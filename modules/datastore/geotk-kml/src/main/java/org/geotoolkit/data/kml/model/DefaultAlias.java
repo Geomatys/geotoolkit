@@ -18,7 +18,7 @@ package org.geotoolkit.data.kml.model;
 
 import java.net.URI;
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 
 /**
  *
@@ -44,11 +44,11 @@ public class DefaultAlias extends DefaultAbstractObject implements Alias {
      * @param abstractAliasSimpleExtensions
      * @param abstractAliasObjectExtensions
      */
-    public DefaultAlias(List<SimpleType> objectSimpleExtensions,
+    public DefaultAlias(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
             URI targetHref, URI sourceHref,
-            List<SimpleType> abstractAliasSimpleExtensions,
-            List<AbstractObject> abstractAliasObjectExtensions) {
+            List<SimpleTypeContainer> abstractAliasSimpleExtensions,
+            List<Object> abstractAliasObjectExtensions) {
         super(objectSimpleExtensions, idAttributes);
         this.targetHref = targetHref;
         this.sourceHref = sourceHref;

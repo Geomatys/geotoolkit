@@ -17,7 +17,7 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static java.util.Collections.*;
 
 /**
@@ -45,13 +45,13 @@ public class DefaultStyleMap extends DefaultAbstractStyleSelector implements Sty
      * @param styleMapSimpleExtensions
      * @param styleMapObjectExtensions
      */
-    public DefaultStyleMap(List<SimpleType> objectSimpleExtensions,
+    public DefaultStyleMap(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
-            List<SimpleType> abstractStyleSelectorSimpleExtensions,
-            List<AbstractObject> abstractStyleSelectorObjectExtensions,
+            List<SimpleTypeContainer> abstractStyleSelectorSimpleExtensions,
+            List<Object> abstractStyleSelectorObjectExtensions,
             List<Pair> pairs,
-            List<SimpleType> styleMapSimpleExtensions,
-            List<AbstractObject> styleMapObjectExtensions) {
+            List<SimpleTypeContainer> styleMapSimpleExtensions,
+            List<Object> styleMapObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
                 abstractStyleSelectorSimpleExtensions,
                 abstractStyleSelectorObjectExtensions);

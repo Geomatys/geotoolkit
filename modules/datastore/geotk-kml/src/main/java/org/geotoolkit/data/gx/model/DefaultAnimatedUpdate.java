@@ -21,7 +21,7 @@ import org.geotoolkit.data.kml.model.DefaultAbstractObject;
 import org.geotoolkit.data.kml.model.Extensions;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Update;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.gx.xml.GxConstants.*;
 
 /**
@@ -37,7 +37,7 @@ public class DefaultAnimatedUpdate extends DefaultAbstractObject implements Anim
         this.duration = DEF_DURATION;
     }
 
-    public DefaultAnimatedUpdate(List<SimpleType> objectSimpleExtensions,
+    public DefaultAnimatedUpdate(List<SimpleTypeContainer> objectSimpleExtensions,
         IdAttributes idAttributes, double duration, Update update){
         super(objectSimpleExtensions, idAttributes);
         this.duration = duration;

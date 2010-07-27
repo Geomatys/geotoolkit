@@ -38,7 +38,7 @@ import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Region;
 import org.geotoolkit.data.kml.model.Update;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import org.geotoolkit.xal.model.AddressDetails;
 import org.opengis.feature.Feature;
 
@@ -50,24 +50,24 @@ public interface GxFactory {
 
     AnimatedUpdate createAnimatedUpdate();
 
-    AnimatedUpdate createAnimatedUpdate(List<SimpleType> objectSimpleExtensions,
+    AnimatedUpdate createAnimatedUpdate(List<SimpleTypeContainer> objectSimpleExtensions,
         IdAttributes idAttributes, double duration, Update update);
 
     FlyTo createFlyTo();
 
-    FlyTo createFlyTo(List<SimpleType> objectSimpleExtensions,
+    FlyTo createFlyTo(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes, double duration,
             EnumFlyToMode flyToMOde, AbstractView view);
 
     PlayList createPlayList();
 
-    PlayList createPlayList(List<SimpleType> objectSimpleExtensions,
+    PlayList createPlayList(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
             List<AbstractTourPrimitive> tourPrimitives);
 
     Feature createTour();
 
-    Feature createTour(List<SimpleType> objectSimpleExtensions,
+    Feature createTour(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
             String name,
             boolean visibility,
@@ -81,27 +81,27 @@ public interface GxFactory {
             AbstractTimePrimitive timePrimitive,
             URI styleUrl, List<AbstractStyleSelector> styleSelector,
             Region region, Object extendedData,
-            List<SimpleType> abstractFeatureSimpleExtensions,
+            List<SimpleTypeContainer> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
             List<PlayList> playLists);
 
     LatLonQuad createLatLonQuad();
 
-    LatLonQuad createLatLonQuad(List<SimpleType> objectSimpleExtensions,
+    LatLonQuad createLatLonQuad(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes, Coordinates coordinates);
 
     SoundCue createSoundCue();
 
-    SoundCue createSoundCue(List<SimpleType> objectSimpleExtensions,
+    SoundCue createSoundCue(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes, String href);
 
     TourControl createTourControl();
 
-    TourControl createTourControl(List<SimpleType> objectSimpleExtensions,
+    TourControl createTourControl(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes, EnumPlayMode playMode);
 
     Wait createWait();
 
-    Wait createWait(List<SimpleType> objectSimpleExtensions,
+    Wait createWait(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes, double duration);
 }

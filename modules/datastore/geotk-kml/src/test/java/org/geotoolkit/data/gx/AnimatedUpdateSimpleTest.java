@@ -186,7 +186,7 @@ public class AnimatedUpdateSimpleTest {
         temp.deleteOnExit();
 
         final KmlWriter writer = new KmlWriter();
-        final GxWriter gxWriter = new GxWriter();
+        final GxWriter gxWriter = new GxWriter(writer);
         writer.setOutput(temp);
         writer.addExtensionWriter(GxConstants.URI_GX, gxWriter);
         writer.write(kml);

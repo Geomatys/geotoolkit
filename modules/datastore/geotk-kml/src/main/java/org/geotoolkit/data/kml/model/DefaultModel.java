@@ -17,7 +17,7 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
@@ -53,14 +53,14 @@ public class DefaultModel extends DefaultAbstractGeometry implements Model {
      * @param modelSimpleExtensions
      * @param modelObjectExtensions
      */
-    public DefaultModel(List<SimpleType> objectSimpleExtensions,
+    public DefaultModel(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
-            List<SimpleType> abstractGeometrySimpleExtensions,
-            List<AbstractObject> abstractGeometryObjectExtensions,
+            List<SimpleTypeContainer> abstractGeometrySimpleExtensions,
+            List<Object> abstractGeometryObjectExtensions,
             EnumAltitudeMode altitudeMode, Location location, Orientation orientation,
             Scale scale, Link link, ResourceMap resourceMap,
-            List<SimpleType> modelSimpleExtensions,
-            List<AbstractObject> modelObjectExtensions) {
+            List<SimpleTypeContainer> modelSimpleExtensions,
+            List<Object> modelObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
                 abstractGeometrySimpleExtensions,
                 abstractGeometryObjectExtensions);

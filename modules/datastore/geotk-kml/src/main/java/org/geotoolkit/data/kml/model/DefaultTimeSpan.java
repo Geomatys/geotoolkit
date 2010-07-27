@@ -18,7 +18,7 @@ package org.geotoolkit.data.kml.model;
 
 import java.util.Calendar;
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 
 /**
  *
@@ -46,13 +46,13 @@ public class DefaultTimeSpan extends DefaultAbstractTimePrimitive implements Tim
      * @param timeSpanSimpleExtensions
      * @param timeSpanObjectExtensions
      */
-    public DefaultTimeSpan(List<SimpleType> objectSimpleExtensions,
+    public DefaultTimeSpan(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
-            List<SimpleType> abstractTimePrimitiveSimpleExtensions,
-            List<AbstractObject> abstractTimePrimitiveObjectExtensions,
+            List<SimpleTypeContainer> abstractTimePrimitiveSimpleExtensions,
+            List<Object> abstractTimePrimitiveObjectExtensions,
             Calendar begin, Calendar end,
-            List<SimpleType> timeSpanSimpleExtensions,
-            List<AbstractObject> timeSpanObjectExtensions) {
+            List<SimpleTypeContainer> timeSpanSimpleExtensions,
+            List<Object> timeSpanObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
                 abstractTimePrimitiveSimpleExtensions,
                 abstractTimePrimitiveObjectExtensions);

@@ -17,7 +17,7 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
@@ -55,14 +55,14 @@ public class DefaultLatLonAltBox extends DefaultAbstractLatLonBox implements Lat
      * @param latLonAltBoxSimpleExtensions
      * @param latLonAltBoxObjectExtensions
      */
-    public DefaultLatLonAltBox(List<SimpleType> objectSimpleExtensions,
+    public DefaultLatLonAltBox(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
             double north, double south, double east, double west,
-            List<SimpleType> abstractLatLonBoxSimpleExtensions,
-            List<AbstractObject> abstractLatLonBoxObjectExtensions,
+            List<SimpleTypeContainer> abstractLatLonBoxSimpleExtensions,
+            List<Object> abstractLatLonBoxObjectExtensions,
             double minAltitude, double maxAltitude, EnumAltitudeMode altitudeMode,
-            List<SimpleType> latLonAltBoxSimpleExtensions,
-            List<AbstractObject> latLonAltBoxObjectExtensions) {
+            List<SimpleTypeContainer> latLonAltBoxSimpleExtensions,
+            List<Object> latLonAltBoxObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
                 north, south, east, west,
                 abstractLatLonBoxSimpleExtensions,

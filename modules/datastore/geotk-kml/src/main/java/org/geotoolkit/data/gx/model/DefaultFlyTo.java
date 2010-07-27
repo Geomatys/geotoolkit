@@ -20,7 +20,7 @@ import java.util.List;
 import org.geotoolkit.data.kml.model.AbstractView;
 import org.geotoolkit.data.kml.model.DefaultAbstractObject;
 import org.geotoolkit.data.kml.model.IdAttributes;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.gx.xml.GxConstants.*;
 
 /**
@@ -39,7 +39,7 @@ public class DefaultFlyTo extends DefaultAbstractObject implements FlyTo {
         this.flyToMode = DEF_FLY_TO_MODE;
     }
 
-    public DefaultFlyTo(List<SimpleType> objectSimpleExtensions,
+    public DefaultFlyTo(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes, double duration,
             EnumFlyToMode flyToMOde, AbstractView view){
         super(objectSimpleExtensions, idAttributes);

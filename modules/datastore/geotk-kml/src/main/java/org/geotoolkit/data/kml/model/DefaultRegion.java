@@ -17,7 +17,7 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 
 /**
  *
@@ -43,11 +43,11 @@ public class DefaultRegion extends DefaultAbstractObject implements Region {
      * @param regionSimpleExtensions
      * @param regionObjectExtensions
      */
-    public DefaultRegion(List<SimpleType> objectSimpleExtensions,
+    public DefaultRegion(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
             LatLonAltBox latLonAltBox, Lod lod,
-            List<SimpleType> regionSimpleExtensions,
-            List<AbstractObject> regionObjectExtensions) {
+            List<SimpleTypeContainer> regionSimpleExtensions,
+            List<Object> regionObjectExtensions) {
         super(objectSimpleExtensions, idAttributes);
         this.latLonAltBox = latLonAltBox;
         this.lod = lod;

@@ -18,7 +18,7 @@ package org.geotoolkit.data.kml.model;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
@@ -59,15 +59,15 @@ public class DefaultLinearRing extends com.vividsolutions.jts.geom.LinearRing im
      * @param lineStringObjectExtensions
      * @param factory
      */
-    public DefaultLinearRing(List<SimpleType> objectSimpleExtensions,
+    public DefaultLinearRing(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
-            List<SimpleType> abstractGeometrySimpleExtensions,
-            List<AbstractObject> abstractGeometryObjectExtensions,
+            List<SimpleTypeContainer> abstractGeometrySimpleExtensions,
+            List<Object> abstractGeometryObjectExtensions,
             boolean extrude, boolean tessellate,
             EnumAltitudeMode altitudeMode,
             Coordinates coordinates,
-            List<SimpleType> lineStringSimpleExtensions,
-            List<AbstractObject> lineStringObjectExtensions,
+            List<SimpleTypeContainer> lineStringSimpleExtensions,
+            List<Object> lineStringObjectExtensions,
             GeometryFactory factory) {
         super(coordinates, factory);
         this.idAttributes = idAttributes;

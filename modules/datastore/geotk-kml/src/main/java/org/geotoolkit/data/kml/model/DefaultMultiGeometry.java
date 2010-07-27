@@ -17,7 +17,7 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static java.util.Collections.*;
 
 /**
@@ -45,13 +45,13 @@ public class DefaultMultiGeometry extends DefaultAbstractGeometry implements Mul
      * @param multiGeometrySimpleExtensions
      * @param multiGeometryObjectExtensions
      */
-    public DefaultMultiGeometry(List<SimpleType> objectSimpleExtensions,
+    public DefaultMultiGeometry(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
-            List<SimpleType> abstractGeometrySimpleExtensions,
-            List<AbstractObject> abstractGeometryObjectExtensions,
+            List<SimpleTypeContainer> abstractGeometrySimpleExtensions,
+            List<Object> abstractGeometryObjectExtensions,
             List<AbstractGeometry> geometries,
-            List<SimpleType> multiGeometrySimpleExtensions,
-            List<AbstractObject> multiGeometryObjectExtensions) {
+            List<SimpleTypeContainer> multiGeometrySimpleExtensions,
+            List<Object> multiGeometryObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
                 abstractGeometrySimpleExtensions,
                 abstractGeometryObjectExtensions);

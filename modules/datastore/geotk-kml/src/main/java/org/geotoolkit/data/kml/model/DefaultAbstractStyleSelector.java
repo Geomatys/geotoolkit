@@ -17,7 +17,7 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 
 /**
  *
@@ -25,8 +25,8 @@ import org.geotoolkit.data.kml.xsd.SimpleType;
  */
 public abstract class DefaultAbstractStyleSelector extends DefaultAbstractObject implements AbstractStyleSelector {
 
-    /*
-     *
+    /**
+     * 
      */
     protected DefaultAbstractStyleSelector() {
     }
@@ -38,10 +38,10 @@ public abstract class DefaultAbstractStyleSelector extends DefaultAbstractObject
      * @param abstractStyleSelectorSimpleExtensions
      * @param abstractStyleSelectorObjectExtensions
      */
-    protected DefaultAbstractStyleSelector(List<SimpleType> objectSimpleExtensions,
+    protected DefaultAbstractStyleSelector(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
-            List<SimpleType> abstractStyleSelectorSimpleExtensions,
-            List<AbstractObject> abstractStyleSelectorObjectExtensions) {
+            List<SimpleTypeContainer> abstractStyleSelectorSimpleExtensions,
+            List<Object> abstractStyleSelectorObjectExtensions) {
         super(objectSimpleExtensions, idAttributes);
         if (abstractStyleSelectorSimpleExtensions != null) {
             this.extensions().simples(Extensions.Names.STYLE_SELECTOR).addAll(abstractStyleSelectorSimpleExtensions);

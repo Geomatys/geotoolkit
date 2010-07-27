@@ -18,7 +18,7 @@ package org.geotoolkit.data.kml.model;
 
 import java.net.URI;
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
@@ -48,11 +48,11 @@ public class DefaultPair extends DefaultAbstractObject implements Pair {
      * @param pairSimpleExtensions
      * @param pairObjectExtensions
      */
-    public DefaultPair(List<SimpleType> objectSimpleExtensions,
+    public DefaultPair(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
             StyleState key, URI styleUrl, AbstractStyleSelector styleSelector,
-            List<SimpleType> pairSimpleExtensions,
-            List<AbstractObject> pairObjectExtensions) {
+            List<SimpleTypeContainer> pairSimpleExtensions,
+            List<Object> pairObjectExtensions) {
         super(objectSimpleExtensions, idAttributes);
         this.key = key;
         this.styleUrl = styleUrl;

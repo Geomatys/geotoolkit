@@ -17,7 +17,6 @@
 package org.geotoolkit.data.kml.model;
 
 import com.vividsolutions.jts.geom.CoordinateSequence;
-import org.geotoolkit.data.kml.xsd.SimpleType;
 
 /**
  *
@@ -29,6 +28,6 @@ import org.geotoolkit.data.kml.xsd.SimpleType;
  *
  * @author Samuel Andrés
  */
-public interface Coordinates extends SimpleType, CoordinateSequence {
+public interface Coordinates extends CoordinateSequence {
 
 }

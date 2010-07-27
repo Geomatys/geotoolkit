@@ -18,7 +18,7 @@ package org.geotoolkit.data.kml.model;
 
 import java.util.List;
 import org.geotoolkit.data.kml.KmlUtilities;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
@@ -50,11 +50,11 @@ public class DefaultOrientation extends DefaultAbstractObject implements Orienta
      * @param orientationSimpleExtensions
      * @param orientationObjectExtensions
      */
-    public DefaultOrientation(List<SimpleType> objectSimpleExtensions,
+    public DefaultOrientation(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
             double heading, double tilt, double roll,
-            List<SimpleType> orientationSimpleExtensions,
-            List<AbstractObject> orientationObjectExtensions) {
+            List<SimpleTypeContainer> orientationSimpleExtensions,
+            List<Object> orientationObjectExtensions) {
         super(objectSimpleExtensions, idAttributes);
         this.heading = KmlUtilities.checkAngle360(heading);
         this.tilt = KmlUtilities.checkAngle360(tilt);

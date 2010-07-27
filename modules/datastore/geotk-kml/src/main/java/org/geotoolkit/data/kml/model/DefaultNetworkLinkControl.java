@@ -18,7 +18,7 @@ package org.geotoolkit.data.kml.model;
 
 import java.util.Calendar;
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
@@ -66,8 +66,8 @@ public class DefaultNetworkLinkControl implements NetworkLinkControl {
             double maxSessionLength, String cookie, String message,
             String linkName, Object linkDescription,
             Snippet linkSnippet, Calendar expire, Update update, AbstractView view,
-            List<SimpleType> networkLinkControlSimpleExtensions,
-            List<AbstractObject> networkLinkControlObjectExtensions) {
+            List<SimpleTypeContainer> networkLinkControlSimpleExtensions,
+            List<Object> networkLinkControlObjectExtensions) {
         this.minRefreshPeriod = minRefreshPeriod;
         this.maxSessionLength = maxSessionLength;
         this.cookie = cookie;

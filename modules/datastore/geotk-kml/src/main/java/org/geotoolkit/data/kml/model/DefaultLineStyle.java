@@ -18,7 +18,7 @@ package org.geotoolkit.data.kml.model;
 
 import java.awt.Color;
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
@@ -50,16 +50,16 @@ public class DefaultLineStyle extends DefaultAbstractColorStyle implements LineS
      * @param lineStyleSimpleExtensions
      * @param lineStyleObjectExtensions
      */
-    public DefaultLineStyle(List<SimpleType> objectSimpleExtensions,
+    public DefaultLineStyle(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
-            List<SimpleType> abstractSubStyleSimpleExtensions,
-            List<AbstractObject> abstractSubStyleObjectExtensions,
+            List<SimpleTypeContainer> abstractSubStyleSimpleExtensions,
+            List<Object> abstractSubStyleObjectExtensions,
             Color color, ColorMode colorMode,
-            List<SimpleType> colorStyleSimpleExtensions,
-            List<AbstractObject> colorStyleObjectExtensions,
+            List<SimpleTypeContainer> colorStyleSimpleExtensions,
+            List<Object> colorStyleObjectExtensions,
             double width,
-            List<SimpleType> lineStyleSimpleExtensions,
-            List<AbstractObject> lineStyleObjectExtensions) {
+            List<SimpleTypeContainer> lineStyleSimpleExtensions,
+            List<Object> lineStyleObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
                 abstractSubStyleSimpleExtensions,
                 abstractSubStyleObjectExtensions,

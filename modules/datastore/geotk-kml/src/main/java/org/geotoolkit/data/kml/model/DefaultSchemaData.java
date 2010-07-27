@@ -18,7 +18,7 @@ package org.geotoolkit.data.kml.model;
 
 import java.net.URI;
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static java.util.Collections.*;
 
 /**
@@ -47,7 +47,7 @@ public class DefaultSchemaData extends DefaultAbstractObject implements SchemaDa
      * @param simpleDatas
      * @param schemaDataExtensions
      */
-    public DefaultSchemaData(List<SimpleType> objectSimpleExtensions,
+    public DefaultSchemaData(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes, URI schemaURL,
             List<SimpleData> simpleDatas, List<Object> schemaDataExtensions) {
         super(objectSimpleExtensions, idAttributes);

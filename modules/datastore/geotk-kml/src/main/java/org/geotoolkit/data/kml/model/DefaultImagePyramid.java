@@ -17,7 +17,7 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
@@ -52,11 +52,11 @@ public class DefaultImagePyramid extends DefaultAbstractObject implements ImageP
      * @param imagePyramidSimpleExtensions
      * @param imagePyramidObjectExtensions
      */
-    public DefaultImagePyramid(List<SimpleType> objectSimpleExtensions,
+    public DefaultImagePyramid(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
             int titleSize, int maxWidth, int maxHeight, GridOrigin gridOrigin,
-            List<SimpleType> imagePyramidSimpleExtensions,
-            List<AbstractObject> imagePyramidObjectExtensions) {
+            List<SimpleTypeContainer> imagePyramidSimpleExtensions,
+            List<Object> imagePyramidObjectExtensions) {
         super(objectSimpleExtensions, idAttributes);
         this.titleSize = titleSize;
         this.maxWidth = maxWidth;

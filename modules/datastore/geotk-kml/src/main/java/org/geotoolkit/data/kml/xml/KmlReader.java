@@ -36,8 +36,6 @@ import org.geotoolkit.data.kml.KmlFactory;
 import org.geotoolkit.data.kml.DefaultKmlFactory;
 import org.geotoolkit.atom.model.AtomPersonConstruct;
 import org.geotoolkit.atom.model.AtomLink;
-import org.geotoolkit.data.gx.xml.GxConstants;
-import org.geotoolkit.data.gx.xml.GxReader;
 import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.kml.model.AbstractColorStyle;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
@@ -48,6 +46,7 @@ import org.geotoolkit.data.kml.model.AbstractSubStyle;
 import org.geotoolkit.data.kml.model.AbstractTimePrimitive;
 import org.geotoolkit.data.kml.model.AbstractView;
 import org.geotoolkit.data.kml.model.Alias;
+import org.geotoolkit.data.kml.model.AltitudeMode;
 import org.geotoolkit.data.kml.model.EnumAltitudeMode;
 import org.geotoolkit.data.kml.model.BalloonStyle;
 import org.geotoolkit.data.kml.model.BasicLink;
@@ -61,6 +60,7 @@ import org.geotoolkit.data.kml.model.Data;
 import org.geotoolkit.data.kml.model.Delete;
 import org.geotoolkit.data.kml.model.DisplayMode;
 import org.geotoolkit.data.kml.model.ExtendedData;
+import org.geotoolkit.data.kml.model.Extensions;
 import org.geotoolkit.data.kml.model.GridOrigin;
 import org.geotoolkit.data.kml.model.Icon;
 import org.geotoolkit.data.kml.model.IconStyle;
@@ -114,8 +114,7 @@ import org.geotoolkit.data.kml.model.ViewRefreshMode;
 import org.geotoolkit.data.kml.model.ViewVolume;
 import org.geotoolkit.xal.model.AddressDetails;
 import org.geotoolkit.xal.model.XalException;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-import org.geotoolkit.data.kml.xsd.DefaultCdata;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import org.geotoolkit.temporal.object.FastDateParser;
 import org.geotoolkit.xml.StaxStreamReader;
 import org.opengis.feature.Feature;
@@ -132,7 +131,7 @@ public class KmlReader extends StaxStreamReader {
     private final XalReader xalReader = new XalReader();
     private final AtomReader atomReader = new AtomReader();
     private final FastDateParser fastDateParser = new FastDateParser();
-    private final Map<String, StaxStreamReader> extensionReaders = new HashMap<String, StaxStreamReader>();
+    private final Map<String, KmlExtensionReader> extensionReaders = new HashMap<String, KmlExtensionReader>();
 
     public KmlReader() {
         super();
@@ -178,17 +177,40 @@ public class KmlReader extends StaxStreamReader {
             throw new KmlException("Bad Kml version Uri. This reader supports 2.1 and 2.2 versions.");
     }
 
+    /**
+     * <p>This method allows to add extensions readers.</p>
+     * <p>An extension reader must implement KmlExtensionReader interface.</p>
+     * <p>Each extension reader is associated with namespace uri of elements
+     * he is able to read.</p>
+     *
+     * @param uri
+     * @param reader
+     * @throws KmlException
+     * @throws IOException
+     * @throws XMLStreamException
+     */
     public void addExtensionReader(String uri, StaxStreamReader reader) 
             throws KmlException, IOException, XMLStreamException{
         if(this.extensionReaders.get(uri) == null){
-            this.extensionReaders.put(uri, reader);
-            reader.setInput(this.reader);
+            if (reader instanceof KmlExtensionReader){
+                this.extensionReaders.put(uri, (KmlExtensionReader) reader);
+                reader.setInput(this.reader);
+            } else {
+                throw new KmlException("Extension reader must implements "+KmlExtensionReader.class.getName()+" interface.");
+            }
         } else {
             throw new KmlException(uri+" uri is already associated with an extension reader.");
         }
     }
 
-    protected StaxStreamReader getExtensionReader(String uri) throws KmlException{
+    /**
+     * <p>This method returns the reader associated with given namespace uri.</p>
+     *
+     * @param uri
+     * @return
+     * @throws KmlException
+     */
+    protected KmlExtensionReader getExtensionReader(String uri) throws KmlException{
         if(this.extensionReaders.get(uri) == null){
             throw new KmlException("There is no available reader for "+uri+" extension.");
         }
@@ -205,7 +227,6 @@ public class KmlReader extends StaxStreamReader {
         try {
 
             while (reader.hasNext()) {
-
                 switch (reader.next()) {
 
                     case XMLStreamConstants.START_ELEMENT:
@@ -246,12 +267,15 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      * @throws KmlException
+     * @throws URISyntaxException
      */
-    private Kml readKml() throws XMLStreamException, KmlException, URISyntaxException {
+    private Kml readKml() 
+            throws XMLStreamException, KmlException, URISyntaxException {
+
         NetworkLinkControl networkLinkControl = null;
         Feature abstractFeature = null;
-        List<SimpleType> kmlSimpleExtensions = null;
-        List<AbstractObject> kmlObjectExtensions = null;
+        List<SimpleTypeContainer> kmlSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> kmlObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -267,30 +291,44 @@ public class KmlReader extends StaxStreamReader {
                         } else if (isAbstractFeature(eName)) {
                             abstractFeature = this.readAbstractFeature(eName);
                         }
+                    } else {
+                        Object ext = this.readExtensionsScheduler(TAG_KML, eUri, eName);
+                        Extensions.Names extensionLevel = this.getExtensionReader(eUri).getComplexExtensionLevel(TAG_KML,eName);
+                        if(Extensions.Names.KML.equals(extensionLevel)){
+                            kmlObjectExtensions.add(ext);
+                        }
+                        extensionLevel = this.getExtensionReader(eUri).getSimpleExtensionLevel(TAG_KML,eName);
+                        if(Extensions.Names.KML.equals(extensionLevel)){
+                            kmlSimpleExtensions.add( (SimpleTypeContainer) ext);
+                        }
                     }
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_KML.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_KML.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
             }
-
         }
-
-        return KmlReader.kmlFactory.createKml(networkLinkControl, abstractFeature, kmlSimpleExtensions, kmlObjectExtensions);
+        return KmlReader.kmlFactory.createKml(
+                networkLinkControl, abstractFeature,
+                kmlSimpleExtensions, kmlObjectExtensions);
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
+     * @throws URISyntaxException
      */
-    private Feature readPlacemark() throws XMLStreamException, KmlException, URISyntaxException {
+    private Feature readPlacemark() 
+            throws XMLStreamException, KmlException, URISyntaxException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractFeature
@@ -310,13 +348,13 @@ public class KmlReader extends StaxStreamReader {
         List<AbstractStyleSelector> styleSelector = new ArrayList<AbstractStyleSelector>();
         Region region = null;
         Object extendedData = null;
-        List<SimpleType> featureSimpleExtensions = null;
-        List<AbstractObject> featureObjectExtensions = null;
+        List<SimpleTypeContainer> featureSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> featureObjectExtensions = new ArrayList<Object>();
 
         // Placemark
         AbstractGeometry abstractGeometry = null;
-        List<SimpleType> placemarkSimpleExtensions = null;
-        List<AbstractObject> placemarkObjectExtensions = null;
+        List<SimpleTypeContainer> placemarkSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> placemarkObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -326,8 +364,8 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
+                    // KML
                     if (URI_KML.equals(eUri)) {
-
                         // ABSTRACT FEATURE
                         if (TAG_NAME.equals(eName)) {
                             name = reader.getElementText();
@@ -365,9 +403,9 @@ public class KmlReader extends StaxStreamReader {
                         else if (isAbstractGeometry(eName)) {
                             abstractGeometry = this.readAbstractGeometry(eName);
                         }
-
-
-                    } else if (URI_ATOM.equals(eUri)) {
+                    }
+                    // ATOM
+                    else if (URI_ATOM.equals(eUri)) {
                         checkVersion(URI_KML_2_2);
                         // ABSTRACT FEATURE
                         if (TAG_ATOM_AUTHOR.equals(eName)) {
@@ -376,22 +414,48 @@ public class KmlReader extends StaxStreamReader {
                             link = this.readAtomLink();
                         }
                     }
-                    if (URI_XAL.equals(eUri)) {
+                    // XAL
+                    else if (URI_XAL.equals(eUri)) {
                         checkVersion(URI_KML_2_2);
                         // ABSTRACT FEATURE
                         if (TAG_XAL_ADDRESS_DETAILS.equals(eName)) {
                             addressDetails = this.readXalAddressDetails();
                         }
                     }
+                    // EXTENSIONS
+                    else {
+                        Object ext = this.readExtensionsScheduler(TAG_PLACEMARK, eUri, eName);
+                        if(ext != null){
+                            Extensions.Names extensionLevel = this.getExtensionReader(eUri).getComplexExtensionLevel(TAG_PLACEMARK,eName);
+                            if(extensionLevel != null){
+                                if(Extensions.Names.FEATURE.equals(extensionLevel)){
+                                    featureObjectExtensions.add(ext);
+                                } else if(Extensions.Names.PLACEMARK.equals(extensionLevel)){
+                                    placemarkObjectExtensions.add(ext);
+                                }
+                            } else {
+                                extensionLevel = this.getExtensionReader(eUri).getSimpleExtensionLevel(TAG_PLACEMARK,eName);
+                                if(extensionLevel != null){
+                                    if(Extensions.Names.OBJECT.equals(extensionLevel)){
+                                        objectSimpleExtensions.add((SimpleTypeContainer) ext);
+                                    } else if(Extensions.Names.FEATURE.equals(extensionLevel)){
+                                        featureSimpleExtensions.add((SimpleTypeContainer) ext);
+                                    } else if(Extensions.Names.PLACEMARK.equals(extensionLevel)){
+                                        placemarkSimpleExtensions.add((SimpleTypeContainer) ext);
+                                    }
+                                }
+                            }
+                        }
+                    }
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_PLACEMARK.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_PLACEMARK.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
             }
-
         }
 
         return KmlReader.kmlFactory.createPlacemark(objectSimpleExtensions, idAttributes,
@@ -402,21 +466,23 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
      */
-    public Region readRegion() throws XMLStreamException, KmlException {
+    public Region readRegion() 
+            throws XMLStreamException, KmlException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // Region
         LatLonAltBox latLonAltBox = null;
         Lod lod = null;
-        List<SimpleType> regionSimpleExtensions = null;
-        List<AbstractObject> regionObjectExtentions = null;
+        List<SimpleTypeContainer> regionSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> regionObjectExtentions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -438,12 +504,12 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_REGION.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_REGION.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
             }
-
         }
 
         return KmlReader.kmlFactory.createRegion(objectSimpleExtensions, idAttributes,
@@ -455,9 +521,10 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private Lod readLod() throws XMLStreamException {
+    private Lod readLod()
+            throws XMLStreamException {
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // Lod
@@ -465,8 +532,8 @@ public class KmlReader extends StaxStreamReader {
         double maxLodPixels = DEF_MAX_LOD_PIXELS;
         double minFadeExtent = DEF_MIN_FADE_EXTENT;
         double maxFadeExtent = DEF_MAX_FADE_EXTENT;
-        List<SimpleType> lodSimpleExtentions = null;
-        List<AbstractObject> lodObjectExtensions = null;
+        List<SimpleTypeContainer> lodSimpleExtentions = new ArrayList<SimpleTypeContainer>();
+        List<Object> lodObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -492,24 +559,28 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_LOD.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_LOD.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
             }
-
         }
 
         return KmlReader.kmlFactory.createLod(objectSimpleExtensions, idAttributes,
-                minLodPixels, maxLodPixels, minFadeExtent, maxFadeExtent, lodSimpleExtentions, lodObjectExtensions);
+                minLodPixels, maxLodPixels, minFadeExtent, maxFadeExtent,
+                lodSimpleExtentions, lodObjectExtensions);
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
+     * @throws URISyntaxException
      */
-    public ExtendedData readExtendedData() throws XMLStreamException, URISyntaxException {
+    public ExtendedData readExtendedData() 
+            throws XMLStreamException, URISyntaxException {
+
         List<Data> datas = new ArrayList<Data>();
         List<SchemaData> schemaDatas = new ArrayList<SchemaData>();
         List<Object> anyOtherElements = null;
@@ -534,15 +605,16 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_EXTENDED_DATA.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_EXTENDED_DATA.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
             }
-
         }
         
-        return KmlReader.kmlFactory.createExtendedData(datas, schemaDatas, anyOtherElements);
+        return KmlReader.kmlFactory.createExtendedData(
+                datas, schemaDatas, anyOtherElements);
     }
 
     /**
@@ -552,7 +624,8 @@ public class KmlReader extends StaxStreamReader {
      * @deprecated
      */
     @Deprecated
-    public Metadata readMetaData() throws XMLStreamException{
+    public Metadata readMetaData()
+            throws XMLStreamException{
         return KmlReader.kmlFactory.createMetadata();
     }
 
@@ -561,16 +634,18 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private Data readData() throws XMLStreamException {
+    private Data readData() 
+            throws XMLStreamException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // Data
         String name = reader.getAttributeValue(null, ATT_NAME);
         Object displayName = null;
         String value = null;
-        List<Object> dataExtensions = null;
+        List<Object> dataExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -606,19 +681,22 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
+     * @throws URISyntaxException
      */
-    private SchemaData readSchemaData() throws XMLStreamException, URISyntaxException {
+    private SchemaData readSchemaData() 
+            throws XMLStreamException, URISyntaxException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // SchemaData
         URI schemaURL = new URI(reader.getAttributeValue(null, ATT_SCHEMA_URL));
         List<SimpleData> simpleDatas = new ArrayList<SimpleData>();
-        List<Object> schemaDataExtensions = null;
+        List<Object> schemaDataExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -638,12 +716,12 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_SCHEMA_DATA.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_SCHEMA_DATA.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
             }
-
         }
 
         return KmlReader.kmlFactory.createSchemaData(objectSimpleExtensions,
@@ -655,8 +733,11 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private SimpleData readSimpleData() throws XMLStreamException {
-        return KmlReader.kmlFactory.createSimpleData(reader.getAttributeValue(null, ATT_NAME), reader.getElementText());
+    private SimpleData readSimpleData() 
+            throws XMLStreamException {
+
+        return KmlReader.kmlFactory.createSimpleData(
+                reader.getAttributeValue(null, ATT_NAME), reader.getElementText());
     }
 
     /**
@@ -664,8 +745,11 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      * @throws KmlException
+     * @throws URISyntaxException
      */
-    private NetworkLinkControl readNetworkLinkControl() throws XMLStreamException, KmlException, URISyntaxException {
+    private NetworkLinkControl readNetworkLinkControl() 
+            throws XMLStreamException, KmlException, URISyntaxException {
+
         double minRefreshPeriod = DEF_MIN_REFRESH_PERIOD;
         double maxSessionLength = DEF_MAX_SESSION_LENGTH;
         String cookie = null;
@@ -676,8 +760,8 @@ public class KmlReader extends StaxStreamReader {
         Calendar expires = null;
         Update update = null;
         AbstractView view = null;
-        List<SimpleType> networkLinkControlSimpleExtensions = null;
-        List<AbstractObject> networkLinkControlObjectExtensions = null;
+        List<SimpleTypeContainer> networkLinkControlSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> networkLinkControlObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -723,12 +807,12 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_NETWORK_LINK_CONTROL.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_NETWORK_LINK_CONTROL.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
             }
-
         }
 
         return KmlReader.kmlFactory.createNetworkLinkControl(minRefreshPeriod, maxSessionLength,
@@ -743,11 +827,13 @@ public class KmlReader extends StaxStreamReader {
      * @throws KmlException
      * @throws URISyntaxException
      */
-    public Update readUpdate() throws XMLStreamException, KmlException, URISyntaxException{
+    public Update readUpdate() 
+            throws XMLStreamException, KmlException, URISyntaxException{
+
         URI targetHref = null;
         List<Object> updates = new ArrayList<Object>();
-        List<Object> updateOpExtensions = null;
-        List<Object> updateExtensions = null;
+        List<Object> updateOpExtensions = new ArrayList<Object>();
+        List<Object> updateExtensions = new ArrayList<Object>();
         
         boucle:
         while (reader.hasNext()) {
@@ -778,7 +864,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_UPDATE.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_UPDATE.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -798,7 +885,9 @@ public class KmlReader extends StaxStreamReader {
      * @deprecated
      */
     @Deprecated
-    private Feature readReplace() throws XMLStreamException, KmlException, URISyntaxException{
+    private Feature readReplace() 
+            throws XMLStreamException, KmlException, URISyntaxException{
+
         Feature replace = null;
 
         boucle:
@@ -817,7 +906,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_REPLACE.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_REPLACE.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -832,6 +922,7 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      * @throws KmlException
+     * @throws URISyntaxException
      */
     private Create readCreate() throws XMLStreamException, KmlException, URISyntaxException{
         List<Feature> containers = new ArrayList<Feature>();
@@ -853,7 +944,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_CREATE.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_CREATE.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -863,12 +955,15 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
+     * @throws URISyntaxException
      */
-    private Delete readDelete() throws XMLStreamException, KmlException, URISyntaxException{
+    private Delete readDelete() 
+            throws XMLStreamException, KmlException, URISyntaxException{
+
         List<Feature> features = new ArrayList<Feature>();
 
         boucle:
@@ -888,7 +983,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_DELETE.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_DELETE.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -902,8 +998,11 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      * @throws KmlException
+     * @throws URISyntaxException
      */
-    private Change readChange() throws XMLStreamException, KmlException, URISyntaxException{
+    private Change readChange() 
+            throws XMLStreamException, KmlException, URISyntaxException{
+
         List<Object> objects = new ArrayList<Object>();
 
         boucle:
@@ -923,7 +1022,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_CHANGE.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_CHANGE.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -938,6 +1038,7 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      * @throws KmlException
+     * @throws URISyntaxException
      */
     private Object readAbstractObject(String eName)
             throws XMLStreamException, KmlException, URISyntaxException{
@@ -995,7 +1096,9 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private AbstractLatLonBox readAbstractLatLonBox(String eName) throws XMLStreamException, KmlException{
+    private AbstractLatLonBox readAbstractLatLonBox(String eName) 
+            throws XMLStreamException, KmlException{
+
         AbstractLatLonBox resultat = null;
         if (TAG_LAT_LON_ALT_BOX.equals(eName)){
             resultat = this.readLatLonAltBox();
@@ -1010,7 +1113,9 @@ public class KmlReader extends StaxStreamReader {
      * @param eName
      * @return
      */
-    private AbstractSubStyle readAbstractSubStyle(String eName) throws XMLStreamException, KmlException{
+    private AbstractSubStyle readAbstractSubStyle(String eName) 
+            throws XMLStreamException, KmlException{
+
         AbstractSubStyle resultat = null;
         if (TAG_BALLOON_STYLE.equals(eName)){
             resultat = this.readBalloonStyle();
@@ -1029,7 +1134,9 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private AbstractColorStyle readAbstractColorStyle(String eName) throws XMLStreamException, KmlException{
+    private AbstractColorStyle readAbstractColorStyle(String eName) 
+            throws XMLStreamException, KmlException{
+
         AbstractColorStyle resultat = null;
         if (TAG_ICON_STYLE.equals(eName)){
             resultat = this.readIconStyle();
@@ -1048,7 +1155,9 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    public Snippet readSnippet() throws XMLStreamException{
+    public Snippet readSnippet() 
+            throws XMLStreamException{
+
         int maxLines = DEF_MAX_SNIPPET_LINES_ATT;
         if (reader.getAttributeValue(null, ATT_MAX_LINES) != null){
             maxLines = Integer.parseInt(reader.getAttributeValue(null, ATT_MAX_LINES));
@@ -1059,12 +1168,15 @@ public class KmlReader extends StaxStreamReader {
 
     /**
      *
-     * @param eName The tag name.
+     * @param eName
      * @return
      * @throws XMLStreamException
      * @throws KmlException
+     * @throws URISyntaxException
      */
-    private AbstractGeometry readAbstractGeometry(String eName) throws XMLStreamException, KmlException, URISyntaxException {
+    private AbstractGeometry readAbstractGeometry(String eName) 
+            throws XMLStreamException, KmlException, URISyntaxException {
+
         AbstractGeometry resultat = null;
         if (TAG_MULTI_GEOMETRY.equals(eName)) {
             resultat = readMultiGeometry();
@@ -1088,28 +1200,31 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
+     * @throws URISyntaxException
      */
-    private Polygon readPolygon() throws XMLStreamException, KmlException {
+    private Polygon readPolygon() 
+            throws XMLStreamException, KmlException, URISyntaxException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractGeometry
-        List<SimpleType> abstractGeometrySimpleExtensions = null;
-        List<AbstractObject> abstractGeometryObjectExtensions = null;
+        List<SimpleTypeContainer> abstractGeometrySimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> abstractGeometryObjectExtensions = new ArrayList<Object>();
 
         // Polygon
         boolean extrude = DEF_EXTRUDE;
         boolean tessellate = DEF_TESSELLATE;
-        EnumAltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
+        AltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
         Boundary outerBoundaryIs = null;
         List<Boundary> innerBoundariesAre = new ArrayList<Boundary>();
-        List<SimpleType> polygonSimpleExtensions = null;
-        List<AbstractObject> polygonObjectExtensions = null;
+        List<SimpleTypeContainer> polygonSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> polygonObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -1132,16 +1247,26 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_INNER_BOUNDARY_IS.equals(eName)) {
                             innerBoundariesAre.add(this.readBoundary());
                         }
+                    } else {
+                        Extensions.Names complexExtensionLevel = this.getExtensionReader(eUri).getComplexExtensionLevel(TAG_GROUND_OVERLAY,eName);
+                        Object ext = this.readExtensionsScheduler(TAG_POLYGON, eUri, eName);
+                        if(complexExtensionLevel == null){
+                            if (ext instanceof AltitudeMode){
+                                altitudeMode = (AltitudeMode) ext;
+                            }
+                        } else if(false){
+                            // Extensions classiques
+                        }
                     }
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_POLYGON.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_POLYGON.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
             }
-
         }
 
         return KmlReader.kmlFactory.createPolygon(objectSimpleExtensions, idAttributes,
@@ -1155,9 +1280,11 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private Boundary readBoundary() throws XMLStreamException{
+    private Boundary readBoundary() 
+            throws XMLStreamException{
+
         LinearRing linearRing = null;
-        List<SimpleType> boundarySimpleExtensions = null;
+        List<SimpleTypeContainer> boundarySimpleExtensions = null;
         List<AbstractObject> boundaryObjectExtensions = null;
 
         boucle:
@@ -1177,32 +1304,36 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if ((TAG_OUTER_BOUNDARY_IS.equals(reader.getLocalName()) || TAG_INNER_BOUNDARY_IS.equals(reader.getLocalName()))
+                    if ((TAG_OUTER_BOUNDARY_IS.equals(reader.getLocalName())
+                            || TAG_INNER_BOUNDARY_IS.equals(reader.getLocalName()))
                             && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
             }
-
         }
 
-        return KmlReader.kmlFactory.createBoundary(linearRing, boundarySimpleExtensions, boundaryObjectExtensions);
+        return KmlReader.kmlFactory.createBoundary(
+                linearRing, boundarySimpleExtensions, boundaryObjectExtensions);
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
+     * @throws URISyntaxException
      */
-    private Model readModel() throws XMLStreamException, KmlException, URISyntaxException {
+    private Model readModel() 
+            throws XMLStreamException, KmlException, URISyntaxException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractGeometry
-        List<SimpleType> abstractGeometrySimpleExtensions = null;
-        List<AbstractObject> abstractGeometryObjectExtensions = null;
+        List<SimpleTypeContainer> abstractGeometrySimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> abstractGeometryObjectExtensions = new ArrayList<Object>();
 
         // Model
         EnumAltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
@@ -1211,8 +1342,8 @@ public class KmlReader extends StaxStreamReader {
         Scale scale = null;
         Link link = null;
         ResourceMap resourceMap = null;
-        List<SimpleType> modelSimpleExtensions = null;
-        List<AbstractObject> modelObjectExtensions = null;
+        List<SimpleTypeContainer> modelSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> modelObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -1242,7 +1373,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_MODEL.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_MODEL.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -1257,20 +1389,22 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
+     * @throws URISyntaxException
      */
-    private ResourceMap readResourceMap() throws XMLStreamException, URISyntaxException{
+    private ResourceMap readResourceMap() 
+            throws XMLStreamException, URISyntaxException{
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // ResourceMap
         List<Alias> aliases = new ArrayList<Alias>();
-        List<SimpleType> resourceMapSimpleExtensions = null;
-        List<AbstractObject> resourceMapObjectExtensions = null;
-
+        List<SimpleTypeContainer> resourceMapSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> resourceMapObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -1289,12 +1423,12 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_RESOURCE_MAP.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_RESOURCE_MAP.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
             }
-
         }
 
         return KmlReader.kmlFactory.createResourceMap(objectSimpleExtensions, idAttributes,
@@ -1303,20 +1437,23 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
+     * @throws URISyntaxException
      */
-     private Alias readAlias() throws XMLStreamException, URISyntaxException{
+     private Alias readAlias() 
+             throws XMLStreamException, URISyntaxException{
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // Alias
         URI targetHref = null;
         URI sourceHref = null;
-        List<SimpleType> alaisSimpleExtensions = null;
-        List<AbstractObject> aliasObjectExtensions = null;
+        List<SimpleTypeContainer> alaisSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> aliasObjectExtensions = new ArrayList<Object>();
 
 
         boucle:
@@ -1343,7 +1480,6 @@ public class KmlReader extends StaxStreamReader {
                     }
                     break;
             }
-
         }
 
         return KmlReader.kmlFactory.createAlias(objectSimpleExtensions, idAttributes,
@@ -1356,17 +1492,19 @@ public class KmlReader extends StaxStreamReader {
       * @return
       * @throws XMLStreamException
       */
-    private Scale readScale() throws XMLStreamException{
+    private Scale readScale() 
+            throws XMLStreamException{
+        
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // Scale
         double x = DEF_X;
         double y = DEF_Y;
         double z = DEF_Z;
-        List<SimpleType> scaleSimpleExtensions = null;
-        List<AbstractObject> scaleObjectExtensions = null;
+        List<SimpleTypeContainer> scaleSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> scaleObjectExtensions = new ArrayList<Object>();
 
 
         boucle:
@@ -1396,7 +1534,6 @@ public class KmlReader extends StaxStreamReader {
                     }
                     break;
             }
-
         }
 
         return KmlReader.kmlFactory.createScale(objectSimpleExtensions, idAttributes,
@@ -1410,17 +1547,19 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private Location readLocation() throws XMLStreamException, KmlException {
+    private Location readLocation() 
+            throws XMLStreamException, KmlException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // Location
         double longitude = DEF_LONGITUDE;
         double latitude = DEF_LATITUDE;
         double altitude = DEF_ALTITUDE;
-        List<SimpleType> locationSimpleExtensions = null;
-        List<AbstractObject> locationObjectExtensions = null;
+        List<SimpleTypeContainer> locationSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> locationObjectExtensions = new ArrayList<Object>();
 
 
         boucle:
@@ -1444,12 +1583,12 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_LOCATION.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_LOCATION.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
             }
-
         }
 
         return KmlReader.kmlFactory.createLocation(objectSimpleExtensions, idAttributes,
@@ -1462,17 +1601,19 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private Orientation readOrientation() throws XMLStreamException, KmlException {
+    private Orientation readOrientation() 
+            throws XMLStreamException, KmlException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // Orientation
         double heading = DEF_HEADING;
         double tilt = DEF_TILT;
         double roll = DEF_ROLL;
-        List<SimpleType> orientationSimpleExtensions = null;
-        List<AbstractObject> orientationObjectExtensions = null;
+        List<SimpleTypeContainer> orientationSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> orientationObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -1495,12 +1636,12 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_ORIENTATION.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_ORIENTATION.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
             }
-
         }
 
         return KmlReader.kmlFactory.createOrientation(objectSimpleExtensions, idAttributes,
@@ -1512,22 +1653,24 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private LinearRing readLinearRing() throws XMLStreamException {
+    private LinearRing readLinearRing() 
+            throws XMLStreamException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractGeometry
-        List<SimpleType> abstractGeometrySimpleExtensions = null;
-        List<AbstractObject> abstractGeometryObjectExtensions = null;
+        List<SimpleTypeContainer> abstractGeometrySimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> abstractGeometryObjectExtensions = new ArrayList<Object>();
 
         // LinearRing
         boolean extrude = DEF_EXTRUDE;
         boolean tessellate = DEF_TESSELLATE;
         EnumAltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
         Coordinates coordinates = null;
-        List<SimpleType> linearRingSimpleExtensions = null;
-        List<AbstractObject> linearRingObjectExtensions = null;
+        List<SimpleTypeContainer> linearRingSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> linearRingObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -1552,12 +1695,12 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_LINEAR_RING.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_LINEAR_RING.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
             }
-
         }
 
         return KmlReader.kmlFactory.createLinearRing(objectSimpleExtensions, idAttributes,
@@ -1570,23 +1713,27 @@ public class KmlReader extends StaxStreamReader {
      *
      * @return
      * @throws XMLStreamException
+     * @throws KmlException
+     * @throws URISyntaxException
      */
-    private LineString readLineString() throws XMLStreamException {
+    private LineString readLineString() 
+            throws XMLStreamException, KmlException, URISyntaxException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractGeometry
-        List<SimpleType> abstractGeometrySimpleExtensions = null;
-        List<AbstractObject> abstractGeometryObjectExtensions = null;
+        List<SimpleTypeContainer> abstractGeometrySimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> abstractGeometryObjectExtensions = new ArrayList<Object>();
 
         // LineString
         boolean extrude = DEF_EXTRUDE;
         boolean tessellate = DEF_TESSELLATE;
-        EnumAltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
+        AltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
         Coordinates coordinates = null;
-        List<SimpleType> lineStringSimpleExtensions = null;
-        List<AbstractObject> lineStringObjectExtensions = null;
+        List<SimpleTypeContainer> lineStringSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> lineStringObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -1607,11 +1754,20 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_COORDINATES.equals(eName)) {
                             coordinates = readCoordinates(reader.getElementText());
                         }
+                    } else {
+                        Extensions.Names complexExtensionLevel = this.getExtensionReader(eUri).getComplexExtensionLevel(TAG_LOOK_AT,eName);
+                        Object ext = this.readExtensionsScheduler(TAG_LINE_STRING, eUri, eName);
+                        if(complexExtensionLevel == null){
+                            if (ext instanceof AltitudeMode){
+                                altitudeMode = (AltitudeMode) ext;
+                            }
+                        }
                     }
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_LINE_STRING.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_LINE_STRING.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -1626,24 +1782,27 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
+     * @throws URISyntaxException
      */
-    private MultiGeometry readMultiGeometry() throws XMLStreamException, KmlException, URISyntaxException{
+    private MultiGeometry readMultiGeometry() 
+            throws XMLStreamException, KmlException, URISyntaxException{
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractGeometry
-        List<SimpleType> abstractGeometrySimpleExtensions = null;
-        List<AbstractObject> abstractGeometryObjectExtensions = null;
+        List<SimpleTypeContainer> abstractGeometrySimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> abstractGeometryObjectExtensions = new ArrayList<Object>();
 
         // Multi Geometry
         List<AbstractGeometry> geometries = new ArrayList<AbstractGeometry>();
-        List<SimpleType> multiGeometrySimpleExtensions = null;
-        List<AbstractObject> multiGeometryObjectExtensions = null;
+        List<SimpleTypeContainer> multiGeometrySimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> multiGeometryObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -1662,12 +1821,12 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_MULTI_GEOMETRY.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_MULTI_GEOMETRY.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
             }
-
         }
 
         return KmlReader.kmlFactory.createMultiGeometry(objectSimpleExtensions, idAttributes,
@@ -1678,12 +1837,15 @@ public class KmlReader extends StaxStreamReader {
 
     /**
      *
-     * @param eName The tag name.
+     * @param eName The tag name
      * @return
      * @throws XMLStreamException
      * @throws KmlException
+     * @throws URISyntaxException
      */
-    private Feature readAbstractFeature(String eName) throws XMLStreamException, KmlException, URISyntaxException {
+    private Feature readAbstractFeature(String eName) 
+            throws XMLStreamException, KmlException, URISyntaxException {
+
         Feature resultat = null;
         if (isAbstractContainer(eName)) {
             resultat = this.readAbstractContainer(eName);
@@ -1699,11 +1861,15 @@ public class KmlReader extends StaxStreamReader {
 
     /**
      *
-     * @param eName The Tag name.
+     * @param eName The tag name
      * @return
      * @throws XMLStreamException
+     * @throws KmlException
+     * @throws URISyntaxException
      */
-    private Feature readAbstractOverlay(String eName) throws XMLStreamException, KmlException, URISyntaxException {
+    private Feature readAbstractOverlay(String eName) 
+            throws XMLStreamException, KmlException, URISyntaxException {
+
         Feature resultat = null;
         if (TAG_GROUND_OVERLAY.equals(eName)) {
             resultat = readGroundOverlay();
@@ -1722,11 +1888,13 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      * @throws KmlException
+     * @throws URISyntaxException
      */
-    private Feature readGroundOverlay() throws XMLStreamException, KmlException, URISyntaxException {
+    private Feature readGroundOverlay()
+            throws XMLStreamException, KmlException, URISyntaxException {
 
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractFeature
@@ -1746,21 +1914,21 @@ public class KmlReader extends StaxStreamReader {
         List<AbstractStyleSelector> styleSelector = new ArrayList<AbstractStyleSelector>();
         Region region = null;
         Object extendedData = null;
-        List<SimpleType> featureSimpleExtensions = null;
-        List<AbstractObject> featureObjectExtensions = null;
+        List<SimpleTypeContainer> featureSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> featureObjectExtensions = new ArrayList<Object>();
 
         // AbstractOverlay
         Color color = DEF_COLOR;
         int drawOrder = DEF_DRAW_ORDER;
         Icon icon = null;
-        List<SimpleType> abstractOverlaySimpleExtensions = null;
-        List<AbstractObject> abstractOverlayObjectExtensions = null;
+        List<SimpleTypeContainer> abstractOverlaySimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> abstractOverlayObjectExtensions = new ArrayList<Object>();
 
         // GroundOverlay
         double altitude = DEF_ALTITUDE;
         EnumAltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
         LatLonBox latLonBox = null;
-        List<SimpleType> groundOverlaySimpleExtensions = null;
+        List<SimpleTypeContainer> groundOverlaySimpleExtensions = new ArrayList<SimpleTypeContainer>();
         List<Object> groundOverlayObjectExtensions = new ArrayList<Object>();
 
         boucle:
@@ -1818,7 +1986,6 @@ public class KmlReader extends StaxStreamReader {
                         // GROUND OVERLAY
                         else if (TAG_ALTITUDE.equals(eName)) {
                             altitude = parseDouble(reader.getElementText());
-                            System.out.println("READ : "+altitude);
                         } else if (TAG_ALTITUDE_MODE.equals(eName)) {
                             altitudeMode = EnumAltitudeMode.transform(reader.getElementText());
                         } else if (TAG_LAT_LON_BOX.equals(eName)) {
@@ -1841,8 +2008,9 @@ public class KmlReader extends StaxStreamReader {
                             addressDetails = this.readXalAddressDetails();
                         }
                     } else {
-                        Object ext = this.readExtensionsScheduler(eUri, eName, TAG_GROUND_OVERLAY);
-                        if(ext instanceof AbstractObject || ext instanceof Feature){
+                        Extensions.Names complexExtensionLevel = this.getExtensionReader(eUri).getComplexExtensionLevel(TAG_GROUND_OVERLAY,eName);
+                        Object ext = this.readExtensionsScheduler(TAG_GROUND_OVERLAY, eUri, eName);
+                        if(Extensions.Names.GROUND_OVERLAY.equals(complexExtensionLevel)){
                             groundOverlayObjectExtensions.add(ext);
                         }
                         //CAS SIMPLE !!!!
@@ -1850,7 +2018,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_GROUND_OVERLAY.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_GROUND_OVERLAY.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -1870,21 +2039,21 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @param stopName
      * @return
-     * @throws KmlException
      * @throws XMLStreamException
      */
-    private Link readLink(String stopName) throws XMLStreamException {
+    private Link readLink(String stopName)
+            throws XMLStreamException {
 
         // Comme BasicLink
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         String href = null;
-        List<SimpleType> basicLinkSimpleExtensions = null;
-        List<Object> basicLinkObjectExtensions = null;
+        List<SimpleTypeContainer> basicLinkSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> basicLinkObjectExtensions = new ArrayList<Object>();
 
         // Spécifique à Link
         RefreshMode refreshMode = DEF_REFRESH_MODE;
@@ -1894,8 +2063,8 @@ public class KmlReader extends StaxStreamReader {
         double viewBoundScale = DEF_VIEW_BOUND_SCALE;
         String viewFormat = null;
         String httpQuery = null;
-        List<SimpleType> linkSimpleExtensions = null;
-        List<Object> linkObjectExtensions = null;
+        List<SimpleTypeContainer> linkSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> linkObjectExtensions = new ArrayList<Object>();
         
         boucle:
         while (reader.hasNext()) {
@@ -1932,7 +2101,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (stopName.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (stopName.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -1942,7 +2112,8 @@ public class KmlReader extends StaxStreamReader {
 
         return KmlReader.kmlFactory.createLink(objectSimpleExtensions, idAttributes,
                 href, basicLinkSimpleExtensions, basicLinkObjectExtensions,
-                refreshMode, refreshInterval, viewRefreshMode, viewRefreshTime, viewBoundScale, viewFormat, httpQuery,
+                refreshMode, refreshInterval, viewRefreshMode, viewRefreshTime,
+                viewBoundScale, viewFormat, httpQuery,
                 linkSimpleExtensions, linkObjectExtensions);
     }
 
@@ -1972,9 +2143,11 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private LatLonBox readLatLonBox() throws XMLStreamException, KmlException {
+    private LatLonBox readLatLonBox() 
+            throws XMLStreamException, KmlException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractLatLonBox
@@ -1982,13 +2155,13 @@ public class KmlReader extends StaxStreamReader {
         double south = DEF_SOUTH;
         double east = DEF_EAST;
         double west = DEF_WEST;
-        List<SimpleType> abstractLatLonBoxSimpleExtensions = null;
-        List<AbstractObject> abstractLatLonBoxObjectExtensions = null;
+        List<SimpleTypeContainer> abstractLatLonBoxSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> abstractLatLonBoxObjectExtensions = new ArrayList<Object>();
 
         // LatLonBox
         double rotation = DEF_ROTATION;
-        List<SimpleType> latLonBoxSimpleExtensions = null;
-        List<AbstractObject> latLonBoxObjectExtensions = null;
+        List<SimpleTypeContainer> latLonBoxSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> latLonBoxObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -2020,12 +2193,12 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_LAT_LON_BOX.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_LAT_LON_BOX.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
             }
-
         }
         return KmlReader.kmlFactory.createLatLonBox(objectSimpleExtensions, idAttributes,
                 north, south, east, west,
@@ -2039,9 +2212,11 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private LatLonAltBox readLatLonAltBox() throws XMLStreamException, KmlException {
+    private LatLonAltBox readLatLonAltBox() 
+            throws XMLStreamException, KmlException {
+        
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractLatLonBox
@@ -2049,15 +2224,15 @@ public class KmlReader extends StaxStreamReader {
         double south = DEF_SOUTH;
         double east = DEF_EAST;
         double west = DEF_WEST;
-        List<SimpleType> abstractLatLonBoxSimpleExtensions = null;
-        List<AbstractObject> abstractLatLonBoxObjectExtensions = null;
+        List<SimpleTypeContainer> abstractLatLonBoxSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> abstractLatLonBoxObjectExtensions = new ArrayList<Object>();
 
         // LatLonAltBox
         double minAltitude = DEF_MIN_ALTITUDE;
         double maxAltitude = DEF_MAX_ALTITUDE;
         EnumAltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
-        List<SimpleType> latLonAltBoxSimpleExtensions = null;
-        List<AbstractObject> latLonAltBoxObjectExtensions = null;
+        List<SimpleTypeContainer> latLonAltBoxSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> latLonAltBoxObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -2093,16 +2268,19 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_LAT_LON_ALT_BOX.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_LAT_LON_ALT_BOX.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
             }
 
         }
-        return KmlReader.kmlFactory.createLatLonAltBox(objectSimpleExtensions, idAttributes,
-                north, south, east, west, abstractLatLonBoxSimpleExtensions, abstractLatLonBoxObjectExtensions,
-                minAltitude, maxAltitude, altitudeMode, latLonAltBoxSimpleExtensions, latLonAltBoxObjectExtensions);
+        return KmlReader.kmlFactory.createLatLonAltBox(objectSimpleExtensions, 
+                idAttributes,north, south, east, west,
+                abstractLatLonBoxSimpleExtensions, abstractLatLonBoxObjectExtensions,
+                minAltitude, maxAltitude, altitudeMode,
+                latLonAltBoxSimpleExtensions, latLonAltBoxObjectExtensions);
     }
 
     /**
@@ -2114,7 +2292,7 @@ public class KmlReader extends StaxStreamReader {
     private ImagePyramid readImagePyramid() throws XMLStreamException, KmlException {
 
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // ImagePyramid
@@ -2122,8 +2300,8 @@ public class KmlReader extends StaxStreamReader {
         int maxWidth = DEF_MAX_WIDTH;
         int maxHeight = DEF_MAX_HEIGHT;
         GridOrigin gridOrigin = DEF_GRID_ORIGIN;
-        List<SimpleType> imagePyramidSimpleExtensions = null;
-        List<AbstractObject> imagePyramidObjectExtensions = null;
+        List<SimpleTypeContainer> imagePyramidSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> imagePyramidObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -2149,7 +2327,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_IMAGE_PYRAMID.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_IMAGE_PYRAMID.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -2168,10 +2347,11 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private ViewVolume readViewVolume() throws XMLStreamException, KmlException {
+    private ViewVolume readViewVolume()
+            throws XMLStreamException, KmlException {
 
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // ViewVolume
@@ -2180,8 +2360,8 @@ public class KmlReader extends StaxStreamReader {
         double bottomFov = DEF_BOTTOM_FOV;
         double topFov = DEF_TOP_FOV;
         double near = DEF_NEAR;
-        List<SimpleType> viewVolumeSimpleExtensions = null;
-        List<AbstractObject> viewVolumeObjectExtensions = null;
+        List<SimpleTypeContainer> viewVolumeSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> viewVolumeObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -2209,7 +2389,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_VIEW_VOLUME.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_VIEW_VOLUME.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -2218,13 +2399,22 @@ public class KmlReader extends StaxStreamReader {
         }
 
         return KmlReader.kmlFactory.createViewVolume(objectSimpleExtensions, idAttributes,
-                leftFov, rightFov, bottomFov, topFov, near, viewVolumeSimpleExtensions, viewVolumeObjectExtensions);
+                leftFov, rightFov, bottomFov, topFov, near,
+                viewVolumeSimpleExtensions, viewVolumeObjectExtensions);
     }
 
-    private Feature readPhotoOverlay() throws XMLStreamException, KmlException, URISyntaxException {
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     * @throws URISyntaxException
+     */
+    private Feature readPhotoOverlay()
+            throws XMLStreamException, KmlException, URISyntaxException {
 
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractFeature
@@ -2244,15 +2434,15 @@ public class KmlReader extends StaxStreamReader {
         List<AbstractStyleSelector> styleSelector = new ArrayList<AbstractStyleSelector>();
         Region region = null;
         Object extendedData = null;
-        List<SimpleType> featureSimpleExtensions = null;
-        List<AbstractObject> featureObjectExtensions = null;
+        List<SimpleTypeContainer> featureSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> featureObjectExtensions = new ArrayList<Object>();
 
         // AbstractOverlay
         Color color = DEF_COLOR;
         int drawOrder = DEF_DRAW_ORDER;
         Icon icon = null;
-        List<SimpleType> abstractOverlaySimpleExtensions = null;
-        List<AbstractObject> abstractOverlayObjectExtensions = null;
+        List<SimpleTypeContainer> abstractOverlaySimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> abstractOverlayObjectExtensions = new ArrayList<Object>();
 
         // PhotoOverlay
         double rotation = DEF_ROTATION;
@@ -2260,8 +2450,8 @@ public class KmlReader extends StaxStreamReader {
         ImagePyramid imagePyramid = null;
         Point point = null;
         Shape shape = null;
-        List<SimpleType> photoOverlaySimpleExtensions = null;
-        List<AbstractObject> photoOverlayObjectExtensions = null;
+        List<SimpleTypeContainer> photoOverlaySimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> photoOverlayObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -2348,12 +2538,12 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_PHOTO_OVERLAY.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_PHOTO_OVERLAY.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
             }
-
         }
 
         return KmlReader.kmlFactory.createPhotoOverlay(objectSimpleExtensions, idAttributes,
@@ -2366,15 +2556,17 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
+     * @throws URISyntaxException
      */
-    private Feature readScreenOverlay() throws XMLStreamException, KmlException, URISyntaxException {
+    private Feature readScreenOverlay()
+            throws XMLStreamException, KmlException, URISyntaxException {
 
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractFeature
@@ -2394,15 +2586,15 @@ public class KmlReader extends StaxStreamReader {
         List<AbstractStyleSelector> styleSelector = new ArrayList<AbstractStyleSelector>();
         Region region = null;
         Object extendedData = null;
-        List<SimpleType> featureSimpleExtensions = null;
-        List<AbstractObject> featureObjectExtensions = null;
+        List<SimpleTypeContainer> featureSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> featureObjectExtensions = new ArrayList<Object>();
 
         // AbstractOverlay
         Color color = DEF_COLOR;
         int drawOrder = DEF_DRAW_ORDER;
         Icon icon = null;
-        List<SimpleType> abstractOverlaySimpleExtensions = null;
-        List<AbstractObject> abstractOverlayObjectExtensions = null;
+        List<SimpleTypeContainer> abstractOverlaySimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> abstractOverlayObjectExtensions = new ArrayList<Object>();
 
         // ScreenOverlay
         Vec2 overlayXY = null;
@@ -2410,8 +2602,8 @@ public class KmlReader extends StaxStreamReader {
         Vec2 rotationXY = null;
         Vec2 size = null;
         double rotation = DEF_ROTATION;
-        List<SimpleType> screenOverlaySimpleExtensions = null;
-        List<AbstractObject> screenOverlayObjectExtensions = null;
+        List<SimpleTypeContainer> screenOverlaySimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> screenOverlayObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -2498,7 +2690,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_SCREEN_OVERLAY.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_SCREEN_OVERLAY.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -2517,11 +2710,15 @@ public class KmlReader extends StaxStreamReader {
 
     /**
      *
-     * @param eName The tag name.
+     * @param eName The tag name
      * @return
      * @throws XMLStreamException
+     * @throws KmlException
+     * @throws URISyntaxException
      */
-    private Feature readAbstractContainer(String eName) throws XMLStreamException, KmlException, URISyntaxException {
+    private Feature readAbstractContainer(String eName) 
+            throws XMLStreamException, KmlException, URISyntaxException {
+
         Feature resultat = null;
         if (TAG_FOLDER.equals(eName)) {
             resultat = readFolder();
@@ -2533,11 +2730,15 @@ public class KmlReader extends StaxStreamReader {
 
     /**
      *
-     * @param eName The tag name.
+     * @param eName The tag name
      * @return
      * @throws XMLStreamException
+     * @throws KmlException
+     * @throws URISyntaxException
      */
-    public AbstractView readAbstractView(String eName) throws XMLStreamException, KmlException, URISyntaxException {
+    public AbstractView readAbstractView(String eName) 
+            throws XMLStreamException, KmlException, URISyntaxException {
+        
         AbstractView resultat = null;
         if (TAG_LOOK_AT.equals(eName)) {
             resultat = readLookAt();
@@ -2552,15 +2753,18 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      * @throws KmlException
+     * @throws URISyntaxException
      */
-    private LookAt readLookAt() throws XMLStreamException, KmlException {
+    private LookAt readLookAt() 
+            throws XMLStreamException, KmlException, URISyntaxException {
+        
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractView
-        List<SimpleType> abstractViewSimpleExtensions = null;
-        List<Object> abstractViewObjectExtensions = null;
+        List<SimpleTypeContainer> abstractViewSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> abstractViewObjectExtensions = new ArrayList<Object>();
 
         // LookAt
         double longitude = DEF_LONGITUDE;
@@ -2569,8 +2773,9 @@ public class KmlReader extends StaxStreamReader {
         double heading = DEF_HEADING;
         double tilt = DEF_TILT;
         double range = DEF_RANGE;
-        List<SimpleType> lookAtSimpleExtensions = null;
-        List<AbstractObject> lookAtObjectExtensions = null;
+        AltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
+        List<SimpleTypeContainer> lookAtSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> lookAtObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -2598,12 +2803,25 @@ public class KmlReader extends StaxStreamReader {
                                 tilt = parseDouble(reader.getElementText());
                         } else if (TAG_RANGE.equals(eName)) {
                             range = parseDouble(reader.getElementText());
+                        } else if (TAG_ALTITUDE_MODE.equals(eName)) {
+                            altitudeMode = EnumAltitudeMode.transform(reader.getElementText());
+                        }
+                    } else {
+                        Extensions.Names complexExtensionLevel = this.getExtensionReader(eUri).getComplexExtensionLevel(TAG_LOOK_AT,eName);
+                        Object ext = this.readExtensionsScheduler(TAG_LOOK_AT, eUri, eName);
+                        if(complexExtensionLevel == null){
+                            if (ext instanceof AltitudeMode){
+                                altitudeMode = (AltitudeMode) ext;
+                            }
+                        } else if(Extensions.Names.VIEW.equals(complexExtensionLevel)){
+                            abstractViewObjectExtensions.add(ext);
                         }
                     }
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_LOOK_AT.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_LOOK_AT.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -2611,23 +2829,26 @@ public class KmlReader extends StaxStreamReader {
         }
         return KmlReader.kmlFactory.createLookAt(objectSimpleExtensions, idAttributes,
                 abstractViewSimpleExtensions, abstractViewObjectExtensions,
-                longitude, latitude, altitude, heading, tilt, range,
+                longitude, latitude, altitude, heading, tilt, range, altitudeMode,
                 lookAtSimpleExtensions, lookAtObjectExtensions);
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
+     * @throws URISyntaxException
      */
-    private Camera readCamera() throws XMLStreamException, KmlException, URISyntaxException {
+    private Camera readCamera() 
+            throws XMLStreamException, KmlException, URISyntaxException {
+        
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractView
-        List<SimpleType> abstractViewSimpleExtensions = null;
+        List<SimpleTypeContainer> abstractViewSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         List<Object> abstractViewObjectExtensions = new ArrayList<Object>();
 
         // Camera
@@ -2637,9 +2858,9 @@ public class KmlReader extends StaxStreamReader {
         double heading = DEF_HEADING;
         double tilt = DEF_TILT;
         double roll = DEF_ROLL;
-        EnumAltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
-        List<SimpleType> cameraSimpleExtensions = null;
-        List<AbstractObject> cameraObjectExtensions = null;
+        AltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
+        List<SimpleTypeContainer> cameraSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> cameraObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -2668,8 +2889,13 @@ public class KmlReader extends StaxStreamReader {
                             altitudeMode = EnumAltitudeMode.transform(reader.getElementText());
                         }
                     } else {
-                        Object ext = this.readExtensionsScheduler(eUri, eName, TAG_CAMERA);
-                        if(ext instanceof AbstractObject || ext instanceof Feature){
+                        Extensions.Names complexExtensionLevel = this.getExtensionReader(eUri).getComplexExtensionLevel(TAG_CAMERA,eName);
+                        Object ext = this.readExtensionsScheduler(TAG_CAMERA, eUri, eName);
+                        if(complexExtensionLevel == null){
+                            if (ext instanceof AltitudeMode){
+                                altitudeMode = (AltitudeMode) ext;
+                            }
+                        } else if(Extensions.Names.VIEW.equals(complexExtensionLevel)){
                             abstractViewObjectExtensions.add(ext);
                         }
                         //CAS SIMPLE !!!!
@@ -2677,7 +2903,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_CAMERA.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_CAMERA.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -2691,11 +2918,15 @@ public class KmlReader extends StaxStreamReader {
 
     /**
      *
-     * @param eName The tag name
+     * @param eNameThe tag name
      * @return
      * @throws XMLStreamException
+     * @throws KmlException
+     * @throws URISyntaxException
      */
-    public AbstractStyleSelector readAbstractStyleSelector(String eName) throws XMLStreamException, KmlException, URISyntaxException {
+    public AbstractStyleSelector readAbstractStyleSelector(String eName) 
+            throws XMLStreamException, KmlException, URISyntaxException {
+
         AbstractStyleSelector resultat = null;
         if (TAG_STYLE.equals(eName)) {
             resultat = readStyle();
@@ -2706,24 +2937,27 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
+     * @throws URISyntaxException
      */
-    private StyleMap readStyleMap() throws XMLStreamException, KmlException, URISyntaxException {
+    private StyleMap readStyleMap() 
+            throws XMLStreamException, KmlException, URISyntaxException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractStyleSelector
-        List<SimpleType> styleSelectorSimpleExtensions = null;
-        List<AbstractObject> styleSelectorObjectExtensions = null;
+        List<SimpleTypeContainer> styleSelectorSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> styleSelectorObjectExtensions = new ArrayList<Object>();
 
         // StyleMap
         List<Pair> pairs = new ArrayList<Pair>();
-        List<SimpleType> styleMapSimpleExtensions = null;
-        List<AbstractObject> styleMapObjectExtensions = null;
+        List<SimpleTypeContainer> styleMapSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> styleMapObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -2743,7 +2977,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_STYLE_MAP.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_STYLE_MAP.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -2756,22 +2991,25 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
+     * @throws URISyntaxException
      */
-    private Pair readPair() throws XMLStreamException, KmlException, URISyntaxException {
+    private Pair readPair() 
+            throws XMLStreamException, KmlException, URISyntaxException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // Pair
         StyleState key = DEF_STYLE_STATE;
         URI styleUrl = null;
         AbstractStyleSelector styleSelector = null;
-        List<SimpleType> pairSimpleExtensions = null;
-        List<AbstractObject> pairObjectExtensions = null;
+        List<SimpleTypeContainer> pairSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> pairObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -2796,7 +3034,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_PAIR.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_PAIR.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -2813,14 +3052,16 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private Style readStyle() throws XMLStreamException, KmlException {
+    private Style readStyle() 
+            throws XMLStreamException, KmlException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractStyleSelector
-        List<SimpleType> styleSelectorSimpleExtensions = null;
-        List<AbstractObject> styleSelectorObjectExtensions = null;
+        List<SimpleTypeContainer> styleSelectorSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> styleSelectorObjectExtensions = new ArrayList<Object>();
 
         // Style
         IconStyle iconStyle = null;
@@ -2829,8 +3070,8 @@ public class KmlReader extends StaxStreamReader {
         PolyStyle polyStyle = null;
         BalloonStyle balloonStyle = null;
         ListStyle listStyle = null;
-        List<SimpleType> styleSimpleExtensions = null;
-        List<AbstractObject> styleObjectExtensions = null;
+        List<SimpleTypeContainer> styleSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> styleObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -2860,7 +3101,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_STYLE.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_STYLE.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -2879,28 +3121,30 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private IconStyle readIconStyle() throws XMLStreamException, KmlException {
+    private IconStyle readIconStyle() 
+            throws XMLStreamException, KmlException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractSubStyle
-        List<SimpleType> subStyleSimpleExtensions = null;
-        List<AbstractObject> subStyleObjectExtensions = null;
+        List<SimpleTypeContainer> subStyleSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> subStyleObjectExtensions = new ArrayList<Object>();
 
         // AbstractColorStyle
         Color color = DEF_COLOR;
         ColorMode colorMode = DEF_COLOR_MODE;
-        List<SimpleType> colorStyleSimpleExtensions = null;
-        List<AbstractObject> colorStyleObjectExtensions = null;
+        List<SimpleTypeContainer> colorStyleSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> colorStyleObjectExtensions = new ArrayList<Object>();
 
         // IconStyle
         double scale = DEF_SCALE;
         double heading = DEF_HEADING;
         BasicLink icon = null;
         Vec2 hotSpot = null;
-        List<SimpleType> iconStyleSimpleExtensions = null;
-        List<AbstractObject> iconStyleObjectExtensions = null;
+        List<SimpleTypeContainer> iconStyleSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> iconStyleObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -2933,7 +3177,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_ICON_STYLE.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_ICON_STYLE.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -2950,30 +3195,32 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private LabelStyle readLabelStyle() throws XMLStreamException, KmlException {
+    private LabelStyle readLabelStyle() 
+            throws XMLStreamException, KmlException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractSubStyle
-        List<SimpleType> subStyleSimpleExtensions = null;
-        List<AbstractObject> subStyleObjectExtensions = null;
+        List<SimpleTypeContainer> subStyleSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> subStyleObjectExtensions = new ArrayList<Object>();
 
         // AbstractColorStyle
         Color color = DEF_COLOR;
         ColorMode colorMode = DEF_COLOR_MODE;
-        List<SimpleType> colorStyleSimpleExtensions = null;
-        List<AbstractObject> colorStyleObjectExtensions = null;
+        List<SimpleTypeContainer> colorStyleSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> colorStyleObjectExtensions = new ArrayList<Object>();
 
         // LabelStyle
         double scale = DEF_SCALE;
-        List<SimpleType> labelStyleSimpleExtensions = null;
-        List<AbstractObject> labelStyleObjectExtensions = null;
+        List<SimpleTypeContainer> labelStyleSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> labelStyleObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -3000,7 +3247,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_LABEL_STYLE.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_LABEL_STYLE.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -3020,25 +3268,27 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private LineStyle readLineStyle() throws XMLStreamException, KmlException {
+    private LineStyle readLineStyle() 
+            throws XMLStreamException, KmlException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractSubStyle
-        List<SimpleType> subStyleSimpleExtensions = null;
-        List<AbstractObject> subStyleObjectExtensions = null;
+        List<SimpleTypeContainer> subStyleSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> subStyleObjectExtensions = new ArrayList<Object>();
 
         // AbstractColorStyle
         Color color = DEF_COLOR;
         ColorMode colorMode = DEF_COLOR_MODE;
-        List<SimpleType> colorStyleSimpleExtensions = null;
-        List<AbstractObject> colorStyleObjectExtensions = null;
+        List<SimpleTypeContainer> colorStyleSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> colorStyleObjectExtensions = new ArrayList<Object>();
 
         // LineStyle
         double width = DEF_WIDTH;
-        List<SimpleType> lineStyleSimpleExtensions = null;
-        List<AbstractObject> lineStyleObjectExtensions = null;
+        List<SimpleTypeContainer> lineStyleSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> lineStyleObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -3065,7 +3315,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_LINE_STYLE.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_LINE_STYLE.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -3085,26 +3336,28 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private PolyStyle readPolyStyle() throws XMLStreamException, KmlException {
+    private PolyStyle readPolyStyle() 
+            throws XMLStreamException, KmlException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractSubStyle
-        List<SimpleType> subStyleSimpleExtensions = null;
-        List<AbstractObject> subStyleObjectExtensions = null;
+        List<SimpleTypeContainer> subStyleSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> subStyleObjectExtensions = new ArrayList<Object>();
 
         // AbstractColorStyle
         Color color = DEF_COLOR;
         ColorMode colorMode = DEF_COLOR_MODE;
-        List<SimpleType> colorStyleSimpleExtensions = null;
-        List<AbstractObject> colorStyleObjectExtensions = null;
+        List<SimpleTypeContainer> colorStyleSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> colorStyleObjectExtensions = new ArrayList<Object>();
 
         // PolyStyle
         boolean fill = DEF_FILL;
         boolean outline = DEF_OUTLINE;
-        List<SimpleType> polyStyleSimpleExtensions = null;
-        List<AbstractObject> polyStyleObjectExtensions = null;
+        List<SimpleTypeContainer> polyStyleSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> polyStyleObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -3133,7 +3386,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_POLY_STYLE.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_POLY_STYLE.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -3153,22 +3407,24 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private BalloonStyle readBalloonStyle() throws XMLStreamException, KmlException {
+    private BalloonStyle readBalloonStyle() 
+            throws XMLStreamException, KmlException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractSubStyle
-        List<SimpleType> subStyleSimpleExtensions = null;
-        List<AbstractObject> subStyleObjectExtensions = null;
+        List<SimpleTypeContainer> subStyleSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> subStyleObjectExtensions = new ArrayList<Object>();
 
         // BalloonStyle
         Color bgColor = DEF_BG_COLOR;
         Color textColor = DEF_TEXT_COLOR;
         Object text = null;
         DisplayMode displayMode = DEF_DISPLAY_MODE;
-        List<SimpleType> balloonStyleSimpleExtensions = null;
-        List<AbstractObject> balloonStyleObjectExtensions = null;
+        List<SimpleTypeContainer> balloonStyleSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> balloonStyleObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -3201,7 +3457,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_BALLOON_STYLE.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_BALLOON_STYLE.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -3221,21 +3478,20 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    public Object readElementText() throws XMLStreamException{
+    public Object readElementText() 
+            throws XMLStreamException{
+
         Object resultat = null;
         boucle:
         while (reader.hasNext()) {
             switch (reader.getEventType()) {
                 case XMLStreamConstants.CDATA:
-                    System.out.println("CDATA");
-                    resultat = new DefaultCdata(reader.getText());
+                    resultat = kmlFactory.createCdata(reader.getText());
                     break;
                 case XMLStreamConstants.CHARACTERS:
-                    System.out.println("CHARACTERS");
                     resultat = reader.getText();
                     break;
                 case XMLStreamConstants.END_ELEMENT:
-                    System.out.println("END");
                     break boucle;
             }
             reader.next();
@@ -3250,22 +3506,24 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private ListStyle readListStyle() throws XMLStreamException, KmlException {
+    private ListStyle readListStyle() 
+            throws XMLStreamException, KmlException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractSubStyle
-        List<SimpleType> subStyleSimpleExtensions = null;
-        List<AbstractObject> subStyleObjectExtensions = null;
+        List<SimpleTypeContainer> subStyleSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> subStyleObjectExtensions = new ArrayList<Object>();
 
         // ListStyle
         ListItem listItem = DEF_LIST_ITEM;
         Color bgColor = DEF_BG_COLOR;
         List<ItemIcon> itemIcons = new ArrayList<ItemIcon>();
         int maxSnippetLines = DEF_MAX_SNIPPET_LINES;
-        List<SimpleType> listStyleSimpleExtensions = null;
-        List<AbstractObject> listStyleObjectExtensions = null;
+        List<SimpleTypeContainer> listStyleSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> listStyleObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -3293,7 +3551,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_LIST_STYLE.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_LIST_STYLE.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -3312,16 +3571,18 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private ItemIcon readItemIcon() throws XMLStreamException {
+    private ItemIcon readItemIcon() 
+            throws XMLStreamException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // ListStyle
         List<ItemIconState> states = null;
         String href = null;
-        List<SimpleType> itemIconSimpleExtensions = null;
-        List<AbstractObject> itemIconObjectExtensions = null;
+        List<SimpleTypeContainer> itemIconSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> itemIconObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -3344,7 +3605,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_ITEM_ICON.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_ITEM_ICON.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -3361,7 +3623,8 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private List<ItemIconState> readStates() throws XMLStreamException {
+    private List<ItemIconState> readStates()
+            throws XMLStreamException {
 
         List<ItemIconState> states = new ArrayList<ItemIconState>();
         for (String iiss : reader.getElementText().split(" ")) {
@@ -3380,19 +3643,20 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private BasicLink readBasicLink(String stopTag) throws XMLStreamException, KmlException {
+    private BasicLink readBasicLink(String stopTag)
+            throws XMLStreamException, KmlException {
 
         if (stopTag == null) {
             throw new KmlException("The stop tag cannot be null. "
                     + "It's probably an <Icon> tag according to KML 2.2 specification.");
         }
 
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         String href = null;
-        List<SimpleType> basicLinkSimpleExtensions = null;
-        List<AbstractObject> basicLinkObjectExtensions = null;
+        List<SimpleTypeContainer> basicLinkSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> basicLinkObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -3410,7 +3674,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (stopTag.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (stopTag.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -3461,7 +3726,6 @@ public class KmlReader extends StaxStreamReader {
                     }
                     break;
             }
-
         }
 
         return KmlReader.kmlFactory.createVec2(x, y, xUnit, yUnit);
@@ -3473,7 +3737,9 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    public AbstractTimePrimitive readAbstractTimePrimitive(String eName) throws XMLStreamException {
+    public AbstractTimePrimitive readAbstractTimePrimitive(String eName) 
+            throws XMLStreamException {
+
         AbstractTimePrimitive resultat = null;
         if (TAG_TIME_STAMP.equals(eName)) {
             resultat = readTimeStamp();
@@ -3488,20 +3754,22 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private TimeSpan readTimeSpan() throws XMLStreamException{
+    private TimeSpan readTimeSpan() 
+            throws XMLStreamException{
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractTimePrimitive
-        List<SimpleType> AbstractTimePrimitiveSimpleExtensions = null;
-        List<AbstractObject> AbstractTimePrimitiveObjectExtensions = null;
+        List<SimpleTypeContainer> AbstractTimePrimitiveSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> AbstractTimePrimitiveObjectExtensions = new ArrayList<Object>();
 
         // TimeSpan
         Calendar begin = null;
         Calendar end = null;
-        List<SimpleType> TimeSpanSimpleExtensions = null;
-        List<AbstractObject> TimeSpanObjectExtensions = null;
+        List<SimpleTypeContainer> TimeSpanSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> TimeSpanObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -3521,12 +3789,12 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_TIME_SPAN.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_TIME_SPAN.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
             }
-
         }
         return KmlReader.kmlFactory.createTimeSpan(objectSimpleExtensions, idAttributes,
                 AbstractTimePrimitiveSimpleExtensions, AbstractTimePrimitiveObjectExtensions,
@@ -3538,19 +3806,21 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private TimeStamp readTimeStamp() throws XMLStreamException{
+    private TimeStamp readTimeStamp() 
+            throws XMLStreamException{
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractTimePrimitive
-        List<SimpleType> AbstractTimePrimitiveSimpleExtensions = null;
-        List<AbstractObject> AbstractTimePrimitiveObjectExtensions = null;
+        List<SimpleTypeContainer> AbstractTimePrimitiveSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> AbstractTimePrimitiveObjectExtensions = new ArrayList<Object>();
 
         // TimeStamp
         Calendar when = null;
-        List<SimpleType> TimeStampSimpleExtensions = null;
-        List<AbstractObject> TimeStampObjectExtensions = null;
+        List<SimpleTypeContainer> TimeStampSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> TimeStampObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -3568,12 +3838,12 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_TIME_STAMP.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_TIME_STAMP.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
             }
-
         }
         return KmlReader.kmlFactory.createTimeStamp(objectSimpleExtensions, idAttributes,
                 AbstractTimePrimitiveSimpleExtensions, AbstractTimePrimitiveObjectExtensions,
@@ -3585,7 +3855,8 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    public AtomPersonConstruct readAtomPersonConstruct() throws XMLStreamException {
+    public AtomPersonConstruct readAtomPersonConstruct()
+            throws XMLStreamException {
         return this.atomReader.readAuthor();
     }
 
@@ -3594,7 +3865,8 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    public AtomLink readAtomLink() throws XMLStreamException {
+    public AtomLink readAtomLink()
+            throws XMLStreamException {
         return this.atomReader.readLink();
     }
 
@@ -3603,7 +3875,9 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    public AddressDetails readXalAddressDetails() throws XMLStreamException {
+    public AddressDetails readXalAddressDetails() 
+            throws XMLStreamException {
+
         AddressDetails resultat = null;
         try {
             resultat = this.xalReader.readAddressDetails();
@@ -3614,14 +3888,17 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
+     * @throws URISyntaxException
      */
-    private Feature readFolder() throws XMLStreamException, KmlException, URISyntaxException {
+    private Feature readFolder() 
+            throws XMLStreamException, KmlException, URISyntaxException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
         
         // AbstractFeature
@@ -3641,17 +3918,17 @@ public class KmlReader extends StaxStreamReader {
         List<AbstractStyleSelector> styleSelector = new ArrayList<AbstractStyleSelector>();
         Region region = null;
         Object extendedData = null;
-        List<SimpleType> featureSimpleExtensions = null;
-        List<AbstractObject> featureObjectExtensions = null;
+        List<SimpleTypeContainer> featureSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> featureObjectExtensions = new ArrayList<Object>();
 
         // Container
-        List<SimpleType> abstractContainerSimpleExtensions = null;
-        List<AbstractObject> abstractContainerObjectExtensions = null;
+        List<SimpleTypeContainer> abstractContainerSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> abstractContainerObjectExtensions = new ArrayList<Object>();
 
         // Folder
         List<Feature> features = new ArrayList<Feature>();
-        List<SimpleType> folderSimpleExtensions = null;
-        List<AbstractObject> folderObjectExtensions = null;
+        List<SimpleTypeContainer> folderSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> folderObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -3720,7 +3997,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_FOLDER.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_FOLDER.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -3736,14 +4014,17 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @return
      * @throws XMLStreamException
      * @throws KmlException
+     * @throws URISyntaxException
      */
-    private Feature readDocument() throws XMLStreamException, KmlException, URISyntaxException {
+    private Feature readDocument() 
+            throws XMLStreamException, KmlException, URISyntaxException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractFeature
@@ -3763,17 +4044,17 @@ public class KmlReader extends StaxStreamReader {
         List<AbstractStyleSelector> styleSelector = new ArrayList<AbstractStyleSelector>();
         Region region = null;
         Object extendedData = null;
-        List<SimpleType> featureSimpleExtensions = null;
-        List<AbstractObject> featureObjectExtensions = null;
+        List<SimpleTypeContainer> featureSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> featureObjectExtensions = new ArrayList<Object>();
 
         // Container
-        List<SimpleType> abstractContainerSimpleExtensions = null;
-        List<AbstractObject> abstractContainerObjectExtensions = null;
+        List<SimpleTypeContainer> abstractContainerSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> abstractContainerObjectExtensions = new ArrayList<Object>();
 
         // Document
         List<Schema> schemas = new ArrayList<Schema>();
         List<Feature> features = new ArrayList<Feature>();
-        List<SimpleType> documentSimpleExtensions = new ArrayList<SimpleType>();
+        List<SimpleTypeContainer> documentSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         List<Object> documentObjectExtensions = new ArrayList<Object>();
 
         boucle:
@@ -3843,8 +4124,9 @@ public class KmlReader extends StaxStreamReader {
                             addressDetails = this.readXalAddressDetails();
                         }
                     } else {
-                        Object ext = this.readExtensionsScheduler(eUri, eName, TAG_DOCUMENT);
-                        if(ext instanceof AbstractObject || ext instanceof Feature){
+                        Extensions.Names complexExtensionLevel = this.getExtensionReader(eUri).getComplexExtensionLevel(TAG_DOCUMENT,eName);
+                        Object ext = this.readExtensionsScheduler(TAG_DOCUMENT, eUri, eName);
+                        if(Extensions.Names.DOCUMENT.equals(complexExtensionLevel)){
                             documentObjectExtensions.add(ext);
                         }
                         //CAS SIMPLE !!!!
@@ -3852,7 +4134,8 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_DOCUMENT.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_DOCUMENT.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -3860,8 +4143,10 @@ public class KmlReader extends StaxStreamReader {
         }
 
         return KmlReader.kmlFactory.createDocument(objectSimpleExtensions, idAttributes,
-                name, visibility, open, author, link, address, addressDetails, phoneNumber, snippet, description,
-                view, timePrimitive, styleUrl, styleSelector, region, extendedData, featureSimpleExtensions, featureObjectExtensions,
+                name, visibility, open, author, link, address, addressDetails,
+                phoneNumber, snippet, description,
+                view, timePrimitive, styleUrl, styleSelector, region, extendedData,
+                featureSimpleExtensions, featureObjectExtensions,
                 abstractContainerSimpleExtensions, abstractContainerObjectExtensions,
                 schemas, features, documentSimpleExtensions, documentObjectExtensions);
     }
@@ -3871,7 +4156,8 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private Schema readSchema() throws XMLStreamException {
+    private Schema readSchema()
+            throws XMLStreamException {
 
         // Schema
         List<SimpleField> simplefields = new ArrayList<SimpleField>();
@@ -3912,7 +4198,8 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private SimpleField readSimpleField() throws XMLStreamException {
+    private SimpleField readSimpleField()
+            throws XMLStreamException {
 
         // SimpleField
         Object displayName = null;
@@ -3937,12 +4224,12 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_SIMPLE_FIELD.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_SIMPLE_FIELD.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
             }
-
         }
 
         return KmlReader.kmlFactory.createSimpleField(displayName, type, name, simpleFieldExtensions);
@@ -3954,9 +4241,11 @@ public class KmlReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private Feature readNetworkLink() throws XMLStreamException, KmlException, URISyntaxException {
+    private Feature readNetworkLink() 
+            throws XMLStreamException, KmlException, URISyntaxException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractFeature
@@ -3976,15 +4265,15 @@ public class KmlReader extends StaxStreamReader {
         List<AbstractStyleSelector> styleSelector = new ArrayList<AbstractStyleSelector>();
         Region region = null;
         Object extendedData = null;
-        List<SimpleType> featureSimpleExtensions = null;
-        List<AbstractObject> featureObjectExtensions = null;
+        List<SimpleTypeContainer> featureSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> featureObjectExtensions = new ArrayList<Object>();
 
         // NetworkLink
         boolean refreshVisibility = DEF_REFRESH_VISIBILITY;
         boolean flyToView = DEF_FLY_TO_VIEW;
         Link link = null;
-        List<SimpleType> networkLinkSimpleExtensions = null;
-        List<AbstractObject> networkLinkObjectExtensions = null;
+        List<SimpleTypeContainer> networkLinkSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> networkLinkObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -4060,12 +4349,12 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_NETWORK_LINK.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_NETWORK_LINK.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
             }
-
         }
 
         return KmlReader.kmlFactory.createNetworkLink(objectSimpleExtensions, idAttributes,
@@ -4082,21 +4371,23 @@ public class KmlReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private Point readPoint() throws XMLStreamException {
+    private Point readPoint() 
+            throws XMLStreamException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         IdAttributes idAttributes = this.readIdAttributes();
 
         // AbstractGeometry
-        List<SimpleType> abstractGeometrySimpleExtensions = null;
-        List<AbstractObject> abstractGeometryObjectExtensions = null;
+        List<SimpleTypeContainer> abstractGeometrySimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> abstractGeometryObjectExtensions = new ArrayList<Object>();
 
         // Point
         boolean extrude = DEF_EXTRUDE;
         EnumAltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
         Coordinates coordinates = null;
-        List<SimpleType> pointSimpleExtensions = null;
-        List<AbstractObject> pointObjectExtensions = null;
+        List<SimpleTypeContainer> pointSimpleExtensions = new ArrayList<SimpleTypeContainer>();
+        List<Object> pointObjectExtensions = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -4119,12 +4410,12 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_POINT.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_POINT.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
             }
-
         }
 
         return KmlReader.kmlFactory.createPoint(objectSimpleExtensions, idAttributes,
@@ -4139,8 +4430,8 @@ public class KmlReader extends StaxStreamReader {
      * @return
      */
     public Coordinates readCoordinates(String coordinates) {
-        List<Coordinate> coordinatesList = new ArrayList<Coordinate>();
 
+        List<Coordinate> coordinatesList = new ArrayList<Coordinate>();
         String[] coordinatesStringList = coordinates.split("[\\s]+");
         
         for (String coordinatesString : coordinatesStringList) {
@@ -4148,7 +4439,6 @@ public class KmlReader extends StaxStreamReader {
                 coordinatesList.add(KmlReader.kmlFactory.createCoordinate(coordinatesString));
             }
         }
-
         return KmlReader.kmlFactory.createCoordinates(coordinatesList);
     }
 
@@ -4160,43 +4450,6 @@ public class KmlReader extends StaxStreamReader {
         return KmlReader.kmlFactory.createIdAttributes(
                 reader.getAttributeValue(null, ATT_ID), reader.getAttributeValue(null, ATT_TARGET_ID));
     }
-
-    /*
-     * METHODE DE LECTURE DES EXTENSIONS
-     */
-
-    public Object readExtensionsScheduler(String uri, String name, String elementTag)
-            throws KmlException, XMLStreamException, URISyntaxException{
-        StaxStreamReader r = this.getExtensionReader(uri);
-        Object resultat = null;
-
-        if(TAG_DOCUMENT.equals(elementTag)){
-          if(r instanceof GxReader){
-              GxReader gxReader = (GxReader) r;
-              if(GxConstants.TAG_TOUR.equals(name)){
-                  resultat = gxReader.readTour();
-              }
-          }
-        } else if (TAG_GROUND_OVERLAY.equals(elementTag)){
-          if(r instanceof GxReader){
-              GxReader gxReader = (GxReader) r;
-              if(GxConstants.TAG_LAT_LON_QUAD.equals(name)){
-                  resultat = gxReader.readLatLonQuad();
-              }
-          }
-        } else if (TAG_CAMERA.equals(elementTag)){
-          if(r instanceof GxReader){
-              GxReader gxReader = (GxReader) r;
-              if(GxConstants.TAG_TIME_SPAN.equals(name)){
-                  resultat = gxReader.readTimeSpan();
-              } else if(GxConstants.TAG_TIME_STAMP.equals(name)){
-                  resultat = gxReader.readTimeStamp();
-              }
-          }
-        }
-        return resultat;
-    }
-
 
     /*
      *  METHODES DE TEST SUR LES TYPES ABSTRAITS
@@ -4348,7 +4601,6 @@ public class KmlReader extends StaxStreamReader {
         throw new KmlException("Kml reader error : Element not allowed by "+this.URI_KML+" namespace.");
     }
 
-
     /**
      *
      * @param version
@@ -4356,5 +4608,14 @@ public class KmlReader extends StaxStreamReader {
      */
     public boolean checkVersionSimple(String version){
         return this.URI_KML.equals(version);
+    }
+
+    /*
+     * READING EXTENSIONS METHODS
+     */
+
+    public Object readExtensionsScheduler(String containingTag, String contentUri, String contentTag)
+            throws KmlException, XMLStreamException, URISyntaxException{
+        return this.getExtensionReader(contentUri).readExtensionElement(containingTag, contentTag);
     }
 }

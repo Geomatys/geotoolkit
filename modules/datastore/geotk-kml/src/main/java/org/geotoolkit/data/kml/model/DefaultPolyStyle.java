@@ -18,7 +18,7 @@ package org.geotoolkit.data.kml.model;
 
 import java.awt.Color;
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
@@ -53,16 +53,16 @@ public class DefaultPolyStyle extends DefaultAbstractColorStyle implements PolyS
      * @param polyStyleSimpleExtensions
      * @param polyStyleObjectExtensions
      */
-    public DefaultPolyStyle(List<SimpleType> objectSimpleExtensions,
+    public DefaultPolyStyle(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
-            List<SimpleType> abstractSubStyleSimpleExtensions,
-            List<AbstractObject> abstractSubStyleObjectExtensions,
+            List<SimpleTypeContainer> abstractSubStyleSimpleExtensions,
+            List<Object> abstractSubStyleObjectExtensions,
             Color color, ColorMode colorMode,
-            List<SimpleType> colorStyleSimpleExtensions,
-            List<AbstractObject> colorStyleObjectExtensions,
+            List<SimpleTypeContainer> colorStyleSimpleExtensions,
+            List<Object> colorStyleObjectExtensions,
             boolean fill, boolean outline,
-            List<SimpleType> polyStyleSimpleExtensions,
-            List<AbstractObject> polyStyleObjectExtensions) {
+            List<SimpleTypeContainer> polyStyleSimpleExtensions,
+            List<Object> polyStyleObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
                 abstractSubStyleSimpleExtensions,
                 abstractSubStyleObjectExtensions,

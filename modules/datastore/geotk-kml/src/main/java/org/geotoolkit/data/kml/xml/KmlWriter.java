@@ -31,8 +31,6 @@ import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.atom.model.AtomLink;
 import org.geotoolkit.atom.model.AtomPersonConstruct;
-import org.geotoolkit.data.gx.model.GxModelConstants;
-import org.geotoolkit.data.gx.model.LatLonQuad;
 import org.geotoolkit.data.gx.xml.GxConstants;
 import org.geotoolkit.data.gx.xml.GxWriter;
 import org.geotoolkit.data.kml.KmlUtilities;
@@ -113,7 +111,7 @@ import org.geotoolkit.data.kml.model.ViewRefreshMode;
 import org.geotoolkit.data.kml.model.ViewVolume;
 import org.geotoolkit.xal.model.AddressDetails;
 import org.geotoolkit.xal.model.XalException;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import org.geotoolkit.data.kml.xsd.Cdata;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.xml.StaxStreamWriter;
@@ -184,8 +182,12 @@ public class KmlWriter extends StaxStreamWriter {
     public void addExtensionWriter(String uri, StaxStreamWriter writer)
             throws KmlException, IOException, XMLStreamException{
         if(this.extensionWriters.get(uri) == null){
-            this.extensionWriters.put(uri, writer);
-            writer.setOutput(this.writer);
+            if(writer instanceof KmlExtensionWriter){
+                this.extensionWriters.put(uri, writer);
+                writer.setOutput(this.writer);
+            } else {
+                throw new KmlException("Extension writer must implements "+KmlExtensionWriter.class.getName()+" interface.");
+            }
         } else {
             throw new KmlException(uri+" uri is already associated with an extension writer.");
         }
@@ -449,7 +451,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param abstractLatLonBox
      * @throws XMLStreamException
      */
-    private void writeAbstractLatLonBox(AbstractLatLonBox abstractLatLonBox) throws XMLStreamException{
+    private void writeAbstractLatLonBox(AbstractLatLonBox abstractLatLonBox) throws XMLStreamException, KmlException{
         if(abstractLatLonBox instanceof LatLonAltBox){
             this.writeLatLonAltBox((LatLonAltBox) abstractLatLonBox);
         } else if (abstractLatLonBox instanceof LatLonBox){
@@ -663,11 +665,13 @@ public class KmlWriter extends StaxStreamWriter {
                 this.writeExtendedData(extendedData);
             }
         }
-//        i = (Li) (abstractFeature.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue())
-//        if (abstractFeature.extensions().simples(Names.FEATURE) != null){
-//        }
-//        if (abstractFeature.extensions().complexes(Names.FEATURE) != null){
-//        }
+        if(abstractFeature.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()) != null){
+            Extensions extensions = (Extensions) abstractFeature.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue();
+            this.writeComplexExtensionsScheduler(
+                    Names.FEATURE, extensions.complexes(Names.FEATURE));
+            this.writeSimpleExtensionsScheduler(
+                    Names.FEATURE, extensions.simples(Names.FEATURE));
+        }
     }
 
     /**
@@ -766,7 +770,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param region
      * @throws XMLStreamException
      */
-    private void writeRegion(Region region) throws XMLStreamException{
+    private void writeRegion(Region region) throws XMLStreamException, KmlException{
         writer.writeStartElement(URI_KML,TAG_REGION);
         this.writeCommonAbstractObject(region);
         if(region.getLatLonAltBox() != null){
@@ -806,7 +810,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param latLonAltBox
      * @throws XMLStreamException
      */
-    private void writeLatLonAltBox(LatLonAltBox latLonAltBox) throws XMLStreamException{
+    private void writeLatLonAltBox(LatLonAltBox latLonAltBox) throws XMLStreamException, KmlException{
         writer.writeStartElement(URI_KML, TAG_LAT_LON_ALT_BOX);
         this.writeCommonAbstractLatLonBox(latLonAltBox);
         if (KmlUtilities.isFiniteNumber(latLonAltBox.getMinAltitude())){
@@ -934,6 +938,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (KmlUtilities.isFiniteNumber(lookAt.getRange())){
             this.writeRange(lookAt.getRange());
         }
+        if (lookAt.getAltitudeMode() != null){
+            this.writeAltitudeMode(lookAt.getAltitudeMode());
+        }
         if (lookAt.extensions().simples(Names.LOOK_AT) != null){
         }
         if (lookAt.extensions().complexes(Names.LOOK_AT) != null){
@@ -982,10 +989,10 @@ public class KmlWriter extends StaxStreamWriter {
     private void writeCommonAbstractView(AbstractView abstractView) throws XMLStreamException, KmlException{
         this.writeCommonAbstractObject(abstractView);
         if(abstractView.extensions() != null){
-            this.writeObjectExtensions(
-                    abstractView.extensions().complexes(Names.VIEW), AbstractView.class.toString());
-            this.writeSimpleExtensions(
-                    abstractView.extensions().simples(Names.VIEW), AbstractView.class.toString());
+            this.writeComplexExtensionsScheduler(
+                    Names.VIEW, abstractView.extensions().complexes(Names.VIEW));
+            this.writeSimpleExtensionsScheduler(Names.VIEW,
+                    abstractView.extensions().simples(Names.VIEW));
         }
     }
 
@@ -1639,12 +1646,12 @@ public class KmlWriter extends StaxStreamWriter {
             }
         }
         if(groundOverlay.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()) != null){
-            this.writeObjectExtensions(
+            this.writeComplexExtensionsScheduler(Names.GROUND_OVERLAY,
                     ((Extensions) groundOverlay.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue())
-                    .complexes(Names.GROUND_OVERLAY), TAG_GROUND_OVERLAY);
-            this.writeSimpleExtensions(
+                    .complexes(Names.GROUND_OVERLAY));
+            this.writeSimpleExtensionsScheduler(Names.GROUND_OVERLAY,
                     ((Extensions) groundOverlay.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue())
-                    .simples(Names.GROUND_OVERLAY), TAG_GROUND_OVERLAY);
+                    .simples(Names.GROUND_OVERLAY));
         }
 //        if (groundOverlay.extensions().simples(Names.GROUND_OVERLAY) != null){
 //        }
@@ -1784,12 +1791,12 @@ public class KmlWriter extends StaxStreamWriter {
             }
         }
         if(document.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()) != null){
-            this.writeObjectExtensions(
+            this.writeComplexExtensionsScheduler(Names.DOCUMENT,
                     ((Extensions) document.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue())
-                    .complexes(Names.DOCUMENT), TAG_DOCUMENT);
-            this.writeSimpleExtensions(
+                    .complexes(Names.DOCUMENT));
+            this.writeSimpleExtensionsScheduler(Names.DOCUMENT,
                     ((Extensions) document.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue())
-                    .simples(Names.DOCUMENT), TAG_DOCUMENT);
+                    .simples(Names.DOCUMENT));
         }
         writer.writeEndElement();
     }
@@ -1997,7 +2004,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param polygon
      * @throws XMLStreamException
      */
-    private void writePolygon(Polygon polygon) throws XMLStreamException{
+    private void writePolygon(Polygon polygon) throws XMLStreamException, KmlException{
         writer.writeStartElement(URI_KML, TAG_POLYGON);
         this.writeCommonAbstractGeometry(polygon);
         this.writeExtrude(polygon.getExtrude());
@@ -2018,13 +2025,13 @@ public class KmlWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeOuterBoundaryIs(Boundary boundary) throws XMLStreamException{
+    private void writeOuterBoundaryIs(Boundary boundary) throws XMLStreamException, KmlException{
         writer.writeStartElement(URI_KML, TAG_OUTER_BOUNDARY_IS);
         this.writeBoundary(boundary);
         writer.writeEndElement();
     }
     
-    private void writeInnerBoundaryIs(Boundary boundary) throws XMLStreamException{
+    private void writeInnerBoundaryIs(Boundary boundary) throws XMLStreamException, KmlException{
         writer.writeStartElement(URI_KML, TAG_INNER_BOUNDARY_IS);
         this.writeBoundary(boundary);
         writer.writeEndElement();
@@ -2035,7 +2042,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param boundary
      * @throws XMLStreamException
      */
-    private void writeBoundary(Boundary boundary) throws XMLStreamException{
+    private void writeBoundary(Boundary boundary) throws XMLStreamException, KmlException{
         if (boundary.getLinearRing() != null){
             this.writeLinearRing(boundary.getLinearRing());
         }
@@ -2050,7 +2057,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param lineString
      * @throws XMLStreamException
      */
-    private void writeLineString(LineString lineString) throws XMLStreamException{
+    private void writeLineString(LineString lineString) throws XMLStreamException, KmlException{
         writer.writeStartElement(URI_KML, TAG_LINE_STRING);
         this.writeCommonAbstractGeometry(lineString);
         this.writeExtrude(lineString.getExtrude());
@@ -2073,7 +2080,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param linearRing
      * @throws XMLStreamException
      */
-    private void writeLinearRing(LinearRing linearRing) throws XMLStreamException{
+    private void writeLinearRing(LinearRing linearRing) throws XMLStreamException, KmlException{
         writer.writeStartElement(URI_KML, TAG_LINEAR_RING);
         this.writeCommonAbstractGeometry(linearRing);
         this.writeExtrude(linearRing.getExtrude());
@@ -2112,7 +2119,7 @@ public class KmlWriter extends StaxStreamWriter {
      *
      * @{@inheritDoc }
      */
-    private void writePoint(Point point) throws XMLStreamException{
+    private void writePoint(Point point) throws XMLStreamException, KmlException{
         writer.writeStartElement(URI_KML, TAG_POINT);
         this.writeCommonAbstractGeometry(point);
         this.writeExtrude(point.getExtrude());
@@ -2149,9 +2156,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (DEF_EXTRUDE != extrude){
             writer.writeStartElement(URI_KML, TAG_EXTRUDE);
             if(extrude){
-                writer.writeCharacters(SimpleType.BOOLEAN_TRUE);
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
             } else {
-                writer.writeCharacters(SimpleType.BOOLEAN_FALSE);
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
             }
             writer.writeEndElement();
         }
@@ -2167,9 +2174,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (DEF_VISIBILITY != visibility){
             writer.writeStartElement(URI_KML, TAG_VISIBILITY);
             if(visibility){
-                writer.writeCharacters(SimpleType.BOOLEAN_TRUE);
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
             } else {
-                writer.writeCharacters(SimpleType.BOOLEAN_FALSE);
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
             }
             writer.writeEndElement();
         }
@@ -2185,9 +2192,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (DEF_OPEN != open){
             writer.writeStartElement(URI_KML, TAG_OPEN);
             if(open){
-                writer.writeCharacters(SimpleType.BOOLEAN_TRUE);
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
             } else {
-                writer.writeCharacters(SimpleType.BOOLEAN_FALSE);
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
             }
             writer.writeEndElement();
         }
@@ -2202,9 +2209,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (DEF_FILL != fill){
             writer.writeStartElement(URI_KML, TAG_FILL);
             if(fill){
-                writer.writeCharacters(SimpleType.BOOLEAN_TRUE);
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
             } else {
-                writer.writeCharacters(SimpleType.BOOLEAN_FALSE);
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
             }
             writer.writeEndElement();
         }
@@ -2219,9 +2226,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (DEF_OUTLINE != outline){
             writer.writeStartElement(URI_KML, TAG_OUTLINE);
             if(outline){
-                writer.writeCharacters(SimpleType.BOOLEAN_TRUE);
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
             } else {
-                writer.writeCharacters(SimpleType.BOOLEAN_FALSE);
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
             }
             writer.writeEndElement();
         }
@@ -2236,9 +2243,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (DEF_TESSELLATE != tessellate){
             writer.writeStartElement(URI_KML, TAG_TESSELLATE);
             if(tessellate){
-                writer.writeCharacters(SimpleType.BOOLEAN_TRUE);
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
             } else {
-                writer.writeCharacters(SimpleType.BOOLEAN_FALSE);
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
             }
             writer.writeEndElement();
         }
@@ -2254,9 +2261,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (DEF_REFRESH_VISIBILITY != refreshVisibility){
             writer.writeStartElement(URI_KML, TAG_REFRESH_VISIBILITY);
             if(refreshVisibility){
-                writer.writeCharacters(SimpleType.BOOLEAN_TRUE);
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
             } else {
-                writer.writeCharacters(SimpleType.BOOLEAN_FALSE);
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
             }
             writer.writeEndElement();
         }
@@ -2272,9 +2279,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (DEF_FLY_TO_VIEW != flyToView){
             writer.writeStartElement(URI_KML, TAG_FLY_TO_VIEW);
             if(flyToView){
-                writer.writeCharacters(SimpleType.BOOLEAN_TRUE);
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
             } else {
-                writer.writeCharacters(SimpleType.BOOLEAN_FALSE);
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
             }
             writer.writeEndElement();
         }
@@ -2610,11 +2617,15 @@ public class KmlWriter extends StaxStreamWriter {
      * @param altitudeMode
      * @throws XMLStreamException
      */
-    private void writeAltitudeMode(AltitudeMode altitudeMode) throws XMLStreamException{
+    private void writeAltitudeMode(AltitudeMode altitudeMode) throws XMLStreamException, KmlException{
         if(DEF_ALTITUDE_MODE != altitudeMode){
-            writer.writeStartElement(URI_KML, TAG_ALTITUDE_MODE);
-            writer.writeCharacters(altitudeMode.getAltitudeMode());
-            writer.writeEndElement();
+            if (altitudeMode instanceof org.geotoolkit.data.kml.model.EnumAltitudeMode){
+                writer.writeStartElement(URI_KML, TAG_ALTITUDE_MODE);
+                writer.writeCharacters(altitudeMode.getAltitudeMode());
+                writer.writeEndElement();
+            } else if (altitudeMode instanceof org.geotoolkit.data.gx.model.EnumAltitudeMode){
+                ((GxWriter) this.getExtensionWriter(GxConstants.URI_GX)).writeAltitudeMode(altitudeMode);
+            }
         }
     }
 
@@ -3278,42 +3289,6 @@ public class KmlWriter extends StaxStreamWriter {
         this.writeVec2(size);
         writer.writeEndElement();
     }
-    
-    private void writeSimpleExtensions(List<SimpleType> simpleExtensions, String elementTag){
-
-    }
-
-    private void writeObjectExtensions(List<Object> objectExtensions, String elementTag) 
-            throws KmlException, XMLStreamException{
-        if(TAG_DOCUMENT.equals(elementTag)){
-            for(Object object : objectExtensions){
-                if(object instanceof Feature){
-                    Feature feature = (Feature) object;
-                    if(feature.getType().equals(GxModelConstants.TYPE_TOUR)){
-                        GxWriter gxWriter = (GxWriter) this.getExtensionWriter(GxConstants.URI_GX);
-                        gxWriter.writeTour(feature);
-                    }
-                }
-            }
-        } else if(TAG_GROUND_OVERLAY.equals(elementTag)){
-            for(Object object : objectExtensions){
-                if(object instanceof LatLonQuad){
-                    GxWriter gxWriter = (GxWriter) this.getExtensionWriter(GxConstants.URI_GX);
-                    gxWriter.writeLatLonQuad((LatLonQuad) object);
-                }
-            }
-        } else if(AbstractView.class.toString().equals(elementTag)){
-            for(Object object : objectExtensions){
-                if(object instanceof TimeSpan){
-                    GxWriter gxWriter = (GxWriter) this.getExtensionWriter(GxConstants.URI_GX);
-                    gxWriter.writeTimeSpan((TimeSpan) object);
-                } else if(object instanceof TimeStamp){
-                    GxWriter gxWriter = (GxWriter) this.getExtensionWriter(GxConstants.URI_GX);
-                    gxWriter.writeTimeStamp((TimeStamp) object);
-                }
-            }
-        }
-    }
 
     /**
      * <p>This method whrites character content as
@@ -3340,7 +3315,7 @@ public class KmlWriter extends StaxStreamWriter {
     }
     
     /*
-     * METHODES UTILITAIRES
+     * UTILITARY METHODS
      */
 
     /**
@@ -3361,6 +3336,34 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private boolean checkVersionSimple(String version){
         return this.URI_KML.equals(version);
+    }
+
+    /*
+     * WRITING EXTENSIONS METHODS
+     */
+
+    private void writeComplexExtensionsScheduler(Extensions.Names ext, List<Object> objectExtensions)
+            throws KmlException, XMLStreamException{
+        for(Object object : objectExtensions){
+            for(String key : this.extensionWriters.keySet()){
+                KmlExtensionWriter candidate = (KmlExtensionWriter) this.getExtensionWriter(key);
+                if(candidate.canHandleComplex(ext, object)){
+                    candidate.writeComplexExtensionElement(object);
+                }
+            }
+        }
+    }
+
+    private void writeSimpleExtensionsScheduler(Extensions.Names ext, List<SimpleTypeContainer> simpleExtensions)
+            throws KmlException, XMLStreamException{
+        for(SimpleTypeContainer object : simpleExtensions){
+            for(String key : this.extensionWriters.keySet()){
+                KmlExtensionWriter candidate = (KmlExtensionWriter) this.getExtensionWriter(key);
+                if(candidate.canHandleSimple(ext, object.getTagName())){
+                    candidate.writeSimpleExtensionElement(object);
+                }
+            }
+        }
     }
 
 }

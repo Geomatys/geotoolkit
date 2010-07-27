@@ -50,7 +50,7 @@ import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.Region;
 import org.geotoolkit.data.kml.model.Update;
 import org.geotoolkit.data.kml.xml.KmlConstants;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.LenientFeatureFactory;
@@ -75,7 +75,7 @@ public class DefaultGxFactory implements GxFactory {
     }
 
     @Override
-    public AnimatedUpdate createAnimatedUpdate(List<SimpleType> objectSimpleExtensions,
+    public AnimatedUpdate createAnimatedUpdate(List<SimpleTypeContainer> objectSimpleExtensions,
         IdAttributes idAttributes, double duration, Update update) {
         return new DefaultAnimatedUpdate(objectSimpleExtensions,
        idAttributes, duration, update);
@@ -87,7 +87,7 @@ public class DefaultGxFactory implements GxFactory {
     }
 
     @Override
-    public FlyTo createFlyTo(List<SimpleType> objectSimpleExtensions,
+    public FlyTo createFlyTo(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes, double duration,
             EnumFlyToMode flyToMOde, AbstractView view) {
         return new DefaultFlyTo(objectSimpleExtensions, idAttributes,
@@ -100,7 +100,7 @@ public class DefaultGxFactory implements GxFactory {
     }
 
     @Override
-    public LatLonQuad createLatLonQuad(List<SimpleType> objectSimpleExtensions,
+    public LatLonQuad createLatLonQuad(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes, Coordinates coordinates) {
         return new DefaultLatLonQuad(objectSimpleExtensions, idAttributes, coordinates);
     }
@@ -111,7 +111,7 @@ public class DefaultGxFactory implements GxFactory {
     }
 
     @Override
-    public PlayList createPlayList(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes, List<AbstractTourPrimitive> tourPrimitives) {
+    public PlayList createPlayList(List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes, List<AbstractTourPrimitive> tourPrimitives) {
         return new DefaultPlayList(objectSimpleExtensions, idAttributes, tourPrimitives);
     }
 
@@ -127,7 +127,7 @@ public class DefaultGxFactory implements GxFactory {
     }
 
     @Override
-    public Feature createTour(List<SimpleType> objectSimpleExtensions,
+    public Feature createTour(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
             String name,
             boolean visibility, boolean open,
@@ -137,7 +137,7 @@ public class DefaultGxFactory implements GxFactory {
             AbstractView view, AbstractTimePrimitive timePrimitive,
             URI styleUrl, List<AbstractStyleSelector> styleSelector,
             Region region, Object extendedData,
-            List<SimpleType> abstractFeatureSimpleExtensions,
+            List<SimpleTypeContainer> abstractFeatureSimpleExtensions,
             List<AbstractObject> abstractFeatureObjectExtensions,
             List<PlayList> playLists) {
 
@@ -188,7 +188,7 @@ public class DefaultGxFactory implements GxFactory {
     }
 
     @Override
-    public SoundCue createSoundCue(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes, String href) {
+    public SoundCue createSoundCue(List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes, String href) {
         return new DefaultSoundCue(objectSimpleExtensions, idAttributes, href);
     }
 
@@ -198,7 +198,7 @@ public class DefaultGxFactory implements GxFactory {
     }
 
     @Override
-    public TourControl createTourControl(List<SimpleType> objectSimpleExtensions,
+    public TourControl createTourControl(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes, EnumPlayMode playMode) {
         return new DefaultTourControl(objectSimpleExtensions, idAttributes, playMode);
     }
@@ -209,7 +209,7 @@ public class DefaultGxFactory implements GxFactory {
     }
 
     @Override
-    public Wait createWait(List<SimpleType> objectSimpleExtensions,
+    public Wait createWait(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes, double duration) {
         return new DefaultWait(objectSimpleExtensions, idAttributes, duration);
     }

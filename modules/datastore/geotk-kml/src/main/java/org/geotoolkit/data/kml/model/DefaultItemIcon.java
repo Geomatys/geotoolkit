@@ -17,7 +17,7 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static java.util.Collections.*;
 
 /**
@@ -45,11 +45,11 @@ public class DefaultItemIcon extends DefaultAbstractObject implements ItemIcon {
      * @param itemIconSimpleExtensions
      * @param itemIconObjectExtensions
      */
-    public DefaultItemIcon(List<SimpleType> objectSimpleExtensions,
+    public DefaultItemIcon(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
             List<ItemIconState> states, String href,
-            List<SimpleType> itemIconSimpleExtensions,
-            List<AbstractObject> itemIconObjectExtensions) {
+            List<SimpleTypeContainer> itemIconSimpleExtensions,
+            List<Object> itemIconObjectExtensions) {
         super(objectSimpleExtensions, idAttributes);
         this.states = states;
         this.href = href;

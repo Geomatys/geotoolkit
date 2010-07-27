@@ -20,7 +20,7 @@ import java.util.List;
 import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.DefaultAbstractObject;
 import org.geotoolkit.data.kml.model.IdAttributes;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 
 /**
  *
@@ -32,7 +32,7 @@ public class DefaultLatLonQuad extends DefaultAbstractObject implements LatLonQu
 
     public DefaultLatLonQuad(){}
 
-    public DefaultLatLonQuad(List<SimpleType> objectSimpleExtensions,
+    public DefaultLatLonQuad(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes, Coordinates coordinates){
         super(objectSimpleExtensions, idAttributes);
         this.coordinates = coordinates;

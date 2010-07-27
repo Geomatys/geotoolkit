@@ -18,7 +18,7 @@ package org.geotoolkit.data.kml.model;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 import static java.util.Collections.*;
 
@@ -32,7 +32,7 @@ public class DefaultPolygon extends com.vividsolutions.jts.geom.Polygon implemen
     private final Extensions extensions = new Extensions();
     private boolean extrude;
     private boolean tessellate;
-    private EnumAltitudeMode altitudeMode;
+    private AltitudeMode altitudeMode;
     private Boundary outerBoundary;
     private List<Boundary> innerBoundaries;
 
@@ -86,15 +86,15 @@ public class DefaultPolygon extends com.vividsolutions.jts.geom.Polygon implemen
      * @param polygonSimpleExtensions
      * @param polygonObjectExtensions
      */
-    public DefaultPolygon(List<SimpleType> objectSimpleExtensions,
+    public DefaultPolygon(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
-            List<SimpleType> abstractGeometrySimpleExtensions,
-            List<AbstractObject> abstractGeometryObjectExtensions,
-            boolean extrude, boolean tessellate, EnumAltitudeMode altitudeMode,
+            List<SimpleTypeContainer> abstractGeometrySimpleExtensions,
+            List<Object> abstractGeometryObjectExtensions,
+            boolean extrude, boolean tessellate, AltitudeMode altitudeMode,
             Boundary outerBoundary,
             List<Boundary> innerBoundaries, GeometryFactory factory,
-            List<SimpleType> polygonSimpleExtensions,
-            List<AbstractObject> polygonObjectExtensions) {
+            List<SimpleTypeContainer> polygonSimpleExtensions,
+            List<Object> polygonObjectExtensions) {
 
         super((com.vividsolutions.jts.geom.LinearRing) outerBoundary.getLinearRing(),
                 extract(innerBoundaries),
@@ -148,7 +148,7 @@ public class DefaultPolygon extends com.vividsolutions.jts.geom.Polygon implemen
      * @{@inheritDoc }
      */
     @Override
-    public EnumAltitudeMode getAltitudeMode() {
+    public AltitudeMode getAltitudeMode() {
         return this.altitudeMode;
     }
 

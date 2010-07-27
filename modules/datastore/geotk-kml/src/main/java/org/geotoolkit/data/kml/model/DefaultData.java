@@ -17,7 +17,7 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static java.util.Collections.*;
 
 /**
@@ -47,7 +47,7 @@ public class DefaultData extends DefaultAbstractObject implements Data {
      * @param value
      * @param dataExtensions
      */
-    public DefaultData(List<SimpleType> objectSimpleExtensions, IdAttributes idAttributes,
+    public DefaultData(List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes,
             String name, Object displayName, String value, List<Object> dataExtensions) {
         super(objectSimpleExtensions, idAttributes);
         this.name = name;

@@ -19,7 +19,7 @@ package org.geotoolkit.data.gx.model;
 import java.util.List;
 import org.geotoolkit.data.kml.model.DefaultAbstractObject;
 import org.geotoolkit.data.kml.model.IdAttributes;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.gx.xml.GxConstants.*;
 
 /**
@@ -34,7 +34,7 @@ public class DefaultTourControl extends DefaultAbstractObject implements TourCon
         this.playMode = DEF_PLAY_MODE;
     }
 
-    public DefaultTourControl(List<SimpleType> objectSimpleExtensions,
+    public DefaultTourControl(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes, EnumPlayMode playMode){
         super(objectSimpleExtensions, idAttributes);
         this.playMode = playMode;

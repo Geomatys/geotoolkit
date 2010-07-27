@@ -18,7 +18,7 @@ package org.geotoolkit.data.kml.model;
 
 import java.awt.Color;
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 import static java.util.Collections.*;
 
@@ -55,13 +55,13 @@ public class DefaultListStyle extends DefaultAbstractSubStyle implements ListSty
      * @param listStyleSimpleExtensions
      * @param listStyleObjectExtensions
      */
-    public DefaultListStyle(List<SimpleType> objectSimpleExtensions,
+    public DefaultListStyle(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
-            List<SimpleType> abstractSubStyleSimpleExtensions,
-            List<AbstractObject> abstractSubStyleObjectExtensions,
+            List<SimpleTypeContainer> abstractSubStyleSimpleExtensions,
+            List<Object> abstractSubStyleObjectExtensions,
             ListItem listItem, Color bgColor, List<ItemIcon> itemIcons, int maxSnippetLines,
-            List<SimpleType> listStyleSimpleExtensions,
-            List<AbstractObject> listStyleObjectExtensions) {
+            List<SimpleTypeContainer> listStyleSimpleExtensions,
+            List<Object> listStyleObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
                 abstractSubStyleSimpleExtensions,
                 abstractSubStyleObjectExtensions);

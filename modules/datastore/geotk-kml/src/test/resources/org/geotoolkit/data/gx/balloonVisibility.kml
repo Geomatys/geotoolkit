@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2"
+ xmlns:gx="http://www.google.com/kml/ext/2.2">
+  <Placemark>
+    <name>Eiffel Tower</name>
+    <description>
+        Located in Paris, France.
+
+        This description balloon opens
+        when the Placemark is loaded.
+    </description>
+    <gx:balloonVisibility>0</gx:balloonVisibility>
+    <Point>
+      <coordinates>2.294785,48.858093,0.0</coordinates>
+    </Point>
+  </Placemark>
+</kml>

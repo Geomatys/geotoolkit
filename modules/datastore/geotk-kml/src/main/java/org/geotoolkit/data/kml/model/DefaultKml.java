@@ -19,11 +19,9 @@ package org.geotoolkit.data.kml.model;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import org.opengis.feature.Feature;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
-import static java.util.Collections.*;
 
 /**
  *
@@ -52,8 +50,8 @@ public class DefaultKml implements Kml {
      */
     public DefaultKml(NetworkLinkControl networkLinkControl,
             Feature abstractFeature,
-            List<SimpleType> kmlSimpleExtensions,
-            List<AbstractObject> kmlObjectExtensions) {
+            List<SimpleTypeContainer> kmlSimpleExtensions,
+            List<Object> kmlObjectExtensions) {
         this.networkLinkControl = networkLinkControl;
         this.abstractFeature = abstractFeature;
         if (kmlSimpleExtensions != null) {

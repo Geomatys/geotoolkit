@@ -17,7 +17,7 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 
 /**
  *
@@ -41,7 +41,7 @@ public class DefaultBoundary implements Boundary {
      * @param boundaryObjectExtensions
      */
     public DefaultBoundary(LinearRing linearRing,
-            List<SimpleType> boundarySimpleExtensions,
+            List<SimpleTypeContainer> boundarySimpleExtensions,
             List<AbstractObject> boundaryObjectExtensions) {
         this.linearRing = linearRing;
         if (boundarySimpleExtensions != null) {

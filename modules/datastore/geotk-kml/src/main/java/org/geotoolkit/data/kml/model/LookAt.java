@@ -53,67 +53,73 @@ public interface LookAt extends AbstractView {
      *
      * @return
      */
-    public double getLongitude();
+    double getLongitude();
 
     /**
      *
      * @return
      */
-    public double getLatitude();
+    double getLatitude();
 
     /**
      *
      * @return
      */
-    public double getAltitude();
+    double getAltitude();
 
     /**
      *
      * @return
      */
-    public double getHeading();
+    double getHeading();
 
     /**
      *
      * @return
      */
-    public double getTilt();
+    double getTilt();
 
     /**
      *
      * @return
      */
-    public double getRange();
+    double getRange();
+
+    /**
+     *
+     * @return
+     */
+    AltitudeMode getAltitudeMode();
 
     /**
      *
      * @param angle
      */
-    public void setLongitude(double longitude);
+    void setLongitude(double longitude);
 
     /**
      *
      * @param latitude
      */
-    public void setLatitude(double latitude);
+    void setLatitude(double latitude);
 
     /**
      *
      * @param altitude
      */
-    public void setAltitude(double altitude);
+    void setAltitude(double altitude);
 
     /**
      *
      * @param heading
      */
-    public void setHeading(double heading);
+    void setHeading(double heading);
 
     /**
      *
      * @param tilt
      */
-    public void setTilt(double tilt);
+    void setTilt(double tilt);
 
     /**
      * <p>Specific setter for 2.1 Kml version.</p>
@@ -122,12 +128,18 @@ public interface LookAt extends AbstractView {
      * @deprecated
      */
     @Deprecated
-    public void setTilt_v2_1(double tilt);
+    void setTilt_v2_1(double tilt);
 
     /**
      *
      * @param range
      */
-    public void setRange(double range);
+    void setRange(double range);
+
+    /**
+     * 
+     * @param altitudeMode
+     */
+    void setAltitudeMode(AltitudeMode altitudeMode);
 
 }

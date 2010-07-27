@@ -17,7 +17,7 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
@@ -49,11 +49,11 @@ public class DefaultScale extends DefaultAbstractObject implements Scale {
      * @param scaleSimpleExtensions
      * @param scaleObjectExtensions
      */
-    public DefaultScale(List<SimpleType> objectSimpleExtensions,
+    public DefaultScale(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
             double x, double y, double z,
-            List<SimpleType> scaleSimpleExtensions,
-            List<AbstractObject> scaleObjectExtensions) {
+            List<SimpleTypeContainer> scaleSimpleExtensions,
+            List<Object> scaleObjectExtensions) {
         super(objectSimpleExtensions, idAttributes);
         this.x = x;
         this.y = y;
@@ -119,10 +119,4 @@ public class DefaultScale extends DefaultAbstractObject implements Scale {
     public void setZ(double z) {
         this.z = z;
     }
-
-    @Override
-    public Extensions extensions() {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

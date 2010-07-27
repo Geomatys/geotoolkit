@@ -68,7 +68,7 @@ public interface LineString extends AbstractGeometry {
      *
      * @return the altitude mode.
      */
-    EnumAltitudeMode getAltitudeMode();
+    AltitudeMode getAltitudeMode();
 
     /**
      * 
@@ -86,6 +86,6 @@ public interface LineString extends AbstractGeometry {
      *
      * @param altitudeMode
      */
-    void setAltitudeMode(EnumAltitudeMode altitudeMode);
+    void setAltitudeMode(AltitudeMode altitudeMode);
 
 }

@@ -21,7 +21,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamConstants;
@@ -32,6 +34,7 @@ import org.geotoolkit.data.gx.DefaultGxFactory;
 import org.geotoolkit.data.gx.GxFactory;
 import org.geotoolkit.data.gx.model.AbstractTourPrimitive;
 import org.geotoolkit.data.gx.model.AnimatedUpdate;
+import org.geotoolkit.data.gx.model.EnumAltitudeMode;
 import org.geotoolkit.data.gx.model.EnumFlyToMode;
 import org.geotoolkit.data.gx.model.EnumPlayMode;
 import org.geotoolkit.data.gx.model.FlyTo;
@@ -46,7 +49,9 @@ import org.geotoolkit.data.kml.model.AbstractObject;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
 import org.geotoolkit.data.kml.model.AbstractTimePrimitive;
 import org.geotoolkit.data.kml.model.AbstractView;
+import org.geotoolkit.data.kml.model.AltitudeMode;
 import org.geotoolkit.data.kml.model.Coordinates;
+import org.geotoolkit.data.kml.model.Extensions;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.model.Region;
@@ -54,28 +59,34 @@ import org.geotoolkit.data.kml.model.TimeSpan;
 import org.geotoolkit.data.kml.model.TimeStamp;
 import org.geotoolkit.data.kml.model.Update;
 import org.geotoolkit.data.kml.xml.KmlConstants;
+import org.geotoolkit.data.kml.xml.KmlExtensionReader;
 import org.geotoolkit.data.kml.xml.KmlReader;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import org.geotoolkit.temporal.object.FastDateParser;
 import org.geotoolkit.xal.model.AddressDetails;
 import org.geotoolkit.xml.StaxStreamReader;
 import org.opengis.feature.Feature;
 import static org.geotoolkit.data.gx.xml.GxConstants.*;
+import static java.util.Collections.EMPTY_MAP;
 
 /**
  *
  * @author Samuel Andrés
  */
-public class GxReader extends StaxStreamReader {
+public class GxReader extends StaxStreamReader implements KmlExtensionReader {
 
     private String URI_KML = KmlConstants.URI_KML_2_2;
     private static final GxFactory gxFactory = new DefaultGxFactory();
     private static final KmlFactory kmlFactory = new DefaultKmlFactory();
     private final KmlReader kmlReader = new KmlReader();
     private final FastDateParser fastDateParser = new FastDateParser();
+    public Map<String, Map<String, Extensions.Names>> complexTable;
+    public Map<String, Map<String, Extensions.Names>> simpleTable;
 
     public GxReader(){
         super();
+        initComplexTable();
+        initSimpleTable();
     }
 
     /**
@@ -86,7 +97,9 @@ public class GxReader extends StaxStreamReader {
      * @throws XMLStreamException
      */
     @Override
-    public void setInput(Object input) throws IOException, XMLStreamException {
+    public void setInput(Object input) 
+            throws IOException, XMLStreamException {
+        
         super.setInput(input);
         try {
             this.kmlReader.setInput(reader, URI_KML);
@@ -104,8 +117,9 @@ public class GxReader extends StaxStreamReader {
      */
     private AnimatedUpdate readAnimatedUpdate() 
             throws XMLStreamException, KmlException, URISyntaxException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = null;
         IdAttributes idAttributes = kmlReader.readIdAttributes();
 
         // AnimatedUpdate
@@ -152,9 +166,11 @@ public class GxReader extends StaxStreamReader {
      * @throws KmlException
      * @throws URISyntaxException
      */
-    public Feature readTour() throws XMLStreamException, KmlException, URISyntaxException {
+    public Feature readTour() 
+            throws XMLStreamException, KmlException, URISyntaxException {
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = null;
         IdAttributes idAttributes = kmlReader.readIdAttributes();
 
         // AbstractFeature
@@ -174,7 +190,7 @@ public class GxReader extends StaxStreamReader {
         List<AbstractStyleSelector> styleSelector = new ArrayList<AbstractStyleSelector>();
         Region region = null;
         Object extendedData = null;
-        List<SimpleType> featureSimpleExtensions = null;
+        List<SimpleTypeContainer> featureSimpleExtensions = null;
         List<AbstractObject> featureObjectExtensions = null;
 
         // Tour
@@ -261,10 +277,14 @@ public class GxReader extends StaxStreamReader {
      *
      * @return
      * @throws XMLStreamException
+     * @throws KmlException
+     * @throws URISyntaxException
      */
-    private PlayList readPlayList() throws XMLStreamException, KmlException, URISyntaxException{
+    private PlayList readPlayList() 
+            throws XMLStreamException, KmlException, URISyntaxException{
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = null;
         IdAttributes idAttributes = kmlReader.readIdAttributes();
 
         // PlayList
@@ -307,6 +327,7 @@ public class GxReader extends StaxStreamReader {
      */
     private AbstractTourPrimitive readAbstractTourPrimitive(String eName)
             throws XMLStreamException, KmlException, URISyntaxException{
+
         AbstractTourPrimitive resultat = null;
         if (TAG_FLY_TO.equals(eName)){
             resultat = this.readFlyTo();
@@ -329,9 +350,11 @@ public class GxReader extends StaxStreamReader {
      * @throws KmlException
      * @throws URISyntaxException
      */
-    private FlyTo readFlyTo() throws XMLStreamException, KmlException, URISyntaxException{
+    private FlyTo readFlyTo() 
+            throws XMLStreamException, KmlException, URISyntaxException{
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = null;
         IdAttributes idAttributes = kmlReader.readIdAttributes();
 
         // FlyTo
@@ -377,9 +400,11 @@ public class GxReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private TourControl readTourControl() throws XMLStreamException{
+    private TourControl readTourControl() 
+            throws XMLStreamException{
+        
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = null;
         IdAttributes idAttributes = kmlReader.readIdAttributes();
 
         // TourControl
@@ -418,7 +443,7 @@ public class GxReader extends StaxStreamReader {
      */
     private Wait readWait() throws XMLStreamException{
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = null;
         IdAttributes idAttributes = kmlReader.readIdAttributes();
 
         // Wait
@@ -455,9 +480,11 @@ public class GxReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private SoundCue readSoundCue() throws XMLStreamException{
+    private SoundCue readSoundCue() 
+            throws XMLStreamException{
+        
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = null;
         IdAttributes idAttributes = kmlReader.readIdAttributes();
 
         // SoundCue
@@ -489,9 +516,11 @@ public class GxReader extends StaxStreamReader {
         return GxReader.gxFactory.createSoundCue(objectSimpleExtensions, idAttributes, href);
     }
 
-    public LatLonQuad readLatLonQuad() throws XMLStreamException{
+    public LatLonQuad readLatLonQuad() 
+            throws XMLStreamException{
+
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = null;
         IdAttributes idAttributes = kmlReader.readIdAttributes();
 
         // LatLonQuad
@@ -523,20 +552,22 @@ public class GxReader extends StaxStreamReader {
         return GxReader.gxFactory.createLatLonQuad(objectSimpleExtensions, idAttributes, coordinates);
     }
 
-    public TimeSpan readTimeSpan() throws XMLStreamException{
+    public TimeSpan readTimeSpan() 
+            throws XMLStreamException{
+        
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = null;
         IdAttributes idAttributes = kmlReader.readIdAttributes();
 
         // AbstractTimePrimitive
-        List<SimpleType> AbstractTimePrimitiveSimpleExtensions = null;
-        List<AbstractObject> AbstractTimePrimitiveObjectExtensions = null;
+        List<SimpleTypeContainer> AbstractTimePrimitiveSimpleExtensions = null;
+        List<Object> AbstractTimePrimitiveObjectExtensions = null;
 
         // TimeSpan
         Calendar begin = null;
         Calendar end = null;
-        List<SimpleType> TimeSpanSimpleExtensions = null;
-        List<AbstractObject> TimeSpanObjectExtensions = null;
+        List<SimpleTypeContainer> TimeSpanSimpleExtensions = null;
+        List<Object> TimeSpanObjectExtensions = null;
 
         boucle:
         while (reader.hasNext()) {
@@ -574,19 +605,21 @@ public class GxReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    public TimeStamp readTimeStamp() throws XMLStreamException{
+    public TimeStamp readTimeStamp() 
+            throws XMLStreamException {
+        
         // AbstractObject
-        List<SimpleType> objectSimpleExtensions = null;
+        List<SimpleTypeContainer> objectSimpleExtensions = null;
         IdAttributes idAttributes = kmlReader.readIdAttributes();
 
         // AbstractTimePrimitive
-        List<SimpleType> AbstractTimePrimitiveSimpleExtensions = null;
-        List<AbstractObject> AbstractTimePrimitiveObjectExtensions = null;
+        List<SimpleTypeContainer> AbstractTimePrimitiveSimpleExtensions = null;
+        List<Object> AbstractTimePrimitiveObjectExtensions = null;
 
         // TimeStamp
         Calendar when = null;
-        List<SimpleType> TimeStampSimpleExtensions = null;
-        List<AbstractObject> TimeStampObjectExtensions = null;
+        List<SimpleTypeContainer> TimeStampSimpleExtensions = null;
+        List<Object> TimeStampObjectExtensions = null;
 
         boucle:
         while (reader.hasNext()) {
@@ -617,6 +650,23 @@ public class GxReader extends StaxStreamReader {
                 when, TimeStampSimpleExtensions, TimeStampObjectExtensions);
     }
 
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     */
+    public AltitudeMode readAltitudeMode() throws XMLStreamException{
+        return EnumAltitudeMode.transform(reader.getElementText());
+    }
+
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     */
+    public boolean readBalloonVisibility() throws XMLStreamException {
+        return parseBoolean(reader.getElementText());
+    }
 
     /**
      * 
@@ -631,5 +681,88 @@ public class GxReader extends StaxStreamReader {
                 || TAG_SOUND_CUE.equals(eName));
     }
 
+    /*
+     *
+     * Implements KmlExtensionReader
+     */
+
+    @Override
+    public Extensions.Names getComplexExtensionLevel(String containingTag, String contentsTag) {
+        try {
+            return this.complexTable.get(contentsTag).get(containingTag);
+        } catch (NullPointerException e){
+            return null;
+        }
+    }
+
+    @Override
+    public Extensions.Names getSimpleExtensionLevel(String containingTag, String contentsTag) {
+        try {
+            return this.simpleTable.get(contentsTag).get(containingTag);
+        } catch (NullPointerException e){
+            return null;
+        }
+    }
+
+    @Override
+    public Object readExtensionElement(String containingTag, String contentsTag)
+            throws XMLStreamException, KmlException, URISyntaxException {
+        Object resultat = null;
+        if(GxConstants.TAG_ALTITUDE_MODE.equals(contentsTag)){
+            resultat = readAltitudeMode();
+        } else if(GxConstants.TAG_BALLOON_VISIBILITY.equals(contentsTag)){
+            resultat = kmlFactory.createSimpleTypeContainer(URI_GX, TAG_BALLOON_VISIBILITY,readBalloonVisibility());
+        } else if (GxConstants.TAG_LAT_LON_QUAD.equals(contentsTag)){
+            resultat = readLatLonQuad();
+        } else if (GxConstants.TAG_TIME_SPAN.equals(contentsTag)){
+            resultat = readTimeSpan();
+        } else if (GxConstants.TAG_TIME_STAMP.equals(contentsTag)){
+            resultat = readTimeStamp();
+        } else if(GxConstants.TAG_TOUR.equals(contentsTag)){
+            resultat = readTour();
+        }
+        return resultat;
+    }
+
+    private void initComplexTable(){
+        // Tour peut se trouver dans toute extension d'abstractObject... à compléter.
+        Map<String, Extensions.Names> tourBinding = new HashMap<String, Extensions.Names>();
+        tourBinding.put( KmlConstants.TAG_DOCUMENT, Extensions.Names.DOCUMENT);
+
+        Map<String, Extensions.Names> latLonQuadBinding = new HashMap<String, Extensions.Names>();
+        latLonQuadBinding.put( KmlConstants.TAG_GROUND_OVERLAY, Extensions.Names.GROUND_OVERLAY);
+
+        Map<String, Extensions.Names> timeSpan = new HashMap<String, Extensions.Names>();
+        timeSpan.put( KmlConstants.TAG_CAMERA, Extensions.Names.VIEW);
+        timeSpan.put( KmlConstants.TAG_LOOK_AT, Extensions.Names.VIEW);
+
+        Map<String, Extensions.Names> timeStamp = new HashMap<String, Extensions.Names>();
+        timeStamp.put( KmlConstants.TAG_CAMERA, Extensions.Names.VIEW);
+        timeStamp.put( KmlConstants.TAG_LOOK_AT, Extensions.Names.VIEW);
+
+        complexTable = new HashMap<String, Map<String, Extensions.Names>>();
+        complexTable.put(GxConstants.TAG_ALTITUDE_MODE, EMPTY_MAP);
+        complexTable.put(GxConstants.TAG_LAT_LON_QUAD, latLonQuadBinding);
+        complexTable.put(GxConstants.TAG_TIME_SPAN, timeSpan);
+        complexTable.put(GxConstants.TAG_TIME_STAMP, timeStamp);
+        complexTable.put(GxConstants.TAG_TOUR, tourBinding);
+    }
+
+    private void initSimpleTable(){
+        Map<String, Extensions.Names> balloonVisibilityBinding = new HashMap<String, Extensions.Names>();
+        balloonVisibilityBinding.put(KmlConstants.TAG_NETWORK_LINK, Extensions.Names.FEATURE);
+        balloonVisibilityBinding.put(KmlConstants.TAG_PLACEMARK, Extensions.Names.FEATURE);
+        balloonVisibilityBinding.put(KmlConstants.TAG_FOLDER, Extensions.Names.FEATURE);
+        balloonVisibilityBinding.put(KmlConstants.TAG_DOCUMENT, Extensions.Names.FEATURE);
+        balloonVisibilityBinding.put(KmlConstants.TAG_GROUND_OVERLAY, Extensions.Names.FEATURE);
+        balloonVisibilityBinding.put(KmlConstants.TAG_SCREEN_OVERLAY, Extensions.Names.FEATURE);
+        balloonVisibilityBinding.put(KmlConstants.TAG_PHOTO_OVERLAY, Extensions.Names.FEATURE);
+
+        Map<String, Extensions.Names> latLonQuadBinding = new HashMap<String, Extensions.Names>();
+        latLonQuadBinding.put(KmlConstants.TAG_GROUND_OVERLAY, Extensions.Names.GROUND_OVERLAY);
+
+        simpleTable = new HashMap<String, Map<String, Extensions.Names>>();
+        simpleTable.put(GxConstants.TAG_BALLOON_VISIBILITY, balloonVisibilityBinding);
+    }
 
 }

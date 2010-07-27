@@ -18,7 +18,7 @@ package org.geotoolkit.data.kml.model;
 
 import java.util.Calendar;
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 
 /**
  *
@@ -45,13 +45,13 @@ public class DefaultTimeStamp extends DefaultAbstractTimePrimitive implements Ti
      * @param timeStampSimpleExtensions
      * @param timeStampObjectExtensions
      */
-    public DefaultTimeStamp(List<SimpleType> objectSimpleExtensions,
+    public DefaultTimeStamp(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
-            List<SimpleType> abstractTimePrimitiveSimpleExtensions,
-            List<AbstractObject> abstractTimePrimitiveObjectExtensions,
+            List<SimpleTypeContainer> abstractTimePrimitiveSimpleExtensions,
+            List<Object> abstractTimePrimitiveObjectExtensions,
             Calendar when,
-            List<SimpleType> timeStampSimpleExtensions,
-            List<AbstractObject> timeStampObjectExtensions) {
+            List<SimpleTypeContainer> timeStampSimpleExtensions,
+            List<Object> timeStampObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
                 abstractTimePrimitiveSimpleExtensions,
                 abstractTimePrimitiveObjectExtensions);

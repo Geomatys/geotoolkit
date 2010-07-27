@@ -19,7 +19,7 @@ package org.geotoolkit.data.gx.model;
 import java.util.List;
 import org.geotoolkit.data.kml.model.DefaultAbstractObject;
 import org.geotoolkit.data.kml.model.IdAttributes;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.gx.xml.GxConstants.*;
 
 /**
@@ -34,7 +34,7 @@ public class DefaultWait extends DefaultAbstractObject implements Wait {
         this.duration = DEF_DURATION;
     }
 
-    public DefaultWait(List<SimpleType> objectSimpleExtensions,
+    public DefaultWait(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes, double duration){
         super(objectSimpleExtensions, idAttributes);
         this.duration = duration;

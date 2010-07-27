@@ -18,7 +18,7 @@ package org.geotoolkit.data.kml.model;
 
 import com.vividsolutions.jts.geom.GeometryFactory;
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
@@ -31,7 +31,7 @@ public class DefaultLineString extends com.vividsolutions.jts.geom.LineString im
     private Extensions extensions = new Extensions();
     private boolean extrude;
     private boolean tessellate;
-    private EnumAltitudeMode altitudeMode;
+    private AltitudeMode altitudeMode;
 
     /**
      *
@@ -59,15 +59,15 @@ public class DefaultLineString extends com.vividsolutions.jts.geom.LineString im
      * @param lineStringObjectExtensions
      * @param factory
      */
-    public DefaultLineString(List<SimpleType> objectSimpleExtensions,
+    public DefaultLineString(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
-            List<SimpleType> abstractGeometrySimpleExtensions,
-            List<AbstractObject> abstractGeometryObjectExtensions,
+            List<SimpleTypeContainer> abstractGeometrySimpleExtensions,
+            List<Object> abstractGeometryObjectExtensions,
             boolean extrude, boolean tessellate,
-            EnumAltitudeMode altitudeMode,
+            AltitudeMode altitudeMode,
             Coordinates coordinates,
-            List<SimpleType> lineStringSimpleExtensions,
-            List<AbstractObject> lineStringObjectExtensions,
+            List<SimpleTypeContainer> lineStringSimpleExtensions,
+            List<Object> lineStringObjectExtensions,
             GeometryFactory factory) {
         super(coordinates, factory);
         this.idAttributes = idAttributes;
@@ -124,7 +124,7 @@ public class DefaultLineString extends com.vividsolutions.jts.geom.LineString im
      * @{@inheritDoc }
      */
     @Override
-    public EnumAltitudeMode getAltitudeMode() {
+    public AltitudeMode getAltitudeMode() {
         return this.altitudeMode;
     }
 
@@ -151,7 +151,7 @@ public class DefaultLineString extends com.vividsolutions.jts.geom.LineString im
      * @{@inheritDoc }
      */
     @Override
-    public void setAltitudeMode(EnumAltitudeMode altitudeMode) {
+    public void setAltitudeMode(AltitudeMode altitudeMode) {
         this.altitudeMode = altitudeMode;
     }
 

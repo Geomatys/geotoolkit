@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import org.opengis.util.CodeList;
 
 /**
@@ -30,16 +30,16 @@ import org.opengis.util.CodeList;
  */
 public final class Extensions {
 
-    private final Map<Names, Entry<List<SimpleType>, List<Object>>> map =
-            new HashMap<Names, Entry<List<SimpleType>, List<Object>>>() {
+    private final Map<Names, Entry<List<SimpleTypeContainer>, List<Object>>> map =
+            new HashMap<Names, Entry<List<SimpleTypeContainer>, List<Object>>>() {
 
                 @Override
-                public Entry<List<SimpleType>, List<Object>> get(Object key) {
-                    Entry<List<SimpleType>, List<Object>> entry = super.get(key);
+                public Entry<List<SimpleTypeContainer>, List<Object>> get(Object key) {
+                    Entry<List<SimpleTypeContainer>, List<Object>> entry = super.get(key);
 
                     if (entry == null) {
-                        entry = new SimpleImmutableEntry<List<SimpleType>, List<Object>>(
-                                new ArrayList<SimpleType>(),
+                        entry = new SimpleImmutableEntry<List<SimpleTypeContainer>, List<Object>>(
+                                new ArrayList<SimpleTypeContainer>(),
                                 new ArrayList<Object>());
                         map.put((Names) key, entry);
                     }
@@ -50,7 +50,7 @@ public final class Extensions {
     public Extensions() {
     }
 
-    public List<SimpleType> simples(Names name) {
+    public List<SimpleTypeContainer> simples(Names name) {
         return map.get(name).getKey();
     }
 

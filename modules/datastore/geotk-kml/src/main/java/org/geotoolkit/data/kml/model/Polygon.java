@@ -64,7 +64,7 @@ public interface Polygon extends AbstractGeometry {
      *
      * @return
      */
-    public EnumAltitudeMode getAltitudeMode();
+    public AltitudeMode getAltitudeMode();
 
     /**
      * 

@@ -18,7 +18,7 @@ package org.geotoolkit.data.kml.model;
 
 import java.util.List;
 import org.geotoolkit.data.kml.KmlUtilities;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 import static java.util.Collections.*;
 
@@ -54,11 +54,11 @@ public abstract class DefaultAbstractLatLonBox extends DefaultAbstractObject imp
      * @param abstractLatLonBoxSimpleExtensions
      * @param abstractLatLonBoxObjectExtensions
      */
-    protected DefaultAbstractLatLonBox(List<SimpleType> objectSimpleExtensions,
+    protected DefaultAbstractLatLonBox(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
             double north, double south, double east, double west,
-            List<SimpleType> abstractLatLonBoxSimpleExtensions,
-            List<AbstractObject> abstractLatLonBoxObjectExtensions) {
+            List<SimpleTypeContainer> abstractLatLonBoxSimpleExtensions,
+            List<Object> abstractLatLonBoxObjectExtensions) {
         super(objectSimpleExtensions, idAttributes);
         this.north = KmlUtilities.checkAngle90(north);
         this.south = KmlUtilities.checkAngle90(south);

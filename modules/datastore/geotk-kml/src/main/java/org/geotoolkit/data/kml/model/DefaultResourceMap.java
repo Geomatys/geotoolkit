@@ -17,7 +17,7 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static java.util.Collections.*;
 
 /**
@@ -43,11 +43,11 @@ public class DefaultResourceMap extends DefaultAbstractObject implements Resourc
      * @param resourceMapSimpleExtensions
      * @param resourceMapObjectExtensions
      */
-    public DefaultResourceMap(List<SimpleType> objectSimpleExtensions,
+    public DefaultResourceMap(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
             List<Alias> aliases,
-            List<SimpleType> resourceMapSimpleExtensions,
-            List<AbstractObject> resourceMapObjectExtensions) {
+            List<SimpleTypeContainer> resourceMapSimpleExtensions,
+            List<Object> resourceMapObjectExtensions) {
         super(objectSimpleExtensions, idAttributes);
         this.aliases = aliases;
         if (resourceMapSimpleExtensions != null) {

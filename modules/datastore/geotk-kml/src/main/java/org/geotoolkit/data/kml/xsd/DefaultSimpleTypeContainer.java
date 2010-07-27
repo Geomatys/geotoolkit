@@ -20,9 +20,32 @@ package org.geotoolkit.data.kml.xsd;
  *
  * @author Samuel Andrés
  */
-public interface SimpleType {
+public class DefaultSimpleTypeContainer implements SimpleTypeContainer {
 
-    public static final String BOOLEAN_FALSE = "0";
-    public static final String BOOLEAN_TRUE = "1";
+    String nameSpaceUri;
+    String tagName;
+    Object value;
 
+    public DefaultSimpleTypeContainer(String nameSpaceUri, String tagName, Object value) {
+        this.nameSpaceUri = nameSpaceUri;
+        this.tagName = tagName;
+        this.value = value;
+    }
+
+    @Override
+    public String getNamespaceUri() {
+        return this.nameSpaceUri;
+    }
+
+    @Override
+    public String getTagName() {
+        return this.tagName;
+    }
+
+    @Override
+    public Object getValue() {
+        return this.value;
+    }
+
+    
 }

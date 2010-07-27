@@ -17,9 +17,11 @@
 package org.geotoolkit.data.gx.xml;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
+import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.gx.model.AbstractTourPrimitive;
 import org.geotoolkit.data.gx.model.AnimatedUpdate;
@@ -33,12 +35,16 @@ import org.geotoolkit.data.gx.model.SoundCue;
 import org.geotoolkit.data.gx.model.TourControl;
 import org.geotoolkit.data.gx.model.Wait;
 import org.geotoolkit.data.kml.KmlUtilities;
+import org.geotoolkit.data.kml.model.AltitudeMode;
+import org.geotoolkit.data.kml.model.Extensions;
 import org.geotoolkit.data.kml.model.Extensions.Names;
 import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.model.TimeSpan;
 import org.geotoolkit.data.kml.model.TimeStamp;
 import org.geotoolkit.data.kml.xml.KmlConstants;
+import org.geotoolkit.data.kml.xml.KmlExtensionWriter;
 import org.geotoolkit.data.kml.xml.KmlWriter;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import org.geotoolkit.xml.StaxStreamWriter;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -48,16 +54,21 @@ import static org.geotoolkit.data.gx.xml.GxConstants.*;
  *
  * @author Samuel Andrés
  */
-public class GxWriter extends StaxStreamWriter{
+public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
 
     private String URI_KML = KmlConstants.URI_KML_2_2;
-    private final KmlWriter kmlWriter = new KmlWriter();
+    private final KmlWriter kmlWriter;
+    public Map<Extensions.Names, List<Object>> complexTable = new HashMap<Extensions.Names, List<Object>>();
+    public Map<Extensions.Names, List<String>> simpleTable = new HashMap<Extensions.Names, List<String>>();
 
     /**
      *
      */
-    public GxWriter(){
+    public GxWriter(KmlWriter writer){
         super();
+        kmlWriter = writer;
+        this.initComplexTable();
+        this.initSimpleTable();
     }
 
     /**
@@ -70,11 +81,11 @@ public class GxWriter extends StaxStreamWriter{
     @Override
     public void setOutput(Object output) throws XMLStreamException, IOException{
         super.setOutput(output);
-        try {
-            this.kmlWriter.setOutput(writer, URI_KML);
-        } catch (KmlException ex) {
-            Logger.getLogger(GxWriter.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            this.kmlWriter.setOutput(writer, URI_KML);
+//        } catch (KmlException ex) {
+//            Logger.getLogger(GxWriter.class.getName()).log(Level.SEVERE, null, ex);
+//        }
     }
 
     /**
@@ -241,5 +252,109 @@ public class GxWriter extends StaxStreamWriter{
         writer.writeStartElement(URI_GX, TAG_PLAY_MODE);
         this.writer.writeCharacters(playMode.getPlayMode());
         writer.writeEndElement();
+    }
+
+    public void writeAltitudeMode(AltitudeMode altitudeMode) throws XMLStreamException{
+        if(DEF_ALTITUDE_MODE != altitudeMode){
+            writer.writeStartElement(URI_GX, TAG_ALTITUDE_MODE);
+            writer.writeCharacters(altitudeMode.getAltitudeMode());
+            writer.writeEndElement();
+        }
+    }
+
+    public void writeBalloonVisibility(Boolean bv) throws XMLStreamException{
+        boolean balloonVisibility = bv.booleanValue();
+        if (DEF_BALLOON_VISIBILITY != balloonVisibility){
+            writer.writeStartElement(URI_GX, TAG_BALLOON_VISIBILITY);
+            if(balloonVisibility){
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
+            } else {
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
+            }
+            writer.writeEndElement();
+        }
+    }
+
+    @Override
+    public void writeComplexExtensionElement(Object contentsElement)
+            throws XMLStreamException, KmlException {
+
+        if(contentsElement instanceof Feature){
+            Feature feature = (Feature) contentsElement;
+            if(feature.getType().equals(GxModelConstants.TYPE_TOUR)){
+                writeTour(feature);
+            }
+        } else if(contentsElement instanceof LatLonQuad){
+            writeLatLonQuad((LatLonQuad) contentsElement);
+        } else if(contentsElement instanceof TimeSpan){
+            writeTimeSpan((TimeSpan) contentsElement);
+        } else if(contentsElement instanceof TimeStamp){
+            writeTimeStamp((TimeStamp) contentsElement);
+        }
+    }
+
+    @Override
+    public void writeSimpleExtensionElement(SimpleTypeContainer contentsElement)
+            throws XMLStreamException, KmlException {
+
+        if(TAG_BALLOON_VISIBILITY.equals(contentsElement.getTagName())){
+            writeBalloonVisibility((Boolean) contentsElement.getValue());
+        }
+    }
+
+    @Override
+    public boolean canHandleComplex(Extensions.Names ext, Object contentObject){
+        List<Object> liste = this.complexTable.get(ext);
+        Boolean reponse = false;
+        if(liste != null){
+            if (contentObject instanceof Feature){
+                if (liste.contains(((Feature) contentObject).getType())){
+                    reponse = true;
+                }
+            } else {
+                for(Object i : liste){
+                    if(i instanceof Class
+                            && ((Class) i).isInstance(contentObject)){
+                        reponse = true;
+                    }
+                }
+            }
+        }
+        return reponse;
+    }
+
+    @Override
+    public boolean canHandleSimple(Names ext, String elementTag) {
+        List<String> liste = this.simpleTable.get(ext);
+        Boolean reponse = false;
+        if(liste != null
+                && liste.contains(elementTag)){
+            reponse = true;
+        }
+        return reponse;
+    }
+
+    private void initComplexTable(){
+        List<Object> documentExtensionsList = new ArrayList<Object>();
+        documentExtensionsList.add(GxModelConstants.TYPE_TOUR);
+        
+        List<Object> groundOverlayExtensionsList = new ArrayList<Object>();
+        groundOverlayExtensionsList.add(LatLonQuad.class);
+
+        List<Object> abstractViewExtensionsList = new ArrayList<Object>();
+        abstractViewExtensionsList.add(TimeSpan.class);
+        abstractViewExtensionsList.add(TimeStamp.class);
+
+        complexTable.put(Names.DOCUMENT, documentExtensionsList);
+        complexTable.put(Names.VIEW, abstractViewExtensionsList);
+        complexTable.put(Names.GROUND_OVERLAY, groundOverlayExtensionsList);
+
+    }
+
+    private void initSimpleTable(){
+        List<String> featureExtensionsList = new ArrayList<String>();
+        featureExtensionsList.add(GxConstants.TAG_BALLOON_VISIBILITY);
+
+        simpleTable.put(Extensions.Names.FEATURE, featureExtensionsList);
     }
 }

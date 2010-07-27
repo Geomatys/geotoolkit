@@ -19,7 +19,7 @@ package org.geotoolkit.data.gx.model;
 import java.util.List;
 import org.geotoolkit.data.kml.model.DefaultAbstractObject;
 import org.geotoolkit.data.kml.model.IdAttributes;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 
 /**
  *
@@ -32,7 +32,7 @@ public class DefaultSoundCue extends DefaultAbstractObject implements SoundCue {
     public DefaultSoundCue(){
     }
 
-    public DefaultSoundCue(List<SimpleType> objectSimpleExtensions,
+    public DefaultSoundCue(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes attributes, String href){
         this.href = href;
     }

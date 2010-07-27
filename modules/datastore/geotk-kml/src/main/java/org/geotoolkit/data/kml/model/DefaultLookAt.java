@@ -18,7 +18,7 @@ package org.geotoolkit.data.kml.model;
 
 import java.util.List;
 import org.geotoolkit.data.kml.KmlUtilities;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
@@ -33,6 +33,7 @@ public class DefaultLookAt extends DefaultAbstractView implements LookAt {
     private double heading;
     private double tilt;
     private double range;
+    private AltitudeMode altitudeMode;
 
     /**
      * 
@@ -44,6 +45,7 @@ public class DefaultLookAt extends DefaultAbstractView implements LookAt {
         this.heading = DEF_HEADING;
         this.tilt = DEF_TILT;
         this.range = DEF_RANGE;
+        this.altitudeMode = DEF_ALTITUDE_MODE;
     }
 
     /**
@@ -61,14 +63,14 @@ public class DefaultLookAt extends DefaultAbstractView implements LookAt {
      * @param lookAtSimpleExtensions
      * @param lookAtObjectExtensions
      */
-    public DefaultLookAt(List<SimpleType> objectSimpleExtensions,
+    public DefaultLookAt(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
-            List<SimpleType> abstractViewSimpleExtensions,
+            List<SimpleTypeContainer> abstractViewSimpleExtensions,
             List<Object> abstractViewObjectExtensions,
             double longitude, double latitude, double altitude,
-            double heading, double tilt, double range,
-            List<SimpleType> lookAtSimpleExtensions,
-            List<AbstractObject> lookAtObjectExtensions) {
+            double heading, double tilt, double range, AltitudeMode altitudeMode,
+            List<SimpleTypeContainer> lookAtSimpleExtensions,
+            List<Object> lookAtObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
                 abstractViewSimpleExtensions,
                 abstractViewObjectExtensions);
@@ -78,6 +80,7 @@ public class DefaultLookAt extends DefaultAbstractView implements LookAt {
         this.heading = KmlUtilities.checkAngle360(heading);
         this.tilt = KmlUtilities.checkAnglePos90(tilt);
         this.range = range;
+        this.altitudeMode = altitudeMode;
         if (lookAtSimpleExtensions != null) {
             this.extensions().simples(Extensions.Names.LOOK_AT).addAll(lookAtSimpleExtensions);
         }
@@ -145,6 +148,15 @@ public class DefaultLookAt extends DefaultAbstractView implements LookAt {
      * @{@inheritDoc }
      */
     @Override
+    public AltitudeMode getAltitudeMode() {
+        return this.altitudeMode;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
     public void setLongitude(double longitude) {
         this.longitude = KmlUtilities.checkAngle180(longitude);
     }
@@ -192,6 +204,15 @@ public class DefaultLookAt extends DefaultAbstractView implements LookAt {
     @Override
     public void setRange(double range) {
         this.range = range;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAltitudeMode(AltitudeMode altitudeMode) {
+        this.altitudeMode = altitudeMode;
     }
 
     /**

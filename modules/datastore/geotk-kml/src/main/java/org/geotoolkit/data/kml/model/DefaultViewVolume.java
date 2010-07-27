@@ -18,7 +18,7 @@ package org.geotoolkit.data.kml.model;
 
 import java.util.List;
 import org.geotoolkit.data.kml.KmlUtilities;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
@@ -54,12 +54,12 @@ public class DefaultViewVolume extends DefaultAbstractObject implements ViewVolu
      * @param topFov
      * @param near
      */
-    public DefaultViewVolume(List<SimpleType> objectSimpleExtensions,
+    public DefaultViewVolume(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
             double leftFov, double rightFov,
             double bottomFov, double topFov, double near,
-            List<SimpleType> viewVolumeSimpleExtensions,
-            List<AbstractObject> viewVolumeObjectExtensions) {
+            List<SimpleTypeContainer> viewVolumeSimpleExtensions,
+            List<Object> viewVolumeObjectExtensions) {
         super(objectSimpleExtensions, idAttributes);
         this.leftFov = KmlUtilities.checkAngle180(leftFov);
         this.rightFov = KmlUtilities.checkAngle180(rightFov);

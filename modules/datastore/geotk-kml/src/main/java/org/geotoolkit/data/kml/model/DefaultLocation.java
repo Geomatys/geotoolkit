@@ -18,7 +18,7 @@ package org.geotoolkit.data.kml.model;
 
 import java.util.List;
 import org.geotoolkit.data.kml.KmlUtilities;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
@@ -47,11 +47,11 @@ public class DefaultLocation extends DefaultAbstractObject implements Location {
      * @param locationSimpleExtensions
      * @param locationObjectExtensions
      */
-    public DefaultLocation(List<SimpleType> objectSimpleExtensions,
+    public DefaultLocation(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
             double longitude, double latitude, double altitude,
-            List<SimpleType> locationSimpleExtensions,
-            List<AbstractObject> locationObjectExtensions) {
+            List<SimpleTypeContainer> locationSimpleExtensions,
+            List<Object> locationObjectExtensions) {
         super(objectSimpleExtensions, idAttributes);
         this.longitude = KmlUtilities.checkAngle180(longitude);
         this.latitude = KmlUtilities.checkAngle90(latitude);

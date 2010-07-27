@@ -16,9 +16,6 @@
  */
 package org.geotoolkit.data.kml.model;
 
-import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
-
 /**
  * <p>This interface maps ImagePyramid element.</p>
  *

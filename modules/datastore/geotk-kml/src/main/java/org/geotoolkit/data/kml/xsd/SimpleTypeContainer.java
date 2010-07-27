@@ -20,7 +20,15 @@ package org.geotoolkit.data.kml.xsd;
  *
  * @author Samuel Andrés
  */
-public class DefaultSimpleType implements SimpleType {
+public interface SimpleTypeContainer {
 
+    static final String BOOLEAN_FALSE = "0";
+    static final String BOOLEAN_TRUE = "1";
+
+    String getNamespaceUri();
+
+    String getTagName();
+
+    Object getValue();
 
 }

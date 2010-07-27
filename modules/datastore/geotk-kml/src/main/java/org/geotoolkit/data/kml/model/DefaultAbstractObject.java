@@ -17,7 +17,7 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 
 /**
  *
@@ -39,7 +39,7 @@ public abstract class DefaultAbstractObject implements AbstractObject {
      * @param objectSimpleExtensions
      * @param idAttributes
      */
-    protected DefaultAbstractObject(List<SimpleType> objectSimpleExtensions,
+    protected DefaultAbstractObject(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes) {
         if (objectSimpleExtensions != null) {
             this.extensions().simples(Extensions.Names.OBJECT).addAll(objectSimpleExtensions);

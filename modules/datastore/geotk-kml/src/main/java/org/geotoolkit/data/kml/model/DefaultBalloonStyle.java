@@ -18,7 +18,7 @@ package org.geotoolkit.data.kml.model;
 
 import java.awt.Color;
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
@@ -54,13 +54,13 @@ public class DefaultBalloonStyle extends DefaultAbstractSubStyle implements Ball
      * @param balloonStyleSimpleExtensions
      * @param balloonStyleObjectExtensions
      */
-    public DefaultBalloonStyle(List<SimpleType> objectSimpleExtensions,
+    public DefaultBalloonStyle(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
-            List<SimpleType> abstractSubStyleSimpleExtensions,
-            List<AbstractObject> abstractSubStyleObjectExtensions,
+            List<SimpleTypeContainer> abstractSubStyleSimpleExtensions,
+            List<Object> abstractSubStyleObjectExtensions,
             Color bgColor, Color textColor, Object text, DisplayMode displayMode,
-            List<SimpleType> balloonStyleSimpleExtensions,
-            List<AbstractObject> balloonStyleObjectExtensions) {
+            List<SimpleTypeContainer> balloonStyleSimpleExtensions,
+            List<Object> balloonStyleObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
                 abstractSubStyleSimpleExtensions,
                 abstractSubStyleObjectExtensions);

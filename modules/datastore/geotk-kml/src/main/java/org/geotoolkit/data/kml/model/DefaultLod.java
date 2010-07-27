@@ -17,7 +17,7 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
@@ -49,12 +49,12 @@ public class DefaultLod extends DefaultAbstractObject implements Lod {
      * @param lodSimpleExtensions
      * @param lodObjectExtensions
      */
-    public DefaultLod(List<SimpleType> objectSimpleExtensions,
+    public DefaultLod(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
             double minLodPixels, double maxLodPixels,
             double minFadeExtent, double maxFadeExtent,
-            List<SimpleType> lodSimpleExtensions,
-            List<AbstractObject> lodObjectExtensions) {
+            List<SimpleTypeContainer> lodSimpleExtensions,
+            List<Object> lodObjectExtensions) {
         super(objectSimpleExtensions, idAttributes);
         this.minLodPixels = minLodPixels;
         this.maxLodPixels = maxLodPixels;

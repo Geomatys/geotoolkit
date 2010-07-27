@@ -1,8 +1,4 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-/*
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
@@ -141,7 +137,7 @@ public class TourTest {
         temp.deleteOnExit();
 
         final KmlWriter writer = new KmlWriter();
-        final GxWriter gxWriter = new GxWriter();
+        final GxWriter gxWriter = new GxWriter(writer);
         writer.setOutput(temp);
         writer.addExtensionWriter(GxConstants.URI_GX, gxWriter);
         writer.write(kml);

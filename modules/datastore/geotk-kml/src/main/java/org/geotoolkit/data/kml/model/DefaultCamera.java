@@ -18,7 +18,7 @@ package org.geotoolkit.data.kml.model;
 
 import java.util.List;
 import org.geotoolkit.data.kml.KmlUtilities;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
@@ -33,7 +33,7 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
     private double heading;
     private double tilt;
     private double roll;
-    private EnumAltitudeMode altitudeMode;
+    private AltitudeMode altitudeMode;
 
     /**
      *
@@ -64,14 +64,14 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
      * @param cameraSimpleExtensions
      * @param cameraObjectExtensions
      */
-    public DefaultCamera(List<SimpleType> objectSimpleExtensions,
+    public DefaultCamera(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
-            List<SimpleType> abstractViewSimpleExtensions,
+            List<SimpleTypeContainer> abstractViewSimpleExtensions,
             List<Object> abstractViewObjectExtensions,
             double longitude, double latitude, double altitude,
-            double heading, double tilt, double roll, EnumAltitudeMode altitudeMode,
-            List<SimpleType> cameraSimpleExtensions,
-            List<AbstractObject> cameraObjectExtensions) {
+            double heading, double tilt, double roll, AltitudeMode altitudeMode,
+            List<SimpleTypeContainer> cameraSimpleExtensions,
+            List<Object> cameraObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
                 abstractViewSimpleExtensions,
                 abstractViewObjectExtensions);
@@ -149,7 +149,7 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
      * @{@inheritDoc }
      */
     @Override
-    public EnumAltitudeMode getAltitudeMode() {
+    public AltitudeMode getAltitudeMode() {
         return this.altitudeMode;
     }
 
@@ -212,7 +212,7 @@ public class DefaultCamera extends DefaultAbstractView implements Camera {
      * @{@inheritDoc }
      */
     @Override
-    public void setAltitudeMode(EnumAltitudeMode altitudeMode) {
+    public void setAltitudeMode(AltitudeMode altitudeMode) {
         this.altitudeMode = altitudeMode;
     }
 }

@@ -17,7 +17,7 @@
 package org.geotoolkit.data.kml.model;
 
 import java.util.List;
-import org.geotoolkit.data.kml.xsd.SimpleType;
+import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
@@ -63,15 +63,15 @@ public class DefaultLink extends DefaultAbstractObject implements Link {
      * @param linkSimpleExtensions
      * @param linkObjectExtension
      */
-    public DefaultLink(List<SimpleType> objectSimpleExtensions,
+    public DefaultLink(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes,
             String href,
-            List<SimpleType> basicLinkSimpleExtensions,
+            List<SimpleTypeContainer> basicLinkSimpleExtensions,
             List<Object> basicLinkObjectExtension,
             RefreshMode refreshMode, double refreshInterval,
             ViewRefreshMode viewRefreshMode, double viewRefreshTime,
             double viewBoundScale, String viewFormat, String httpQuery,
-            List<SimpleType> linkSimpleExtensions,
+            List<SimpleTypeContainer> linkSimpleExtensions,
             List<Object> linkObjectExtension) {
         super(objectSimpleExtensions, idAttributes);
         this.href = href;
