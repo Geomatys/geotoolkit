@@ -110,6 +110,14 @@ public class LabelingUtilities {
         return candidates;
     }
 
+    public static boolean intersects(Candidate candidate, List<Candidate> candidates){
+        for(Candidate c : candidates){
+            if(intersects(candidate, c)){
+                return true;
+            }
+        }
+        return false;
+    }
 
     public static boolean intersects(Candidate candidate1, Candidate candidate2){
         if(candidate1 instanceof PointCandidate){

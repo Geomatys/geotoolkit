@@ -49,6 +49,11 @@ public class DecimationLabelRenderer extends DefaultLabelRenderer{
     public DecimationLabelRenderer() {
     }
 
+    @Override
+    public LabelLayer createLabelLayer() {
+        return new DecimateLabelLayer(false, true);
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -90,6 +95,10 @@ public class DecimationLabelRenderer extends DefaultLabelRenderer{
         //priority is in the order of the layers provided.
         int priority = layers.size();
         for(final LabelLayer layer : layers){
+            if(layer instanceof DecimateLabelLayer){
+                candidates.addAll( ((DecimateLabelLayer)layer).candidates );
+            }
+
             for(LabelDescriptor label : layer.labels()){
                 Candidate c = null;
 
@@ -148,5 +157,65 @@ public class DecimationLabelRenderer extends DefaultLabelRenderer{
         return cleaned;
     }
 
+
+    private class DecimateLabelLayer implements LabelLayer{
+
+        private List<Candidate> candidates = new ArrayList<Candidate>();
+        private int inc = 0;
+
+        private final List<LabelDescriptor> labels = new ArrayList<LabelDescriptor>(){
+
+            @Override
+            public boolean add(LabelDescriptor label) {
+                Candidate c = null;
+
+                if(label instanceof PointLabelDescriptor){
+                    c = pointRenderer.generateCandidat((PointLabelDescriptor) label);
+                }else if(label instanceof LinearLabelDescriptor){
+                    c = LinearRenderer.generateCandidat((LinearLabelDescriptor) label);
+                }else{
+                    c = null;
+                }
+
+                if(c != null){
+                    c.setPriority(1);
+                    candidates.add(c);
+                }
+
+
+                //decimate when we have enough, to reduce memory usage
+                inc++;
+                if(inc == 100){
+                    inc = 0;
+                    candidates = optimize(candidates);
+                }
+                return true;
+            }
+
+        };
+        private final boolean obstacle;
+        private final boolean labelled;
+
+        public DecimateLabelLayer(boolean isObstacle, boolean isLabelled) {
+            this.labelled = isLabelled;
+            this.obstacle = isObstacle;
+        }
+
+        @Override
+        public boolean isObstacle() {
+            return obstacle;
+        }
+
+        @Override
+        public boolean isLabelled() {
+            return labelled;
+        }
+
+        @Override
+        public List<LabelDescriptor> labels() {
+            return labels;
+        }
+
+    }
 
 }

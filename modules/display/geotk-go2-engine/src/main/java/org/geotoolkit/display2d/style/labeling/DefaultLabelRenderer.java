@@ -48,7 +48,12 @@ public class DefaultLabelRenderer implements LabelRenderer{
     
     public DefaultLabelRenderer() {
     }
-    
+
+    @Override
+    public LabelLayer createLabelLayer() {
+        return new DefaultLabelLayer(false, true);
+    }
+
     /**
      * {@inheritDoc }
      */
