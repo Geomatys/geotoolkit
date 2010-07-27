@@ -18,13 +18,11 @@
 package org.geotoolkit.coverage.io;
 
 import java.awt.Shape;
-import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.NoninvertibleTransformException;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.concurrent.CancellationException;
@@ -34,6 +32,7 @@ import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -225,45 +224,39 @@ public abstract class GridCoverageStore implements Localized {
     }
 
     /**
-     * Returns the "<cite>Grid to CRS</cite>" conversion as an affine transform.
-     * The conversion will map upper-left corner, as in Java2D conventions.
-     *
-     * @param  gridGeometry The grid geometry from which to extract the conversion.
-     * @return The "<cite>grid to CRS</cite>" conversion.
-     * @throws InvalidGridGeometryException If the conversion is not affine.
-     */
-    private AffineTransform getGridToCRS(final GridGeometry2D gridGeometry) throws InvalidGridGeometryException {
-        final MathTransform gridToCRS = gridGeometry.getGridToCRS2D(PixelOrientation.UPPER_LEFT);
-        if (gridToCRS instanceof AffineTransform) {
-            return (AffineTransform) gridToCRS;
-        }
-        throw new InvalidGridGeometryException(formatErrorMessage(Errors.Keys.NOT_AN_AFFINE_TRANSFORM));
-    }
-
-    /**
      * Converts geodetic parameters to pixel parameters and stores the result in the given
-     * {@code IIOParam} object. This is a convenience method provided to subclasses implementation.
-     * The default implementation invokes the following methods:
+     * {@code IIOParam} object. This method expects a {@code gridGeometry} argument, which
+     * is the grid geometry of the source coverage. Coordinate transformations are applied
+     * as needed if the parameters given in the {@code geodeticParam} argument use a different
+     * CRS. Then the source region and the source subsampling (in pixel units) are computed in
+     * such a way that the image to be read contains fully the requested image at a resolution
+     * equals or better than the requested resolution. Next, the source region and subsampling
+     * are clipped to the image bounds and maximal resolution, and the following methods are
+     * invoked with the result:
      * <p>
      * <ul>
      *   <li>{@link IIOParam#setSourceRegion(Rectangle)}</li>
      *   <li>{@link IIOParam#setSourceSubsampling(int, int, int, int)}</li>
      * </ul>
      * <p>
-     * All other attributes are left unchanged.
+     * As a consequence of the reprojection, rounding to pixel coordinates and clipping, the
+     * source region and subsampling may not match exactly the requested envelope and resolution.
+     * Callers are responsible for checking the resulting grid geometry and perform themselves a
+     * resampling operation if they need exactly the requested grid geometry.
      *
      * @param  gridGeometry The grid geometry of the source as a whole (without subsampling).
      * @param  geodeticParam Parameters containing the geodetic envelope and the resolution
      *         to use for reading the source.
      * @param  pixelParam The object where to set the source region in subsampling to
      *         use for reading the source.
-     * @return The image bounds, returned for convenience. This is the same value than the
-     *         one provided by {@link IIOParam#getSourceRegion()} after this method call.
+     * @return Coordinates in pixels of the region to read. This is the same value than the
+     *         one provided by {@link IIOParam#getSourceRegion()} after this method call,
+     *         and is returned for convenience.
      * @throws CoverageStoreException If the region can not be computed.
      *
      * @since 3.14
      */
-    protected Rectangle geodeticToPixelCoordinates(final GridGeometry2D gridGeometry,
+    final Rectangle geodeticToPixelCoordinates(final GridGeometry2D gridGeometry,
             final GridCoverageStoreParam geodeticParam, final IIOParam pixelParam)
             throws CoverageStoreException
     {
@@ -304,20 +297,20 @@ public abstract class GridCoverageStore implements Localized {
      * @return The region to be read in pixel coordinates, or {@code null} if the coverage
      *         can't be read because the region to read is empty.
      */
-    private Rectangle computeBounds(final GridGeometry2D gridGeometry, Envelope envelope,
+    private static Rectangle computeBounds(final GridGeometry2D gridGeometry, Envelope envelope,
             final double[] resolution, final CoordinateReferenceSystem sourceCRS)
-            throws InvalidGridGeometryException, NoninvertibleTransformException, TransformException, FactoryException
+            throws InvalidGridGeometryException, TransformException, FactoryException
     {
         final Rectangle gridRange = gridGeometry.getGridRange2D();
         final int width  = gridRange.width;
         final int height = gridRange.height;
-        final AffineTransform gridToCRS = getGridToCRS(gridGeometry);
-        final AffineTransform crsToGrid = gridToCRS.createInverse();
+        final MathTransform2D gridToCRS = gridGeometry.getGridToCRS2D(PixelOrientation.UPPER_LEFT);
+        final MathTransform2D crsToGrid = gridToCRS.inverse();
         /*
          * Get the full coverage envelope in the coverage CRS. The returned shape is likely
          * (but not garanteed) to be an instance of Rectangle2D. It can be freely modified.
          */
-        Shape shapeToRead = XAffineTransform.transform(gridToCRS, gridRange, false); // Will be clipped later.
+        Shape shapeToRead = CRS.transform(gridToCRS, gridRange, null); // Will be clipped later.
         Rectangle2D geodeticBounds = (shapeToRead instanceof Rectangle2D) ?
                 (Rectangle2D) shapeToRead : shapeToRead.getBounds2D();
         if (geodeticBounds.isEmpty()) {
@@ -381,7 +374,13 @@ public abstract class GridCoverageStore implements Localized {
          */
         double sx = geodeticBounds.getWidth();  // "Real world" size of the region to be read.
         double sy = geodeticBounds.getHeight(); // Need to be extracted before the line below.
-        shapeToRead = XAffineTransform.transform(crsToGrid, shapeToRead, shapeToRead != gridRange);
+        if (crsToGrid instanceof AffineTransform) {
+            shapeToRead = XAffineTransform.transform((AffineTransform) crsToGrid, shapeToRead,
+                    shapeToRead != gridRange); // boolean telling whatever we can overwrite.
+        } else {
+            // Unefficient fallback, but should not occur often.
+            shapeToRead = CRS.transform(crsToGrid, shapeToRead.getBounds2D(), null);
+        }
         final RectangularShape imageRegion = (shapeToRead instanceof RectangularShape) ?
                 (RectangularShape) shapeToRead : shapeToRead.getBounds2D();
         sx = imageRegion.getWidth()  / sx;  // (sx,sy) are now conversion factors
@@ -390,7 +389,7 @@ public abstract class GridCoverageStore implements Localized {
         final int ySubsampling;
         if (resolution != null) {
             /*
-             * Transform the resolution if needed. The code below assume that the target
+             * Transform the resolution if needed. The code below assumes that the target
              * dimension (always 2) is smaller than the source dimension.
              */
             double[] transformed = resolution;

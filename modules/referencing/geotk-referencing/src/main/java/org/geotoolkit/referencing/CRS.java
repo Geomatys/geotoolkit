@@ -65,6 +65,7 @@ import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.operation.projection.UnitaryProjection;
 import org.geotoolkit.referencing.operation.transform.IdentityTransform;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
+import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
@@ -1633,6 +1634,10 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
                                               Rectangle2D     destination)
             throws TransformException
     {
+        if (transform instanceof AffineTransform) {
+            // Common case implemented in a more efficient way (less points to transform).
+            return XAffineTransform.transform((AffineTransform) transform, envelope, destination);
+        }
         return transform(transform, envelope, destination, new Point2D.Double());
     }
 

@@ -247,27 +247,4 @@ public final class AnchorType implements InternationalString {
                Utilities.hash(actuate,
                Utilities.hash(value, 99911302))))))));
     }
-
-    /*
-     * Following methods are temporary. They are required by Constellation which expect setter
-     * methods. A future version may remove those methods if we update Constellation for using
-     * directly the field values.
-     */
-    @Deprecated public String getType()    {return type;}
-    @Deprecated public URI    getHref()    {return href;}
-    @Deprecated public URI    getRole()    {return role;}
-    @Deprecated public URI    getArcrole() {return arcrole;}
-    @Deprecated public String getTitle()   {return title;}
-    @Deprecated public String getShow()    {return show;}
-    @Deprecated public String getActuate() {return actuate;}
-    @Deprecated public String getValue()   {return value;}
-
-    @Deprecated public void setType   (String  type)   {this.type    = type;}
-    @Deprecated public void setHref   (URI     href)   {this.href    = href;}
-    @Deprecated public void setRole   (URI     role)   {this.role    = role;}
-    @Deprecated public void setArcrole(URI  arcrole)   {this.arcrole = arcrole;}
-    @Deprecated public void setTitle  (String title)   {this.title   = title;}
-    @Deprecated public void setShow   (String show)    {this.show    = show;}
-    @Deprecated public void setActuate(String actuate) {this.actuate = actuate;}
-    @Deprecated public void setValue  (String value)   {this.value   = value;}
 }
