@@ -42,7 +42,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * referencing objects are expected to be immutable.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.14
  *
  * @since 3.08
  * @module
@@ -52,6 +52,11 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
      * The NetCDF coordinate axis wrapped by this {@code NetcdfCRS} instance.
      */
     private final CoordinateAxis1D axis;
+
+    /**
+     * The unit, computed when first needed.
+     */
+    volatile Unit<?> unit;
 
     /**
      * Creates a new {@code NetcdfAxis} object wrapping the given NetCDF coordinate axis.
@@ -196,8 +201,14 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
      */
     @Override
     public Unit<?> getUnit() {
-        final String symbol = getUnitsString();
-        return (symbol != null) ? Units.valueOf(symbol) : null;
+        Unit<?> unit = this.unit;
+        if (unit == null) {
+            final String symbol = getUnitsString();
+            if (symbol != null) {
+                this.unit = unit = Units.valueOf(symbol);
+            }
+        }
+        return unit;
     }
 
     /**

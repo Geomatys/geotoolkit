@@ -561,16 +561,17 @@ public class CoverageList extends JComponent {
                         } catch (DatabaseVetoException e) {
                             // User cancelled the operation or closed the frame.
                             // Do not report the exception since it is intentional.
-                        } catch (CoverageStoreException e) {
+                        } catch (Exception e) {
                             exceptionOccured(e);
+                        } finally {
+                            EventQueue.invokeLater(new Runnable() {
+                                @Override public void run() {
+                                    busyLabel.setBusy(false);
+                                    setSelectionPanel(TABLE);
+                                    refresh();
+                                }
+                            });
                         }
-                        EventQueue.invokeLater(new Runnable() {
-                            @Override public void run() {
-                                busyLabel.setBusy(false);
-                                setSelectionPanel(TABLE);
-                                refresh();
-                            }
-                        });
                     }
                 });
             }

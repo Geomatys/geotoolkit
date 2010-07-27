@@ -667,7 +667,11 @@ final class LayerEntry extends DefaultEntry implements Layer {
     }
 
     /**
-     * Returns the grid geometries used by the coverages in this layer.
+     * Returns the grid geometries used by the coverages in this layer, with the most frequently
+     * used one first. The grid geometries may be 2D, 3D or 4D. The coordinate reference system
+     * is the one declared in the {@link GridGeometryTable} for each entry. The envelope include
+     * the vertical and temporal ranges if any. The temporal range is computed from the entries
+     * found in the {@link GridCoverageTable}.
      */
     @Override
     public synchronized SortedSet<GeneralGridGeometry> getGridGeometries() throws CoverageStoreException {

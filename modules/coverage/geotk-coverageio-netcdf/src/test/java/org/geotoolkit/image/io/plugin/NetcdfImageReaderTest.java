@@ -62,22 +62,8 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
             "│   ├───origin=“-179.5 -77.0104751586914 5.0 0.0”\n" +
             "│   ├───CoordinateReferenceSystem\n" +
             "│   │   ├───name=“NetCDF:time depth latitude longitude”\n" +
-            "│   │   ├───type=“geographic”\n" +
-            "│   │   ├───Datum\n" +
-            "│   │   │   ├───name=“OGC:WGS84”\n" +
-            "│   │   │   ├───type=“geodetic”\n" +
-            "│   │   │   ├───Ellipsoid\n" +
-            "│   │   │   │   ├───name=“WGS84”\n" +
-            "│   │   │   │   ├───axisUnit=“m”\n" +
-            "│   │   │   │   ├───semiMajorAxis=“6378137.0”\n" +
-            "│   │   │   │   └───inverseFlattening=“298.257223563”\n" +
-            "│   │   │   └───PrimeMeridian\n" +
-            "│   │   │       ├───name=“Greenwich”\n" +
-            "│   │   │       ├───greenwichLongitude=“0.0”\n" +
-            "│   │   │       └───angularUnit=“deg”\n" +
             "│   │   └───CoordinateSystem\n" +
             "│   │       ├───name=“NetCDF:time depth latitude longitude”\n" +
-            "│   │       ├───type=“ellipsoidal”\n" +
             "│   │       ├───dimension=“4”\n" +
             "│   │       └───Axes\n" +
             "│   │           ├───CoordinateSystemAxis\n" +

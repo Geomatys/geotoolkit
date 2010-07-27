@@ -86,7 +86,7 @@ final class GridGeometryEntry extends DefaultEntry {
 
     /**
      * The immutable grid geometry, which may be 2D, 3D or 4D. The coordinate reference system is
-     * the one declared in the {@link GridCoverageTable} for that entry. The envelope must include
+     * the one declared in the {@link GridGeometryTable} for that entry. The envelope must include
      * the vertical range if any. If there is a temporal dimension, then the temporal extent must be
      * presents as well but may be invalid (the exact value will be set on an coverage-by-coverage
      * basis).
@@ -104,7 +104,7 @@ final class GridGeometryEntry extends DefaultEntry {
      * A shape describing the coverage outline in the database CRS (usually WGS 84). This is the
      * value computed by Geotk, not the PostGIS object declared in the database, in order to make
      * sure that coordinate transformations are applied using the same algorithm, i.e. the Geotk
-     * algortihm instead than the Proj4 algorithms used by PostGIS. This is necessary in case the
+     * algorithm instead than the Proj4 algorithms used by PostGIS. This is necessary in case the
      * {@code "spatial_ref_sys"} table content is inconsistent with the EPSG database used by Geotk.
      *
      * @see #getHorizontalEnvelope()

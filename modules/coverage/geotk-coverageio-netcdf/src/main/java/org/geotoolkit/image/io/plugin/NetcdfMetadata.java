@@ -62,6 +62,7 @@ import org.geotoolkit.referencing.adapters.NetcdfCRS;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import ucar.nc2.dataset.NetcdfDataset;
 
 
 /**
@@ -159,9 +160,13 @@ final class NetcdfMetadata extends SpatialMetadata {
      * should have been invoked (if needed) before this constructor.
      *
      * @param reader The reader for which to assign the metadata.
+     * @param file The originating dataset file, or {@code null} if none.
      * @param variable The variable for which to read metadata.
+     * @throws IOException If an I/O operation was needed and failed.
      */
-    public NetcdfMetadata(final ImageReader reader, final VariableIF... variables) {
+    public NetcdfMetadata(final ImageReader reader, final NetcdfDataset file,
+            final VariableIF... variables) throws IOException
+    {
         super(SpatialMetadataFormat.IMAGE, reader, null);
         nativeMetadataFormatName = NATIVE_FORMAT;
         for (final VariableIF variable : variables) {
@@ -169,7 +174,7 @@ final class NetcdfMetadata extends SpatialMetadata {
                 final List<CoordinateSystem> systems = ((Enhancements) variable).getCoordinateSystems();
                 if (systems != null && !systems.isEmpty()) {
                     CoordinateReferenceSystem crs = parseWKT(variable, "ESRI_pe_string");
-                    setCoordinateSystem(systems.get(0), crs);
+                    setCoordinateSystem(file, systems.get(0), crs);
                     break; // Infers the CRS only from the first variable having such CRS.
                 }
             }
@@ -184,7 +189,7 @@ final class NetcdfMetadata extends SpatialMetadata {
      *
      * @param  variable The variable to look.
      * @param  attributeName The attribute to look for.
-     * @return The CRS if the attribute has been found and successfuly parsed,
+     * @return The CRS if the attribute has been found and successfully parsed,
      *         or {@code null} otherwise.
      */
     private CoordinateReferenceSystem parseWKT(final VariableIF variable, final String attributeName) {
@@ -206,12 +211,16 @@ final class NetcdfMetadata extends SpatialMetadata {
      * GeoAPI {@linkplain org.opengis.referencing.crs.CoordinateReferenceSystem
      * Coordinate Reference System} implementation.
      *
+     * @param file The originating dataset file, or {@code null} if none.
      * @param cs The coordinate system to define in metadata.
      * @param crs Always {@code null}, unless an alternative CRS should be formatted
      *        in replacement of the CRS built from the given NetCDF coordinate system.
+     * @throws IOException If an I/O operation was needed and failed.
      */
-    private void setCoordinateSystem(final CoordinateSystem cs, CoordinateReferenceSystem crs) {
-        final NetcdfCRS netcdfCRS = NetcdfCRS.wrap(cs);
+    private void setCoordinateSystem(final NetcdfDataset file, final CoordinateSystem cs,
+            CoordinateReferenceSystem crs) throws IOException
+    {
+        final NetcdfCRS netcdfCRS = NetcdfCRS.wrap(cs, file, this);
         final int dimension = netcdfCRS.getDimension();
         for (int i=0; i<dimension; i++) {
             final NetcdfAxis axis = netcdfCRS.getAxis(i);

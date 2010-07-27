@@ -154,7 +154,9 @@ public interface Layer {
 
     /**
      * Returns the grid geometries used by the coverages in this layer, sorted by decreasing
-     * frequency of use.
+     * frequency of use. The grid geometries may be 2D, 3D or 4D, including the vertical and
+     * temporal ranges if any. The Coordinate Reference System is the one declared in the
+     * database for the coverages.
      *
      * @return The grid geometries, with the most frequently used geometry first.
      * @throws CoverageStoreException if an error occurred while querying the database.

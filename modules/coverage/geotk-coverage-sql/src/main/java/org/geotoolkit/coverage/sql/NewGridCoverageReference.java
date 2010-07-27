@@ -38,8 +38,11 @@ import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
+import org.opengis.referencing.crs.VerticalCRS;
+import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.DateRange;
@@ -56,6 +59,7 @@ import org.geotoolkit.internal.sql.table.NoSuchRecordException;
 import org.geotoolkit.internal.coverage.TransferFunction;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -381,12 +385,20 @@ public final class NewGridCoverageReference {
                         horizontalSRID = id;
                     }
                 }
-                final CoordinateReferenceSystem verticalCRS = CRS.getVerticalCRS(crs);
+                final VerticalCRS verticalCRS = CRS.getVerticalCRS(crs);
                 if (verticalCRS != null) {
                     final Integer id = getIdentifier(verticalCRS, crsFactory);
                     if (id != null) {
                         verticalSRID = id;
                     }
+                }
+                final TemporalCRS temporalCRS = CRS.getTemporalCRS(crs);
+                if (temporalCRS != null) {
+                    final CoordinateSystemAxis axis = temporalCRS.getCoordinateSystem().getAxis(0);
+                    final DefaultTemporalCRS c = DefaultTemporalCRS.wrap(temporalCRS);
+                    dateRanges = new DateRange[] {
+                        new DateRange(c.toDate(axis.getMinimumValue()), c.toDate(axis.getMaximumValue()))
+                    };
                 }
             }
         }

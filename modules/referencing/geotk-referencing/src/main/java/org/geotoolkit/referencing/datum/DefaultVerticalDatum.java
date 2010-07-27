@@ -43,7 +43,7 @@ import org.geotoolkit.lang.Immutable;
  * it is combined to create a {@linkplain org.opengis.referencing.crs.VerticalCRS vertical CRS}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.03
+ * @version 3.14
  *
  * @since 1.2
  * @module
@@ -80,6 +80,14 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
     private final VerticalDatumType type;
 
     /**
+     * Default vertical datum for {@linkplain VerticalDatumType#BAROMETRIC barometric heights}.
+     *
+     * @since 3.14
+     */
+    public static final DefaultVerticalDatum BAROMETRIC =
+            new DefaultVerticalDatum(name(Vocabulary.Keys.BAROMETRIC_ALTITUDE), VerticalDatumType.BAROMETRIC);
+
+    /**
      * Default vertical datum for {@linkplain VerticalDatumType#GEOIDAL geoidal heights}.
      */
     public static final DefaultVerticalDatum GEOIDAL =
@@ -92,6 +100,14 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
      */
     public static final DefaultVerticalDatum ELLIPSOIDAL =
             new DefaultVerticalDatum(name(Vocabulary.Keys.ELLIPSOIDAL), VerticalDatumTypes.ELLIPSOIDAL);
+
+    /**
+     * Default vertical datum for {@linkplain VerticalDatumType#OTHER_SURFACE other surface}.
+     *
+     * @since 3.14
+     */
+    public static final DefaultVerticalDatum OTHER_SURFACE =
+            new DefaultVerticalDatum(name(Vocabulary.Keys.OTHER), VerticalDatumType.OTHER_SURFACE);
 
     /**
      * Constructs a new object in which every attributes are set to a default value.
