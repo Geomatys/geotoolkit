@@ -105,6 +105,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
@@ -866,6 +867,23 @@ public final class GO2Utilities {
         }
     }
 
+    public static Class getGeometryClass(final FeatureType featuretype, final String geomName){
+        final PropertyDescriptor prop;
+        if (geomName != null && !geomName.trim().isEmpty()) {
+            prop = featuretype.getDescriptor(geomName);
+        }else if(featuretype != null){
+            prop = featuretype.getGeometryDescriptor();
+        }else{
+            prop = null;
+        }
+
+        if(prop != null){
+            return prop.getType().getBinding();
+        }else{
+            return Geometry.class;
+        }
+    }
+
     public static Geometry getGeometry(final Feature feature, final String geomName){
         if (geomName != null && !geomName.trim().isEmpty()) {
             final Property prop = feature.getProperty(geomName);
@@ -1184,6 +1202,31 @@ public final class GO2Utilities {
 
     public static void clearCache(){
         CACHE.clear();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // OTHER UTILS /////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Merge colors, the first color is placed at the back.
+     * The first color is expected to be opaque.
+     *
+     * @return Opaque color resulting from the merge
+     * @throws IllegalArgumentException if first color is not opaque
+     */
+    public static Color mergeColors(Color c1, Color c2) throws IllegalArgumentException{
+
+        if(c1.getAlpha() != 255){
+            throw new IllegalArgumentException("First color must be opaque");
+        }
+
+        final float alpha = (float)c2.getAlpha()/255f;
+        final int r = Math.min(c1.getRed(), c2.getRed())        + (int) (Math.abs(c1.getRed()-c2.getRed())*alpha);
+        final int g = Math.min(c1.getGreen(), c2.getGreen())    + (int) (Math.abs(c1.getGreen()-c2.getGreen())*alpha);
+        final int b = Math.min(c1.getBlue(), c2.getBlue())      + (int) (Math.abs(c1.getBlue()-c2.getBlue())*alpha);
+
+        return new Color(r, g, b);
     }
 
 }

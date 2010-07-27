@@ -103,7 +103,7 @@ public final class JTSLineIterator extends JTSGeometryIterator<LineString> {
         }
     }
 
-	/**
+    /**
      * {@inheritDoc }
      */
     @Override
@@ -122,5 +122,26 @@ public final class JTSLineIterator extends JTSGeometryIterator<LineString> {
             return SEG_LINETO;
         }
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int currentSegment(float[] coords) {
+        if (currentCoord == 0) {
+            coords[0] = (float) coordinates.getX(0);
+            coords[1] = (float) coordinates.getY(0);
+            transform.transform(coords, 0, coords, 0, 1);
+            return SEG_MOVETO;
+        } else if ((currentCoord == coordinateCount) && isClosed) {
+            return SEG_CLOSE;
+        } else {
+            coords[0] = (float)coordinates.getX(currentCoord);
+            coords[1] = (float)coordinates.getY(currentCoord);
+            transform.transform(coords, 0, coords, 0, 1);
+            return SEG_LINETO;
+        }
+    }
+
 	
 }

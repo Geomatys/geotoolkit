@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -35,6 +35,7 @@ import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
 import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
 import org.geotoolkit.data.memory.GenericSortByFeatureIterator;
 import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
+import org.geotoolkit.data.memory.GenericTransformFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.session.DefaultSession;
 import org.geotoolkit.data.session.Session;
@@ -45,6 +46,7 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.logging.Logging;
 
@@ -61,6 +63,9 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
+ * Uncomplete implementation of a datastore that handle most methods
+ * by fallbacking on others. It also offer some generic methods to
+ * handle query parameters and events.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -74,14 +79,14 @@ public abstract class AbstractDataStore implements DataStore{
     public static final String GML_NAME = "name";
     public static final String GML_DESCRIPTION = "description";
 
-    private final Logger Logger = Logging.getLogger(getClass().getPackage().getName());
+    private final Logger logger = Logging.getLogger(getClass().getPackage().getName());
 
     //@todo not thread safe, I dont think it's important
     private final Set<StorageListener> listeners = new HashSet<StorageListener>();
 
 
     protected Logger getLogger(){
-        return Logger;
+        return logger;
     }
 
     /**
@@ -363,6 +368,7 @@ public abstract class AbstractDataStore implements DataStore{
         final Filter filter = remainingParameters.getFilter();
         final Name[] properties = remainingParameters.getPropertyNames();
         final SortBy[] sorts = remainingParameters.getSortBy();
+        final double[] resampling = remainingParameters.getResolution();
         final CoordinateReferenceSystem crs = remainingParameters.getCoordinateSystemReproject();
         final Hints hints = remainingParameters.getHints();
 
@@ -427,6 +433,11 @@ public abstract class AbstractDataStore implements DataStore{
         }
         if(mask != original){
             reader = GenericRetypeFeatureIterator.wrap(reader, mask, hints);
+        }
+
+        //wrap resampling ------------------------------------------------------
+        if(resampling != null){
+            reader = GenericTransformFeatureIterator.wrap(reader, new GeometryScaleTransformer(resampling[0], resampling[1]));
         }
 
         //wrap reprojection ----------------------------------------------------

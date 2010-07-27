@@ -175,6 +175,7 @@ public class QueryTest extends TestCase{
         query = QueryBuilder.all(name);
         assertEquals(query.getTypeName(), name);
         assertEquals(query.getCoordinateSystemReproject(), null);
+        assertEquals(query.getResolution(), null);
         assertEquals(query.getFilter(), Filter.INCLUDE);
         assertEquals(query.getMaxFeatures(), null);
         assertEquals(query.getPropertyNames(), null);
@@ -185,6 +186,7 @@ public class QueryTest extends TestCase{
         query = QueryBuilder.fids(name);
         assertEquals(query.getTypeName(), name);
         assertEquals(query.getCoordinateSystemReproject(), null);
+        assertEquals(query.getResolution(), null);
         assertEquals(query.getFilter(), Filter.INCLUDE);
         assertEquals(query.getMaxFeatures(), null);
         assertNotNull(query.getPropertyNames()); //must be an empty array, not null
@@ -196,6 +198,7 @@ public class QueryTest extends TestCase{
         query = QueryBuilder.filtered(name, Filter.EXCLUDE);
         assertEquals(query.getTypeName(), name);
         assertEquals(query.getCoordinateSystemReproject(), null);
+        assertEquals(query.getResolution(), null);
         assertEquals(query.getFilter(), Filter.EXCLUDE);
         assertEquals(query.getMaxFeatures(), null);
         assertEquals(query.getPropertyNames(), null);
@@ -206,6 +209,7 @@ public class QueryTest extends TestCase{
         query = QueryBuilder.sorted(name, new SortBy[]{FF.sort("att1", SortOrder.DESCENDING)});
         assertEquals(query.getTypeName(), name);
         assertEquals(query.getCoordinateSystemReproject(), null);
+        assertEquals(query.getResolution(), null);
         assertEquals(query.getFilter(), Filter.INCLUDE);
         assertEquals(query.getMaxFeatures(), null);
         assertEquals(query.getPropertyNames(), null);
@@ -237,6 +241,7 @@ public class QueryTest extends TestCase{
         //test all parameters---------------------------------------------------
         qb.setTypeName(name);
         qb.setCRS(DefaultGeographicCRS.WGS84);
+        qb.setResolution(new double[]{45,31});
         qb.setFilter(Filter.EXCLUDE);
         qb.setMaxFeatures(10);
         qb.setProperties(new String[]{"att1","att2"});
@@ -246,6 +251,8 @@ public class QueryTest extends TestCase{
 
         assertEquals(query.getTypeName(), name);
         assertEquals(query.getCoordinateSystemReproject(), DefaultGeographicCRS.WGS84);
+        assertEquals(query.getResolution()[0], 45d);
+        assertEquals(query.getResolution()[1], 31d);
         assertEquals(query.getFilter(), Filter.EXCLUDE);
         assertEquals(query.getMaxFeatures(), Integer.valueOf(10));
         assertEquals(query.getPropertyNames()[0], DefaultName.valueOf("att1"));
@@ -262,6 +269,7 @@ public class QueryTest extends TestCase{
 
         assertEquals(query.getTypeName(), name);
         assertEquals(query.getCoordinateSystemReproject(), null);
+        assertEquals(query.getResolution(), null);
         assertEquals(query.getFilter(), Filter.INCLUDE);
         assertEquals(query.getMaxFeatures(), null);
         assertEquals(query.getPropertyNames(), null);
@@ -274,6 +282,8 @@ public class QueryTest extends TestCase{
 
         assertEquals(query.getTypeName(), name);
         assertEquals(query.getCoordinateSystemReproject(), DefaultGeographicCRS.WGS84);
+        assertEquals(query.getResolution()[0], 45d);
+        assertEquals(query.getResolution()[1], 31d);
         assertEquals(query.getFilter(), Filter.EXCLUDE);
         assertEquals(query.getMaxFeatures(), Integer.valueOf(10));
         assertEquals(query.getPropertyNames()[0], DefaultName.valueOf("att1"));
@@ -287,6 +297,8 @@ public class QueryTest extends TestCase{
 
         assertEquals(query.getTypeName(), name);
         assertEquals(query.getCoordinateSystemReproject(), DefaultGeographicCRS.WGS84);
+        assertEquals(query.getResolution()[0], 45d);
+        assertEquals(query.getResolution()[1], 31d);
         assertEquals(query.getFilter(), Filter.EXCLUDE);
         assertEquals(query.getMaxFeatures(), Integer.valueOf(10));
         assertEquals(query.getPropertyNames()[0], DefaultName.valueOf("att1"));
@@ -300,6 +312,7 @@ public class QueryTest extends TestCase{
 
         assertEquals(query.getTypeName(), name);
         assertEquals(query.getCoordinateSystemReproject(), null);
+        assertEquals(query.getResolution(), null);
         assertEquals(query.getFilter(), Filter.INCLUDE);
         assertEquals(query.getMaxFeatures(), null);
         assertEquals(query.getPropertyNames(), null);
@@ -376,47 +389,61 @@ public class QueryTest extends TestCase{
         final Query query = qb.buildQuery();
 
         final FeatureCollection col = session.getFeatureCollection(query);
+        final FeatureIterator ite = col.iterator();
 
-        FeatureIterator ite = col.iterator();
-        Feature f = null;
+        boolean foundStr1 = false;
+        boolean foundStr20 = false;
+        boolean foundStr21 = false;
+        boolean foundStr3 = false;
+        boolean foundStr50 = false;
+        boolean foundStr51 = false;
 
-        f = ite.next();
-        assertEquals(f.getProperty("att1").getValue(), "str1");
-        assertEquals(f.getProperty("att2").getValue(), 1);
-        assertEquals(f.getProperty("att3").getValue(), 1);
-        assertEquals(f.getProperty("att4").getValue(), 10d);
+        int count = 0;
+        while(ite.hasNext()){
+            final Feature f = ite.next();
+            final String att1 = f.getProperty("att1").getValue().toString();
 
-        f = ite.next();
-        assertEquals(f.getProperty("att1").getValue(), "str2");
-        assertEquals(f.getProperty("att2").getValue(), 2);
-        assertEquals(f.getProperty("att3").getValue(), 2);
-        assertEquals(f.getProperty("att4").getValue(), 20d);
+            if(att1.equals("str1")){
+                foundStr1 = true;
+                assertEquals(f.getProperty("att2").getValue(), 1);
+                assertEquals(f.getProperty("att3").getValue(), 1);
+                assertEquals(f.getProperty("att4").getValue(), 10d);
+            }else if(att1.equals("str2")){
+                assertEquals(f.getProperty("att2").getValue(), 2);
+                assertEquals(f.getProperty("att3").getValue(), 2);
+                double att4 = (Double)f.getProperty("att4").getValue();
+                if(att4 == 20d){
+                    foundStr20 = true;
+                }else if(att4 == 30d){
+                    foundStr21 = true;
+                }
+            }else if(att1.equals("str3")){
+                foundStr3 = true;
+                assertEquals(f.getProperty("att2").getValue(), 3);
+                assertEquals(f.getProperty("att3").getValue(), 3);
+                assertEquals(f.getProperty("att4").getValue(), 40d);
+            }else if(att1.equals("str50")){
+                foundStr50 = true;
+                assertEquals(f.getProperty("att2").getValue(), 50);
+                assertEquals(f.getProperty("att3").getValue(), null);
+                assertEquals(f.getProperty("att4").getValue(), null);
+            }else if(att1.equals("str51")){
+                foundStr51 = true;
+                assertEquals(f.getProperty("att2").getValue(), 51);
+                assertEquals(f.getProperty("att3").getValue(), null);
+                assertEquals(f.getProperty("att4").getValue(), null);
+            }
+            count++;
+        }
 
-        f = ite.next();
-        assertEquals(f.getProperty("att1").getValue(), "str2");
-        assertEquals(f.getProperty("att2").getValue(), 2);
-        assertEquals(f.getProperty("att3").getValue(), 2);
-        assertEquals(f.getProperty("att4").getValue(), 30d);
+        assertTrue(foundStr1);
+        assertTrue(foundStr20);
+        assertTrue(foundStr21);
+        assertTrue(foundStr3);
+        assertTrue(foundStr50);
+        assertTrue(foundStr51);
+        assertEquals(6, count);
 
-        f = ite.next();
-        assertEquals(f.getProperty("att1").getValue(), "str3");
-        assertEquals(f.getProperty("att2").getValue(), 3);
-        assertEquals(f.getProperty("att3").getValue(), 3);
-        assertEquals(f.getProperty("att4").getValue(), 40d);
-
-        f = ite.next();
-        assertEquals(f.getProperty("att1").getValue(), "str50");
-        assertEquals(f.getProperty("att2").getValue(), 50);
-        assertEquals(f.getProperty("att3").getValue(), null);
-        assertEquals(f.getProperty("att4").getValue(), null);
-
-        f = ite.next();
-        assertEquals(f.getProperty("att1").getValue(), "str51");
-        assertEquals(f.getProperty("att2").getValue(), 51);
-        assertEquals(f.getProperty("att3").getValue(), null);
-        assertEquals(f.getProperty("att4").getValue(), null);
-
-        assertFalse(ite.hasNext());
         ite.close();
     }
 
@@ -438,48 +465,62 @@ public class QueryTest extends TestCase{
         final Query query = qb.buildQuery();
 
         final FeatureCollection col = session.getFeatureCollection(query);
+        final FeatureIterator ite = col.iterator();
 
-        FeatureIterator ite = col.iterator();
-        Feature f = null;
+        boolean foundStr1 = false;
+        boolean foundStr20 = false;
+        boolean foundStr21 = false;
+        boolean foundStr3 = false;
+        boolean foundStr60 = false;
+        boolean foundStr61 = false;
 
-        f = ite.next();
-        assertEquals(f.getProperty("att1").getValue(), "str1");
-        assertEquals(f.getProperty("att2").getValue(), 1);
-        assertEquals(f.getProperty("att3").getValue(), 1);
-        assertEquals(f.getProperty("att4").getValue(), 10d);
+        int count = 0;
+        while(ite.hasNext()){
+            final Feature f = ite.next();
+            final Object att1 = f.getProperty("att1").getValue();
 
-        f = ite.next();
-        assertEquals(f.getProperty("att1").getValue(), "str2");
-        assertEquals(f.getProperty("att2").getValue(), 2);
-        assertEquals(f.getProperty("att3").getValue(), 2);
-        assertEquals(f.getProperty("att4").getValue(), 20d);
+            if("str1".equals(att1)){
+                foundStr1 = true;
+                assertEquals(f.getProperty("att2").getValue(), 1);
+                assertEquals(f.getProperty("att3").getValue(), 1);
+                assertEquals(f.getProperty("att4").getValue(), 10d);
+            }else if("str2".equals(att1)){
+                assertEquals(f.getProperty("att2").getValue(), 2);
+                assertEquals(f.getProperty("att3").getValue(), 2);
+                double att4 = (Double)f.getProperty("att4").getValue();
+                if(att4 == 20d){
+                    foundStr20 = true;
+                }else if(att4 == 30d){
+                    foundStr21 = true;
+                }
+            }else if("str3".equals(att1)){
+                foundStr3 = true;
+                assertEquals(f.getProperty("att2").getValue(), 3);
+                assertEquals(f.getProperty("att3").getValue(), 3);
+                assertEquals(f.getProperty("att4").getValue(), 40d);
+            }else if(att1 == null){
+                assertEquals(f.getProperty("att2").getValue(), null);
+                int att3 = (Integer)f.getProperty("att3").getValue();
+                
+                if(att3 == 60){
+                    assertEquals(f.getProperty("att4").getValue(), 60d);
+                    foundStr60 = true;
+                }else if(att3 == 61){
+                    assertEquals(f.getProperty("att4").getValue(), 61d);
+                    foundStr61 = true;
+                }
+            }
+            count++;
+        }
 
-        f = ite.next();
-        assertEquals(f.getProperty("att1").getValue(), "str2");
-        assertEquals(f.getProperty("att2").getValue(), 2);
-        assertEquals(f.getProperty("att3").getValue(), 2);
-        assertEquals(f.getProperty("att4").getValue(), 30d);
-
-        f = ite.next();
-        assertEquals(f.getProperty("att1").getValue(), "str3");
-        assertEquals(f.getProperty("att2").getValue(), 3);
-        assertEquals(f.getProperty("att3").getValue(), 3);
-        assertEquals(f.getProperty("att4").getValue(), 40d);
-
-        f = ite.next();
-        assertEquals(f.getProperty("att1").getValue(), null);
-        assertEquals(f.getProperty("att2").getValue(), null);
-        assertEquals(f.getProperty("att3").getValue(), 60);
-        assertEquals(f.getProperty("att4").getValue(), 60d);
-
-        f = ite.next();
-        assertEquals(f.getProperty("att1").getValue(), null);
-        assertEquals(f.getProperty("att2").getValue(), null);
-        assertEquals(f.getProperty("att3").getValue(), 61);
-        assertEquals(f.getProperty("att4").getValue(), 61d);
-
-        assertFalse(ite.hasNext());
-
+        assertTrue(foundStr1);
+        assertTrue(foundStr20);
+        assertTrue(foundStr21);
+        assertTrue(foundStr3);
+        assertTrue(foundStr60);
+        assertTrue(foundStr61);
+        assertEquals(6, count);
+        
     }
 
 }

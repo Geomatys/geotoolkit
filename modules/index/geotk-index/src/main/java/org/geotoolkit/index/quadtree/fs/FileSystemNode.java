@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2004-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -31,27 +32,24 @@ import com.vividsolutions.jts.geom.Envelope;
  * DOCUMENT ME!
  * 
  * @author Tommaso Nolli
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class FileSystemNode extends Node {
-    private ScrollingBuffer buffer;
-    private ByteOrder order;
-    private int subNodeStartByte;
-    private int subNodesLength;
+
+    private final ScrollingBuffer buffer;
+    private final int subNodeStartByte;
+    private final int subNodesLength;
     private int numSubNodes;
 
     /**
      * DOCUMENT ME!
      * 
      * @param bounds
-     * @param channel
-     *                DOCUMENT ME!
-     * @param order
-     *                DOCUMENT ME!
-     * @param startByte
-     *                DOCUMENT ME!
-     * @param subNodesLength
-     *                DOCUMENT ME!
+     * @param channel DOCUMENT ME!
+     * @param order DOCUMENT ME!
+     * @param startByte DOCUMENT ME!
+     * @param subNodesLengt DOCUMENT ME!
      */
     FileSystemNode(Envelope bounds, int id, Node parent,
             ScrollingBuffer buffer, int startByte, int subNodesLength) {
@@ -66,7 +64,8 @@ public class FileSystemNode extends Node {
      */
     @Override
     public Node copy() throws IOException {
-        FileSystemNode copy = new FileSystemNode(getBounds(), id, getParent(),
+        final FileSystemNode copy = new FileSystemNode(
+                getBounds(), id, getParent(),
                 buffer, subNodeStartByte, subNodesLength);
         copy.numShapesId = numShapesId;
         copy.shapesId = new int[numShapesId];
@@ -156,34 +155,31 @@ public class FileSystemNode extends Node {
      */
     public static FileSystemNode readNode(int id, Node parent,
             FileChannel channel, ByteOrder order) throws IOException {
-        ScrollingBuffer buffer = new ScrollingBuffer(channel, order);
+        final ScrollingBuffer buffer = new ScrollingBuffer(channel, order);
         return readNode(id, parent, buffer);
     }
 
     static FileSystemNode readNode(int id, Node parent, ScrollingBuffer buf)
             throws IOException {
         // offset
-        int offset = buf.getInt();
-        double x1;
-        double y1;
-        double x2;
-        double y2;
+        final int offset = buf.getInt();
 
         // envelope
-        x1 = buf.getDouble();
-        y1 = buf.getDouble();
-        x2 = buf.getDouble();
-        y2 = buf.getDouble();
-        Envelope env = new Envelope(x1, x2, y1, y2);
+        final double x1 = buf.getDouble();
+        final double y1 = buf.getDouble();
+        final double x2 = buf.getDouble();
+        final double y2 = buf.getDouble();
+        final Envelope env = new Envelope(x1, x2, y1, y2);
 
         // shapes in this node
-        int numShapesId = buf.getInt();
-        int[] ids = new int[numShapesId];
+        final int numShapesId = buf.getInt();
+        final int[] ids = new int[numShapesId];
         buf.getIntArray(ids);
-        int numSubNodes = buf.getInt();
+        final int numSubNodes = buf.getInt();
 
         // let's create the new node
-        FileSystemNode node = new FileSystemNode(env, id, parent, buf,
+        final FileSystemNode node = new FileSystemNode(
+                env, id, parent, buf,
                 (int) buf.getPosition(), offset);
         node.setShapesId(ids);
         node.setNumSubNodes(numSubNodes);
@@ -196,11 +192,13 @@ public class FileSystemNode extends Node {
      * buffer reading file contents with a minimum of 8kb per access
      */
     private static class ScrollingBuffer {
-        FileChannel channel;
-        ByteOrder order;
-        ByteBuffer buffer;
+
+        private final FileChannel channel;
+        private final ByteOrder order;
+
+        private ByteBuffer buffer;
         /** the initial position of the buffer in the channel */
-        long bufferStart;
+        private long bufferStart;
 
         public ScrollingBuffer(FileChannel channel, ByteOrder order)
                 throws IOException {
@@ -228,11 +226,12 @@ public class FileSystemNode extends Node {
         }
 
         public void getIntArray(int[] array) throws IOException {
-            int size = array.length * 4;
-            if (buffer.remaining() < size)
+            final int size = array.length * 4;
+            if (buffer.remaining() < size){
                 refillBuffer(size);
+            }
             // read the array using a view
-            IntBuffer intView = buffer.asIntBuffer();
+            final IntBuffer intView = buffer.asIntBuffer();
             intView.limit(array.length);
             intView.get(array);
             // don't forget to update the original buffer position, since the
@@ -247,12 +246,13 @@ public class FileSystemNode extends Node {
          */
         void refillBuffer(int requiredSize) throws IOException {
             // compute the actual position up to we have read something
-            long currentPosition = bufferStart + buffer.position();
+            final long currentPosition = bufferStart + buffer.position();
             // if the buffer is not big enough enlarge it
             if (buffer.capacity() < requiredSize) {
                 int size = buffer.capacity();
-                while (size < requiredSize)
+                while (size < requiredSize){
                     size *= 2;
+                }
                 buffer = ByteBuffer.allocateDirect(size);
                 buffer.order(order);
             }
@@ -277,8 +277,7 @@ public class FileSystemNode extends Node {
             // if the new position is already in the buffer, just move the
             // buffer position
             // otherwise we have to reload it
-            if (newPosition >= bufferStart
-                    && newPosition <= bufferStart + buffer.limit()) {
+            if (newPosition >= bufferStart && newPosition <= bufferStart + buffer.limit()) {
                 buffer.position((int) (newPosition - bufferStart));
             } else {
                 readBuffer(newPosition);

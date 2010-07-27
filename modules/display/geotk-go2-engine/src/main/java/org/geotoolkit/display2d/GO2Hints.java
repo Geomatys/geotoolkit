@@ -18,6 +18,7 @@
 package org.geotoolkit.display2d;
 
 import java.awt.RenderingHints.Key;
+import java.awt.image.ColorModel;
 import org.geotoolkit.display.canvas.HintKey;
 
 /**
@@ -72,6 +73,12 @@ public class GO2Hints {
      */
     public static final Key KEY_LABEL_RENDERER_CLASS = new HintKey(6, Class.class);
 
+    /**
+     * Force the canvas to use the given color model.
+     * This only works with the J2DBufferedCanvas.
+     */
+    public static final Key KEY_COLOR_MODEL = new HintKey(7, ColorModel.class);
+
 
     public static final Boolean MULTI_THREAD_ON = Boolean.TRUE;
     public static final Boolean MULTI_THREAD_OFF = Boolean.FALSE;
@@ -86,5 +93,5 @@ public class GO2Hints {
      * Going under 1 doesnt bring much more details 
      * going above 2.5 makes small geometries disapear or look sharp.
      */
-    public static final Number GENERALIZE_FACTOR_DEFAULT = new Float(1.3f);
+    public static final Number GENERALIZE_FACTOR_DEFAULT = Float.valueOf(1.3f);
 }

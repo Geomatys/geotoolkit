@@ -182,7 +182,7 @@ class DefaultMutableLayerFeatureConstraints implements MutableLayerFeatureConstr
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[MutableLayerFeatureConstraints : ConstraintsSize=");
         builder.append(constraints.size());
         builder.append(']');

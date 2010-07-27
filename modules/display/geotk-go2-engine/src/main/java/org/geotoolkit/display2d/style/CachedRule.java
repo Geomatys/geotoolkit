@@ -17,11 +17,11 @@
  */
 package org.geotoolkit.display2d.style;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
+import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.display2d.GO2Utilities;
 
 import org.opengis.feature.Feature;
@@ -39,6 +39,7 @@ import org.opengis.style.Symbolizer;
 public class CachedRule extends Cache<Rule>{
 
     private final CachedSymbolizer[] symbols;
+    private final Filter preparedFilter;
 
     public CachedRule(Rule source){
         super(source);
@@ -61,13 +62,15 @@ public class CachedRule extends Cache<Rule>{
             //we could not find a cache for each symbol, we must resize our array.
             this.symbols = Arrays.copyOf(array, i);
         }
+
+        this.preparedFilter = FilterUtilities.prepare(source.getFilter(),Feature.class);
     }
 
     /**
-     * @return Rule filter.
+     * @return Rule optimized filter.
      */
     public Filter getFilter(){
-        return styleElement.getFilter();
+        return preparedFilter;
     }
 
     /**

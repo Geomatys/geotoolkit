@@ -104,11 +104,11 @@ public class DefaultAnchorPoint implements AnchorPoint{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[AnchorPoint : X=");
-        builder.append(anchorX.toString());
+        builder.append(anchorX);
         builder.append(" Y=");
-        builder.append(anchorY.toString());
+        builder.append(anchorY);
         builder.append(']');
         return builder.toString();
     }

@@ -84,7 +84,11 @@ import org.opengis.filter.identity.Identifier;
 import com.vividsolutions.jts.geom.Envelope;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.shapefile.ShpDBF;
+import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.DefaultName;
+import org.opengis.feature.type.FeatureType;
+import org.opengis.filter.sort.SortBy;
 
 /**
  * A DataStore implementation which allows reading and writing from Shapefiles.
@@ -228,58 +232,72 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
     @Override
     public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Query query)
             throws DataStoreException {
-        final String typeName = query.getTypeName().getLocalPart();
-        if (query.getFilter() == Filter.EXCLUDE){
-            return GenericEmptyFeatureIterator.createReader(getFeatureType());
+        final SimpleFeatureType originalSchema = getFeatureType();
+        final Name              queryTypeName = query.getTypeName();
+        final Filter            queryFilter = query.getFilter();
+        final SortBy[]          querySortBy = query.getSortBy();
+        final Hints             queryHints = query.getHints();
+
+        if (queryFilter == Filter.EXCLUDE){
+            return GenericEmptyFeatureIterator.createReader(originalSchema);
         }
 
-        if (query.getSortBy() != null) {
+        if (querySortBy != null && querySortBy.length > 0) {
             throw new DataStoreException("The ShapeFileDatastore does not support sortby query");
         }
 
-        final Hints hints = query.getHints();
+        final Name defaultGeomName = originalSchema.getGeometryDescriptor().getName();
 
-        Name[] propertyNames = query.getPropertyNames() == null ? new Name[0]
-                : query.getPropertyNames();
-        final Name defaultGeomName = getFeatureType().getGeometryDescriptor().getName();
+        final FilterAttributeExtractor fae = new FilterAttributeExtractor();
+        queryFilter.accept(fae, null);
 
-        FilterAttributeExtractor fae = new FilterAttributeExtractor();
-        query.getFilter().accept(fae, null);
-
-        Set attributes = new HashSet(Arrays.asList(propertyNames));
-        attributes.addAll(fae.getAttributeNameSet());
-
-        SimpleFeatureType newSchema = getFeatureType();
-        boolean readDbf = true;
-        boolean readGeometry = true;
-
-        propertyNames = (Name[]) attributes.toArray(new Name[attributes.size()]);
+        //find all attributs needed
+        final Set<Name> attributes = new HashSet<Name>(fae.getAttributeNameSet());
+        final Name[] queryPropertyNames = query.getPropertyNames();
+        if(queryPropertyNames != null && queryPropertyNames.length > 0){
+            attributes.addAll(Arrays.asList(queryPropertyNames));
+        }
+        final Name[] propertyNames = (Name[]) attributes.toArray(new Name[attributes.size()]);
+        
 
         try {
-            if (((query.getPropertyNames() != null)
-                    && (propertyNames.length == 1) && propertyNames[0]
-                    .equals(defaultGeomName))) {
-                readDbf = false;
-                newSchema = (SimpleFeatureType) FeatureTypeUtilities.createSubType(getFeatureType(), propertyNames);
-            } else if ((query.getPropertyNames() != null)
-                    && (propertyNames.length == 0)) {
-                readDbf = false;
-                readGeometry = false;
-                newSchema = (SimpleFeatureType) FeatureTypeUtilities.createSubType(getFeatureType(), propertyNames);
-            } else if (query.getPropertyNames() != null) {
-                newSchema = (SimpleFeatureType) FeatureTypeUtilities.createSubType(getFeatureType(), propertyNames, newSchema.getCoordinateReferenceSystem());
+            final SimpleFeatureType newSchema;
+            final boolean readDbf;
+            final boolean readGeometry;
+
+            if(queryPropertyNames != null){
+                if (propertyNames.length==1 && DefaultName.match(propertyNames[0],defaultGeomName)){
+                    readDbf = false;
+                    readGeometry = true;
+                    newSchema = (SimpleFeatureType) FeatureTypeUtilities.createSubType(originalSchema, propertyNames);
+                } else if (propertyNames.length == 0) {
+                    readDbf = false;
+                    readGeometry = false;
+                    newSchema = (SimpleFeatureType) FeatureTypeUtilities.createSubType(originalSchema, propertyNames);
+                } else {
+                    readDbf = true;
+                    readGeometry = true;
+                    newSchema = (SimpleFeatureType) FeatureTypeUtilities.createSubType(originalSchema, propertyNames, 
+                            originalSchema.getCoordinateReferenceSystem());
+                }
+            }else{
+                readDbf = true;
+                readGeometry = true;
+                newSchema = originalSchema;
             }
 
-            FeatureReader<SimpleFeatureType,SimpleFeature> reader = createFeatureReader(typeName, getAttributesReader(readDbf,
-                    readGeometry, query.getFilter()), getFeatureType(), hints);
+            final FeatureReader<SimpleFeatureType,SimpleFeature> reader = createFeatureReader(
+                    queryTypeName.getLocalPart(), getAttributesReader(readDbf,readGeometry, queryFilter),
+                    newSchema, queryHints);
 
-            QueryBuilder query2 = new QueryBuilder(query.getTypeName());
-            query2.setProperties(query.getPropertyNames());
-            query2.setFilter(query.getFilter());
-            query2.setHints(query.getHints());
-
-            reader = handleRemaining(reader, query2.buildQuery());
-            return reader;
+            //handle remaining parameters
+            final QueryBuilder qb = new QueryBuilder(queryTypeName);
+            qb.setProperties(queryPropertyNames);
+            qb.setFilter(queryFilter);
+            qb.setHints(queryHints);
+            qb.setCRS(query.getCoordinateSystemReproject());
+            qb.setResolution(query.getResolution());
+            return handleRemaining(reader, qb.buildQuery());
 
         } catch (IOException se) {
             throw new DataStoreException("Error creating reader", se);
@@ -406,9 +424,6 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             final IndexFile shx = openIndexFile();
             try {
 
-                DataDefinition def = new DataDefinition("US-ASCII");
-                def.addField(Integer.class);
-                def.addField(Long.class);
                 for (Identifier identifier : idsSet) {
                     String fid = identifier.toString();
                     long recno = reader.findFid(fid);
@@ -419,10 +434,9 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
                         continue;
                     }
                     try {
-                        Data data = new Data(def);
-                        data.addValue(new Integer((int) recno + 1));
-                        data.addValue(new Long(shx
-                                .getOffsetInBytes((int) recno)));
+                        Data data = new ShpData(
+                                (int)(recno+1),
+                                (long)shx.getOffsetInBytes((int) recno));
                         if(getLogger().isLoggable(Level.FINEST)){
                             getLogger().finest("fid " + fid+ " found for record #"
                                     + data.getValue(0) + " at index file offset "

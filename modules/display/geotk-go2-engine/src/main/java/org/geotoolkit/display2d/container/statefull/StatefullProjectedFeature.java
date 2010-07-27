@@ -68,7 +68,7 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
 
     public void clearDataCache(){
         for(StatefullProjectedGeometry sg : geometries.values()){
-            sg.setDataGeometry(null);
+            sg.setObjectiveGeometry(null);
         }
     }
 
@@ -92,14 +92,15 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
         if(proj == null){
             Geometry geom = GO2Utilities.getGeometry(feature, name);
             if(geom != null){
-                StatefullProjectedGeometry projectedGeom = new StatefullProjectedGeometry(params, geom);
+                final Class geomClass = GO2Utilities.getGeometryClass(feature.getType(), name);
+                final StatefullProjectedGeometry projectedGeom = new StatefullProjectedGeometry(params, geomClass, geom);
                 geometries.put(name, projectedGeom);
                 return projectedGeom;
             }
         }else{
             //check that the geometry is set
-            if(proj.getDataGeometry() == null){
-                proj.setDataGeometry(GO2Utilities.getGeometry(feature, name));
+            if(proj.getObjectiveGeometryJTS() == null){
+                proj.setObjectiveGeometry(GO2Utilities.getGeometry(feature, name));
             }
         }
         return proj;

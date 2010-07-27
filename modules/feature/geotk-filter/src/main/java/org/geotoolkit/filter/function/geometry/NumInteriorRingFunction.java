@@ -39,6 +39,6 @@ public class NumInteriorRingFunction extends AbstractFunction {
                     "Filter Function problem for function numInteriorRing argument #0 - expected type Geometry");
         }
 
-        return new Integer(StaticGeometry.numInteriorRing(arg0));
+        return StaticGeometry.numInteriorRing(arg0);
     }
 }

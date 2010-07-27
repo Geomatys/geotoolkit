@@ -89,8 +89,21 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
 
     @Override
     public void setAttributes(Object[] values) {
-        for (int i = 0; i < values.length; i++) {
-            setAttribute(i, values[i]);
+
+        final List<Property> properties = getProperties();
+        final boolean validating = isValidating();
+
+        for (int index = 0; index < values.length; index++) {
+            final Property prop = properties.get(index);
+            final Object val = values[index];
+
+            // if necessary, validation too
+            if (validating) {
+                FeatureValidationUtilities.validate((AttributeDescriptor)prop.getDescriptor(), val);
+            }
+
+            //the type must match, we don't test, user must know what he is doing or must validate feature.
+            prop.setValue(val);
         }
     }
 

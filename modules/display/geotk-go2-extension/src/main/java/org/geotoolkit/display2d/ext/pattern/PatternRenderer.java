@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.display2d.ext.pattern;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -41,8 +43,14 @@ import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
+import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
+import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.opengis.feature.Feature;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.geometry.Envelope;
@@ -104,8 +112,7 @@ public class PatternRenderer extends AbstractSymbolizerRenderer<CachedPatternSym
                         dataCoverage.view(ViewType.NATIVE),
                         renderingContext.getObjectiveCRS());
             }catch(Exception ex){
-                System.out.println("ERROR resample in raster symbolizer renderer: " + ex.getMessage());
-                ex.printStackTrace();
+                LOGGER.log(Level.WARNING, "ERROR resample in raster symbolizer renderer",ex);
             }
         }
 
@@ -126,30 +133,35 @@ public class PatternRenderer extends AbstractSymbolizerRenderer<CachedPatternSym
         final StatefullContextParams params = new StatefullContextParams(canvas,null);
         final CoordinateReferenceSystem objectiveCRS = renderingContext.getObjectiveCRS();
 
-        try {
-            params.dataToObjective = renderingContext.getMathTransform(dataCRS, objectiveCRS);
-            params.dataToObjectiveTransformer.setMathTransform(params.dataToObjective);
-        } catch (FactoryException ex) {
-            ex.printStackTrace();
-        }
 
-        final AffineTransform objtoDisp = renderingContext.getObjectiveToDisplay();
+        final AffineTransform2D objtoDisp = renderingContext.getObjectiveToDisplay();
         params.objectiveToDisplay.setTransform(objtoDisp);
-        params.updateGeneralizationFactor(renderingContext, dataCRS);
+        ((CoordinateSequenceMathTransformer)params.objToDisplayTransformer.getCSTransformer())
+                .setTransform(objtoDisp);
+
+
+        //data to objective
+        final CoordinateSequenceMathTransformer cstrs;
         try {
-            params.dataToDisplayTransformer.setMathTransform(renderingContext.getMathTransform(dataCRS, renderingContext.getDisplayCRS()));
+            cstrs = new CoordinateSequenceMathTransformer(CRS.findMathTransform(dataCRS, objectiveCRS));
         } catch (FactoryException ex) {
-            ex.printStackTrace();
+            throw new PortrayalException(ex);
         }
+        GeometryTransformer trs = new GeometryCSTransformer(cstrs);
 
         final StatefullProjectedFeature projectedFeature = new StatefullProjectedFeature(params);
-        for(final Map.Entry<SimpleFeature,List<CachedSymbolizer>> entry : features.entrySet()){
-            projectedFeature.setFeature(entry.getKey());
+        try {
+            for(final Map.Entry<SimpleFeature,List<CachedSymbolizer>> entry : features.entrySet()){
+                Feature f = entry.getKey();
+                f.getDefaultGeometryProperty().setValue(trs.transform((Geometry)f.getDefaultGeometryProperty().getValue()));
+                projectedFeature.setFeature(entry.getKey());
 
-            for(final CachedSymbolizer cached : entry.getValue()){
-                GO2Utilities.portray(projectedFeature, cached, renderingContext);
+                for(final CachedSymbolizer cached : entry.getValue()){
+                    GO2Utilities.portray(projectedFeature, cached, renderingContext);
+                }
             }
-
+        } catch (TransformException ex) {
+            throw new PortrayalException(ex);
         }
 
         renderingContext.switchToDisplayCRS();

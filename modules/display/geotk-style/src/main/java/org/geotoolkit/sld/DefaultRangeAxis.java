@@ -96,11 +96,11 @@ class DefaultRangeAxis implements RangeAxis {
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[RangeAxis : Name=");
-        builder.append(name.toString());
+        builder.append(name);
         builder.append(" Value=");
-        builder.append(value.toString());
+        builder.append(value);
         builder.append(']');
         return builder.toString();
     }

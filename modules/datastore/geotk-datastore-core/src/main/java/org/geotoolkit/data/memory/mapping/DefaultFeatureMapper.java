@@ -29,7 +29,8 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.util.List;
 import java.util.Map;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
-import org.geotoolkit.geometry.jts.GeometryCoordinateSequenceTransformer;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.Converters;
 import org.opengis.feature.Feature;
@@ -119,11 +120,8 @@ public class DefaultFeatureMapper implements FeatureMapper {
                 final CoordinateReferenceSystem targetCRS = targetGeomDesc.getCoordinateReferenceSystem();
                 if(!CRS.equalsIgnoreMetadata(sourceCRS,targetCRS)){
                     //crs are different, reproject source geometry
-                    final GeometryCoordinateSequenceTransformer transformer
-                            = new GeometryCoordinateSequenceTransformer();
                     try {
-                        transformer.setMathTransform(CRS.findMathTransform(sourceCRS, targetCRS, true));
-                        candidateGeom = transformer.transform(candidateGeom);
+                        candidateGeom = JTS.transform(candidateGeom, CRS.findMathTransform(sourceCRS, targetCRS, true));
                     } catch (Exception ex) {
                         ex.printStackTrace();
                         return null;

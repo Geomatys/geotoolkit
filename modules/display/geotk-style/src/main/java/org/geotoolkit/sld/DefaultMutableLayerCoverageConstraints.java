@@ -182,7 +182,7 @@ class DefaultMutableLayerCoverageConstraints implements MutableLayerCoverageCons
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[MutableLayerCoverageConstraint : ConstraintSize=");
         builder.append(constraints.size());
         builder.append(']');

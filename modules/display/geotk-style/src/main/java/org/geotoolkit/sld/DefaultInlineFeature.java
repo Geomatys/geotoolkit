@@ -97,7 +97,7 @@ class DefaultInlineFeature implements InlineFeature{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[InlineFeature : Size=");
         builder.append(features.size());
         builder.append(']');

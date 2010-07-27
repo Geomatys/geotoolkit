@@ -49,6 +49,6 @@ public class EqualsExactFunction extends AbstractFunction {
                     "Filter Function problem for function equalsExact argument #1 - expected type Geometry");
         }
 
-        return new Boolean(StaticGeometry.equalsExact(arg0, arg1));
+        return StaticGeometry.equalsExact(arg0, arg1);
     }
 }

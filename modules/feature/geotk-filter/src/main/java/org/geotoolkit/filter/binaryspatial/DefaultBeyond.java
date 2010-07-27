@@ -61,7 +61,7 @@ public class DefaultBeyond extends AbstractBinarySpatialOperator<Expression,Expr
      */
     @Override
     public String getDistanceUnits() {
-        return strUnit.toString();
+        return strUnit;
     }
 
     /**

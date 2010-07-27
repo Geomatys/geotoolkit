@@ -121,14 +121,14 @@ public class DefaultChannelSelection implements ChannelSelection{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[ChannelSelection : ");
         if(rgb != null){
             builder.append(" RGB=");
-            builder.append(rgb.toString());
+            builder.append(rgb);
         }else if(gray != null){
             builder.append(" GRAY=");
-            builder.append(gray.toString());
+            builder.append(gray);
         }
         builder.append("]");
         return builder.toString();

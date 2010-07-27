@@ -56,6 +56,6 @@ public class BetweenFunction extends AbstractFunction {
                     "Filter Function problem for function between argument #2 - expected type Object");
         }
 
-        return new Boolean(StaticGeometry.between(arg0, arg1, arg2));
+        return StaticGeometry.between(arg0, arg1, arg2);
     }
 }

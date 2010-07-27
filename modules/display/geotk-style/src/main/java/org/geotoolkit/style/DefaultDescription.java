@@ -105,7 +105,7 @@ public class DefaultDescription implements Description{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[Description : Title=");
         builder.append(title);
         builder.append(" Abstract=");

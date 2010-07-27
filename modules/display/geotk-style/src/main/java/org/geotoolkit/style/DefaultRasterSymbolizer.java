@@ -214,10 +214,10 @@ public class DefaultRasterSymbolizer extends AbstractSymbolizer implements Raste
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("[RasterSymbolizer : Opacity=");
-        builder.append(opacity.toString());
+        builder.append(opacity);
         if(selection != null){
             builder.append(" Channels=");
-            builder.append(selection.toString());
+            builder.append(selection);
         }
         builder.append(']');
         return builder.toString();

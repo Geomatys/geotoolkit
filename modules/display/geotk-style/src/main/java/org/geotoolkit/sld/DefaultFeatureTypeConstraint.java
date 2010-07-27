@@ -125,15 +125,15 @@ class DefaultFeatureTypeConstraint implements FeatureTypeConstraint{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[FeatureTypeConstraint : ");
         if(featureName != null){
             builder.append(" FeatureName=");
-            builder.append(featureName.toString());
+            builder.append(featureName);
         }
         if(filter != null){
             builder.append(" Filter=");
-            builder.append(filter.toString());
+            builder.append(filter);
         }
         builder.append(" Extent size=");
         builder.append(extents.size());

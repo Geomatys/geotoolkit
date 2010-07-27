@@ -245,7 +245,7 @@ public class OMDataStore extends AbstractDataStore {
                 result.add(identifier);
             }
         } catch (SQLException ex) {
-            LOGGER.log(Level.WARNING, SQL_WRITE_SAMPLING_POINT.toString(), ex);
+            LOGGER.log(Level.WARNING, SQL_WRITE_SAMPLING_POINT, ex);
         }finally{
             if(stmtWrite != null){
                 try {

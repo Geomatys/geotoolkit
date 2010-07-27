@@ -108,9 +108,9 @@ public class DefaultSelectedChannelType implements SelectedChannelType{
     public String toString() {
         StringBuilder builder = new StringBuilder();
         builder.append("[SelectedChannelType : Name=");
-        builder.append(name.toString());
+        builder.append(name);
         builder.append(" Enhancement=");
-        builder.append(enhance.toString());
+        builder.append(enhance);
         builder.append(']');
         return builder.toString();
     }

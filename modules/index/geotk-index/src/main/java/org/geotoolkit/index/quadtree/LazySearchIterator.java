@@ -17,16 +17,13 @@
 package org.geotoolkit.index.quadtree;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.geotoolkit.index.Data;
-import org.geotoolkit.index.DataDefinition;
 
 import com.vividsolutions.jts.geom.Envelope;
+import java.util.Arrays;
 
 /**
  * Iterator that search the quad tree depth first. 32000 indices are cached at a
@@ -40,102 +37,151 @@ import com.vividsolutions.jts.geom.Envelope;
 public class LazySearchIterator implements Iterator<Data> {
 
     private static final int MAX_INDICES = 32768;
-    
-    Data next = null;
 
-    Node current;
+    private final int[] indices = new int[MAX_INDICES];
+    private final Data[] datas = new Data[MAX_INDICES];
+    private final DataReader dataReader;
+    private final Envelope bounds;
 
-    int idIndex = 0;
-
+    private Data next = null;
+    private Node current;
+    private int idIndex = 0;
     private boolean closed;
+    private Iterator<Data> data;
 
-    private Envelope bounds;
-
-    Iterator data;
-
-    private DataReader indexfile;
-
-    public LazySearchIterator(Node root, DataReader indexfile, Envelope bounds) {
-        super();
+    public LazySearchIterator(Node root, DataReader dataReader, Envelope bounds) {
+        this.dataReader = dataReader;
         this.current = root;
         this.bounds = bounds;
         this.closed = false;
         this.next = null;
-        this.indexfile = indexfile;
     }
 
+    @Override
     public boolean hasNext() {
-        if (closed)
-            throw new IllegalStateException("Iterator has been closed!");
-        if (next != null)
-            return true;
-        if (data != null && data.hasNext()) {
-            next = (Data) data.next();
-        } else {
-            fillCache();
-            if (data != null && data.hasNext())
-                next = (Data) data.next();
-        }
+        findNext();
         return next != null;
     }
 
-    private void fillCache() {
-        List indices = new ArrayList();
-        ArrayList dataList = new ArrayList();
-        try {
-            while (indices.size() < MAX_INDICES && current != null) {
-                if (idIndex < current.getNumShapeIds() && !current.isVisited()
-                        && current.getBounds().intersects(bounds)) {
-                    indices.add(new Integer(current.getShapeId(idIndex)));
-                    idIndex++;
-                } else {
-                    current.setShapesId(new int[0]);
-                    idIndex = 0;
-                    boolean foundUnvisited = false;
-                    for (int i = 0; i < current.getNumSubNodes(); i++) {
-                        Node node = current.getSubNode(i);
-                        if (!node.isVisited()
-                                && node.getBounds().intersects(bounds)) {
-                            foundUnvisited = true;
-                            current = node;
-                            break;
-                        }
-                    }
-                    if (!foundUnvisited) {
-                        current.setVisited(true);
-                        current = current.getParent();
-                    }
-                }
-            }
-            // sort so offset lookup is faster
-            Collections.sort(indices);
-            for (Iterator iter = indices.iterator(); iter.hasNext();) {
-                Integer recno = (Integer) iter.next();
-                Data data = indexfile.create(recno);
-                dataList.add(data);
-            }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (StoreException e) {
-            throw new RuntimeException(e);
-        }
-        data = dataList.iterator();
-    }
-
+    @Override
     public Data next() {
-        if (!hasNext())
+        findNext();
+        if (next == null){
             throw new NoSuchElementException("No more elements available");
-        Data temp = next;
+        }
+        
+        final Data temp = next;
         next = null;
         return temp;
     }
 
+    @Override
     public void remove() {
         throw new UnsupportedOperationException();
     }
 
     public void close() throws StoreException {
         this.closed = true;
+    }
+
+    private void findNext(){
+        if (closed){
+            throw new IllegalStateException("Iterator has been closed!");
+        }
+
+        if(next != null){
+            return;
+        }
+
+        //search for the next value.
+        if (data != null && data.hasNext()) {
+            next = data.next();
+        } else {
+            fillCache();
+            if (data != null && data.hasNext())
+                next = data.next();
+        }
+    }
+
+
+    private void fillCache() {
+        int indexSize = 0;
+
+        try {
+            while (indexSize < MAX_INDICES && current != null) {
+                final int nbShapeIds = current.getNumShapeIds();
+                final int nbShapeRemaining = nbShapeIds - idIndex;
+
+                if (nbShapeRemaining > 0 && !current.isVisited()
+                        && current.getBounds().intersects(bounds)) {
+
+                    final int[] shapeIds = current.shapesId;
+                    
+                    //find the max shapeIds we can add in one pass
+                    final int nb = Math.min(nbShapeRemaining, MAX_INDICES-indexSize);
+                    System.arraycopy(shapeIds, idIndex, indices, indexSize, nb);
+                    indexSize += nb;
+                    idIndex += nb;
+                } else {
+                    current.setShapesId(new int[0]);
+                    idIndex = 0;
+
+                    boolean foundUnvisited = false;
+                    for (int i=0,n=current.getNumSubNodes(); i<n ; i++) {
+                        final Node node = current.getSubNode(i);
+                        if (!node.isVisited() && node.getBounds().intersects(bounds)) {
+                            foundUnvisited = true;
+                            current = node;
+                            break;
+                        }
+                    }
+
+                    if (!foundUnvisited) {
+                        current.setVisited(true);
+                        current = current.getParent();
+                    }
+                }
+            }
+
+            // sort so offset lookup is faster
+            Arrays.sort(indices,0,indexSize);
+            for (int i=0; i<indexSize; i++) {
+                datas[i] = dataReader.create(indices[i]);
+            }
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (StoreException e) {
+            throw new RuntimeException(e);
+        }
+
+        data = new LimitedArrayIterator(indexSize);
+    }
+
+    private class LimitedArrayIterator implements Iterator<Data>{
+
+        private final int limit;
+        private int index = 0;
+
+        LimitedArrayIterator(int limit){
+            this.limit = limit;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return index<limit;
+        }
+
+        @Override
+        public Data next() {
+            return datas[index++];
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("Not supported yet.");
+        }
+
     }
 
 }

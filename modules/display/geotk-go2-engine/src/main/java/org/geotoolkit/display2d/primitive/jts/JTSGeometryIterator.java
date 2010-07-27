@@ -30,9 +30,8 @@ import java.awt.geom.PathIterator;
  */
 public abstract class JTSGeometryIterator<T extends Geometry> implements PathIterator {
 
-    private static final AffineTransform IDENTITY = new AffineTransform();
+    static final AffineTransform IDENTITY = new AffineTransform();
 
-    protected double[] dcoords = new double[2];
     protected AffineTransform transform;
     protected T geometry;
 
@@ -47,17 +46,6 @@ public abstract class JTSGeometryIterator<T extends Geometry> implements PathIte
 
     public void setGeometry(T geom){
         this.geometry = geom;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public int currentSegment(float[] coords) {
-        int result = currentSegment(dcoords);
-        coords[0] = (float) dcoords[0];
-        coords[1] = (float) dcoords[1];
-        return result;
     }
 
     public void setTransform(AffineTransform trs){

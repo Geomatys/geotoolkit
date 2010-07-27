@@ -18,6 +18,7 @@
 
 package org.geotoolkit.data.query;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
@@ -35,6 +36,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.sort.SortBy;
 
 /**
  *
@@ -279,6 +281,22 @@ public class QueryUtilities {
         //group start index ----------------------------------------------------
         int start = original.getStartIndex() + second.getStartIndex();
         qb.setStartIndex(start);
+
+        //ordering -------------------------------------------------------------
+        final List<SortBy> sorts = new ArrayList<SortBy>();
+        SortBy[] sts = original.getSortBy();
+        if(sts != null){
+            sorts.addAll(Arrays.asList(sts));
+        }
+
+        sts = second.getSortBy();
+        if(sts != null){
+            sorts.addAll(Arrays.asList(sts));
+        }
+
+        if(sorts != null){
+            qb.setSortBy(sorts.toArray(new SortBy[sorts.size()]));
+        }
 
         //hints of the second query
         qb.setHints(second.getHints());

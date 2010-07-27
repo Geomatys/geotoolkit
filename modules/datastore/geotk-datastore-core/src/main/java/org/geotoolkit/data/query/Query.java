@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  * 
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -187,6 +188,15 @@ public interface Query {
      *         be reprojected to.
      */
     CoordinateReferenceSystem getCoordinateSystemReproject();
+
+    /**
+     * Set The wished resolution of the geometries.
+     * Since there is no Envelope provided in the query like in CoverageReadParam
+     * this resolution must be expressed in the native data coordinate reference system.
+     * 
+     * @return resolution or null if no resolution provided.
+     */
+    double[] getResolution();
 
     /**
      * SortBy results according to indicated property and order.

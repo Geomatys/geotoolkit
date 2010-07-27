@@ -110,18 +110,18 @@ public class DefaultPointSymbolizer extends AbstractSymbolizer implements PointS
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[Point Symbolizer : Graphic=");
         if(graphic != null){
-            builder.append(graphic.toString());
+            builder.append(graphic);
         }
         if(uom != null){
             builder.append(" Unit=");
-            builder.append(uom.toString());
+            builder.append(uom);
         }
         if(geom != null){
             builder.append(" Geometry=");
-            builder.append(geom.toString());
+            builder.append(geom);
         }
         builder.append(']');
         return builder.toString();

@@ -279,19 +279,13 @@ public class DefaultStroke implements Stroke{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("[Stroke : Color=");
-        builder.append(color.toString());
-        builder.append(" Cap=");
-        builder.append(cap.toString());
-        builder.append(" Join=");
-        builder.append(join.toString());
-        builder.append(" Offset=");
-        builder.append(offset.toString());
-        builder.append(" Opacity=");
-        builder.append(opacity.toString());
-        builder.append(" Width=");
-        builder.append(width.toString());
+        final StringBuilder builder = new StringBuilder();
+        builder.append("[Stroke : Color=").append(color);
+        builder.append(" Cap=").append(cap);
+        builder.append(" Join=").append(join);
+        builder.append(" Offset=").append(offset);
+        builder.append(" Opacity=").append(opacity);
+        builder.append(" Width=").append(width);
         if(dashes != null){
             builder.append(" Dashes=[");
             for(int i=0;i<dashes.length;i++){
@@ -304,11 +298,11 @@ public class DefaultStroke implements Stroke{
         }
         if(fill != null){
             builder.append(" Fill=");
-            builder.append(fill.toString());
+            builder.append(fill);
         }
         if(stroke != null){
             builder.append(" Stroke=");
-            builder.append(stroke.toString());
+            builder.append(stroke);
         }
         builder.append(']');
         return builder.toString();

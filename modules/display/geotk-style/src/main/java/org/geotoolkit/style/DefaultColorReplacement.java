@@ -91,9 +91,9 @@ public class DefaultColorReplacement implements ColorReplacement{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[ColorReplacement : Function=");
-        builder.append(recode.toString());
+        builder.append(recode);
         builder.append(']');
         return builder.toString();
     }

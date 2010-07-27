@@ -185,17 +185,12 @@ public class DefaultGraphic implements Graphic{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("[Graphic : Opacity=");
-        builder.append(opacity.toString());
-        builder.append(" Size=");
-        builder.append(size.toString());
-        builder.append(" Rotation=");
-        builder.append(rotation.toString());
-        builder.append(" Anchor=");
-        builder.append(anchor.toString());
-        builder.append(" Displacement=");
-        builder.append(disp.toString());
+        final StringBuilder builder = new StringBuilder();
+        builder.append("[Graphic : Opacity=").append(opacity);
+        builder.append(" Size=").append(size);
+        builder.append(" Rotation=").append(rotation);
+        builder.append(" Anchor=").append(anchor);
+        builder.append(" Displacement=").append(disp);
         builder.append(']');
         return builder.toString();
     }

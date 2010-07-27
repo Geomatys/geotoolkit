@@ -39,6 +39,6 @@ public class IsSimpleFunction extends AbstractFunction {
                     "Filter Function problem for function isSimple argument #0 - expected type Geometry");
         }
 
-        return new Boolean(StaticGeometry.isSimple(arg0));
+        return StaticGeometry.isSimple(arg0);
     }
 }

@@ -39,6 +39,6 @@ public class GetXFunction extends AbstractFunction {
                     "Filter Function problem for function getX argument #0 - expected type Geometry");
         }
 
-        return new Double(StaticGeometry.getX(arg0));
+        return Double.valueOf(StaticGeometry.getX(arg0));
     }
 }
