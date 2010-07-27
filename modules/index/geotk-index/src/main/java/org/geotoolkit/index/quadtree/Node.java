@@ -27,10 +27,10 @@ import com.vividsolutions.jts.geom.Envelope;
  */
 public class Node extends AbstractNode{
 
-    protected Node n0;
-    protected Node n1;
-    protected Node n2;
-    protected Node n3;
+    protected AbstractNode n0;
+    protected AbstractNode n1;
+    protected AbstractNode n2;
+    protected AbstractNode n3;
 
     /**
      * @param envelope the node bounds [MinX,MinY,MaxX,MaxY]
@@ -44,13 +44,13 @@ public class Node extends AbstractNode{
     }
 
     @Override
-    public void setSubNodes(Node ... nodes) {
+    public void setSubNodes(AbstractNode ... nodes) {
         n0 = null;
         n1 = null;
         n2 = null;
         n3 = null;
         for(int i=0;i<nodes.length;i++){
-            final Node n = nodes[i];
+            final AbstractNode n = nodes[i];
             switch(i){
                 case 0: this.n0=n; break;
                 case 1: this.n1=n; break;
@@ -77,7 +77,7 @@ public class Node extends AbstractNode{
     }
 
     @Override
-    public Node getSubNode(int pos) throws StoreException {
+    public AbstractNode getSubNode(int pos) throws StoreException {
         switch(pos){
             case 0: return n0;
             case 1: return n1;

@@ -53,7 +53,7 @@ public class QuadTree {
     //open iterators
     private final Set iterators = new HashSet();
 
-    private Node root;
+    private AbstractNode root;
     private int numShapes;
     private int maxDepth;
 
@@ -142,7 +142,7 @@ public class QuadTree {
      * @param md
      * @throws StoreException
      */
-    private void insert(Node node, int recno, Envelope bounds, int md)
+    private void insert(AbstractNode node, int recno, Envelope bounds, int md)
             throws StoreException {
 
         final Envelope buffer = new Envelope();
@@ -152,7 +152,7 @@ public class QuadTree {
              * If there are subnodes, then consider whether this object will fit
              * in them.
              */
-            Node subNode = null;
+            AbstractNode subNode = null;
             for (int i = 0; i < node.getNumSubNodes(); i++) {
                 subNode = node.getSubNode(i);
                 if (subNode.getBounds(buffer).contains(bounds)) {
@@ -231,13 +231,13 @@ public class QuadTree {
      * @param node The node to trim
      * @return true if this node has been trimmed
      */
-    private boolean trim(Node node) throws StoreException {
+    private boolean trim(AbstractNode node) throws StoreException {
         final int nbSub = node.getNumSubNodes();
 
         if(nbSub>0){
-            final List<Node> dummy = new ArrayList<Node>(nbSub);
+            final List<AbstractNode> dummy = new ArrayList<AbstractNode>(nbSub);
             for (int i=0; i<nbSub; i++) {
-                final Node n = node.getSubNode(i);
+                final AbstractNode n = node.getSubNode(i);
                 if(!this.trim(n)) {
                     dummy.add(n);
                 }
@@ -250,10 +250,10 @@ public class QuadTree {
          * to my position.
          */
         if (node.getNumSubNodes() == 1 && node.getNumShapeIds() == 0) {
-            final Node subNode = node.getSubNode(0);
+            final AbstractNode subNode = node.getSubNode(0);
 
             final int nbssn = subNode.getNumSubNodes();
-            final Node[] ssn = new Node[nbssn];
+            final AbstractNode[] ssn = new AbstractNode[nbssn];
             for(int i=0;i<nbssn;i++){
                 ssn[i] = subNode.getSubNode(i);
             }
@@ -314,7 +314,7 @@ public class QuadTree {
     }
 
     /**
-     * @param numShapes
+     * @param numShapesAbstractNode
      *                The numShapes to set.
      */
     public void setNumShapes(int numShapes) {
@@ -324,7 +324,7 @@ public class QuadTree {
     /**
      * @return Returns the root.
      */
-    public Node getRoot() {
+    public AbstractNode getRoot() {
         return this.root;
     }
 
@@ -332,7 +332,7 @@ public class QuadTree {
      * @param root
      *                The root to set.
      */
-    public void setRoot(Node root) {
+    public void setRoot(AbstractNode root) {
         this.root = root;
     }
 

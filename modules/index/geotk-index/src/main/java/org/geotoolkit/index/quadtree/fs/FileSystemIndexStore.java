@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.index.quadtree.fs;
 
+import org.geotoolkit.index.quadtree.AbstractNode;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -137,7 +138,7 @@ public class FileSystemIndexStore implements IndexStore {
      * @throws StoreException
      *                 DOCUMENT ME!
      */
-    private void writeNode(QuadTree tree, Node node, FileChannel channel, ByteOrder order)
+    private void writeNode(QuadTree tree, AbstractNode node, FileChannel channel, ByteOrder order)
             throws IOException, StoreException {
         final int offset = this.getSubNodeOffset(node);
 
@@ -179,11 +180,11 @@ public class FileSystemIndexStore implements IndexStore {
      * @throws StoreException
      *                 DOCUMENT ME!
      */
-    private int getSubNodeOffset(Node node) throws StoreException {
+    private int getSubNodeOffset(AbstractNode node) throws StoreException {
         int offset = 0;
 
         for (int i=0,n=node.getNumSubNodes(); i<n; i++) {
-            Node tmp = node.getSubNode(i);
+            AbstractNode tmp = node.getSubNode(i);
             offset += (4 * 8); // Envelope size
             offset += ((tmp.getNumShapeIds() + 3) * 4); // Entries size + 3
             offset += this.getSubNodeOffset(tmp);

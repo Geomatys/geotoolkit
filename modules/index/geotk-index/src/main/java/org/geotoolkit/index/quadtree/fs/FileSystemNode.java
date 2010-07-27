@@ -18,10 +18,12 @@
 package org.geotoolkit.index.quadtree.fs;
 
 import java.io.IOException;
+import java.lang.ref.SoftReference;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.nio.channels.FileChannel;
+import org.geotoolkit.index.quadtree.AbstractNode;
 
 import org.geotoolkit.index.quadtree.Node;
 import org.geotoolkit.index.quadtree.StoreException;
@@ -33,7 +35,9 @@ import org.geotoolkit.index.quadtree.StoreException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class FileSystemNode extends Node {
+public class FileSystemNode extends AbstractNode {
+
+    private SoftReference<FileSystemNode[]> nodes = new SoftReference<FileSystemNode[]>(null);
 
     private final ScrollingBuffer buffer;
     private final int subNodeStartByte;
@@ -88,34 +92,36 @@ public class FileSystemNode extends Node {
      * {@inheritDoc }
      */
     @Override
-    public Node getSubNode(int index) throws StoreException {
-        if (this.n0 != null) {
-            return super.getSubNode(index);
-        }
+    public AbstractNode getSubNode(int index) throws StoreException {
 
-        //read the subnodes
-        try {            
-            final Node[] subNodes = new Node[numSubNodes];
-            for(int i = 0;i<subNodes.length; i++){
+        FileSystemNode[] subNodes = nodes.get();
+        
+        if (subNodes == null) {
+            //read the subnodes
+            try {
+                subNodes = new FileSystemNode[numSubNodes];
+                for(int i = 0;i<subNodes.length; i++){
 
-                final int offset;
-                if(i>0){
-                    //skip the previous nodes
-                    final FileSystemNode previousNode = (FileSystemNode) subNodes[i-1];
-                    offset = previousNode.getSubNodeStartByte()+ previousNode.getSubNodesLength();
-                }else{
-                    offset = subNodeStartByte;
+                    final int offset;
+                    if(i>0){
+                        //skip the previous nodes
+                        final FileSystemNode previousNode = (FileSystemNode) subNodes[i-1];
+                        offset = previousNode.getSubNodeStartByte()+ previousNode.getSubNodesLength();
+                    }else{
+                        offset = subNodeStartByte;
+                    }
+                    buffer.goTo(offset);
+                    subNodes[i] = readNode(buffer);
                 }
-                buffer.goTo(offset);
-                subNodes[i] = readNode(buffer);
-            }
-            setSubNodes(subNodes);
 
-        } catch (IOException e) {
-            throw new StoreException(e);
+                nodes = new SoftReference<FileSystemNode[]>(subNodes);
+
+            } catch (IOException e) {
+                throw new StoreException(e);
+            }
         }
 
-        return super.getSubNode(index);
+        return subNodes[index];
     }
 
     /**
@@ -154,6 +160,11 @@ public class FileSystemNode extends Node {
         node.setNumSubNodes(numSubNodes);
 
         return node;
+    }
+
+    @Override
+    public void setSubNodes(AbstractNode ... nodes) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**

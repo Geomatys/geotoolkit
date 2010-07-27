@@ -64,7 +64,7 @@ public abstract class AbstractNode {
         Arrays.fill(this.shapesId, -1);
     }
 
-    public abstract void setSubNodes(Node ... nodes);
+    public abstract void setSubNodes(AbstractNode ... nodes);
 
     /**
      * @return Returns the bounds. [MinX,MinY,MaxX,MaxY]
@@ -113,7 +113,7 @@ public abstract class AbstractNode {
      * @return A Node
      * @throws StoreException DOCUMENT ME!
      */
-    public abstract Node getSubNode(int pos) throws StoreException;
+    public abstract AbstractNode getSubNode(int pos) throws StoreException;
 
     /**
      * Add a shape id

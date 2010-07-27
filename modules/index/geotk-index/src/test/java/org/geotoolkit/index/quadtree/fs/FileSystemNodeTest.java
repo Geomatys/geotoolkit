@@ -5,6 +5,7 @@
 
 package org.geotoolkit.index.quadtree.fs;
 
+import org.geotoolkit.index.quadtree.AbstractNode;
 import org.geotoolkit.index.quadtree.Node;
 import com.vividsolutions.jts.geom.Envelope;
 import java.io.IOException;
@@ -82,7 +83,7 @@ public class FileSystemNodeTest {
                    tree.getRoot().getBounds(new Envelope()));
         assertEquals(3602,tree.getNumShapes());
 
-        final Node root = tree.getRoot();
+        final AbstractNode root = tree.getRoot();
         System.out.println(root);
 
         for(int i=0;i<4;i++){

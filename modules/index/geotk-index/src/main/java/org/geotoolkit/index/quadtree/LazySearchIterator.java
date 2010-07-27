@@ -44,23 +44,23 @@ public class LazySearchIterator implements Iterator<Data> {
     private boolean closed;
 
     //the current path where we are, Integer is the current visited child node index.
-    private final List<Entry<Node,Integer>> path = new ArrayList<Entry<Node,Integer>>(10);
+    private final List<Entry<AbstractNode,Integer>> path = new ArrayList<Entry<AbstractNode,Integer>>(10);
     private final Envelope buffer = new Envelope();
 
     //curent visited node
-    private Node current = null;
+    private AbstractNode current = null;
     private int nbShp = 0;
     private int idShp = 0;
     private Data next = null;
 
-    public LazySearchIterator(Node node, DataReader dataReader, Envelope bounds) {
+    public LazySearchIterator(AbstractNode node, DataReader dataReader, Envelope bounds) {
         this.dataReader = dataReader;
         this.bounds = bounds;
         this.closed = false;
         this.next = null;
 
         if(node.getBounds(buffer).intersects(bounds)){
-            path.add(new SimpleEntry<Node, Integer>(node, -1));
+            path.add(new SimpleEntry<AbstractNode, Integer>(node, -1));
         }
         
     }
@@ -148,8 +148,8 @@ public class LazySearchIterator implements Iterator<Data> {
             }
 
             final int lastIndex = path.size()-1;
-            final Entry<Node,Integer> segment = path.get(lastIndex);
-            final Node candidate = segment.getKey();
+            final Entry<AbstractNode,Integer> segment = path.get(lastIndex);
+            final AbstractNode candidate = segment.getKey();
             int idNode = segment.getValue();
 
             if(idNode == -1){
@@ -173,14 +173,14 @@ public class LazySearchIterator implements Iterator<Data> {
             final int nbNodes = candidate.getNumSubNodes();
             childLoop:
             while(idNode < nbNodes){
-                final Node child = candidate.getSubNode(idNode);
+                final AbstractNode child = candidate.getSubNode(idNode);
                 if(bounds != null && !child.getBounds(buffer).intersects(bounds)){
                     //not in the area we requested
                     idNode++;
                     continue childLoop;
                 }
 
-                path.add(new SimpleEntry<Node, Integer>(candidate.getSubNode(idNode),-1));
+                path.add(new SimpleEntry<AbstractNode, Integer>(candidate.getSubNode(idNode),-1));
                 
                 //prepare next node sarch
                 idNode++;
