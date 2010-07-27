@@ -58,11 +58,11 @@ import javax.xml.bind.annotation.XmlType;
 public class PolygonPatchType extends AbstractSurfacePatchType {
 
     @XmlElementRef(name = "exterior", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected JAXBElement<AbstractRingPropertyType> exterior;
+    private JAXBElement<AbstractRingPropertyType> exterior;
     @XmlElementRef(name = "interior", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected List<JAXBElement<AbstractRingPropertyType>> interior;
+    private List<JAXBElement<AbstractRingPropertyType>> interior;
     @XmlAttribute
-    protected SurfaceInterpolationType interpolation;
+    private SurfaceInterpolationType interpolation;
 
     PolygonPatchType() {}
 
@@ -109,20 +109,6 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
     /**
      * Gets the value of the interior property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the interior property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getInterior().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
@@ -162,6 +148,24 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
      */
     public void setInterpolation(SurfaceInterpolationType value) {
         this.interpolation = value;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[PolygonPatchType]").append("\n");
+        if (interpolation != null) {
+            sb.append("interpolation:").append(interpolation).append('\n');
+        }
+        if (interior != null) {
+            sb.append("interior:").append('\n');
+            for (JAXBElement<AbstractRingPropertyType> inte : interior) {
+                sb.append(inte.getValue()).append('\n');
+            }
+        }
+        if (exterior != null) {
+            sb.append("exterior:").append(exterior.getValue()).append('\n');
+        }
+        return sb.toString();
     }
 
 }

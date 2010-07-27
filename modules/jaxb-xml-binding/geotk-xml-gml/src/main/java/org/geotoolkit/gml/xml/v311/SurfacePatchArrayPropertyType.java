@@ -64,20 +64,6 @@ public class SurfacePatchArrayPropertyType {
     /**
      * Gets the value of the surfacePatch property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the surfacePatch property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getSurfacePatch().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AbstractParametricCurveSurfaceType }{@code >}
      * {@link JAXBElement }{@code <}{@link TriangleType }{@code >}
@@ -96,6 +82,18 @@ public class SurfacePatchArrayPropertyType {
             abstractSurfacePatch = new ArrayList<JAXBElement<? extends AbstractSurfacePatchType>>();
         }
         return this.abstractSurfacePatch;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[SurfacePatchArrayPropertyType]").append('\n');
+        if (abstractSurfacePatch != null) {
+            s.append(" abstractSurfacePatch:");
+            for (JAXBElement<? extends AbstractSurfacePatchType>  sp: abstractSurfacePatch) {
+                s.append("patches:").append(sp.getValue()).append('\n');
+            }
+        }
+        return s.toString();
     }
 
 }

@@ -55,38 +55,24 @@ import javax.xml.bind.annotation.XmlValue;
 public class DirectPositionListType {
 
     @XmlValue
-    protected List<Double> value;
+    private List<Double> value;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    protected Integer count;
+    private Integer count;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
-    protected String srsName;
+    private String srsName;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    protected Integer srsDimension;
+    private Integer srsDimension;
     @XmlAttribute
-    protected List<String> axisLabels;
+    private List<String> axisLabels;
     @XmlAttribute
-    protected List<String> uomLabels;
+    private List<String> uomLabels;
 
     /**
      * XML List based on XML Schema double type.  An element of this type contains a space-separated list of double values Gets the value of the value property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the value property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getValue().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Double }
      * 
@@ -174,20 +160,6 @@ public class DirectPositionListType {
     /**
      * Gets the value of the axisLabels property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the axisLabels property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAxisLabels().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 
@@ -203,20 +175,6 @@ public class DirectPositionListType {
     /**
      * Gets the value of the uomLabels property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the uomLabels property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getUomLabels().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 
@@ -227,6 +185,42 @@ public class DirectPositionListType {
             uomLabels = new ArrayList<String>();
         }
         return this.uomLabels;
+    }
+
+    /**
+     * Return a String description of the object.
+     */
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[DirectPositionListType}\n");
+        if (count != null) {
+            s.append("count : ").append(count).append('\n');
+        }
+        if (srsDimension != null) {
+            s.append("srsDimension : ").append(srsDimension).append('\n');
+        }
+        if (srsName != null) {
+            s.append("srsName : ").append(srsName).append('\n');
+        }
+        if (axisLabels != null) {
+            s.append("axisLabels : ").append('\n');
+            for (String a : axisLabels) {
+                s.append(a).append('\n');
+            }
+        }
+        if (uomLabels != null) {
+            s.append("uomLabels : ").append('\n');
+            for (String a : uomLabels) {
+                s.append(a).append('\n');
+            }
+        }
+        if (value != null) {
+            s.append("value : ").append('\n');
+            for (Double a : value) {
+                s.append(a).append('\n');
+            }
+        }
+        return s.toString();
     }
 
 }

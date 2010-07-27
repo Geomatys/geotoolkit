@@ -55,7 +55,7 @@ import org.geotoolkit.util.Utilities;
 public class CurveSegmentArrayPropertyType {
 
     @XmlElementRef(name = "AbstractCurveSegment", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected List<JAXBElement<? extends AbstractCurveSegmentType>> abstractCurveSegment;
+    private List<JAXBElement<? extends AbstractCurveSegmentType>> abstractCurveSegment;
 
     public CurveSegmentArrayPropertyType() {}
 
@@ -72,20 +72,6 @@ public class CurveSegmentArrayPropertyType {
     /**
      * Gets the value of the curveSegment property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the curveSegment property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getCurveSegment().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link LineStringSegmentType }{@code >}
      * {@link JAXBElement }{@code <}{@link ArcByBulgeType }{@code >}
@@ -145,5 +131,17 @@ public class CurveSegmentArrayPropertyType {
         int hash = 7;
         hash = 79 * hash + (this.abstractCurveSegment != null ? this.abstractCurveSegment.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[CurveSegmentArrayPropertyType]\n");
+        if (abstractCurveSegment != null) {
+            sb.append("segments:").append('\n');
+            for (JAXBElement<? extends AbstractCurveSegmentType> s : abstractCurveSegment) {
+                sb.append(s.getValue()).append('\n');
+            }
+        }
+        return sb.toString();
     }
 }

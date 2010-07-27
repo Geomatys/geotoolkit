@@ -52,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
 public class AbstractRingPropertyType {
 
     @XmlElementRef(name = "AbstractRing", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected JAXBElement<? extends AbstractRingType> abstractRing;
+    private JAXBElement<? extends AbstractRingType> abstractRing;
 
     AbstractRingPropertyType() {}
 
@@ -95,6 +95,15 @@ public class AbstractRingPropertyType {
      */
     public void setAbstractRing(JAXBElement<? extends AbstractRingType> value) {
         this.abstractRing = ((JAXBElement<? extends AbstractRingType> ) value);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[AbstractRingPropertyType]\n");
+        if (abstractRing != null) {
+            sb.append("abstractRing:").append(abstractRing.getValue()).append('\n');
+        }
+        return sb.toString();
     }
 
 }

@@ -75,11 +75,11 @@ public class LineStringSegmentType
         @XmlElementRef(name = "pos", namespace = "http://www.opengis.net/gml", type = JAXBElement.class),
         @XmlElementRef(name = "pointRep", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     })
-    protected List<JAXBElement<?>> posOrPointPropertyOrPointRep;
-    protected DirectPositionListType posList;
-    protected CoordinatesType coordinates;
+    private List<JAXBElement<?>> posOrPointPropertyOrPointRep;
+    private DirectPositionListType posList;
+    private CoordinatesType coordinates;
     @XmlAttribute
-    protected CurveInterpolationType interpolation;
+    private CurveInterpolationType interpolation;
 
     public LineStringSegmentType() {
 
@@ -100,20 +100,6 @@ public class LineStringSegmentType
     /**
      * Gets the value of the posOrPointPropertyOrPointRep property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the posOrPointPropertyOrPointRep property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getPosOrPointPropertyOrPointRep().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link DirectPositionType }{@code >}
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
@@ -204,4 +190,24 @@ public class LineStringSegmentType
         this.interpolation = value;
     }
 
+     @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (interpolation != null) {
+            sb.append("interpolation:").append(interpolation).append('\n');
+        }
+        if (coordinates != null) {
+            sb.append("coordinates:").append(coordinates).append('\n');
+        }
+        if (posList != null) {
+            sb.append("posList:").append(posList).append('\n');
+        }
+        if (posOrPointPropertyOrPointRep != null) {
+            sb.append("posOrPointPropertyOrPointRep:").append('\n');
+            for (JAXBElement<?>  inte : posOrPointPropertyOrPointRep) {
+                sb.append(inte.getValue()).append('\n');
+            }
+        }
+        return sb.toString();
+    }
 }

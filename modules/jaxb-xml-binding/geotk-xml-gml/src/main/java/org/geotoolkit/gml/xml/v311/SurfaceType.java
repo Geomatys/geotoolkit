@@ -55,12 +55,10 @@ import javax.xml.bind.annotation.XmlType;
     TriangulatedSurfaceType.class,
     PolyhedralSurfaceType.class
 })
-public class SurfaceType
-    extends AbstractSurfaceType
-{
+public class SurfaceType extends AbstractSurfaceType {
 
     @XmlElementRef(name = "patches", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected JAXBElement<? extends SurfacePatchArrayPropertyType> patches;
+    private JAXBElement<? extends SurfacePatchArrayPropertyType> patches;
 
     /**
      * This element encapsulates the patches of the surface.
@@ -90,4 +88,12 @@ public class SurfaceType
         this.patches = ((JAXBElement<? extends SurfacePatchArrayPropertyType> ) value);
     }
 
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(super.toString()).append('\n');
+        if (patches != null) {
+            s.append("patches:").append(patches.getValue()).append('\n');
+        }
+        return s.toString();
+    }
 }

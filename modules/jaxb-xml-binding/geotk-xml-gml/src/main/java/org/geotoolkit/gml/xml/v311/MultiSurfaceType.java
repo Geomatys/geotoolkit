@@ -52,33 +52,13 @@ import org.opengis.filter.expression.ExpressionVisitor;
     "surfaceMember",
     "surfaceMembers"
 })
-public class MultiSurfaceType
-    extends AbstractGeometricAggregateType
-{
+public class MultiSurfaceType extends AbstractGeometricAggregateType {
 
-    protected List<SurfacePropertyType> surfaceMember;
-    protected SurfaceArrayPropertyType surfaceMembers;
+    private List<SurfacePropertyType> surfaceMember;
+    private SurfaceArrayPropertyType surfaceMembers;
 
     /**
      * Gets the value of the surfaceMember property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the surfaceMember property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getSurfaceMember().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link SurfacePropertyType }
-     * 
      * 
      */
     public List<SurfacePropertyType> getSurfaceMember() {
@@ -127,4 +107,18 @@ public class MultiSurfaceType
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (surfaceMembers != null) {
+            sb.append("surfaceMembers:").append(surfaceMembers).append('\n');
+        }
+        if (surfaceMember != null) {
+            sb.append("surfaceMember:").append('\n');
+            for (SurfacePropertyType sp : surfaceMember) {
+                sb.append(sp).append('\n');
+            }
+        }
+        return sb.toString();
+    }
 }

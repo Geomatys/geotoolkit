@@ -47,9 +47,7 @@ import javax.xml.bind.annotation.XmlType;
     RingType.class,
     LinearRingType.class
 })
-public abstract class AbstractRingType
-    extends AbstractGeometryType
-{
+public abstract class AbstractRingType extends AbstractGeometryType {
 
 
 }

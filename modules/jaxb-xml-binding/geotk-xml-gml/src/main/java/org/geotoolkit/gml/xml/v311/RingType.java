@@ -56,26 +56,16 @@ import org.opengis.filter.expression.ExpressionVisitor;
 public class RingType extends AbstractRingType {
 
     @XmlElement(required = true)
-    protected List<CurvePropertyType> curveMember;
+    private List<CurvePropertyType> curveMember;
 
     /**
-     * This element references or contains one curve in the composite curve. The curves are contiguous, the collection of curves is ordered.
-     * NOTE: This definition allows for a nested structure, i.e. a CompositeCurve may use, for example, another CompositeCurve as a curve member.Gets the value of the curveMember property.
+     * This element references or contains one curve in the composite curve.
+     * The curves are contiguous, the collection of curves is ordered.
+     * NOTE: This definition allows for a nested structure, i.e. a CompositeCurve may use,
+     * for example, another CompositeCurve as a curve member.
+     *
+     * Gets the value of the curveMember property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the curveMember property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getCurveMember().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link CurvePropertyType }
      * 
@@ -103,4 +93,15 @@ public class RingType extends AbstractRingType {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[RingType]\n");
+        if (curveMember != null) {
+            sb.append("curveMember:").append('\n');
+            for (CurvePropertyType cu : curveMember) {
+                sb.append(cu).append('\n');
+            }
+        }
+        return sb.toString();
+    }
 }

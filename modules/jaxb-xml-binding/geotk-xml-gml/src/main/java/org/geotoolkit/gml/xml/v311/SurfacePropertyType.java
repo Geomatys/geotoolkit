@@ -55,27 +55,27 @@ import javax.xml.bind.annotation.XmlType;
 public class SurfacePropertyType {
 
     @XmlElementRef(name = "AbstractSurface", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected JAXBElement<? extends AbstractSurfaceType> abstractSurface;
+    private JAXBElement<? extends AbstractSurfaceType> abstractSurface;
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
-    protected String remoteSchema;
+    private String remoteSchema;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    protected String type;
-    @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    @XmlSchemaType(name = "anyURI")
-    protected String href;
+    private String type;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     @XmlSchemaType(name = "anyURI")
-    protected String role;
+    private String href;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     @XmlSchemaType(name = "anyURI")
-    protected String arcrole;
+    private String role;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    protected String title;
+    @XmlSchemaType(name = "anyURI")
+    private String arcrole;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    protected String show;
+    private String title;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    protected String actuate;
+    private String show;
+    @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
+    private String actuate;
 
     /**
      * Gets the value of the abstractSurface property.
@@ -316,4 +316,36 @@ public class SurfacePropertyType {
         this.actuate = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[SurfacePropertyType]").append("\n");
+        if (abstractSurface != null) {
+            sb.append("abstractSurface: ").append(abstractSurface.getValue()).append('\n');
+        }
+        if (remoteSchema != null) {
+            sb.append("remoteSchema: ").append(remoteSchema).append('\n');
+        }
+        if (actuate != null) {
+            sb.append("actuate: ").append(actuate).append('\n');
+        }
+        if (arcrole != null) {
+            sb.append("actuate: ").append(arcrole).append('\n');
+        }
+        if (href != null) {
+            sb.append("href: ").append(href).append('\n');
+        }
+        if (role != null) {
+            sb.append("role: ").append(role).append('\n');
+        }
+        if (show != null) {
+            sb.append("show: ").append(show).append('\n');
+        }
+        if (title != null) {
+            sb.append("title: ").append(title).append('\n');
+        }
+        if (type != null) {
+            sb.append("type: ").append(type).append('\n');
+        }
+        return sb.toString();
+    }
 }

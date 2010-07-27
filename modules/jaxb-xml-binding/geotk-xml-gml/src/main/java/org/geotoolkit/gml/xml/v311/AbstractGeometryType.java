@@ -78,17 +78,17 @@ import org.opengis.referencing.operation.TransformException;
 public abstract class AbstractGeometryType extends AbstractGMLEntry implements Geometry, Expression {
 
     @XmlAttribute
-    protected String gid;
+    private String gid;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
-    protected String srsName;
+    private String srsName;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    protected Integer srsDimension;
+    private Integer srsDimension;
     @XmlAttribute
-    protected List<String> axisLabels;
+    private List<String> axisLabels;
     @XmlAttribute
-    protected List<String> uomLabels;
+    private List<String> uomLabels;
 
     /**
      * empty constructor used by JAXB
