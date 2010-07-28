@@ -213,8 +213,8 @@ public class QuadTree {
      */
     public void close(Iterator iter) throws StoreException {
         iterators.remove(iter);
-        if (iter instanceof LazySearchIterator)
-            ((LazySearchIterator) iter).close();
+        if (iter instanceof LazySearchCollection.BufferIterator)
+            ((LazySearchCollection.BufferIterator) iter).close();
     }
 
     /**
