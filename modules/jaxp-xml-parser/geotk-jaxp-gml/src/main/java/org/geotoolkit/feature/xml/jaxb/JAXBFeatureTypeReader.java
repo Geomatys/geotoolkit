@@ -32,6 +32,7 @@ import javax.xml.namespace.QName;
 
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureTypeReader;
 import org.geotoolkit.xml.MarshallerPool;
@@ -55,7 +56,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
 
-    private static Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
     
     private static MarshallerPool marshallpool;
     static {
@@ -79,7 +80,11 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
         builder.reset();
         final Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
         final Schema schema             = (Schema) unmarshaller.unmarshal(new StringReader(xml));
-        return getAllFeatureTypeFromSchema(schema);
+        try {
+            return getAllFeatureTypeFromSchema(schema);
+        } catch (SchemaException ex) {
+            throw new JAXBException(ex);
+        }
     }
 
      /**
@@ -90,7 +95,11 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
         builder.reset();
         final Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
         final Schema schema             = (Schema) unmarshaller.unmarshal(in);
-        return getAllFeatureTypeFromSchema(schema);
+        try {
+            return getAllFeatureTypeFromSchema(schema);
+        } catch (SchemaException ex) {
+            throw new JAXBException(ex);
+        }
     }
 
      /**
@@ -101,7 +110,11 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
         builder.reset();
         final Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
         final Schema schema             = (Schema) unmarshaller.unmarshal(reader);
-        return getAllFeatureTypeFromSchema(schema);
+        try {
+            return getAllFeatureTypeFromSchema(schema);
+        } catch (SchemaException ex) {
+            throw new JAXBException(ex);
+        }
     }
 
      /**
@@ -112,7 +125,11 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
         builder.reset();
         final Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
         final Schema schema             = (Schema) unmarshaller.unmarshal(new StringReader(xml));
-        return getFeatureTypeFromSchema(schema, name);
+        try {
+            return getFeatureTypeFromSchema(schema, name);
+        } catch (SchemaException ex) {
+            throw new JAXBException(ex);
+        }
     }
 
      /**
@@ -123,7 +140,11 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
         builder.reset();
         final Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
         final Schema schema             = (Schema) unmarshaller.unmarshal(in);
-        return getFeatureTypeFromSchema(schema, name);
+        try {
+            return getFeatureTypeFromSchema(schema, name);
+        } catch (SchemaException ex) {
+            throw new JAXBException(ex);
+        }
     }
 
      /**
@@ -134,11 +155,15 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
         builder.reset();
         final Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
         final Schema schema             = (Schema) unmarshaller.unmarshal(reader);
-        return getFeatureTypeFromSchema(schema, name);
+        try {
+            return getFeatureTypeFromSchema(schema, name);
+        } catch (SchemaException ex) {
+            throw new JAXBException(ex);
+        }
     }
 
 
-    private List<FeatureType> getAllFeatureTypeFromSchema(Schema schema) {
+    private List<FeatureType> getAllFeatureTypeFromSchema(Schema schema) throws SchemaException {
         final List<FeatureType> result = new ArrayList<FeatureType>();
         for (TopLevelElement element : schema.getElements()) {
             final QName typeName = element.getType();
@@ -150,7 +175,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
     }
     
     
-    private FeatureType getFeatureTypeFromSchema(Schema schema, String name) {
+    private FeatureType getFeatureTypeFromSchema(Schema schema, String name) throws SchemaException {
         final TopLevelElement element = schema.getElementByName(name);
         if (element != null) {
             final QName typeName = element.getType();
@@ -159,13 +184,13 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
                 final TopLevelComplexType type = schema.getComplexTypeByName(typeName.getLocalPart());
                 return getFeatureTypeFromSchema(type, typeName.getNamespaceURI());
             } else {
-                LOGGER.warning("the element:" + name + " has no type");
+                LOGGER.log(Level.WARNING, "the element:{0} has no type", name);
             }
         }
         return null;
     }
     
-    private FeatureType getFeatureTypeFromSchema(TopLevelComplexType type, String namespace) {
+    private FeatureType getFeatureTypeFromSchema(TopLevelComplexType type, String namespace) throws SchemaException {
         if (type != null) {
             final ComplexContent content = type.getComplexContent();
             if (content != null) {
@@ -192,6 +217,9 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
                             CoordinateReferenceSystem crs = null;
 
                             final Class c = Utils.getTypeFromQName(elementType);
+                            if (c == null) {
+                                throw new SchemaException("The attribute:" + elementName + " does no have a declared type.");
+                            }
                             if(Geometry.class.isAssignableFrom(c) || org.opengis.geometry.Geometry.class.isAssignableFrom(c)){
                                 builder.add(new DefaultName(namespace, elementName), c, crs, min, max, nillable, null);
                             }else{

@@ -59,7 +59,7 @@ import javax.xml.bind.annotation.XmlType;
 public class SurfacePatchArrayPropertyType {
 
     @XmlElementRef(name = "AbstractSurfacePatch", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected List<JAXBElement<? extends AbstractSurfacePatchType>> abstractSurfacePatch;
+    private List<JAXBElement<? extends AbstractSurfacePatchType>> abstractSurfacePatch;
 
     /**
      * Gets the value of the surfacePatch property.

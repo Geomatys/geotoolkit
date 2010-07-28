@@ -66,9 +66,7 @@ import org.opengis.geometry.DirectPosition;
     "posList",
     "coordinates"
 })
-public class LineStringSegmentType
-    extends AbstractCurveSegmentType
-{
+public class LineStringSegmentType extends AbstractCurveSegmentType {
 
     @XmlElementRefs({
         @XmlElementRef(name = "pointProperty", namespace = "http://www.opengis.net/gml", type = JAXBElement.class),
