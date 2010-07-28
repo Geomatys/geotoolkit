@@ -40,6 +40,7 @@ import org.geotoolkit.xsd.xml.v2001.ComplexContent;
 import org.geotoolkit.xsd.xml.v2001.Element;
 import org.geotoolkit.xsd.xml.v2001.ExplicitGroup;
 import org.geotoolkit.xsd.xml.v2001.ExtensionType;
+import org.geotoolkit.xsd.xml.v2001.LocalSimpleType;
 import org.geotoolkit.xsd.xml.v2001.ObjectFactory;
 import org.geotoolkit.xsd.xml.v2001.Schema;
 import org.geotoolkit.xsd.xml.v2001.TopLevelComplexType;
@@ -200,7 +201,14 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
                     final ExplicitGroup sequence = ext.getSequence();
                     if (sequence != null) {
                         for (Element attributeElement : sequence.getElements()) {
-                            final QName elementType  = attributeElement.getType();
+                            QName elementType  = attributeElement.getType();
+                            // Try to extract base from a SimpleType
+                            if (elementType == null && attributeElement.getSimpleType() != null) {
+                                final LocalSimpleType simpleType = attributeElement.getSimpleType();
+                                if (simpleType.getRestriction() != null) {
+                                    elementType = simpleType.getRestriction().getBase();
+                                }
+                            }
                             final String elementName = attributeElement.getName();
                             final Integer minAtt = attributeElement.getMinOccurs();
                             final String maxxAtt = attributeElement.getMaxOccurs();
