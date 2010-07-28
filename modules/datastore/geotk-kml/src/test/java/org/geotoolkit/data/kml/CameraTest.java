@@ -98,7 +98,7 @@ public class CameraTest {
 
     @Test
     public void cameraWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         double longitude = 4;
         double latitude = 43;

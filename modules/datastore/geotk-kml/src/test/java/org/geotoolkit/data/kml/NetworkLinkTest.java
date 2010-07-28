@@ -99,7 +99,7 @@ public class NetworkLinkTest {
 
     @Test
     public void networkLinkWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Feature networkLink = kmlFactory.createNetworkLink();
         networkLink.getProperties().add(FF.createAttribute("NE US Radar", KmlModelConstants.ATT_NAME, null));
@@ -112,10 +112,10 @@ public class NetworkLinkTest {
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
-        File temp = File.createTempFile("testNetworkLink", ".kml");
+        final File temp = File.createTempFile("testNetworkLink", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

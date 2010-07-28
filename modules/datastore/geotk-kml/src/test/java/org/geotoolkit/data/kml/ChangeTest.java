@@ -105,30 +105,30 @@ public class ChangeTest {
 
     @Test
     public void changeWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
-        Coordinate coordinate = kmlFactory.createCoordinate(-95.48, 40.43, 0);
-        Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate));
+        final Coordinate coordinate = kmlFactory.createCoordinate(-95.48, 40.43, 0);
+        final Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate));
 
-        Point point = kmlFactory.createPoint(coordinates);
+        final Point point = kmlFactory.createPoint(coordinates);
         point.setIdAttributes(kmlFactory.createIdAttributes(null, "point123"));
 
-        Change change = kmlFactory.createChange(Arrays.asList((Object) point));
+        final Change change = kmlFactory.createChange(Arrays.asList((Object) point));
 
-        Update update = kmlFactory.createUpdate();
+        final Update update = kmlFactory.createUpdate();
         update.setUpdates(Arrays.asList((Object) change));
         update.setTargetHref(new URI("http://www/~sam/January14Data/Point.kml"));
 
-        NetworkLinkControl networkLinkControl = kmlFactory.createNetworkLinkControl();
+        final NetworkLinkControl networkLinkControl = kmlFactory.createNetworkLinkControl();
         networkLinkControl.setUpdate(update);
 
 
         final Kml kml = kmlFactory.createKml(networkLinkControl, null, null, null);
 
-        File temp = File.createTempFile("testChange", ".kml");
+        final File temp = File.createTempFile("testChange", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

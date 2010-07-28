@@ -17,6 +17,7 @@
 package org.geotoolkit.data.kml.xml;
 
 import java.net.URISyntaxException;
+import java.util.Map.Entry;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.Extensions;
 import org.geotoolkit.data.kml.model.KmlException;
@@ -28,31 +29,30 @@ import org.geotoolkit.data.kml.model.KmlException;
 public interface KmlExtensionReader {
 
     /**
+     * 
+     * @param containingTag
+     * @param contentsTag
+     * @return
+     */
+    boolean canHandleComplexExtension(String containingTag, String contentsTag);
+
+    /**
      *
      * @param containingTag
      * @param contentsTag
-     * @return The complex extension level of given element. Null if there is no mapping level.
+     * @return
      */
-    Extensions.Names getComplexExtensionLevel(String containingTag, String contentsTag);
+    boolean canHandleSimpleExtension(String containingTag, String contentsTag);
 
     /**
-     * 
+     *
      * @param containingTag
      * @param contentsTag
-     * @return The complex extension level of given element. Null if there is no mapping level.
-     */
-    Extensions.Names getSimpleExtensionLevel(String containingTag, String contentsTag);
-
-    /**
-     * <p>This method read an element whose tag is contained in a specified parent tag.</p>
-     * 
-     * @param containingTag
-     * @param contentsTag
-     * @return An object mapping read element. Null if element has not been read.
+     * @return
      * @throws XMLStreamException
      * @throws KmlException
      * @throws URISyntaxException
      */
-    Object readExtensionElement(String containingTag, String contentsTag)
+    Entry<Object, Extensions.Names> readExtensionElement(String containingTag, String contentsTag)
             throws XMLStreamException, KmlException, URISyntaxException;
 }

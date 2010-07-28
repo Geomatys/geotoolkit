@@ -102,8 +102,10 @@ public class RegionTest {
     }
 
     @Test
-    public void regionWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+    public void regionWriteTest()
+            throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
+        
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final LatLonAltBox latLonAltBox = kmlFactory.createLatLonAltBox();
         latLonAltBox.setNorth(50.625);
@@ -128,10 +130,10 @@ public class RegionTest {
 
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);
 
-        File temp = File.createTempFile("testRegion", ".kml");
+        final File temp = File.createTempFile("testRegion", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

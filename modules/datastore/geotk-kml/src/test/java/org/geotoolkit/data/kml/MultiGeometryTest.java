@@ -127,7 +127,7 @@ public class MultiGeometryTest {
 
     @Test
     public void multiGeometryWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Coordinate coordinate00 = kmlFactory.createCoordinate("-122.4425587930444,37.80666418607323,0.0");
         final Coordinate coordinate01 = kmlFactory.createCoordinate("-122.4428379594768,37.80663578323093,0.0");
@@ -145,17 +145,17 @@ public class MultiGeometryTest {
         multiGeometry.setGeometries(Arrays.asList((AbstractGeometry) lineString0, (AbstractGeometry) lineString1));
 
         final Feature placemark = kmlFactory.createPlacemark();
-        Collection<Property> placemarkProperties = placemark.getProperties();
+        final Collection<Property> placemarkProperties = placemark.getProperties();
         placemarkProperties.add(FF.createAttribute("SF Marina Harbor Master", KmlModelConstants.ATT_NAME, null));
         placemark.getProperty(KmlModelConstants.ATT_VISIBILITY.getName()).setValue(Boolean.FALSE);
         placemarkProperties.add(FF.createAttribute(multiGeometry, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);
 
-        File temp = File.createTempFile("testMultiGeometry", ".kml");
+        final File temp = File.createTempFile("testMultiGeometry", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

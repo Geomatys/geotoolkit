@@ -174,7 +174,7 @@ public class PolygonTest {
 
     @Test
     public void polygonWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Coordinate coordinate10 = kmlFactory.createCoordinate("-122.366278,37.818844,30.0");
         final Coordinate coordinate11 = kmlFactory.createCoordinate("-122.365248,37.819267,30.0");
@@ -196,7 +196,7 @@ public class PolygonTest {
 
         final LinearRing linearRing1 = kmlFactory.createLinearRing(coordinates1);
 
-        final  LinearRing linearRing2 = kmlFactory.createLinearRing(coordinates2);
+        final LinearRing linearRing2 = kmlFactory.createLinearRing(coordinates2);
 
         final Boundary outerBoundaryIs = kmlFactory.createBoundary();
         outerBoundaryIs.setLinearRing(linearRing1);
@@ -209,12 +209,12 @@ public class PolygonTest {
         polygon.setAltitudeMode(EnumAltitudeMode.RELATIVE_TO_GROUND);
 
         final Feature placemark = kmlFactory.createPlacemark();
-        Collection<Property> placemarkProperties = placemark.getProperties();
+        final Collection<Property> placemarkProperties = placemark.getProperties();
         placemarkProperties.add(FF.createAttribute("hollow box", KmlModelConstants.ATT_NAME, null));
         placemarkProperties.add(FF.createAttribute(polygon, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
         final Feature document = kmlFactory.createDocument();
-        Collection<Property> documentProperties = document.getProperties();
+        final Collection<Property> documentProperties = document.getProperties();
         documentProperties.add(FF.createAttribute("Polygon.kml", KmlModelConstants.ATT_NAME, null));
         document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
         documentProperties.add(FF.createAttribute(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
@@ -222,10 +222,10 @@ public class PolygonTest {
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
-        File temp = File.createTempFile("testPolygon", ".kml");
+        final File temp = File.createTempFile("testPolygon", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

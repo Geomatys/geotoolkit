@@ -139,31 +139,31 @@ public class LineStyleTest {
 
     @Test
     public void lineStyleWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
-        Coordinate coordinate0 = kmlFactory.createCoordinate(-122.364383, 37.824664, 0);
-        Coordinate coordinate1 = kmlFactory.createCoordinate(-122.364152, 37.824322, 0);
-        Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate0, coordinate1));
-        LineString lineString = kmlFactory.createLineString(coordinates);
+        final Coordinate coordinate0 = kmlFactory.createCoordinate(-122.364383, 37.824664, 0);
+        final Coordinate coordinate1 = kmlFactory.createCoordinate(-122.364152, 37.824322, 0);
+        final Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate0, coordinate1));
+        final LineString lineString = kmlFactory.createLineString(coordinates);
         lineString.setTessellate(true);
         lineString.setExtrude(true);
 
-        Feature placemark = kmlFactory.createPlacemark();
-        Collection<Property> placemarkProperties = placemark.getProperties();
+        final Feature placemark = kmlFactory.createPlacemark();
+        final Collection<Property> placemarkProperties = placemark.getProperties();
         placemarkProperties.add(FF.createAttribute("LineStyle Example", KmlModelConstants.ATT_NAME, null));
         placemarkProperties.add(FF.createAttribute(new URI("#linestyleExample"), KmlModelConstants.ATT_STYLE_URL, null));
         placemarkProperties.add(FF.createAttribute(lineString, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
-        Style style = kmlFactory.createStyle();
-        LineStyle lineStyle = kmlFactory.createLineStyle();
+        final Style style = kmlFactory.createStyle();
+        final LineStyle lineStyle = kmlFactory.createLineStyle();
         lineStyle.setWidth(4);
         lineStyle.setColor(new Color(255, 0, 0, 127));
         style.setLineStyle(lineStyle);
-        IdAttributes idAttributes = kmlFactory.createIdAttributes("linestyleExample", null);
+        final IdAttributes idAttributes = kmlFactory.createIdAttributes("linestyleExample", null);
         style.setIdAttributes(idAttributes);
 
-        Feature document = kmlFactory.createDocument();
-        Collection<Property> documentProperties = document.getProperties();
+        final Feature document = kmlFactory.createDocument();
+        final Collection<Property> documentProperties = document.getProperties();
         documentProperties.add(FF.createAttribute(style, KmlModelConstants.ATT_STYLE_SELECTOR,null));
         documentProperties.add(FF.createAttribute(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES,null));
         documentProperties.add(FF.createAttribute("LineStyle.kml", KmlModelConstants.ATT_NAME,null));
@@ -171,10 +171,10 @@ public class LineStyleTest {
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
-        File temp = File.createTempFile("testLineStyle", ".kml");
+        final File temp = File.createTempFile("testLineStyle", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

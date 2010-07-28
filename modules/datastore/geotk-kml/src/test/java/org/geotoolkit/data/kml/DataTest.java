@@ -107,36 +107,36 @@ public class DataTest {
 
     @Test
     public void dataWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
-        Feature placemark = kmlFactory.createPlacemark();
+        final Feature placemark = kmlFactory.createPlacemark();
 
-        ExtendedData extendedData = kmlFactory.createExtendedData();
+        final ExtendedData extendedData = kmlFactory.createExtendedData();
 
-        Data data0 = kmlFactory.createData();
+        final Data data0 = kmlFactory.createData();
         data0.setName("holeNumber");
         data0.setValue("1");
 
-        Data data1 = kmlFactory.createData();
+        final Data data1 = kmlFactory.createData();
         data1.setName("holeYardage");
         data1.setValue("234");
 
-        Data data2 = kmlFactory.createData();
+        final Data data2 = kmlFactory.createData();
         data2.setName("holePar");
         data2.setValue("4");
 
         extendedData.setDatas(Arrays.asList(data0, data1, data2));
 
-        Collection<Property> placemarkProperties = placemark.getProperties();
+        final Collection<Property> placemarkProperties = placemark.getProperties();
         placemarkProperties.add(FF.createAttribute("Club house", KmlModelConstants.ATT_NAME, null));
         placemarkProperties.add(FF.createAttribute(extendedData, KmlModelConstants.ATT_EXTENDED_DATA, null));
 
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);
 
-        File temp = File.createTempFile("testData", ".kml");
+        final File temp = File.createTempFile("testData", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

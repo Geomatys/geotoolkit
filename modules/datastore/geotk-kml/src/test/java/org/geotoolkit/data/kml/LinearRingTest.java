@@ -125,7 +125,7 @@ public class LinearRingTest {
 
     @Test
     public void linearRingWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Coordinate coordinate0 = kmlFactory.createCoordinate("-122.365662,37.826988,0.0");
         final Coordinate coordinate1 = kmlFactory.createCoordinate("-122.365202,37.826302,0.0");
@@ -144,16 +144,16 @@ public class LinearRingTest {
         final Polygon polygon = kmlFactory.createPolygon(outerBoundaryIs, null);
 
         final Feature placemark = kmlFactory.createPlacemark();
-        Collection<Property> placemarkProperties = placemark.getProperties();
+        final Collection<Property> placemarkProperties = placemark.getProperties();
         placemarkProperties.add(FF.createAttribute("LinearRing.kml", KmlModelConstants.ATT_NAME, null));
         placemarkProperties.add(FF.createAttribute(polygon, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);
 
-        File temp = File.createTempFile("testLinearRing", ".kml");
+        final File temp = File.createTempFile("testLinearRing", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

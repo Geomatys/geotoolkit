@@ -136,7 +136,7 @@ public class IconStyleTest {
 
     @Test
     public void iconStyleWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         Coordinate coordinate = kmlFactory.createCoordinate(-122.36868, 37.831145, 0);
         Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate));

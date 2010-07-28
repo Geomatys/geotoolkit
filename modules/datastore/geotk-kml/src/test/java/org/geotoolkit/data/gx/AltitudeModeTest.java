@@ -19,34 +19,24 @@ package org.geotoolkit.data.gx;
 import com.vividsolutions.jts.geom.Coordinate;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.gx.model.AbstractTourPrimitive;
-import org.geotoolkit.data.gx.model.AnimatedUpdate;
 import org.geotoolkit.data.gx.model.EnumAltitudeMode;
-import org.geotoolkit.data.gx.model.GxModelConstants;
-import org.geotoolkit.data.gx.model.PlayList;
 import org.geotoolkit.data.gx.xml.GxConstants;
 import org.geotoolkit.data.gx.xml.GxReader;
 import org.geotoolkit.data.gx.xml.GxWriter;
 import org.geotoolkit.data.kml.DefaultKmlFactory;
 import org.geotoolkit.data.kml.KmlFactory;
-import org.geotoolkit.data.kml.model.Change;
 import org.geotoolkit.data.kml.model.Coordinates;
-import org.geotoolkit.data.kml.model.Extensions;
-import org.geotoolkit.data.kml.model.IconStyle;
-import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.LineString;
 import org.geotoolkit.data.kml.model.LookAt;
-import org.geotoolkit.data.kml.model.Update;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.factory.FactoryFinder;
@@ -101,9 +91,9 @@ public class AltitudeModeTest {
         Iterator i;
 
         final KmlReader reader = new KmlReader();
-        final GxReader gxReader = new GxReader();
+        final GxReader gxReader = new GxReader(reader);
         reader.setInput(new File(pathToTestFile));
-        reader.addExtensionReader(GxConstants.URI_GX, gxReader);
+        reader.addExtensionReader(gxReader);
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
@@ -156,8 +146,8 @@ public class AltitudeModeTest {
 
     @Test
     public void altitudeModeWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
-        final GxFactory gxFactory = new DefaultGxFactory();
+        final GxFactory gxFactory = DefaultGxFactory.getInstance();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Coordinate coordinate0 = kmlFactory.createCoordinate("146.825,12.233,400.0");
         final Coordinate coordinate1 = kmlFactory.createCoordinate("146.820,12.222,400.0");

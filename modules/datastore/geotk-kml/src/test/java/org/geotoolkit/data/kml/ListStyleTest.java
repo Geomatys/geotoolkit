@@ -314,7 +314,7 @@ public class ListStyleTest {
 
     @Test
     public void listStyleWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Coordinate coordinate000 = kmlFactory.createCoordinate(-122.362815, 37.822931, 0);
         final Coordinate coordinate010 = kmlFactory.createCoordinate(-122.362825, 37.822931, 0);
@@ -347,47 +347,47 @@ public class ListStyleTest {
         final Point point22 = kmlFactory.createPoint(coordinates22);
 
         final Feature placemark00 = kmlFactory.createPlacemark();
-        Collection<Property> placemark00Properties = placemark00.getProperties();
+        final Collection<Property> placemark00Properties = placemark00.getProperties();
         placemark00Properties.add(FF.createAttribute("pl1", KmlModelConstants.ATT_NAME, null));
         placemark00Properties.add(FF.createAttribute(point00, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
             final Feature placemark01 = kmlFactory.createPlacemark();
-            Collection<Property> placemark01Properties = placemark01.getProperties();
+            final Collection<Property> placemark01Properties = placemark01.getProperties();
             placemark01Properties.add(FF.createAttribute("pl2", KmlModelConstants.ATT_NAME, null));
             placemark01Properties.add(FF.createAttribute(point01, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
         final Feature placemark02 = kmlFactory.createPlacemark();
-        Collection<Property> placemark02Properties = placemark02.getProperties();
+        final Collection<Property> placemark02Properties = placemark02.getProperties();
         placemark02Properties.add(FF.createAttribute("pl3", KmlModelConstants.ATT_NAME, null));
         placemark02Properties.add(FF.createAttribute(point02, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
             final Feature placemark10 = kmlFactory.createPlacemark();
-            Collection<Property> placemark10Properties = placemark10.getProperties();
+            final Collection<Property> placemark10Properties = placemark10.getProperties();
             placemark10Properties.add(FF.createAttribute("pl4", KmlModelConstants.ATT_NAME, null));
             placemark10Properties.add(FF.createAttribute(point10, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
         final Feature placemark11 = kmlFactory.createPlacemark();
-        Collection<Property> placemark11Properties = placemark11.getProperties();
+        final Collection<Property> placemark11Properties = placemark11.getProperties();
         placemark11Properties.add(FF.createAttribute("pl5", KmlModelConstants.ATT_NAME, null));
         placemark11Properties.add(FF.createAttribute(point11, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
             final Feature placemark12 = kmlFactory.createPlacemark();
-            Collection<Property> placemark12Properties = placemark12.getProperties();
+            final Collection<Property> placemark12Properties = placemark12.getProperties();
             placemark12Properties.add(FF.createAttribute("pl6", KmlModelConstants.ATT_NAME, null));
             placemark12Properties.add(FF.createAttribute(point12, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
         final Feature placemark20 = kmlFactory.createPlacemark();
-        Collection<Property> placemark20Properties = placemark20.getProperties();
+        final Collection<Property> placemark20Properties = placemark20.getProperties();
         placemark20Properties.add(FF.createAttribute("pl7", KmlModelConstants.ATT_NAME, null));
         placemark20Properties.add(FF.createAttribute(point20, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
             final Feature placemark21 = kmlFactory.createPlacemark();
-            Collection<Property> placemark21Properties = placemark21.getProperties();
+            final Collection<Property> placemark21Properties = placemark21.getProperties();
             placemark21Properties.add(FF.createAttribute("pl8", KmlModelConstants.ATT_NAME, null));
             placemark21Properties.add(FF.createAttribute(point21, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
         final Feature placemark22 = kmlFactory.createPlacemark();
-        Collection<Property> placemark22Properties = placemark22.getProperties();
+        final Collection<Property> placemark22Properties = placemark22.getProperties();
         placemark22Properties.add(FF.createAttribute("pl9", KmlModelConstants.ATT_NAME, null));
         placemark22Properties.add(FF.createAttribute(point22, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
@@ -458,10 +458,10 @@ public class ListStyleTest {
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
-        File temp = File.createTempFile("testListStyle", ".kml");
+        final File temp = File.createTempFile("testListStyle", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

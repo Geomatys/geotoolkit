@@ -106,7 +106,7 @@ public class GroundOverlayTest {
 
     @Test
     public void groundOverlayWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException{
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final double north = 37.83234;
         final double south = 37.832122;
@@ -132,7 +132,7 @@ public class GroundOverlayTest {
         final int drawOrder = 1;
 
         final Feature groundOverlay = kmlFactory.createGroundOverlay();
-        Collection<Property> groundOverlayProperties = groundOverlay.getProperties();
+        final Collection<Property> groundOverlayProperties = groundOverlay.getProperties();
         groundOverlayProperties.add(FF.createAttribute(name, KmlModelConstants.ATT_NAME, null));
         groundOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_COLOR.getName()).setValue(color);
         groundOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_DRAW_ORDER.getName()).setValue(drawOrder);
@@ -141,10 +141,10 @@ public class GroundOverlayTest {
 
         final Kml kml = kmlFactory.createKml(null, groundOverlay, null, null);
 
-        File temp = File.createTempFile("testGroundOverlay",".kml");
+        final File temp = File.createTempFile("testGroundOverlay",".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

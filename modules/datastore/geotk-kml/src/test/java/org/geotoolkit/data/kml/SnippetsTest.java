@@ -127,7 +127,7 @@ public class SnippetsTest {
 
     @Test
     public void snippetsWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Feature placemark0 = kmlFactory.createPlacemark();
         placemark0.getProperties().add(FF.createAttribute("Bonjour", KmlModelConstants.ATT_SNIPPET, null));
@@ -144,20 +144,20 @@ public class SnippetsTest {
         placemark3.getProperties().add(FF.createAttribute(snippet3, KmlModelConstants.ATT_SNIPPET, null));
 
         final Feature document = kmlFactory.createDocument();
-        Collection<Property> documentProperties = document.getProperties();
+        final Collection<Property> documentProperties = document.getProperties();
         documentProperties.add(FF.createAttribute(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
         documentProperties.add(FF.createAttribute(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
         documentProperties.add(FF.createAttribute(placemark2, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
         documentProperties.add(FF.createAttribute(placemark3, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
         document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
-         documentProperties.add(FF.createAttribute("Document.kml", KmlModelConstants.ATT_NAME, null));
+        documentProperties.add(FF.createAttribute("Document.kml", KmlModelConstants.ATT_NAME, null));
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
-        File temp = File.createTempFile("testSnippets", ".kml");
+        final File temp = File.createTempFile("testSnippets", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

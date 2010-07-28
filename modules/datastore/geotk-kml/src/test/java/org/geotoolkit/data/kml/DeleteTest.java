@@ -104,11 +104,11 @@ public class DeleteTest {
 
     @Test
     public void deleteWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Feature placemark = kmlFactory.createPlacemark();
-        Collection<Property> placemarkProperties = placemark.getProperties();
-        IdAttributes placemarkIdAttributes = kmlFactory.createIdAttributes(null, "pa3556");
+        final Collection<Property> placemarkProperties = placemark.getProperties();
+        final IdAttributes placemarkIdAttributes = kmlFactory.createIdAttributes(null, "pa3556");
         placemarkProperties.add(FF.createAttribute(placemarkIdAttributes, KmlModelConstants.ATT_ID_ATTRIBUTES, null));
 
         final Delete delete = kmlFactory.createDelete();
@@ -129,7 +129,7 @@ public class DeleteTest {
         final File temp = File.createTempFile("testDelete", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

@@ -112,7 +112,7 @@ public class PhotoOverlayTest {
 
     @Test
     public void photoOverlayWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final double longitude = 1;
         final double latitude = 1;
@@ -132,7 +132,7 @@ public class PhotoOverlayTest {
         final Icon icon = kmlFactory.createIcon(link);
 
         final Feature photoOverlay = kmlFactory.createPhotoOverlay();
-        Collection<Property> photoOverlayProperties = photoOverlay.getProperties();
+        final Collection<Property> photoOverlayProperties = photoOverlay.getProperties();
         photoOverlayProperties.add(FF.createAttribute("A simple non-pyramidal photo", KmlModelConstants.ATT_NAME, null));
         photoOverlayProperties.add(FF.createAttribute("High above the ocean", KmlModelConstants.ATT_DESCRIPTION, null));
         photoOverlayProperties.add(FF.createAttribute(icon, KmlModelConstants.ATT_OVERLAY_ICON, null));
@@ -141,10 +141,10 @@ public class PhotoOverlayTest {
 
         final Kml kml = kmlFactory.createKml(null, photoOverlay, null, null);
 
-        File temp = File.createTempFile("testPhotoOverlay",".kml");
+        final File temp = File.createTempFile("testPhotoOverlay",".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

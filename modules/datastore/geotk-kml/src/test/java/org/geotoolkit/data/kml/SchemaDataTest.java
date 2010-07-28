@@ -175,7 +175,7 @@ public class SchemaDataTest {
 
     @Test
     public void schemaDataWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Coordinate coordinate0 = kmlFactory.createCoordinate(-122, 37.002);
         final Coordinates coordinates0 = kmlFactory.createCoordinates(Arrays.asList(coordinate0));
@@ -193,7 +193,7 @@ public class SchemaDataTest {
         extendedData0.setSchemaData(Arrays.asList(schemaData0));
 
         final Feature placemark0 = kmlFactory.createPlacemark();
-        Collection<Property> placemark0Properties = placemark0.getProperties();
+        final Collection<Property> placemark0Properties = placemark0.getProperties();
         placemark0Properties.add(FF.createAttribute(extendedData0, KmlModelConstants.ATT_EXTENDED_DATA, null));
         placemark0Properties.add(FF.createAttribute("Easy trail", KmlModelConstants.ATT_NAME, null));
         placemark0Properties.add(FF.createAttribute(point0, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
@@ -214,22 +214,22 @@ public class SchemaDataTest {
         extendedData1.setSchemaData(Arrays.asList(schemaData1));
 
         final Feature placemark1 = kmlFactory.createPlacemark();
-        Collection<Property> placemark1Properties = placemark1.getProperties();
+        final Collection<Property> placemark1Properties = placemark1.getProperties();
         placemark1Properties.add(FF.createAttribute(extendedData1, KmlModelConstants.ATT_EXTENDED_DATA, null));
         placemark1Properties.add(FF.createAttribute("Difficult trail", KmlModelConstants.ATT_NAME, null));
         placemark1Properties.add(FF.createAttribute(point1, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
         final Feature document = kmlFactory.createDocument();
-        Collection<Property> documentProperties = document.getProperties();
+        final Collection<Property> documentProperties = document.getProperties();
         documentProperties.add(FF.createAttribute(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
         documentProperties.add(FF.createAttribute(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
-        File temp = File.createTempFile("testSchemaData", ".kml");
+        final File temp = File.createTempFile("testSchemaData", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

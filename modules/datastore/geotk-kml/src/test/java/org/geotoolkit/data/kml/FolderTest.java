@@ -174,7 +174,7 @@ public class FolderTest {
 
     @Test
     public void folderWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Feature placemark0 = kmlFactory.createPlacemark();
         final double longitude00 = -122.377588;
@@ -183,7 +183,7 @@ public class FolderTest {
         final Coordinate coordinate00 = kmlFactory.createCoordinate(longitude00, latitude00, altitude00);
         final Coordinates coordinates0 = kmlFactory.createCoordinates(Arrays.asList(coordinate00));
         final Point point = kmlFactory.createPoint(coordinates0);
-        Collection<Property> placemark0Properties = placemark0.getProperties();
+        final Collection<Property> placemark0Properties = placemark0.getProperties();
         placemark0Properties.add(FF.createAttribute(point, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
         placemark0Properties.add(FF.createAttribute("Folder object 1 (Placemark)", KmlModelConstants.ATT_NAME, null));
 
@@ -206,10 +206,10 @@ public class FolderTest {
         final Coordinate coordinate13 = kmlFactory.createCoordinate(longitude13, latitude13, altitude13);
         final Coordinates coordinates1 = kmlFactory.createCoordinates(Arrays.asList(coordinate10, coordinate11, coordinate12, coordinate13));
         final LinearRing linearRing = kmlFactory.createLinearRing(coordinates1);
-        Boundary outerBoundaryIs = kmlFactory.createBoundary();
+        final Boundary outerBoundaryIs = kmlFactory.createBoundary();
         outerBoundaryIs.setLinearRing(linearRing);
         final Polygon polygon = kmlFactory.createPolygon(outerBoundaryIs, null);
-        Collection<Property> placemark1Properties = placemark1.getProperties();
+        final Collection<Property> placemark1Properties = placemark1.getProperties();
         placemark1Properties.add(FF.createAttribute(polygon, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
         placemark1Properties.add(FF.createAttribute("Folder object 2 (Polygon)", KmlModelConstants.ATT_NAME, null));
 
@@ -225,12 +225,12 @@ public class FolderTest {
         final Coordinates coordinates2 = kmlFactory.createCoordinates(Arrays.asList(coordinate20, coordinate21));
         final LineString lineString = kmlFactory.createLineString(coordinates2);
         lineString.setTessellate(true);
-        Collection<Property> placemark2Properties = placemark2.getProperties();
+        final Collection<Property> placemark2Properties = placemark2.getProperties();
         placemark2Properties.add(FF.createAttribute(lineString, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
         placemark2Properties.add(FF.createAttribute("Folder object 3 (Path)", KmlModelConstants.ATT_NAME, null));
 
-        Feature folder = kmlFactory.createFolder();
-        Collection<Property> folderProperties = folder.getProperties();
+        final Feature folder = kmlFactory.createFolder();
+        final Collection<Property> folderProperties = folder.getProperties();
         folderProperties.add(FF.createAttribute("Folder.kml", KmlModelConstants.ATT_NAME, null));
         folder.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
         folderProperties.add(FF.createAttribute("\n    A folder is a container that can hold multiple other objects\n  ", KmlModelConstants.ATT_DESCRIPTION, null));
@@ -240,10 +240,10 @@ public class FolderTest {
 
         final Kml kml = kmlFactory.createKml(null, folder, null, null);
 
-        File temp = File.createTempFile("testFolder",".kml");
+        final File temp = File.createTempFile("testFolder",".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

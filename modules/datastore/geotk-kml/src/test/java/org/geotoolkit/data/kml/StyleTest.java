@@ -148,50 +148,50 @@ public class StyleTest {
 
     @Test
     public void styleWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
-        Feature placemark0 = kmlFactory.createPlacemark();
-        Collection<Property> placemark0Properties = placemark0.getProperties();
+        final Feature placemark0 = kmlFactory.createPlacemark();
+        final Collection<Property> placemark0Properties = placemark0.getProperties();
         placemark0Properties.add(FF.createAttribute("Google Earth - New Polygon", KmlModelConstants.ATT_NAME, null));
         placemark0Properties.add(FF.createAttribute("Here is some descriptive text", KmlModelConstants.ATT_DESCRIPTION, null));
         placemark0Properties.add(FF.createAttribute(new URI("#myDefaultStyles"), KmlModelConstants.ATT_STYLE_URL, null));
 
-        Feature placemark1 = kmlFactory.createPlacemark();
-        Collection<Property> placemark1Properties = placemark1.getProperties();
+        final Feature placemark1 = kmlFactory.createPlacemark();
+        final Collection<Property> placemark1Properties = placemark1.getProperties();
         placemark1Properties.add(FF.createAttribute("Google Earth - New Path", KmlModelConstants.ATT_NAME, null));
         placemark1Properties.add(FF.createAttribute(new URI("#myDefaultStyles"), KmlModelConstants.ATT_STYLE_URL, null));
 
 
-        IconStyle iconStyle = kmlFactory.createIconStyle();
-        BasicLink icon = kmlFactory.createBasicLink();
+        final IconStyle iconStyle = kmlFactory.createIconStyle();
+        final BasicLink icon = kmlFactory.createBasicLink();
         icon.setHref("http://myserver.com/icon.jpg");
         iconStyle.setIcon(icon);
         iconStyle.setColor(new Color(255, 0, 255, 161));
         iconStyle.setScale(1.399999976158142);
 
-        LabelStyle labelStyle = kmlFactory.createLabelStyle();
+        final LabelStyle labelStyle = kmlFactory.createLabelStyle();
         labelStyle.setColor(new Color(255, 170, 255, 127));
         labelStyle.setScale(1.5);
 
-        LineStyle lineStyle = kmlFactory.createLineStyle();
+        final LineStyle lineStyle = kmlFactory.createLineStyle();
         lineStyle.setColor(new Color(255, 0, 0, 255));
         lineStyle.setWidth(15);
 
-        PolyStyle polyStyle = kmlFactory.createPolyStyle();
+        final PolyStyle polyStyle = kmlFactory.createPolyStyle();
         polyStyle.setColor(new Color(170, 170, 127, 127));
         polyStyle.setColorMode(ColorMode.RANDOM);
 
-        IdAttributes idAttributes = kmlFactory.createIdAttributes("myDefaultStyles", null);
+        final IdAttributes idAttributes = kmlFactory.createIdAttributes("myDefaultStyles", null);
 
-        Style style = kmlFactory.createStyle();
+        final Style style = kmlFactory.createStyle();
         style.setIdAttributes(idAttributes);
         style.setIconStyle(iconStyle);
         style.setLabelStyle(labelStyle);
         style.setLineStyle(lineStyle);
         style.setPolyStyle(polyStyle);
 
-        Feature document = kmlFactory.createDocument();
-        Collection<Property> documentProperties = document.getProperties();
+        final Feature document = kmlFactory.createDocument();
+        final Collection<Property> documentProperties = document.getProperties();
         documentProperties.add(FF.createAttribute(style, KmlModelConstants.ATT_STYLE_SELECTOR, null));
         documentProperties.add(FF.createAttribute(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
         documentProperties.add(FF.createAttribute(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
@@ -199,10 +199,10 @@ public class StyleTest {
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
-        File temp = File.createTempFile("testStyle", ".kml");
+        final File temp = File.createTempFile("testStyle", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

@@ -118,7 +118,7 @@ public class MetadataTest {
 
     @Test
     public void metadataWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Feature placemark0 = kmlFactory.createPlacemark();
         final ExtendedData extendedData = kmlFactory.createExtendedData();
@@ -129,7 +129,7 @@ public class MetadataTest {
         placemark1.getProperties().add(FF.createAttribute(metadata, KmlModelConstants.ATT_EXTENDED_DATA, null));
 
         final Feature document = kmlFactory.createDocument();
-        Collection<Property> documentProperties = document.getProperties();
+        final Collection<Property> documentProperties = document.getProperties();
         documentProperties.add(FF.createAttribute(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
         documentProperties.add(FF.createAttribute(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
         document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
@@ -137,10 +137,10 @@ public class MetadataTest {
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
-        File temp = File.createTempFile("testMetadata", ".kml");
+        final File temp = File.createTempFile("testMetadata", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

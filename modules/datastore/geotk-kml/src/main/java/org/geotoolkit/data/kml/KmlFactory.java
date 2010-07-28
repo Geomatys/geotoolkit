@@ -493,7 +493,7 @@ public interface KmlFactory {
             List<Object> abstractFeatureObjectExtensions,
             Color color, int drawOrder, Icon icon,
             List<SimpleTypeContainer> abstractOveraySimpleExtensions, List<Object> abstractOverlayObjectExtensions,
-            double altitude, EnumAltitudeMode altitudeMode, LatLonBox latLonBox,
+            double altitude, AltitudeMode altitudeMode, LatLonBox latLonBox,
             List<SimpleTypeContainer> groundOverlaySimpleExtensions, List<Object> groundOverlayObjectExtensions);
 
     /**

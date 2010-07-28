@@ -113,7 +113,7 @@ public class PlacemarkTest {
 
     @Test
     public void placemarkWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Coordinate coordinate = kmlFactory.createCoordinate(-90.86948943473118, 48.25450093195546, 0);
         final Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate));
@@ -127,7 +127,7 @@ public class PlacemarkTest {
         lookAt.setRange(440.8);
 
         final Feature placemark = kmlFactory.createPlacemark();
-        Collection<Property> placemarkProperties = placemark.getProperties();
+        final Collection<Property> placemarkProperties = placemark.getProperties();
         placemarkProperties.add(FF.createAttribute("Google Earth - New Placemark", KmlModelConstants.ATT_NAME, null));
         placemarkProperties.add(FF.createAttribute("Some Descriptive text.", KmlModelConstants.ATT_DESCRIPTION, null));
         placemarkProperties.add(FF.createAttribute(lookAt, KmlModelConstants.ATT_VIEW, null));
@@ -135,10 +135,10 @@ public class PlacemarkTest {
 
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);
 
-        File temp = File.createTempFile("testPlacemark",".kml");
+        final File temp = File.createTempFile("testPlacemark",".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

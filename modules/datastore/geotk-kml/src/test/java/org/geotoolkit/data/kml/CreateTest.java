@@ -130,44 +130,43 @@ public class CreateTest {
 
     @Test
     public void createWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
-        Coordinate coordinate = kmlFactory.createCoordinate(-95.48, 40.43, 0);
-        Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate));
+        final Coordinate coordinate = kmlFactory.createCoordinate(-95.48, 40.43, 0);
+        final Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate));
 
-        Point point = kmlFactory.createPoint(coordinates);
+        final Point point = kmlFactory.createPoint(coordinates);
 
-        Feature placemark = kmlFactory.createPlacemark();
-        Collection<Property> placemarkProperties = placemark.getProperties();
-        IdAttributes placemarkIdAttributes = kmlFactory.createIdAttributes("placemark891", null);
+        final Feature placemark = kmlFactory.createPlacemark();
+        final Collection<Property> placemarkProperties = placemark.getProperties();
+        final IdAttributes placemarkIdAttributes = kmlFactory.createIdAttributes("placemark891", null);
         placemarkProperties.add(FF.createAttribute(placemarkIdAttributes, KmlModelConstants.ATT_ID_ATTRIBUTES, null));
         placemarkProperties.add(FF.createAttribute(point, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
-        Feature document = kmlFactory.createDocument();
-        Collection<Property> documentProperties = document.getProperties();
+        final Feature document = kmlFactory.createDocument();
+        final Collection<Property> documentProperties = document.getProperties();
         documentProperties.add(FF.createAttribute(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
-        IdAttributes documentIdAttributes = kmlFactory.createIdAttributes(null, "region24");
+        final IdAttributes documentIdAttributes = kmlFactory.createIdAttributes(null, "region24");
         documentProperties.add(FF.createAttribute(documentIdAttributes, KmlModelConstants.ATT_ID_ATTRIBUTES, null));
 
-        Create create = kmlFactory.createCreate();
+        final Create create = kmlFactory.createCreate();
         create.setContainers(Arrays.asList(document));
 
-        URI targetHref = new URI("http://myserver.com/Point.kml");
+        final URI targetHref = new URI("http://myserver.com/Point.kml");
 
-        Update update = kmlFactory.createUpdate();
+        final Update update = kmlFactory.createUpdate();
         update.setUpdates(Arrays.asList((Object) create));
         update.setTargetHref(targetHref);
 
-        NetworkLinkControl networkLinkControl = kmlFactory.createNetworkLinkControl();
+        final NetworkLinkControl networkLinkControl = kmlFactory.createNetworkLinkControl();
         networkLinkControl.setUpdate(update);
-
 
         final Kml kml = kmlFactory.createKml(networkLinkControl, null, null, null);
 
-        File temp = File.createTempFile("testCreate", ".kml");
+        final File temp = File.createTempFile("testCreate", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

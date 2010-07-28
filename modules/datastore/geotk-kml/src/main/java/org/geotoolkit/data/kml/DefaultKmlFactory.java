@@ -169,9 +169,16 @@ import org.opengis.feature.Property;
  */
 public class DefaultKmlFactory implements KmlFactory{
 
+    private static final KmlFactory KMLF = new DefaultKmlFactory();
     private static final GeometryFactory GF = new GeometryFactory();
     private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
             new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+
+    private DefaultKmlFactory(){}
+
+    public static KmlFactory getInstance(){
+        return KMLF;
+    }
 
     /**
      *
@@ -653,7 +660,7 @@ public class DefaultKmlFactory implements KmlFactory{
             Color color, int drawOrder, Icon icon,
             List<SimpleTypeContainer> abstractOveraySimpleExtensions,
             List<Object> abstractOverlayObjectExtensions,
-            double altitude, EnumAltitudeMode altitudeMode, LatLonBox latLonBox,
+            double altitude, AltitudeMode altitudeMode, LatLonBox latLonBox,
             List<SimpleTypeContainer> groundOverlaySimpleExtensions,
             List<Object> groundOverlayObjectExtensions) {
 

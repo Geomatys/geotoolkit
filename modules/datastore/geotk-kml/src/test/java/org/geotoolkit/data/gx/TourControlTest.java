@@ -92,9 +92,9 @@ public class TourControlTest {
         Iterator i;
 
         final KmlReader reader = new KmlReader();
-        final GxReader gxReader = new GxReader();
+        final GxReader gxReader = new GxReader(reader);
         reader.setInput(new File(pathToTestFile));
-        reader.addExtensionReader(GxConstants.URI_GX, gxReader);
+        reader.addExtensionReader(gxReader);
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
@@ -129,8 +129,8 @@ public class TourControlTest {
 
     @Test
     public void tourControlWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
-        final GxFactory gxFactory = new DefaultGxFactory();
+        final GxFactory gxFactory = DefaultGxFactory.getInstance();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final TourControl tourControl = gxFactory.createTourControl();
         tourControl.setPlayMode(EnumPlayMode.PAUSE);

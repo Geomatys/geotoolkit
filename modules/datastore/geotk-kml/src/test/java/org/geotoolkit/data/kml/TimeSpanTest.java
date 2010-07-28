@@ -100,9 +100,9 @@ public class TimeSpanTest {
 
     @Test
     public void timeSpanWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
-        Calendar begin = Calendar.getInstance();
+        final Calendar begin = Calendar.getInstance();
         begin.set(Calendar.YEAR, 1876);
         begin.set(Calendar.MONTH, 7);
         begin.set(Calendar.DAY_OF_MONTH, 2);
@@ -112,19 +112,19 @@ public class TimeSpanTest {
         begin.set(Calendar.MILLISECOND, 543);
         begin.set(Calendar.ZONE_OFFSET, 3600000);
 
-        TimeSpan timeSpan = kmlFactory.createTimeSpan();
+        final TimeSpan timeSpan = kmlFactory.createTimeSpan();
         timeSpan.setBegin(begin);
 
-        Feature placemark = kmlFactory.createPlacemark();
-        Collection<Property> placemarkProperties = placemark.getProperties();
+        final Feature placemark = kmlFactory.createPlacemark();
+        final Collection<Property> placemarkProperties = placemark.getProperties();
         placemarkProperties.add(FF.createAttribute("Colorado", KmlModelConstants.ATT_NAME, null));
         placemarkProperties.add(FF.createAttribute(timeSpan, KmlModelConstants.ATT_TIME_PRIMITIVE, null));
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);
 
-        File temp = File.createTempFile("timeSpanTest", ".kml");
+        final File temp = File.createTempFile("timeSpanTest", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

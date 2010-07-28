@@ -141,14 +141,14 @@ public class BalloonStyleTest {
 
     @Test
     public void balloonStyleWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Coordinate coordinate = kmlFactory.createCoordinate(-122.370533,37.823842,0.0);
         final Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate));
         final Point point = kmlFactory.createPoint(coordinates);
 
         final Feature placemark = kmlFactory.createPlacemark();
-        Collection<Property> placemarkProperties = placemark.getProperties();
+        final Collection<Property> placemarkProperties = placemark.getProperties();
         placemarkProperties.add(FF.createAttribute("BalloonStyle", KmlModelConstants.ATT_NAME, null));
         placemarkProperties.add(FF.createAttribute("An example of BalloonStyle", KmlModelConstants.ATT_DESCRIPTION, null));
         placemarkProperties.add(FF.createAttribute(new URI("#exampleBalloonStyle"), KmlModelConstants.ATT_STYLE_URL, null));
@@ -173,7 +173,7 @@ public class BalloonStyleTest {
         style.setBalloonStyle(balloonStyle);
 
         final Feature document = kmlFactory.createDocument();
-        Collection<Property> documentProperties = document.getProperties();
+        final Collection<Property> documentProperties = document.getProperties();
         documentProperties.add(FF.createAttribute("BalloonStyle.kml", KmlModelConstants.ATT_NAME, null));
         document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
         documentProperties.add(FF.createAttribute(style, KmlModelConstants.ATT_STYLE_SELECTOR, null));

@@ -106,7 +106,8 @@ public class ReplaceTest {
             throws KmlException, IOException,
             XMLStreamException, ParserConfigurationException,
             SAXException, URISyntaxException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Feature placemark = kmlFactory.createPlacemark();
         placemark.getProperties().add(FF.createAttribute("Replace placemark", KmlModelConstants.ATT_NAME, null));
@@ -114,23 +115,23 @@ public class ReplaceTest {
         final Feature groundOverlay = kmlFactory.createGroundOverlay();
         groundOverlay.getProperties().add(FF.createAttribute("Replace overlay", KmlModelConstants.ATT_NAME, null));
 
-        URI targetHref = new URI("http://chezmoi.com/tests.kml");
+        final URI targetHref = new URI("http://chezmoi.com/tests.kml");
 
-        Update update = kmlFactory.createUpdate();
+        final Update update = kmlFactory.createUpdate();
         update.setTargetHref(targetHref);
         update.setUpdates(Arrays.asList((Object) placemark, (Object) groundOverlay));
 
-        NetworkLinkControl networkLinkControl = kmlFactory.createNetworkLinkControl();
+        final NetworkLinkControl networkLinkControl = kmlFactory.createNetworkLinkControl();
         networkLinkControl.setUpdate(update);
 
 
         final Kml kml = kmlFactory.createKml(networkLinkControl, null, null, null);
         kml.setVersion(KmlConstants.URI_KML_2_1);
 
-        File temp = File.createTempFile("testReplace", ".kml");
+        final File temp = File.createTempFile("testReplace", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

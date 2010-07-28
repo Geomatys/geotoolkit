@@ -83,7 +83,7 @@ public class NetworkLinkControlTest {
 
     @Test
     public void networkLinkControlWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final NetworkLinkControl networkLinkControl = kmlFactory.createNetworkLinkControl();
         networkLinkControl.setCookie("cookie=sometext");
@@ -94,10 +94,10 @@ public class NetworkLinkControlTest {
 
         final Kml kml = kmlFactory.createKml(networkLinkControl, null, null, null);
 
-        File temp = File.createTempFile("testNetworkLinkControl", ".kml");
+        final File temp = File.createTempFile("testNetworkLinkControl", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

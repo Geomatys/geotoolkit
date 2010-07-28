@@ -167,7 +167,7 @@ public class LineStringTest {
 
     @Test
     public void lineStringWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Coordinate coordinate00 = kmlFactory.createCoordinate(-122.364383,37.824664,0.0);
         final Coordinate coordinate01 = kmlFactory.createCoordinate(-122.364152,37.824322,0.0);
@@ -187,12 +187,12 @@ public class LineStringTest {
         lineString1.setAltitudeMode(EnumAltitudeMode.RELATIVE_TO_GROUND);
 
         final Feature placemark0 = kmlFactory.createPlacemark();
-        Collection<Property> placemark0Properties = placemark0.getProperties();
+        final Collection<Property> placemark0Properties = placemark0.getProperties();
         placemark0Properties.add(FF.createAttribute("unextruded", KmlModelConstants.ATT_NAME, null));
         placemark0Properties.add(FF.createAttribute(lineString0, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
         final Feature placemark1 = kmlFactory.createPlacemark();
-        Collection<Property> placemark1Properties = placemark1.getProperties();
+        final Collection<Property> placemark1Properties = placemark1.getProperties();
         placemark1Properties.add(FF.createAttribute("extruded", KmlModelConstants.ATT_NAME, null));
         placemark1Properties.add(FF.createAttribute(lineString1, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
@@ -205,7 +205,7 @@ public class LineStringTest {
         lookAt.setRange(150);
 
         final Feature document = kmlFactory.createDocument();
-        Collection<Property> documentProperties = document.getProperties();
+        final Collection<Property> documentProperties = document.getProperties();
         documentProperties.add(FF.createAttribute("LineString.kml", KmlModelConstants.ATT_NAME, null));
         document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
         documentProperties.add(FF.createAttribute(lookAt, KmlModelConstants.ATT_VIEW, null));
@@ -215,10 +215,10 @@ public class LineStringTest {
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
-        File temp = File.createTempFile("testLineString", ".kml");
+        final File temp = File.createTempFile("testLineString", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

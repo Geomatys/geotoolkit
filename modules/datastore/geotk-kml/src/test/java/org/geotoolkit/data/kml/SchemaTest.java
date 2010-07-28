@@ -119,36 +119,36 @@ public class SchemaTest {
 
     @Test
     public void schemaWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
-        SimpleField simpleField0 = kmlFactory.createSimpleField();
+        final SimpleField simpleField0 = kmlFactory.createSimpleField();
         simpleField0.setDisplayName(new DefaultCdata("<b>Trail Head Name</b>"));
         simpleField0.setType("string");
         simpleField0.setName("TrailHeadName");
 
-        SimpleField simpleField1 = kmlFactory.createSimpleField();
+        final SimpleField simpleField1 = kmlFactory.createSimpleField();
         simpleField1.setDisplayName(new DefaultCdata("<i>The length in miles</i>"));
         simpleField1.setType("double");
         simpleField1.setName("TrailLength");
 
-        SimpleField simpleField2 = kmlFactory.createSimpleField();
+        final SimpleField simpleField2 = kmlFactory.createSimpleField();
         simpleField2.setDisplayName(new DefaultCdata("<i>change in altitude</i>"));
         simpleField2.setType("int");
         simpleField2.setName("ElevationGain");
 
-        Schema schema = kmlFactory.createSchema(
+        final Schema schema = kmlFactory.createSchema(
                 Arrays.asList(simpleField0, simpleField1, simpleField2),
                 "TrailHeadType", "TrailHeadTypeId", null);
 
-        Feature document = kmlFactory.createDocument();
+        final Feature document = kmlFactory.createDocument();
         document.getProperties().add(FF.createAttribute(schema, KmlModelConstants.ATT_DOCUMENT_SCHEMAS, null));
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
-        File temp = File.createTempFile("testSchema", ".kml");
+        final File temp = File.createTempFile("testSchema", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

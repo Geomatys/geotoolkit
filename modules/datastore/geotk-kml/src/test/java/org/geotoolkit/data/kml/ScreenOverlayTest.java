@@ -119,22 +119,8 @@ public class ScreenOverlayTest {
 
     @Test
     public void screenOverlayWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
-//<?xml version="1.0" encoding="UTF-8"?>
-//<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:xal="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0">
-//<ScreenOverlay id="khScreenOverlay756">
-//  <name>Simple crosshairs</name>
-//  <description>This screen overlay uses fractional positioning
-//   to put the image in the exact center of the screen</description>
-//  <Icon>
-//    <href>http://myserver/myimage.jpg</href>
-//  </Icon>
-//  <overlayXY x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
-//  <screenXY x="0.5" y="0.5" xunits="fraction" yunits="fraction"/>
-//  <size x="0" y="0" xunits="pixels" yunits="pixels"/>
-//  <rotation>39.37878630116985</rotation>
-//</ScreenOverlay>
-//</kml>
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
+
         final Vec2 overlayXY = kmlFactory.createVec2(0.5, 0.5, Units.FRACTION, Units.FRACTION);
         final Vec2 screenXY = kmlFactory.createVec2(0.5, 0.5, Units.FRACTION, Units.FRACTION);
         final Vec2 size = kmlFactory.createVec2(0, 0, Units.PIXELS, Units.PIXELS);
@@ -146,7 +132,7 @@ public class ScreenOverlayTest {
         final IdAttributes idAttributes = kmlFactory.createIdAttributes("khScreenOverlay756", null);
 
         final Feature screenOverlay = kmlFactory.createScreenOverlay();
-        Collection<Property> screenOverlayProperties = screenOverlay.getProperties();
+        final Collection<Property> screenOverlayProperties = screenOverlay.getProperties();
         screenOverlayProperties.add(FF.createAttribute("Simple crosshairs", KmlModelConstants.ATT_NAME, null));
         screenOverlayProperties.add(FF.createAttribute("This screen overlay uses fractional positioning\n"
                 + "   to put the image in the exact center of the screen", KmlModelConstants.ATT_DESCRIPTION, null));
@@ -159,10 +145,10 @@ public class ScreenOverlayTest {
 
         final Kml kml = kmlFactory.createKml(null, screenOverlay, null, null);
 
-        File temp = File.createTempFile("testScreenOverlay", ".kml");
+        final File temp = File.createTempFile("testScreenOverlay", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

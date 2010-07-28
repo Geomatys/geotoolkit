@@ -138,7 +138,7 @@ public class ModelTest {
 
     @Test
     public void regionWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException{
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Alias alias0 = kmlFactory.createAlias();
         alias0.setTargetHref(new URI("../files/CU-Macky---Center-StairsnoCulling.jpg"));
@@ -185,17 +185,17 @@ public class ModelTest {
         model.setRessourceMap(resourceMap);
 
         final Feature placemark = kmlFactory.createPlacemark();
-        Collection<Property> placemarkProperties = placemark.getProperties();
+        final Collection<Property> placemarkProperties = placemark.getProperties();
         placemarkProperties.add(FF.createAttribute("Colorado", KmlModelConstants.ATT_NAME, null));
         placemarkProperties.add(FF.createAttribute(model, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
 
         final Kml kml = kmlFactory.createKml(null, placemark, null, null);
 
-        File temp = File.createTempFile("testModel",".kml");
+        final File temp = File.createTempFile("testModel",".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

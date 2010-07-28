@@ -197,68 +197,70 @@ public class PolyStyleTest {
     }
 
     @Test
-    public void polyStyleWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+    public void polyStyleWriteTest()
+            throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
+        
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
-        Coordinate coordinate0 = kmlFactory.createCoordinate(
+        final Coordinate coordinate0 = kmlFactory.createCoordinate(
                 -122.3662784465226, 37.81884427772081, 30);
-        Coordinate coordinate1 = kmlFactory.createCoordinate(
+        final Coordinate coordinate1 = kmlFactory.createCoordinate(
                 -122.3652480684771, 37.81926777010555, 30);
-        Coordinate coordinate2 = kmlFactory.createCoordinate(
+        final Coordinate coordinate2 = kmlFactory.createCoordinate(
                 -122.365640222455, 37.81986126286519, 30);
-        Coordinate coordinate3 = kmlFactory.createCoordinate(
+        final Coordinate coordinate3 = kmlFactory.createCoordinate(
                 -122.36666937925, 37.81942987753481, 30);
-        Coordinate coordinate4 = kmlFactory.createCoordinate(
+        final Coordinate coordinate4 = kmlFactory.createCoordinate(
                 -122.3662784465226, 37.81884427772081, 30);
-        Coordinates coordinates = kmlFactory.createCoordinates(
+        final Coordinates coordinates = kmlFactory.createCoordinates(
                 Arrays.asList(coordinate0, coordinate1,
                 coordinate2, coordinate3, coordinate4));
 
-        Coordinate coordinate00 = kmlFactory.createCoordinate(
+        final Coordinate coordinate00 = kmlFactory.createCoordinate(
                 -122.366212593918, 37.81897719083808, 30);
-        Coordinate coordinate01 = kmlFactory.createCoordinate(
+        final Coordinate coordinate01 = kmlFactory.createCoordinate(
                 -122.3654241733188, 37.81929450992014, 30);
-        Coordinate coordinate02 = kmlFactory.createCoordinate(
+        final Coordinate coordinate02 = kmlFactory.createCoordinate(
                 -122.3657048517827, 37.81973175302663, 30);
-        Coordinate coordinate03 = kmlFactory.createCoordinate(
+        final Coordinate coordinate03 = kmlFactory.createCoordinate(
                 -122.3664882465854, 37.81940249291773, 30);
-        Coordinate coordinate04 = kmlFactory.createCoordinate(
+        final Coordinate coordinate04 = kmlFactory.createCoordinate(
                 -122.366212593918, 37.81897719083808, 30);
-        Coordinates coordinates0 = kmlFactory.createCoordinates(
+        final Coordinates coordinates0 = kmlFactory.createCoordinates(
                 Arrays.asList(coordinate00, coordinate01,
                 coordinate02, coordinate03, coordinate04));
 
-        LinearRing linearRing = kmlFactory.createLinearRing(coordinates);
+        final LinearRing linearRing = kmlFactory.createLinearRing(coordinates);
 
-        LinearRing linearRing0 = kmlFactory.createLinearRing(coordinates0);
+        final LinearRing linearRing0 = kmlFactory.createLinearRing(coordinates0);
 
-        Boundary outerBoundaryIs = kmlFactory.createBoundary();
+        final Boundary outerBoundaryIs = kmlFactory.createBoundary();
         outerBoundaryIs.setLinearRing(linearRing);
 
-        Boundary innerBoundaryIs = kmlFactory.createBoundary();
+        final Boundary innerBoundaryIs = kmlFactory.createBoundary();
         innerBoundaryIs.setLinearRing(linearRing0);
 
-        Polygon polygon = kmlFactory.createPolygon(outerBoundaryIs, Arrays.asList(innerBoundaryIs));
+        final Polygon polygon = kmlFactory.createPolygon(outerBoundaryIs, Arrays.asList(innerBoundaryIs));
         polygon.setExtrude(true);
         polygon.setAltitudeMode(EnumAltitudeMode.RELATIVE_TO_GROUND);
 
-        Feature placemark = kmlFactory.createPlacemark();
-        Collection<Property> placemarkProperties = placemark.getProperties();
+        final Feature placemark = kmlFactory.createPlacemark();
+        final Collection<Property> placemarkProperties = placemark.getProperties();
         placemarkProperties.add(FF.createAttribute("hollow box", KmlModelConstants.ATT_NAME, null));
         placemarkProperties.add(FF.createAttribute(new URI("#examplePolyStyle"), KmlModelConstants.ATT_STYLE_URL, null));
         placemarkProperties.add(FF.createAttribute(polygon, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
-        Style style = kmlFactory.createStyle();
-        IdAttributes idAttributes = kmlFactory.createIdAttributes("examplePolyStyle", null);
+        final Style style = kmlFactory.createStyle();
+        final IdAttributes idAttributes = kmlFactory.createIdAttributes("examplePolyStyle", null);
         style.setIdAttributes(idAttributes);
 
-        PolyStyle polyStyle = kmlFactory.createPolyStyle();
+        final PolyStyle polyStyle = kmlFactory.createPolyStyle();
         polyStyle.setColor(new Color(204, 0, 0, 255));
         polyStyle.setColorMode(ColorMode.RANDOM);
         style.setPolyStyle(polyStyle);
 
-        Feature document = kmlFactory.createDocument();
-        Collection<Property> documentProperties = document.getProperties();
+        final Feature document = kmlFactory.createDocument();
+        final Collection<Property> documentProperties = document.getProperties();
         documentProperties.add(FF.createAttribute(style, KmlModelConstants.ATT_STYLE_SELECTOR, null));
         documentProperties.add(FF.createAttribute(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
         documentProperties.add(FF.createAttribute("PolygonStyle.kml", KmlModelConstants.ATT_NAME, null));
@@ -266,10 +268,10 @@ public class PolyStyleTest {
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
-        File temp = File.createTempFile("testPolyStyle", ".kml");
+        final File temp = File.createTempFile("testPolyStyle", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

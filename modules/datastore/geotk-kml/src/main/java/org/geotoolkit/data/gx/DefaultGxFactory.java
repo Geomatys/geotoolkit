@@ -65,9 +65,15 @@ import org.opengis.feature.Property;
  */
 public class DefaultGxFactory implements GxFactory {
 
-
+    private static final GxFactory GXF = new DefaultGxFactory();
     private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
             new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+
+    private DefaultGxFactory(){}
+
+    public static GxFactory getInstance(){
+        return GXF;
+    }
 
     @Override
     public AnimatedUpdate createAnimatedUpdate() {

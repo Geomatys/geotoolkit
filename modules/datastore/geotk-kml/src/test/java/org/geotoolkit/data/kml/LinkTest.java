@@ -103,10 +103,10 @@ public class LinkTest {
 
     @Test
     public void linkWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Feature networkLink = kmlFactory.createNetworkLink();
-        Collection<Property> networkLinkProperties = networkLink.getProperties();
+        final Collection<Property> networkLinkProperties = networkLink.getProperties();
         networkLinkProperties.add(FF.createAttribute("NE US Radar", KmlModelConstants.ATT_NAME, null));
         networkLink.getProperty(KmlModelConstants.ATT_NETWORK_LINK_FLY_TO_VIEW.getName()).setValue(Boolean.TRUE);
 
@@ -116,7 +116,7 @@ public class LinkTest {
         link.setRefreshInterval(30);
         link.setViewRefreshMode(ViewRefreshMode.ON_STOP);
         link.setViewRefreshTime(7);
-        String text = "BBOX=[bboxWest],[bboxSouth],[bboxEast],[bboxNorth];CAMERA=\\\n"+
+        final String text = "BBOX=[bboxWest],[bboxSouth],[bboxEast],[bboxNorth];CAMERA=\\\n"+
 "      [lookatLon],[lookatLat],[lookatRange],[lookatTilt],[lookatHeading];VIEW=\\\n"+
 "      [horizFov],[vertFov],[horizPixels],[vertPixels],[terrainEnabled]";
         link.setViewFormat(text);
@@ -124,10 +124,10 @@ public class LinkTest {
 
         final Kml kml = kmlFactory.createKml(null, networkLink, null, null);
 
-        File temp = File.createTempFile("testLink",".kml");
+        final File temp = File.createTempFile("testLink",".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

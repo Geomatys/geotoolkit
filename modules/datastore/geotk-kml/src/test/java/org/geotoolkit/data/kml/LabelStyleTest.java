@@ -134,39 +134,39 @@ public class LabelStyleTest {
 
     @Test
     public void labelStyleWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
-        Coordinate coordinate = kmlFactory.createCoordinate(-122.367375, 37.829192, 0);
-        Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate));
-        Point point = kmlFactory.createPoint(coordinates);
+        final Coordinate coordinate = kmlFactory.createCoordinate(-122.367375, 37.829192, 0);
+        final Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate));
+        final Point point = kmlFactory.createPoint(coordinates);
 
-        Feature placemark = kmlFactory.createPlacemark();
-        Collection<Property> placemarkProperties = placemark.getProperties();
+        final Feature placemark = kmlFactory.createPlacemark();
+        final Collection<Property> placemarkProperties = placemark.getProperties();
         placemarkProperties.add(FF.createAttribute("LabelStyle.kml", KmlModelConstants.ATT_NAME, null));
         placemarkProperties.add(FF.createAttribute(new URI("#randomLabelColor"), KmlModelConstants.ATT_STYLE_URL, null));
         placemarkProperties.add(FF.createAttribute(point, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
-        Style style = kmlFactory.createStyle();
+        final Style style = kmlFactory.createStyle();
             LabelStyle labelStyle = kmlFactory.createLabelStyle();
             BasicLink icon = kmlFactory.createBasicLink();
             labelStyle.setScale(1.5);
             labelStyle.setColor(new Color(204, 0, 0, 255));
             labelStyle.setColorMode(ColorMode.RANDOM);
         style.setLabelStyle(labelStyle);
-        IdAttributes idAttributes = kmlFactory.createIdAttributes("randomLabelColor", null);
+        final IdAttributes idAttributes = kmlFactory.createIdAttributes("randomLabelColor", null);
         style.setIdAttributes(idAttributes);
 
-        Feature document = kmlFactory.createDocument();
-        Collection<Property> documentProperties = document.getProperties();
+        final Feature document = kmlFactory.createDocument();
+        final Collection<Property> documentProperties = document.getProperties();
         documentProperties.add(FF.createAttribute(style, KmlModelConstants.ATT_STYLE_SELECTOR, null));
         documentProperties.add(FF.createAttribute(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
-        File temp = File.createTempFile("testLabelStyle", ".kml");
+        final File temp = File.createTempFile("testLabelStyle", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

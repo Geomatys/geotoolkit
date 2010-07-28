@@ -96,14 +96,14 @@ public class LookAtTest {
 
     @Test
     public void lookAtWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException {
-        final KmlFactory kmlFactory = new DefaultKmlFactory();
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
-        double longitude = -122.0839597145766;
-        double latitude = 37.42222904525232;
-        double altitude = 1000.34;
-        double heading = -148.4122922628044;
-        double tilt = 40.5575073395506;
-        double range = 500.6566641072245;
+        final double longitude = -122.0839597145766;
+        final double latitude = 37.42222904525232;
+        final double altitude = 1000.34;
+        final double heading = -148.4122922628044;
+        final double tilt = 40.5575073395506;
+        final double range = 500.6566641072245;
 
         final LookAt lookAt = kmlFactory.createLookAt();
         lookAt.setLongitude(longitude);
@@ -116,10 +116,10 @@ public class LookAtTest {
         folder.getProperties().add(FF.createAttribute(lookAt, KmlModelConstants.ATT_VIEW, null));
         final Kml kml = kmlFactory.createKml(null, folder, null, null);
 
-        File temp = File.createTempFile("testLookAt", ".kml");
+        final File temp = File.createTempFile("testLookAt", ".kml");
         temp.deleteOnExit();
 
-        KmlWriter writer = new KmlWriter();
+        final KmlWriter writer = new KmlWriter();
         writer.setOutput(temp);
         writer.write(kml);
         writer.dispose();

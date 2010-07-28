@@ -64,11 +64,11 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
     /**
      *
      */
-    public GxWriter(KmlWriter writer){
+    public GxWriter(KmlWriter w){
         super();
-        kmlWriter = writer;
         this.initComplexTable();
         this.initSimpleTable();
+        this.kmlWriter = w;
     }
 
     /**

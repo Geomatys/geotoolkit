@@ -19,11 +19,13 @@ package org.geotoolkit.data.gx.xml;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamConstants;
@@ -67,7 +69,6 @@ import org.geotoolkit.xal.model.AddressDetails;
 import org.geotoolkit.xml.StaxStreamReader;
 import org.opengis.feature.Feature;
 import static org.geotoolkit.data.gx.xml.GxConstants.*;
-import static java.util.Collections.EMPTY_MAP;
 
 /**
  *
@@ -76,17 +77,18 @@ import static java.util.Collections.EMPTY_MAP;
 public class GxReader extends StaxStreamReader implements KmlExtensionReader {
 
     private String URI_KML = KmlConstants.URI_KML_2_2;
-    private static final GxFactory gxFactory = new DefaultGxFactory();
-    private static final KmlFactory kmlFactory = new DefaultKmlFactory();
-    private final KmlReader kmlReader = new KmlReader();
+    private static final GxFactory gxFactory = DefaultGxFactory.getInstance();
+    private static final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
+    private final KmlReader kmlReader;
     private final FastDateParser fastDateParser = new FastDateParser();
-    public Map<String, Map<String, Extensions.Names>> complexTable;
-    public Map<String, Map<String, Extensions.Names>> simpleTable;
+    public Map<String, List<String>> complexTable;
+    public Map<String, List<String>> simpleTable;
 
-    public GxReader(){
+    public GxReader(KmlReader r){
         super();
         initComplexTable();
         initSimpleTable();
+        this.kmlReader = r;
     }
 
     /**
@@ -99,13 +101,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
     @Override
     public void setInput(Object input) 
             throws IOException, XMLStreamException {
-        
         super.setInput(input);
-        try {
-            this.kmlReader.setInput(reader, URI_KML);
-        } catch (KmlException ex) {
-            Logger.getLogger(GxReader.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     /**
@@ -687,81 +683,99 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
      */
 
     @Override
-    public Extensions.Names getComplexExtensionLevel(String containingTag, String contentsTag) {
+    public boolean canHandleComplexExtension(String containingTag, String contentsTag) {
         try {
-            return this.complexTable.get(contentsTag).get(containingTag);
+            return this.complexTable.get(contentsTag).contains(containingTag);
         } catch (NullPointerException e){
-            return null;
+            return false;
         }
     }
 
     @Override
-    public Extensions.Names getSimpleExtensionLevel(String containingTag, String contentsTag) {
+    public boolean canHandleSimpleExtension(String containingTag, String contentsTag) {
         try {
-            return this.simpleTable.get(contentsTag).get(containingTag);
+            return this.simpleTable.get(contentsTag).contains(containingTag);
         } catch (NullPointerException e){
-            return null;
+            return false;
         }
     }
 
     @Override
-    public Object readExtensionElement(String containingTag, String contentsTag)
+    public Entry<Object, Extensions.Names> readExtensionElement(String containingTag, String contentsTag)
             throws XMLStreamException, KmlException, URISyntaxException {
         Object resultat = null;
+        Extensions.Names ext = null;
         if(GxConstants.TAG_ALTITUDE_MODE.equals(contentsTag)){
             resultat = readAltitudeMode();
         } else if(GxConstants.TAG_BALLOON_VISIBILITY.equals(contentsTag)){
             resultat = kmlFactory.createSimpleTypeContainer(URI_GX, TAG_BALLOON_VISIBILITY,readBalloonVisibility());
+            ext = Extensions.Names.FEATURE;
         } else if (GxConstants.TAG_LAT_LON_QUAD.equals(contentsTag)){
             resultat = readLatLonQuad();
+            if(KmlConstants.TAG_GROUND_OVERLAY.equals(containingTag)){
+                ext = Extensions.Names.GROUND_OVERLAY;
+            }
         } else if (GxConstants.TAG_TIME_SPAN.equals(contentsTag)){
             resultat = readTimeSpan();
+            ext = Extensions.Names.VIEW;
         } else if (GxConstants.TAG_TIME_STAMP.equals(contentsTag)){
             resultat = readTimeStamp();
+            ext = Extensions.Names.VIEW;
         } else if(GxConstants.TAG_TOUR.equals(contentsTag)){
             resultat = readTour();
+            if(KmlConstants.TAG_DOCUMENT.equals(containingTag)){
+                ext = Extensions.Names.DOCUMENT;
+            }
         }
-        return resultat;
+        return new SimpleImmutableEntry<Object, Extensions.Names>(resultat, ext);
     }
 
     private void initComplexTable(){
         // Tour peut se trouver dans toute extension d'abstractObject... à compléter.
-        Map<String, Extensions.Names> tourBinding = new HashMap<String, Extensions.Names>();
-        tourBinding.put( KmlConstants.TAG_DOCUMENT, Extensions.Names.DOCUMENT);
+        List<String> tourBinding = new ArrayList<String>();
+        tourBinding.add( KmlConstants.TAG_DOCUMENT);
 
-        Map<String, Extensions.Names> latLonQuadBinding = new HashMap<String, Extensions.Names>();
-        latLonQuadBinding.put( KmlConstants.TAG_GROUND_OVERLAY, Extensions.Names.GROUND_OVERLAY);
+        List<String> latLonQuadBinding = new ArrayList<String>();
+        latLonQuadBinding.add(KmlConstants.TAG_GROUND_OVERLAY);
 
-        Map<String, Extensions.Names> timeSpan = new HashMap<String, Extensions.Names>();
-        timeSpan.put( KmlConstants.TAG_CAMERA, Extensions.Names.VIEW);
-        timeSpan.put( KmlConstants.TAG_LOOK_AT, Extensions.Names.VIEW);
+        List<String> timeSpan = new ArrayList<String>();
+        timeSpan.add(KmlConstants.TAG_CAMERA);
+        timeSpan.add(KmlConstants.TAG_LOOK_AT);
 
-        Map<String, Extensions.Names> timeStamp = new HashMap<String, Extensions.Names>();
-        timeStamp.put( KmlConstants.TAG_CAMERA, Extensions.Names.VIEW);
-        timeStamp.put( KmlConstants.TAG_LOOK_AT, Extensions.Names.VIEW);
+        List<String> timeStamp = new ArrayList<String>();
+        timeStamp.add(KmlConstants.TAG_CAMERA);
+        timeStamp.add(KmlConstants.TAG_LOOK_AT);
 
-        complexTable = new HashMap<String, Map<String, Extensions.Names>>();
-        complexTable.put(GxConstants.TAG_ALTITUDE_MODE, EMPTY_MAP);
+        List<String> altitudeModeBinding = new ArrayList<String>();
+        altitudeModeBinding.add(KmlConstants.TAG_LOOK_AT);
+        altitudeModeBinding.add(KmlConstants.TAG_CAMERA);
+        altitudeModeBinding.add(KmlConstants.TAG_LAT_LON_ALT_BOX);
+        altitudeModeBinding.add(KmlConstants.TAG_POINT);
+        altitudeModeBinding.add(KmlConstants.TAG_LINE_STRING);
+        altitudeModeBinding.add(KmlConstants.TAG_LINEAR_RING);
+        altitudeModeBinding.add(KmlConstants.TAG_POLYGON);
+        altitudeModeBinding.add(KmlConstants.TAG_MODEL);
+        altitudeModeBinding.add(KmlConstants.TAG_GROUND_OVERLAY);
+
+        complexTable = new HashMap<String, List<String>>();
         complexTable.put(GxConstants.TAG_LAT_LON_QUAD, latLonQuadBinding);
         complexTable.put(GxConstants.TAG_TIME_SPAN, timeSpan);
         complexTable.put(GxConstants.TAG_TIME_STAMP, timeStamp);
         complexTable.put(GxConstants.TAG_TOUR, tourBinding);
+        complexTable.put(GxConstants.TAG_ALTITUDE_MODE, altitudeModeBinding);
     }
 
     private void initSimpleTable(){
-        Map<String, Extensions.Names> balloonVisibilityBinding = new HashMap<String, Extensions.Names>();
-        balloonVisibilityBinding.put(KmlConstants.TAG_NETWORK_LINK, Extensions.Names.FEATURE);
-        balloonVisibilityBinding.put(KmlConstants.TAG_PLACEMARK, Extensions.Names.FEATURE);
-        balloonVisibilityBinding.put(KmlConstants.TAG_FOLDER, Extensions.Names.FEATURE);
-        balloonVisibilityBinding.put(KmlConstants.TAG_DOCUMENT, Extensions.Names.FEATURE);
-        balloonVisibilityBinding.put(KmlConstants.TAG_GROUND_OVERLAY, Extensions.Names.FEATURE);
-        balloonVisibilityBinding.put(KmlConstants.TAG_SCREEN_OVERLAY, Extensions.Names.FEATURE);
-        balloonVisibilityBinding.put(KmlConstants.TAG_PHOTO_OVERLAY, Extensions.Names.FEATURE);
+        List<String> balloonVisibilityBinding = new ArrayList<String>();
+        balloonVisibilityBinding.add(KmlConstants.TAG_NETWORK_LINK);
+        balloonVisibilityBinding.add(KmlConstants.TAG_PLACEMARK);
+        balloonVisibilityBinding.add(KmlConstants.TAG_FOLDER);
+        balloonVisibilityBinding.add(KmlConstants.TAG_DOCUMENT);
+        balloonVisibilityBinding.add(KmlConstants.TAG_GROUND_OVERLAY);
+        balloonVisibilityBinding.add(KmlConstants.TAG_SCREEN_OVERLAY);
+        balloonVisibilityBinding.add(KmlConstants.TAG_PHOTO_OVERLAY);
 
-        Map<String, Extensions.Names> latLonQuadBinding = new HashMap<String, Extensions.Names>();
-        latLonQuadBinding.put(KmlConstants.TAG_GROUND_OVERLAY, Extensions.Names.GROUND_OVERLAY);
-
-        simpleTable = new HashMap<String, Map<String, Extensions.Names>>();
+        simpleTable = new HashMap<String, List<String>>();
         simpleTable.put(GxConstants.TAG_BALLOON_VISIBILITY, balloonVisibilityBinding);
     }
 
