@@ -26,8 +26,19 @@ import org.geotoolkit.index.Data;
  */
 public interface DataReader {
 
-    Data create(int id) throws IOException;
+    /**
+     * Read a single data value.
+     */
+    Data read(int id) throws IOException;
 
+    /**
+     * Read a buffer of values.
+     */
+    void read(int[] ids, Data[] buffer, int size) throws IOException;
+
+    /**
+     * Release resources.
+     */
     void close() throws IOException;
 
 }

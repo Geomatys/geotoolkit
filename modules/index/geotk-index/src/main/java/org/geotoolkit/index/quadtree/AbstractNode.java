@@ -30,6 +30,12 @@ import java.util.logging.Level;
  */
 public abstract class AbstractNode {
 
+    public static enum Relation{
+        CONTAINED,
+        INTERSECT,
+        NONE
+    }
+
     /**
      * [MinX,MinY,MaxX,MaxY]
      */
@@ -227,6 +233,36 @@ public abstract class AbstractNode {
         }
 
         return sb.toString();
+    }
+
+    public boolean intersects(Envelope other){
+        return !(other.getMinX() > maxx ||
+                 other.getMaxX() < minx ||
+                 other.getMinY() > maxy ||
+                 other.getMaxY() < miny);
+    }
+
+    public Relation relation(Envelope other){
+        final double envMinx = other.getMinX();
+        final double envMaxx = other.getMaxX();
+        final double envMiny = other.getMinY();
+        final double envMaxy = other.getMaxY();
+
+        if(minx >= envMinx &&
+               maxx <= envMaxx &&
+               miny >= envMiny &&
+               maxy <= envMaxy){
+            //we are contained by the given envelope
+            return Relation.CONTAINED;
+        }else if(!(envMinx > maxx ||
+                   envMaxx < minx ||
+                   envMiny > maxy ||
+                   envMaxy < miny)){
+            //we intersect
+            return Relation.INTERSECT;
+        }else{
+            return Relation.NONE;
+        }
     }
 
 }

@@ -173,9 +173,7 @@ public class LazySearchCollection extends AbstractCollection<Data> implements
             // sort so offset lookup is faster
             Arrays.sort(indices,0,indexSize);
             try{
-                for (int i=0; i<indexSize; i++) {
-                    datas[i] = reader.create(indices[i]);
-                }
+                reader.read(indices, datas, indexSize);
             }catch(IOException ex) {
                 throw new RuntimeException(ex);
             }

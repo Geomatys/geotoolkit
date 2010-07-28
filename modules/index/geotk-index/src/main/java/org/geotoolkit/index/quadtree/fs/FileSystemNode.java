@@ -18,14 +18,12 @@
 package org.geotoolkit.index.quadtree.fs;
 
 import java.io.IOException;
-import java.lang.ref.SoftReference;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 import java.nio.channels.FileChannel;
-import org.geotoolkit.index.quadtree.AbstractNode;
 
-import org.geotoolkit.index.quadtree.Node;
+import org.geotoolkit.index.quadtree.AbstractNode;
 import org.geotoolkit.index.quadtree.StoreException;
 
 /**
@@ -37,7 +35,7 @@ import org.geotoolkit.index.quadtree.StoreException;
  */
 public class FileSystemNode extends AbstractNode {
 
-    private SoftReference<FileSystemNode[]> nodes = new SoftReference<FileSystemNode[]>(null);
+    private FileSystemNode[] nodes = null;
 
     private final ScrollingBuffer buffer;
     private final int subNodeStartByte;
@@ -94,34 +92,30 @@ public class FileSystemNode extends AbstractNode {
     @Override
     public AbstractNode getSubNode(int index) throws StoreException {
 
-        FileSystemNode[] subNodes = nodes.get();
-        
-        if (subNodes == null) {
+        if (nodes == null) {
             //read the subnodes
             try {
-                subNodes = new FileSystemNode[numSubNodes];
-                for(int i = 0;i<subNodes.length; i++){
+                nodes = new FileSystemNode[numSubNodes];
+                for(int i = 0;i<nodes.length; i++){
 
                     final int offset;
                     if(i>0){
                         //skip the previous nodes
-                        final FileSystemNode previousNode = (FileSystemNode) subNodes[i-1];
+                        final FileSystemNode previousNode = (FileSystemNode) nodes[i-1];
                         offset = previousNode.getSubNodeStartByte()+ previousNode.getSubNodesLength();
                     }else{
                         offset = subNodeStartByte;
                     }
                     buffer.goTo(offset);
-                    subNodes[i] = readNode(buffer);
+                    nodes[i] = readNode(buffer);
                 }
-
-                nodes = new SoftReference<FileSystemNode[]>(subNodes);
 
             } catch (IOException e) {
                 throw new StoreException(e);
             }
         }
 
-        return subNodes[index];
+        return nodes[index];
     }
 
     /**

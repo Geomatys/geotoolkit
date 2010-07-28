@@ -27,8 +27,16 @@ public class IndexDataReader implements DataReader {
     }
 
     @Override
-    public Data create(int recno) throws IOException {
+    public Data read(int recno) throws IOException {
         return new ShpData(recno+1, (long)indexfile.getOffsetInBytes(recno));
+    }
+
+    @Override
+    public void read(int[] ids, Data[] buffer, int size) throws IOException {
+        for(int i=0;i<size;i++){
+            final int recno = ids[i];
+            buffer[i] = new ShpData(recno+1, (long)indexfile.getOffsetInBytes(recno));
+        }
     }
 
     @Override

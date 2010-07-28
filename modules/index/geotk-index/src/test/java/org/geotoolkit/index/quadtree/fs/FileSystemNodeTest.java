@@ -63,7 +63,7 @@ public class FileSystemNodeTest {
 
         final DataReader reader = new DataReader() {
             @Override
-            public Data create(final int id) throws IOException {
+            public Data read(final int id) throws IOException {
                 return new DefaultData(DATA_DEFINITION){
                     @Override
                     public String toString() {
@@ -73,6 +73,13 @@ public class FileSystemNodeTest {
             }
             @Override
             public void close() throws IOException {
+            }
+
+            @Override
+            public void read(int[] ids, Data[] buffer, int size) throws IOException {
+                for(int i=0;i<size;i++){
+                    buffer[i] = read(ids[i]);
+                }
             }
         };
 

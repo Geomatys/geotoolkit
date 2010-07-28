@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.index.quadtree;
 
-import java.util.AbstractMap.SimpleEntry;
-import java.util.Map.Entry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Iterator;
@@ -36,12 +34,22 @@ import com.vividsolutions.jts.geom.Envelope;
  */
 public class LazySearchIterator implements Iterator<AbstractNode> {
 
+    private static class Segment{
+        private final AbstractNode node;
+        int childIndex;
+
+        private Segment(AbstractNode node, int childIndex){
+            this.node = node;
+            this.childIndex = childIndex;
+        }
+
+    }
+
     private final Envelope bounds;
     private boolean closed;
 
     //the current path where we are, Integer is the current visited child node index.
-    private final List<Entry<AbstractNode,Integer>> path = new ArrayList<Entry<AbstractNode,Integer>>(10);
-    private final Envelope buffer = new Envelope();
+    private final List<Segment> path = new ArrayList<Segment>(10);
 
     //curent visited node
     private AbstractNode current = null;
@@ -50,8 +58,8 @@ public class LazySearchIterator implements Iterator<AbstractNode> {
         this.bounds = bounds;
         this.closed = false;
 
-        if(node.getBounds(buffer).intersects(bounds)){
-            path.add(new SimpleEntry<AbstractNode, Integer>(node, -1));
+        if(node.intersects(bounds)){
+            path.add(new Segment(node, -1));
         }
         
     }
@@ -112,40 +120,37 @@ public class LazySearchIterator implements Iterator<AbstractNode> {
             }
 
             final int lastIndex = path.size()-1;
-            final Entry<AbstractNode,Integer> segment = path.get(lastIndex);
-            final AbstractNode candidate = segment.getKey();
-            int idNode = segment.getValue();
+            final Segment segment = path.get(lastIndex);
 
-            if(idNode == -1){
+            if(segment.childIndex == -1){
                 //prepare for next node search
-                idNode = 0;
-                segment.setValue(idNode);
+                segment.childIndex = 0;
 
                 //we have not yet explore this node ids
                 //we use the node shpIds if he has some
-                final int nb = candidate.getNumShapeIds();
+                final int nb = segment.node.getNumShapeIds();
                 if(nb>0){
                     //we have some ids in this node
-                    current = candidate;
+                    current = segment.node;
                     return;
                 }
             }
 
-            final int nbNodes = candidate.getNumSubNodes();
+            final int nbNodes = segment.node.getNumSubNodes();
             childLoop:
-            while(idNode < nbNodes){
-                final AbstractNode child = candidate.getSubNode(idNode);
-                if(bounds != null && !child.getBounds(buffer).intersects(bounds)){
+            while(segment.childIndex < nbNodes){
+                final AbstractNode child = segment.node.getSubNode(segment.childIndex);
+
+                if(!child.intersects(bounds)){
                     //not in the area we requested
-                    idNode++;
+                    segment.childIndex++;
                     continue childLoop;
                 }
 
-                path.add(new SimpleEntry<AbstractNode, Integer>(candidate.getSubNode(idNode),-1));
+                path.add(new Segment(segment.node.getSubNode(segment.childIndex), -1));
                 
                 //prepare next node sarch
-                idNode++;
-                segment.setValue(idNode);
+                segment.childIndex++;
 
                 //explore the sub node
                 continue nodeLoop;
