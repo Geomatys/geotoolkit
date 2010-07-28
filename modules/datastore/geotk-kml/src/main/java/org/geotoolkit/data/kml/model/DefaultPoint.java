@@ -30,7 +30,7 @@ public class DefaultPoint extends com.vividsolutions.jts.geom.Point implements P
     private IdAttributes idAttributes;
     private final Extensions extensions = new Extensions();
     private boolean extrude;
-    private EnumAltitudeMode altitudeMode;
+    private AltitudeMode altitudeMode;
 
     /**
      * 
@@ -61,7 +61,7 @@ public class DefaultPoint extends com.vividsolutions.jts.geom.Point implements P
             List<SimpleTypeContainer> abstractGeometrySimpleExtensions,
             List<Object> abstractGeometryObjectExtensions,
             boolean extrude,
-            EnumAltitudeMode altitudeMode,
+            AltitudeMode altitudeMode,
             Coordinates coordinates,
             List<SimpleTypeContainer> pointSimpleExtensions,
             List<Object> pointObjectExtensions,
@@ -101,7 +101,7 @@ public class DefaultPoint extends com.vividsolutions.jts.geom.Point implements P
      * @{@inheritDoc }
      */
     @Override
-    public EnumAltitudeMode getAltitudeMode() {
+    public AltitudeMode getAltitudeMode() {
         return this.altitudeMode;
     }
 
@@ -128,7 +128,7 @@ public class DefaultPoint extends com.vividsolutions.jts.geom.Point implements P
      * @{@inheritDoc }
      */
     @Override
-    public void setAltitudeMode(EnumAltitudeMode altitudeMode) {
+    public void setAltitudeMode(AltitudeMode altitudeMode) {
         this.altitudeMode = altitudeMode;
     }
 

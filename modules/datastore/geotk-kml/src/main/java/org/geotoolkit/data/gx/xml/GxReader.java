@@ -26,8 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.atom.model.AtomLink;
@@ -76,7 +74,6 @@ import static org.geotoolkit.data.gx.xml.GxConstants.*;
  */
 public class GxReader extends StaxStreamReader implements KmlExtensionReader {
 
-    private String URI_KML = KmlConstants.URI_KML_2_2;
     private static final GxFactory gxFactory = DefaultGxFactory.getInstance();
     private static final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
     private final KmlReader kmlReader;
@@ -134,7 +131,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
                         if (TAG_DURATION.equals(eName)) {
                             duration = parseDouble(reader.getElementText());
                         }
-                    } else if (URI_KML.equals(eUri)) {
+                    } else if (this.kmlReader.getVersionUri().equals(eUri)) {
                         if (KmlConstants.TAG_UPDATE.equals(eName)) {
                             update = this.kmlReader.readUpdate();
                         }
@@ -200,7 +197,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (this.kmlReader.getVersionUri().equals(eUri)) {
                         // ABSTRACT FEATURE
                         if (KmlConstants.TAG_NAME.equals(eName)) {
                             name = reader.getElementText();
@@ -366,13 +363,16 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
+                    // GX
                     if (URI_GX.equals(eUri)) {
                         if (TAG_DURATION.equals(eName)) {
                             duration = parseDouble(reader.getElementText());
                         } else if (TAG_FLY_TO_MODE.equals(eName)) {
                             flyToMode = EnumFlyToMode.transform(reader.getElementText());
                         }
-                    } else if (URI_KML.equals(eUri)) {
+                    } 
+                    // KML
+                    else if (this.kmlReader.getVersionUri().equals(eUri)) {
                         if (kmlReader.isAbstractView(eName)) {
                             view = this.kmlReader.readAbstractView(eName);
                         }
@@ -494,7 +494,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (this.kmlReader.getVersionUri().equals(eUri)) {
                         if (KmlConstants.TAG_HREF.equals(eName)) {
                             href = reader.getElementText();
                         }
@@ -530,7 +530,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (this.kmlReader.getVersionUri().equals(eUri)) {
                         if (KmlConstants.TAG_COORDINATES.equals(eName)) {
                             coordinates = kmlReader.readCoordinates(reader.getElementText());
                         }
@@ -573,7 +573,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (this.kmlReader.getVersionUri().equals(eUri)) {
                         if (KmlConstants.TAG_BEGIN.equals(eName)) {
                             begin = (Calendar) fastDateParser.getCalendar(reader.getElementText()).clone();
                         } else if (KmlConstants.TAG_END.equals(eName)) {
@@ -625,7 +625,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (this.kmlReader.getVersionUri().equals(eUri)) {
                         if (KmlConstants.TAG_WHEN.equals(eName)) {
                             when = (Calendar) fastDateParser.getCalendar(reader.getElementText()).clone();
                         }
@@ -733,7 +733,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
     private void initComplexTable(){
         // Tour peut se trouver dans toute extension d'abstractObject... à compléter.
         List<String> tourBinding = new ArrayList<String>();
-        tourBinding.add( KmlConstants.TAG_DOCUMENT);
+        tourBinding.add(KmlConstants.TAG_DOCUMENT);
 
         List<String> latLonQuadBinding = new ArrayList<String>();
         latLonQuadBinding.add(KmlConstants.TAG_GROUND_OVERLAY);
@@ -747,15 +747,15 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
         timeStamp.add(KmlConstants.TAG_LOOK_AT);
 
         List<String> altitudeModeBinding = new ArrayList<String>();
-        altitudeModeBinding.add(KmlConstants.TAG_LOOK_AT);
-        altitudeModeBinding.add(KmlConstants.TAG_CAMERA);
-        altitudeModeBinding.add(KmlConstants.TAG_LAT_LON_ALT_BOX);
-        altitudeModeBinding.add(KmlConstants.TAG_POINT);
-        altitudeModeBinding.add(KmlConstants.TAG_LINE_STRING);
-        altitudeModeBinding.add(KmlConstants.TAG_LINEAR_RING);
-        altitudeModeBinding.add(KmlConstants.TAG_POLYGON);
+        altitudeModeBinding.add(KmlConstants.TAG_LOOK_AT);//
+        altitudeModeBinding.add(KmlConstants.TAG_CAMERA);//
+        altitudeModeBinding.add(KmlConstants.TAG_LAT_LON_ALT_BOX);//
+        altitudeModeBinding.add(KmlConstants.TAG_POINT);//
+        altitudeModeBinding.add(KmlConstants.TAG_LINE_STRING);//
+        altitudeModeBinding.add(KmlConstants.TAG_LINEAR_RING);//
+        altitudeModeBinding.add(KmlConstants.TAG_POLYGON);//
         altitudeModeBinding.add(KmlConstants.TAG_MODEL);
-        altitudeModeBinding.add(KmlConstants.TAG_GROUND_OVERLAY);
+        altitudeModeBinding.add(KmlConstants.TAG_GROUND_OVERLAY);//
 
         complexTable = new HashMap<String, List<String>>();
         complexTable.put(GxConstants.TAG_LAT_LON_QUAD, latLonQuadBinding);

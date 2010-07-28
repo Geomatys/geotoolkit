@@ -24,13 +24,11 @@ import java.util.List;
 import org.geotoolkit.atom.model.AtomPersonConstruct;
 import org.geotoolkit.atom.model.AtomLink;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
-import org.geotoolkit.data.kml.model.AbstractObject;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
 import org.geotoolkit.data.kml.model.AbstractTimePrimitive;
 import org.geotoolkit.data.kml.model.AbstractView;
 import org.geotoolkit.data.kml.model.Alias;
 import org.geotoolkit.data.kml.model.AltitudeMode;
-import org.geotoolkit.data.kml.model.EnumAltitudeMode;
 import org.geotoolkit.data.kml.model.BalloonStyle;
 import org.geotoolkit.data.kml.model.BasicLink;
 import org.geotoolkit.data.kml.model.Boundary;
@@ -199,7 +197,7 @@ public interface KmlFactory {
      * @return
      */
     Boundary createBoundary(LinearRing linearRing,
-            List<SimpleTypeContainer> boundarySimpleExtensions, List<AbstractObject> boundaryObjectExtensions);
+            List<SimpleTypeContainer> boundarySimpleExtensions, List<Object> boundaryObjectExtensions);
 
     /**
      *
@@ -687,7 +685,7 @@ public interface KmlFactory {
             double north, double south, double east, double west,
             List<SimpleTypeContainer> abstractLatLonBoxSimpleExtensions,
             List<Object> abstractLatLonBoxObjectExtensions,
-            double minAltitude, double maxAltitude, EnumAltitudeMode altitudeMode,
+            double minAltitude, double maxAltitude, AltitudeMode altitudeMode,
             List<SimpleTypeContainer> latLonAltBoxSimpleExtensions,
             List<Object> latLonAltBoxObjectExtensions);
 
@@ -716,7 +714,7 @@ public interface KmlFactory {
             List<SimpleTypeContainer> abstractGeometrySimpleExtensions,
             List<Object> abstractGeometryObjectExtensions,
             boolean extrude, boolean tessellate,
-            EnumAltitudeMode altitudeMode,
+           AltitudeMode altitudeMode,
             Coordinates coordinates,
             List<SimpleTypeContainer> linearRingSimpleExtensions,
             List<Object> linearRingObjectExtensions);
@@ -960,7 +958,7 @@ public interface KmlFactory {
             IdAttributes idAttributes,
             List<SimpleTypeContainer> abstractGeometrySimpleExtensions,
             List<Object> abstractGeometryObjectExtensions,
-            EnumAltitudeMode altitudeMode, Location location, Orientation orientation,
+            AltitudeMode altitudeMode, Location location, Orientation orientation,
             Scale scale, Link link, ResourceMap resourceMap,
             List<SimpleTypeContainer> modelSimpleExtensions, List<Object> modelObjectExtensions);
 
@@ -1253,7 +1251,7 @@ public interface KmlFactory {
             List<SimpleTypeContainer> abstractGeometrySimpleExtensions,
             List<Object> abstractGeometryObjectExtensions,
             boolean extrude,
-            EnumAltitudeMode altitudeMode,
+            AltitudeMode altitudeMode,
             Coordinates coordinates,
             List<SimpleTypeContainer> pointSimpleExtensions,
             List<Object> pointObjectExtensions);

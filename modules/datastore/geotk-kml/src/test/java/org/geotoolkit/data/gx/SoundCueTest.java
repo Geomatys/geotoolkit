@@ -138,12 +138,12 @@ public class SoundCueTest {
         playList.setTourPrimitives(Arrays.asList((AbstractTourPrimitive) soundCue));
 
         final Feature tour = gxFactory.createTour();
-        Collection<Property> tourProperties = tour.getProperties();
+        final Collection<Property> tourProperties = tour.getProperties();
         tourProperties.add(FF.createAttribute("example", KmlModelConstants.ATT_NAME, null));
         tourProperties.add(FF.createAttribute(playList, GxModelConstants.ATT_TOUR_PLAY_LIST, null));
 
         final Feature document = kmlFactory.createDocument();
-        Collection<Property> documentProperties = document.getProperties();
+        final Collection<Property> documentProperties = document.getProperties();
         documentProperties.add(FF.createAttribute("gx:SoundCue example", KmlModelConstants.ATT_NAME, null));
         document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
         ((Extensions) document.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue()).

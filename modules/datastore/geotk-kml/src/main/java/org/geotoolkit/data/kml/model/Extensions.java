@@ -35,7 +35,7 @@ public final class Extensions {
 
                 @Override
                 public Entry<List<SimpleTypeContainer>, List<Object>> get(Object key) {
-                    Entry<List<SimpleTypeContainer>, List<Object>> entry = super.get(key);
+                    Entry<List<SimpleTypeContainer>, List<Object>> entry = super.get((Names) key);
 
                     if (entry == null) {
                         entry = new SimpleImmutableEntry<List<SimpleTypeContainer>, List<Object>>(
@@ -65,7 +65,7 @@ public final class Extensions {
         public static final Names OBJECT = new Names("OBJECT");
             public static final Names GEOMETRY = new Names("GEOMETRY");
                 public static final Names LINE_STRING = new Names("LINE_STRING");
-                public static final Names LINAR_RING = new Names("LINEAR_RING");
+                public static final Names LINEAR_RING = new Names("LINEAR_RING");
                 public static final Names POINT = new Names("POINT");
                 public static final Names MODEL = new Names("MODEL");
                 public static final Names POLYGON = new Names("POLYGON");
@@ -117,7 +117,6 @@ public final class Extensions {
         public static final Names KML = new Names("KML");
         public static final Names BASIC_LINK = new Names("BASIC_LINK");
         public static final Names NETWORK_LINK_CONTROL = new Names("NETWORK_LINK_CONTROL");
-        public static final Names LINEAR_RING = new Names("LINEAR_RING");
 
         private Names(final String name) {
             super(name, VALUES);
@@ -129,6 +128,7 @@ public final class Extensions {
             }
         }
 
+        @Override
         public Names[] family() {
             return values();
         }

@@ -31,7 +31,7 @@ public class DefaultLinearRing extends com.vividsolutions.jts.geom.LinearRing im
     private final Extensions exts = new Extensions();
     private boolean extrude;
     private boolean tessellate;
-    private EnumAltitudeMode altitudeMode;
+    private AltitudeMode altitudeMode;
 
     /**
      *
@@ -64,7 +64,7 @@ public class DefaultLinearRing extends com.vividsolutions.jts.geom.LinearRing im
             List<SimpleTypeContainer> abstractGeometrySimpleExtensions,
             List<Object> abstractGeometryObjectExtensions,
             boolean extrude, boolean tessellate,
-            EnumAltitudeMode altitudeMode,
+            AltitudeMode altitudeMode,
             Coordinates coordinates,
             List<SimpleTypeContainer> lineStringSimpleExtensions,
             List<Object> lineStringObjectExtensions,
@@ -84,10 +84,10 @@ public class DefaultLinearRing extends com.vividsolutions.jts.geom.LinearRing im
         this.tessellate = tessellate;
         this.altitudeMode = altitudeMode;
         if (lineStringSimpleExtensions != null) {
-            this.extensions().simples(Extensions.Names.LINAR_RING).addAll(lineStringSimpleExtensions);
+            this.extensions().simples(Extensions.Names.LINEAR_RING).addAll(lineStringSimpleExtensions);
         }
         if (lineStringObjectExtensions != null) {
-            this.extensions().complexes(Extensions.Names.LINAR_RING).addAll(lineStringObjectExtensions);
+            this.extensions().complexes(Extensions.Names.LINEAR_RING).addAll(lineStringObjectExtensions);
         }
     }
 
@@ -114,7 +114,7 @@ public class DefaultLinearRing extends com.vividsolutions.jts.geom.LinearRing im
      * @{@inheritDoc }
      */
     @Override
-    public EnumAltitudeMode getAltitudeMode() {
+    public AltitudeMode getAltitudeMode() {
         return this.altitudeMode;
     }
 
@@ -150,7 +150,7 @@ public class DefaultLinearRing extends com.vividsolutions.jts.geom.LinearRing im
      * @{@inheritDoc }
      */
     @Override
-    public void setAltitudeMode(EnumAltitudeMode altitudeMode) {
+    public void setAltitudeMode(AltitudeMode altitudeMode) {
         this.altitudeMode = altitudeMode;
     }
 

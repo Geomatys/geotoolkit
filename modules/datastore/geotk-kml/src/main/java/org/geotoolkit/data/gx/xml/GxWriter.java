@@ -41,7 +41,6 @@ import org.geotoolkit.data.kml.model.Extensions.Names;
 import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.model.TimeSpan;
 import org.geotoolkit.data.kml.model.TimeStamp;
-import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.data.kml.xml.KmlExtensionWriter;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
@@ -49,6 +48,7 @@ import org.geotoolkit.xml.StaxStreamWriter;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import static org.geotoolkit.data.gx.xml.GxConstants.*;
+import static java.util.Collections.*;
 
 /**
  *
@@ -56,13 +56,13 @@ import static org.geotoolkit.data.gx.xml.GxConstants.*;
  */
 public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
 
-    private String URI_KML = KmlConstants.URI_KML_2_2;
     private final KmlWriter kmlWriter;
-    public Map<Extensions.Names, List<Object>> complexTable = new HashMap<Extensions.Names, List<Object>>();
-    public Map<Extensions.Names, List<String>> simpleTable = new HashMap<Extensions.Names, List<String>>();
+    public Map<Object, List<Extensions.Names>> complexTable = new HashMap<Object, List<Extensions.Names>>();
+    public Map<String, List<Extensions.Names>> simpleTable = new HashMap<String, List<Extensions.Names>>();
 
     /**
      *
+     * @param w Kmlwriter used by GxWriter.
      */
     public GxWriter(KmlWriter w){
         super();
@@ -72,20 +72,12 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
     }
 
     /**
-     * <p>Set output. This method use kml uri version 2.2.</p>
      *
-     * @param output
-     * @throws XMLStreamException
-     * @throws IOException
+     * @{@inheritDoc }
      */
     @Override
     public void setOutput(Object output) throws XMLStreamException, IOException{
         super.setOutput(output);
-//        try {
-//            this.kmlWriter.setOutput(writer, URI_KML);
-//        } catch (KmlException ex) {
-//            Logger.getLogger(GxWriter.class.getName()).log(Level.SEVERE, null, ex);
-//        }
     }
 
     /**
@@ -121,6 +113,12 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
         writer.writeEndElement();
     }
 
+    /**
+     * 
+     * @param tourPrimitive
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private void writeAbstractTourPrimitive(AbstractTourPrimitive tourPrimitive) throws XMLStreamException, KmlException{
         if(tourPrimitive instanceof FlyTo){
             this.writeFlyTo((FlyTo) tourPrimitive);
@@ -135,10 +133,24 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
         }
     }
 
-    private void writeCommonAbstractTourPrimitive(AbstractTourPrimitive tourPrimitive) throws XMLStreamException{
+    /**
+     * 
+     * @param tourPrimitive
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
+    private void writeCommonAbstractTourPrimitive(AbstractTourPrimitive tourPrimitive) 
+            throws XMLStreamException, KmlException{
+
         this.kmlWriter.writeCommonAbstractObject(tourPrimitive);
     }
 
+    /**
+     * 
+     * @param flyTo
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private void writeFlyTo(FlyTo flyTo) throws XMLStreamException, KmlException {
         writer.writeStartElement(URI_GX, TAG_FLY_TO);
         writeCommonAbstractTourPrimitive(flyTo);
@@ -154,6 +166,12 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
         writer.writeEndElement();
     }
 
+    /**
+     *
+     * @param animatedUpdate
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
     private void writeAnimatedUpdate(AnimatedUpdate animatedUpdate) throws XMLStreamException, KmlException {
         writer.writeStartElement(URI_GX, TAG_ANIMATED_UPDATE);
         writeCommonAbstractTourPrimitive(animatedUpdate);
@@ -166,7 +184,15 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
         writer.writeEndElement();
     }
 
-    private void writeTourControl(TourControl tourControl) throws XMLStreamException {
+    /**
+     *
+     * @param tourControl
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
+    private void writeTourControl(TourControl tourControl) 
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_GX, TAG_TOUR_CONTROL);
         writeCommonAbstractTourPrimitive(tourControl);
         if(tourControl.getPlayMode() != null){
@@ -175,7 +201,15 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
         writer.writeEndElement();
     }
 
-    private void writeWait(Wait wait) throws XMLStreamException {
+    /**
+     * 
+     * @param wait
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
+    private void writeWait(Wait wait) 
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_GX, TAG_WAIT);
         writeCommonAbstractTourPrimitive(wait);
         if(KmlUtilities.isFiniteNumber(wait.getDuration())){
@@ -184,17 +218,32 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
         writer.writeEndElement();
     }
 
-    private void writeSoundCue(SoundCue soundCue) throws XMLStreamException {
+    /**
+     *
+     * @param soundCue
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
+    private void writeSoundCue(SoundCue soundCue) 
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_GX, TAG_SOUND_CUE);
         writeCommonAbstractTourPrimitive(soundCue);
         if(soundCue.getHref() != null){
-            System.out.println(soundCue.getHref());
             this.kmlWriter.writeHref(soundCue.getHref());
         }
         writer.writeEndElement();
     }
 
-    public void writeLatLonQuad(LatLonQuad latLonQuad) throws XMLStreamException {
+    /**
+     * 
+     * @param latLonQuad
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
+    public void writeLatLonQuad(LatLonQuad latLonQuad) 
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_GX, TAG_LAT_LON_QUAD);
         kmlWriter.writeCommonAbstractObject(latLonQuad);
         if(latLonQuad.getCoordinates() != null){
@@ -203,7 +252,15 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
         writer.writeEndElement();
     }
 
-    public void writeTimeSpan(TimeSpan timeSpan) throws XMLStreamException{
+    /**
+     *
+     * @param timeSpan
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
+    public void writeTimeSpan(TimeSpan timeSpan) 
+            throws XMLStreamException, KmlException{
+
         writer.writeStartElement(URI_GX, TAG_TIME_SPAN);
         kmlWriter.writeCommonAbstractTimePrimitive(timeSpan);
         if (timeSpan.getBegin() != null){
@@ -219,7 +276,15 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
         writer.writeEndElement();
     }
 
-    public void writeTimeStamp(TimeStamp timeStamp) throws XMLStreamException{
+    /**
+     * 
+     * @param timeStamp
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
+    public void writeTimeStamp(TimeStamp timeStamp) 
+            throws XMLStreamException, KmlException{
+
         writer.writeStartElement(URI_GX, TAG_TIME_STAMP);
         kmlWriter.writeCommonAbstractTimePrimitive(timeStamp);
         if (timeStamp.getWhen() != null){
@@ -232,6 +297,11 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
         writer.writeEndElement();
     }
 
+    /**
+     *
+     * @param duration
+     * @throws XMLStreamException
+     */
     private void writeDuration(double duration) throws XMLStreamException {
         if (DEF_DURATION != duration){
             writer.writeStartElement(URI_GX, TAG_DURATION);
@@ -240,6 +310,11 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
         }
     }
 
+    /**
+     *
+     * @param enumFlyToMode
+     * @throws XMLStreamException
+     */
     private void writeFlyToMode(EnumFlyToMode enumFlyToMode) throws XMLStreamException {
         if(!DEF_FLY_TO_MODE.equals(enumFlyToMode)){
             writer.writeStartElement(URI_GX, TAG_FLY_TO_MODE);
@@ -248,12 +323,22 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
         }
     }
 
+    /**
+     *
+     * @param playMode
+     * @throws XMLStreamException
+     */
     private void writePlayMode(EnumPlayMode playMode) throws XMLStreamException {
         writer.writeStartElement(URI_GX, TAG_PLAY_MODE);
         this.writer.writeCharacters(playMode.getPlayMode());
         writer.writeEndElement();
     }
 
+    /**
+     *
+     * @param altitudeMode
+     * @throws XMLStreamException
+     */
     public void writeAltitudeMode(AltitudeMode altitudeMode) throws XMLStreamException{
         if(DEF_ALTITUDE_MODE != altitudeMode){
             writer.writeStartElement(URI_GX, TAG_ALTITUDE_MODE);
@@ -262,6 +347,11 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
         }
     }
 
+    /**
+     *
+     * @param bv
+     * @throws XMLStreamException
+     */
     public void writeBalloonVisibility(Boolean bv) throws XMLStreamException{
         boolean balloonVisibility = bv.booleanValue();
         if (DEF_BALLOON_VISIBILITY != balloonVisibility){
@@ -275,24 +365,37 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
         }
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public void writeComplexExtensionElement(Object contentsElement)
             throws XMLStreamException, KmlException {
 
+        // Feature element
         if(contentsElement instanceof Feature){
             Feature feature = (Feature) contentsElement;
             if(feature.getType().equals(GxModelConstants.TYPE_TOUR)){
                 writeTour(feature);
             }
-        } else if(contentsElement instanceof LatLonQuad){
+        }
+        // non-Feature element
+        else if(contentsElement instanceof LatLonQuad){
             writeLatLonQuad((LatLonQuad) contentsElement);
         } else if(contentsElement instanceof TimeSpan){
             writeTimeSpan((TimeSpan) contentsElement);
         } else if(contentsElement instanceof TimeStamp){
             writeTimeStamp((TimeStamp) contentsElement);
+        } else if(contentsElement instanceof AltitudeMode){
+            writeAltitudeMode((AltitudeMode) contentsElement);
         }
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public void writeSimpleExtensionElement(SimpleTypeContainer contentsElement)
             throws XMLStreamException, KmlException {
@@ -302,59 +405,80 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
         }
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public boolean canHandleComplex(Extensions.Names ext, Object contentObject){
-        List<Object> liste = this.complexTable.get(ext);
         Boolean reponse = false;
+        List<Extensions.Names> liste = null;
+        if (contentObject instanceof Feature){
+            liste = this.complexTable.get(((Feature) contentObject).getType());
+        } else {
+            for (Object c : this.complexTable.keySet()){
+                if(c instanceof Class
+                        && ((Class) c).isInstance(contentObject)){
+                    liste = this.complexTable.get(c);
+                    break;
+                }
+            }
+        }
         if(liste != null){
-            if (contentObject instanceof Feature){
-                if (liste.contains(((Feature) contentObject).getType())){
-                    reponse = true;
-                }
-            } else {
-                for(Object i : liste){
-                    if(i instanceof Class
-                            && ((Class) i).isInstance(contentObject)){
-                        reponse = true;
-                    }
-                }
+            if (EMPTY_LIST.equals(liste)
+                    || liste.contains(ext)){
+                reponse = true;
             }
         }
         return reponse;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public boolean canHandleSimple(Names ext, String elementTag) {
-        List<String> liste = this.simpleTable.get(ext);
+        List<Names> liste = this.simpleTable.get(elementTag);
         Boolean reponse = false;
         if(liste != null
-                && liste.contains(elementTag)){
+                && liste.contains(ext)){
             reponse = true;
         }
         return reponse;
     }
 
+    /**
+     *
+     */
     private void initComplexTable(){
-        List<Object> documentExtensionsList = new ArrayList<Object>();
-        documentExtensionsList.add(GxModelConstants.TYPE_TOUR);
+        List<Names> tourContainersList = new ArrayList<Names>();
+        tourContainersList.add(Names.DOCUMENT);
         
-        List<Object> groundOverlayExtensionsList = new ArrayList<Object>();
-        groundOverlayExtensionsList.add(LatLonQuad.class);
+        List<Names> latLonQuadContainersList = new ArrayList<Names>();
+        latLonQuadContainersList.add(Names.GROUND_OVERLAY);
 
-        List<Object> abstractViewExtensionsList = new ArrayList<Object>();
-        abstractViewExtensionsList.add(TimeSpan.class);
-        abstractViewExtensionsList.add(TimeStamp.class);
+        List<Names> timeSpanContainers = new ArrayList<Names>();
+        timeSpanContainers.add(Names.VIEW);
 
-        complexTable.put(Names.DOCUMENT, documentExtensionsList);
-        complexTable.put(Names.VIEW, abstractViewExtensionsList);
-        complexTable.put(Names.GROUND_OVERLAY, groundOverlayExtensionsList);
+        List<Names> timeStampContainers = new ArrayList<Names>();
+        timeStampContainers.add(Names.VIEW);
+
+        complexTable.put(GxModelConstants.TYPE_TOUR, tourContainersList);
+        complexTable.put(TimeSpan.class, timeSpanContainers);
+        complexTable.put(TimeStamp.class, timeStampContainers);
+        complexTable.put(LatLonQuad.class, latLonQuadContainersList);
+        complexTable.put(AltitudeMode.class, EMPTY_LIST);
 
     }
 
+    /**
+     *
+     */
     private void initSimpleTable(){
-        List<String> featureExtensionsList = new ArrayList<String>();
-        featureExtensionsList.add(GxConstants.TAG_BALLOON_VISIBILITY);
+        List<Names> featureExtensionsList = new ArrayList<Names>();
+        featureExtensionsList.add(Extensions.Names.FEATURE);
 
-        simpleTable.put(Extensions.Names.FEATURE, featureExtensionsList);
+        simpleTable.put(GxConstants.TAG_BALLOON_VISIBILITY, featureExtensionsList);
     }
 }

@@ -26,7 +26,6 @@ import java.util.List;
 import org.geotoolkit.atom.model.AtomLink;
 import org.geotoolkit.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
-import org.geotoolkit.data.kml.model.AbstractObject;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
 import org.geotoolkit.data.kml.model.AbstractTimePrimitive;
 import org.geotoolkit.data.kml.model.AbstractView;
@@ -278,7 +277,7 @@ public class DefaultKmlFactory implements KmlFactory{
     @Override
     public Boundary createBoundary(LinearRing linearRing,
             List<SimpleTypeContainer> boundarySimpleExtensions,
-            List<AbstractObject> boundaryObjectExtensions) {
+            List<Object> boundaryObjectExtensions) {
         return new DefaultBoundary(linearRing, boundarySimpleExtensions,
                 boundaryObjectExtensions);
     }
@@ -926,7 +925,7 @@ public class DefaultKmlFactory implements KmlFactory{
             double north, double south, double east, double west,
             List<SimpleTypeContainer> abstractLatLonBoxSimpleExtensions,
             List<Object> abstractLatLonBoxObjectExtensions,
-            double minAltitude, double maxAltitude, EnumAltitudeMode altitudeMode,
+            double minAltitude, double maxAltitude, AltitudeMode altitudeMode,
             List<SimpleTypeContainer> latLonAltBoxSimpleExtensions,
             List<Object> latLonAltBoxObjectExtensions) {
         return new DefaultLatLonAltBox(objectSimpleExtensions, idAttributes,
@@ -957,7 +956,7 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleTypeContainer> abstractGeometrySimpleExtensions,
             List<Object> abstractGeometryObjectExtensions,
             boolean extrude, boolean tessellate,
-            EnumAltitudeMode altitudeMode,
+            AltitudeMode altitudeMode,
             Coordinates coordinates,
             List<SimpleTypeContainer> linearRingSimpleExtensions,
             List<Object> linearRingObjectExtensions) {
@@ -1203,7 +1202,7 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes,
             List<SimpleTypeContainer> abstractGeometrySimpleExtensions,
             List<Object> abstractGeometryObjectExtensions,
-            EnumAltitudeMode altitudeMode, Location location,
+            AltitudeMode altitudeMode, Location location,
             Orientation orientation, Scale scale, Link link, ResourceMap resourceMap,
             List<SimpleTypeContainer> modelSimpleExtensions,
             List<Object> modelObjectExtensions) {
@@ -1604,7 +1603,7 @@ public class DefaultKmlFactory implements KmlFactory{
             List<SimpleTypeContainer> abstractGeometrySimpleExtensions,
             List<Object> abstractGeometryObjectExtensions,
             boolean extrude,
-            EnumAltitudeMode altitudeMode,
+            AltitudeMode altitudeMode,
             Coordinates coordinates,
             List<SimpleTypeContainer> pointSimpleExtensions,
             List<Object> pointObjectExtensions) {

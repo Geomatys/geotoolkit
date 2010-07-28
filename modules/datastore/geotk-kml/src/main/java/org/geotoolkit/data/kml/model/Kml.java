@@ -75,9 +75,9 @@ public interface Kml {
 
     /**
      * 
-     * @param networkLinkCOntrol
+     * @param networkLinkControl
      */
-    public void setNetworkLinkControl(NetworkLinkControl networkLinkCOntrol);
+    public void setNetworkLinkControl(NetworkLinkControl networkLinkControl);
 
     /**
      * 
@@ -86,11 +86,16 @@ public interface Kml {
     public void setAbstractFeature(Feature feature);
 
     /**
-     * 
+     *
      * @param extensionsUris
      */
     public void setExtensionsUris(Map<String, String> extensionsUris);
 
+    /**
+     * 
+     * @param uri
+     * @param prefix
+     */
     public void addExtensionUri(String uri, String prefix);
 
     /**

@@ -42,7 +42,7 @@ public class DefaultBoundary implements Boundary {
      */
     public DefaultBoundary(LinearRing linearRing,
             List<SimpleTypeContainer> boundarySimpleExtensions,
-            List<AbstractObject> boundaryObjectExtensions) {
+            List<Object> boundaryObjectExtensions) {
         this.linearRing = linearRing;
         if (boundarySimpleExtensions != null) {
             this.extensions().simples(Extensions.Names.BOUNDARY).addAll(boundarySimpleExtensions);

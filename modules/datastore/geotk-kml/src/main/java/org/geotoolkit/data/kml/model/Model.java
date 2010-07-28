@@ -51,7 +51,7 @@ public interface Model extends AbstractGeometry {
      *
      * @return
      */
-    public EnumAltitudeMode getAltitudeMode();
+    public AltitudeMode getAltitudeMode();
 
     /**
      *
@@ -87,7 +87,7 @@ public interface Model extends AbstractGeometry {
      *
      * @param altitudeMode
      */
-    public void setAltitudeMode(EnumAltitudeMode altitudeMode);
+    public void setAltitudeMode(AltitudeMode altitudeMode);
 
     /**
      *

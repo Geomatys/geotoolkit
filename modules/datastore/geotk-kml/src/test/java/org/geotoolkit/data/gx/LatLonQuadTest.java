@@ -172,7 +172,7 @@ public class LatLonQuadTest {
         kml.addExtensionUri(GxConstants.URI_GX, "gx");
 
         final File temp = File.createTempFile("testLatLonQuad", ".kml");
-        temp.deleteOnExit();
+        //temp.deleteOnExit();
 
         final KmlWriter writer = new KmlWriter();
         final GxWriter gxWriter = new GxWriter(writer);

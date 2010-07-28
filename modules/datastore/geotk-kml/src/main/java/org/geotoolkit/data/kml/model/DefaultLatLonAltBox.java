@@ -28,7 +28,7 @@ public class DefaultLatLonAltBox extends DefaultAbstractLatLonBox implements Lat
 
     private double minAltitude;
     private double maxAltitude;
-    private EnumAltitudeMode altitudeMode;
+    private AltitudeMode altitudeMode;
 
     /**
      * 
@@ -60,7 +60,7 @@ public class DefaultLatLonAltBox extends DefaultAbstractLatLonBox implements Lat
             double north, double south, double east, double west,
             List<SimpleTypeContainer> abstractLatLonBoxSimpleExtensions,
             List<Object> abstractLatLonBoxObjectExtensions,
-            double minAltitude, double maxAltitude, EnumAltitudeMode altitudeMode,
+            double minAltitude, double maxAltitude, AltitudeMode altitudeMode,
             List<SimpleTypeContainer> latLonAltBoxSimpleExtensions,
             List<Object> latLonAltBoxObjectExtensions) {
         super(objectSimpleExtensions, idAttributes,
@@ -101,7 +101,7 @@ public class DefaultLatLonAltBox extends DefaultAbstractLatLonBox implements Lat
      * @{@inheritDoc }
      */
     @Override
-    public EnumAltitudeMode getAltitudeMode() {
+    public AltitudeMode getAltitudeMode() {
         return this.altitudeMode;
     }
 
@@ -128,7 +128,7 @@ public class DefaultLatLonAltBox extends DefaultAbstractLatLonBox implements Lat
      * @{@inheritDoc }
      */
     @Override
-    public void setAltitudeMode(EnumAltitudeMode altitudeMode) {
+    public void setAltitudeMode(AltitudeMode altitudeMode) {
         this.altitudeMode = altitudeMode;
     }
 }

@@ -86,7 +86,7 @@ public class ModelTest {
     }
 
     @Test
-    public void regionReadTest() throws IOException, XMLStreamException, URISyntaxException {
+    public void modelReadTest() throws IOException, XMLStreamException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));
@@ -137,7 +137,7 @@ public class ModelTest {
     }
 
     @Test
-    public void regionWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException{
+    public void modelWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException{
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Alias alias0 = kmlFactory.createAlias();

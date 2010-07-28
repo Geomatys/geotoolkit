@@ -67,7 +67,7 @@ public interface LinearRing extends AbstractGeometry {
      *
      * @return
      */
-    public EnumAltitudeMode getAltitudeMode();
+    public AltitudeMode getAltitudeMode();
 
     /**
      * 
@@ -85,6 +85,6 @@ public interface LinearRing extends AbstractGeometry {
      *
      * @param altitudeMode
      */
-    public void setAltitudeMode(EnumAltitudeMode altitudeMode);
+    public void setAltitudeMode(AltitudeMode altitudeMode);
 
 }

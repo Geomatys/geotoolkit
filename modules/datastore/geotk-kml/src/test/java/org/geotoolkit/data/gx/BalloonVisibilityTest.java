@@ -148,7 +148,7 @@ public class BalloonVisibilityTest {
         kml.addExtensionUri(GxConstants.URI_GX, "gx");
 
         final File temp = File.createTempFile("testBalloonVisibility", ".kml");
-        //temp.deleteOnExit();
+        temp.deleteOnExit();
 
         final KmlWriter writer = new KmlWriter();
         final GxWriter gxWriter = new GxWriter(writer);
