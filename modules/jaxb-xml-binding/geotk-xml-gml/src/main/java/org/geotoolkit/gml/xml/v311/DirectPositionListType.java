@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -71,12 +72,11 @@ public class DirectPositionListType {
     private List<String> uomLabels;
 
     /**
-     * XML List based on XML Schema double type.  An element of this type contains a space-separated list of double values Gets the value of the value property.
+     * XML List based on XML Schema double type.
+     * An element of this type contains a space-separated list of double values Gets the value of the value property.
      * 
      * Objects of the following type(s) are allowed in the list
      * {@link Double }
-     * 
-     * 
      */
     public List<Double> getValue() {
         if (value == null) {
@@ -85,6 +85,31 @@ public class DirectPositionListType {
         return this.value;
     }
 
+    /**
+     * XML List based on XML Schema double type.
+     * An element of this type contains a space-separated list of double values Gets the value of the value property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@link Double }
+     */
+    public void setValue(List<Double> value) {
+        this.value = value;
+    }
+
+    /**
+     * XML List based on XML Schema double type.
+     * An element of this type contains a space-separated list of double values Gets the value of the value property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@link Double }
+     */
+    public void setValue(Double value) {
+        if (this.value == null) {
+            this.value = new ArrayList<Double>();
+        }
+        this.value.add(value);
+    }
+    
     /**
      * Gets the value of the count property.
      * 
@@ -222,5 +247,38 @@ public class DirectPositionListType {
         }
         return s.toString();
     }
+
+    /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof DirectPositionListType) {
+            final DirectPositionListType that = (DirectPositionListType) object;
+            return  Utilities.equals(this.getAxisLabels(), that.getAxisLabels()) &&
+                    Utilities.equals(this.srsDimension,    that.srsDimension)    &&
+                    Utilities.equals(this.srsName,         that.srsName)         &&
+                    Utilities.equals(this.count,           that.count)           &&
+                    Utilities.equals(this.getUomLabels(),  that.getUomLabels())  &&
+                    Utilities.equals(this.value,           that.value);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + (this.value != null ? this.value.hashCode() : 0);
+        hash = 53 * hash + (this.count != null ? this.count.hashCode() : 0);
+        hash = 53 * hash + (this.srsName != null ? this.srsName.hashCode() : 0);
+        hash = 53 * hash + (this.srsDimension != null ? this.srsDimension.hashCode() : 0);
+        hash = 53 * hash + (this.axisLabels != null ? this.axisLabels.hashCode() : 0);
+        hash = 53 * hash + (this.uomLabels != null ? this.uomLabels.hashCode() : 0);
+        return hash;
+    }
+
 
 }

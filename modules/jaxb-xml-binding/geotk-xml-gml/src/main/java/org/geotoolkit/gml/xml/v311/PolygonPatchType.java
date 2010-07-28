@@ -89,7 +89,7 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
      *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
      *     
      */
-    public JAXBElement<AbstractRingPropertyType> getExterior() {
+    public JAXBElement<AbstractRingPropertyType> getJbExterior() {
         return exterior;
     }
 
@@ -102,8 +102,38 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
      *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
      *     
      */
-    public void setExterior(JAXBElement<AbstractRingPropertyType> value) {
+    public void setJbExterior(JAXBElement<AbstractRingPropertyType> value) {
         this.exterior = ((JAXBElement<AbstractRingPropertyType> ) value);
+    }
+
+    /**
+     * Gets the value of the exterior property.
+     *
+     * @return
+     *     possible object is
+     *     {@code <}{@link AbstractRingPropertyType }{@code >}
+     *     {@code <}{@link AbstractRingPropertyType }{@code >}
+     *
+     */
+    public AbstractRingPropertyType getExterior() {
+        if (exterior != null) {
+            return exterior.getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Sets the value of the exterior property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@code <}{@link AbstractRingPropertyType }{@code >}
+     *     {@code <}{@link AbstractRingPropertyType }{@code >}
+     *
+     */
+    public void setExterior(AbstractRingPropertyType value) {
+        ObjectFactory factory = new ObjectFactory();
+        this.exterior =  factory.createExterior(value);
     }
 
     /**
@@ -115,11 +145,87 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
      * 
      * 
      */
-    public List<JAXBElement<AbstractRingPropertyType>> getInterior() {
+    public List<JAXBElement<AbstractRingPropertyType>> getJbInterior() {
         if (interior == null) {
             interior = new ArrayList<JAXBElement<AbstractRingPropertyType>>();
         }
         return this.interior;
+    }
+
+    /**
+     * Sets the value of the interior property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
+     * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
+     *
+     *
+     */
+    public void setJbInterior(List<JAXBElement<AbstractRingPropertyType>> interior) {
+        this.interior = interior;
+    }
+
+
+    /**
+     * Gets the value of the interior property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
+     * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
+     *
+     *
+     */
+    public List<AbstractRingPropertyType> getInterior() {
+        if (interior == null) {
+            interior = new ArrayList<JAXBElement<AbstractRingPropertyType>>();
+        }
+        final List<AbstractRingPropertyType> result = new ArrayList<AbstractRingPropertyType>();
+        for (JAXBElement<AbstractRingPropertyType> jb : interior) {
+            result.add(jb.getValue());
+        }
+        return result;
+    }
+
+    /**
+     * Sets the value of the interior property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
+     * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
+     *
+     *
+     */
+    public void setInterior(List<AbstractRingPropertyType> interior) {
+        if (interior != null) {
+            if (this.interior == null) {
+                this.interior = new ArrayList<JAXBElement<AbstractRingPropertyType>>();
+            }
+            final ObjectFactory factory = new ObjectFactory();
+            for (AbstractRingPropertyType jb : interior) {
+                this.interior.add(factory.createInterior(jb));
+            }
+        } else {
+            this.interior = null;
+        }
+    }
+
+    /**
+     * Sets the value of the interior property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
+     * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
+     *
+     *
+     */
+    public void setInterior(AbstractRingPropertyType interior) {
+        if (interior != null) {
+            if (this.interior == null) {
+                this.interior = new ArrayList<JAXBElement<AbstractRingPropertyType>>();
+            }
+            final ObjectFactory factory = new ObjectFactory();
+            this.interior.add(factory.createInterior(interior));
+        } 
     }
 
     /**

@@ -79,7 +79,7 @@ public class AbstractRingPropertyType {
      *     {@link JAXBElement }{@code <}{@link LinearRingType }{@code >}
      *     
      */
-    public JAXBElement<? extends AbstractRingType> getAbstractRing() {
+    public JAXBElement<? extends AbstractRingType> getJbAbstractRing() {
         return abstractRing;
     }
 
@@ -93,8 +93,50 @@ public class AbstractRingPropertyType {
      *     {@link JAXBElement }{@code <}{@link LinearRingType }{@code >}
      *     
      */
-    public void setAbstractRing(JAXBElement<? extends AbstractRingType> value) {
+    public void setJbAbstractRing(JAXBElement<? extends AbstractRingType> value) {
         this.abstractRing = ((JAXBElement<? extends AbstractRingType> ) value);
+    }
+
+    /**
+     * Gets the value of the abstractRing property.
+     *
+     * @return
+     *     possible object is
+     *     {@code <}{@link AbstractRingType }{@code >}
+     *     {@code <}{@link RingType }{@code >}
+     *     {@code <}{@link LinearRingType }{@code >}
+     *
+     */
+    public AbstractRingType getAbstractRing() {
+        if (abstractRing != null) {
+            return abstractRing.getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Sets the value of the abstractRing property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@code <}{@link AbstractRingType }{@code >}
+     *     {@code <}{@link RingType }{@code >}
+     *     {@code <}{@link LinearRingType }{@code >}
+     *
+     */
+    public void setAbstractRing(AbstractRingType ring) {
+        if (ring != null) {
+            ObjectFactory factory = new ObjectFactory();
+            if (ring instanceof RingType) {
+                abstractRing = factory.createRing((RingType) ring);
+            } else if (ring instanceof LinearRingType) {
+                abstractRing = factory.createLinearRing((LinearRingType) ring);
+            } else {
+                throw new IllegalArgumentException("unexpected sub type of AbstractRingType");
+            }
+        } else {
+            ring = null;
+        }
     }
 
     @Override

@@ -70,7 +70,7 @@ public class SurfaceType extends AbstractSurfaceType {
      *     {@link JAXBElement }{@code <}{@link PolygonPatchArrayPropertyType }{@code >}
      *     
      */
-    public JAXBElement<? extends SurfacePatchArrayPropertyType> getPatches() {
+    public JAXBElement<? extends SurfacePatchArrayPropertyType> getJbPatches() {
         return patches;
     }
 
@@ -84,8 +84,50 @@ public class SurfaceType extends AbstractSurfaceType {
      *     {@link JAXBElement }{@code <}{@link PolygonPatchArrayPropertyType }{@code >}
      *     
      */
-    public void setPatches(JAXBElement<? extends SurfacePatchArrayPropertyType> value) {
+    public void setJbPatches(JAXBElement<? extends SurfacePatchArrayPropertyType> value) {
         this.patches = ((JAXBElement<? extends SurfacePatchArrayPropertyType> ) value);
+    }
+
+    /**
+     * This element encapsulates the patches of the surface.
+     *
+     * @return
+     *     possible object is
+     *     {@code <}{@link SurfacePatchArrayPropertyType }{@code >}
+     *     {@code <}{@link TrianglePatchArrayPropertyType }{@code >}
+     *     {@code <}{@link PolygonPatchArrayPropertyType }{@code >}
+     *
+     */
+    public SurfacePatchArrayPropertyType getPatches() {
+        if (patches != null) {
+            return patches.getValue();
+        }
+        return null;
+    }
+
+    /**
+     * This element encapsulates the patches of the surface.
+     *
+     * @param value
+     *     allowed object is
+     *     {@code <}{@link SurfacePatchArrayPropertyType }{@code >}
+     *     {@code <}{@link TrianglePatchArrayPropertyType }{@code >}
+     *     {@code <}{@link PolygonPatchArrayPropertyType }{@code >}
+     *
+     */
+    public void setPatches(SurfacePatchArrayPropertyType value) {
+        if (value != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            if (value instanceof TrianglePatchArrayPropertyType) {
+                this.patches = factory.createTrianglePatches((TrianglePatchArrayPropertyType) value);
+            } else if (value instanceof PolygonPatchArrayPropertyType) {
+                this.patches = factory.createPolygonPatches((PolygonPatchArrayPropertyType) value);
+            } else {
+                this.patches = factory.createPatches( value);
+            }
+        } else {
+            this.patches = null;
+        }
     }
 
     @Override

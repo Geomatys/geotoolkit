@@ -78,6 +78,17 @@ public class RingType extends AbstractRingType {
         return this.curveMember;
     }
 
+    public void setCurveMember(List<CurvePropertyType> curveMember) {
+        this.curveMember = curveMember;
+    }
+
+    public void setCurveMember(CurvePropertyType curveMember) {
+        if (this.curveMember == null) {
+            this.curveMember = new ArrayList<CurvePropertyType>();
+        }
+        this.curveMember.add(curveMember);
+    }
+
     @Override
     public Object evaluate(Object object) {
         throw new UnsupportedOperationException("Not supported yet.");

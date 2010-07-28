@@ -77,12 +77,140 @@ public class SurfacePatchArrayPropertyType {
      * 
      * 
      */
-    public List<JAXBElement<? extends AbstractSurfacePatchType>> getSurfacePatch() {
+    public List<JAXBElement<? extends AbstractSurfacePatchType>> getJbAbstractSurfacePatch() {
         if (abstractSurfacePatch == null) {
             abstractSurfacePatch = new ArrayList<JAXBElement<? extends AbstractSurfacePatchType>>();
         }
         return this.abstractSurfacePatch;
     }
+
+    /**
+     * Gets the value of the surfacePatch property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@link JAXBElement }{@code <}{@link AbstractParametricCurveSurfaceType }{@code >}
+     * {@link JAXBElement }{@code <}{@link TriangleType }{@code >}
+     * {@link JAXBElement }{@code <}{@link RectangleType }{@code >}
+     * {@link JAXBElement }{@code <}{@link ConeType }{@code >}
+     * {@link JAXBElement }{@code <}{@link CylinderType }{@code >}
+     * {@link JAXBElement }{@code <}{@link AbstractGriddedSurfaceType }{@code >}
+     * {@link JAXBElement }{@code <}{@link SphereType }{@code >}
+     * {@link JAXBElement }{@code <}{@link AbstractSurfacePatchType }{@code >}
+     * {@link JAXBElement }{@code <}{@link PolygonPatchType }{@code >}
+     *
+     *
+     */
+    public void setJbAbstractSurfacePatch(List<JAXBElement<? extends AbstractSurfacePatchType>> abstractSurfacePatch) {
+        this.abstractSurfacePatch = abstractSurfacePatch;
+    }
+
+    /**
+     * Gets the value of the surfacePatch property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@code <}{@link AbstractParametricCurveSurfaceType }{@code >}
+     * {@code <}{@link TriangleType }{@code >}
+     * {@code <}{@link RectangleType }{@code >}
+     * {@code <}{@link ConeType }{@code >}
+     * {@code <}{@link CylinderType }{@code >}
+     * {@code <}{@link AbstractGriddedSurfaceType }{@code >}
+     * {@code <}{@link SphereType }{@code >}
+     * {@code <}{@link AbstractSurfacePatchType }{@code >}
+     * {@code <}{@link PolygonPatchType }{@code >}
+     *
+     *
+     */
+    public List<? extends AbstractSurfacePatchType> getAbstractSurfacePatch() {
+        if (abstractSurfacePatch == null) {
+            abstractSurfacePatch = new ArrayList<JAXBElement<? extends AbstractSurfacePatchType>>();
+        }
+        final List<AbstractSurfacePatchType> result = new ArrayList<AbstractSurfacePatchType>();
+        for (JAXBElement<? extends AbstractSurfacePatchType> jb : abstractSurfacePatch) {
+            result.add(jb.getValue());
+        }
+        return result;
+    }
+
+    /**
+     * Gets the value of the surfacePatch property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@code <}{@link AbstractParametricCurveSurfaceType }{@code >}
+     * {@code <}{@link TriangleType }{@code >}
+     * {@code <}{@link RectangleType }{@code >}
+     * {@code <}{@link ConeType }{@code >}
+     * {@code <}{@link CylinderType }{@code >}
+     * {@code <}{@link AbstractGriddedSurfaceType }{@code >}
+     * {@code <}{@link SphereType }{@code >}
+     * {@code <}{@link AbstractSurfacePatchType }{@code >}
+     * {@code <}{@link PolygonPatchType }{@code >}
+     *
+     *
+     */
+    public void setAbstractSurfacePatch(AbstractSurfacePatchType abstractSurfacePatch) {
+        if (abstractSurfacePatch != null) {
+            if (this.abstractSurfacePatch == null) {
+                this.abstractSurfacePatch = new ArrayList<JAXBElement<? extends AbstractSurfacePatchType>>();
+            }
+            final ObjectFactory factory = new ObjectFactory();
+            if (abstractSurfacePatch instanceof TriangleType) {
+                this.abstractSurfacePatch.add(factory.createTriangle((TriangleType)abstractSurfacePatch));
+            } else if (abstractSurfacePatch instanceof RectangleType) {
+                this.abstractSurfacePatch.add(factory.createRectangle((RectangleType)abstractSurfacePatch));
+            } else if (abstractSurfacePatch instanceof ConeType) {
+                this.abstractSurfacePatch.add(factory.createCone((ConeType)abstractSurfacePatch));
+            } else if (abstractSurfacePatch instanceof CylinderType) {
+                this.abstractSurfacePatch.add(factory.createCylinder((CylinderType)abstractSurfacePatch));
+            } else if (abstractSurfacePatch instanceof SphereType) {
+                this.abstractSurfacePatch.add(factory.createSphere((SphereType)abstractSurfacePatch));
+            } else if (abstractSurfacePatch instanceof PolygonPatchType) {
+                this.abstractSurfacePatch.add(factory.createPolygonPatch((PolygonPatchType)abstractSurfacePatch));
+            }
+        } else {
+            this.abstractSurfacePatch = null;
+        }
+    }
+
+     /**
+     * Gets the value of the surfacePatch property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@code <}{@link AbstractParametricCurveSurfaceType }{@code >}
+     * {@code <}{@link TriangleType }{@code >}
+     * {@code <}{@link RectangleType }{@code >}
+     * {@code <}{@link ConeType }{@code >}
+     * {@code <}{@link CylinderType }{@code >}
+     * {@code <}{@link AbstractGriddedSurfaceType }{@code >}
+     * {@code <}{@link SphereType }{@code >}
+     * {@code <}{@link AbstractSurfacePatchType }{@code >}
+     * {@code <}{@link PolygonPatchType }{@code >}
+     *
+     *
+     */
+    public void setAbstractSurfacePatch(List<? extends AbstractSurfacePatchType> abstractSurfacePatch) {
+        if (abstractSurfacePatch != null) {
+            this.abstractSurfacePatch = new ArrayList<JAXBElement<? extends AbstractSurfacePatchType>>();
+            final ObjectFactory factory = new ObjectFactory();
+            for (AbstractSurfacePatchType jb : abstractSurfacePatch) {
+                if (jb instanceof TriangleType) {
+                    this.abstractSurfacePatch.add(factory.createTriangle((TriangleType)jb));
+                } else if (jb instanceof RectangleType) {
+                    this.abstractSurfacePatch.add(factory.createRectangle((RectangleType)jb));
+                } else if (jb instanceof ConeType) {
+                    this.abstractSurfacePatch.add(factory.createCone((ConeType)jb));
+                } else if (jb instanceof CylinderType) {
+                    this.abstractSurfacePatch.add(factory.createCylinder((CylinderType)jb));
+                } else if (jb instanceof SphereType) {
+                    this.abstractSurfacePatch.add(factory.createSphere((SphereType)jb));
+                } else if (jb instanceof PolygonPatchType) {
+                    this.abstractSurfacePatch.add(factory.createPolygonPatch((PolygonPatchType)jb));
+                }
+            }
+        } else {
+            this.abstractSurfacePatch = null;
+        }
+    }
+
 
     @Override
     public String toString() {

@@ -92,11 +92,67 @@ public class CurveSegmentArrayPropertyType {
      * 
      * 
      */
-    public List<JAXBElement<? extends AbstractCurveSegmentType>> getAbstractCurveSegment() {
+    public List<JAXBElement<? extends AbstractCurveSegmentType>> getJbAbstractCurveSegment() {
         if (abstractCurveSegment == null) {
             abstractCurveSegment = new ArrayList<JAXBElement<? extends AbstractCurveSegmentType>>();
         }
         return this.abstractCurveSegment;
+    }
+
+    public void setJbAbstractCurveSegment(List<JAXBElement<? extends AbstractCurveSegmentType>> abstractCurveSegment) {
+        this.abstractCurveSegment = abstractCurveSegment;
+    }
+
+    public void setAbstractCurveSegment(AbstractCurveSegmentType abstractCurveSegment) {
+        if (this.abstractCurveSegment == null) {
+            this.abstractCurveSegment = new ArrayList<JAXBElement<? extends AbstractCurveSegmentType>>();
+        }
+        ObjectFactory factory = new ObjectFactory();
+        if (abstractCurveSegment instanceof LineStringSegmentType) {
+            this.abstractCurveSegment.add(factory.createLineStringSegment((LineStringSegmentType) abstractCurveSegment));
+        } else if (abstractCurveSegment instanceof ArcByBulgeType) {
+            this.abstractCurveSegment.add(factory.createArcByBulge((ArcByBulgeType) abstractCurveSegment));
+        } else if (abstractCurveSegment instanceof ClothoidType) {
+            this.abstractCurveSegment.add(factory.createClothoid((ClothoidType) abstractCurveSegment));
+        } else if (abstractCurveSegment instanceof OffsetCurveType) {
+            this.abstractCurveSegment.add(factory.createOffsetCurve((OffsetCurveType) abstractCurveSegment));
+        } else if (abstractCurveSegment instanceof BezierType) {
+            this.abstractCurveSegment.add(factory.createBezier((BezierType) abstractCurveSegment));
+        } else if (abstractCurveSegment instanceof ArcByCenterPointType) {
+            this.abstractCurveSegment.add(factory.createArcByCenterPoint((ArcByCenterPointType) abstractCurveSegment));
+        } else if (abstractCurveSegment instanceof CubicSplineType) {
+            this.abstractCurveSegment.add(factory.createCubicSpline((CubicSplineType) abstractCurveSegment));
+        } else if (abstractCurveSegment instanceof CircleType) {
+            this.abstractCurveSegment.add(factory.createCircle((CircleType) abstractCurveSegment));
+        } else if (abstractCurveSegment instanceof ArcStringByBulgeType) {
+            this.abstractCurveSegment.add(factory.createArcStringByBulge((ArcStringByBulgeType) abstractCurveSegment));
+        } else if (abstractCurveSegment instanceof ArcType) {
+            this.abstractCurveSegment.add(factory.createArc((ArcType) abstractCurveSegment));
+        } else if (abstractCurveSegment instanceof GeodesicType) {
+            this.abstractCurveSegment.add(factory.createGeodesic((GeodesicType) abstractCurveSegment));
+        } else if (abstractCurveSegment instanceof ArcStringType) {
+            this.abstractCurveSegment.add(factory.createArcString((ArcStringType) abstractCurveSegment));
+        } else if (abstractCurveSegment instanceof CircleByCenterPointType) {
+            this.abstractCurveSegment.add(factory.createCircleByCenterPoint((CircleByCenterPointType) abstractCurveSegment));
+        } else if (abstractCurveSegment instanceof BSplineType) {
+            this.abstractCurveSegment.add(factory.createBSpline((BSplineType) abstractCurveSegment));
+        } else if (abstractCurveSegment instanceof GeodesicStringType) {
+            this.abstractCurveSegment.add(factory.createGeodesicString((GeodesicStringType) abstractCurveSegment));
+        } else {
+            throw new IllegalArgumentException("Unexpected CUreType:" + abstractCurveSegment);
+        }
+
+    }
+
+    public List<? extends AbstractCurveSegmentType> getAbstractCurveSegment() {
+        if (abstractCurveSegment == null) {
+            abstractCurveSegment = new ArrayList<JAXBElement<? extends AbstractCurveSegmentType>>();
+        }
+        List<AbstractCurveSegmentType> response = new ArrayList<AbstractCurveSegmentType>();
+        for (JAXBElement<? extends AbstractCurveSegmentType> jb : abstractCurveSegment) {
+            response.add(jb.getValue());
+        }
+        return response;
     }
 
     /**

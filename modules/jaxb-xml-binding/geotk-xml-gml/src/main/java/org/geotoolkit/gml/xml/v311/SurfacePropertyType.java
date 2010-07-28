@@ -91,15 +91,8 @@ public class SurfacePropertyType {
      *     {@link JAXBElement }{@code <}{@link TinType }{@code >}
      *     
      */
-    public JAXBElement<? extends AbstractSurfaceType> getAbstractSurface() {
+    public JAXBElement<? extends AbstractSurfaceType> getJbAbstractSurface() {
         return abstractSurface;
-    }
-
-    public AbstractSurfaceType getRealAbstractSurface() {
-        if (abstractSurface != null) {
-            return abstractSurface.getValue();
-        }
-        return null;
     }
 
     /**
@@ -116,8 +109,67 @@ public class SurfacePropertyType {
      *     {@link JAXBElement }{@code <}{@link TinType }{@code >}
      *     
      */
-    public void setAbstractSurface(JAXBElement<? extends AbstractSurfaceType> value) {
+    public void setJbAbstractSurface(JAXBElement<? extends AbstractSurfaceType> value) {
         this.abstractSurface = ((JAXBElement<? extends AbstractSurfaceType> ) value);
+    }
+
+
+    /**
+     * Gets the value of the abstractSurface property.
+     *
+     * @return
+     *     possible object is
+     *     {@code <}{@link SurfaceType }{@code >}
+     *     {@code <}{@link OrientableSurfaceType }{@code >}
+     *     {@code <}{@link AbstractSurfaceType }{@code >}
+     *     {@code <}{@link TriangulatedSurfaceType }{@code >}
+     *     {@code <}{@link PolyhedralSurfaceType }{@code >}
+     *     {@code <}{@link PolygonType }{@code >}
+     *     {@code <}{@link TinType }{@code >}
+     *
+     */
+    public AbstractSurfaceType getAbstractSurface() {
+        if (abstractSurface != null) {
+            return abstractSurface.getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Sets the value of the abstractSurface property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@code <}{@link SurfaceType }{@code >}
+     *     {@code <}{@link OrientableSurfaceType }{@code >}
+     *     {@code <}{@link AbstractSurfaceType }{@code >}
+     *     {@code <}{@link TriangulatedSurfaceType }{@code >}
+     *     {@code <}{@link PolyhedralSurfaceType }{@code >}
+     *     {@code <}{@link PolygonType }{@code >}
+     *     {@code <}{@link TinType }{@code >}
+     *
+     */
+    public void setAbstractSurface(AbstractSurfaceType value) {
+        if (value != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            if (value instanceof TinType) {
+                this.abstractSurface = factory.createTin((TinType) value);
+            } else if (value instanceof PolygonType) {
+                this.abstractSurface = factory.createPolygon((PolygonType) value);
+            } else if (value instanceof PolyhedralSurfaceType) {
+                this.abstractSurface = factory.createPolyhedralSurface((PolyhedralSurfaceType) value);
+            } else if (value instanceof TriangulatedSurfaceType) {
+                this.abstractSurface = factory.createTriangulatedSurface((TriangulatedSurfaceType) value);
+            } else if (value instanceof SurfaceType) {
+                this.abstractSurface = factory.createSurface((SurfaceType) value);
+            } else if (value instanceof OrientableSurfaceType) {
+                this.abstractSurface = factory.createOrientableSurface((OrientableSurfaceType) value);
+            } else if (value instanceof AbstractSurfaceType) {
+                this.abstractSurface = factory.createAbstractSurface((AbstractSurfaceType) value);
+            }
+        } else {
+            value = null;
+        }
     }
 
     /**
