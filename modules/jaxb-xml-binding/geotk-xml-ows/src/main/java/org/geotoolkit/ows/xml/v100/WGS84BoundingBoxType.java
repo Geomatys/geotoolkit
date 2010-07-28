@@ -19,6 +19,7 @@ package org.geotoolkit.ows.xml.v100;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 
 
 /**
@@ -49,8 +50,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "WGS84BoundingBoxType")
-public class WGS84BoundingBoxType extends BoundingBoxType {
-    
+public class WGS84BoundingBoxType extends BoundingBoxType implements GeographicBoundingBox {
     /**
      * An empty constructor used by JAXB.
      */
@@ -72,6 +72,46 @@ public class WGS84BoundingBoxType extends BoundingBoxType {
      */
     public WGS84BoundingBoxType(String crs, double minx, double miny, double maxx, double maxy){
         super(crs, minx, miny, maxx, maxy);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public double getWestBoundLongitude() {
+        return getLowerCorner().get(0);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public double getEastBoundLongitude() {
+        return getUpperCorner().get(0);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public double getSouthBoundLatitude() {
+        return getLowerCorner().get(1);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public double getNorthBoundLatitude() {
+        return getUpperCorner().get(1);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Boolean getInclusion() {
+        return Boolean.TRUE;
     }
 
 }
