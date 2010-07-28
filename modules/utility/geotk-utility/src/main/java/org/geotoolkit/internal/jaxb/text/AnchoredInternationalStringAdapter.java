@@ -30,6 +30,7 @@ import org.geotoolkit.internal.jaxb.metadata.InternationalStringAdapter;
  * labels and URNs, and the configured adapter must be given to the mashaller as below:
  *
  * {@preformat java
+ *     AnchoredCharSequenceAdapter charSequenceAdapter = ...
  *     marshaller.setAdapter(charSequenceAdapter.international);
  * }
  *

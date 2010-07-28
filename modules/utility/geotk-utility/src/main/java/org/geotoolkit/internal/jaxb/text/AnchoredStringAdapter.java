@@ -25,6 +25,7 @@ package org.geotoolkit.internal.jaxb.text;
  * labels and URNs, and the configured adapter must be given to the mashaller as below:
  *
  * {@preformat java
+ *     AnchoredCharSequenceAdapter charSequenceAdapter = ...
  *     marshaller.setAdapter(charSequenceAdapter.string);
  * }
  *

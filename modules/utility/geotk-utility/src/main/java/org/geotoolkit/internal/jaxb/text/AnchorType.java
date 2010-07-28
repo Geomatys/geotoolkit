@@ -33,6 +33,9 @@ import org.geotoolkit.xml.Namespaces;
 
 /**
  * The {@code AnchorType} element, which is included in {@code CharacterString} elements.
+ * This class extends {@link InternationalString} in an opportunist way, in order to allow
+ * direct usage with public API expecting {@link CharSequence} or {@link InternationalString}
+ * object.
  *
  * @author Guilhem Legal (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
@@ -131,6 +134,7 @@ public final class AnchorType implements InternationalString {
 
     /**
      * Often a short textual description of the URN target.
+     * This is the value returned by {@link #toString()}.
      */
     @XmlValue
     private String value;

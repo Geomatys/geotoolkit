@@ -37,7 +37,8 @@ import org.geotoolkit.internal.jaxb.metadata.FreeText;
 @XmlSeeAlso(FreeText.class)
 public class CharacterString {
     /**
-     * The text or anchor value. {@link AnchorType} needs to be handled in a special way.
+     * The text or anchor value, or {@code null} if none. May be an instance
+     * of {@link AnchorType}, which needs to be handled in a special way.
      */
     CharSequence text;
 
@@ -50,7 +51,7 @@ public class CharacterString {
     /**
      * Builds an adapter for the given text.
      *
-     * @param text The string to marshall.
+     * @param text The string to marshall, or {@code null} if none.
      */
     public CharacterString(final CharSequence text) {
         this.text = text;

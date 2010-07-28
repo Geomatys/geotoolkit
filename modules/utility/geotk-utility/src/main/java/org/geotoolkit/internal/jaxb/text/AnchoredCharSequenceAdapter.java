@@ -35,11 +35,13 @@ import org.geotoolkit.resources.Errors;
  *     AnchoredCharSequenceAdapter adapter = new AnchoredCharSequenceAdapter();
  *     adapter.addLinkage(...);
  *     marshaller.setAdapter(adapter);
+ *     marshaller.setAdapter(adapter.string);
+ *     marshaller.setAdapter(adapter.international);
  * }
  *
  * @author Guilhem Legal (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.13
+ * @version 3.14
  *
  * @since 3.00
  * @module
@@ -49,12 +51,13 @@ public final class AnchoredCharSequenceAdapter extends CharSequenceAdapter {
      * For default constructor of {@code AnchoredFooAdapter} only.
      */
     static final AnchoredCharSequenceAdapter INSTANCE =
-            new AnchoredCharSequenceAdapter(Collections.<String,URI>emptyMap());
+            new AnchoredCharSequenceAdapter(Collections.<String,Object>emptyMap());
 
     /**
-     * Binds string labels with URNs.
+     * Binds string labels with URNs or anchors. Values can be
+     * either {@link URI} or {@link AnchorType} instances.
      */
-    private final Map<String,URI> anchors;
+    private final Map<String,Object> anchors;
 
     /**
      * An adapter for {@link String} using the same anchors than this adapter.
@@ -71,7 +74,7 @@ public final class AnchoredCharSequenceAdapter extends CharSequenceAdapter {
      * Creates a uninitialized adapter.
      */
     public AnchoredCharSequenceAdapter() {
-        anchors       = new HashMap<String,URI>();
+        anchors       = new HashMap<String,Object>();
         string        = new AnchoredStringAdapter(this);
         international = new AnchoredInternationalStringAdapter(this);
     }
@@ -79,7 +82,7 @@ public final class AnchoredCharSequenceAdapter extends CharSequenceAdapter {
     /**
      * Constructor for {@link #INSTANCE} only.
      */
-    private AnchoredCharSequenceAdapter(final Map<String,URI> anchors) {
+    private AnchoredCharSequenceAdapter(final Map<String,Object> anchors) {
         this.anchors       = anchors;
         this.string        = null;
         this.international = null;
@@ -90,15 +93,34 @@ public final class AnchoredCharSequenceAdapter extends CharSequenceAdapter {
      *
      * @param  label The label associated to the URN.
      * @param  linkage The URN.
-     * @throws IllegalStateException If a URN is already associated to the given linkage.
+     * @throws IllegalStateException If a URN is already associated to the given label.
      */
     public void addLinkage(final String label, final URI linkage) throws IllegalStateException {
-        final URI old;
+        add(label, linkage);
+    }
+
+    /**
+     * Adds an anchor (label associated to an URN).
+     *
+     * @param  anchor The anchor to add.
+     * @throws IllegalStateException If a URN is already associated to the anchor value.
+     *
+     * @since 3.14
+     */
+    public void addLinkage(final AnchorType anchor) throws IllegalStateException {
+        add(anchor.toString(), anchor);
+    }
+
+    /**
+     * Implementation of {@code addLinkage} methods.
+     */
+    private void add(final String label, final Object linkage) throws IllegalStateException {
         synchronized (anchors) {
-            old = anchors.put(label, linkage);
-        }
-        if (old != null) {
-            throw new IllegalStateException(Errors.format(Errors.Keys.VALUE_ALREADY_DEFINED_$1, label));
+            final Object old = anchors.put(label, linkage);
+            if (old != null) {
+                anchors.put(label, old);
+                throw new IllegalStateException(Errors.format(Errors.Keys.VALUE_ALREADY_DEFINED_$1, label));
+            }
         }
     }
 
@@ -112,16 +134,20 @@ public final class AnchoredCharSequenceAdapter extends CharSequenceAdapter {
     @Override
     public CharacterString marshal(CharSequence value) {
         if (value != null) {
-            final URI href;
+            final Object linkage;
             String key = value.toString();
             if (key != null) {
                 key = key.trim();
                 if (key.length() != 0) {
                     synchronized (anchors) {
-                        href = anchors.get(key);
+                        linkage = anchors.get(key);
                     }
-                    if (href != null) {
-                        value = new AnchorType(href, key);
+                    if (linkage != null) {
+                        if (linkage instanceof URI) {
+                            value = new AnchorType((URI) linkage, key);
+                        } else {
+                            value = (AnchorType) linkage;
+                        }
                     }
                     return new CharacterString(value);
                 }
