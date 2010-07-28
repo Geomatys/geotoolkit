@@ -25,10 +25,8 @@ import java.util.Collections;
 import java.util.Formatter;
 import javax.measure.unit.SI;
 
-import ucar.nc2.Variable;
 import ucar.nc2.units.DateUnit;
 import ucar.nc2.constants.AxisType;
-import ucar.nc2.dataset.VariableDS;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dataset.CoordinateAxis1D;
@@ -553,15 +551,12 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
                 final WarningProducer logger) throws IOException
         {
             if (!(axis instanceof CoordinateAxis1DTime) && file != null) {
-                final Variable variable = file.findVariable(axis.getNameEscaped());
-                if (variable instanceof VariableDS) {
-                    final Formatter formatter = (logger != null) ? new Formatter() : null;
-                    axis = CoordinateAxis1DTime.factory(file, (VariableDS) variable, formatter);
-                    if (formatter != null) {
-                        final StringBuilder buffer = (StringBuilder) formatter.out();
-                        if (buffer.length() != 0) {
-                            Warnings.log(logger, null, NetcdfCRS.class, "wrap", buffer.toString());
-                        }
+                final Formatter formatter = (logger != null) ? new Formatter() : null;
+                axis = CoordinateAxis1DTime.factory(file, axis, formatter);
+                if (formatter != null) {
+                    final StringBuilder buffer = (StringBuilder) formatter.out();
+                    if (buffer.length() != 0) {
+                        Warnings.log(logger, null, NetcdfCRS.class, "wrap", buffer.toString());
                     }
                 }
             }
