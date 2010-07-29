@@ -20,6 +20,7 @@ package org.geotoolkit.coverage.io;
 import java.util.Locale;
 import java.util.concurrent.CancellationException;
 import java.awt.image.RenderedImage;
+import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.imageio.IIOImage;
@@ -30,14 +31,24 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
 import javax.media.jai.RenderedImageAdapter;
 
+import org.opengis.geometry.Envelope;
+import org.opengis.util.FactoryException;
 import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.mosaic.MosaicImageWriter;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.resources.Errors;
+import org.opengis.referencing.operation.MathTransform2D;
 
 
 /**
@@ -365,7 +376,9 @@ public class ImageCoverageWriter extends GridCoverageWriter {
             throws CoverageStoreException, CancellationException
     {
         abortRequested = false;
-        RenderedImage image = coverage.getRenderableImage(X_DIMENSION, Y_DIMENSION).createDefaultRendering();
+        GridGeometry2D gridGeometry = GridGeometry2D.wrap(coverage.getGridGeometry());
+        RenderedImage image = coverage.getRenderableImage(gridGeometry.gridDimensionX,
+                gridGeometry.gridDimensionY).createDefaultRendering();
         while (image instanceof RenderedImageAdapter) {
             image = ((RenderedImageAdapter) image).getWrappedImage();
         }
@@ -375,18 +388,33 @@ public class ImageCoverageWriter extends GridCoverageWriter {
         if (imageWriter == null) {
             throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_OUTPUT));
         }
-        final GridGeometry2D gridGeometry = GridGeometry2D.wrap(coverage.getGridGeometry());
+        /*
+         * Now process to the coverage writing.
+         */
         final IIOMetadata streamMetadata = null; // TODO
-        final IIOImage bundle = new IIOImage(image, null, null);
+        final IIOMetadata imageMetadata  = null; // TODO
+        final IIOImage bundle = new IIOImage(image, null, imageMetadata);
+        MathTransform2D diff = null;
         try {
             final ImageWriteParam imageParam = createImageWriteParam(image);
             if (param != null) {
-                geodeticToPixelCoordinates(gridGeometry, param, imageParam);
+                diff = geodeticToPixelCoordinates(gridGeometry, param, imageParam);
                 imageParam.setSourceBands(param.getSourceBands());
             }
             imageWriter.write(streamMetadata, bundle, imageParam);
         } catch (IOException e) {
             throw new CoverageStoreException(formatErrorMessage(e), e);
+        }
+        if (!isIdentity(diff)) {
+            /*
+             * We need to resample the image if:
+             *
+             *  - The transform from the source grid to the target grid is not affine;
+             *  - The above transform is affine but more complex than scale and translations;
+             *  - The translation of scale factors of the above transform are not integers;
+             *  - The requested envelope is greater than the coverage envelope;
+             */
+            // TODO
         }
     }
 

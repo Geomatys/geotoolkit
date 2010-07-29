@@ -123,6 +123,7 @@ public final class ImageCoverageReaderTest {
         assertEquals("Image columns", 20, image.getWidth());
         assertEquals("Image rows",    42, image.getHeight());
         assertEquals("Grid geometry", gridGeometry, gridCoverage.getGridGeometry());
+        assertTrue("No transformation expected.", reader.getReadMatchesRequest());
         /*
          * Check the envelope, which should be the envelope of the full coverage.
          */
@@ -165,6 +166,7 @@ public final class ImageCoverageReaderTest {
         assertEquals("Image rows",     0, image.getMinY());
         assertEquals("Image columns",  9, image.getWidth());
         assertEquals("Image rows",    14, image.getHeight());
+        assertTrue("No transformation expected.", reader.getReadMatchesRequest());
         /*
          * Check the envelope, which should be the same than the requested one
          * (in this particular test case, since the reader does not have to clip

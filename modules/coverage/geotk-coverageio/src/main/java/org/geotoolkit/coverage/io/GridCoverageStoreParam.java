@@ -228,13 +228,13 @@ public abstract class GridCoverageStoreParam implements Serializable {
      * Sets the maximal extent of the region to read from the source. The actual envelope of
      * the destination (the coverage returned by {@link GridCoverageReader}, or the coverage
      * in the file written by {@link GridCoverageWriter}) may be smaller if the coverage
-     * available in the source does not fill completly the given envelope.
+     * available in the source does not fill completely the given envelope.
      * <p>
      * The envelope can be specified in any {@linkplain CoordinateReferenceSystem Coordinate
      * Reference System}. The envelope CRS is honored as below:
      *
      * <ul>
-     *   <li><p><b>At reading time</b>: {@code GridCoverageReader} may return a coverage in that CRS
+     *   <li><p><b>At reading time</b>: {@link GridCoverageReader} may return a coverage in that CRS
      *       if it can do that cheaply (for example if the backing store already contains the same
      *       coverage in different CRS), or return the coverage in its native CRS otherwise, at
      *       implementation choice. Callers should check the CRS of the returned coverage.</p></li>

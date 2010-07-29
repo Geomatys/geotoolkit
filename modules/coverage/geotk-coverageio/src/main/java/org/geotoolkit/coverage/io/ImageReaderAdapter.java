@@ -182,6 +182,8 @@ public class ImageReaderAdapter extends SpatialImageReader {
     /**
      * Returns the number of images in the current input. The default implementation returns
      * the length of the list returned by {@link GridCoverageReader#getCoverageNames()}.
+     *
+     * @throws IOException if an error occurs reading the information from the input source.
      */
     @Override
     public int getNumImages(final boolean allowSearch) throws IOException {
@@ -196,6 +198,8 @@ public class ImageReaderAdapter extends SpatialImageReader {
     /**
      * Returns the number of bands available for the specified image. The default implementation
      * returns the length of the list returned by {@link GridCoverageReader#getSampleDimensions(int)}.
+     *
+     * @throws IOException if an error occurs reading the information from the input source.
      */
     @Override
     public int getNumBands(final int imageIndex) throws IOException {
@@ -212,6 +216,8 @@ public class ImageReaderAdapter extends SpatialImageReader {
      * Returns the number of dimension of the image at the given index. The default
      * implementation returns the dimension of the geometry returned by
      * {@link GridCoverageReader#getGridGeometry(int)}.
+     *
+     * @throws IOException if an error occurs reading the information from the input source.
      */
     @Override
     public int getDimension(final int imageIndex) throws IOException {
@@ -251,6 +257,8 @@ public class ImageReaderAdapter extends SpatialImageReader {
     /**
      * Returns the width of the image at the given index. This method delegates
      * to {@link #getSize(int)}, which computes the size from the grid geometry.
+     *
+     * @throws IOException if an error occurs reading the information from the input source.
      */
     @Override
     public final int getWidth(final int imageIndex) throws IOException {
@@ -260,6 +268,8 @@ public class ImageReaderAdapter extends SpatialImageReader {
     /**
      * Returns the height of the image at the given index. This method delegates
      * to {@link #getSize(int)}, which computes the size from the grid geometry.
+     *
+     * @throws IOException if an error occurs reading the information from the input source.
      */
     @Override
     public final int getHeight(final int imageIndex) throws IOException {
@@ -270,6 +280,8 @@ public class ImageReaderAdapter extends SpatialImageReader {
      * Returns the data type which most closely represents the "raw" internal data of the image.
      * The default implementation returns the data type of the sample model of the type returned
      * by {@link #getRawImageType(int)}.
+     *
+     * @throws IOException if an error occurs reading the information from the input source.
      */
     @Override
     protected int getRawDataType(final int imageIndex) throws IOException {
@@ -280,6 +292,8 @@ public class ImageReaderAdapter extends SpatialImageReader {
     /**
      * Returns the raw type of the image at the given index. The default implementation computes
      * the type from the value returned by {@link GridCoverageReader#getSampleDimensions(int)}.
+     *
+     * @throws IOException if an error occurs reading the information from the input source.
      */
     @Override
     public ImageTypeSpecifier getRawImageType(final int imageIndex) throws IOException {
@@ -307,6 +321,8 @@ public class ImageReaderAdapter extends SpatialImageReader {
     /**
      * Returns the possible image types to which the given image can be decoded. The default
      * implementation puts the value returned by {@link #getRawDataType(int)} in a singleton set.
+     *
+     * @throws IOException if an error occurs reading the information from the input source.
      */
     @Override
     public Iterator<ImageTypeSpecifier> getImageTypes(final int imageIndex) throws IOException {
@@ -324,6 +340,8 @@ public class ImageReaderAdapter extends SpatialImageReader {
      * Fetches the stream metadata or image metadata. This method is invoked automatically when
      * the metadata are requested for the first time. The default implementation delegates directly
      * to the coverage reader.
+     *
+     * @throws IOException if an error occurs reading the information from the input source.
      */
     @Override
     protected SpatialMetadata createMetadata(final int imageIndex) throws IOException {
@@ -339,6 +357,8 @@ public class ImageReaderAdapter extends SpatialImageReader {
      * the wrapped {@link GridCoverageReader}, then extracts the {@link RenderedImage} from
      * the coverage. Note that the image returned by this method will typically be an instance
      * of {@link PlanarImage} rather than {@link BufferedImage}.
+     *
+     * @throws IOException if an error occurs reading the information from the input source.
      */
     @Override
     public RenderedImage readAsRenderedImage(final int imageIndex, final ImageReadParam param) throws IOException {
@@ -400,6 +420,8 @@ public class ImageReaderAdapter extends SpatialImageReader {
      * <p>
      * The {@code readAsRenderedImage} method should be preferred when the image is
      * not required to be an instance of {@code BufferedImage}.
+     *
+     * @throws IOException if an error occurs reading the information from the input source.
      */
     @Override
     public BufferedImage read(final int imageIndex, final ImageReadParam param) throws IOException {

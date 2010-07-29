@@ -207,6 +207,11 @@ public class ImageCoverageReader extends GridCoverageReader {
     private final GridCoverageFactory factory;
 
     /**
+     * {@code true} if the last read operation has been able to match the user request.
+     */
+    private transient boolean readMatchesRequest;
+
+    /**
      * Creates a new instance using the default
      * {@linkplain GridCoverageFactory grid coverage factory}.
      */
@@ -777,7 +782,6 @@ public class ImageCoverageReader extends GridCoverageReader {
         }
         GridGeometry2D gridGeometry = getGridGeometry(index);
         checkAbortState();
-        final AffineTransform change; // The change in the 'gridToCRS' transform.
         final ImageReadParam imageParam;
         try {
             imageParam = createImageReadParam(index);
@@ -797,24 +801,24 @@ public class ImageCoverageReader extends GridCoverageReader {
              * Convert geodetic envelope and resolution to pixel coordinates.
              * Store the result of the above conversions in the ImageReadParam object.
              */
-            final Rectangle imageBounds = geodeticToPixelCoordinates(gridGeometry, param, imageParam);
+            readMatchesRequest = isIdentity(geodeticToPixelCoordinates(gridGeometry, param, imageParam));
             /*
-             * Also keep trace of the change that will need to be applied on the gridToCRS
-             * transform. Conceptually we should scale right after the translation:
+             * Conceptually we could compute right now:
              *
+             *     AffineTransform change = new AffineTransform();
+             *     change.translate(sourceRegion.x, sourceRegion.y);
              *     change.scale(xSubsampling, ySubsampling);
              *
              * However this implementation will scale only after the image has been read,
              * because the MosaicImageReader may have changed the subsampling to more
              * efficient values if it was authorized to make such change.
              */
-            change = AffineTransform.getTranslateInstance(imageBounds.x, imageBounds.y);
             imageParam.setSourceBands(srcBands);
             imageParam.setDestinationBands(dstBands);
         } else {
             srcBands = null;
             dstBands = null;
-            change   = null;
+            readMatchesRequest = true;
         }
         /*
          * At this point, the standard parameters (source region, source bands) are set.
@@ -885,8 +889,9 @@ public class ImageCoverageReader extends GridCoverageReader {
          * them in account anyway as a paranoiac safety (a previous version of this code used
          * the 'readAsRenderedImage(...)' method, which could have shifted the image).
          */
-        if (change != null) {
-            // Following line is the deferred call discussed before the "if (false)" block.
+        if (param != null) {
+            final Rectangle sourceRegion = imageParam.getSourceRegion();
+            final AffineTransform change = AffineTransform.getTranslateInstance(sourceRegion.x, sourceRegion.y);
             change.scale(imageParam.getSourceXSubsampling(), imageParam.getSourceYSubsampling());
             final int xmin = image.getMinX();
             final int ymin = image.getMinY();
@@ -915,6 +920,13 @@ public class ImageCoverageReader extends GridCoverageReader {
             }
         }
         return factory.create(name, image, gridGeometry, bands, null, properties);
+    }
+
+    /**
+     * Returns {@code true} if the last read operation has been able to match the user request.
+     */
+    final boolean getReadMatchesRequest() {
+        return readMatchesRequest;
     }
 
     /**
@@ -948,10 +960,11 @@ public class ImageCoverageReader extends GridCoverageReader {
      * @throws IOException if an error occurs while closing the input.
      */
     private void close() throws IOException {
-        coverageNames    = null;
-        gridGeometry     = null;
-        sampleDimensions = null;
-        input            = null; // Clear now in case the code below fails.
+        coverageNames      = null;
+        gridGeometry       = null;
+        sampleDimensions   = null;
+        input              = null; // Clear now in case the code below fails.
+        readMatchesRequest = false;
         final ImageReader imageReader = this.imageReader; // Protect from changes.
         if (imageReader != null) {
             XImageIO.close(imageReader);
