@@ -468,7 +468,7 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
                 continue;
             }
             /*
-             * Try all possible authority names, begining with the most specific ones.
+             * Try all possible authority names, beginning with the most specific ones.
              * For example if the code is "urn:ogc:def:crs:EPSG:6.8:4326", then we will
              * try "urn:ogc:def:crs:EPSG:6.8" first, "urn:ogc:def:crs:EPSG" next, etc.
              * until a suitable factory is found (searching into user-supplied factories

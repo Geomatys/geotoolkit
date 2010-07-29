@@ -36,7 +36,7 @@ public final class SymbolsTest {
     @Test
     public void testContainsAxis() {
         final Symbols s = Symbols.DEFAULT;
-        assertTrue("AXIS at the begining of a line.",
+        assertTrue("AXIS at the beginning of a line.",
                 s.containsAxis("AXIS[\"Long\", EAST]"));
         assertTrue("AXIS embeded in GEOGCS.",
                 s.containsAxis("GEOGCS[\"WGS84\", AXIS[\"Long\", EAST]]"));

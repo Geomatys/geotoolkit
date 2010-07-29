@@ -162,7 +162,7 @@ public abstract class FloodFill extends OpImage {
         /*
          * Copies the points coordinates in an IntegerList. The content of that list will be
          * (x,y) tupples translated in such a way that the upper left pixel is located at (0,0)
-         * by definition (this is always the case with BufferedImage, but not necessarly with
+         * by definition (this is always the case with BufferedImage, but not necessarily with
          * other kind of RenderedImage). Later we will call the fill(WritableRaster...) method
          * in a loop as long as the list is not empty. Note that the fill(WritableRaster...)
          * method may itself push more points in that list (can occur only if the image is tiled).

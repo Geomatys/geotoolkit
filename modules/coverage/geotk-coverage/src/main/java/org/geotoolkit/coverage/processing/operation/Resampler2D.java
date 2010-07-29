@@ -223,7 +223,7 @@ final class Resampler2D extends GridCoverage2D {
         /*
          * The following will tell us if the target GridRange (GR) and GridGeometry (GG) should
          * be computed automatically, or if we should follow strictly what the user said. Note
-         * that "automaticGG" implies "automaticGR" but the converse is not necessarly true.
+         * that "automaticGG" implies "automaticGR" but the converse is not necessarily true.
          */
         final boolean automaticGG, automaticGR;
         /*

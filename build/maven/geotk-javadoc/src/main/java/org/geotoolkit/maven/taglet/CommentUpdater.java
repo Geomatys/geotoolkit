@@ -33,7 +33,7 @@ import java.io.Writer;
  * <p>
  * <ul>
  *   <li>Javadoc comments just before the first "{@code class}" keyword found in the source file.</li>
- *   <li>"slash-star" style comment at the begining of the first comment line.</li>
+ *   <li>"slash-star" style comment at the beginning of the first comment line.</li>
  *   <li>"star-slash" style comment at the end of the last comment line.</li>
  * </ul>
  *
@@ -150,8 +150,8 @@ public class CommentUpdater implements FileFilter {
         String line;
 scan:   while ((line=in.readLine()) != null) {
             /*
-             * Search for the begining of a comment block.  The comments must start at the
-             * begining of the line (except for whitespace), otherwise we stop the process
+             * Search for the beginning of a comment block.  The comments must start at the
+             * beginning of the line (except for whitespace), otherwise we stop the process
              * as a safety.
              */
             if (!isComment) {
@@ -160,7 +160,7 @@ scan:   while ((line=in.readLine()) != null) {
                     while (--i >= 0) {
                         if (!Character.isWhitespace(line.charAt(i))) {
                             // This simple algorithm doesn't know how to process such file.
-                            message = START_COMMENT + " should appears at the begining of the line.";
+                            message = START_COMMENT + " should appears at the beginning of the line.";
                             break scan;
                         }
                     }

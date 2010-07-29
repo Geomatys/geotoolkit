@@ -64,7 +64,7 @@ final class PackFiles implements FileFilter, Comparator<File> {
 
     /**
      * Filters the files to be included in the ZIP file. We ommit hidden files and everything
-     * begining with a dot (this is the same than hidden files on Unix only). Also ommit the
+     * beginning with a dot (this is the same than hidden files on Unix only). Also ommit the
      * target directory created by Maven, and the Derby log file.
      */
     @Override

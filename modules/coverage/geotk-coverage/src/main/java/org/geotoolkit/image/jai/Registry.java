@@ -116,7 +116,7 @@ public final class Registry {
      * Allows or disallows native acceleration for the specified operation on the given JAI instance.
      * By default, JAI uses hardware accelerated methods when available. For example, it make use of
      * MMX instructions on Intel processors. Unfortunatly, some native method crash the Java Virtual
-     * Machine under some circonstances. For example on JAI 1.1.2, the {@code "Affine"} operation on
+     * Machine under some circumstances. For example on JAI 1.1.2, the {@code "Affine"} operation on
      * an image with float data type, bilinear interpolation and an {@link javax.media.jai.ImageLayout}
      * rendering hint cause an exception in medialib native code. Disabling the native acceleration
      * (i.e using the pure Java version) is a convenient workaround until Sun fix the bug.

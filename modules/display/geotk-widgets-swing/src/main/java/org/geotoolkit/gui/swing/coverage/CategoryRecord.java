@@ -581,7 +581,7 @@ public class CategoryRecord implements Cloneable, Serializable {
     }
 
     /**
-     * Sets a coefficient of the transfer function, rounding it is raisonable.
+     * Sets a coefficient of the transfer function, rounding it is reasonable.
      * This is for internal usage by {@link CategoryTable} only.
      */
     final boolean setCoefficient(final int order, final Number coeff) throws IllegalArgumentException {

@@ -309,7 +309,7 @@ public final class ShapeUtilities {
     /**
      * Returns a quadratic curve passing by the 3 given points. There is an infinity of quadratic
      * curves passing by 3 points. We can express the curve we are looking for as a parabolic
-     * equation of the form {@code y=ax²+bx+c} but where the <var>x</var> axis is not necessarly
+     * equation of the form {@code y=ax²+bx+c} but where the <var>x</var> axis is not necessarily
      * horizontal. The orientation of the <var>x</var> axis in the above equation is determined
      * by the {@code horizontal} parameter:
      * <p>
@@ -345,7 +345,7 @@ public final class ShapeUtilities {
     /**
      * Returns a quadratic curve passing by the 3 given points. There is an infinity of quadratic
      * curves passing by 3 points. We can express the curve we are looking for as a parabolic
-     * equation of the form {@code y=ax²+bx+c} but where the <var>x</var> axis is not necessarly
+     * equation of the form {@code y=ax²+bx+c} but where the <var>x</var> axis is not necessarily
      * horizontal. The orientation of the <var>x</var> axis in the above equation is determined
      * by the {@code horizontal} parameter:
      * <p>
@@ -385,7 +385,7 @@ public final class ShapeUtilities {
      * Returns the control point of a quadratic curve passing by the 3 given points. There is an
      * infinity of quadratic curves passing by 3 points. We can express the curve we are looking
      * for as a parabolic equation of the form {@code y=ax²+bx+c} but where the <var>x</var> axis
-     * is not necessarly horizontal. The orientation of the <var>x</var> axis in the above equation
+     * is not necessarily horizontal. The orientation of the <var>x</var> axis in the above equation
      * is determined by the {@code horizontal} parameter:
      * <p>
      * <ul>

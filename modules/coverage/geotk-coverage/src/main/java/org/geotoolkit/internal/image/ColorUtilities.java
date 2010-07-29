@@ -135,7 +135,7 @@ public final class ColorUtilities {
 
     /**
      * Returns a subarray of the specified color array. The {@code lower} and {@code upper} index
-     * will be clamb into the {@code palette} range. If they are completly out of range, or if
+     * will be clamb into the {@code palette} range. If they are completely out of range, or if
      * they would result in an empty array, then {@code null} is returned.
      * <p>
      * This method is used by {@link org.geotoolkit.coverage.GridSampleDimension} as an

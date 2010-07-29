@@ -45,7 +45,7 @@ final class MetadataDescriptions {
 
     /**
      * The locale requested when we fetched the {@link #descriptions} map.
-     * This is not necessarly the same than {@code DescriptionMap.getLocale()}.
+     * This is not necessarily the same than {@code DescriptionMap.getLocale()}.
      */
     final Locale locale;
 

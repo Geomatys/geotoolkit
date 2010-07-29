@@ -126,7 +126,7 @@ final class PropertyAccessor {
      * The JavaBeans property names. They are computed at construction time,
      * {@linkplain String#intern interned} then cached. Those names are often
      * the same than field names (at least in Geotk implementation), so it is
-     * raisonable to intern them in order to share {@code String} instances.
+     * reasonable to intern them in order to share {@code String} instances.
      */
     private final String[] names;
 

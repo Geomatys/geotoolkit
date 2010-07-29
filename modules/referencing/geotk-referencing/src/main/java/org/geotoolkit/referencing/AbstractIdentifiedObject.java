@@ -982,7 +982,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      * <P>
      * Some subclasses (especially {@link org.geotoolkit.referencing.datum.AbstractDatum}
      * and {@link org.geotoolkit.parameter.AbstractParameterDescriptor}) will test for the
-     * {@linkplain #getName() name}, since objects with different name have completly
+     * {@linkplain #getName() name}, since objects with different name have completely
      * different meaning. For example nothing differentiate the {@code "semi_major"} and
      * {@code "semi_minor"} parameters except the name. The name comparison may be loose
      * however, i.e. we may accept a name matching an alias.

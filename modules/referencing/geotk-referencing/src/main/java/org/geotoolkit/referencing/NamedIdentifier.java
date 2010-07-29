@@ -60,7 +60,7 @@ import org.geotoolkit.lang.Immutable;
  * authority's {@linkplain Citation#getAlternateTitles alternate titles} (or the
  * {@linkplain Citation#getTitle main title} if there is no alternate titles) as the
  * {@linkplain ScopedName#scope scope}, and the {@linkplain #getCode code} as the
- * {@linkplain ScopedName#tip tip}. This heuristic rule seems raisonable since,
+ * {@linkplain ScopedName#tip tip}. This heuristic rule seems reasonable since,
  * according ISO 19115, the {@linkplain Citation#getAlternateTitles alternate titles}
  * often contains abreviation (for example "DCW" as an alternative title for
  * "<cite>Digital Chart of the World</cite>").
@@ -194,7 +194,7 @@ public class NamedIdentifier extends DefaultReferenceIdentifier implements Gener
     /**
      * Returns the generic name of this identifier. The name will be constructed
      * automatically the first time it will be needed. The name's scope is infered
-     * from the shortest alternative title (if any). This heuristic rule seems raisonable
+     * from the shortest alternative title (if any). This heuristic rule seems reasonable
      * since, according ISO 19115, the {@linkplain Citation#getAlternateTitles alternate
      * titles} often contains abreviation (for example "DCW" as an alternative title for
      * "Digital Chart of the World"). If no alternative title is found or if the main title

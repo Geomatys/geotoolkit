@@ -81,7 +81,7 @@ final class MetadataResult extends StatementEntry {
      * message pretends to be emitted by the interface constructor, which doesn't exist. But
      * this is the closest we can get from a public API. Otherwise the emitter is deep behind
      * {@link java.lang.reflect.Proxy}, which generates on-the-fly implementations of the
-     * interface (so we are not completly wrong neither).
+     * interface (so we are not completely wrong neither).
      */
     private void closeResultSet() throws SQLException {
         final boolean hasNext = results.next();

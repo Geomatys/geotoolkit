@@ -126,7 +126,7 @@ final class OperationMethodSet extends AbstractSet<OperationMethod> {
         }
 
         /**
-         * Skips invalid entries, begining at the current index.
+         * Skips invalid entries, beginning at the current index.
          */
         private void skip() {
             if (type != null) {

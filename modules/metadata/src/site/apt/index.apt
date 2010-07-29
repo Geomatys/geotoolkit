@@ -43,7 +43,7 @@ Metadata
   <<Notes:>>
 
   * The <<<Abstract>>> prefix means that the class is abstract in the sense of the implemented
-    standard. It it not necessarly abstract in the sense of Java. Because incomplete metadata are
+    standard. It it not necessarily abstract in the sense of Java. Because incomplete metadata are
     common in practice, sometime we wish to instantiate an "abstract" class despite the lack of
     knowledge about the exact sub-type.
 

@@ -80,7 +80,7 @@ public final class Calendar {
     /**
      * Returns the julian day of the given date. This is the number of days elapsed since
      * January 1st, 4713 before J.C. at noon GMT. This is named after <cite>Julius Scaliger</cite>,
-     * not to be confused to the number of days elapsed since the begining of the year (named after
+     * not to be confused to the number of days elapsed since the beginning of the year (named after
      * <cite>Julius Caesar</cite>).
      *
      * @param  time The time for which to evaluate the julian day.

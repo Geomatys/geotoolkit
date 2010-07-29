@@ -519,7 +519,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
             if (!compareMetadata) {
                 /*
                  * Tests for name, since parameters with different name have
-                 * completly different meaning. For example there is no difference
+                 * completely different meaning. For example there is no difference
                  * between "semi_major" and "semi_minor" parameters except the name.
                  * We don't perform this comparison if the user asked for metadata
                  * comparison, because in such case the names have already been

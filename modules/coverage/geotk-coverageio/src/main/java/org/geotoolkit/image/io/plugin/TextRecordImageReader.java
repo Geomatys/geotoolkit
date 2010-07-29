@@ -783,7 +783,7 @@ public class TextRecordImageReader extends TextImageReader {
         protected boolean isValidContent(final double[][] rows) {
             /*
              * The 12 lines limit is arbitrary and may change in future version.
-             * We ask for a minimal amount of lines in order to have raisonable
+             * We ask for a minimal amount of lines in order to have reasonable
              * chances to determine if the data are distributed on a regular grid.
              * This limit should be safe if the average line length is lower than
              * 80 characters (usually they are about 15 characters).

@@ -224,14 +224,14 @@ scan:   for (int i=0; i<numBands; i++) {
      * Invoked by {@link #create} when a photographic view needs to be created. This method
      * reformats the {@linkplain ColorModel color model} to a {@linkplain ComponentColorModel
      * component color model} preserving transparency. The new color model is typically backed
-     * by an RGB {@linkplain ColorSpace color space}, but not necessarly. It could be YMCB as well.
+     * by an RGB {@linkplain ColorSpace color space}, but not necessarily. It could be YMCB as well.
      */
     @SuppressWarnings("fallthrough")
     private static GridCoverage2D photographic(final GridCoverage2D coverage, final Hints userHints) {
         final RenderedImage image = coverage.getRenderedImage();
         final ColorModel cm = image.getColorModel();
         /*
-         * If the image already use a component color model (not necessarly backed by
+         * If the image already use a component color model (not necessarily backed by
          * RGB color space - it could be CYMB as well), then there is nothing to do.
          */
         if (cm instanceof ComponentColorModel) {
@@ -429,7 +429,7 @@ scan:   for (int i=0; i<numBands; i++) {
         }
         /*
          * STEP 4 - Check if the transcoding could be done with a JAI's "Rescale" or "Piecewise"
-         *          operations. The "Rescale" operation requires a completly linear relationship
+         *          operations. The "Rescale" operation requires a completely linear relationship
          *          between the source and the destination sample values. The "Piecewise" operation
          *          is less strict: piecewise breakpoints are very similar to categories, but the
          *          transformation for all categories still have to be linear.

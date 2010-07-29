@@ -147,7 +147,7 @@ Geotoolkit.org History
   {{{build/tools/geotk-migrate/changes.html}documented}}, and a migration tool has been created
   for automatizing the application of most common changes. Because Geotidy initiators were aware
   that not anyone will agree with every technical decision, the Geotidy code was hosted on a
-  <Distributed Versioning System> ({{{http://hg-scm.org/}Mercurial}}) from the begining, as
+  <Distributed Versioning System> ({{{http://hg-scm.org/}Mercurial}}) from the beginning, as
   opposed to the <Central Versioning System> ({{{http://subversion.tigris.org/}Subversion}})
   used by GeoTools. Martin also offered to help GeoServer with the initial backport of this new
   code to Java\ 5. By the end of March\ 2009, Martin had finished his cleanup work and began the

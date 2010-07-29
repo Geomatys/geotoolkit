@@ -147,7 +147,7 @@ attmpt: while (true) {
                 /*
                  * If this is the first iteration, then add the provider in the list. We add
                  * the providers in iteration order, except if the suffixes match in which case
-                 * we add the providers at the begining of the list (so we try them first if we
+                 * we add the providers at the beginning of the list (so we try them first if we
                  * perform an other iteration later).
                  *
                  * Note: useSuffix and useProvidersList are not modified in this inner loop.

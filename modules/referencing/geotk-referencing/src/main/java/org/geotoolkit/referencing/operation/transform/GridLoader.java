@@ -44,7 +44,7 @@ class GridLoader {
     private static final Cache<GridLoader,GridLoader> CACHE = new Cache<GridLoader,GridLoader>(4, 0, true);
 
     /**
-     * The type of the grid loader. This is not necessarly the same than
+     * The type of the grid loader. This is not necessarily the same than
      * {@link Object#getClass()}, since this {@code GridLoader} instance
      * may be used as a key for an other {@code GridLoader} instance of
      * that class.

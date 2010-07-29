@@ -371,7 +371,7 @@ abstract class DatabasePanel extends JComponent implements ActionListener {
             settings = new Properties();
         } else {
             /*
-             * If there is an URL in the property file, add it at the begining
+             * If there is an URL in the property file, add it at the beginning
              * of the URL combo box.
              */
             final Field urlField = fields[0];

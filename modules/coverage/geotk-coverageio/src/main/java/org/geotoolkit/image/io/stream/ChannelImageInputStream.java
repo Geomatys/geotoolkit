@@ -267,7 +267,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
         if (remaining < n) {
             final int p = buffer.position();
             if (p != 0) {
-                // Move the remaining bytes at the begining of the buffer,
+                // Move the remaining bytes at the beginning of the buffer,
                 // if they are not already there.
                 bufferPosition += p;
                 for (int i=0; i<remaining; i++) {

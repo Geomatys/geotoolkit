@@ -251,7 +251,7 @@ final class CategoryTable extends Table {
                     throw new IllegalRecordException(errors().getString(Errors.Keys.VALUE_OUT_OF_BOUNDS_$3,
                             band, minBand, MAXIMUM_BANDS), this, results, bandIndex, name);
                 }
-                // If we are begining a new band, stores the previous
+                // If we are beginning a new band, stores the previous
                 // categories in the 'dimensions' map.
                 if (band != bandOfPreviousCategory) {
                     if (!categories.isEmpty()) {

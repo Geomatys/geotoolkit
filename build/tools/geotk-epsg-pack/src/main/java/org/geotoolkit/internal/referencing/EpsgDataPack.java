@@ -140,7 +140,7 @@ final class EpsgDataPack extends ScriptRunner {
             insertDatum = lnup.startsWith("INSERT INTO EPSG_DATUM VALUES");
             int valuesStart = lnup.indexOf("VALUES", 11);
             if (valuesStart >= 0) {
-                // We are begining insertions in a new table.
+                // We are beginning insertions in a new table.
                 valuesStart += 6; // Move to the end of "VALUES".
                 insertStatement = lnup.substring(0, valuesStart).trim();
                 final String pc = line.substring(0, valuesStart).trim();

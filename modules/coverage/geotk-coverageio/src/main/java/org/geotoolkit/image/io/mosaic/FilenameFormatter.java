@@ -279,7 +279,7 @@ loop:   for (int fieldNumber=0; ;fieldNumber++) {
                     if (useLetters ? Character.isLetter(c) : Character.isDigit(c)) {
                         return null; // The number is not the one given in argument to this method.
                     }
-                    break; // We have found the begining of the number (base 10 or 26).
+                    break; // We have found the beginning of the number (base 10 or 26).
                 }
                 start--;
             }

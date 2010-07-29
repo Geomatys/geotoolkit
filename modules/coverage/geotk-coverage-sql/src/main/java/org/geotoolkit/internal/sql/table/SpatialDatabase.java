@@ -223,7 +223,7 @@ public class SpatialDatabase extends Database {
         /*
          * Try to get the PostGIS SRID from the horizontal CRS. First, search for an explicit
          * PostGIS code. If none are found, lookup for the EPSG code and convert that code to
-         * a PostGIS code (this is usually the same, but not necessarly).
+         * a PostGIS code (this is usually the same, but not necessarily).
          */
         if (horizontalCRS == null) {
             horizontalSRID = 0;

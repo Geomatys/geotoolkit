@@ -52,7 +52,7 @@ public class AnyConverter {
     private transient ObjectConverter<?,?> converter;
 
     /**
-     * The last source and target classes requested, or {@code null}. This is not necessarly
+     * The last source and target classes requested, or {@code null}. This is not necessarily
      * the same than the classes returned by {@code converter.get[Source|Target]Class()}.
      */
     private transient Class<?> source, target;

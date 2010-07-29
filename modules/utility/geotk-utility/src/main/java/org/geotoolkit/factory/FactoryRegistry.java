@@ -335,7 +335,7 @@ public class FactoryRegistry extends ServiceRegistry {
              * and formatted by the default java.util.logging.SimpleFormatter.
              *
              * Conventions for the message part according java.util.logging.Logger javadoc:
-             * - "ENTRY"  at the begining of a method.
+             * - "ENTRY"  at the beginning of a method.
              * - "RETURN" at the end of a method, if successful.
              * - "THROW"  in case of failure.
              * - "CHECK"  ... is our own addition to Sun's convention for this method ...

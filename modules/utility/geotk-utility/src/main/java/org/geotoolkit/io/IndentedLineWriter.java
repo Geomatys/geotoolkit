@@ -101,7 +101,7 @@ public class IndentedLineWriter extends FilterWriter {
     }
 
     /**
-     * Invoked when a new line is begining. The default implementation writes the
+     * Invoked when a new line is beginning. The default implementation writes the
      * amount of spaces specified by the last call to {@link #setIndentation}.
      *
      * @throws IOException If an I/O error occurs

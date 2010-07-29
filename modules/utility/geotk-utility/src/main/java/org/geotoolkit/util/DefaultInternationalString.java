@@ -168,7 +168,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
      * stands for remarks in {@linkplain Locale#FRENCH French} while the {@code "remarks_fr_CA"}
      * property key stands for remarks in {@linkplain Locale#CANADA_FRENCH French Canadian}.
      *
-     * @param  prefix The prefix to skip at the begining of the {@code key}.
+     * @param  prefix The prefix to skip at the beginning of the {@code key}.
      * @param  key The property key.
      * @param  string The localized string for the specified {@code key}.
      * @return {@code true} if the key has been recognized, or {@code false} otherwise.

@@ -76,7 +76,7 @@ final class DescriptionMap extends MetadataMap<String> implements Localized {
 
     /**
      * Returns the locale of the resource bundle which is backing this map.
-     * This is not necessarly the same than the locale argument provided at
+     * This is not necessarily the same than the locale argument provided at
      * construction time.
      *
      * @return The locale of the resource bundle.

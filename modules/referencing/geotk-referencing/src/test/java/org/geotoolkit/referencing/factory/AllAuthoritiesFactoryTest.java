@@ -200,7 +200,7 @@ public final class AllAuthoritiesFactoryTest extends ReferencingTestCase {
                 }
             }
             /*
-             * TODO: It is not completly clear why we don't see a SQL exception
+             * TODO: It is not completely clear why we don't see a SQL exception
              *       when the driver are present but there is no EPSG factory.
              */
             assumeTrue(isEpsgFactoryAvailable());

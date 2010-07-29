@@ -166,7 +166,7 @@ final class RegionCalculator {
                 reference = tr;
             }
             /*
-             * If there is missing tiles at the begining of the first row, then the x location
+             * If there is missing tiles at the beginning of the first row, then the x location
              * of the first tile is greater than the "true" minimum. We will need to adjust.
              */
             if (reference == null) {
@@ -401,7 +401,7 @@ final class RegionCalculator {
         /*
          * From this point, consider 'base', 'scale', 'shear', 'scaleIsNull', 'shearIsNull'
          * as final. They describe the AffineTransform with finest resolution along one axis
-         * (X or Y), not necessarly both.
+         * (X or Y), not necessarily both.
          */
         while (processing < length) {
             final AffineTransform candidate = gridToCRS[processing++];

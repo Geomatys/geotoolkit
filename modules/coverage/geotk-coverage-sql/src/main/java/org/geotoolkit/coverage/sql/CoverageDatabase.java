@@ -84,7 +84,7 @@ import org.geotoolkit.resources.Errors;
 public class CoverageDatabase implements Localized {
     /**
      * Maximal amount of concurrent threads which can be running. Note that higher values are
-     * not necessarly better, since each thread will typically perform a lot of SQL or I/O
+     * not necessarily better, since each thread will typically perform a lot of SQL or I/O
      * operations and too many concurrency in such operations may decrease performance.
      */
     private static final int MAXIMUM_THREADS = 8;

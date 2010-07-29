@@ -175,7 +175,7 @@ public abstract class MouseSelectionTracker extends MouseInputAdapter {
      *   <li>If the model is an instance of {@link Line2D} (which means that this
      *       {@code MouseSelectionTracker} only draws a line between points), the
      *       object returned will belong to the {@link Line2D} class.</li>
-     *   <li>Otherwise the object returned is usually (but not necessarly) an instance of the same
+     *   <li>Otherwise the object returned is usually (but not necessarily) an instance of the same
      *       class, usually {@link Rectangle2D}. There could be situations where the returned object
      *       is an instance of an another class, for example if the affine transform performs a
      *       rotation.</li>

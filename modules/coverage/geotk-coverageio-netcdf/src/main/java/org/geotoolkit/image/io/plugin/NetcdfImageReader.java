@@ -179,7 +179,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
      * {@link #prepareVariable} when first needed, and may be updated when the argument given to
      * any method expecting a {@code imageIndex} parameter has changed.
      * <p>
-     * This field is typically (but not necessarly) an instance of {@link VariableDS}.
+     * This field is typically (but not necessarily) an instance of {@link VariableDS}.
      */
     protected Variable variable;
 

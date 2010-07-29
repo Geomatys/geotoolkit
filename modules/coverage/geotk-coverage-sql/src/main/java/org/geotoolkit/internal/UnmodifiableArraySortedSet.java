@@ -164,7 +164,7 @@ public abstract class UnmodifiableArraySortedSet<E> extends AbstractSet<E> imple
     }
 
     /**
-     * Returns a sub-set from the begining of this set to the given element (exclusive).
+     * Returns a sub-set from the beginning of this set to the given element (exclusive).
      */
     @Override
     public SortedSet<E> headSet(final Object toElement) {

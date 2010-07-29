@@ -180,7 +180,7 @@ public class ConverterRegistry {
      * {@section Which sub-classes of the source class are registered}
      * Sub-classes of the source class will be registered on a case-by-case basis when the
      * {@link #converter(Class, Class)} is invoked, because we can not know the set of all
-     * sub-classes in advance (and would not necessarly want to register all of them anyway).
+     * sub-classes in advance (and would not necessarily want to register all of them anyway).
      *
      * @param converter The converter to register.
      */

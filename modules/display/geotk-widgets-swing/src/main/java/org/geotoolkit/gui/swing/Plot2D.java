@@ -124,7 +124,7 @@ public class Plot2D extends ZoomPane {
     /**
      * The set of <var>x</var> axes. There is usually only one axis, but more axes are allowed.
      * All {@code Entry.xAxis} instance <strong>must</strong> appears in this list as well, but
-     * not necessarly in the same order.
+     * not necessarily in the same order.
      *
      * @see #addXAxis
      * @see #addSeries
@@ -134,7 +134,7 @@ public class Plot2D extends ZoomPane {
     /**
      * The set of <var>y</var> axes. There is usually only one axis, but more axes are allowed.
      * All {@code Entry.yAxis} instance <strong>must</strong> appears in this list as well, but
-     * not necessarly in the same order.
+     * not necessarily in the same order.
      *
      * @see #addYAxis
      * @see #addSeries

@@ -54,7 +54,7 @@ public enum X364 {
     /** Reset the background color.                  */ BACKGROUND_DEFAULT  (FOREGROUND_DEFAULT);
 
     /**
-     * The begining of escape sequences.
+     * The beginning of escape sequences.
      */
     private static final String START = "\u001B[";
 

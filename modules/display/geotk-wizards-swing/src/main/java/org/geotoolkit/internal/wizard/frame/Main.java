@@ -69,7 +69,7 @@ public final class Main extends JFrame implements ActionListener {
             MOSAIC="MOSAIC", SETUP="SETUP", HOME="HOME", ABOUT="ABOUT", QUIT="QUIT";
 
     /**
-     * The desktop pane, which fill completly the frame.
+     * The desktop pane, which fill completely the frame.
      */
     private final JDesktopPane desktop;
 

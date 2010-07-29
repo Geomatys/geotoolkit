@@ -151,7 +151,7 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
      * is greater than {@code size()}.
      * <p>
      * This method is sometime used as a hint for choosing a {@code UnmodifiableArrayList}
-     * instance to keep, given a choice. Note that a greater value is not necessarly more
+     * instance to keep, given a choice. Note that a greater value is not necessarily more
      * memory consuming, since the backing array may be shared by many sublists.
      *
      * @return The length of the backing array.

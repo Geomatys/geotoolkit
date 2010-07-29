@@ -153,7 +153,7 @@ final class Element {
             }
             //
             // Try to parse the next element as a number. We will take it as a number if
-            // the first non-blank character is not the begining of an unicode identifier.
+            // the first non-blank character is not the beginning of an unicode identifier.
             //
             lower = position.getIndex();
             if (!Character.isUnicodeIdentifierStart(text.charAt(lower))) {

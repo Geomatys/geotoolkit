@@ -264,7 +264,7 @@ public class AuthorityCodesComboBox extends WindowCreator {
      * Returns the authority name. This is useful for example in order to provide a window title.
      *
      * {@section Multi-threading}
-     * This method can be safely invoked from any thread - not necessarly the <cite>Swing</cite>
+     * This method can be safely invoked from any thread - not necessarily the <cite>Swing</cite>
      * thread. This is assuming that the {@linkplain AuthorityFactory Authority Factory} provided
      * at construction time is thread-safe, but this is the case of all Geotk implementations.
      *
@@ -278,7 +278,7 @@ public class AuthorityCodesComboBox extends WindowCreator {
      * Returns the code for the selected object, or {@code null} if none.
      *
      * {@section Multi-threading}
-     * This method can be safely invoked from any thread - not necessarly the <cite>Swing</cite>
+     * This method can be safely invoked from any thread - not necessarily the <cite>Swing</cite>
      * thread. This is a requirement for allowing {@link #getSelectedItem()} to be safely invoked
      * from a background thread.
      *
@@ -340,7 +340,7 @@ public class AuthorityCodesComboBox extends WindowCreator {
      * objects should be created.
      *
      * {@section Multi-threading}
-     * This method can be safely invoked from any thread - not necessarly the <cite>Swing</cite>
+     * This method can be safely invoked from any thread - not necessarily the <cite>Swing</cite>
      * thread. This is assuming that the {@linkplain AuthorityFactory Authority Factory} provided
      * at construction time is thread-safe, but this is the case of all Geotk implementations.
      *

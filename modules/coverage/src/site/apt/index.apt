@@ -18,7 +18,7 @@ Coverage
   case - it is user's responsibility to implement the GeoAPI <<<Coverage>>> interface.
 
   In the particular case where the coverage values are located on a rectangular grid where each cell
-  have the same size (not necessarly in spatial coordinates), then we have a <Grid Coverage>. A Grid
+  have the same size (not necessarily in spatial coordinates), then we have a <Grid Coverage>. A Grid
   Coverage is like a matrix of values, or an image if a RGB color can be associated to each value.
 
 

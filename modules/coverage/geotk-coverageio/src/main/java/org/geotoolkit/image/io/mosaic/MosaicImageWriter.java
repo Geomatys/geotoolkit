@@ -644,7 +644,7 @@ public class MosaicImageWriter extends ImageWriter implements Disposable {
                     /*
                      * While submitPermits.acquire() was waiting in the above code, some image
                      * writers may have been pushed back to the cache. Ensure that the cache is
-                     * keept to a raisonable size by disposing, if needed, the oldest writers.
+                     * keept to a reasonable size by disposing, if needed, the oldest writers.
                      * We do this cleanup here instead than after submitPermits.acquire() because
                      * getImageWriter(...) may have selected a writer that we would otherwise have
                      * disposed.

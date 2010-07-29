@@ -158,7 +158,7 @@ public class Stereographic extends UnitaryProjection {
     final double phi0;
 
     /**
-     * Constants used for the oblique projections. All those constants are completly
+     * Constants used for the oblique projections. All those constants are completely
      * determined by {@link #phi0}. Consequently, there is no need to test them in
      * {@link #hashCode} or {@link #equivalent} methods.
      */
@@ -171,7 +171,7 @@ public class Stereographic extends UnitaryProjection {
     private final double chi1;
 
     /**
-     * Constants used for the oblique projections. All those constants are completly
+     * Constants used for the oblique projections. All those constants are completely
      * determined by {@link #phi0} and {@link #excentricity}. Consequently, there is
      * no need to test them in {@link #hashCode} or {@link #equivalent} methods.
      */

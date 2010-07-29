@@ -46,7 +46,7 @@ import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 @Immutable
 final class URN_Parser {
     /**
-     * The begining parts of the URN, typically {@code "urn:ogc:def:"} and {@code "urn:x-ogc:def:"}.
+     * The beginning parts of the URN, typically {@code "urn:ogc:def:"} and {@code "urn:x-ogc:def:"}.
      * All elements in the array are treated as synonymous. Those parts are up to, but do not
      * include, de type part ({@code "crs"}, {@code "cs"}, {@code "datum"}, <i>etc.</i>).
      * They must include a trailing (@value #SEPARATOR} character.

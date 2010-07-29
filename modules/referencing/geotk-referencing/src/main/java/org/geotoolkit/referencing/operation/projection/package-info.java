@@ -95,7 +95,7 @@
  *
  * The Geotk implementation extends this rule to axis directions as well, i.e. (<var>x</var>,
  * <var>y</var>) coordinates must be ({@linkplain org.opengis.referencing.cs.AxisDirection#EAST East},
- * {@linkplain org.opengis.referencing.cs.AxisDirection#NORTH North}) orientated.
+ * {@linkplain org.opengis.referencing.cs.AxisDirection#NORTH North}) oriented.
  *
  * <blockquote><font size="-1"><b>Implications on South oriented projections</b><br>
  * The above rule implies a non-intuitive behavior for the <cite>Transverse Mercator (South
@@ -110,10 +110,10 @@
  * projection as well (at the opposite of what ESRI does).
  * </font></blockquote>
  * <p>
- * In order to reduce the risk of confusion, this package never defines south orientated
+ * In order to reduce the risk of confusion, this package never defines south oriented
  * map projection. This rule removes all ambiguity when reading a transform in
  * <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
- * Known Text</cite> (WKT)</A> format, since only the north-orientated variant is used and
+ * Known Text</cite> (WKT)</A> format, since only the north-oriented variant is used and
  * the affine transform coefficients tell exactly which axis flips are applied.
  *
  *
@@ -143,7 +143,7 @@
  * In other words, the
  * {@linkplain org.geotoolkit.referencing.operation.projection.UnitaryProjection#transform(double[],int,double[],int)
  * transform} method of the middle step works typically on longitude and latitude values in <strong>radians</strong>
- * relative to the central meridian (not necessarly Greenwich). Its results are typically (<var>x</var>, <var>y</var>)
+ * relative to the central meridian (not necessarily Greenwich). Its results are typically (<var>x</var>, <var>y</var>)
  * coordinates having ({@linkplain org.opengis.referencing.cs.AxisDirection#EAST East},
  * {@linkplain org.opengis.referencing.cs.AxisDirection#NORTH North}) axis orientation. However in
  * some cases the actual input and output coordinates may be different than the above by some scale

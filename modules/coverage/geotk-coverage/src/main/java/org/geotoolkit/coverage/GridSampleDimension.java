@@ -584,7 +584,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      * quantitative and qualitative. It is possible to specify more than one quantitative
      * categories, providing that their sample value ranges do not overlap. Quantitative
      * categories can map sample values to geophysics values using arbitrary relation
-     * (not necessarly linear).
+     * (not necessarily linear).
      *
      * @param description
      *          The sample dimension title or description, or {@code null} for the default
@@ -845,7 +845,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      * Returns a default category to use for background. A background category is used
      * when an image is <A HREF="../gp/package-summary.html#Resample">resampled</A> (for
      * example reprojected in an other coordinate system) and the resampled image do not
-     * fit in a rectangular area. It can also be used in various situation where a raisonable
+     * fit in a rectangular area. It can also be used in various situation where a reasonable
      * "no data" category is needed. The default implementation try to returns one
      * of the {@linkplain #getNoDataValues no data values}. If no suitable category is found,
      * then a {@linkplain Category#NODATA default} one is returned.

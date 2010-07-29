@@ -298,7 +298,7 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
         /*
          * Gets the hints to be given to the operation. Note that the DefaultCoverageProcessor
          * constructor has explicitly set to null a few hints considered relevant, while not
-         * necessarly specified by the user. If those hints were not overridden by the user,
+         * necessarily specified by the user. If those hints were not overridden by the user,
          * then the corresponding null value will not be put in the hints map below.
          */
         final Hints hints = EMPTY_HINTS.clone();

@@ -604,7 +604,7 @@ adjust: while (true) {
             }
         }
         /*
-         * Copies the "virtual tiles" at the begining of the nodes array.
+         * Copies the "virtual tiles" at the beginning of the nodes array.
          */
         final int n = extra.size();
         if (n != 0) {

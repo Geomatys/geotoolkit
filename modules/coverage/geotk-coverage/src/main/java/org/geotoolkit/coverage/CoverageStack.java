@@ -98,7 +98,7 @@ import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
  * be anything, including time.
  *
  * {@section Construction}
- * {@code GridCoverage2D} objects tend to be big. In order to keep memory usage raisonable, this
+ * {@code GridCoverage2D} objects tend to be big. In order to keep memory usage reasonable, this
  * implementation doesn't requires all {@code GridCoverage2D} objects at once. Instead, it requires
  * an array of {@link Element} objects, which will load the coverage content only when first
  * needed.

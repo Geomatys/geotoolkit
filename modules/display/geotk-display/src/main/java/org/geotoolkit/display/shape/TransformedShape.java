@@ -53,19 +53,19 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
  *        of the transform by direct access to the <code>AffineTransform</code> methods, but this is
  *        not an example that shoud be replicated.}
  *
- * <b>Example:</b> The {@link Arrow2D} class is inconditionnaly orientated toward 0° arithmetic.
+ * <b>Example:</b> The {@link Arrow2D} class is inconditionnaly oriented toward 0° arithmetic.
  * In order to draw a field of arrows in arbitrary directions, the code below can be used:
  *
  * {@preformat java
  *     protected void paint(Graphics2D graphics) {
  *         Arrow2D arrow = new Arrow2D(...);
- *         TransformedShape orientatedArrow = new TransformedShape(arrow);
+ *         TransformedShape orientedArrow = new TransformedShape(arrow);
  *         for (int i=0; i<numArrows; i++) {
  *             double scale = ...
  *             double orientation = Math.toRadians(...);
- *             orientatedArrow.setToScale(scale, scale);
- *             orientatedArrow.rotate(orientation);
- *             graphics.fill(orientatedArrow);
+ *             orientedArrow.setToScale(scale, scale);
+ *             orientedArrow.rotate(orientation);
+ *             graphics.fill(orientedArrow);
  *         }
  *     }
  * }

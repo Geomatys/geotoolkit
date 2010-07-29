@@ -459,7 +459,7 @@ scanLine:   for (; i<length; i++) {
                     }
                 }
                 /*
-                 * Any other kind of character. If we find the begining of an identifier
+                 * Any other kind of character. If we find the beginning of an identifier
                  * (arbitrarily assuming similar syntax than Java identifier rules), check
                  * for the end of the word and replace it needed.
                  */

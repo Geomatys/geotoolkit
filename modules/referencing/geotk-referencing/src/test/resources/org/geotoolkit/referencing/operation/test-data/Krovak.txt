@@ -130,7 +130,7 @@ target pt = (489343.16, 1081630.34)
 //
 //     102067 - ESRI definition
 //
-//     ESRI defines the Krovak projection as (SOUTH,WEST) orientated, no matter what
+//     ESRI defines the Krovak projection as (SOUTH,WEST) oriented, no matter what
 //     the AXIS[...] elements said.  ESRI gets the (EAST,NORTH) orientation with the
 //     addition of "X_Scale", "X_Scale" and "XY_Plane_Rotation" parameters. In order
 //     to get the ESRI behavior in Geotk (which default to  (EAST,NORTH)  at the

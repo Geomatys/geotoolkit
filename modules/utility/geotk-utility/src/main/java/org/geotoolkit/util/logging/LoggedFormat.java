@@ -39,7 +39,7 @@ import org.geotoolkit.internal.StringUtilities;
  * <ul>
  *   <li>Checks if the string was fully parsed and log a warning if it was not. This is
  *       different than the default {@link #parseObject(String)} behavior which check only
- *       if the <em>begining</em> of the string was parsed and ignore any remaining characters.</li>
+ *       if the <em>beginning</em> of the string was parsed and ignore any remaining characters.</li>
  *   <li>Ensures that the parsed object is of some specific class specified at construction time.</li>
  *   <li>If the string can't be fully parsed or is not of the expected class, logs a warning.</li>
  * </ul>

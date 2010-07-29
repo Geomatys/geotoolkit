@@ -426,7 +426,7 @@ public class ImageInspector {
      * <p>
      * <ul>
      *   <li><code>setRenderingHint({@linkplain JAI#KEY_TILE_CACHE}, null)</code>
-     *       disables completly the tile cache.</li>
+     *       disables completely the tile cache.</li>
      *   <li><code>setRenderingHint({@linkplain ImageWorker#TILING_ALLOWED}, Boolean.FALSE)</code>
      *       forces all operators to produce untiled images.</li>
      * </ul>

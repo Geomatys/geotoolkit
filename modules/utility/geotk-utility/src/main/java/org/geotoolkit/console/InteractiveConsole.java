@@ -38,7 +38,7 @@ import static org.geotoolkit.io.X364.*;
  * {@linkplain System#in standard input stream} and sent the results to the {@linkplain System#out
  * standard output stream}. But different streams can be explicitly specified at construction time.
  * <p>
- * Every empty lines, and every lines begining with {@code "//"} or {@code "#"} characters,
+ * Every empty lines, and every lines beginning with {@code "//"} or {@code "#"} characters,
  * are ignored. Other lines are sent to the {@link #execute execute} method, which subclasses
  * should override.
  *
@@ -86,7 +86,7 @@ public abstract class InteractiveConsole implements Runnable {
     final boolean colors;
 
     /**
-     * The locale. The default value is not necessarly the system default, since this locale is
+     * The locale. The default value is not necessarily the system default, since this locale is
      * used also for parsing numbers, dates, <i>etc</i>. The policy for the default value
      * may change in future version, so it is safer to not make this field public for now.
      */
@@ -606,7 +606,7 @@ public abstract class InteractiveConsole implements Runnable {
      * after some coordinate points in test scripts.
      *
      * @param text  The string to check.
-     * @param start The delimitor required at the string begining.
+     * @param start The delimitor required at the string beginning.
      * @param end   The delimitor required at the string end.
      */
     private static String removeDelimitors(String text, final char start, final char end) {

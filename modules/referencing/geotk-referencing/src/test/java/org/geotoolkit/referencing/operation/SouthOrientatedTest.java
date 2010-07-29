@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 
 
 /**
- * Tests some south-orientated map projections.
+ * Tests some south-oriented map projections.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
@@ -47,7 +47,7 @@ public final class SouthOrientatedTest {
     private static final double EPS = 1E-10;
 
     /**
-     * Parses a test CRS north or south orientated. If the CRS is fully south-orientated
+     * Parses a test CRS north or south oriented. If the CRS is fully south-oriented
      * with 0.0 northing, then it should be the EPSG:22285 one.
      */
     private static ProjectedCRS parseTransverseMercator(final boolean methodSouth,
@@ -86,7 +86,7 @@ public final class SouthOrientatedTest {
     @Test
     public void testTransverseMercator() throws FactoryException {
         /*
-         * Tests "Transverse Mercator" (not south-orientated) with an axis orientated toward south.
+         * Tests "Transverse Mercator" (not south-oriented) with an axis oriented toward south.
          */
         ProjectedCRS north = parseTransverseMercator(false, false, 1000);
         assertEquals(AxisDirection.WEST,  north.getCoordinateSystem().getAxis(0).getDirection());

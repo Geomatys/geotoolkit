@@ -210,7 +210,7 @@ public class SystemConverterTest {
         assertEquals(Date.class, system.findCommonTarget(Comparable.class, Date  .class, Long.class));
         assertEquals(Long.class, system.findCommonTarget(Comparable.class, Number.class, Date.class));
         // Actually the last test below match current implementation, but this behavior is not
-        // necessarly the most appropriate one. We could also return conservatively Double.class
+        // necessarily the most appropriate one. We could also return conservatively Double.class
         // since Number can be anything.
         /*
          * Following tests use the fact that URL does not implement Comparable,

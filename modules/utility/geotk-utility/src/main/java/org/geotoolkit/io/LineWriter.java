@@ -365,7 +365,7 @@ public class LineWriter extends FilterWriter {
     }
 
     /**
-     * Flushs the stream's content to the underlying stream. This method flush completly
+     * Flushs the stream's content to the underlying stream. This method flush completely
      * all internal buffers, including any whitespace characters that should have been
      * skipped if the next non-blank character is a line separator.
      *

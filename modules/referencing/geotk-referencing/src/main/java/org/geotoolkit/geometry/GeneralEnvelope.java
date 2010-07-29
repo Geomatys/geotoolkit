@@ -385,7 +385,7 @@ scan:   for (int i=0; i<length; i++) {
             }
             /*
              * At this point we have skipped the leading keyword (BOX, POLYGON, etc.),
-             * the spaces and the parenthesis if any. We should be at the begining of
+             * the spaces and the parenthesis if any. We should be at the beginning of
              * a number. Search the first separator character (which determine the end
              * of the number) and parse the number.
              */
@@ -1068,7 +1068,7 @@ scanNumber: while (++i < length) {
     }
 
     /**
-     * Returns {@code true} if this envelope completly encloses the specified envelope.
+     * Returns {@code true} if this envelope completely encloses the specified envelope.
      * If one or more edges from the specified envelope coincide with an edge from this
      * envelope, then this method returns {@code true} only if {@code edgesInclusive}
      * is {@code true}.
@@ -1078,7 +1078,7 @@ scanNumber: while (++i < length) {
      *
      * @param  envelope The envelope to test for inclusion.
      * @param  edgesInclusive {@code true} if this envelope edges are inclusive.
-     * @return {@code true} if this envelope completly encloses the specified one.
+     * @return {@code true} if this envelope completely encloses the specified one.
      * @throws MismatchedDimensionException if the specified envelope doesn't have
      *         the expected dimension.
      *

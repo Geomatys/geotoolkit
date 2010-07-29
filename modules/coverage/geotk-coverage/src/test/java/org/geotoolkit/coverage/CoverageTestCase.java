@@ -70,7 +70,7 @@ public abstract class CoverageTestCase {
 
     /**
      * Returns the "Sample to geophysics" transform as an affine transform, or {@code null}
-     * if none. Note that the returned instance may be an immutable one, not necessarly the
+     * if none. Note that the returned instance may be an immutable one, not necessarily the
      * default Java2D implementation.
      *
      * @param  coverage The coverage for which to get the "grid to CRS" affine transform.

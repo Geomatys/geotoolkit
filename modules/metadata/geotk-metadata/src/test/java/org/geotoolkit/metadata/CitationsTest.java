@@ -54,7 +54,7 @@ public final class CitationsTest {
         /*
          * Reminder: (?s) allows .* to skip new line characters.
          *           (?m) enable the multi-lines mode for ^ and $.
-         *           ^ and $ match the begining and end of a line respectively.
+         *           ^ and $ match the beginning and end of a line respectively.
          */
         assertTrue(text.matches("(?s)(?m).*^\\s+Identifiers:\\s+Code:\\s+EPSG$.*"));
         assertTrue(text.matches("(?s)(?m).*^\\s+Linkage:\\s+http://www.epsg.org$.*"));

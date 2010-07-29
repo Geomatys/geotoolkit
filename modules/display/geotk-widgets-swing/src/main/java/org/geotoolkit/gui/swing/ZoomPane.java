@@ -793,7 +793,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
      * full content should appear in the panel, even if some space is not used. Default value is
      * {@code false}.
      *
-     * @param fill {@code true} if the panel should be initially completly filled.
+     * @param fill {@code true} if the panel should be initially completely filled.
      */
     protected void setResetPolicy(final boolean fill) {
         fillPanel = fill;

@@ -61,7 +61,7 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
  * value {@link Graduation#getMaximum}.
  * <p>
  * Note the line's coordinates (<var>x<sub>1</sub></var>,<var>y<sub>1</sub></var>) and
- * (<var>x<sub>2</sub></var>,<var>y<sub>2</sub></var>) are completly independent of graduation
+ * (<var>x<sub>2</sub></var>,<var>y<sub>2</sub></var>) are completely independent of graduation
  * minimal and maximal values. Line's coordinates should be expressed in some units convenient
  * for rendering, as pixels or point (1/72 of inch). On the opposite, graduation can have any
  * arbitrary units, which is given by {@link Graduation#getUnit}. The
@@ -328,7 +328,7 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
      * Sets the location of the endpoints of this {@code Axis2D} to the specified
      * coordinates. Coordinates should be in pixels (for screen rendering) or points
      * (for paper rendering). Using points units make it easy to render labels with
-     * a raisonable font size, no matter the screen resolution or the axis graduation.
+     * a reasonable font size, no matter the screen resolution or the axis graduation.
      *
      * @param x1 Coordinate <var>x</var> of starting point.
      * @param y1 Coordinate <var>y</var> of starting point

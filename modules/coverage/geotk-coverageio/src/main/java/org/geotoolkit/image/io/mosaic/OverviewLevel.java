@@ -362,7 +362,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
          * Accepts only instance of Tile (not a subclass), otherwise we will not know how to create
          * the instance on the fly. Once we have verified that the class is Tile, we are allowed to
          * check the tile size using the 'isSizeEquals' shortcut. We accept only tiles that fill
-         * completly the cell size, otherwise we can not recreate the tile from a pattern.
+         * completely the cell size, otherwise we can not recreate the tile from a pattern.
          */
         if (!Tile.class.equals(tile.getClass()) || !tile.isSizeEquals(dx, dy)) {
             return null;

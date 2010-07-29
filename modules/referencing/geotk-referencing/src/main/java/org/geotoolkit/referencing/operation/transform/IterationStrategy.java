@@ -123,7 +123,7 @@ public enum IterationStrategy {
      *   <li>For each coordinate to be transformed, all ordinate values are read before the
      *       transformation process starts. For example if a transform goes from geographic
      *       to projected CRS, the (<var>longitude</var>, <var>latitude</var>, <var>height</var>)
-     *       tuple must be completly read before to start writing the
+     *       tuple must be completely read before to start writing the
      *       (<var>x</var>,<var>y</var>,<var>z</var>) tuple.</li>
      * </ul>
      *

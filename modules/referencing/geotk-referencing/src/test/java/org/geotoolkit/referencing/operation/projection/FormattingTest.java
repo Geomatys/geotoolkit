@@ -377,7 +377,7 @@ public final class FormattingTest extends ProjectionTestCase {
         }
         /*
          * Now the interresting part: concatenate the two transforms. We ignore the change of
-         * ellipsoid, which is completly wrong but our intend here is to test concatenation,
+         * ellipsoid, which is completely wrong but our intend here is to test concatenation,
          * not datum change. The referencing framework just concatenates what we said without
          * question. Note that while the WKT we get here seems rather straightforward, the
          * internal storage is actually quite different (invoke "printInternalWKT() to see).

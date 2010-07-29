@@ -243,7 +243,7 @@ public final class Strings {
      * More specifically if the given string ends with a {@code '.'} character followed by a
      * sequence of {@code '0'} characters, then those characters are omitted. Otherwise this
      * method returns the string unchanged. This is a "<cite>all or nothing</cite>" method:
-     * either the fractional part is completly removed, or either it is left unchanged.
+     * either the fractional part is completely removed, or either it is left unchanged.
      *
      * {@section Examples}
      * This method returns {@code "4"} if the given value is {@code "4."}, {@code "4.0"} or
@@ -560,7 +560,7 @@ cmp:    while (ia < lga) {
     }
 
     /**
-     * Returns the longuest sequence of characters which is found at the begining of the
+     * Returns the longuest sequence of characters which is found at the beginning of the
      * two given strings. If one of those string is {@code null}, then the other string is
      * returned.
      *

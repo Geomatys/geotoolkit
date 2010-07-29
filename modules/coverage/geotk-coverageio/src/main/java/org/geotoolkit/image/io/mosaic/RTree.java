@@ -88,7 +88,7 @@ final class RTree {
     protected boolean subsamplingChangeAllowed;
 
     /**
-     * Initialized to {@link #subsampling} at the begining of a search,
+     * Initialized to {@link #subsampling} at the beginning of a search,
      * then modified during the search for internal purpose.
      */
     private Dimension subsamplingCandidate;
@@ -177,7 +177,7 @@ final class RTree {
     /**
      * Returns the value of {@link Tile#getSubsamplingFloor} for the first tile that returns a
      * non-null value. It doesn't matter if the selected tile is not the best one. This method
-     * is used only as a hint for begining with a tile having reasonable chances to be cheap,
+     * is used only as a hint for beginning with a tile having reasonable chances to be cheap,
      * in order to compute an initial cost relatively low.
      *
      * @param node The node where to starts the search (initially the {@linkplain #root}).

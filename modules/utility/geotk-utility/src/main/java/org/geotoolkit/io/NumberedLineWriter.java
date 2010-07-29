@@ -123,7 +123,7 @@ public class NumberedLineWriter extends IndentedLineWriter {
     }
 
     /**
-     * Invoked when a new line is begining. The default implementation writes the
+     * Invoked when a new line is beginning. The default implementation writes the
      * current line number.
      *
      * @throws IOException If an I/O error occurs

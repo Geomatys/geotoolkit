@@ -667,7 +667,7 @@ public class RangeFormat extends Format {
                     continue;
                 }
                 // At this point we found a character that could be
-                // the begining of a unit symbol. Try to parse that.
+                // the beginning of a unit symbol. Try to parse that.
                 pos.setIndex(index);
 // TODO: Uncomment when we have upgrated JSR-275 dependency.
 //              unit = unitFormat.parse(source, pos);

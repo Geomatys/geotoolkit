@@ -273,7 +273,7 @@ final class ArrayVector extends Vector implements Serializable {
 
         /**
          * Returns the value casted as a {@code float}, since we may loose precision but the
-         * result of the cast is not completly wrong (at worst we get zero of infinity values
+         * result of the cast is not completely wrong (at worst we get zero of infinity values
          * if the magnitude of the {@code double} value was too small or too large).
          */
         @Override public float floatValue(int index) throws ArrayIndexOutOfBoundsException {

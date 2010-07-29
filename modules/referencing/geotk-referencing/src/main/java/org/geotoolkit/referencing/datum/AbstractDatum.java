@@ -287,7 +287,7 @@ public class AbstractDatum extends AbstractIdentifiedObject implements Datum {
         if (super.equals(object, compareMetadata)) {
             if (!compareMetadata) {
                 /*
-                 * Tests for name, since datum with different name have completly
+                 * Tests for name, since datum with different name have completely
                  * different meaning. We don't perform this comparison if the user
                  * asked for metadata comparison, because in such case the names
                  * have already been compared by the subclass.

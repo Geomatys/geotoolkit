@@ -86,7 +86,7 @@ public class StatementPool<K,V extends StatementEntry> extends LinkedHashMap<K,V
      * The timeout before to close a prepared statement. This is set to 2 seconds, which is
      * a bit short but should be okay if the {@link DataSource} creates pooled connections.
      * In case there is no connection pool, then the mechanism defined in this package will
-     * hopefully keeps the performance at a raisonable level.
+     * hopefully keeps the performance at a reasonable level.
      */
     private static final int TIMEOUT = 2000;
 

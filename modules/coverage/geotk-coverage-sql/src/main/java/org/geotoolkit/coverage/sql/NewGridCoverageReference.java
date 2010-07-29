@@ -94,7 +94,7 @@ public final class NewGridCoverageReference {
      * The authorities of {@link #horizontalSRID} and {@link #verticalSRID} codes, in preference
      * order. The SRID should be the primary keys in the {@code "spatial_ref_sys"} table. If we
      * failed to determine the primary key, we will rely on the observation that the primary key
-     * values are often the EPSG codes (but not necessarly). We shall declare here only the
+     * values are often the EPSG codes (but not necessarily). We shall declare here only the
      * authority which are known to use numerical codes.
      */
     private static final Citation[] AUTHORITIES = {
@@ -150,7 +150,7 @@ public final class NewGridCoverageReference {
 
     /**
      * The name of the coverage format. It shall be one of the primary key values in the
-     * {@code "Formats"} table. Note that this is not necessarly the same name than the
+     * {@code "Formats"} table. Note that this is not necessarily the same name than the
      * {@linkplain ImageReaderSpi#getFormatNames() image format name}.
      * <p>
      * This field is initialized to the format which seems the best fit. A list of

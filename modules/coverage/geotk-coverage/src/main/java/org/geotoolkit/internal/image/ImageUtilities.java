@@ -579,7 +579,7 @@ public final class ImageUtilities {
     /**
      * Sets the content of all banks in the given data buffer to the specified value. We do not
      * allow setting of different value for invidivual bank because the data buffer "banks" do
-     * not necessarly match the image "bands".
+     * not necessarily match the image "bands".
      * <p>
      * We do not provide version for setting only a portion of the data buffer in order to
      * avoid the complexity of considering the number of bits per pixel, the pixel stride

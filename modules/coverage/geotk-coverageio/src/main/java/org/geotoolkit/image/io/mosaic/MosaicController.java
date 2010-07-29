@@ -114,7 +114,7 @@ public class MosaicController implements IIOParamController {
      * Invoked by {@link #activate activate} for every
      * {@linkplain MosaicImageReadParam#getTileParameters tile read parameters} or
      * {@linkplain MosaicImageWriteParam#getTileParameters tile write parameters}.
-     * Note that this method is not necessarly invoked for every tiles, but only for every readers
+     * Note that this method is not necessarily invoked for every tiles, but only for every readers
      * or writers to be used with tiles. For example this method is invoked only once if every
      * tiles are to be read with the same {@linkplain ImageReader image reader}.
      * <p>

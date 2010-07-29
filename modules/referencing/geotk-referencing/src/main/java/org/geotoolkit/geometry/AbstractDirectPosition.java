@@ -221,7 +221,7 @@ public abstract class AbstractDirectPosition implements DirectPosition {
             } while (Character.isWhitespace(c = wkt.charAt(i)));
         }
         /*
-         * Index i is either at the begining of a number, at the closing parenthesis or at the end
+         * Index i is either at the beginning of a number, at the closing parenthesis or at the end
          * of string (in any cases we are not at a whitespace). Now process every space-separated
          * ordinates until we reach the closing parenthesis or the end of string.
          */
@@ -242,7 +242,7 @@ scan:   while (true) {
                 break scan;
             }
             /*
-             * We are at the begining of a number. Find where the number ends (at
+             * We are at the beginning of a number. Find where the number ends (at
              * the first whitespace or closing parenthesis), parse it and store it.
              */
             final int start = i;

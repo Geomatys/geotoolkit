@@ -79,7 +79,7 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
  * avoid the creation of a temporary {@code Callable} statement which may never be executed,
  * and avoid the exception handling due to the {@code throws Exception} clause. Note that the
  * call to {@link Handler#putAndUnlock putAndUnlock} <strong>must</strong> be in the {@code finally}
- * block of a {@code try} block begining immediatly after the call to {@link #lock lock},
+ * block of a {@code try} block beginning immediatly after the call to {@link #lock lock},
  * no matter what the result of the computation is (including {@code null}).
  *
  * {@preformat java

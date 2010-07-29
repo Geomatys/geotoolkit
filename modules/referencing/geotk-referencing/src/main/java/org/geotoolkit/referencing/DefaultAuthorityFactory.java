@@ -155,7 +155,7 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
          * Note that the factories found above are override. If the above list contains
          * an EPSG factory, then AuthorityFactoryFinder will never be used for fetching
          * an EPSG factory. Consequently the EPSG factory used is constrained by the
-         * hints computed at the begining of this method. Only factories that would not
+         * hints computed at the beginning of this method. Only factories that would not
          * be available otherwise will be fetch by AuthorityFactoryFinder with no hints
          * constraint.
          */

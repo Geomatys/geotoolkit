@@ -37,7 +37,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * takes advantage of the fact that alphabetical order is not the same than numerical
  * order for scaning a slightly smaller amount of records (however the advantage is
  * significant only in some special cases - generally speaking this class is not for
- * table having thousands of identifier begining with the given prefix). However the
+ * table having thousands of identifier beginning with the given prefix). However the
  * selected numbers are not garanteed to be in increasing order if there is "holes"
  * in the sequence of numbers (i.e. if some old records have been deleted). Generating
  * strictly increasing sequence is not a goal of this class, since it would be too costly.

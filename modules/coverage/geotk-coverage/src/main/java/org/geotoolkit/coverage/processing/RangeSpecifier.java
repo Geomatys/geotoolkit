@@ -35,7 +35,7 @@ import org.geotoolkit.util.converter.Classes;
  * colors and units of a computation result. {@code RangeSpecifier} are used for tuning the
  * {@link org.geotoolkit.coverage.Category} object to be constructed.
  * <p>
- * By default, most {@linkplain OperationJAI operations} try to guess a raisonable range for
+ * By default, most {@linkplain OperationJAI operations} try to guess a reasonable range for
  * output values. For example the {@code "GradientMagnitude"} operation will produces new
  * {@link org.geotoolkit.coverage.grid.GridCoverage2D} with sample values ranging from 0 to
  * the maximal possible value. This maximal value is usually much to high, since gradient

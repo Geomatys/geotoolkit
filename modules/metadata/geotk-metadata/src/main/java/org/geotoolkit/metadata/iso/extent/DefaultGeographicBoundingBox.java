@@ -149,7 +149,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      * a CRS, then the bounding box may be projected to a geographic CRS. Otherwise, the envelope
      * is assumed already in appropriate CRS.
      * <p>
-     * When coordinate transformation is required, the target geographic CRS is not necessarly
+     * When coordinate transformation is required, the target geographic CRS is not necessarily
      * {@linkplain org.geotoolkit.referencing.crs.DefaultGeographicCRS#WGS84 WGS84}. This method
      * preserves the same {@linkplain org.opengis.referencing.datum.Ellipsoid ellipsoid} than
      * in the envelope CRS when possible. This is because geographic bounding box are only
@@ -189,7 +189,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      * CRS is not null, then the rectangle may be projected to a geographic CRS. Otherwise, the
      * rectangle is assumed already in appropriate CRS.
      * <p>
-     * When coordinate transformation is required, the target geographic CRS is not necessarly
+     * When coordinate transformation is required, the target geographic CRS is not necessarily
      * {@linkplain org.geotoolkit.referencing.crs.DefaultGeographicCRS#WGS84 WGS84}. This method
      * preserves the same {@linkplain org.opengis.referencing.datum.Ellipsoid ellipsoid} than
      * in the given CRS when possible. This is because geographic bounding box are only

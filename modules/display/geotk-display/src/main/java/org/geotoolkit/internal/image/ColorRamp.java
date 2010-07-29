@@ -303,7 +303,7 @@ public class ColorRamp implements Serializable {
          * Gets the color palette, preferably from the "non-geophysics" view since it is usually
          * the one backed by an IndexColorModel.  We assume that 'palette[i]' gives the color of
          * sample value 'i'. We will search for the largest range of valid sample integer values,
-         * ignoring "nodata" values. Those "nodata" values appear usually at the begining or at
+         * ignoring "nodata" values. Those "nodata" values appear usually at the beginning or at
          * the end of the whole palette range.
          *
          * Note that the above algorithm works without Category. We try to avoid dependency

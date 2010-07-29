@@ -551,7 +551,7 @@ public class PaletteFactory {
             }
             /*
              * We can iterate only with ClassLoader because there is no Class.getResources(...)
-             * method. Note that this iteration (when performed) is not completly redundant with
+             * method. Note that this iteration (when performed) is not completely redundant with
              * the above call to 'getReader' because the user may have overridden
              * PaletteFactory.getResourceAsStream(String).
              */

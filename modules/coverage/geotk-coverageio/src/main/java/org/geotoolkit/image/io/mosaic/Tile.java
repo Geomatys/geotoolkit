@@ -635,7 +635,7 @@ public class Tile implements Comparable<Tile>, Serializable {
                         stream.seek(0);
                     } catch (IndexOutOfBoundsException e) {
                         // We tried to reuse the same stream in order to preserve cached data, but it was
-                        // not possible to seek to the begining. Closes it; we will open a new one later.
+                        // not possible to seek to the beginning. Closes it; we will open a new one later.
                         Logging.recoverableException(Tile.class, "getImageReader", e);
                         stream.close();
                         stream = null;

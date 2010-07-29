@@ -67,7 +67,7 @@ public final class QueryTest extends CatalogTestBase {
             assertEquals("SELECT \"name\" FROM \"coverages\".\"Formats\"", query.select(EXISTS));
             trySelectStatement(SQL);
             /*
-             * Tests the iterator over the columns that we declared at the begining of this method.
+             * Tests the iterator over the columns that we declared at the beginning of this method.
              * This iterator should filter the returned values, in order to returns only the one
              * present for the kind of query we asked.
              */

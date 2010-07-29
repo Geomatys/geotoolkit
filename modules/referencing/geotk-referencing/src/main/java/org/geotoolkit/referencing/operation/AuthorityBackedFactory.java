@@ -273,7 +273,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
         } catch (FactoryException exception) {
             /*
              * Other kind of error. It may be more serious, but the super-class is capable
-             * to provides a raisonable default behavior. Log as a warning and lets continue.
+             * to provides a reasonable default behavior. Log as a warning and lets continue.
              */
             log(exception, authorityFactory);
             return null;

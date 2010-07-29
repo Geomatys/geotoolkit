@@ -177,7 +177,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
      *       that the data provider thinks that the extra precision is needed.</li>
      *   <li>If the value is the result of a computation (typically through a vector created
      *       by {@link #createSequence}), cast the value because the calculation accuracy is
-     *       often unknown to the vector - and not necessarly its job.</li>
+     *       often unknown to the vector - and not necessarily its job.</li>
      * </ul>
      * <p>
      * For safety users should either call {@link #doubleValue} in all cases, or call this

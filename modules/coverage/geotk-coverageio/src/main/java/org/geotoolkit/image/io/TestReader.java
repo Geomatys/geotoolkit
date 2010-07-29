@@ -223,7 +223,7 @@ final class TestReader extends TextImageReader {
          */
         int lower = 0;
 scan:   while (lower < readAheadLimit) {
-            // Skip line feeds at the begining of the line. They may be
+            // Skip line feeds at the beginning of the line. They may be
             // trailing characters from the previous iteration of the loop.
             char c = buffer[lower];
             if (c == '\r' || c == '\n') {
@@ -287,7 +287,7 @@ scan:   while (lower < readAheadLimit) {
             final int length = keyword.length();
             if (length == 0) {
                 // Ignore blank lines. Note that some formats could consider blank lines as
-                // the begining of next band or next image. This TestReader just ignore them.
+                // the beginning of next band or next image. This TestReader just ignore them.
                 return true;
             }
             if (Character.isJavaIdentifierStart(keyword.charAt(0))) {

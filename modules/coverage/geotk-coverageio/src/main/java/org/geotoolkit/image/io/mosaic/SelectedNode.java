@@ -190,7 +190,7 @@ final class SelectedNode extends TreeNode {
                 /*
                  * A cheaper tiles existed for the same bounds. Reinsert the previous tile in the
                  * map. We will delete this node from the tree later, except if the previous node
-                 * is a children of this node. In the later case, we can't remove completly this
+                 * is a children of this node. In the later case, we can't remove completely this
                  * node since it would remove its children as well, so we just nullify the tile.
                  */
                 if (existing.getParent() == this) {

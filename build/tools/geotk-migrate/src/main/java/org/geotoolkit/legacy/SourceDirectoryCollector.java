@@ -47,7 +47,7 @@ final class SourceDirectoryCollector implements FileFilter {
 
     /**
      * Filter directories only. This method ignores hidden directory, directory starting
-     * with dot (same as hidden on Unix but not necessarly on Windows) and the "target"
+     * with dot (same as hidden on Unix but not necessarily on Windows) and the "target"
      * directory created by Maven.
      */
     @Override
