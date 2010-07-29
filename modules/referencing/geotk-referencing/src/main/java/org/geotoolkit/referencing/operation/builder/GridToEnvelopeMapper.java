@@ -400,9 +400,7 @@ public class GridToEnvelopeMapper {
                 reverseAxis = new boolean[dimension];
                 if (isAutomatic(REVERSE_AXIS)) {
                     for (int i=0; i<dimension; i++) {
-                        final AxisDirection direction = cs.getAxis(i).getDirection();
-                        final AxisDirection absolute  = AxisDirections.absolute(direction);
-                        reverseAxis[i] = direction.equals(AxisDirections.opposite(absolute));
+                        reverseAxis[i] = AxisDirections.isOpposite(cs.getAxis(i).getDirection());
                     }
                     if (dimension >= 2) {
                         final int i = getSwapXY() ? 0 : 1;

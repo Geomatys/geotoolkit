@@ -273,7 +273,8 @@ public class CoordinateFormat extends Format {
             final CoordinateSystemAxis axis = cs.getAxis(i);
             final Unit<?> unit = axis.getUnit();
             AxisDirection dir = axis.getDirection();
-            final boolean neg = (dir != (dir = AxisDirections.absolute(dir)));
+            final boolean neg = AxisDirections.isOpposite(dir);
+            dir = AxisDirections.absolute(dir);
             /*
              * Formatter for angular units. Target unit is DEGREE_ANGLE.
              * Type is LONGITUDE, LATITUDE or ANGLE depending on axis direction.

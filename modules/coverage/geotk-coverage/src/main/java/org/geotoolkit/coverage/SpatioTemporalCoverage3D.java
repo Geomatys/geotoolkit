@@ -90,14 +90,14 @@ public class SpatioTemporalCoverage3D extends AbstractCoverage {
 
     /**
      * A set of usual axis directions for <var>x</var> and <var>y</var> values (opposite directions
-     * not required). If an ordinate value is orientated toward one of those directions, it will be
+     * not required). If an ordinate value is oriented toward one of those directions, it will be
      * interpreted as the {@link java.awt.geom.Point2D.Double#x} value if the direction was found at
      * an even index, or as the {@link java.awt.geom.Point2D.Double#y} value if the direction was
      * found at an odd index.
      */
     private static final AxisDirection[] DIRECTIONS = {
         AxisDirection.EAST,             AxisDirection.NORTH,
-        AxisDirection.DISPLAY_RIGHT,    AxisDirection.DISPLAY_UP,
+        AxisDirection.DISPLAY_RIGHT,    AxisDirection.DISPLAY_DOWN,
         AxisDirection.COLUMN_POSITIVE,  AxisDirection.ROW_POSITIVE
     };
 

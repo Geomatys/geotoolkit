@@ -361,7 +361,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
     /**
      * Returns a name for the specified math transform.
      */
-    private static final String getName(final MathTransform transform) {
+    private static String getName(final MathTransform transform) {
         if (transform instanceof AbstractMathTransform) {
             ParameterValueGroup params = ((AbstractMathTransform) transform).getParameterValues();
             if (params != null) {

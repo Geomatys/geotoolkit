@@ -250,14 +250,14 @@ public final class ParameterTest {
      */
     @Test
     public void testCodeListAddition() {
-        Parameter<AxisDirection> p = Parameter.create("Test", AxisDirection.class, AxisDirection.DISPLAY_UP);
+        Parameter<AxisDirection> p = Parameter.create("Test", AxisDirection.class, AxisDirection.DISPLAY_DOWN);
         ParameterDescriptor<AxisDirection> d = p.getDescriptor();
         Set<AxisDirection> validValues = d.getValidValues();
         validate(p);
 
         assertNull ("default value", d.getDefaultValue());
         assertEquals("Valid values", new HashSet<AxisDirection>(Arrays.asList(AxisDirection.values())), validValues);
-        assertEquals("Actual value", AxisDirection.DISPLAY_UP, p.getValue());
+        assertEquals("Actual value", AxisDirection.DISPLAY_DOWN, p.getValue());
         p.setValue(AxisDirection.DOWN);
         try {
             p.setValue(VerticalDatumTypes.ELLIPSOIDAL);

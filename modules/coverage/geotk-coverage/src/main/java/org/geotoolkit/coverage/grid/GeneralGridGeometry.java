@@ -441,9 +441,10 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
     }
 
     /**
-     * Returns the number of dimensions.
+     * Returns the number of dimensions of the <em>grid</em>. This is typically the same
+     * than the number of dimension of the envelope or the CRS, but not necessarily.
      *
-     * @return The number of dimensions.
+     * @return The number of grid dimensions.
      */
     public int getDimension() {
         if (gridToCRS != null) {

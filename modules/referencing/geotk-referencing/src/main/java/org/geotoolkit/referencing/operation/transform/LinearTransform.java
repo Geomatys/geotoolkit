@@ -25,10 +25,12 @@ import org.opengis.referencing.operation.MathTransform;
 
 
 /**
- * Interface for linear {@link MathTransform}s.  A linear transform can be express as an affine
- * transform using a {@linkplain #getMatrix matrix}. The {@linkplain Matrix#getNumCol number of
- * columns} is equal to the number of {@linkplain #getSourceDimensions source dimensions} plus 1,
- * and the {@linkplain Matrix#getNumRow number of rows} is equal to the number of
+ * A {@link MathTransform} which can be represented by a {@linkplain #getMatrix matrix}.
+ * Such transforms are often affine, but not necessarily.
+ * <p>
+ * The {@linkplain Matrix#getNumCol number of columns} is equal to the number of
+ * {@linkplain #getSourceDimensions source dimensions} plus 1, and the
+ * {@linkplain Matrix#getNumRow number of rows} is equal to the number of
  * {@linkplain #getTargetDimensions target dimensions} plus 1.
  *
  * @author Martin Desruisseaux (IRD)

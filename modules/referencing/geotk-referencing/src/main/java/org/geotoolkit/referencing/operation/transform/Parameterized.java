@@ -27,9 +27,10 @@ import org.opengis.referencing.operation.SingleOperation;
 
 
 /**
- * Interface for objects that can supply their parameters. Every Geotk implementations
- * of {@link MathTransform} implement this interface, including {@link AffineTransform2D}
- * which does not extend {@link AbstractMathTransform}.
+ * An object (usually a {@link MathTransform}) which can supply its parameters in a
+ * {@link ParameterValueGroup}. Every Geotk implementations of {@code MathTransform}
+ * implement this interface, including {@link AffineTransform2D} even if it does not
+ * extend {@link AbstractMathTransform}.
  *
  * {@note The name of this interface is not <code>ParameterizedTransform</code> because in
  *        some few cases, it may be implemented by objects that are not math transform. For

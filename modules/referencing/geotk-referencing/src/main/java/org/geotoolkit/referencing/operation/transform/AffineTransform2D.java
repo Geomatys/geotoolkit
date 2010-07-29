@@ -223,7 +223,10 @@ public class AffineTransform2D extends XAffineTransform
     }
 
     /**
-     * Transforms the specified shape.
+     * Transforms the specified shape. This method creates a simpler shape then the default
+     * {@linkplain AffineTransform#createTransformedShape(Shape) super-class implementation}.
+     * For example if the given shape is a rectangle and this affine transform has no scale or
+     * shear, then the returned shape will be an instance of {@link java.awt.geom.Rectangle2D}.
      *
      * @param  shape Shape to transform.
      * @return Transformed shape, or {@code shape} if this transform is the identity transform.

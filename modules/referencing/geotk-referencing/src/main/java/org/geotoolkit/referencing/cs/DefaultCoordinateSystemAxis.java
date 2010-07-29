@@ -853,7 +853,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
      * Constructs an axis with a name and an abbreviation as a resource bundle key.
      * To be used for construction of pre-defined constants only.
      *
-     * @param name         The resource bundle key for the name.
+     * @param name         The resource bundle key for the name, or {@code -1} if none.
      * @param abbreviation The {@linkplain #getAbbreviation abbreviation} used for this
      *                     coordinate system axes.
      * @param direction    The {@linkplain #getDirection direction} of this coordinate system axis.

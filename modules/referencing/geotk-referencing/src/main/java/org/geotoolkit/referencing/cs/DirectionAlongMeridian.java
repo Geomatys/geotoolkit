@@ -214,7 +214,7 @@ final class DirectionAlongMeridian implements Comparable<DirectionAlongMeridian>
          * Reverses the sign for axis oriented toward SOUTH,
          * so a positive angle is a right-handed system.
          */
-        if (!baseDirection.equals(AxisDirections.absolute(baseDirection))) {
+        if (AxisDirections.isOpposite(baseDirection)) {
             angle = -angle;
         }
         return angle;

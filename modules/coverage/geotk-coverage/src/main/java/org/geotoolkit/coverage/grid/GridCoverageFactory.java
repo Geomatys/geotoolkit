@@ -636,12 +636,12 @@ public class GridCoverageFactory extends Factory {
          * If no CRS were specified, a default one is used.
          */
         if (!gridGeometry.isDefined(GridGeometry2D.CRS)) {
-            final int dimension = gridGeometry.getDimension();
+            final int dimension = gridGeometry.getGridToCRS().getTargetDimensions();
             gridGeometry = new GridGeometry2D(gridGeometry, getDefaultCRS(dimension));
         }
         final GridCoverage2D coverage;
         coverage = new GridCoverage2D(name, PlanarImage.wrapRenderedImage(image),
-                                      gridGeometry, bands, sources, properties, userHints);
+                gridGeometry, bands, sources, properties, userHints);
         coverage.tileEncoding = (String) hints.get(Hints.TILE_ENCODING);
         return coverage;
     }

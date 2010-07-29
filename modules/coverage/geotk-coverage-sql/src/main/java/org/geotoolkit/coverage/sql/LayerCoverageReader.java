@@ -290,7 +290,7 @@ public class LayerCoverageReader extends GridCoverageReader {
             /*
              * Transforms the envelope and the resolution (if any) from the user envelope CRS
              * to the database CRS. In the particular case of the resolution, we will transform
-             * an offset vector in the center of the interection between the user envelope and
+             * an offset vector in the center of the intersection between the user envelope and
              * the layer envelope.
              */
             try {

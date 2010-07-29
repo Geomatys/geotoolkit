@@ -19,8 +19,11 @@ package org.geotoolkit.internal.referencing;
 
 import java.util.Map;
 import java.util.HashMap;
+
 import org.opengis.referencing.cs.AxisDirection;
+
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.util.Utilities;
 
 import static org.opengis.referencing.cs.AxisDirection.*;
 
@@ -29,7 +32,7 @@ import static org.opengis.referencing.cs.AxisDirection.*;
  * Utilities methods related to {@link AxisDirection}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.13
+ * @version 3.14
  *
  * @since 3.13
  * @module
@@ -63,7 +66,7 @@ public final class AxisDirections {
             COLUMN_POSITIVE,  COLUMN_NEGATIVE,
             ROW_POSITIVE,     ROW_NEGATIVE,
             DISPLAY_RIGHT,    DISPLAY_LEFT,
-            DISPLAY_UP,       DISPLAY_DOWN
+            DISPLAY_DOWN,     DISPLAY_UP // y values increase toward down.
         };
         for (int i=0; i<dir.length; i++) {
             if (opposites.put(dir[i], dir[i ^ 1]) != null) {
@@ -135,5 +138,19 @@ public final class AxisDirections {
             }
         }
         return dir;
+    }
+
+    /**
+     * Returns {@code true} if the given direction is an "opposite" direction.
+     * If this method can not determine if the given direction is an "opposite"
+     * one, then it conservatively returns {@code true}.
+     *
+     * @param  dir The direction to test, or {@code null}.
+     * @return {@code true} if the given direction is an "opposite".
+     *
+     * @since 3.14
+     */
+    public static boolean isOpposite(final AxisDirection dir) {
+        return Utilities.equals(dir, opposite(absolute(dir)));
     }
 }

@@ -645,9 +645,9 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
             AxisDirection direction = AxisDirection.OTHER;
             if (x1 == x2) {
                 if (y1 < y2) {
-                    direction = AxisDirection.DISPLAY_UP;
-                } else if (y1 > y2) {
                     direction = AxisDirection.DISPLAY_DOWN;
+                } else if (y1 > y2) {
+                    direction = AxisDirection.DISPLAY_UP;
                 }
                 abbreviation = "y";
             } else if (y1 == y2) {

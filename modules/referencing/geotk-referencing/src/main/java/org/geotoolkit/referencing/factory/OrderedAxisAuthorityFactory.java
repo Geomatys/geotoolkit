@@ -128,7 +128,7 @@ public class OrderedAxisAuthorityFactory extends TransformedAuthorityFactory
         AxisDirection.COLUMN_POSITIVE,
         AxisDirection.ROW_POSITIVE,
         AxisDirection.DISPLAY_RIGHT,
-        AxisDirection.DISPLAY_UP,
+        AxisDirection.DISPLAY_DOWN,
         AxisDirection.FUTURE
     };
 
