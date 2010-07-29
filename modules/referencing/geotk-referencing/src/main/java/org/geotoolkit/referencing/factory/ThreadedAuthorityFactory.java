@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.concurrent.RejectedExecutionException;
 import java.awt.RenderingHints;
 
 import org.opengis.util.FactoryException;
@@ -29,6 +30,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -461,7 +463,7 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
      * automatically after the amount of time specified by {@link #setTimeout}, providing that the
      * factory was not used during that time. The default implementation always returns {@code true}.
      * Subclasses should override this method and returns {@code false} if they want to prevent the
-     * backing store disposal under some circonstances.
+     * backing store disposal under some circumstances.
      *
      * @param backingStore The backing store in process of being disposed.
      * @return {@code true} if the backing store can be disposed now.
@@ -478,13 +480,26 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
      * run the user-code while we hold a synchronization lock on this factory.
      */
     private void dispose(final AbstractAuthorityFactory factory, final boolean shutdown) {
-        Threads.executor(!shutdown).execute(new Runnable() {
+        final Runnable task = new Runnable() {
             @Override public void run() {
                 if (shutdown || canDisposeBackingStore(factory)) {
                     factory.dispose(shutdown);
                 }
             }
-        });
+        };
+        try {
+            Threads.executor(!shutdown).execute(task);
+        } catch (RejectedExecutionException e) {
+            /*
+             * May happen because of race conditions on JVM shutdown. Don't let StoreDisposer
+             * dies. If we are not in a shutdown process, we may have a problem: log the full
+             * stack trace.  If we are in a shutdown process, still log the problem but there
+             * is some chance that the log message will not be visible to the user because the
+             * logging framework is shutdown.
+             */
+            Logging.unexpectedException(ThreadedAuthorityFactory.class, "dispose", e);
+            task.run(); // Run in current thread as a fallback (may be more dangerous).
+        }
     }
 
     /**
