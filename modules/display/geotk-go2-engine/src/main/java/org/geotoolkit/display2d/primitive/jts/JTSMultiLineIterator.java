@@ -17,9 +17,9 @@
  */
 package org.geotoolkit.display2d.primitive.jts;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import java.awt.geom.AffineTransform;
 
@@ -33,8 +33,6 @@ import java.awt.geom.AffineTransform;
 public final class JTSMultiLineIterator extends JTSGeometryIterator<MultiLineString> {
 
     private int coordinateCount;
-    /** True if the line is a ring */
-    private boolean isClosed;
 
     //global geometry state
     private int nbGeom = 0;
@@ -44,7 +42,6 @@ public final class JTSMultiLineIterator extends JTSGeometryIterator<MultiLineStr
     //sub geometry state
     private CoordinateSequence currentSequence = null;
     private int currentCoord = -1;
-    private boolean subGeomDone = false;
 
     /**
      * Creates a new instance of LineIterator
@@ -71,7 +68,6 @@ public final class JTSMultiLineIterator extends JTSGeometryIterator<MultiLineStr
             //nothing left, we are done
             currentSequence = null;
             currentCoord = -1;
-            subGeomDone = true;
             done = true;
         }else{
             final LineString subGeom = ((LineString)geometry.getGeometryN(currentGeom));
@@ -82,9 +78,7 @@ public final class JTSMultiLineIterator extends JTSGeometryIterator<MultiLineStr
                 //no point in this line, skip it
                 nextSubGeom();
             }else{
-                isClosed = subGeom instanceof LinearRing;
                 currentCoord = 0;
-                subGeomDone = false;
                 done = false;
             }
         }
@@ -115,9 +109,8 @@ public final class JTSMultiLineIterator extends JTSGeometryIterator<MultiLineStr
         if(done){
             reset();
             return true;
-        }else{
-            return false;
         }
+        return false;
     }
 
     /**
@@ -139,15 +132,17 @@ public final class JTSMultiLineIterator extends JTSGeometryIterator<MultiLineStr
     @Override
     public int currentSegment(double[] coords) {
         if (currentCoord == 0) {
-            coords[0] = currentSequence.getX(currentCoord);
-            coords[1] = currentSequence.getY(currentCoord);
+            final Coordinate c = currentSequence.getCoordinate(currentCoord);
+            coords[0] = c.x;
+            coords[1] = c.y;
             transform.transform(coords, 0, coords, 0, 1);
             return SEG_MOVETO;
         } else if (currentCoord == coordinateCount) {
             return SEG_CLOSE;
         } else {
-            coords[0] = currentSequence.getX(currentCoord);
-            coords[1] = currentSequence.getY(currentCoord);
+            final Coordinate c = currentSequence.getCoordinate(currentCoord);
+            coords[0] = c.x;
+            coords[1] = c.y;
             transform.transform(coords, 0, coords, 0, 1);            
             return SEG_LINETO;
         }
@@ -159,15 +154,17 @@ public final class JTSMultiLineIterator extends JTSGeometryIterator<MultiLineStr
     @Override
     public int currentSegment(float[] coords) {
         if (currentCoord == 0) {
-            coords[0] = (float) currentSequence.getX(currentCoord);
-            coords[1] = (float) currentSequence.getY(currentCoord);
+            final Coordinate c = currentSequence.getCoordinate(currentCoord);
+            coords[0] = (float) c.x;
+            coords[1] = (float) c.y;
             transform.transform(coords, 0, coords, 0, 1);
             return SEG_MOVETO;
         } else if (currentCoord == coordinateCount) {
             return SEG_CLOSE;
         } else {
-            coords[0] = (float) currentSequence.getX(currentCoord);
-            coords[1] = (float) currentSequence.getY(currentCoord);
+            final Coordinate c = currentSequence.getCoordinate(currentCoord);
+            coords[0] = (float) c.x;
+            coords[1] = (float) c.y;
             transform.transform(coords, 0, coords, 0, 1);
             return SEG_LINETO;
         }

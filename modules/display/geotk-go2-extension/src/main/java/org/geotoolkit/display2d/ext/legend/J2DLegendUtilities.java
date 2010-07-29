@@ -126,7 +126,14 @@ public class J2DLegendUtilities {
             if(style == null) continue;
 
             if(template.isLayerVisible()){
-                final String title = layer.getDescription().getTitle().toString();
+                String title = "";
+                final Description description = layer.getDescription();
+                if (description != null) {
+                    final InternationalString titleTmp = description.getTitle();
+                    if (titleTmp != null) {
+                        title = titleTmp.toString();
+                    }
+                }
 
                 moveY += layerFontMetric.getLeading() + layerFontMetric.getAscent();
                 g2d.setFont(template.getLayerFont());
@@ -140,7 +147,14 @@ public class J2DLegendUtilities {
             for(final MutableFeatureTypeStyle fts :style.featureTypeStyles()){
                 for(final MutableRule rule : fts.rules()){
 
-                    final String title = rule.getDescription().getTitle().toString();
+                    String title = "";
+                    final Description description = rule.getDescription();
+                    if (description != null) {
+                        final InternationalString titleTmp = description.getTitle();
+                        if (titleTmp != null) {
+                            title = titleTmp.toString();
+                        }
+                    }
                     rectangle.setRect(0, moveY, glyphWidth, glyphHeight);
 
                     DefaultGlyphService.render(rule, rectangle, g2d,layer);
@@ -195,7 +209,14 @@ public class J2DLegendUtilities {
         float Y = bounds.y;
 
         for(final Rule rule : rules){
-            final String title = rule.getDescription().getTitle().toString();
+            String title = "";
+            final Description description = rule.getDescription();
+            if (description != null) {
+                final InternationalString titleTmp = description.getTitle();
+                if (titleTmp != null) {
+                    title = titleTmp.toString();
+                }
+            }
             rectangle.setRect(X, Y, glyphWidth, glyphHeight);
             DefaultGlyphService.render(rule, rectangle, g2d, null);
             g2d.setFont(template.getRuleFont());

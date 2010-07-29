@@ -22,15 +22,17 @@ import static org.geotoolkit.data.shapefile.ShpFileType.QIX;
 import static org.geotoolkit.data.shapefile.ShpFileType.SHP;
 import static org.geotoolkit.data.shapefile.ShpFileType.SHX;
 
+import com.vividsolutions.jts.geom.Envelope;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -61,7 +63,6 @@ import org.geotoolkit.filter.visitor.IdCollectorFilterVisitor;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.Data;
-import org.geotoolkit.index.DataDefinition;
 import org.geotoolkit.index.LockTimeoutException;
 import org.geotoolkit.index.TreeException;
 import org.geotoolkit.index.quadtree.QuadTree;
@@ -80,16 +81,13 @@ import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
+import org.opengis.filter.sort.SortBy;
 
-import com.vividsolutions.jts.geom.Envelope;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.shapefile.ShpDBF;
 import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.index.quadtree.Node;
-import org.opengis.feature.type.FeatureType;
-import org.opengis.filter.sort.SortBy;
 
 /**
  * A DataStore implementation which allows reading and writing from Shapefiles.
@@ -379,27 +377,27 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
                 }
             }
         }
-        SimpleFeatureType schema = getFeatureType();
-        List<AttributeDescriptor> atts = (schema == null) ? readAttributes(namespace)
-                : schema.getAttributeDescriptors();
+
+        final SimpleFeatureType schema = getFeatureType();
+        final List<AttributeDescriptor> atts;
 
         IndexedDbaseFileReader dbfR = null;
 
         if (!readDbf) {
             getLogger().fine("The DBF file won't be opened since no attributes "
-                    + "will be read from it");
-            atts = new ArrayList<AttributeDescriptor>(1);
-            atts.add(schema.getGeometryDescriptor());
-
-            if (!readGeometry) {
-                atts = new ArrayList<AttributeDescriptor>(1);
+                    + "will be read from it");            
+            if(readGeometry){
+                atts = Collections.singletonList((AttributeDescriptor)schema.getGeometryDescriptor());
+            }else{
+                atts = Collections.EMPTY_LIST;
             }
         } else {
+            atts = (schema == null) ? readAttributes(namespace)
+                : schema.getAttributeDescriptors();
             dbfR = (IndexedDbaseFileReader) openDbfReader();
         }
 
-        return new IndexedShapefileAttributeReader(atts, openShapeReader(),
-                dbfR, goodRecs);
+        return new IndexedShapefileAttributeReader(atts, openShapeReader(), dbfR, goodRecs);
     }
 
     /**

@@ -17,8 +17,8 @@
  */
 package org.geotoolkit.index.quadtree;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -49,7 +49,7 @@ public class LazySearchIterator implements Iterator<AbstractNode> {
     private boolean closed;
 
     //the current path where we are, Integer is the current visited child node index.
-    private final List<Segment> path = new ArrayList<Segment>(10);
+    private final Deque<Segment> path = new ArrayDeque<Segment>(10);
 
     //curent visited node
     private AbstractNode current = null;
@@ -110,17 +110,13 @@ public class LazySearchIterator implements Iterator<AbstractNode> {
     }
 
     private void findNextNode() throws StoreException {
-       
         nodeLoop:
         do{
-            //nothing left
-            if(path.isEmpty()){
+            final Segment segment = path.peekLast();
+            if(segment == null){
                 current = null;
                 return;
             }
-
-            final int lastIndex = path.size()-1;
-            final Segment segment = path.get(lastIndex);
 
             if(segment.childIndex == -1){
                 //prepare for next node search
@@ -138,27 +134,26 @@ public class LazySearchIterator implements Iterator<AbstractNode> {
 
             final int nbNodes = segment.node.getNumSubNodes();
             childLoop:
-            while(segment.childIndex < nbNodes){
+            while (segment.childIndex < nbNodes) {
                 final AbstractNode child = segment.node.getSubNode(segment.childIndex);
 
-                if(!child.intersects(bounds)){
+                //prepare next node search
+                segment.childIndex++;
+
+                if (!child.intersects(bounds)) {
                     //not in the area we requested
-                    segment.childIndex++;
                     continue childLoop;
                 }
 
-                path.add(new Segment(segment.node.getSubNode(segment.childIndex), -1));
-                
-                //prepare next node sarch
-                segment.childIndex++;
+                path.addLast(new Segment(child, -1));
 
                 //explore the sub node
                 continue nodeLoop;
             }
-            
+
             //we have nothing left to explore in this node, go back to the parent
             //to explore next branch
-            path.remove(lastIndex);
+            path.removeLast();
         }while(current == null);
 
     }
