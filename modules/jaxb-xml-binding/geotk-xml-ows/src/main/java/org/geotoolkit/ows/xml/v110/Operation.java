@@ -99,6 +99,7 @@ public class Operation implements AbstractOperation {
      * At present, only the HTTP DCP is defined, so this element will appear only once.
      * Gets the value of the dcp property.
      */
+    @Override
     public List<DCP> getDCP() {
         return dcp;
     }
@@ -106,11 +107,44 @@ public class Operation implements AbstractOperation {
     /**
      * Gets the value of the parameter property.
      */
+    @Override
     public List<DomainType> getParameter() {
         if (parameter == null) {
             parameter = new ArrayList<DomainType>();
         }
         return Collections.unmodifiableList(parameter);
+    }
+
+    /**
+     * Get a parameter from the specified parameter name
+     */
+    @Override
+    public DomainType getParameter(String name) {
+        if (parameter == null) {
+            return null;
+        } else {
+            for (DomainType domain: parameter) {
+                if (domain.getName().equals(name))
+                    return domain;
+            }
+            return null;
+        }
+    }
+
+    /**
+     * Get a parameter from the specified parameter name
+     */
+    @Override
+    public DomainType getParameterIgnoreCase(String name) {
+        if (parameter == null) {
+            return null;
+        } else {
+            for (DomainType domain: parameter) {
+                if (domain.getName().equalsIgnoreCase(name))
+                    return domain;
+            }
+            return null;
+        }
     }
     
     /**
@@ -119,7 +153,6 @@ public class Operation implements AbstractOperation {
     public void updateParameter(String parameterName, Collection<String> values) {
         for (DomainType dom: parameter) {
             if (dom.getName().equals(parameterName)) {
-                List<ValueType> valuesTyped = new ArrayList<ValueType>();
                 dom.setAllowedValues(new AllowedValues(values));
             }
         }
@@ -145,6 +178,29 @@ public class Operation implements AbstractOperation {
             constraint = new ArrayList<DomainType>();
         }
         return Collections.unmodifiableList(constraint);
+    }
+
+    @Override
+    public DomainType getConstraint(String name) {
+        if (constraint != null) {
+            for (DomainType d : constraint) {
+                if (d.getName().equals(name))
+                    return d;
+            }
+        }
+        return null;
+
+    }
+
+    @Override
+    public DomainType getConstraintIgnoreCase(String name) {
+        if (constraint != null) {
+            for (DomainType d : constraint) {
+                if (d.getName().equalsIgnoreCase(name))
+                    return d;
+            }
+        }
+        return null;
     }
 
     /**

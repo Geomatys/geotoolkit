@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractDomain;
 import org.geotoolkit.util.Utilities;
 
 
@@ -57,7 +58,7 @@ import org.geotoolkit.util.Utilities;
     "value",
     "metadata"
 })
-public class DomainType {
+public class DomainType implements AbstractDomain {
 
     @XmlElement(name = "Value", required = true)
     private List<String> value;
@@ -110,9 +111,12 @@ public class DomainType {
     }
     
     /**
-     * Optional unordered list of additional metadata about this parameter. A list of required and optional metadata elements for this domain should be specified in the Implementation Specification for this service. (Informative: This metadata might specify the meanings of the valid values.) Gets the value of the metadata property.
+     * Optional unordered list of additional metadata about this parameter. 
+     * A list of required and optional metadata elements for this domain should be specified in the Implementation Specification for this service.
+     * (Informative: This metadata might specify the meanings of the valid values.) Gets the value of the metadata property.
      * (unmodifiable)
      */
+    @Override
     public List<MetadataType> getMetadata() {
         if (metadata == null) {
             metadata = new ArrayList<MetadataType>();
@@ -123,6 +127,7 @@ public class DomainType {
     /**
      * Gets the value of the name property.
      */
+    @Override
     public String getName() {
         return name;
     }

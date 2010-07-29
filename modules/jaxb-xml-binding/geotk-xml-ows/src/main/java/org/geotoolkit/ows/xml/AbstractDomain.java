@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -24,19 +24,9 @@ import java.util.List;
  * @author Guilhem Legal
  * @module pending
  */
-public interface AbstractOperation {
-    
-    List<? extends AbstractDCP> getDCP();
+public interface AbstractDomain {
 
-    List<? extends AbstractDomain> getParameter();
+    String getName();
 
-    AbstractDomain getParameter(String name);
-
-    AbstractDomain getParameterIgnoreCase(String name);
-
-    List<? extends AbstractDomain> getConstraint();
-
-    AbstractDomain getConstraint(String name);
-
-    AbstractDomain getConstraintIgnoreCase(String name);
+    List<? extends AbstractMetadata> getMetadata();
 }

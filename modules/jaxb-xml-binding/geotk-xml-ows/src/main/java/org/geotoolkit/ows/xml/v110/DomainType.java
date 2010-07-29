@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractDomain;
 import org.geotoolkit.util.Utilities;
 
 
@@ -45,7 +46,7 @@ import org.geotoolkit.util.Utilities;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "DomainType")
-public class DomainType extends UnNamedDomainType {
+public class DomainType extends UnNamedDomainType implements AbstractDomain {
 
     @XmlAttribute(required = true)
     private String name;
@@ -66,6 +67,7 @@ public class DomainType extends UnNamedDomainType {
     /**
      * Gets the value of the name property.
      */
+    @Override
     public String getName() {
         return name;
     }
