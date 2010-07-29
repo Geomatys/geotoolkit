@@ -24,7 +24,6 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
-import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
 import java.nio.DoubleBuffer;
 
 import org.geotoolkit.storage.DataStoreException;

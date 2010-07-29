@@ -44,10 +44,10 @@ public class IndexedShapefileAttributeReader extends ShapefileAttributeReader
 
     private CloseableCollection<Data> closeableCollection;
 
-    public IndexedShapefileAttributeReader(
-            List<AttributeDescriptor> attributes, ShapefileReader shp,
-            IndexedDbaseFileReader dbf, CloseableCollection<Data> goodRecs) {
-        this(attributes.toArray(new AttributeDescriptor[attributes.size()]), shp, dbf, goodRecs);
+    public IndexedShapefileAttributeReader( List<AttributeDescriptor> attributes,
+            ShapefileReader shp, IndexedDbaseFileReader dbf,
+            CloseableCollection<Data> col, Iterator<Data> goodRecs) {
+        this(attributes.toArray(new AttributeDescriptor[attributes.size()]), shp, dbf, col, goodRecs);
     }
 
     /**
@@ -61,11 +61,10 @@ public class IndexedShapefileAttributeReader extends ShapefileAttributeReader
      */
     public IndexedShapefileAttributeReader(AttributeDescriptor[] atts,
             ShapefileReader shp, IndexedDbaseFileReader dbf,
-            CloseableCollection<Data> goodRecs) {
+            CloseableCollection<Data> col, Iterator<Data> goodRecs) {
         super(atts, shp, dbf);
-        if (goodRecs != null)
-            this.goodRecs = goodRecs.iterator();
-        this.closeableCollection = goodRecs;
+        this.goodRecs = goodRecs;
+        this.closeableCollection = col;
         this.recno = 0;
     }
 
@@ -84,6 +83,10 @@ public class IndexedShapefileAttributeReader extends ShapefileAttributeReader
 
     @Override
     public boolean hasNext() throws IOException {
+        return hasNextInternal();
+    }
+
+    private boolean hasNextInternal() throws IOException{
         if (this.goodRecs != null) {
             if (next != null)
                 return true;
@@ -101,7 +104,7 @@ public class IndexedShapefileAttributeReader extends ShapefileAttributeReader
 
     @Override
     public void next() throws IOException {
-        if (!hasNext())
+        if (!hasNextInternal())
             throw new IndexOutOfBoundsException("No more features in reader");
         if (this.goodRecs != null) {
             this.recno = ((Integer) next.getValue(0)).intValue();

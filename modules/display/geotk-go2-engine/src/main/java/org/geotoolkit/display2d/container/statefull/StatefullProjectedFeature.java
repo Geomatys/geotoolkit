@@ -45,7 +45,7 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
     private static final String DEFAULT_GEOM = "";
 
     private final StatefullContextParams params;
-    private final Map<String,StatefullProjectedGeometry> geometries = 
+    private final Map<String,StatefullProjectedGeometry> geometries =
             new LinkedHashMap<String,StatefullProjectedGeometry>(); //linked hashmap is faster than hashmap on iteration.
     private Feature feature;
 

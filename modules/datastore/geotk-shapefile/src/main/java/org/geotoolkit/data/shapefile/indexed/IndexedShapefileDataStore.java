@@ -22,7 +22,13 @@ import static org.geotoolkit.data.shapefile.ShpFileType.QIX;
 import static org.geotoolkit.data.shapefile.ShpFileType.SHP;
 import static org.geotoolkit.data.shapefile.ShpFileType.SHX;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.prep.PreparedGeometry;
+import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -56,6 +62,12 @@ import org.geotoolkit.data.dbf.IndexedDbaseFileReader;
 import org.geotoolkit.data.shapefile.shp.IndexFile;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader.Record;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.data.shapefile.ShpDBF;
+import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.index.quadtree.LazySearchCollection;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.filter.visitor.ExtractBoundsFilterVisitor;
@@ -72,6 +84,7 @@ import org.geotoolkit.index.rtree.RTree;
 import org.geotoolkit.util.NullProgressListener;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.index.quadtree.LazyTyleSearchIterator;
 import org.geotoolkit.resources.NIOUtilities;
 
 import org.opengis.feature.simple.SimpleFeature;
@@ -82,12 +95,8 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.filter.sort.SortBy;
+import org.opengis.filter.spatial.BBOX;
 
-import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.data.shapefile.ShpDBF;
-import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.DefaultName;
 
 /**
  * A DataStore implementation which allows reading and writing from Shapefiles.
@@ -99,6 +108,9 @@ import org.geotoolkit.feature.DefaultName;
  * @module pending
  */
 public class IndexedShapefileDataStore extends ShapefileDataStore {
+
+    private static final PreparedGeometryFactory PREPARED_FACTORY = new PreparedGeometryFactory();
+    private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
 
     private static final class IdentifierComparator implements Comparator<Identifier>{
         @Override
@@ -233,9 +245,9 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             throws DataStoreException {
         final SimpleFeatureType originalSchema = getFeatureType();
         final Name              queryTypeName = query.getTypeName();
-        final Filter            queryFilter = query.getFilter();
         final SortBy[]          querySortBy = query.getSortBy();
         final Hints             queryHints = query.getHints();
+        Filter            queryFilter = query.getFilter();
 
         if (queryFilter == Filter.EXCLUDE){
             return GenericEmptyFeatureIterator.createReader(originalSchema);
@@ -285,9 +297,23 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
                 newSchema = originalSchema;
             }
 
-            final FeatureReader<SimpleFeatureType,SimpleFeature> reader = createFeatureReader(
-                    queryTypeName.getLocalPart(), getAttributesReader(readDbf,readGeometry, queryFilter),
-                    newSchema, queryHints);
+            final FeatureReader<SimpleFeatureType,SimpleFeature> reader;
+            
+            if(queryFilter instanceof BBOX){
+                //in case we have a BBOX filter onyle, which is very commun, we can speed
+                //the process by relying on the quadtree estimations
+                final Envelope bbox = (Envelope) queryFilter.accept(
+                        ExtractBoundsFilterVisitor.BOUNDS_VISITOR, new JTSEnvelope2D());
+                queryFilter = Filter.INCLUDE;
+                reader = createFeatureReader(queryTypeName.getLocalPart(),
+                        getBBoxAttributesReader(readDbf,readGeometry, bbox),
+                        newSchema, queryHints);
+
+            }else{
+                reader = createFeatureReader(queryTypeName.getLocalPart(),
+                        getAttributesReader(readDbf,readGeometry, queryFilter),
+                        newSchema, queryHints);
+            }
 
             //handle remaining parameters
             final QueryBuilder qb = new QueryBuilder(queryTypeName);
@@ -324,6 +350,104 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      */
     public void generateFidIndex() throws IOException {
         FidIndexer.generate(shpFiles);
+    }
+
+    /**
+     * Utility method to transform an envelope in geometry.
+     * @param env
+     * @return Geometry
+     */
+    private static PreparedGeometry toGeometry(Envelope env){
+        final Coordinate[] coords = new Coordinate[5];
+        coords[0] = new Coordinate(env.getMinX(), env.getMinY());
+        coords[1] = new Coordinate(env.getMinX(), env.getMaxY());
+        coords[2] = new Coordinate(env.getMaxX(), env.getMaxY());
+        coords[3] = new Coordinate(env.getMaxX(), env.getMinY());
+        coords[4] = new Coordinate(env.getMinX(), env.getMinY());
+        final LinearRing ring = GEOMETRY_FACTORY.createLinearRing(coords);
+        Geometry geom = GEOMETRY_FACTORY.createPolygon(ring, new LinearRing[0]);
+        return PREPARED_FACTORY.create(geom);
+    }
+
+    protected IndexedShapefileAttributeReader getBBoxAttributesReader(
+            boolean readDbf, boolean readGeometry, final Envelope bbox)
+            throws DataStoreException {
+
+        final PreparedGeometry boundingGeometry = toGeometry(bbox);
+
+        CloseableCollection<Data> goodCollec = null;
+        try {
+            final QuadTree quadTree = openQuadTree();
+            if ((quadTree != null)) {
+                goodCollec = quadTree.search(bbox);
+            }
+
+        } catch (StoreException e) {
+            throw new DataStoreException("Error querying index: " + e.getMessage());
+        }
+        final LazySearchCollection col = (LazySearchCollection) goodCollec;
+
+        final SimpleFeatureType schema = getFeatureType();
+        final List<AttributeDescriptor> atts;
+
+        IndexedDbaseFileReader dbfR = null;
+
+        if (!readDbf) {
+            getLogger().fine("The DBF file won't be opened since no attributes "
+                    + "will be read from it");
+            if(readGeometry){
+                atts = Collections.singletonList((AttributeDescriptor)schema.getGeometryDescriptor());
+            }else{
+                atts = Collections.EMPTY_LIST;
+            }
+        } else {
+            atts = (schema == null) ? readAttributes(namespace)
+                : schema.getAttributeDescriptors();
+            dbfR = (IndexedDbaseFileReader) openDbfReader();
+        }
+
+        return new IndexedShapefileAttributeReader(atts, openShapeReader(), dbfR, goodCollec, col.bboxIterator()){
+
+            private boolean hasNext = false;
+            private final Object[] buffer = new Object[metaData.length];
+
+            @Override
+            public boolean hasNext() throws IOException {
+                findNext();
+                return hasNext;
+            }
+
+            @Override
+            public void next() throws IOException {
+                hasNext = false;
+            }
+
+            @Override
+            public void read(Object[] buffer) throws IOException {
+                System.arraycopy(this.buffer, 0, buffer, 0, this.buffer.length);
+            }
+
+            private void findNext() throws IOException{
+                while(!hasNext && super.hasNext()){
+                    super.next();
+                    if(((LazyTyleSearchIterator.Buffered)goodRecs).isSafe()){
+                        super.read(buffer);
+                        hasNext = true;
+                        continue;
+                    }
+
+                    if(!(bbox.getMinX() > record.maxX ||
+                         bbox.getMaxX() < record.minX ||
+                         bbox.getMinY() > record.maxY ||
+                         bbox.getMaxY() < record.minY)){
+                        super.read(buffer);
+                        final Geometry candidate = (Geometry)buffer[0];
+                        hasNext = boundingGeometry.intersects(candidate);
+                    }
+                }
+            }
+
+        };
     }
 
     /**
@@ -397,7 +521,8 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             dbfR = (IndexedDbaseFileReader) openDbfReader();
         }
 
-        return new IndexedShapefileAttributeReader(atts, openShapeReader(), dbfR, goodRecs);
+        return new IndexedShapefileAttributeReader(atts, openShapeReader(), dbfR, 
+                goodRecs, ((goodRecs!=null)?goodRecs.iterator():null));
     }
 
     /**
