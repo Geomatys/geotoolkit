@@ -47,9 +47,6 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     AbstractGriddedSurfaceType.class
 })
-public class AbstractParametricCurveSurfaceType
-    extends AbstractSurfacePatchType
-{
-
+public class AbstractParametricCurveSurfaceType extends AbstractSurfacePatchType {
 
 }

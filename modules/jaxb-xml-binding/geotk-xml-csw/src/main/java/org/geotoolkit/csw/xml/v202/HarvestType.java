@@ -180,13 +180,16 @@ public class HarvestType extends RequestBaseType implements Harvest {
 
     /**
      * Gets the value of the responseHandler property.
-     * (unmodifiable)
      */
     public List<String> getResponseHandler() {
         if (responseHandler == null) {
             responseHandler = new ArrayList<String>();
         }
         return Collections.unmodifiableList(responseHandler);
+    }
+
+    public void setResponseHandler(List<String> responseHandler) {
+        this.responseHandler = responseHandler;
     }
 
     public String getOutputFormat() {

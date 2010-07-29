@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -224,4 +225,26 @@ public class SurfacePatchArrayPropertyType {
         return s.toString();
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof SurfacePatchArrayPropertyType) {
+            final SurfacePatchArrayPropertyType that = (SurfacePatchArrayPropertyType) object;
+
+            return Utilities.equals(this.getAbstractSurfacePatch(), that.getAbstractSurfacePatch());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 53 * hash + (this.getAbstractSurfacePatch() != null ? this.getAbstractSurfacePatch().hashCode() : 0);
+        return hash;
+    }
 }

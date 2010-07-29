@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -137,5 +138,28 @@ public class SurfaceType extends AbstractSurfaceType {
             s.append("patches:").append(patches.getValue()).append('\n');
         }
         return s.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof SurfaceType && super.equals(object)) {
+            final SurfaceType that = (SurfaceType) object;
+
+            return Utilities.equals(this.getPatches(), that.getPatches());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + (this.getPatches() != null ? this.getPatches().hashCode() : 0);
+        return hash;
     }
 }

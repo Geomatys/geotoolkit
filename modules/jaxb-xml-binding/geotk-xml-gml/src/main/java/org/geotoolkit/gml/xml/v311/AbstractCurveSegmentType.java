@@ -88,11 +88,10 @@ public abstract class AbstractCurveSegmentType {
      *     
      */
     public Integer getNumDerivativesAtStart() {
-        if (numDerivativesAtStart == null) {
+        /*if (numDerivativesAtStart == null) {
             return 0;
-        } else {
-            return numDerivativesAtStart;
-        }
+        } else {*/
+        return numDerivativesAtStart;
     }
 
     /**
@@ -116,11 +115,10 @@ public abstract class AbstractCurveSegmentType {
      *     
      */
     public Integer getNumDerivativesAtEnd() {
-        if (numDerivativesAtEnd == null) {
+        /*if (numDerivativesAtEnd == null) {
             return 0;
-        } else {
-            return numDerivativesAtEnd;
-        }
+        } else {*/
+        return numDerivativesAtEnd;
     }
 
     /**
@@ -144,11 +142,10 @@ public abstract class AbstractCurveSegmentType {
      *     
      */
     public Integer getNumDerivativeInterior() {
-        if (numDerivativeInterior == null) {
+        /*if (numDerivativeInterior == null) {
             return 0;
-        } else {
-            return numDerivativeInterior;
-        }
+        } else {*/
+        return numDerivativeInterior;
     }
 
     /**

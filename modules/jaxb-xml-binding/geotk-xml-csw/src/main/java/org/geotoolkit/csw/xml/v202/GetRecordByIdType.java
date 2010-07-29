@@ -98,13 +98,16 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
      
     /**
      * Gets the value of the id property.
-     * (unmodifiable)
      */
     public List<String> getId() {
         if (id == null) {
             id = new ArrayList<String>();
         }
-        return Collections.unmodifiableList(id);
+        return id;
+    }
+
+    public void setId(List<String> id) {
+        this.id = id;
     }
 
     /**
@@ -112,6 +115,10 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
      */
     public ElementSetNameType getElementSetName() {
         return elementSetName;
+    }
+
+    public void setElementSetName(ElementSetNameType elementSetName) {
+        this.elementSetName = elementSetName;
     }
 
     /**
@@ -133,6 +140,10 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
      */
     public String getOutputSchema() {
         return outputSchema;
+    }
+
+    public void setOutputSchema(String outputSchema) {
+        this.outputSchema = outputSchema;
     }
 
     /**

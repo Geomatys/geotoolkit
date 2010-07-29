@@ -17,7 +17,6 @@
 package org.geotoolkit.csw.xml.v202;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -145,13 +144,17 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
 
     /**
      * Gets the value of the responseHandler property.
-     * (unmodifiable)
      */
     public List<String> getResponseHandler() {
         if (responseHandler == null) {
             responseHandler = new ArrayList<String>();
         }
-        return Collections.unmodifiableList(responseHandler);
+        return responseHandler;
+    }
+
+
+    public void setResponseHandler(List<String> responseHandler) {
+        this.responseHandler = responseHandler;
     }
 
     /**
@@ -174,6 +177,10 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
      */
     public Object getAny() {
         return any;
+    }
+
+    public void setAny(Object any) {
+        this.any = any;
     }
 
     /**

@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -237,11 +238,10 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
      *     
      */
     public SurfaceInterpolationType getInterpolation() {
-        if (interpolation == null) {
+        /*if (interpolation == null) {
             return SurfaceInterpolationType.PLANAR;
-        } else {
-            return interpolation;
-        }
+        } else {*/
+        return interpolation;
     }
 
     /**
@@ -254,6 +254,33 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
      */
     public void setInterpolation(SurfaceInterpolationType value) {
         this.interpolation = value;
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof PolygonPatchType) {
+            final PolygonPatchType that = (PolygonPatchType) object;
+
+            return Utilities.equals(this.getExterior(),    that.getExterior()) &&
+                   Utilities.equals(this.getInterior(),    that.getInterior()) &&
+                   Utilities.equals(this.interpolation,    that.interpolation);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + (this.getExterior() != null ? this.getExterior().hashCode() : 0);
+        hash = 37 * hash + (this.getInterior() != null ? this.getInterior().hashCode() : 0);
+        hash = 37 * hash + (this.interpolation != null ? this.interpolation.hashCode() : 0);
+        return hash;
     }
 
     @Override

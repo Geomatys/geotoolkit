@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -205,11 +206,10 @@ public class SurfacePropertyType {
      *     
      */
     public String getType() {
-        if (type == null) {
+        /*if (type == null) {
             return "simple";
-        } else {
-            return type;
-        }
+        } else {*/
+        return type;
     }
 
     /**
@@ -366,6 +366,45 @@ public class SurfacePropertyType {
      */
     public void setActuate(String value) {
         this.actuate = value;
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof SurfacePropertyType) {
+            final SurfacePropertyType that = (SurfacePropertyType) object;
+
+            return Utilities.equals(this.actuate,              that.actuate)          &&
+                   Utilities.equals(this.arcrole,              that.arcrole)          &&
+                   Utilities.equals(this.type,                 that.type)             &&
+                   Utilities.equals(this.href,                 that.href)             &&
+                   Utilities.equals(this.remoteSchema,         that.remoteSchema)     &&
+                   Utilities.equals(this.show,                 that.show)             &&
+                   Utilities.equals(this.role,                 that.role)             &&
+                   Utilities.equals(this.title,                that.title)            &&
+                   Utilities.equals(this.getAbstractSurface(), that.getAbstractSurface());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 19 * hash + (this.remoteSchema != null ? this.remoteSchema.hashCode() : 0);
+        hash = 19 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 19 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 19 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 19 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 19 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 19 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 19 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        hash = 19 * hash + (this.getAbstractSurface() != null ? this.getAbstractSurface().hashCode() : 0);
+        return hash;
     }
 
     @Override

@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 
@@ -65,37 +66,21 @@ import org.opengis.filter.expression.ExpressionVisitor;
     "coordinates",
     "coord"
 })
-public class LinearRingType
-    extends AbstractRingType
-{
+public class LinearRingType extends AbstractRingType {
 
     @XmlElementRefs({
         @XmlElementRef(name = "pointProperty", namespace = "http://www.opengis.net/gml", type = JAXBElement.class),
         @XmlElementRef(name = "pos", namespace = "http://www.opengis.net/gml", type = JAXBElement.class),
         @XmlElementRef(name = "pointRep", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     })
-    protected List<JAXBElement<?>> posOrPointPropertyOrPointRep;
-    protected DirectPositionListType posList;
-    protected CoordinatesType coordinates;
-    protected List<CoordType> coord;
+    private List<JAXBElement<?>> posOrPointPropertyOrPointRep;
+    private DirectPositionListType posList;
+    private CoordinatesType coordinates;
+    private List<CoordType> coord;
 
     /**
      * Gets the value of the posOrPointPropertyOrPointRep property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the posOrPointPropertyOrPointRep property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getPosOrPointPropertyOrPointRep().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link DirectPositionType }{@code >}
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
@@ -159,22 +144,9 @@ public class LinearRingType
     }
 
     /**
-     * Deprecated with GML version 3.0 and included for backwards compatibility with GML 2. Use "pos" elements instead.Gets the value of the coord property.
+     * Deprecated with GML version 3.0 and included for backwards compatibility with GML 2.
+     * Use "pos" elements instead.Gets the value of the coord property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the coord property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getCoord().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link CoordType }
      * 
@@ -202,4 +174,50 @@ public class LinearRingType
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof LinearRingType) {
+            final LinearRingType that = (LinearRingType) object;
+
+            boolean jb = false;
+            if (this.getPosOrPointPropertyOrPointRep().size() == that.getPosOrPointPropertyOrPointRep().size()) {
+                jb = true;
+                for (int i = 0; i < this.getPosOrPointPropertyOrPointRep().size(); i++) {
+                    if (!JAXBElementEquals(this.getPosOrPointPropertyOrPointRep().get(i), this.getPosOrPointPropertyOrPointRep().get(i))) {
+                        jb = false;
+                    }
+                }
+            }
+            return Utilities.equals(this.coordinates,  that.coordinates) &&
+                   Utilities.equals(this.posList,      that.posList)     &&
+                   Utilities.equals(this.coord,        that.coord)       &&
+                   jb;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (this.posOrPointPropertyOrPointRep != null ? this.posOrPointPropertyOrPointRep.hashCode() : 0);
+        hash = 97 * hash + (this.posList != null ? this.posList.hashCode() : 0);
+        hash = 97 * hash + (this.coordinates != null ? this.coordinates.hashCode() : 0);
+        hash = 97 * hash + (this.coord != null ? this.coord.hashCode() : 0);
+        return hash;
+    }
+
+    private boolean JAXBElementEquals(JAXBElement a, JAXBElement b) {
+        if (a  != null && b != null) {
+            return Utilities.equals(a.getValue(), b.getValue());
+        } else if (a == null && b == null) {
+            return true;
+        }
+        return false;
+    }
 }

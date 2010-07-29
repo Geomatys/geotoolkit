@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -137,6 +138,29 @@ public class AbstractRingPropertyType {
         } else {
             ring = null;
         }
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof AbstractRingPropertyType) {
+            final AbstractRingPropertyType that = (AbstractRingPropertyType) object;
+
+            return Utilities.equals(this.getAbstractRing(), that.getAbstractRing());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 31 * hash + (this.getAbstractRing() != null ? this.getAbstractRing().hashCode() : 0);
+        return hash;
     }
 
     @Override

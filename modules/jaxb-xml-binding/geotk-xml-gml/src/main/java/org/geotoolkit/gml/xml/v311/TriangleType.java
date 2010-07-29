@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -51,14 +52,12 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "TriangleType", propOrder = {
     "exterior"
 })
-public class TriangleType
-    extends AbstractSurfacePatchType
-{
+public class TriangleType extends AbstractSurfacePatchType {
 
     @XmlElementRef(name = "exterior", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected JAXBElement<AbstractRingPropertyType> exterior;
+    private JAXBElement<AbstractRingPropertyType> exterior;
     @XmlAttribute
-    protected SurfaceInterpolationType interpolation;
+    private SurfaceInterpolationType interpolation;
 
     /**
      * Constraint: The Ring shall be a LinearRing and must form a triangle, the first and the last position must be co-incident.
@@ -69,7 +68,7 @@ public class TriangleType
      *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
      *     
      */
-    public JAXBElement<AbstractRingPropertyType> getExterior() {
+    public JAXBElement<AbstractRingPropertyType> geJbtExterior() {
         return exterior;
     }
 
@@ -82,8 +81,38 @@ public class TriangleType
      *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
      *     
      */
-    public void setExterior(JAXBElement<AbstractRingPropertyType> value) {
+    public void setJbExterior(JAXBElement<AbstractRingPropertyType> value) {
         this.exterior = ((JAXBElement<AbstractRingPropertyType> ) value);
+    }
+
+    /**
+     * Gets the value of the exterior property.
+     *
+     * @return
+     *     possible object is
+     *     {@code <}{@link AbstractRingPropertyType }{@code >}
+     *     {@code <}{@link AbstractRingPropertyType }{@code >}
+     *
+     */
+    public AbstractRingPropertyType getExterior() {
+        if (exterior != null) {
+            return exterior.getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Sets the value of the exterior property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@code <}{@link AbstractRingPropertyType }{@code >}
+     *     {@code <}{@link AbstractRingPropertyType }{@code >}
+     *
+     */
+    public void setExterior(AbstractRingPropertyType value) {
+        ObjectFactory factory = new ObjectFactory();
+        this.exterior =  factory.createExterior(value);
     }
 
     /**
@@ -114,4 +143,40 @@ public class TriangleType
         this.interpolation = value;
     }
 
+     /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof TriangleType) {
+            final TriangleType that = (TriangleType) object;
+
+            return Utilities.equals(this.getExterior(),    that.getExterior()) &&
+                   Utilities.equals(this.interpolation,    that.interpolation);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + (this.getExterior() != null ? this.getExterior().hashCode() : 0);
+        hash = 37 * hash + (this.interpolation != null ? this.interpolation.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[TriangleType]").append("\n");
+        if (interpolation != null) {
+            sb.append("interpolation:").append(interpolation).append('\n');
+        }
+        if (exterior != null) {
+            sb.append("exterior:").append(exterior.getValue()).append('\n');
+        }
+        return sb.toString();
+    }
 }

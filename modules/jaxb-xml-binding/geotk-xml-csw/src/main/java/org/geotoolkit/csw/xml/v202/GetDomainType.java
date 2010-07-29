@@ -98,11 +98,19 @@ public class GetDomainType extends RequestBaseType implements GetDomain {
         return propertyName;
     }
 
+    public void setPropertyName(String propertyName) {
+        this.propertyName = propertyName;
+    }
+
     /**
      * Gets the value of the parameterName property.
      */
     public String getParameterName() {
         return parameterName;
+    }
+
+    public void setParameterName(String parameterName) {
+        this.parameterName = parameterName;
     }
 
     public String getOutputFormat() {

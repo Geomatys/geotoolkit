@@ -99,4 +99,8 @@ public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v100.GetCapabili
             return service;
         }
     }
+
+    public void setService(String service) {
+        this.service = service;
+    }
 }

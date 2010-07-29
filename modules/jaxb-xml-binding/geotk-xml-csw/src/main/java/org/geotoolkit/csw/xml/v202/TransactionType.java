@@ -17,7 +17,6 @@
 package org.geotoolkit.csw.xml.v202;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -124,13 +123,12 @@ public class TransactionType extends RequestBaseType implements Transaction {
     
     /**
      * Gets the value of the insertOrUpdateOrDelete property.
-     * (unmodifiable)
      */
     public List<Object> getInsertOrUpdateOrDelete() {
         if (insertOrUpdateOrDelete == null) {
             insertOrUpdateOrDelete = new ArrayList<Object>();
         }
-        return Collections.unmodifiableList(insertOrUpdateOrDelete);
+        return insertOrUpdateOrDelete;
     }
 
     /**

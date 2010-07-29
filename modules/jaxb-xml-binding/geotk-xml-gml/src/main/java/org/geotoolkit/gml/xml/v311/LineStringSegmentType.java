@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.DirectPosition;
 
 
@@ -169,11 +170,10 @@ public class LineStringSegmentType extends AbstractCurveSegmentType {
      *     
      */
     public CurveInterpolationType getInterpolation() {
-        if (interpolation == null) {
+        /*if (interpolation == null) {
             return CurveInterpolationType.LINEAR;
-        } else {
-            return interpolation;
-        }
+        } else {*/
+        return interpolation;
     }
 
     /**
@@ -186,6 +186,52 @@ public class LineStringSegmentType extends AbstractCurveSegmentType {
      */
     public void setInterpolation(CurveInterpolationType value) {
         this.interpolation = value;
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof LineStringSegmentType) {
+            final LineStringSegmentType that = (LineStringSegmentType) object;
+
+            boolean jb = false;
+            if (this.getPosOrPointPropertyOrPointRep().size() == that.getPosOrPointPropertyOrPointRep().size()) {
+                jb = true;
+                for (int i = 0; i < this.getPosOrPointPropertyOrPointRep().size(); i++) {
+                    if (!JAXBElementEquals(this.getPosOrPointPropertyOrPointRep().get(i), this.getPosOrPointPropertyOrPointRep().get(i))) {
+                        jb = false;
+                    }
+                }
+            }
+            return Utilities.equals(this.coordinates,    that.coordinates)   &&
+                   Utilities.equals(this.posList,        that.posList)       &&
+                   Utilities.equals(this.interpolation,  that.interpolation) &&
+                   jb;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + (this.posOrPointPropertyOrPointRep != null ? this.posOrPointPropertyOrPointRep.hashCode() : 0);
+        hash = 79 * hash + (this.posList != null ? this.posList.hashCode() : 0);
+        hash = 79 * hash + (this.coordinates != null ? this.coordinates.hashCode() : 0);
+        return hash;
+    }
+
+    private boolean JAXBElementEquals(JAXBElement a, JAXBElement b) {
+        if (a  != null && b != null) {
+            return Utilities.equals(a.getValue(), b.getValue());
+        } else if (a == null && b == null) {
+            return true;
+        }
+        return false;
     }
 
      @Override

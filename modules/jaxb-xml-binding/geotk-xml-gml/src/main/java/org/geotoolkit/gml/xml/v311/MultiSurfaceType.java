@@ -21,6 +21,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 
@@ -116,6 +117,31 @@ public class MultiSurfaceType extends AbstractGeometricAggregateType {
     @Override
     public Object accept(ExpressionVisitor visitor, Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof MultiSurfaceType && super.equals(object)) {
+            final MultiSurfaceType that = (MultiSurfaceType) object;
+
+            return Utilities.equals(this.surfaceMember,  that.surfaceMember) &&
+                   Utilities.equals(this.surfaceMembers, that.surfaceMembers);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (this.surfaceMember != null ? this.surfaceMember.hashCode() : 0);
+        hash = 97 * hash + (this.surfaceMembers != null ? this.surfaceMembers.hashCode() : 0);
+        return hash;
     }
 
     @Override
