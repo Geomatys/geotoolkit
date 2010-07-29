@@ -127,6 +127,7 @@ public class KmlWriter extends StaxStreamWriter {
     private final XalWriter xalWriter = new XalWriter();
     private final AtomWriter atomWriter = new AtomWriter();
     private final List<StaxStreamWriter> extensionWriters = new ArrayList<StaxStreamWriter>();
+    private final List<StaxStreamWriter> dataWriters = new ArrayList<StaxStreamWriter>();
 
     public KmlWriter(){
         super();
@@ -180,6 +181,16 @@ public class KmlWriter extends StaxStreamWriter {
             throws KmlException, IOException, XMLStreamException{
         if(writer instanceof KmlExtensionWriter){
             this.extensionWriters.add(writer);
+            writer.setOutput(this.writer);
+        } else {
+            throw new KmlException("Extension writer must implements "+KmlExtensionWriter.class.getName()+" interface.");
+        }
+    }
+
+    public void addDataWriter(String uri, StaxStreamWriter writer)
+            throws KmlException, IOException, XMLStreamException{
+        if(writer instanceof KmlExtensionWriter){
+            this.dataWriters.add(writer);
             writer.setOutput(this.writer);
         } else {
             throw new KmlException("Extension writer must implements "+KmlExtensionWriter.class.getName()+" interface.");
@@ -706,20 +717,24 @@ public class KmlWriter extends StaxStreamWriter {
         }
         if (extendedData.getAnyOtherElements() != null){
 
+            this.writeDataScheduler(extendedData.getAnyOtherElements());
         }
         writer.writeEndElement();
     }
 
     /**
-     *
+     * 
      * @param metadata
+     * @throws XMLStreamException
+     * @throws KmlException
      * @deprecated
      */
     @Deprecated
     private void writeMetaData(Metadata metadata) 
-            throws XMLStreamException{
+            throws XMLStreamException, KmlException{
 
         writer.writeStartElement(URI_KML, TAG_META_DATA);
+        this.writeDataScheduler(metadata.getContent());
         writer.writeEndElement();
     }
 
@@ -3519,6 +3534,19 @@ public class KmlWriter extends StaxStreamWriter {
                 level, extensions.complexes(level));
         this.writeSimpleExtensionsScheduler(
                 level, extensions.simples(level));
+    }
+
+    private void writeDataScheduler(List<Object> objectExtensions)
+            throws KmlException, XMLStreamException{
+        for(Object object : objectExtensions){
+            for(StaxStreamWriter candidate : this.dataWriters){
+                if(((KmlExtensionWriter) candidate).canHandleComplex(null, object)){
+                    ((KmlExtensionWriter) candidate).writeComplexExtensionElement(object);
+                } else if(((KmlExtensionWriter) candidate).canHandleSimple(null, ((SimpleTypeContainer) object).getTagName())){
+                    ((KmlExtensionWriter) candidate).writeSimpleExtensionElement((SimpleTypeContainer) object);
+                }
+            }
+        }
     }
 
 }

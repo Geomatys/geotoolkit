@@ -132,6 +132,7 @@ public class KmlReader extends StaxStreamReader {
     private final AtomReader atomReader = new AtomReader();
     private final FastDateParser fastDateParser = new FastDateParser();
     private final List<KmlExtensionReader> extensionReaders = new ArrayList<KmlExtensionReader>();
+    private final List<KmlExtensionReader> dataReaders = new ArrayList<KmlExtensionReader>();
 
     public KmlReader() {
         super();
@@ -194,6 +195,26 @@ public class KmlReader extends StaxStreamReader {
         } else {
             throw new KmlException("Extension reader must implements "+KmlExtensionReader.class.getName()+" interface.");
         }
+    }
+
+    public void addDataReader(StaxStreamReader reader)
+            throws KmlException, IOException, XMLStreamException{
+        if (reader instanceof KmlExtensionReader){
+            this.dataReaders.add((KmlExtensionReader) reader);
+            reader.setInput(this.reader);
+        } else {
+            throw new KmlException("Extension reader must implements "+KmlExtensionReader.class.getName()+" interface.");
+        }
+    }
+
+    protected KmlExtensionReader getDataReader(String containingTag, String contentsTag){
+        for(KmlExtensionReader r : this.dataReaders){
+            if(r.canHandleComplexExtension(containingTag, contentsTag)
+                    || r.canHandleSimpleExtension(containingTag, contentsTag)){
+                return r;
+            }
+        }
+        return null;
     }
 
     /**
@@ -652,17 +673,18 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     *
+     * 
      * @return
      * @throws XMLStreamException
      * @throws URISyntaxException
+     * @throws KmlException
      */
     public ExtendedData readExtendedData() 
-            throws XMLStreamException, URISyntaxException {
+            throws XMLStreamException, URISyntaxException, KmlException {
 
         List<Data> datas = new ArrayList<Data>();
         List<SchemaData> schemaDatas = new ArrayList<SchemaData>();
-        List<Object> anyOtherElements = null;
+        List<Object> anyOtherElements = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -679,6 +701,15 @@ public class KmlReader extends StaxStreamReader {
                             datas.add(this.readData());
                         } else if (TAG_SCHEMA_DATA.equals(eName)) {
                             schemaDatas.add(this.readSchemaData());
+                        }
+                    }
+                    // OTHER FREE DATA
+                    else {
+                        KmlExtensionReader r;
+                        if((r = this.getDataReader(TAG_EXTENDED_DATA, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_EXTENDED_DATA, eName);
+                            Object ext = result.getKey();
+                            anyOtherElements.add(ext);
                         }
                     }
                     break;
@@ -700,12 +731,39 @@ public class KmlReader extends StaxStreamReader {
      * 
      * @return
      * @throws XMLStreamException
+     * @throws KmlException
+     * @throws URISyntaxException
      * @deprecated
      */
     @Deprecated
     public Metadata readMetaData()
-            throws XMLStreamException{
-        return KmlReader.kmlFactory.createMetadata();
+            throws XMLStreamException, KmlException, URISyntaxException{
+        
+        List<Object> content = new ArrayList<Object>();
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    KmlExtensionReader r;
+                    if((r = this.getDataReader(TAG_META_DATA, eName)) != null){
+                        Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_META_DATA, eName);
+                        content.add(result.getKey());
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_META_DATA.equals(reader.getLocalName())
+                            && URI_KML.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+        }
+        return KmlReader.kmlFactory.createMetadata(content);
     }
 
     /**
