@@ -57,7 +57,7 @@ import org.opengis.test.Validators;
  * the convenience methods defined in GeoAPI and adds a few {@code asserts} statements.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.12
+ * @version 3.14
  *
  * @since 2.0
  */
@@ -405,14 +405,14 @@ public abstract class TransformTestCase extends org.opengis.test.referencing.Tra
         assertSame(P1, transform.transform(P1, P1));
         assertSame(P2, transform.transform(P2, P2));
         assertEquals("scaleX", (P2.x - P1.x) / delta, matrix.getElement(0, 0), tolerance);
-        assertEquals("shearY", (P2.y - P1.y) / delta, matrix.getElement(1, 0), tolerance);
+        assertEquals("shearY", (P2.y - P1.y) / delta, matrix.getElement(0, 1), tolerance);
 
         // Next, test the vertical component of the derivative.
         P1.x = x; P1.y = y - delta/2;
         P2.x = x; P2.y = y + delta/2;
         assertSame(P1, transform.transform(P1, P1));
         assertSame(P2, transform.transform(P2, P2));
-        assertEquals("shearX", (P2.x - P1.x) / delta, matrix.getElement(0, 1), tolerance);
+        assertEquals("shearX", (P2.x - P1.x) / delta, matrix.getElement(1, 0), tolerance);
         assertEquals("scaleY", (P2.y - P1.y) / delta, matrix.getElement(1, 1), tolerance);
     }
 
@@ -421,7 +421,7 @@ public abstract class TransformTestCase extends org.opengis.test.referencing.Tra
      *
      * @param  domain     The domain of the numbers to be generated.
      * @param  randomSeed The seed for the random number generator, in order to keep the test
-     *                    suite reproductible.
+     *                    suite reproducible.
      * @return Random coordinates in the given domain.
      */
     protected final double[] generateRandomCoordinates(final CoordinateDomain domain, final long randomSeed) {
@@ -452,7 +452,7 @@ public abstract class TransformTestCase extends org.opengis.test.referencing.Tra
      *
      * @param  domain     The domain of the numbers to be generated.
      * @param  randomSeed The seed for the random number generator, in order to keep the test
-     *                    suite reproductible.
+     *                    suite reproducible.
      * @throws TransformException If at transformation failed.
      */
     protected final void stress(final CoordinateDomain domain, final long randomSeed) throws TransformException {

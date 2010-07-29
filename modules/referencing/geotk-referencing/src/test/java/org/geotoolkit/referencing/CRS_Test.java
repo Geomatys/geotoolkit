@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing;
 
+import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import java.util.Set;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
@@ -434,9 +435,18 @@ public final class CRS_Test {
         final double[] expected = new double[2];
         at.deltaTransform(vector, 0, expected, 0, 1);
         /*
-         * Computes the same delta using the CRS.deltaTransform(...) method.
+         * Computes the same delta using the CRS.deltaTransform(...) method. We need a custom
+         * class that doesn't extends AffineTransform, otherwise CRS.deltaTransform would select
+         * its optimized path which doesn't really test the code we want to test.
          */
-        final MathTransform tr = ProjectiveTransform.create(at);
+        final class TestTransform extends AbstractMathTransform {
+            @Override public int getSourceDimensions() {return 2;}
+            @Override public int getTargetDimensions() {return 2;}
+            @Override protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff) {
+                at.transform(srcPts, srcOff, dstPts, dstOff, 1);
+            }
+        }
+        final TestTransform tr = new TestTransform();
         final DirectPosition2D origin = new DirectPosition2D(80, -20);
         final double[] result = CRS.deltaTransform(tr, origin, vector);
         assertEquals(expected.length, result.length);

@@ -21,18 +21,22 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
+import java.awt.geom.Point2D;
+import java.awt.geom.AffineTransform;
+
 import static java.lang.Math.*;
 import static java.lang.Double.*;
-import java.awt.geom.AffineTransform;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.provider.LambertConformal1SP;
 import org.geotoolkit.referencing.operation.provider.LambertConformal2SP;
 
@@ -80,13 +84,13 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  *   <li>John P. Snyder (Map Projections - A Working Manual,<br>
  *       U.S. Geological Survey Professional Paper 1395, 1987)</li>
  *   <li>"Coordinate Conversions and Transformations including Formulas",<br>
- *       EPSG Guidence Note Number 7, Version 19.</li>
+ *       EPSG Guidance Note Number 7, Version 19.</li>
  * </ul>
  *
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author André Gosselin (MPO)
  * @author Rueben Schulz (UBC)
- * @version 3.00
+ * @version 3.14
  *
  * @since 1.0
  * @module
@@ -99,7 +103,7 @@ public class LambertConformal extends UnitaryProjection {
     private static final long serialVersionUID = 2067358524298002016L;
 
     /**
-     * Constant for the belgium 2SP case. This is 29.2985 seconds, given here in radians.
+     * Constant for the Belgium 2SP case. This is 29.2985 seconds, given here in radians.
      */
     private static final double BELGE_A = 0.00014204313635987700;
 
@@ -456,6 +460,31 @@ public class LambertConformal extends UnitaryProjection {
             super.inverseTransform(srcPts, srcOff, dstPts, dstOff);
             return Assertions.checkInverseTransform(dstPts, dstOff, lambda, phi);
         }
+    }
+
+    /**
+     * Gets the derivative of this transform at a point.
+     * The current implementation is derived from the spherical formulas.
+     *
+     * @param  point The coordinate point where to evaluate the derivative.
+     * @return The derivative at the specified point as a 2&times;2 matrix.
+     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
+     *
+     * @since 3.14
+     */
+    @Override
+    public Matrix derivative(final Point2D point) throws ProjectionException {
+        final double λ    = point.getX();
+        final double φ    = point.getY();
+        final double sinλ = sin(λ);
+        final double cosλ = cos(λ);
+        final double ρ    = pow(tan(PI/4 + 0.5*φ), -n);
+        final double dρ   = -n*ρ / cos(φ);
+        return new Matrix2(
+                ρ  *  cosλ,    // dx/dλ
+                ρ  * -sinλ,    // dy/dλ
+                dρ *  sinλ,    // dx/dφ
+                dρ *  cosλ);   // dy/dφ
     }
 
     /**

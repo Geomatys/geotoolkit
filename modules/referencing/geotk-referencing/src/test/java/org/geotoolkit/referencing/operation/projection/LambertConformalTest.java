@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
+import java.awt.geom.Point2D;
+
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
@@ -37,7 +39,7 @@ import static org.geotoolkit.referencing.operation.provider.LambertConformal1SP.
  * long as we make this value varying, the latitude of origin is the simpliest approach.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.14
  *
  * @since 3.00
  */
@@ -61,7 +63,7 @@ public final class LambertConformalTest extends ProjectionTestCase {
      * parallels.
      *
      * @param  ellipse {@code false} for a sphere, or {@code true} for WGS84 ellipsoid.
-     * @param  latitudeOfOrigin The latitude of origin.
+     * @param  latitudeOfOrigin The latitude of origin, in decimal degrees.
      * @return Newly created projection.
      */
     private static LambertConformal create(final boolean ellipse, final double latitudeOfOrigin) {
@@ -183,6 +185,27 @@ public final class LambertConformalTest extends ProjectionTestCase {
             assertTrue(isSpherical());
             stressLongitudeRolling(CoordinateDomain.GEOGRAPHIC);
         }
+    }
+
+    /**
+     * Creates a projection and derivates a few points.
+     *
+     * @throws TransformException Should never happen.
+     *
+     * @since 3.14
+     */
+    @Test
+    public void testDerivative() throws TransformException {
+        tolerance = 1E-9;
+        transform = create(false, 45);
+        assertTrue(isSpherical());
+        validate();
+
+        final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+        final Point2D.Double point = new Point2D.Double();
+        checkDerivative2D(point, delta);
+        point.x = toRadians(15); point.y = toRadians(30); checkDerivative2D(point, delta);
+        point.x = toRadians(10); point.y = toRadians(60); checkDerivative2D(point, delta);
     }
 
     /**

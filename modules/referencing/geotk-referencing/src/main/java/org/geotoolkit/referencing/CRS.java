@@ -89,7 +89,7 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
  * @author Andrea Aime (TOPP)
- * @version 3.06
+ * @version 3.14
  *
  * @since 2.1
  * @module
@@ -1853,29 +1853,41 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      *
      * @since 3.10 (derived from 2.3)
      */
-    public static double[] deltaTransform(final MathTransform  transform,
+    public static double[] deltaTransform(final MathTransform transform,
             final DirectPosition origin, final double... vector) throws TransformException
     {
         final int sourceDim = transform.getSourceDimensions();
         final int targetDim = transform.getTargetDimensions();
-        final double[] coordinates = new double[2 * Math.max(sourceDim, targetDim)];
-        for (int i=0; i<sourceDim; i++) {
-            final double c = origin.getOrdinate(i);
-            final double d = vector[i] * 0.5;
-            coordinates[i] = c - d;
-            coordinates[i + sourceDim] = c + d;
-        }
-        transform.transform(coordinates, 0, coordinates, 0, 2);
         final double[] result = new double[targetDim];
-        for (int i=0; i<targetDim; i++) {
-            result[i] = coordinates[i + targetDim] - coordinates[i];
+        if (vector.length != sourceDim) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.MISMATCHED_DIMENSION_$3,
+                    "vector", vector.length, sourceDim));
+        }
+        if (transform instanceof AffineTransform) {
+            ((AffineTransform) transform).deltaTransform(vector, 0, result, 0, 1);
+        } else {
+            /*
+             * If the optimized case in the previous "if" statement can't be used,
+             * use a more generic (but more costly) algorithm.
+             */
+            final double[] coordinates = new double[2 * Math.max(sourceDim, targetDim)];
+            for (int i=0; i<sourceDim; i++) {
+                final double c = origin.getOrdinate(i);
+                final double d = vector[i] * 0.5;
+                coordinates[i] = c - d;
+                coordinates[i + sourceDim] = c + d;
+            }
+            transform.transform(coordinates, 0, coordinates, 0, 2);
+            for (int i=0; i<targetDim; i++) {
+                result[i] = coordinates[i + targetDim] - coordinates[i];
+            }
         }
         return result;
     }
 
     /**
      * Invoked when an unexpected exception occurred. Those exceptions must be non-fatal,
-     * i.e. the caller <strong>must</strong> have a raisonable fallback (otherwise it
+     * i.e. the caller <strong>must</strong> have a reasonable fallback (otherwise it
      * should propagate the exception).
      */
     static void unexpectedException(final String methodName, final Exception exception) {
