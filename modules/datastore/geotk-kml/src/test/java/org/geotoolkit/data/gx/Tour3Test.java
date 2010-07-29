@@ -18,24 +18,25 @@ package org.geotoolkit.data.gx;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.gx.model.AbstractTourPrimitive;
 import org.geotoolkit.data.gx.model.GxModelConstants;
 import org.geotoolkit.data.gx.model.PlayList;
-import org.geotoolkit.data.gx.model.SoundCue;
 import org.geotoolkit.data.gx.xml.GxConstants;
 import org.geotoolkit.data.gx.xml.GxReader;
 import org.geotoolkit.data.gx.xml.GxWriter;
 import org.geotoolkit.data.kml.DefaultKmlFactory;
 import org.geotoolkit.data.kml.KmlFactory;
+import org.geotoolkit.data.kml.model.Delete;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
-import org.geotoolkit.data.kml.model.KmlModelConstants;
+import org.geotoolkit.data.kml.model.NetworkLinkControl;
+import org.geotoolkit.data.kml.model.Update;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.factory.FactoryFinder;
@@ -57,14 +58,14 @@ import static org.junit.Assert.*;
  *
  * @author Samuel Andrés
  */
-public class SoundCueTest {
+public class Tour3Test {
 
     private static final double DELTA = 0.000000000001;
-    private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/gx/soundCue.kml";
+    private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/gx/tour3.kml";
     private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
             new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
-    public SoundCueTest() {
+    public Tour3Test() {
     }
 
     @BeforeClass
@@ -84,8 +85,7 @@ public class SoundCueTest {
     }
 
     @Test
-    public void soundCueReadTest()
-            throws IOException, XMLStreamException, URISyntaxException, KmlException {
+    public void tour3ReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
 
         Iterator i;
 
@@ -96,58 +96,48 @@ public class SoundCueTest {
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
-        final Feature document = kmlObjects.getAbstractFeature();
-        assertTrue(document.getType().equals(KmlModelConstants.TYPE_DOCUMENT));
-        assertEquals("gx:SoundCue example", document.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-        assertTrue((Boolean) document.getProperty(KmlModelConstants.ATT_OPEN.getName()).getValue());
-        assertEquals(1, document.getProperties(KmlModelConstants.ATT_EXTENSIONS.getName()).size());
+        final NetworkLinkControl networkLinkControl = kmlObjects.getNetworkLinkControl();
+        final Update update = networkLinkControl.getUpdate();
+        assertEquals(new URI("http://myserver.com/Bof.kml"), update.getTargetHref());
 
-        assertTrue(document.getProperty(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).getValue() instanceof Feature);
-        final Feature tour = (Feature) document.getProperty(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).getValue();
-        assertTrue(tour.getType().equals(GxModelConstants.TYPE_TOUR));
+        assertEquals(1, update.getUpdates().size());
+        assertTrue(update.getUpdates().get(0) instanceof Delete);
 
-        assertEquals("example", tour.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-        assertEquals(1,tour.getProperties(GxModelConstants.ATT_TOUR_PLAY_LIST.getName()).size());
+        final Delete delete = (Delete) update.getUpdates().get(0);
+        assertEquals(1, delete.getFeatures().size());
+        assertTrue(((Feature) delete.getFeatures().get(0)).getType().equals(GxModelConstants.TYPE_TOUR));
 
-        i = tour.getProperties(GxModelConstants.ATT_TOUR_PLAY_LIST.getName()).iterator();
+        final Feature tour = (Feature) delete.getFeatures().get(0);
+        final PlayList playlist = (PlayList) tour.getProperty(GxModelConstants.ATT_TOUR_PLAY_LIST.getName()).getValue();
+        assertEquals(0, playlist.getTourPrimitives().size());
 
-        if(i.hasNext()){
-            final Object object = ((Property) i.next()).getValue();
-            assertTrue(object instanceof PlayList);
-            final PlayList playList = (PlayList) object;
-            assertEquals(1, playList.getTourPrimitives().size());
-            assertTrue(playList.getTourPrimitives().get(0) instanceof SoundCue);
-            final SoundCue soundCue = (SoundCue) playList.getTourPrimitives().get(0);
-            assertEquals("http://monsite.com/maressource", soundCue.getHref());
-        }
     }
 
     @Test
-    public void soundCueWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
+    public void tour3WriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
         final GxFactory gxFactory = DefaultGxFactory.getInstance();
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
-        final SoundCue soundCue = gxFactory.createSoundCue();
-        soundCue.setHref("http://monsite.com/maressource");
-
         final PlayList playList = gxFactory.createPlayList();
-        playList.setTourPrimitives(Arrays.asList((AbstractTourPrimitive) soundCue));
 
         final Feature tour = gxFactory.createTour();
-        final Collection<Property> tourProperties = tour.getProperties();
-        tourProperties.add(FF.createAttribute("example", KmlModelConstants.ATT_NAME, null));
+        Collection<Property> tourProperties = tour.getProperties();
         tourProperties.add(FF.createAttribute(playList, GxModelConstants.ATT_TOUR_PLAY_LIST, null));
 
-        final Feature document = kmlFactory.createDocument();
-        final Collection<Property> documentProperties = document.getProperties();
-        documentProperties.add(FF.createAttribute("gx:SoundCue example", KmlModelConstants.ATT_NAME, null));
-        document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
-        documentProperties.add(FF.createAttribute(tour, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+        final Delete delete = kmlFactory.createDelete();
+        delete.setFeatures(Arrays.asList(tour));
 
-        final Kml kml = kmlFactory.createKml(null, document, null, null);
+        final Update update = kmlFactory.createUpdate();
+        update.setTargetHref(new URI("http://myserver.com/Bof.kml"));
+        update.setUpdates(Arrays.asList((Object) delete));
+
+        final NetworkLinkControl networkLinkControl = kmlFactory.createNetworkLinkControl();
+        networkLinkControl.setUpdate(update);
+
+        final Kml kml = kmlFactory.createKml(networkLinkControl, null, null, null);
         kml.addExtensionUri(GxConstants.URI_GX, "gx");
 
-        final File temp = File.createTempFile("testSoundCue", ".kml");
+        final File temp = File.createTempFile("testTour3", ".kml");
         temp.deleteOnExit();
 
         final KmlWriter writer = new KmlWriter();
@@ -160,5 +150,4 @@ public class SoundCueTest {
         DomCompare.compare(
                 new File(pathToTestFile), temp);
     }
-
 }

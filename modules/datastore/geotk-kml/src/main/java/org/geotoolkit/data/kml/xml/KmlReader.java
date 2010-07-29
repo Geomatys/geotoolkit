@@ -317,14 +317,22 @@ public class KmlReader extends StaxStreamReader {
                     else {
                         KmlExtensionReader r;
                         if((r = this.getComplexExtensionReader(TAG_KML, eName)) != null){
-                            Object ext = r.readExtensionElement(TAG_KML, eName);
-                            if(ext!= null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_KML, eName);
+                            Object ext = result.getKey();
+                            Extensions.Names extensionLevel = result.getValue();
+                            if(Extensions.Names.KML.equals(extensionLevel)){
                                 kmlObjectExtensions.add(ext);
+                            } else if(extensionLevel == null){
+                                if (ext instanceof Feature){
+                                   abstractFeature = (Feature) ext;
+                                }
                             }
                         } else if ((r = this.getSimpleExtensionReader(TAG_KML, eName)) != null){
-                            SimpleTypeContainer ext = (SimpleTypeContainer) r.readExtensionElement(TAG_KML, eName);
-                            if(ext!= null){
-                                kmlSimpleExtensions.add(ext);
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_KML, eName);
+                            Object ext = result.getKey();
+                            Extensions.Names extensionLevel = result.getValue();
+                            if(Extensions.Names.KML.equals(extensionLevel)){
+                                kmlSimpleExtensions.add((SimpleTypeContainer) ext);
                             }
                         }
                     }
@@ -987,6 +995,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
+                    // KML
                     if (URI_KML.equals(eUri)) {
                         if (isAbstractFeature(eName)) {
                             replace = this.readAbstractFeature(eName);
@@ -1067,6 +1076,20 @@ public class KmlReader extends StaxStreamReader {
 
                         if (isAbstractObject(eName)) {
                             features.add(this.readAbstractFeature(eName));
+                        }
+                    }
+                    // EXTENSIONS
+                    else {
+                        KmlExtensionReader r;
+                        if((r = this.getComplexExtensionReader(TAG_DELETE, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_DELETE, eName);
+                            Object ext = result.getKey();
+                            Extensions.Names extensionLevel = result.getValue();
+                            if(extensionLevel == null){
+                                if (ext instanceof Feature){
+                                   features.add((Feature) ext);
+                                }
+                            }
                         }
                     }
                     break;
@@ -4969,6 +4992,10 @@ public class KmlReader extends StaxStreamReader {
                                 abstractContainerObjectExtensions.add(ext);
                             } else if(Extensions.Names.FOLDER.equals(extensionLevel)){
                                 folderObjectExtensions.add(ext);
+                            } else if(extensionLevel == null){
+                                if (ext instanceof Feature){
+                                   features.add((Feature) ext);
+                                }
                             }
                         } else if ((r = this.getSimpleExtensionReader(TAG_FOLDER, eName)) != null){
                             Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_FOLDER, eName);
@@ -5130,6 +5157,10 @@ public class KmlReader extends StaxStreamReader {
                                 abstractContainerObjectExtensions.add(ext);
                             } else if(Extensions.Names.DOCUMENT.equals(extensionLevel)){
                                 documentObjectExtensions.add(ext);
+                            } else if(extensionLevel == null){
+                                if (ext instanceof Feature){
+                                   features.add((Feature) ext);
+                                }
                             }
                         } else if ((r = this.getSimpleExtensionReader(TAG_DOCUMENT, eName)) != null){
                             Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_DOCUMENT, eName);

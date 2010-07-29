@@ -42,7 +42,6 @@ import org.geotoolkit.data.kml.model.BasicLink;
 import org.geotoolkit.data.kml.model.Camera;
 import org.geotoolkit.data.kml.model.Change;
 import org.geotoolkit.data.kml.model.Coordinates;
-import org.geotoolkit.data.kml.model.Extensions;
 import org.geotoolkit.data.kml.model.IconStyle;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Kml;
@@ -131,7 +130,7 @@ public class AnimatedUpdateTest {
             assertEquals(2.0, style.getIconStyle().getScale(), DELTA);
         }
 
-        assertEquals(1, document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).size());
+        assertEquals(2, document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).size());
 
         i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
 
@@ -153,65 +152,60 @@ public class AnimatedUpdateTest {
             assertEquals(170.1435558771009, coordinate.x, DELTA);
             assertEquals(-43.60505741890396, coordinate.y, DELTA);
             assertEquals(0, coordinate.z, DELTA);
-
-
-
-
         }
 
-        assertEquals(1, document.getProperties(KmlModelConstants.ATT_EXTENSIONS.getName()).size());
-
-        final Extensions extensions = (Extensions) document.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue();
-
-        assertEquals(1, extensions.complexes(Extensions.Names.DOCUMENT).size());
-        assertTrue(extensions.complexes(Extensions.Names.DOCUMENT).get(0) instanceof Feature);
-        final Feature tour = (Feature) extensions.complexes(Extensions.Names.DOCUMENT).get(0);
-        assertTrue(tour.getType().equals(GxModelConstants.TYPE_TOUR));
-
-        assertEquals("Play me!", tour.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-        assertEquals(1,tour.getProperties(GxModelConstants.ATT_TOUR_PLAY_LIST.getName()).size());
-
-        i = tour.getProperties(GxModelConstants.ATT_TOUR_PLAY_LIST.getName()).iterator();
-
-        if(i.hasNext()){
-            final Object object = ((Property) i.next()).getValue();
-            assertTrue(object instanceof PlayList);
-            final PlayList playList = (PlayList) object;
-            assertEquals(3, playList.getTourPrimitives().size());
-
-            assertTrue(playList.getTourPrimitives().get(0) instanceof FlyTo);
-            final FlyTo flyTo = (FlyTo) playList.getTourPrimitives().get(0);
-            assertEquals(3, flyTo.getDuration(), DELTA);
-            assertEquals(EnumFlyToMode.SMOOTH, flyTo.getFlyToMode());
-
-            System.out.println(flyTo.getView().getClass());
-            assertTrue(flyTo.getView() instanceof Camera);
-            final Camera camera = (Camera) flyTo.getView();
-            assertEquals(170.157, camera.getLongitude(), DELTA);
-            assertEquals(-43.671, camera.getLatitude(), DELTA);
-            assertEquals(9700, camera.getAltitude(), DELTA);
-            assertEquals(-6.333, camera.getHeading(), DELTA);
-            assertEquals(33.5, camera.getTilt(), DELTA);
+        if (i.hasNext()){
+            Object obj  = ((Property) i.next()).getValue();
+            assertTrue(obj instanceof Feature);
+            Feature tour = (Feature) obj;
+            assertTrue(tour.getType().equals(GxModelConstants.TYPE_TOUR));
 
 
-            assertTrue(playList.getTourPrimitives().get(1) instanceof AnimatedUpdate);
-            final AnimatedUpdate animatedUpdate = (AnimatedUpdate) playList.getTourPrimitives().get(1);
-            assertEquals(5, animatedUpdate.getDuration(), DELTA);
-            assertTrue(animatedUpdate.getUpdate() instanceof Update);
-            final Update update = animatedUpdate.getUpdate();
-            assertEquals(new URI("http://moncoco.com"), update.getTargetHref());
-            assertEquals(1, update.getUpdates().size());
-            assertTrue(update.getUpdates().get(0) instanceof Change);
-            final Change change = (Change) update.getUpdates().get(0);
-            assertEquals(1, change.getObjects().size());
-            assertTrue(change.getObjects().get(0) instanceof IconStyle);
-            final IconStyle iconStyle = (IconStyle) change.getObjects().get(0);
-            assertEquals("mystyle", iconStyle.getIdAttributes().getTargetId());
-            assertEquals(10.0, iconStyle.getScale(), DELTA);
+            assertEquals("Play me!", tour.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+            assertEquals(1,tour.getProperties(GxModelConstants.ATT_TOUR_PLAY_LIST.getName()).size());
 
-            assertTrue(playList.getTourPrimitives().get(2) instanceof Wait);
-            final Wait wait = (Wait) playList.getTourPrimitives().get(2);
-            assertEquals(5, wait.getDuration(), DELTA);
+            i = tour.getProperties(GxModelConstants.ATT_TOUR_PLAY_LIST.getName()).iterator();
+
+            if(i.hasNext()){
+                final Object object = ((Property) i.next()).getValue();
+                assertTrue(object instanceof PlayList);
+                final PlayList playList = (PlayList) object;
+                assertEquals(3, playList.getTourPrimitives().size());
+
+                assertTrue(playList.getTourPrimitives().get(0) instanceof FlyTo);
+                final FlyTo flyTo = (FlyTo) playList.getTourPrimitives().get(0);
+                assertEquals(3, flyTo.getDuration(), DELTA);
+                assertEquals(EnumFlyToMode.SMOOTH, flyTo.getFlyToMode());
+
+                System.out.println(flyTo.getView().getClass());
+                assertTrue(flyTo.getView() instanceof Camera);
+                final Camera camera = (Camera) flyTo.getView();
+                assertEquals(170.157, camera.getLongitude(), DELTA);
+                assertEquals(-43.671, camera.getLatitude(), DELTA);
+                assertEquals(9700, camera.getAltitude(), DELTA);
+                assertEquals(-6.333, camera.getHeading(), DELTA);
+                assertEquals(33.5, camera.getTilt(), DELTA);
+
+
+                assertTrue(playList.getTourPrimitives().get(1) instanceof AnimatedUpdate);
+                final AnimatedUpdate animatedUpdate = (AnimatedUpdate) playList.getTourPrimitives().get(1);
+                assertEquals(5, animatedUpdate.getDuration(), DELTA);
+                assertTrue(animatedUpdate.getUpdate() instanceof Update);
+                final Update update = animatedUpdate.getUpdate();
+                assertEquals(new URI("http://moncoco.com"), update.getTargetHref());
+                assertEquals(1, update.getUpdates().size());
+                assertTrue(update.getUpdates().get(0) instanceof Change);
+                final Change change = (Change) update.getUpdates().get(0);
+                assertEquals(1, change.getObjects().size());
+                assertTrue(change.getObjects().get(0) instanceof IconStyle);
+                final IconStyle iconStyle = (IconStyle) change.getObjects().get(0);
+                assertEquals("mystyle", iconStyle.getIdAttributes().getTargetId());
+                assertEquals(10.0, iconStyle.getScale(), DELTA);
+
+                assertTrue(playList.getTourPrimitives().get(2) instanceof Wait);
+                final Wait wait = (Wait) playList.getTourPrimitives().get(2);
+                assertEquals(5, wait.getDuration(), DELTA);
+            }
         }
     }
 
@@ -291,9 +285,8 @@ public class AnimatedUpdateTest {
         documentProperties.add(FF.createAttribute("gx:AnimatedUpdate example", KmlModelConstants.ATT_NAME, null));
         documentProperties.add(FF.createAttribute(style, KmlModelConstants.ATT_STYLE_SELECTOR, null));
         documentProperties.add(FF.createAttribute(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+        documentProperties.add(FF.createAttribute(tour, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
         document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.FALSE);
-        ((Extensions) document.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue()).
-                complexes(Extensions.Names.DOCUMENT).add(tour);
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
         kml.addExtensionUri(GxConstants.URI_GX, "gx");

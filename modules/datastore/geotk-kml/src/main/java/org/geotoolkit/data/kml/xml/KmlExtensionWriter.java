@@ -28,6 +28,26 @@ import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 public interface KmlExtensionWriter {
 
     /**
+     * <p>This method indicats if KmlExtentionWriter can write given element
+     * contained in given extension</p>
+     *
+     * @param ext
+     * @param contentObject
+     * @return
+     */
+    boolean canHandleComplex(Extensions.Names ext, Object contentObject);
+
+    /**
+     * <p>This method indicats if KmlExtentionWriter can write given element
+     * contained in given extension</p>
+     *
+     * @param ext
+     * @param elementTag
+     * @return
+     */
+    boolean canHandleSimple(Extensions.Names ext, String elementTag);
+
+    /**
      * <p>This method writes a complex extension element.</p>
      *
      * @param contentElement
@@ -46,25 +66,5 @@ public interface KmlExtensionWriter {
      */
     void writeSimpleExtensionElement(SimpleTypeContainer contentElement)
             throws XMLStreamException, KmlException;
-
-    /**
-     * <p>This method indicats if KmlExtentionWriter can write given element
-     * contained in given extension</p>
-     *
-     * @param ext
-     * @param contentObject
-     * @return
-     */
-    boolean canHandleComplex(Extensions.Names ext, Object contentObject);
-
-    /**
-     * <p>This method indicats if KmlExtentionWriter can write given element
-     * contained in given extension</p>
-     * 
-     * @param ext
-     * @param elementTag
-     * @return
-     */
-    boolean canHandleSimple(Extensions.Names ext, String elementTag);
 
 }

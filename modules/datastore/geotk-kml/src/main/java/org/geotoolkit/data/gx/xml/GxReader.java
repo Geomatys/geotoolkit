@@ -723,9 +723,6 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
             ext = Extensions.Names.VIEW;
         } else if(GxConstants.TAG_TOUR.equals(contentsTag)){
             resultat = readTour();
-            if(KmlConstants.TAG_DOCUMENT.equals(containingTag)){
-                ext = Extensions.Names.DOCUMENT;
-            }
         }
         return new SimpleImmutableEntry<Object, Extensions.Names>(resultat, ext);
     }
@@ -734,6 +731,9 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
         // Tour peut se trouver dans toute extension d'abstractObject... à compléter.
         List<String> tourBinding = new ArrayList<String>();
         tourBinding.add(KmlConstants.TAG_DOCUMENT);
+        tourBinding.add(KmlConstants.TAG_FOLDER);
+        tourBinding.add(KmlConstants.TAG_KML);
+        tourBinding.add(KmlConstants.TAG_DELETE);
 
         List<String> latLonQuadBinding = new ArrayList<String>();
         latLonQuadBinding.add(KmlConstants.TAG_GROUND_OVERLAY);

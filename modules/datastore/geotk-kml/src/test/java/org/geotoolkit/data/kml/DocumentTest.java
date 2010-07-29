@@ -22,23 +22,33 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.Coordinates;
+import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.model.KmlModelConstants;
+import org.geotoolkit.data.kml.model.LabelStyle;
 import org.geotoolkit.data.kml.model.Point;
 import org.geotoolkit.data.kml.model.Style;
 import org.geotoolkit.data.kml.xml.KmlReader;
+import org.geotoolkit.data.kml.xml.KmlWriter;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.LenientFeatureFactory;
+import org.geotoolkit.xml.DomCompare;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.Property;
 import org.xml.sax.SAXException;
 import static org.junit.Assert.*;
@@ -51,7 +61,9 @@ public class DocumentTest {
 
     private static final double DELTA = 0.000000000001;
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/kml/document.kml";
-
+    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
+            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+    
     public DocumentTest() {
     }
 
@@ -138,58 +150,61 @@ public class DocumentTest {
 
     @Test
     public void documentWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException{
-//        final KmlFactory kmlFactory = new DefaultKmlFactory();
-//
-//        final Placemark placemark0 = kmlFactory.createPlacemark();
-//        final double longitude00 = -122.371;
-//        final double latitude00 = 37.816;
-//        final double altitude00 = 0;
-//        final Coordinate coordinate00 = kmlFactory.createCoordinate(longitude00, latitude00, altitude00);
-//        final Coordinates coordinates0 = kmlFactory.createCoordinates(Arrays.asList(coordinate00));
-//        final Point point0 = kmlFactory.createPoint(coordinates0);
-//        placemark0.setAbstractGeometry(point0);
-//        placemark0.setFeatureName("Document Feature 1");
-//        placemark0.setStyleUrl(new URI("#exampleStyleDocument"));
-//
-//        final Placemark placemark1 = kmlFactory.createPlacemark();
-//        final double longitude10 = -122.370;
-//        final double latitude10 = 37.817;
-//        final double altitude10 = 0;
-//        final Coordinate coordinate10 = kmlFactory.createCoordinate(longitude10, latitude10, altitude10);
-//        final Coordinates coordinates1 = kmlFactory.createCoordinates(Arrays.asList(coordinate10));
-//        final Point point1 = kmlFactory.createPoint(coordinates1);
-//        placemark1.setAbstractGeometry(point1);
-//        placemark1.setFeatureName("Document Feature 2");
-//        placemark1.setStyleUrl(new URI("#exampleStyleDocument"));
-//
-//        Style style = kmlFactory.createStyle();
-//        Color color = new Color(204,0,0,255);
-//        LabelStyle labelStyle = kmlFactory.createLabelStyle();
-//        labelStyle.setColor(color);
-//        style.setLabelStyle(labelStyle);
-//
-//        IdAttributes idAttributes = kmlFactory.createIdAttributes("exampleStyleDocument", null);
-//        style.setIdAttributes(idAttributes);
-//
-//        Document document = kmlFactory.createDocument();
-//        document.setFeatureName("Document.kml");
-//        document.setOpen(true);
-//        List<AbstractStyleSelector> styleSelectors = Arrays.asList((AbstractStyleSelector) style);
-//        document.setStyleSelectors(styleSelectors);
-//        document.setAbstractFeatures(Arrays.asList((AbstractFeature) placemark0, (AbstractFeature) placemark1));
-//
-//        final Kml kml = kmlFactory.createKml(null, document, null, null);
-//
-//        File temp = File.createTempFile("testDocument",".kml");
-//        temp.deleteOnExit();
-//
-//        KmlWriter writer = new KmlWriter();
-//        writer.setOutput(temp);
-//        writer.write(kml);
-//        writer.dispose();
-//
-//        DomCompare.compare(
-//                 new File(pathToTestFile), temp);
+        final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
+
+        final Feature placemark0 = kmlFactory.createPlacemark();
+        final double longitude00 = -122.371;
+        final double latitude00 = 37.816;
+        final double altitude00 = 0;
+        final Coordinate coordinate00 = kmlFactory.createCoordinate(longitude00, latitude00, altitude00);
+        final Coordinates coordinates0 = kmlFactory.createCoordinates(Arrays.asList(coordinate00));
+        final Point point0 = kmlFactory.createPoint(coordinates0);
+        Collection<Property> placemark0Properties = placemark0.getProperties();
+        placemark0Properties.add(FF.createAttribute(point0, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
+        placemark0Properties.add(FF.createAttribute("Document Feature 1", KmlModelConstants.ATT_NAME, null));
+        placemark0Properties.add(FF.createAttribute(new URI("#exampleStyleDocument"), KmlModelConstants.ATT_STYLE_URL, null));
+
+        final Feature placemark1 = kmlFactory.createPlacemark();
+        final double longitude10 = -122.370;
+        final double latitude10 = 37.817;
+        final double altitude10 = 0;
+        final Coordinate coordinate10 = kmlFactory.createCoordinate(longitude10, latitude10, altitude10);
+        final Coordinates coordinates1 = kmlFactory.createCoordinates(Arrays.asList(coordinate10));
+        final Point point1 = kmlFactory.createPoint(coordinates1);
+        Collection<Property> placemark1Properties = placemark1.getProperties();
+        placemark1Properties.add(FF.createAttribute(point1, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
+        placemark1Properties.add(FF.createAttribute("Document Feature 2", KmlModelConstants.ATT_NAME, null));
+        placemark1Properties.add(FF.createAttribute(new URI("#exampleStyleDocument"), KmlModelConstants.ATT_STYLE_URL, null));
+
+        Style style = kmlFactory.createStyle();
+        Color color = new Color(204,0,0,255);
+        LabelStyle labelStyle = kmlFactory.createLabelStyle();
+        labelStyle.setColor(color);
+        style.setLabelStyle(labelStyle);
+
+        IdAttributes idAttributes = kmlFactory.createIdAttributes("exampleStyleDocument", null);
+        style.setIdAttributes(idAttributes);
+
+        Feature document = kmlFactory.createDocument();
+        Collection<Property> documentProperties = document.getProperties();
+        documentProperties.add(FF.createAttribute("Document.kml", KmlModelConstants.ATT_NAME, null));
+        documentProperties.add(FF.createAttribute(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+        documentProperties.add(FF.createAttribute(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+        document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(true);
+        documentProperties.add(FF.createAttribute(style, KmlModelConstants.ATT_STYLE_SELECTOR, null));
+
+        final Kml kml = kmlFactory.createKml(null, document, null, null);
+
+        File temp = File.createTempFile("testDocument",".kml");
+        temp.deleteOnExit();
+
+        KmlWriter writer = new KmlWriter();
+        writer.setOutput(temp);
+        writer.write(kml);
+        writer.dispose();
+
+        DomCompare.compare(
+                 new File(pathToTestFile), temp);
 
     }
 }

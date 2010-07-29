@@ -30,7 +30,6 @@ import org.geotoolkit.data.gx.xml.GxReader;
 import org.geotoolkit.data.gx.xml.GxWriter;
 import org.geotoolkit.data.kml.DefaultKmlFactory;
 import org.geotoolkit.data.kml.KmlFactory;
-import org.geotoolkit.data.kml.model.Extensions;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.model.KmlModelConstants;
@@ -97,13 +96,9 @@ public class TourTest {
         assertTrue(document.getType().equals(KmlModelConstants.TYPE_DOCUMENT));
         assertEquals("gx:AnimatedUpdate example", document.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
         assertTrue((Boolean) document.getProperty(KmlModelConstants.ATT_OPEN.getName()).getValue());
-        assertEquals(1, document.getProperties(KmlModelConstants.ATT_EXTENSIONS.getName()).size());
-
-        Extensions extensions = (Extensions) document.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue();
-
-        assertEquals(1, extensions.complexes(Extensions.Names.DOCUMENT).size());
-        assertTrue(extensions.complexes(Extensions.Names.DOCUMENT).get(0) instanceof Feature);
-        Feature tour = (Feature) extensions.complexes(Extensions.Names.DOCUMENT).get(0);
+        
+        assertTrue(document.getProperty(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).getValue() instanceof Feature);
+        Feature tour = (Feature) document.getProperty(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).getValue();
         assertTrue(tour.getType().equals(GxModelConstants.TYPE_TOUR));
 
         assertEquals("Play me!", tour.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
@@ -128,8 +123,7 @@ public class TourTest {
         Collection<Property> documentProperties = document.getProperties();
         documentProperties.add(FF.createAttribute("gx:AnimatedUpdate example", KmlModelConstants.ATT_NAME, null));
         document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
-        Extensions extensions = (Extensions) document.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue();
-        extensions.complexes(Extensions.Names.DOCUMENT).add(tour);
+        documentProperties.add(FF.createAttribute(tour, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
         final Kml kml = kmlFactory.createKml(null, document, null, null);
         kml.addExtensionUri(GxConstants.URI_GX, "gx");
 

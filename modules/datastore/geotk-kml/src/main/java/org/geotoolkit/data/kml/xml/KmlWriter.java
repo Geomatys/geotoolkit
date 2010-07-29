@@ -244,10 +244,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (kml.getAbstractFeature() != null){
             this.writeAbstractFeature(kml.getAbstractFeature());
         }
-        this.writeComplexExtensionsScheduler(Names.KML,
-                kml.extensions().complexes(Names.KML));
-        this.writeSimpleExtensionsScheduler(Names.KML,
-                kml.extensions().simples(Names.KML));
+        this.writeStandardExtensionLevel(
+                kml.extensions(),
+                Names.KML);
     }
 
     /**
@@ -288,10 +287,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (networkLinkControl.getView() != null){
             this.writeAbstractView(networkLinkControl.getView());
         }
-        this.writeComplexExtensionsScheduler(Names.NETWORK_LINK_CONTROL,
-                networkLinkControl.extensions().complexes(Names.NETWORK_LINK_CONTROL));
-        this.writeSimpleExtensionsScheduler(Names.NETWORK_LINK_CONTROL,
-                networkLinkControl.extensions().simples(Names.NETWORK_LINK_CONTROL));
+        this.writeStandardExtensionLevel(
+                networkLinkControl.extensions(),
+                Names.NETWORK_LINK_CONTROL);
         
         writer.writeEndElement();
     }
@@ -524,6 +522,13 @@ public class KmlWriter extends StaxStreamWriter {
             this.writeAbstractOverlay(abstractFeature);
         } else if (abstractFeature.getType().equals(KmlModelConstants.TYPE_PLACEMARK)){
             this.writePlacemark(abstractFeature);
+        } else {
+            System.out.println("ABSTRACT FEATURE PAS COMMUN !!!");
+            for(StaxStreamWriter candidate : this.extensionWriters){
+                if(((KmlExtensionWriter) candidate).canHandleComplex(null, abstractFeature)){
+                    ((KmlExtensionWriter) candidate).writeComplexExtensionElement(abstractFeature);
+                }
+            }
         }
     }
 
@@ -540,6 +545,7 @@ public class KmlWriter extends StaxStreamWriter {
         this.writeCommonAbstractFeature(networkLink);
         this.writeRefreshVisibility((Boolean) networkLink.getProperty(KmlModelConstants.ATT_NETWORK_LINK_REFRESH_VISIBILITY.getName()).getValue());
         this.writeFlyToView((Boolean) networkLink.getProperty(KmlModelConstants.ATT_NETWORK_LINK_FLY_TO_VIEW.getName()).getValue());
+
         if (networkLink.getProperty(KmlModelConstants.ATT_NETWORK_LINK_LINK.getName()) != null){
             Object link = networkLink.getProperty(KmlModelConstants.ATT_NETWORK_LINK_LINK.getName()).getValue();
             if (link instanceof Url)
@@ -547,11 +553,9 @@ public class KmlWriter extends StaxStreamWriter {
             else if (link instanceof Link)
                 this.writeLink((Link) link);
         }
-        Extensions extensions = (Extensions) networkLink.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue();
-        this.writeComplexExtensionsScheduler(
-                Names.NETWORK_LINK, extensions.complexes(Names.NETWORK_LINK));
-        this.writeSimpleExtensionsScheduler(
-                Names.NETWORK_LINK, extensions.simples(Names.NETWORK_LINK));
+        this.writeStandardExtensionLevel(
+                (Extensions) networkLink.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
+                Names.NETWORK_LINK);
         writer.writeEndElement();
     }
 
@@ -663,11 +667,9 @@ public class KmlWriter extends StaxStreamWriter {
                 this.writeExtendedData(extendedData);
             }
         }
-        Extensions extensions = (Extensions) abstractFeature.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue();
-        this.writeComplexExtensionsScheduler(
-                Names.FEATURE, extensions.complexes(Names.FEATURE));
-        this.writeSimpleExtensionsScheduler(
-                Names.FEATURE, extensions.simples(Names.FEATURE));
+        this.writeStandardExtensionLevel(
+                (Extensions) abstractFeature.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
+                Names.FEATURE);
     }
 
     /**
@@ -792,10 +794,9 @@ public class KmlWriter extends StaxStreamWriter {
         if(region.getLod() != null){
             this.writeLod(region.getLod());
         }
-        this.writeComplexExtensionsScheduler(Names.REGION,
-                region.extensions().complexes(Names.REGION));
-        this.writeSimpleExtensionsScheduler(Names.REGION,
-                region.extensions().simples(Names.REGION));
+        this.writeStandardExtensionLevel(
+                region.extensions(),
+                Names.REGION);
         writer.writeEndElement();
     }
 
@@ -821,10 +822,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (KmlUtilities.isFiniteNumber(lod.getMaxFadeExtent())){
             this.writeMaxFadeExtent(lod.getMaxFadeExtent());
         }
-        this.writeComplexExtensionsScheduler(Names.LOD,
-                lod.extensions().complexes(Names.LOD));
-        this.writeSimpleExtensionsScheduler(Names.LOD,
-                lod.extensions().simples(Names.LOD));
+        this.writeStandardExtensionLevel(
+                lod.extensions(),
+                Names.LOD);
         writer.writeEndElement();
     }
 
@@ -845,10 +845,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (latLonAltBox.getAltitudeMode() != null){
             this.writeAltitudeMode(latLonAltBox.getAltitudeMode());
         }
-        this.writeComplexExtensionsScheduler(Names.LAT_LON_ALT_BOX,
-                latLonAltBox.extensions().complexes(Names.LAT_LON_ALT_BOX));
-        this.writeSimpleExtensionsScheduler(Names.LAT_LON_ALT_BOX,
-                latLonAltBox.extensions().simples(Names.LAT_LON_ALT_BOX));
+        this.writeStandardExtensionLevel(
+                latLonAltBox.extensions(),
+                Names.LAT_LON_ALT_BOX);
         writer.writeEndElement();
     }
 
@@ -907,10 +906,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (timeSpan.getEnd() != null){
             this.writeEnd(timeSpan.getEnd());
         }
-        this.writeComplexExtensionsScheduler(Names.TIME_SPAN,
-                timeSpan.extensions().complexes(Names.TIME_SPAN));
-        this.writeSimpleExtensionsScheduler(Names.TIME_SPAN,
-                timeSpan.extensions().simples(Names.TIME_SPAN));
+        this.writeStandardExtensionLevel(
+                timeSpan.extensions(),
+                Names.TIME_SPAN);
         writer.writeEndElement();
     }
 
@@ -928,10 +926,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (timeStamp.getWhen() != null){
             this.writeWhen(timeStamp.getWhen());
         }
-        this.writeComplexExtensionsScheduler(Names.TIME_STAMP,
-                timeStamp.extensions().complexes(Names.TIME_STAMP));
-        this.writeSimpleExtensionsScheduler(Names.TIME_STAMP,
-                timeStamp.extensions().simples(Names.TIME_STAMP));
+        this.writeStandardExtensionLevel(
+                timeStamp.extensions(),
+                Names.TIME_STAMP);
         writer.writeEndElement();
     }
 
@@ -977,10 +974,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (lookAt.getAltitudeMode() != null){
             this.writeAltitudeMode(lookAt.getAltitudeMode());
         }
-        this.writeComplexExtensionsScheduler(Names.LOOK_AT,
-                lookAt.extensions().complexes(Names.LOOK_AT));
-        this.writeSimpleExtensionsScheduler(Names.LOOK_AT,
-                lookAt.extensions().simples(Names.LOOK_AT));
+        this.writeStandardExtensionLevel(
+                lookAt.extensions(),
+                Names.LOOK_AT);
         writer.writeEndElement();
     }
 
@@ -1008,10 +1004,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (camera.getAltitudeMode() != null){
             this.writeAltitudeMode(camera.getAltitudeMode());
         }
-        this.writeComplexExtensionsScheduler(Names.CAMERA,
-                camera.extensions().complexes(Names.CAMERA));
-        this.writeSimpleExtensionsScheduler(Names.CAMERA,
-                camera.extensions().simples(Names.CAMERA));
+        this.writeStandardExtensionLevel(
+                camera.extensions(),
+                Names.CAMERA);
         writer.writeEndElement();
     }
 
@@ -1024,10 +1019,9 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private void writeCommonAbstractView(AbstractView abstractView) throws XMLStreamException, KmlException{
         this.writeCommonAbstractObject(abstractView);
-        this.writeComplexExtensionsScheduler(Names.VIEW,
-                abstractView.extensions().complexes(Names.VIEW));
-        this.writeSimpleExtensionsScheduler(Names.VIEW,
-                abstractView.extensions().simples(Names.VIEW));
+        this.writeStandardExtensionLevel(
+                abstractView.extensions(),
+                Names.VIEW);
     }
 
     /**
@@ -1041,10 +1035,9 @@ public class KmlWriter extends StaxStreamWriter {
             throws XMLStreamException, KmlException{
 
         this.writeCommonAbstractObject(abstractTimePrimitive);
-        this.writeComplexExtensionsScheduler(Names.TIME_PRIMITIVE,
-                abstractTimePrimitive.extensions().complexes(Names.TIME_PRIMITIVE));
-        this.writeSimpleExtensionsScheduler(Names.TIME_PRIMITIVE,
-                abstractTimePrimitive.extensions().simples(Names.TIME_PRIMITIVE));
+        this.writeStandardExtensionLevel(
+                abstractTimePrimitive.extensions(),
+                Names.TIME_PRIMITIVE);
     }
 
     /**
@@ -1075,10 +1068,9 @@ public class KmlWriter extends StaxStreamWriter {
             throws XMLStreamException, KmlException{
 
         this.writeCommonAbstractObject(abstractStyleSelector);
-        this.writeComplexExtensionsScheduler(Names.STYLE_SELECTOR,
-                abstractStyleSelector.extensions().complexes(Names.STYLE_SELECTOR));
-        this.writeSimpleExtensionsScheduler(Names.STYLE_SELECTOR,
-                abstractStyleSelector.extensions().simples(Names.STYLE_SELECTOR));
+        this.writeStandardExtensionLevel(
+                abstractStyleSelector.extensions(),
+                Names.STYLE_SELECTOR);
     }
 
     /**
@@ -1095,10 +1087,9 @@ public class KmlWriter extends StaxStreamWriter {
         for(Pair pair : styleMap.getPairs()){
             this.writePair(pair);
         }
-        this.writeComplexExtensionsScheduler(Names.STYLE_MAP,
-                styleMap.extensions().complexes(Names.STYLE_MAP));
-        this.writeSimpleExtensionsScheduler(Names.STYLE_MAP,
-                styleMap.extensions().simples(Names.STYLE_MAP));
+        this.writeStandardExtensionLevel(
+                styleMap.extensions(),
+                Names.STYLE_MAP);
         writer.writeEndElement();
     }
 
@@ -1120,10 +1111,9 @@ public class KmlWriter extends StaxStreamWriter {
             checkVersion(URI_KML_2_2);
             this.writeAbstractStyleSelector(pair.getAbstractStyleSelector());
         }
-        this.writeComplexExtensionsScheduler(Names.PAIR,
-                pair.extensions().complexes(Names.PAIR));
-        this.writeSimpleExtensionsScheduler(Names.PAIR,
-                pair.extensions().simples(Names.PAIR));
+        this.writeStandardExtensionLevel(
+                pair.extensions(),
+                Names.PAIR);
         writer.writeEndElement();
     }
 
@@ -1156,10 +1146,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (style.getListStyle() != null){
             this.writeListStyle(style.getListStyle());
         }
-        this.writeComplexExtensionsScheduler(Names.STYLE,
-                style.extensions().complexes(Names.STYLE));
-        this.writeSimpleExtensionsScheduler(Names.STYLE,
-                style.extensions().simples(Names.STYLE));
+        this.writeStandardExtensionLevel(
+                style.extensions(),
+                Names.STYLE);
         writer.writeEndElement();
     }
 
@@ -1186,10 +1175,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (iconStyle.getHotSpot() != null){
             this.writeHotSpot(iconStyle.getHotSpot());
         }
-        this.writeComplexExtensionsScheduler(Names.ICON_STYLE,
-                iconStyle.extensions().complexes(Names.ICON_STYLE));
-        this.writeSimpleExtensionsScheduler(Names.ICON_STYLE,
-                iconStyle.extensions().simples(Names.ICON_STYLE));
+        this.writeStandardExtensionLevel(
+                iconStyle.extensions(),
+                Names.ICON_STYLE);
         writer.writeEndElement();
     }
 
@@ -1207,10 +1195,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (KmlUtilities.isFiniteNumber(labelStyle.getScale())){
             this.writeScale(labelStyle.getScale());
         }
-        this.writeComplexExtensionsScheduler(Names.LABEL_STYLE,
-                labelStyle.extensions().complexes(Names.LABEL_STYLE));
-        this.writeSimpleExtensionsScheduler(Names.LABEL_STYLE,
-                labelStyle.extensions().simples(Names.LABEL_STYLE));
+        this.writeStandardExtensionLevel(
+                labelStyle.extensions(),
+                Names.LABEL_STYLE);
         writer.writeEndElement();
     }
 
@@ -1228,10 +1215,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (KmlUtilities.isFiniteNumber(lineStyle.getWidth())){
             this.writeWidth(lineStyle.getWidth());
         }
-        this.writeComplexExtensionsScheduler(Names.LINE_STYLE,
-                lineStyle.extensions().complexes(Names.LINE_STYLE));
-        this.writeSimpleExtensionsScheduler(Names.LINE_STYLE,
-                lineStyle.extensions().simples(Names.LINE_STYLE));
+        this.writeStandardExtensionLevel(
+                lineStyle.extensions(),
+                Names.LINE_STYLE);
         writer.writeEndElement();
     }
 
@@ -1248,10 +1234,9 @@ public class KmlWriter extends StaxStreamWriter {
         this.writeCommonAbstractColorStyle(polyStyle);
         this.writeFill(polyStyle.getFill());
         this.writeOutline(polyStyle.getOutline());
-        this.writeComplexExtensionsScheduler(Names.POLY_STYLE,
-                polyStyle.extensions().complexes(Names.POLY_STYLE));
-        this.writeSimpleExtensionsScheduler(Names.POLY_STYLE,
-                polyStyle.extensions().simples(Names.POLY_STYLE));
+        this.writeStandardExtensionLevel(
+                polyStyle.extensions(),
+                Names.POLY_STYLE);
         writer.writeEndElement();
     }
 
@@ -1279,10 +1264,9 @@ public class KmlWriter extends StaxStreamWriter {
                 && checkVersionSimple(URI_KML_2_2)){
             this.writeDisplayMode(balloonStyle.getDisplayMode());
         }
-        this.writeComplexExtensionsScheduler(Names.BALLOON_STYLE,
-                balloonStyle.extensions().complexes(Names.BALLOON_STYLE));
-        this.writeSimpleExtensionsScheduler(Names.BALLOON_STYLE,
-                balloonStyle.extensions().simples(Names.BALLOON_STYLE));
+        this.writeStandardExtensionLevel(
+                balloonStyle.extensions(),
+                Names.BALLOON_STYLE);
         writer.writeEndElement();
     }
 
@@ -1310,10 +1294,9 @@ public class KmlWriter extends StaxStreamWriter {
                 && checkVersionSimple(URI_KML_2_2)){
             this.writeMaxSnippetLines(listStyle.getMaxSnippetLines());
         }
-        this.writeComplexExtensionsScheduler(Names.LIST_STYLE,
-                listStyle.extensions().complexes(Names.LIST_STYLE));
-        this.writeSimpleExtensionsScheduler(Names.LIST_STYLE,
-                listStyle.extensions().simples(Names.LIST_STYLE));
+        this.writeStandardExtensionLevel(
+                listStyle.extensions(),
+                Names.LIST_STYLE);
         writer.writeEndElement();
     }
 
@@ -1334,10 +1317,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (itemIcon.getHref() != null){
             this.writeHref(itemIcon.getHref());
         }
-        this.writeComplexExtensionsScheduler(Names.ITEM_ICON,
-                itemIcon.extensions().complexes(Names.ITEM_ICON));
-        this.writeSimpleExtensionsScheduler(Names.ITEM_ICON,
-                itemIcon.extensions().simples(Names.ITEM_ICON));
+        this.writeStandardExtensionLevel(
+                itemIcon.extensions(),
+                Names.ITEM_ICON);
         writer.writeEndElement();
     }
 
@@ -1370,6 +1352,7 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private void writeIcon(BasicLink icon) 
             throws XMLStreamException, KmlException{
+
         writer.writeStartElement(URI_KML, TAG_ICON);
         if (icon.getIdAttributes() != null){
             this.writeIdAttributes(icon.getIdAttributes());
@@ -1381,10 +1364,10 @@ public class KmlWriter extends StaxStreamWriter {
         if (icon.getHref() != null){
             this.writeHref(icon.getHref());
         }
-        this.writeComplexExtensionsScheduler(Names.BASIC_LINK,
-                icon.extensions().complexes(Names.BASIC_LINK));
-        this.writeSimpleExtensionsScheduler(Names.BASIC_LINK,
-                icon.extensions().simples(Names.BASIC_LINK));
+
+        this.writeStandardExtensionLevel(
+                icon.extensions(),
+                Names.BASIC_LINK);
         writer.writeEndElement();
     }
 
@@ -1449,10 +1432,9 @@ public class KmlWriter extends StaxStreamWriter {
             this.writeHref(link.getHref());
         }
 
-        this.writeComplexExtensionsScheduler(Names.BASIC_LINK,
-                link.extensions().complexes(Names.BASIC_LINK));
-        this.writeSimpleExtensionsScheduler(Names.BASIC_LINK,
-                link.extensions().simples(Names.BASIC_LINK));
+        this.writeStandardExtensionLevel(
+                link.extensions(),
+                Names.BASIC_LINK);
 
         if (link.getRefreshMode() != null){
             this.writeRefreshMode(link.getRefreshMode());
@@ -1476,10 +1458,9 @@ public class KmlWriter extends StaxStreamWriter {
             this.writeHttpQuery(link.getHttpQuery());
         }
         
-        this.writeComplexExtensionsScheduler(Names.LINK,
-                link.extensions().complexes(Names.LINK));
-        this.writeSimpleExtensionsScheduler(Names.LINK,
-                link.extensions().simples(Names.LINK));
+        this.writeStandardExtensionLevel(
+                link.extensions(),
+                Names.LINK);
     }
 
     /**
@@ -1501,10 +1482,9 @@ public class KmlWriter extends StaxStreamWriter {
             this.writeColorMode(abstractColorStyle.getColorMode());
         }
 
-        this.writeComplexExtensionsScheduler(Names.COLOR_STYLE,
-                abstractColorStyle.extensions().complexes(Names.COLOR_STYLE));
-        this.writeSimpleExtensionsScheduler(Names.COLOR_STYLE,
-                abstractColorStyle.extensions().simples(Names.COLOR_STYLE));
+        this.writeStandardExtensionLevel(
+                abstractColorStyle.extensions(),
+                Names.COLOR_STYLE);
     }
 
     /**
@@ -1519,10 +1499,9 @@ public class KmlWriter extends StaxStreamWriter {
             throws XMLStreamException, KmlException{
 
         this.writeCommonAbstractObject(abstractSubStyle);
-        this.writeComplexExtensionsScheduler(Names.SUB_STYLE,
-                abstractSubStyle.extensions().complexes(Names.SUB_STYLE));
-        this.writeSimpleExtensionsScheduler(Names.SUB_STYLE,
-                abstractSubStyle.extensions().simples(Names.SUB_STYLE));
+        this.writeStandardExtensionLevel(
+                abstractSubStyle.extensions(),
+                Names.SUB_STYLE);
     }
 
     /**
@@ -1678,11 +1657,14 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     /**
-     * 
+     *
      * @param screenOverlay
      * @throws XMLStreamException
+     * @throws KmlException
      */
-    private void writeScreenOverlay(Feature screenOverlay) throws XMLStreamException, KmlException{
+    private void writeScreenOverlay(Feature screenOverlay) 
+            throws XMLStreamException, KmlException{
+
         writer.writeStartElement(URI_KML, TAG_SCREEN_OVERLAY);
         this.writeCommonAbstractOverlay(screenOverlay);
         if (screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_OVERLAYXY.getName()) != null){
@@ -1963,10 +1945,9 @@ public class KmlWriter extends StaxStreamWriter {
             throws XMLStreamException, KmlException{
 
         this.writeCommonAbstractObject(abstractGeometry);
-        if (abstractGeometry.extensions().simples(Names.GEOMETRY) != null){
-        }
-        if (abstractGeometry.extensions().complexes(Names.GEOMETRY) != null){
-        }
+        this.writeStandardExtensionLevel(
+                abstractGeometry.extensions(),
+                Names.GEOMETRY);
     }
 
     /**
@@ -1999,10 +1980,9 @@ public class KmlWriter extends StaxStreamWriter {
             checkVersion(URI_KML_2_2);
             this.writeResourceMap(model.getRessourceMap());
         }
-        if (model.extensions().simples(Names.MODEL) != null){
-        }
-        if (model.extensions().complexes(Names.MODEL) != null){
-        }
+        this.writeStandardExtensionLevel(
+                model.extensions(),
+                Names.MODEL);
         writer.writeEndElement();
     }
 
@@ -2026,6 +2006,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (KmlUtilities.isFiniteNumber(location.getAltitude())){
             this.writeAltitude(location.getAltitude());
         }
+        this.writeStandardExtensionLevel(
+                location.extensions(),
+                Names.LOCATION);
         writer.writeEndElement();
     }
 
@@ -2049,6 +2032,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (KmlUtilities.isFiniteNumber(orientation.getRoll())){
             this.writeRoll(orientation.getRoll());
         }
+        this.writeStandardExtensionLevel(
+                orientation.extensions(),
+                Names.ORIENTATION);
         writer.writeEndElement();
     }
 
@@ -2056,8 +2042,11 @@ public class KmlWriter extends StaxStreamWriter {
      * 
      * @param scale
      * @throws XMLStreamException
+     * @throws KmlException
      */
-    private void writeScale(Scale scale) throws XMLStreamException{
+    private void writeScale(Scale scale) 
+            throws XMLStreamException, KmlException{
+
         writer.writeStartElement(URI_KML, TAG_SCALE_BIG);
         if (KmlUtilities.isFiniteNumber(scale.getX())){
             this.writeX(scale.getX());
@@ -2068,6 +2057,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (KmlUtilities.isFiniteNumber(scale.getZ())){
             this.writeZ(scale.getZ());
         }
+        this.writeStandardExtensionLevel(
+                scale.extensions(),
+                Names.SCALE);
         writer.writeEndElement();
     }
 
@@ -2085,6 +2077,9 @@ public class KmlWriter extends StaxStreamWriter {
         for (Alias alias : resourceMap.getAliases()){
             this.writeAlias(alias);
         }
+        this.writeStandardExtensionLevel(
+                resourceMap.extensions(),
+                Names.RESOURCE_MAP);
         writer.writeEndElement();
     }
 
@@ -2105,6 +2100,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (alias.getSourceHref() != null){
             this.writeSourceHref(alias.getSourceHref());
         }
+        this.writeStandardExtensionLevel(
+                alias.extensions(),
+                Names.ALIAS);
         writer.writeEndElement();
     }
 
@@ -2130,10 +2128,9 @@ public class KmlWriter extends StaxStreamWriter {
         for(Boundary innerBoundaryIs : polygon.getInnerBoundaries()){
             this.writeInnerBoundaryIs(innerBoundaryIs);
         }
-        if (polygon.extensions().simples(Names.POLYGON) != null){
-        }
-        if (polygon.extensions().complexes(Names.POLYGON) != null){
-        }
+        this.writeStandardExtensionLevel(
+                polygon.extensions(),
+                Names.POLYGON);
         writer.writeEndElement();
     }
 
@@ -2177,10 +2174,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (boundary.getLinearRing() != null){
             this.writeLinearRing(boundary.getLinearRing());
         }
-        if (boundary.extensions().simples(Names.BOUNDARY) != null){
-        }
-        if (boundary.extensions().complexes(Names.BOUNDARY) != null){
-        }
+        this.writeStandardExtensionLevel(
+                boundary.extensions(),
+                Names.BOUNDARY);
     }
 
     /**
@@ -2202,10 +2198,9 @@ public class KmlWriter extends StaxStreamWriter {
 
         this.writeCoordinates(lineString.getCoordinateSequence());
 
-        if (lineString.extensions().simples(Names.LINE_STRING) != null){
-        }
-        if (lineString.extensions().complexes(Names.LINE_STRING) != null){
-        }
+        this.writeStandardExtensionLevel(
+                lineString.extensions(),
+                Names.LINE_STRING);
         writer.writeEndElement();
     }
 
@@ -2226,10 +2221,9 @@ public class KmlWriter extends StaxStreamWriter {
             this.writeAltitudeMode(linearRing.getAltitudeMode());
         }
         this.writeCoordinates(linearRing.getCoordinateSequence());
-        if (linearRing.extensions().simples(Names.LINEAR_RING) != null){
-        }
-        if (linearRing.extensions().complexes(Names.LINEAR_RING) != null){
-        }
+        this.writeStandardExtensionLevel(
+                linearRing.extensions(),
+                Names.LINEAR_RING);
         writer.writeEndElement();
     }
 
@@ -2246,10 +2240,9 @@ public class KmlWriter extends StaxStreamWriter {
         for (AbstractGeometry abstractGeometry : multiGeometry.getGeometries()){
             this.writeAbstractGeometry(abstractGeometry);
         }
-        if (multiGeometry.extensions().simples(Names.MULTI_GEOMETRY) != null){
-        }
-        if (multiGeometry.extensions().complexes(Names.MULTI_GEOMETRY) != null){
-        }
+        this.writeStandardExtensionLevel(
+                multiGeometry.extensions(),
+                Names.MULTI_GEOMETRY);
         writer.writeEndElement();
     }
 
@@ -2270,10 +2263,9 @@ public class KmlWriter extends StaxStreamWriter {
         if (point.getCoordinateSequence() != null){
             this.writeCoordinates(point.getCoordinateSequence());
         }
-        if (point.extensions().simples(Names.POINT) != null){
-        }
-        if (point.extensions().complexes(Names.POINT) != null){
-        }
+        this.writeStandardExtensionLevel(
+                point.extensions(),
+                Names.POINT);
         writer.writeEndElement();
     }
 
@@ -2774,7 +2766,7 @@ public class KmlWriter extends StaxStreamWriter {
                 writer.writeStartElement(URI_KML, TAG_ALTITUDE_MODE);
                 writer.writeCharacters(altitudeMode.getAltitudeMode());
                 writer.writeEndElement();
-            } else if (altitudeMode instanceof AltitudeMode){
+            } else {
                 for(StaxStreamWriter candidate : this.extensionWriters){
                     if(((KmlExtensionWriter) candidate).canHandleComplex(null, altitudeMode)){
                         ((KmlExtensionWriter) candidate).writeComplexExtensionElement(altitudeMode);
@@ -3501,7 +3493,6 @@ public class KmlWriter extends StaxStreamWriter {
             throws KmlException, XMLStreamException{
         for(Object object : objectExtensions){
             for(StaxStreamWriter candidate : this.extensionWriters){
-                System.out.println("SALUT");
                 if(((KmlExtensionWriter) candidate).canHandleComplex(ext, object)){
                     ((KmlExtensionWriter) candidate).writeComplexExtensionElement(object);
                 }

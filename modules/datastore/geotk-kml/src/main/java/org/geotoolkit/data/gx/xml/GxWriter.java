@@ -464,7 +464,7 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
         List<Names> timeStampContainers = new ArrayList<Names>();
         timeStampContainers.add(Names.VIEW);
 
-        complexTable.put(GxModelConstants.TYPE_TOUR, tourContainersList);
+        complexTable.put(GxModelConstants.TYPE_TOUR, EMPTY_LIST);
         complexTable.put(TimeSpan.class, timeSpanContainers);
         complexTable.put(TimeStamp.class, timeStampContainers);
         complexTable.put(LatLonQuad.class, latLonQuadContainersList);
