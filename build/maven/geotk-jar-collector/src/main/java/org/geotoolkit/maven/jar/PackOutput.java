@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.Enumeration;
 import java.util.jar.*;
 import java.io.File;
 import java.io.Closeable;
@@ -36,11 +37,16 @@ import static java.util.jar.Pack200.Packer.*;
  * A JAR file to be created for output by {@link Packer}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.14
  *
  * @since 3.00
  */
 final class PackOutput implements Closeable {
+    /**
+     * The extension of class files in a JAR file.
+     */
+    private static final String CLASS = ".class";
+
     /**
      * The packer that created this object. Will be used in order to fetch
      * additional informations like the version to declare in the pom.xml file.
@@ -163,7 +169,7 @@ final class PackOutput implements Closeable {
     void open(final File file) throws IOException {
         this.file = file;
         final Manifest manifest = new Manifest();
-        final Attributes attributes = manifest.getMainAttributes();
+        Attributes attributes = manifest.getMainAttributes();
         attributes.put(Attributes.Name.MANIFEST_VERSION,       "1.0");
         attributes.put(Attributes.Name.SPECIFICATION_TITLE,    "Geotoolkit.org");
         attributes.put(Attributes.Name.SPECIFICATION_VENDOR,   "Geotoolkit.org");
@@ -178,8 +184,69 @@ final class PackOutput implements Closeable {
         if (splashScreen != null) {
             attributes.put(PackInput.SPLASH_SCREEN, splashScreen);
         }
+        /*
+         * Add the manifest of every dependencies.
+         */
+        for (final File input : inputs) {
+            if (!input.getName().startsWith("geotk-")) {
+                String packageName = null;
+                final JarFile jar = new JarFile(input, false);
+                final Enumeration<JarEntry> entries = jar.entries();
+                while (entries.hasMoreElements()) {
+                    final JarEntry entry = entries.nextElement();
+                    final String classname = entry.getName();
+                    if (classname.endsWith(CLASS)) {
+                        int length = classname.length() - CLASS.length();
+                        if (packageName == null) {
+                            packageName = classname.substring(0, length);
+                        } else {
+                            length = Math.min(packageName.length(), length);
+                            int i=0; for (i=0; i<length; i++) {
+                                if (packageName.charAt(i) != classname.charAt(i)) {
+                                    break;
+                                }
+                            }
+                            i = packageName.lastIndexOf('/', i) + 1;
+                            packageName = packageName.substring(0, i);
+                        }
+                    }
+                }
+                if (packageName != null && packageName.length() != 0) {
+                    packageName = packageName.substring(0, packageName.length()-1).replace('/', '.');
+                    final Attributes src = jar.getManifest().getMainAttributes();
+                    attributes = new Attributes();
+                    if (copy(src, attributes, Attributes.Name.SPECIFICATION_TITLE)    |
+                        copy(src, attributes, Attributes.Name.SPECIFICATION_VENDOR)   |
+                        copy(src, attributes, Attributes.Name.SPECIFICATION_VERSION)  |
+                        copy(src, attributes, Attributes.Name.IMPLEMENTATION_TITLE)   |
+                        copy(src, attributes, Attributes.Name.IMPLEMENTATION_VENDOR)  |
+                        copy(src, attributes, Attributes.Name.IMPLEMENTATION_VERSION) |
+                        copy(src, attributes, Attributes.Name.IMPLEMENTATION_URL))
+                    {
+                        manifest.getEntries().put(packageName, attributes);
+                    }
+                }
+                jar.close();
+            }
+        }
+        /*
+         * Open the output stream for the big JAR file.
+         */
         out = new JarOutputStream(new FileOutputStream(file), manifest);
         out.setLevel(1); // Use a cheap compression level since this JAR file is temporary.
+    }
+
+    /**
+     * Copies the value of the given attribute from a source {@code Attributes} to a target
+     * {@code Attributes} object.
+     */
+    private static boolean copy(final Attributes src, final Attributes dst, final Attributes.Name name) {
+        String value = (String) src.get(name);
+        if (value != null && ((value = value.trim()).length()) != 0) {
+            dst.put(name, value);
+            return true;
+        }
+        return false;
     }
 
     /**
