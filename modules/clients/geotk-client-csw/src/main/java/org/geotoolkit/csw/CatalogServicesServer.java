@@ -49,7 +49,7 @@ public class CatalogServicesServer implements Server {
         if (version.equals("2.0.2")){
             this.version = CSWVersion.v202;
         } else {
-            throw new IllegalArgumentException("unkonwed version : "+ version);
+            throw new IllegalArgumentException("unknown version : "+ version);
         }
         this.serverURL = serverURL;
     }

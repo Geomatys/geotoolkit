@@ -94,7 +94,7 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
         Marshaller marsh = null;
         try {
             marsh = POOL.acquireMarshaller();
-            final GetCapabilitiesType getCapsXml = new GetCapabilitiesType(version);
+            final GetCapabilitiesType getCapsXml = new GetCapabilitiesType("CSW");
             marsh.marshal(getCapsXml, stream);
         } catch (JAXBException ex) {
             throw new IOException(ex);
