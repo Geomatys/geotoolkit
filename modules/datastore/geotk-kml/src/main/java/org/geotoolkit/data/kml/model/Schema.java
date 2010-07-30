@@ -44,47 +44,47 @@ public interface Schema {
      *
      * @return
      */
-    public List<SimpleField> getSimpleFields();
+    List<SimpleField> getSimpleFields();
 
     /**
      *
      * @return
      */
-    public String getName();
+    String getName();
 
     /**
      * 
      * @return
      */
-    public String getId();
+    String getId();
 
     /**
      *
      * @return
      */
-    public List<Object> getSchemaExtensions();
+    List<Object> getSchemaExtensions();
 
     /**
      *
      * @param simpleFields
      */
-    public void setSimpleFields(List<SimpleField> simpleFields);
+    void setSimpleFields(List<SimpleField> simpleFields);
 
     /**
      *
      * @param name
      */
-    public void setName(String name);
+    void setName(String name);
 
     /**
      *
      * @param id
      */
-    public void setId(String id);
+    void setId(String id);
 
     /**
      * 
      * @param schemaExtensions
      */
-    public void setSchemaExtensions(List<Object> schemaExtensions);
+    void setSchemaExtensions(List<Object> schemaExtensions);
 }

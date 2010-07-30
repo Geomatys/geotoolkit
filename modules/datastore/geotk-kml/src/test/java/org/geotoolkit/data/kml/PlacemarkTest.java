@@ -17,6 +17,7 @@
 package org.geotoolkit.data.kml;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -25,7 +26,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.AbstractView;
-import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.model.KmlModelConstants;
@@ -103,7 +103,7 @@ public class PlacemarkTest {
         final AbstractGeometry geometry = (AbstractGeometry) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
         assertTrue(geometry instanceof Point);
         Point point = (Point) geometry;
-        final Coordinates coordinates = point.getCoordinateSequence();
+        final CoordinateSequence coordinates = point.getCoordinateSequence();
         assertEquals(1, coordinates.size());
         Coordinate coordinate = coordinates.getCoordinate(0);
         assertEquals(-90.86948943473118, coordinate.x, DELTA);
@@ -116,7 +116,7 @@ public class PlacemarkTest {
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Coordinate coordinate = kmlFactory.createCoordinate(-90.86948943473118, 48.25450093195546, 0);
-        final Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate));
+        final CoordinateSequence coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate));
         final Point point = kmlFactory.createPoint(coordinates);
 
         final LookAt lookAt = kmlFactory.createLookAt();

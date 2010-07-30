@@ -53,126 +53,126 @@ public interface NetworkLinkControl {
      *
      * @return
      */
-    public double getMinRefreshPeriod();
+    double getMinRefreshPeriod();
 
     /**
      *
      * @return
      */
-    public double getMaxSessionLength();
+    double getMaxSessionLength();
 
     /**
      *
      * @return
      */
-    public String getCookie();
+    String getCookie();
 
     /**
      *
      * @return
      */
-    public String getMessage();
+    String getMessage();
 
     /**
      *
      * @return
      */
-    public String getLinkName();
+    String getLinkName();
 
     /**
      *
      * @return
      */
-    public Object getLinkDescription();
+    Object getLinkDescription();
 
     /**
      *
      * @return
      */
-    public Snippet getLinkSnippet();
+    Snippet getLinkSnippet();
 
     /**
      *
      * @return
      */
-    public Calendar getExpires();
+    Calendar getExpires();
 
     /**
      *
      * @return
      */
-    public Update getUpdate();
+    Update getUpdate();
 
     /**
      *
      * @return
      */
-    public AbstractView getView();
+    AbstractView getView();
 
     /**
      *
      * @param minRefreshPeriod
      */
-    public void setMinRefreshPeriod(double minRefreshPeriod);
+    void setMinRefreshPeriod(double minRefreshPeriod);
 
     /**
      *
      * @param maxSessionLength
      */
-    public void setMaxSessionLength(double maxSessionLength);
+    void setMaxSessionLength(double maxSessionLength);
 
     /**
      *
      * @param cookie
      */
-    public void setCookie(String cookie);
+    void setCookie(String cookie);
 
     /**
      *
      * @param message
      */
-    public void setMessage(String message);
+    void setMessage(String message);
 
     /**
      *
      * @param linkName
      */
-    public void setLinkName(String linkName);
+    void setLinkName(String linkName);
 
     /**
      *
      * @param linkDescription
      */
-    public void setLinkDescription(Object linkDescription);
+    void setLinkDescription(Object linkDescription);
 
     /**
      *
      * @param linkSnippet
      */
-    public void setLinkSnippet(Snippet linkSnippet);
+    void setLinkSnippet(Snippet linkSnippet);
 
     /**
      *
      * @param expires
      */
-    public void setExpires(Calendar expires);
+    void setExpires(Calendar expires);
 
     /**
      *
      * @param update
      */
-    public void setUpdate(Update update);
+    void setUpdate(Update update);
 
     /**
      *
      * @param abstractView
      */
-    public void setView(AbstractView abstractView);
+    void setView(AbstractView abstractView);
 
     /**
      * 
      * @return
      */
-    public Extensions extensions();
+    Extensions extensions();
 
 }

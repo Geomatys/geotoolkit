@@ -17,6 +17,7 @@
 package org.geotoolkit.data.gx;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -41,7 +42,6 @@ import org.geotoolkit.data.kml.KmlFactory;
 import org.geotoolkit.data.kml.model.BasicLink;
 import org.geotoolkit.data.kml.model.Camera;
 import org.geotoolkit.data.kml.model.Change;
-import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.IconStyle;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Kml;
@@ -146,7 +146,7 @@ public class AnimatedUpdateTest {
             assertTrue(placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
 
             Point point = (Point) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
-            Coordinates coordinates = point.getCoordinateSequence();
+            CoordinateSequence coordinates = point.getCoordinateSequence();
             assertEquals(1, coordinates.size());
             Coordinate coordinate = coordinates.getCoordinate(0);
             assertEquals(170.1435558771009, coordinate.x, DELTA);
@@ -255,7 +255,7 @@ public class AnimatedUpdateTest {
         tourProperties.add(FF.createAttribute(playList, GxModelConstants.ATT_TOUR_PLAY_LIST, null));
 
         final Coordinate coordinate = kmlFactory.createCoordinate("170.1435558771009,-43.60505741890396,0.0");
-        final Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate));
+        final CoordinateSequence coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate));
         final Point point = kmlFactory.createPoint(coordinates);
         final Feature placemark = kmlFactory.createPlacemark();
         Collection<Property> placemarkProperties = placemark.getProperties();

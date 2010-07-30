@@ -37,12 +37,12 @@ public interface Snippet {
      *
      * @return
      */
-    public int getMaxLines();
+    int getMaxLines();
 
     /**
      *
      * @return
      */
-    public Object getContent();
+    Object getContent();
 
 }

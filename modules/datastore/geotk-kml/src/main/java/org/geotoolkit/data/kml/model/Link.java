@@ -50,95 +50,95 @@ public interface Link extends AbstractObject {
      *
      * @return
      */
-    public String getHref();
+    String getHref();
 
     /**
      *
      * @return
      */
-    public RefreshMode getRefreshMode();
+    RefreshMode getRefreshMode();
 
     /**
      *
      * @return
      */
-    public double getRefreshInterval();
+    double getRefreshInterval();
 
     /**
      *
      * @return
      */
-    public ViewRefreshMode getViewRefreshMode();
+    ViewRefreshMode getViewRefreshMode();
 
     /**
      *
      * @return
      */
-    public double getViewRefreshTime();
+    double getViewRefreshTime();
 
     /**
      *
      * @return
      */
-    public double getViewBoundScale();
+    double getViewBoundScale();
 
     /**
      *
      * @return
      */
-    public String getViewFormat();
+    String getViewFormat();
 
     /**
      *
      * @return
      */
-    public String getHttpQuery();
+    String getHttpQuery();
 
     /**
      *
      * @param href
      */
-    public void setHref(String href);
+    void setHref(String href);
 
     /**
      *
      * @param refreshMode
      */
-    public void setRefreshMode(RefreshMode refreshMode);
+    void setRefreshMode(RefreshMode refreshMode);
 
     /**
      *
      * @param refreshInterval
      */
-    public void setRefreshInterval(double refreshInterval);
+    void setRefreshInterval(double refreshInterval);
 
     /**
      *
      * @param viewRefreshMode
      */
-    public void setViewRefreshMode(ViewRefreshMode viewRefreshMode);
+    void setViewRefreshMode(ViewRefreshMode viewRefreshMode);
 
     /**
      *
      * @param viewRefreshTime
      */
-    public void setViewRefreshTime(double viewRefreshTime);
+    void setViewRefreshTime(double viewRefreshTime);
 
     /**
      *
      * @return
      */
-    public void setViewBoundScale(double viewBoundScale);
+    void setViewBoundScale(double viewBoundScale);
 
     /**
      *
      * @param viewFormat
      */
-    public void setViewFormat(String viewFormat);
+    void setViewFormat(String viewFormat);
 
     /**
      *
      * @param httpQuery
      */
-    public void setHttpQuery(String httpQuery);
+    void setHttpQuery(String httpQuery);
 }

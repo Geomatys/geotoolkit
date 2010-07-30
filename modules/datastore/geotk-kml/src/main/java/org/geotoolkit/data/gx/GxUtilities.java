@@ -16,10 +16,49 @@
  */
 package org.geotoolkit.data.gx;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import org.geotoolkit.data.gx.model.Angles;
+
 /**
  *
  * @author Samuel Andrés
  */
 public class GxUtilities {
 
+    public static Coordinate toCoordinate(String coordinates){
+        final String[] coordinatesList = coordinates.split(" ");
+        final Coordinate c = new Coordinate();
+
+        c.x = Double.valueOf(coordinatesList[0].trim());
+        c.y = Double.valueOf(coordinatesList[1].trim());
+        if(coordinatesList.length == 3){
+            c.z = Double.valueOf(coordinatesList[2].trim());
+        }
+
+        return c;
+    }
+
+    public static String toString(Coordinate coordinate) {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(coordinate.x);
+        sb.append(' ');
+        sb.append(coordinate.y);
+        if(!Double.isNaN(coordinate.z)) {
+            sb.append(' ');
+            sb.append(coordinate.z);
+        }
+        return sb.toString();
+    }
+
+    public static String toString(Angles angles) {
+        final StringBuilder sb = new StringBuilder();
+        sb.append(angles.getHeading());
+        sb.append(' ');
+        sb.append(angles.getTilt());
+        if(!Double.isNaN(angles.getRoll())) {
+            sb.append(' ');
+            sb.append(angles.getRoll());
+        }
+        return sb.toString();
+    }
 }

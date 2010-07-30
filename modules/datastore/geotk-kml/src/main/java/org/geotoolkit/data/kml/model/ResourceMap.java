@@ -48,12 +48,12 @@ public interface ResourceMap extends AbstractObject {
      *
      * @return
      */
-    public List<Alias> getAliases();
+    List<Alias> getAliases();
 
     /**
      *
      * @param aliases
      */
-    public void setAliases(List<Alias> aliases);
+    void setAliases(List<Alias> aliases);
 
 }

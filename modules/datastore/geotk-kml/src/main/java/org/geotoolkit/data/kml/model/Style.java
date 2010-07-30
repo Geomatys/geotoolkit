@@ -51,72 +51,72 @@ public interface Style extends AbstractStyleSelector {
      *
      * @return
      */
-    public IconStyle getIconStyle();
+    IconStyle getIconStyle();
 
     /**
      *
      * @return
      */
-    public LabelStyle getLabelStyle();
+    LabelStyle getLabelStyle();
 
     /**
      *
      * @return
      */
-    public LineStyle getLineStyle();
+    LineStyle getLineStyle();
 
     /**
      *
      * @return
      */
-    public PolyStyle getPolyStyle();
+    PolyStyle getPolyStyle();
 
     /**
      *
      * @return
      */
-    public BalloonStyle getBalloonStyle();
+    BalloonStyle getBalloonStyle();
 
     /**
      *
      * @return
      */
-    public ListStyle getListStyle();
+    ListStyle getListStyle();
     
     /**
      *
      * @param iconStyle
      */
-    public void setIconStyle(IconStyle iconStyle);
+    void setIconStyle(IconStyle iconStyle);
 
     /**
      *
      * @param labelStyle
      */
-    public void setLabelStyle(LabelStyle labelStyle);
+    void setLabelStyle(LabelStyle labelStyle);
 
     /**
      *
      * @param lineStyle
      */
-    public void setLineStyle(LineStyle lineStyle);
+    void setLineStyle(LineStyle lineStyle);
 
     /**
      *
      * @param polyStyle
      */
-    public void setPolyStyle(PolyStyle polyStyle);
+    void setPolyStyle(PolyStyle polyStyle);
 
     /**
      *
      * @param baloonStyle
      */
-    public void setBalloonStyle(BalloonStyle baloonStyle);
+    void setBalloonStyle(BalloonStyle baloonStyle);
 
     /**
      *
      * @param listStyle
      */
-    public void setListStyle(ListStyle listStyle);
+    void setListStyle(ListStyle listStyle);
 
 }

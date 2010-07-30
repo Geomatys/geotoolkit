@@ -14,20 +14,48 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.kml.model;
-
-import com.vividsolutions.jts.geom.CoordinateSequence;
+package org.geotoolkit.data.gx.model;
 
 /**
  *
- * <pre>
- * &lt;simpleType name="coordinatesType">
- *  &lt;list itemType="string"/>
- * &lt;/simpleType>
- * </pre>
- *
  * @author Samuel Andrés
  */
-public interface Coordinates extends CoordinateSequence {
+public interface Angles {
+
+    /**
+     *
+     * @return
+     */
+    double getHeading();
+
+    /**
+     *
+     * @return
+     */
+    double getTilt();
+
+    /**
+     *
+     * @return
+     */
+    double getRoll();
+
+    /**
+     *
+     * @param heading
+     */
+    void setHeading(double heading);
+
+    /**
+     *
+     * @param tilt
+     */
+    void setTilt(double tilt);
+
+    /**
+     * 
+     * @param setRoll
+     */
+    void setRoll(double roll);
 
 }

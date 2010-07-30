@@ -48,36 +48,36 @@ public interface Location extends AbstractObject {
      *
      * @return
      */
-    public double getLongitude();
+    double getLongitude();
 
     /**
      *
      * @return
      */
-    public double getLatitude();
+    double getLatitude();
 
     /**
      *
      * @return
      */
-    public double getAltitude();
+    double getAltitude();
 
     /**
      *
      * @param longitude
      */
-    public void setLongitude(double longitude);
+    void setLongitude(double longitude);
 
     /**
      *
      * @param latitude
      */
-    public void setLatitude(double latitude);
+    void setLatitude(double latitude);
 
     /**
      *
      * @param altitude
      */
-    public void setAltitude(double altitude);
+    void setAltitude(double altitude);
 
 }

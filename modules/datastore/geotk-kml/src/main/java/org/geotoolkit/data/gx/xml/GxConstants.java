@@ -35,6 +35,8 @@ public class GxConstants {
     public static final String PREFIX_XSI = "xsi";
 
     public static final String TAG_ALTITUDE_MODE = "altitudeMode";
+    public static final String TAG_ANGLES = "angles";
+    public static final String TAG_COORD = "coord";
     public static final String TAG_FLY_TO_MODE = "flyToMode";
     public static final String TAG_PLAY_MODE = "playMode";
     public static final String TAG_ABSTRACT_TOUR_PRIMITIVE = "AbstractTourPrimitive";
@@ -48,6 +50,7 @@ public class GxConstants {
     public static final String TAG_TIME_STAMP = "TimeStamp";
     public static final String TAG_TIME_SPAN = "TimeSpan";
     public static final String TAG_TOUR_CONTROL = "TourControl";
+    public static final String TAG_TRACK = "Track";
     public static final String TAG_WAIT = "Wait";
     public static final String TAG_LAT_LON_QUAD = "LatLonQuad";
 

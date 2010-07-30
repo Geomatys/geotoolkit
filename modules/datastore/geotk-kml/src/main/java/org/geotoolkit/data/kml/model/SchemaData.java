@@ -48,36 +48,36 @@ public interface SchemaData extends AbstractObject {
      *
      * @return
      */
-    public URI getSchemaURL();
+    URI getSchemaURL();
 
     /**
      *
      * @return the list of SimpleData simple extensions.
      */
-    public List<SimpleData> getSimpleDatas();
+    List<SimpleData> getSimpleDatas();
 
     /**
      *
      * @return the list of SimpleData object extensions.
      */
-    public List<Object> getSchemaDataExtensions();
+    List<Object> getSchemaDataExtensions();
 
     /**
      *
      * @return
      */
-    public void setSchemaURL(URI schemaURL);
+    void setSchemaURL(URI schemaURL);
 
     /**
      *
      * @return the list of SimpleData simple extensions.
      */
-    public void setSimpleDatas(List<SimpleData> simpleDatas);
+    void setSimpleDatas(List<SimpleData> simpleDatas);
 
     /**
      *
      * @return the list of SimpleData object extensions.
      */
-    public void setSchemaDataExtensions(List<Object> schemaDataExtensions);
+    void setSchemaDataExtensions(List<Object> schemaDataExtensions);
 
 }

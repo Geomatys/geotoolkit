@@ -49,48 +49,48 @@ public interface IconStyle extends AbstractColorStyle {
      *
      * @return
      */
-    public double getScale();
+    double getScale();
 
     /**
      *
      * @return
      */
-    public double getHeading();
+    double getHeading();
     
     /**
      * 
      * @return
      */
-    public BasicLink getIcon();
+    BasicLink getIcon();
 
     /**
      * 
      * @return
      */
-    public Vec2 getHotSpot();
+    Vec2 getHotSpot();
 
     /**
      *
      * @param scale
      */
-    public void setScale(double scale);
+    void setScale(double scale);
 
     /**
      *
      * @param heading
      */
-    public void setHeading(double heading);
+    void setHeading(double heading);
 
     /**
      *
      * @param icon
      */
-    public void setIcon(BasicLink icon);
+    void setIcon(BasicLink icon);
 
     /**
      *
      * @param hotSpot
      */
-    public void setHotSpot(Vec2 hotSpot);
+    void setHotSpot(Vec2 hotSpot);
 
 }

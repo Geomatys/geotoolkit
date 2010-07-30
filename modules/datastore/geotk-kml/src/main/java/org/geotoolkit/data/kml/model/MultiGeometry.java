@@ -48,12 +48,12 @@ public interface MultiGeometry extends AbstractGeometry {
      *
      * @return
      */
-    public List<AbstractGeometry> getGeometries();
+    List<AbstractGeometry> getGeometries();
 
     /**
      *
      * @param geometries
      */
-    public void setGeometries(List<AbstractGeometry> geometries);
+    void setGeometries(List<AbstractGeometry> geometries);
 
 }

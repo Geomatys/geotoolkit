@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.data.kml.model;
 
+import com.vividsolutions.jts.geom.CoordinateSequence;
+
 /**
  * <p>This interface maps LinearRing element.</p>
  *
@@ -49,42 +51,42 @@ public interface LinearRing extends AbstractGeometry {
      *
      * @return
      */
-    Coordinates getCoordinateSequence();
+    CoordinateSequence getCoordinateSequence();
     
     /**
      *
      * @return
      */
-    public boolean getExtrude();
+    boolean getExtrude();
 
     /**
      *
      * @return
      */
-    public boolean getTessellate();
+    boolean getTessellate();
 
     /**
      *
      * @return
      */
-    public AltitudeMode getAltitudeMode();
+    AltitudeMode getAltitudeMode();
 
     /**
      * 
      * @param extrude
      */
-    public void setExtrude(boolean extrude);
+    void setExtrude(boolean extrude);
 
     /**
      *
      * @param tesselate
      */
-    public void setTessellate(boolean tesselate);
+    void setTessellate(boolean tesselate);
 
     /**
      *
      * @param altitudeMode
      */
-    public void setAltitudeMode(AltitudeMode altitudeMode);
+    void setAltitudeMode(AltitudeMode altitudeMode);
 
 }

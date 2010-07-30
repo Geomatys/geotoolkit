@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.data.kml.model;
 
+import com.vividsolutions.jts.geom.CoordinateSequence;
+
 /**
  * <p>This interface maps Point element.</p>
  *
@@ -53,29 +55,29 @@ public interface Point extends AbstractGeometry{
      *
      * @return
      */
-    Coordinates getCoordinateSequence();
+    CoordinateSequence getCoordinateSequence();
 
     /**
      *
      * @return
      */
-    public boolean getExtrude();
+    boolean getExtrude();
 
     /**
      *
      * @return
      */
-    public AltitudeMode getAltitudeMode();
+    AltitudeMode getAltitudeMode();
 
     /**
      *
      * @param extrude
      */
-    public void setExtrude(boolean extrude);
+    void setExtrude(boolean extrude);
 
     /**
      *
      * @param altitudeMode
      */
-    public void setAltitudeMode(AltitudeMode altitudeMode);
+    void setAltitudeMode(AltitudeMode altitudeMode);
 }

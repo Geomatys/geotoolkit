@@ -17,6 +17,7 @@
 package org.geotoolkit.data.kml;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +28,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
@@ -123,7 +123,7 @@ public class LineStyleTest {
             LineString lineString = (LineString) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
             assertTrue(lineString.getExtrude());
             assertTrue(lineString.getTessellate());
-            Coordinates coordinates = lineString.getCoordinateSequence();
+            CoordinateSequence coordinates = lineString.getCoordinateSequence();
             assertEquals(2, coordinates.size());
             Coordinate coordinate0 = coordinates.getCoordinate(0);
             assertEquals(-122.364383, coordinate0.x, DELTA);
@@ -143,7 +143,7 @@ public class LineStyleTest {
 
         final Coordinate coordinate0 = kmlFactory.createCoordinate(-122.364383, 37.824664, 0);
         final Coordinate coordinate1 = kmlFactory.createCoordinate(-122.364152, 37.824322, 0);
-        final Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate0, coordinate1));
+        final CoordinateSequence coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate0, coordinate1));
         final LineString lineString = kmlFactory.createLineString(coordinates);
         lineString.setTessellate(true);
         lineString.setExtrude(true);

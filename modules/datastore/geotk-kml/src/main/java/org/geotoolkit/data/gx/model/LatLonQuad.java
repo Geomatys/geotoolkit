@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.data.gx.model;
 
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import org.geotoolkit.data.kml.model.AbstractObject;
-import org.geotoolkit.data.kml.model.Coordinates;
 
 /**
  * <p>This interface maps LatLonQuad element.</p>
@@ -44,11 +44,11 @@ public interface LatLonQuad extends AbstractObject {
      *
      * @return
      */
-    Coordinates getCoordinates();
+    CoordinateSequence getCoordinates();
 
     /**
      * 
      * @param coordinates
      */
-    void setCoordinates(Coordinates coordinates);
+    void setCoordinates(CoordinateSequence coordinates);
 }

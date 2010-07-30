@@ -17,6 +17,7 @@
 package org.geotoolkit.data.kml;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -28,7 +29,6 @@ import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
-import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
@@ -120,7 +120,7 @@ public class DocumentTest {
             AbstractGeometry abstractGeometry0 = (AbstractGeometry) placemark0.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
             assertTrue(abstractGeometry0 instanceof Point);
             Point point0 = (Point) abstractGeometry0;
-            Coordinates coordinates0 = point0.getCoordinateSequence();
+            CoordinateSequence coordinates0 = point0.getCoordinateSequence();
             assertEquals(1, coordinates0.size());
             Coordinate coordinate00 = coordinates0.getCoordinate(0);
             assertEquals(-122.371, coordinate00.x, DELTA);
@@ -139,7 +139,7 @@ public class DocumentTest {
             AbstractGeometry abstractGeometry1 = (AbstractGeometry) placemark1.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
             assertTrue(abstractGeometry1 instanceof Point);
             Point point1 = (Point) abstractGeometry1;
-            Coordinates coordinates1 = point1.getCoordinateSequence();
+            CoordinateSequence coordinates1 = point1.getCoordinateSequence();
             assertEquals(1, coordinates1.size());
             Coordinate coordinate10 = coordinates1.getCoordinate(0);
             assertEquals(-122.370, coordinate10.x, DELTA);
@@ -157,7 +157,7 @@ public class DocumentTest {
         final double latitude00 = 37.816;
         final double altitude00 = 0;
         final Coordinate coordinate00 = kmlFactory.createCoordinate(longitude00, latitude00, altitude00);
-        final Coordinates coordinates0 = kmlFactory.createCoordinates(Arrays.asList(coordinate00));
+        final CoordinateSequence coordinates0 = kmlFactory.createCoordinates(Arrays.asList(coordinate00));
         final Point point0 = kmlFactory.createPoint(coordinates0);
         Collection<Property> placemark0Properties = placemark0.getProperties();
         placemark0Properties.add(FF.createAttribute(point0, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
@@ -169,7 +169,7 @@ public class DocumentTest {
         final double latitude10 = 37.817;
         final double altitude10 = 0;
         final Coordinate coordinate10 = kmlFactory.createCoordinate(longitude10, latitude10, altitude10);
-        final Coordinates coordinates1 = kmlFactory.createCoordinates(Arrays.asList(coordinate10));
+        final CoordinateSequence coordinates1 = kmlFactory.createCoordinates(Arrays.asList(coordinate10));
         final Point point1 = kmlFactory.createPoint(coordinates1);
         Collection<Property> placemark1Properties = placemark1.getProperties();
         placemark1Properties.add(FF.createAttribute(point1, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));

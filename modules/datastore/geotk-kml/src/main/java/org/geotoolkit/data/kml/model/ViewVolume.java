@@ -50,60 +50,60 @@ public interface ViewVolume extends AbstractObject {
      *
      * @return
      */
-    public double getLeftFov();
+    double getLeftFov();
 
     /**
      *
      * @return
      */
-    public double getRightFov();
+    double getRightFov();
 
     /**
      *
      * @return
      */
-    public double getBottomFov();
+    double getBottomFov();
 
     /**
      *
      * @return
      */
-    public double getTopFov();
+    double getTopFov();
 
     /**
      *
      * @return
      */
-    public double getNear();
+    double getNear();
 
     /**
      *
      * @param leftFov
      */
-    public void setLeftFov(double leftFov);
+    void setLeftFov(double leftFov);
 
     /**
      *
      * @param rightFov
      */
-    public void setRightFov(double rightFov);
+    void setRightFov(double rightFov);
 
     /**
      *
      * @param bottomFov
      */
-    public void setBottomFov(double bottomFov);
+    void setBottomFov(double bottomFov);
 
     /**
      *
      * @param topFov
      */
-    public void setTopFov(double topFov);
+    void setTopFov(double topFov);
 
     /**
      *
      * @param near
      */
-    public void setNear(double near);
+    void setNear(double near);
 
 }

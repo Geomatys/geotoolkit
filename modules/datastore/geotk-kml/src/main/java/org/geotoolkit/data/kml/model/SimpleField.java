@@ -44,47 +44,47 @@ public interface SimpleField {
      *
      * @return
      */
-    public Object getDisplayName();
+    Object getDisplayName();
 
     /**
      *
      * @return
      */
-    public String getType();
+    String getType();
 
     /**
      * 
      * @return
      */
-    public String getName();
+    String getName();
 
     /**
      *
      * @return
      */
-    public List<Object> getSimpleFieldExtensions();
+    List<Object> getSimpleFieldExtensions();
 
     /**
      *
      * @param displayName
      */
-    public void setDisplayName(Object displayName);
+    void setDisplayName(Object displayName);
 
     /**
      *
      * @param type
      */
-    public void setType(String type);
+    void setType(String type);
 
     /**
      *
      * @param name
      */
-    public void setName(String name);
+    void setName(String name);
 
     /**
      * 
      * @param simpleFieldExtensions
      */
-    public void setSimpleFieldExtensions(List<Object> simpleFieldExtensions);
+    void setSimpleFieldExtensions(List<Object> simpleFieldExtensions);
 }

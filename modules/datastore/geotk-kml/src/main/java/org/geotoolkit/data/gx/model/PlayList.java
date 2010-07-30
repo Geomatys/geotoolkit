@@ -21,6 +21,22 @@ import org.geotoolkit.data.kml.model.AbstractObject;
 
 /**
  *
+ * <p>This interface maps Playlist element.</p>
+ *
+ * <pre>
+ * &lt;element name="Playlist" type="gx:PlaylistType" substitutionGroup="kml:AbstractObjectGroup"/>
+ *
+ * &lt;complexType name="PlaylistType">
+ *  &lt;complexContent>
+ *      &lt;extension base="kml:AbstractObjectType">
+ *          &lt;sequence>
+ *              &lt;element ref="gx:AbstractTourPrimitiveGroup" minOccurs="0" maxOccurs="unbounded"/>
+ *          &lt;/sequence>
+ *      &lt;/extension>
+ *  &lt;/complexContent>
+ * &lt;/complexType>
+ * </pre>
+ *
  * @author Samuel Andrés
  */
 public interface PlayList extends AbstractObject{

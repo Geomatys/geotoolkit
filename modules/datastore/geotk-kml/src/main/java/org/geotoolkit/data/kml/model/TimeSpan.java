@@ -49,24 +49,24 @@ public interface TimeSpan extends AbstractTimePrimitive{
      *
      * @return
      */
-    public Calendar getBegin();
+    Calendar getBegin();
 
     /**
      *
      * @return
      */
-    public Calendar getEnd();
+    Calendar getEnd();
 
     /**
      *
      * @param begin
      */
-    public void setBegin(Calendar begin);
+    void setBegin(Calendar begin);
 
     /**
      *
      * @param end
      */
-    public void setEnd(Calendar end);
+    void setEnd(Calendar end);
 
 }

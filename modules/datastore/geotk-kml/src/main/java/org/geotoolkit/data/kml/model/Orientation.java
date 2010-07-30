@@ -48,36 +48,36 @@ public interface Orientation extends AbstractObject {
      *
      * @return
      */
-    public double getHeading();
+    double getHeading();
 
     /**
      *
      * @return
      */
-    public double getTilt();
+    double getTilt();
 
     /**
      *
      * @return
      */
-    public double getRoll();
+    double getRoll();
 
     /**
      *
      * @param heading
      */
-    public void setHeading(double heading);
+    void setHeading(double heading);
 
     /**
      *
      * @param tilt
      */
-    public void setTilt(double tilt);
+    void setTilt(double tilt);
 
     /**
      *
      * @param roll
      */
-    public void setRoll(double roll);
+    void setRoll(double roll);
 
 }

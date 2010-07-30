@@ -17,6 +17,7 @@
 package org.geotoolkit.data.gx;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -30,7 +31,6 @@ import org.geotoolkit.data.gx.xml.GxReader;
 import org.geotoolkit.data.gx.xml.GxWriter;
 import org.geotoolkit.data.kml.DefaultKmlFactory;
 import org.geotoolkit.data.kml.KmlFactory;
-import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Extensions;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
@@ -128,7 +128,7 @@ public class BalloonVisibilityTest {
         final GxFactory gxFactory = DefaultGxFactory.getInstance();
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
-        final Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(
+        final CoordinateSequence coordinates = kmlFactory.createCoordinates(Arrays.asList(
                 kmlFactory.createCoordinate("2.294785,48.858093,0.0")));
 
         final Point point = kmlFactory.createPoint(coordinates);

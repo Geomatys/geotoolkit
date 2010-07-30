@@ -17,6 +17,7 @@
 package org.geotoolkit.data.gx;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -31,7 +32,6 @@ import org.geotoolkit.data.gx.xml.GxReader;
 import org.geotoolkit.data.gx.xml.GxWriter;
 import org.geotoolkit.data.kml.DefaultKmlFactory;
 import org.geotoolkit.data.kml.KmlFactory;
-import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Extensions;
 import org.geotoolkit.data.kml.model.Icon;
 import org.geotoolkit.data.kml.model.Kml;
@@ -112,9 +112,9 @@ public class LatLonQuadTest {
         assertEquals(1, extensions.complexes(Extensions.Names.GROUND_OVERLAY).size());
         assertTrue(extensions.complexes(Extensions.Names.GROUND_OVERLAY).get(0) instanceof LatLonQuad);
         final LatLonQuad latLonQuad = (LatLonQuad) extensions.complexes(Extensions.Names.GROUND_OVERLAY).get(0);
-        assertTrue(latLonQuad.getCoordinates() instanceof Coordinates);
+        assertTrue(latLonQuad.getCoordinates() instanceof CoordinateSequence);
 
-        final Coordinates coordinates = latLonQuad.getCoordinates();
+        final CoordinateSequence coordinates = latLonQuad.getCoordinates();
 
         assertEquals(4, coordinates.size());
 
@@ -150,7 +150,7 @@ public class LatLonQuadTest {
         final Coordinate coordinate2 = kmlFactory.createCoordinate("82.947737,44.248831");
         final Coordinate coordinate3 = kmlFactory.createCoordinate("81.509322,44.321015");
 
-        final  Coordinates coordinates = kmlFactory.createCoordinates(
+        final CoordinateSequence coordinates = kmlFactory.createCoordinates(
                 Arrays.asList(coordinate0, coordinate1, coordinate2, coordinate3));
 
         final LatLonQuad latLonQuad = gxFactory.createLatLonQuad();

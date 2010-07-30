@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.kml.model;
 
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
@@ -37,7 +38,7 @@ public class DefaultPoint extends com.vividsolutions.jts.geom.Point implements P
      * @param coordinates
      * @param factory
      */
-    public DefaultPoint(Coordinates coordinates, GeometryFactory factory) {
+    public DefaultPoint(CoordinateSequence coordinates, GeometryFactory factory) {
         super(coordinates, factory);
         this.extrude = DEF_EXTRUDE;
         this.altitudeMode = DEF_ALTITUDE_MODE;
@@ -62,7 +63,7 @@ public class DefaultPoint extends com.vividsolutions.jts.geom.Point implements P
             List<Object> abstractGeometryObjectExtensions,
             boolean extrude,
             AltitudeMode altitudeMode,
-            Coordinates coordinates,
+            CoordinateSequence coordinates,
             List<SimpleTypeContainer> pointSimpleExtensions,
             List<Object> pointObjectExtensions,
             GeometryFactory factory) {
@@ -103,15 +104,6 @@ public class DefaultPoint extends com.vividsolutions.jts.geom.Point implements P
     @Override
     public AltitudeMode getAltitudeMode() {
         return this.altitudeMode;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public Coordinates getCoordinateSequence() {
-        return (Coordinates) super.getCoordinateSequence();
     }
 
     /**

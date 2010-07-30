@@ -17,6 +17,7 @@
 package org.geotoolkit.data.kml;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +28,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
@@ -159,7 +159,7 @@ public class ListStyleTest {
 
                     assertEquals("pl1", placemark00.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
                     assertTrue(placemark00.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
-                    final Coordinates coordinates00 = ((Point) placemark00.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
+                    final CoordinateSequence coordinates00 = ((Point) placemark00.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
                     assertEquals(1, coordinates00.size());
                     assertEquals(-122.362815, coordinates00.getCoordinate(0).x, DELTA);
                     assertEquals(37.822931, coordinates00.getCoordinate(0).y, DELTA);
@@ -173,7 +173,7 @@ public class ListStyleTest {
 
                     assertEquals("pl2", placemark01.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
                     assertTrue(placemark01.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
-                    final Coordinates coordinates01 = ((Point) placemark01.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
+                    final CoordinateSequence coordinates01 = ((Point) placemark01.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
                     assertEquals(1, coordinates01.size());
                     assertEquals(-122.362825, coordinates01.getCoordinate(0).x, DELTA);
                     assertEquals(37.822931, coordinates01.getCoordinate(0).y, DELTA);
@@ -187,7 +187,7 @@ public class ListStyleTest {
 
                     assertEquals("pl3", placemark02.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
                     assertTrue(placemark02.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
-                    final Coordinates coordinates02 = ((Point) placemark02.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
+                    final CoordinateSequence coordinates02 = ((Point) placemark02.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
                     assertEquals(1, coordinates02.size());
                     assertEquals(-122.362835, coordinates02.getCoordinate(0).x, DELTA);
                     assertEquals(37.822931, coordinates02.getCoordinate(0).y, DELTA);
@@ -214,7 +214,7 @@ public class ListStyleTest {
 
                     assertEquals("pl4", placemark10.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
                     assertTrue(placemark10.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
-                    final Coordinates coordinates10 = ((Point) placemark10.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
+                    final CoordinateSequence coordinates10 = ((Point) placemark10.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
                     assertEquals(1, coordinates10.size());
                     assertEquals(-122.362845, coordinates10.getCoordinate(0).x, DELTA);
                     assertEquals(37.822941, coordinates10.getCoordinate(0).y, DELTA);
@@ -229,7 +229,7 @@ public class ListStyleTest {
 
                     assertEquals("pl5", placemark11.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
                     assertTrue(placemark11.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
-                    final Coordinates coordinates11 = ((Point) placemark11.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
+                    final CoordinateSequence coordinates11 = ((Point) placemark11.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
                     assertEquals(1, coordinates11.size());
                     assertEquals(-122.362855, coordinates11.getCoordinate(0).x, DELTA);
                     assertEquals(37.822941, coordinates11.getCoordinate(0).y, DELTA);
@@ -244,7 +244,7 @@ public class ListStyleTest {
 
                     assertEquals("pl6", placemark12.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
                     assertTrue(placemark12.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
-                    final Coordinates coordinates12 = ((Point) placemark12.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
+                    final CoordinateSequence coordinates12 = ((Point) placemark12.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
                     assertEquals(1, coordinates12.size());
                     assertEquals(-122.362865, coordinates12.getCoordinate(0).x, DELTA);
                     assertEquals(37.822941, coordinates12.getCoordinate(0).y, DELTA);
@@ -272,7 +272,7 @@ public class ListStyleTest {
 
                     assertEquals("pl7", placemark20.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
                     assertTrue(placemark20.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
-                    final Coordinates coordinates20 = ((Point) placemark20.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
+                    final CoordinateSequence coordinates20 = ((Point) placemark20.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
                     assertEquals(1, coordinates20.size());
                     assertEquals(-122.362875, coordinates20.getCoordinate(0).x, DELTA);
                     assertEquals(37.822951, coordinates20.getCoordinate(0).y, DELTA);
@@ -286,7 +286,7 @@ public class ListStyleTest {
 
                     assertEquals("pl8", placemark21.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
                     assertTrue(placemark21.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
-                    final Coordinates coordinates21 = ((Point) placemark21.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
+                    final CoordinateSequence coordinates21 = ((Point) placemark21.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
                     assertEquals(1, coordinates21.size());
                     assertEquals(-122.362885, coordinates21.getCoordinate(0).x, DELTA);
                     assertEquals(37.822951, coordinates21.getCoordinate(0).y, DELTA);
@@ -301,7 +301,7 @@ public class ListStyleTest {
 
                     assertEquals("pl9", placemark22.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
                     assertTrue(placemark22.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
-                    final Coordinates coordinates22 = ((Point) placemark22.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
+                    final CoordinateSequence coordinates22 = ((Point) placemark22.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getCoordinateSequence();
                     assertEquals(1, coordinates22.size());
                     assertEquals(-122.362895, coordinates22.getCoordinate(0).x, DELTA);
                     assertEquals(37.822951, coordinates22.getCoordinate(0).y, DELTA);
@@ -326,15 +326,15 @@ public class ListStyleTest {
         final Coordinate coordinate210 = kmlFactory.createCoordinate(-122.362885, 37.822951, 0);
         final Coordinate coordinate220 = kmlFactory.createCoordinate(-122.362895, 37.822951, 0);
 
-        final Coordinates coordinates00 = kmlFactory.createCoordinates(Arrays.asList(coordinate000));
-        final Coordinates coordinates01 = kmlFactory.createCoordinates(Arrays.asList(coordinate010));
-        final Coordinates coordinates02 = kmlFactory.createCoordinates(Arrays.asList(coordinate020));
-            final Coordinates coordinates10 = kmlFactory.createCoordinates(Arrays.asList(coordinate100));
-            final Coordinates coordinates11 = kmlFactory.createCoordinates(Arrays.asList(coordinate110));
-            final Coordinates coordinates12 = kmlFactory.createCoordinates(Arrays.asList(coordinate120));
-        final Coordinates coordinates20 = kmlFactory.createCoordinates(Arrays.asList(coordinate200));
-        final Coordinates coordinates21 = kmlFactory.createCoordinates(Arrays.asList(coordinate210));
-        final Coordinates coordinates22 = kmlFactory.createCoordinates(Arrays.asList(coordinate220));
+        final CoordinateSequence coordinates00 = kmlFactory.createCoordinates(Arrays.asList(coordinate000));
+        final CoordinateSequence coordinates01 = kmlFactory.createCoordinates(Arrays.asList(coordinate010));
+        final CoordinateSequence coordinates02 = kmlFactory.createCoordinates(Arrays.asList(coordinate020));
+            final CoordinateSequence coordinates10 = kmlFactory.createCoordinates(Arrays.asList(coordinate100));
+            final CoordinateSequence coordinates11 = kmlFactory.createCoordinates(Arrays.asList(coordinate110));
+            final CoordinateSequence coordinates12 = kmlFactory.createCoordinates(Arrays.asList(coordinate120));
+        final CoordinateSequence coordinates20 = kmlFactory.createCoordinates(Arrays.asList(coordinate200));
+        final CoordinateSequence coordinates21 = kmlFactory.createCoordinates(Arrays.asList(coordinate210));
+        final CoordinateSequence coordinates22 = kmlFactory.createCoordinates(Arrays.asList(coordinate220));
 
         final Point point00 = kmlFactory.createPoint(coordinates00);
             final Point point01 = kmlFactory.createPoint(coordinates01);

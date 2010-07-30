@@ -17,6 +17,7 @@
 package org.geotoolkit.data.kml;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import java.awt.Color;
 import java.net.URI;
 import java.util.Calendar;
@@ -35,7 +36,6 @@ import org.geotoolkit.data.kml.model.Boundary;
 import org.geotoolkit.data.kml.model.Camera;
 import org.geotoolkit.data.kml.model.Change;
 import org.geotoolkit.data.kml.model.ColorMode;
-import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Create;
 import org.geotoolkit.data.kml.model.Data;
 import org.geotoolkit.data.kml.model.Delete;
@@ -276,7 +276,7 @@ public interface KmlFactory {
      * @param coordinates
      * @return
      */
-    Coordinates createCoordinates(List<Coordinate> coordinates);
+    CoordinateSequence createCoordinates(List<Coordinate> coordinates);
 
     /**
      *
@@ -714,8 +714,8 @@ public interface KmlFactory {
             List<SimpleTypeContainer> abstractGeometrySimpleExtensions,
             List<Object> abstractGeometryObjectExtensions,
             boolean extrude, boolean tessellate,
-           AltitudeMode altitudeMode,
-            Coordinates coordinates,
+            AltitudeMode altitudeMode,
+            CoordinateSequence coordinates,
             List<SimpleTypeContainer> linearRingSimpleExtensions,
             List<Object> linearRingObjectExtensions);
 
@@ -724,7 +724,7 @@ public interface KmlFactory {
      * @param coordinates
      * @return
      */
-    LinearRing createLinearRing(Coordinates coordinates);
+    LinearRing createLinearRing(CoordinateSequence coordinates);
 
     /**
      *
@@ -746,7 +746,7 @@ public interface KmlFactory {
             List<Object> abstractGeometryObjectExtensions,
             boolean extrude, boolean tessellate,
             AltitudeMode altitudeMode,
-            Coordinates coordinates,
+            CoordinateSequence coordinates,
             List<SimpleTypeContainer> lineStringSimpleExtensions,
             List<Object> lineStringObjectExtensions);
 
@@ -755,7 +755,7 @@ public interface KmlFactory {
      * @param coordinates
      * @return
      */
-    LineString createLineString(Coordinates coordinates);
+    LineString createLineString(CoordinateSequence coordinates);
 
     /**
      *
@@ -1252,7 +1252,7 @@ public interface KmlFactory {
             List<Object> abstractGeometryObjectExtensions,
             boolean extrude,
             AltitudeMode altitudeMode,
-            Coordinates coordinates,
+            CoordinateSequence coordinates,
             List<SimpleTypeContainer> pointSimpleExtensions,
             List<Object> pointObjectExtensions);
 
@@ -1261,7 +1261,7 @@ public interface KmlFactory {
      * @param coordinates
      * @return
      */
-    Point createPoint(Coordinates coordinates);
+    Point createPoint(CoordinateSequence coordinates);
 
     /**
      * 
@@ -1681,14 +1681,14 @@ public interface KmlFactory {
      *
      * @return
      */
-    public ViewVolume createViewVolume();
+    ViewVolume createViewVolume();
 
     /**
      *
      * @param content
      * @return
      */
-    public Cdata createCdata(String content);
+   Cdata createCdata(String content);
 
     /**
      * 
@@ -1697,5 +1697,5 @@ public interface KmlFactory {
      * @param value
      * @return
      */
-    public SimpleTypeContainer createSimpleTypeContainer(String namespaceUri, String tagName, Object value);
+    SimpleTypeContainer createSimpleTypeContainer(String namespaceUri, String tagName, Object value);
 }

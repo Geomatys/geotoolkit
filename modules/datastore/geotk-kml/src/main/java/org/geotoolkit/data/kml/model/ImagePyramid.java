@@ -49,48 +49,48 @@ public interface ImagePyramid extends AbstractObject {
      *
      * @return
      */
-    public int getTitleSize();
+    int getTitleSize();
 
     /**
      *
      * @return
      */
-    public int getMaxWidth();
+    int getMaxWidth();
 
     /**
      *
      * @return
      */
-    public int getMaxHeight();
+    int getMaxHeight();
 
     /**
      *
      * @return
      */
-    public GridOrigin getGridOrigin();
+    GridOrigin getGridOrigin();
 
     /**
      * 
      * @param titleSize
      */
-    public void setTitleSize(int titleSize);
+    void setTitleSize(int titleSize);
 
     /**
      *
      * @param maxWidth
      */
-    public void setMaxWidth(int maxWidth);
+    void setMaxWidth(int maxWidth);
 
     /**
      *
      * @param maxHeight
      */
-    public void setMaxHeight(int maxHeight);
+    void setMaxHeight(int maxHeight);
 
     /**
      *
      * @param gridOrigin
      */
-    public void setGridOrigin(GridOrigin gridOrigin);
+    void setGridOrigin(GridOrigin gridOrigin);
 
 }

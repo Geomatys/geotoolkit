@@ -40,12 +40,12 @@ public interface Delete {
      *
      * @return AbstractFeature list.
      */
-    public List<Feature> getFeatures();
+    List<Feature> getFeatures();
 
     /**
      * 
      * @param features
      */
-    public void setFeatures(List<Feature> features);
+    void setFeatures(List<Feature> features);
 
 }

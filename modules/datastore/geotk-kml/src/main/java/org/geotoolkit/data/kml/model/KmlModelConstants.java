@@ -490,7 +490,6 @@ public class KmlModelConstants {
 
     }
 
-
     private KmlModelConstants(){}
 
 }

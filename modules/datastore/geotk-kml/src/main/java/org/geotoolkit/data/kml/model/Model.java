@@ -51,72 +51,72 @@ public interface Model extends AbstractGeometry {
      *
      * @return
      */
-    public AltitudeMode getAltitudeMode();
+    AltitudeMode getAltitudeMode();
 
     /**
      *
      * @return
      */
-    public Location getLocation();
+    Location getLocation();
 
     /**
      *
      * @return
      */
-    public Orientation getOrientation();
+    Orientation getOrientation();
 
     /**
      *
      * @return
      */
-    public Scale getScale();
+    Scale getScale();
 
     /**
      *
      * @return
      */
-    public Link getLink();
+    Link getLink();
 
     /**
      *
      * @return
      */
-    public ResourceMap getRessourceMap();
+    ResourceMap getRessourceMap();
 
     /**
      *
      * @param altitudeMode
      */
-    public void setAltitudeMode(AltitudeMode altitudeMode);
+    void setAltitudeMode(AltitudeMode altitudeMode);
 
     /**
      *
      * @param location
      */
-    public void setLocation(Location location);
+    void setLocation(Location location);
 
     /**
      *
      * @param orientation
      */
-    public void setOrientation(Orientation orientation);
+    void setOrientation(Orientation orientation);
 
     /**
      *
      * @param scale
      */
-    public void setScale(Scale scale);
+    void setScale(Scale scale);
 
     /**
      *
      * @param link
      */
-    public void setLink(Link link);
+    void setLink(Link link);
 
     /**
      *
      * @param resourceMap
      */
-    public void setRessourceMap(ResourceMap resourceMap);
+    void setRessourceMap(ResourceMap resourceMap);
 
 }

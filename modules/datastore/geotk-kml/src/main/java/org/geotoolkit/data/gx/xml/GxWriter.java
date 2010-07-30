@@ -16,14 +16,18 @@
  */
 package org.geotoolkit.data.gx.xml;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.xml.stream.XMLStreamException;
+import org.geotoolkit.data.gx.GxUtilities;
 import org.geotoolkit.data.gx.model.AbstractTourPrimitive;
+import org.geotoolkit.data.gx.model.Angles;
 import org.geotoolkit.data.gx.model.AnimatedUpdate;
 import org.geotoolkit.data.gx.model.EnumFlyToMode;
 import org.geotoolkit.data.gx.model.EnumPlayMode;
@@ -33,6 +37,7 @@ import org.geotoolkit.data.gx.model.LatLonQuad;
 import org.geotoolkit.data.gx.model.PlayList;
 import org.geotoolkit.data.gx.model.SoundCue;
 import org.geotoolkit.data.gx.model.TourControl;
+import org.geotoolkit.data.gx.model.Track;
 import org.geotoolkit.data.gx.model.Wait;
 import org.geotoolkit.data.kml.KmlUtilities;
 import org.geotoolkit.data.kml.model.AltitudeMode;
@@ -299,6 +304,54 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
 
     /**
      *
+     * @param track
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
+    public void writeTrack(Track track)
+            throws XMLStreamException, KmlException{
+
+        writer.writeStartElement(URI_GX, TAG_TRACK);
+        kmlWriter.writeCommonAbstractGeometry(track);
+        if(track.getAltitudeMode() != null){
+            kmlWriter.writeAltitudeMode(track.getAltitudeMode());
+        }
+        for(Calendar when : track.getWhens()){
+            kmlWriter.writeWhen(when);
+        }
+        if(track.getCoord() != null){
+            for(Coordinate coord : track.getCoord().toCoordinateArray()){
+                this.writeCoord(coord);
+            }
+        }
+        for(Angles angles : track.getAngles()){
+            this.writeAngles(angles);
+        }
+        if(track.getModel() != null){
+            kmlWriter.writeModel(track.getModel());
+        }
+        if(track.getExtendedData() != null){
+            kmlWriter.writeExtendedData(track.getExtendedData());
+        }
+        writer.writeEndElement();
+    }
+
+    public void writeCoord(Coordinate coord) throws XMLStreamException{
+
+        writer.writeStartElement(URI_GX, TAG_COORD);
+        writer.writeCharacters(GxUtilities.toString(coord));
+        writer.writeEndElement();
+    }
+
+    public void writeAngles(Angles angles) throws XMLStreamException{
+
+        writer.writeStartElement(URI_GX, TAG_ANGLES);
+        writer.writeCharacters(GxUtilities.toString(angles));
+        writer.writeEndElement();
+    }
+
+    /**
+     *
      * @param duration
      * @throws XMLStreamException
      */
@@ -389,6 +442,8 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
             writeTimeStamp((TimeStamp) contentsElement);
         } else if(contentsElement instanceof AltitudeMode){
             writeAltitudeMode((AltitudeMode) contentsElement);
+        } else if(contentsElement instanceof Track){
+            writeTrack((Track) contentsElement);
         }
     }
 
@@ -452,8 +507,6 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      *
      */
     private void initComplexTable(){
-        List<Names> tourContainersList = new ArrayList<Names>();
-        tourContainersList.add(Names.DOCUMENT);
         
         List<Names> latLonQuadContainersList = new ArrayList<Names>();
         latLonQuadContainersList.add(Names.GROUND_OVERLAY);
@@ -465,6 +518,7 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
         timeStampContainers.add(Names.VIEW);
 
         complexTable.put(GxModelConstants.TYPE_TOUR, EMPTY_LIST);
+        complexTable.put(Track.class, EMPTY_LIST);
         complexTable.put(TimeSpan.class, timeSpanContainers);
         complexTable.put(TimeStamp.class, timeStampContainers);
         complexTable.put(LatLonQuad.class, latLonQuadContainersList);

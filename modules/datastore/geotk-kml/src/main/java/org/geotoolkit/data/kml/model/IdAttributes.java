@@ -34,23 +34,23 @@ public interface IdAttributes {
      *
      * @return The id value.
      */
-    public String getId();
+    String getId();
 
     /**
      *
      * @return The targetId value.
      */
-    public String getTargetId();
+    String getTargetId();
 
     /**
      * 
      * @param id
      */
-    public void setId(String id);
+    void setId(String id);
 
     /**
      *
      * @param targetId
      */
-    public void setTargetId(String targetId);
+    void setTargetId(String targetId);
 }

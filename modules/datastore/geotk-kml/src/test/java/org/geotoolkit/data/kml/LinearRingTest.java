@@ -17,6 +17,7 @@
 package org.geotoolkit.data.kml;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import java.io.File;
 import java.io.IOException;
@@ -25,7 +26,6 @@ import java.util.Collection;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.Boundary;
-import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.model.KmlModelConstants;
@@ -91,7 +91,7 @@ public class LinearRingTest {
         assertTrue(placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Polygon);
         final Boundary outerBoundaryIs = ((Polygon) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue()).getOuterBoundary();
         final LinearRing linearRing = outerBoundaryIs.getLinearRing();
-        final Coordinates coordinates = linearRing.getCoordinateSequence();
+        final CoordinateSequence coordinates = linearRing.getCoordinateSequence();
 
         assertEquals(5, coordinates.size());
 
@@ -133,7 +133,7 @@ public class LinearRingTest {
         final Coordinate coordinate3 = kmlFactory.createCoordinate("-122.365038,37.827237,0.0");
         final Coordinate coordinate4 = kmlFactory.createCoordinate("-122.365662,37.826988,0.0");
 
-        final Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(
+        final CoordinateSequence coordinates = kmlFactory.createCoordinates(Arrays.asList(
                 coordinate0, coordinate1, coordinate2, coordinate3, coordinate4));
 
         final LinearRing linearRing = kmlFactory.createLinearRing(coordinates);

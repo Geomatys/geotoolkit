@@ -17,6 +17,7 @@
 package org.geotoolkit.data.kml;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +28,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.EnumAltitudeMode;
 import org.geotoolkit.data.kml.model.Boundary;
-import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.model.KmlModelConstants;
@@ -111,7 +111,7 @@ public class PolygonTest {
 
             final Boundary outerBoundaryIs = polygon.getOuterBoundary();
             final LinearRing linearRing1 = outerBoundaryIs.getLinearRing();
-            final Coordinates coordinates1 = linearRing1.getCoordinateSequence();
+            final CoordinateSequence coordinates1 = linearRing1.getCoordinateSequence();
             assertEquals(5, coordinates1.size());
 
             final Coordinate coordinate10 = coordinates1.getCoordinate(0);
@@ -142,7 +142,7 @@ public class PolygonTest {
             assertEquals(1, polygon.getInnerBoundaries().size());
             final Boundary innerBoundaryIs = polygon.getInnerBoundaries().get(0);
             final LinearRing linearRing2 = innerBoundaryIs.getLinearRing();
-            final Coordinates coordinates2 = linearRing2.getCoordinateSequence();
+            final CoordinateSequence coordinates2 = linearRing2.getCoordinateSequence();
             assertEquals(5, coordinates2.size());
 
             final Coordinate coordinate20 = coordinates2.getCoordinate(0);
@@ -188,10 +188,10 @@ public class PolygonTest {
         final Coordinate coordinate23 = kmlFactory.createCoordinate("-122.366488,37.819402,30.0");
         final Coordinate coordinate24 = kmlFactory.createCoordinate("-122.366212,37.818977,30.0");
 
-        final Coordinates coordinates1 = kmlFactory.createCoordinates(
+        final CoordinateSequence coordinates1 = kmlFactory.createCoordinates(
                 Arrays.asList(coordinate10, coordinate11, coordinate12, coordinate13, coordinate14));
 
-        final Coordinates coordinates2 = kmlFactory.createCoordinates(
+        final CoordinateSequence coordinates2 = kmlFactory.createCoordinates(
                 Arrays.asList(coordinate20, coordinate21, coordinate22, coordinate23, coordinate24));
 
         final LinearRing linearRing1 = kmlFactory.createLinearRing(coordinates1);

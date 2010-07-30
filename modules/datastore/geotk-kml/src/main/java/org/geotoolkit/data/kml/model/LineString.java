@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.data.kml.model;
 
+import com.vividsolutions.jts.geom.CoordinateSequence;
+
 /**
  *
  * <p>This interface maps LineString element.</p>
@@ -50,7 +52,7 @@ public interface LineString extends AbstractGeometry {
      *
      * @return
      */
-    Coordinates getCoordinateSequence();
+    CoordinateSequence getCoordinateSequence();
 
     /**
      *

@@ -17,10 +17,10 @@
 package org.geotoolkit.data.kml;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import java.awt.Color;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.KmlException;
 
 /**
@@ -252,7 +252,7 @@ public class KmlUtilities {
         return sb.toString();
     }
 
-    public static String toString(Coordinates coordinates){
+    public static String toString(CoordinateSequence coordinates){
         final StringBuilder sb = new StringBuilder();
 
         for(int i=0, n=coordinates.size(); i<n; i++){

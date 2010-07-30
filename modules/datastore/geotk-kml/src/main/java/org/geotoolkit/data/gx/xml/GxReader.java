@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.data.gx.xml;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -33,6 +35,7 @@ import org.geotoolkit.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.gx.DefaultGxFactory;
 import org.geotoolkit.data.gx.GxFactory;
 import org.geotoolkit.data.gx.model.AbstractTourPrimitive;
+import org.geotoolkit.data.gx.model.Angles;
 import org.geotoolkit.data.gx.model.AnimatedUpdate;
 import org.geotoolkit.data.gx.model.EnumAltitudeMode;
 import org.geotoolkit.data.gx.model.EnumFlyToMode;
@@ -42,6 +45,7 @@ import org.geotoolkit.data.gx.model.LatLonQuad;
 import org.geotoolkit.data.gx.model.PlayList;
 import org.geotoolkit.data.gx.model.SoundCue;
 import org.geotoolkit.data.gx.model.TourControl;
+import org.geotoolkit.data.gx.model.Track;
 import org.geotoolkit.data.gx.model.Wait;
 import org.geotoolkit.data.kml.DefaultKmlFactory;
 import org.geotoolkit.data.kml.KmlFactory;
@@ -50,10 +54,11 @@ import org.geotoolkit.data.kml.model.AbstractStyleSelector;
 import org.geotoolkit.data.kml.model.AbstractTimePrimitive;
 import org.geotoolkit.data.kml.model.AbstractView;
 import org.geotoolkit.data.kml.model.AltitudeMode;
-import org.geotoolkit.data.kml.model.Coordinates;
+import org.geotoolkit.data.kml.model.ExtendedData;
 import org.geotoolkit.data.kml.model.Extensions;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.KmlException;
+import org.geotoolkit.data.kml.model.Model;
 import org.geotoolkit.data.kml.model.Region;
 import org.geotoolkit.data.kml.model.TimeSpan;
 import org.geotoolkit.data.kml.model.TimeStamp;
@@ -62,7 +67,6 @@ import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.data.kml.xml.KmlExtensionReader;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
-import org.geotoolkit.temporal.object.FastDateParser;
 import org.geotoolkit.xal.model.AddressDetails;
 import org.geotoolkit.xml.StaxStreamReader;
 import org.opengis.feature.Feature;
@@ -74,12 +78,12 @@ import static org.geotoolkit.data.gx.xml.GxConstants.*;
  */
 public class GxReader extends StaxStreamReader implements KmlExtensionReader {
 
-    private static final GxFactory gxFactory = DefaultGxFactory.getInstance();
-    private static final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
+    private static final GxFactory GX_FACTORY = DefaultGxFactory.getInstance();
+    private static final KmlFactory KML_FACTORY = DefaultKmlFactory.getInstance();
     private final KmlReader kmlReader;
-    private final FastDateParser fastDateParser = new FastDateParser();
-    public Map<String, List<String>> complexTable;
-    public Map<String, List<String>> simpleTable;
+
+    private Map<String, List<String>> complexTable;
+    private Map<String, List<String>> simpleTable;
 
     public GxReader(KmlReader r){
         super();
@@ -89,7 +93,6 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
     }
 
     /**
-     * <p>Set input (use KML 2.2).</p>
      *
      * @param input
      * @throws IOException
@@ -148,7 +151,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
             }
         }
         AnimatedUpdate u;
-        return GxReader.gxFactory.createAnimatedUpdate(objectSimpleExtensions,
+        return GxReader.GX_FACTORY.createAnimatedUpdate(objectSimpleExtensions,
                 idAttributes,duration, update);
     }
 
@@ -259,7 +262,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
                     break;
             }
         }
-        return GxReader.gxFactory.createTour(objectSimpleExtensions, idAttributes,
+        return GxReader.GX_FACTORY.createTour(objectSimpleExtensions, idAttributes,
                 name, visibility, open, author, link, address, addressDetails,
                 phoneNumber, snippet, description, view, timePrimitive, styleUrl,
                 styleSelector, region, extendedData, featureSimpleExtensions,
@@ -306,7 +309,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
                     break;
             }
         }
-        return GxReader.gxFactory.createPlayList(
+        return GxReader.GX_FACTORY.createPlayList(
                 objectSimpleExtensions, idAttributes, tourPrimitives);
     }
 
@@ -387,7 +390,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
                     break;
             }
         }
-        return GxReader.gxFactory.createFlyTo(objectSimpleExtensions, idAttributes,
+        return GxReader.GX_FACTORY.createFlyTo(objectSimpleExtensions, idAttributes,
                 duration, flyToMode, view);
     }
 
@@ -429,7 +432,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
                     break;
             }
         }
-        return GxReader.gxFactory.createTourControl(objectSimpleExtensions, idAttributes, playMode);
+        return GxReader.GX_FACTORY.createTourControl(objectSimpleExtensions, idAttributes, playMode);
     }
 
     /**
@@ -468,7 +471,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
                     break;
             }
         }
-        return GxReader.gxFactory.createWait(objectSimpleExtensions, idAttributes, duration);
+        return GxReader.GX_FACTORY.createWait(objectSimpleExtensions, idAttributes, duration);
     }
 
     /**
@@ -509,7 +512,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
                     break;
             }
         }
-        return GxReader.gxFactory.createSoundCue(objectSimpleExtensions, idAttributes, href);
+        return GxReader.GX_FACTORY.createSoundCue(objectSimpleExtensions, idAttributes, href);
     }
 
     public LatLonQuad readLatLonQuad() 
@@ -520,7 +523,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
         IdAttributes idAttributes = kmlReader.readIdAttributes();
 
         // LatLonQuad
-        Coordinates coordinates = null;
+        CoordinateSequence coordinates = null;
 
         boucle:
         while (reader.hasNext()) {
@@ -545,7 +548,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
                     break;
             }
         }
-        return GxReader.gxFactory.createLatLonQuad(objectSimpleExtensions, idAttributes, coordinates);
+        return GxReader.GX_FACTORY.createLatLonQuad(objectSimpleExtensions, idAttributes, coordinates);
     }
 
     public TimeSpan readTimeSpan() 
@@ -575,9 +578,9 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
 
                     if (this.kmlReader.getVersionUri().equals(eUri)) {
                         if (KmlConstants.TAG_BEGIN.equals(eName)) {
-                            begin = (Calendar) fastDateParser.getCalendar(reader.getElementText()).clone();
+                            begin = kmlReader.readCalendar();
                         } else if (KmlConstants.TAG_END.equals(eName)) {
-                            end = (Calendar) fastDateParser.getCalendar(reader.getElementText()).clone();
+                            end = kmlReader.readCalendar();
                         }
                     }
                     break;
@@ -591,7 +594,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
             }
 
         }
-        return kmlFactory.createTimeSpan(objectSimpleExtensions, idAttributes,
+        return KML_FACTORY.createTimeSpan(objectSimpleExtensions, idAttributes,
                 AbstractTimePrimitiveSimpleExtensions, AbstractTimePrimitiveObjectExtensions,
                 begin, end, TimeSpanSimpleExtensions, TimeSpanObjectExtensions);
     }
@@ -627,7 +630,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
 
                     if (this.kmlReader.getVersionUri().equals(eUri)) {
                         if (KmlConstants.TAG_WHEN.equals(eName)) {
-                            when = (Calendar) fastDateParser.getCalendar(reader.getElementText()).clone();
+                            when = kmlReader.readCalendar();
                         }
                     }
                     break;
@@ -641,9 +644,94 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
             }
 
         }
-        return kmlFactory.createTimeStamp(objectSimpleExtensions, idAttributes,
+        return KML_FACTORY.createTimeStamp(objectSimpleExtensions, idAttributes,
                 AbstractTimePrimitiveSimpleExtensions, AbstractTimePrimitiveObjectExtensions,
                 when, TimeStampSimpleExtensions, TimeStampObjectExtensions);
+    }
+
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     * @throws KmlException
+     * @throws URISyntaxException
+     */
+    public Track readTrack() 
+            throws XMLStreamException, KmlException, URISyntaxException{
+        
+        AltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
+        List<Calendar> whens = new ArrayList<Calendar>();
+        List<Coordinate> coordinates = new ArrayList<Coordinate>();
+        List<Angles> anglesList = new ArrayList<Angles>();
+        Model model = null;
+        ExtendedData extendedData = null;
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_GX.equals(eUri)) {
+                        if (TAG_ALTITUDE_MODE.equals(eName)) {
+                            altitudeMode = this.readAltitudeMode();
+                        } else if (TAG_COORD.equals(eName)){
+                            coordinates.add(this.readCoord());
+                        } else if (TAG_ANGLES.equals(eName)){
+                            anglesList.add(this.readAngles());
+                        }
+                    } else if (this.kmlReader.getVersionUri().equals(eUri)) {
+                        if (KmlConstants.TAG_ALTITUDE_MODE.equals(eName)) {
+                            altitudeMode = kmlReader.readAltitudeMode();
+                        } else if (KmlConstants.TAG_WHEN.equals(eName)) {
+                            whens.add(kmlReader.readCalendar());
+                        } else if (KmlConstants.TAG_MODEL.equals(eName)) {
+                            model = kmlReader.readModel();
+                        } else if (KmlConstants.TAG_EXTENDED_DATA.equals(eName)) {
+                            extendedData = kmlReader.readExtendedData();
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_TRACK.equals(reader.getLocalName())
+                            && URI_GX.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+
+        }
+
+        CoordinateSequence coord = KML_FACTORY.createCoordinates(coordinates);
+        return GX_FACTORY.createTrack(altitudeMode, whens, coord, anglesList, model, extendedData);
+    }
+
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     */
+    public Angles readAngles() throws XMLStreamException {
+
+        String[] ch = reader.getElementText().split(" ");
+
+        double heading = parseDouble(ch[0]);
+        double tilt = parseDouble(ch[1]);
+        double roll = parseDouble(ch[2]);
+
+        return GX_FACTORY.createAngles(heading, tilt, roll);
+    }
+
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     */
+    private Coordinate readCoord() throws XMLStreamException{
+        return GX_FACTORY.createCoordinate(reader.getElementText());
     }
 
     /**
@@ -679,7 +767,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
 
     /*
      *
-     * Implements KmlExtensionReader
+     * IMPLEMENTS KML EXTENSION READER
      */
 
     @Override
@@ -708,7 +796,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
         if(GxConstants.TAG_ALTITUDE_MODE.equals(contentsTag)){
             resultat = readAltitudeMode();
         } else if(GxConstants.TAG_BALLOON_VISIBILITY.equals(contentsTag)){
-            resultat = kmlFactory.createSimpleTypeContainer(URI_GX, TAG_BALLOON_VISIBILITY,readBalloonVisibility());
+            resultat = KML_FACTORY.createSimpleTypeContainer(URI_GX, TAG_BALLOON_VISIBILITY,readBalloonVisibility());
             ext = Extensions.Names.FEATURE;
         } else if (GxConstants.TAG_LAT_LON_QUAD.equals(contentsTag)){
             resultat = readLatLonQuad();
@@ -723,17 +811,23 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
             ext = Extensions.Names.VIEW;
         } else if(GxConstants.TAG_TOUR.equals(contentsTag)){
             resultat = readTour();
+        } else if(GxConstants.TAG_TRACK.equals(contentsTag)){
+            resultat = readTrack();
         }
         return new SimpleImmutableEntry<Object, Extensions.Names>(resultat, ext);
     }
 
     private void initComplexTable(){
-        // Tour peut se trouver dans toute extension d'abstractObject... à compléter.
+
         List<String> tourBinding = new ArrayList<String>();
         tourBinding.add(KmlConstants.TAG_DOCUMENT);
         tourBinding.add(KmlConstants.TAG_FOLDER);
         tourBinding.add(KmlConstants.TAG_KML);
         tourBinding.add(KmlConstants.TAG_DELETE);
+
+        List<String> trackBinding = new ArrayList<String>();
+        trackBinding.add(KmlConstants.TAG_PLACEMARK);
+        trackBinding.add(KmlConstants.TAG_MULTI_GEOMETRY);
 
         List<String> latLonQuadBinding = new ArrayList<String>();
         latLonQuadBinding.add(KmlConstants.TAG_GROUND_OVERLAY);
@@ -747,21 +841,22 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
         timeStamp.add(KmlConstants.TAG_LOOK_AT);
 
         List<String> altitudeModeBinding = new ArrayList<String>();
-        altitudeModeBinding.add(KmlConstants.TAG_LOOK_AT);//
-        altitudeModeBinding.add(KmlConstants.TAG_CAMERA);//
-        altitudeModeBinding.add(KmlConstants.TAG_LAT_LON_ALT_BOX);//
-        altitudeModeBinding.add(KmlConstants.TAG_POINT);//
-        altitudeModeBinding.add(KmlConstants.TAG_LINE_STRING);//
-        altitudeModeBinding.add(KmlConstants.TAG_LINEAR_RING);//
-        altitudeModeBinding.add(KmlConstants.TAG_POLYGON);//
+        altitudeModeBinding.add(KmlConstants.TAG_LOOK_AT);
+        altitudeModeBinding.add(KmlConstants.TAG_CAMERA);
+        altitudeModeBinding.add(KmlConstants.TAG_LAT_LON_ALT_BOX);
+        altitudeModeBinding.add(KmlConstants.TAG_POINT);
+        altitudeModeBinding.add(KmlConstants.TAG_LINE_STRING);
+        altitudeModeBinding.add(KmlConstants.TAG_LINEAR_RING);
+        altitudeModeBinding.add(KmlConstants.TAG_POLYGON);
         altitudeModeBinding.add(KmlConstants.TAG_MODEL);
-        altitudeModeBinding.add(KmlConstants.TAG_GROUND_OVERLAY);//
+        altitudeModeBinding.add(KmlConstants.TAG_GROUND_OVERLAY);
 
         complexTable = new HashMap<String, List<String>>();
         complexTable.put(GxConstants.TAG_LAT_LON_QUAD, latLonQuadBinding);
         complexTable.put(GxConstants.TAG_TIME_SPAN, timeSpan);
         complexTable.put(GxConstants.TAG_TIME_STAMP, timeStamp);
         complexTable.put(GxConstants.TAG_TOUR, tourBinding);
+        complexTable.put(GxConstants.TAG_TRACK, trackBinding);
         complexTable.put(GxConstants.TAG_ALTITUDE_MODE, altitudeModeBinding);
     }
 

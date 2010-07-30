@@ -48,36 +48,36 @@ public interface Scale extends AbstractObject {
      *
      * @return
      */
-    public double getX();
+    double getX();
 
     /**
      *
      * @return
      */
-    public double getY();
+    double getY();
 
     /**
      *
      * @return
      */
-    public double getZ();
+    double getZ();
 
     /**
      *
      * @param x
      */
-    public void setX(double x);
+    void setX(double x);
 
     /**
      *
      * @param y
      */
-    public void setY(double y);
+    void setY(double y);
 
     /**
      *
      * @param z
      */
-    public void setZ(double z);
+    void setZ(double z);
 
 }

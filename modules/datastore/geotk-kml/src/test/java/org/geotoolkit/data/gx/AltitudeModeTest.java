@@ -17,6 +17,7 @@
 package org.geotoolkit.data.gx;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -31,7 +32,6 @@ import org.geotoolkit.data.gx.xml.GxReader;
 import org.geotoolkit.data.gx.xml.GxWriter;
 import org.geotoolkit.data.kml.DefaultKmlFactory;
 import org.geotoolkit.data.kml.KmlFactory;
-import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.model.KmlModelConstants;
@@ -115,7 +115,7 @@ public class AltitudeModeTest {
         assertTrue(lineString.getExtrude());
         assertEquals(EnumAltitudeMode.RELATIVE_TO_SEA_FLOOR, lineString.getAltitudeMode());
 
-        Coordinates coordinates = lineString.getCoordinateSequence();
+        CoordinateSequence coordinates = lineString.getCoordinateSequence();
         assertEquals(5, coordinates.size());
         Coordinate coordinate0 = coordinates.getCoordinate(0);
         assertEquals(146.825, coordinate0.x, DELTA);
@@ -155,7 +155,7 @@ public class AltitudeModeTest {
         final Coordinate coordinate3 = kmlFactory.createCoordinate("146.796,12.209,400.0");
         final Coordinate coordinate4 = kmlFactory.createCoordinate("146.788,12.205,400.0");
 
-        final Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate0, coordinate1,
+        final CoordinateSequence coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate0, coordinate1,
                 coordinate2, coordinate3, coordinate4));
 
         final LineString lineString = kmlFactory.createLineString(coordinates);

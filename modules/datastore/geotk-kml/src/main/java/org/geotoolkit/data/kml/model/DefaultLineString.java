@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.kml.model;
 
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
@@ -38,7 +39,7 @@ public class DefaultLineString extends com.vividsolutions.jts.geom.LineString im
      * @param coordinates
      * @param factory
      */
-    public DefaultLineString(Coordinates coordinates, GeometryFactory factory) {
+    public DefaultLineString(CoordinateSequence coordinates, GeometryFactory factory) {
         super(coordinates, factory);
         this.extrude = DEF_EXTRUDE;
         this.tessellate = DEF_TESSELLATE;
@@ -65,7 +66,7 @@ public class DefaultLineString extends com.vividsolutions.jts.geom.LineString im
             List<Object> abstractGeometryObjectExtensions,
             boolean extrude, boolean tessellate,
             AltitudeMode altitudeMode,
-            Coordinates coordinates,
+            CoordinateSequence coordinates,
             List<SimpleTypeContainer> lineStringSimpleExtensions,
             List<Object> lineStringObjectExtensions,
             GeometryFactory factory) {
@@ -90,15 +91,6 @@ public class DefaultLineString extends com.vividsolutions.jts.geom.LineString im
             this.extensions().complexes(Extensions.Names.LINE_STRING).addAll(lineStringObjectExtensions);
         }
 
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public Coordinates getCoordinateSequence() {
-        return (Coordinates) super.getCoordinateSequence();
     }
 
     /**

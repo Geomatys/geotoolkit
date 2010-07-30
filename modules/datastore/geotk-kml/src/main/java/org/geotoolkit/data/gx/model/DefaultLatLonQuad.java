@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.data.gx.model;
 
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import java.util.List;
-import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.DefaultAbstractObject;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
@@ -28,23 +28,23 @@ import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
  */
 public class DefaultLatLonQuad extends DefaultAbstractObject implements LatLonQuad {
 
-    private Coordinates coordinates;
+    private CoordinateSequence coordinates;
 
     public DefaultLatLonQuad(){}
 
     public DefaultLatLonQuad(List<SimpleTypeContainer> objectSimpleExtensions,
-            IdAttributes idAttributes, Coordinates coordinates){
+            IdAttributes idAttributes, CoordinateSequence coordinates){
         super(objectSimpleExtensions, idAttributes);
         this.coordinates = coordinates;
     }
 
     @Override
-    public Coordinates getCoordinates() {
+    public CoordinateSequence getCoordinates() {
         return this.coordinates;
     }
 
     @Override
-    public void setCoordinates(Coordinates coordinates) {
+    public void setCoordinates(CoordinateSequence coordinates) {
         this.coordinates = coordinates;
     }
 

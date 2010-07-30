@@ -16,11 +16,15 @@
  */
 package org.geotoolkit.data.gx;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import java.net.URI;
+import java.util.Calendar;
 import java.util.List;
 import org.geotoolkit.atom.model.AtomLink;
 import org.geotoolkit.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.gx.model.AbstractTourPrimitive;
+import org.geotoolkit.data.gx.model.Angles;
 import org.geotoolkit.data.gx.model.AnimatedUpdate;
 import org.geotoolkit.data.gx.model.EnumFlyToMode;
 import org.geotoolkit.data.gx.model.EnumPlayMode;
@@ -29,13 +33,16 @@ import org.geotoolkit.data.gx.model.LatLonQuad;
 import org.geotoolkit.data.gx.model.PlayList;
 import org.geotoolkit.data.gx.model.SoundCue;
 import org.geotoolkit.data.gx.model.TourControl;
+import org.geotoolkit.data.gx.model.Track;
 import org.geotoolkit.data.gx.model.Wait;
 import org.geotoolkit.data.kml.model.AbstractObject;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
 import org.geotoolkit.data.kml.model.AbstractTimePrimitive;
 import org.geotoolkit.data.kml.model.AbstractView;
-import org.geotoolkit.data.kml.model.Coordinates;
+import org.geotoolkit.data.kml.model.AltitudeMode;
+import org.geotoolkit.data.kml.model.ExtendedData;
 import org.geotoolkit.data.kml.model.IdAttributes;
+import org.geotoolkit.data.kml.model.Model;
 import org.geotoolkit.data.kml.model.Region;
 import org.geotoolkit.data.kml.model.Update;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
@@ -48,16 +55,27 @@ import org.opengis.feature.Feature;
  */
 public interface GxFactory {
 
+    Angles createAngles();
+
+    Angles createAngles(double... angles);
+
     AnimatedUpdate createAnimatedUpdate();
 
     AnimatedUpdate createAnimatedUpdate(List<SimpleTypeContainer> objectSimpleExtensions,
         IdAttributes idAttributes, double duration, Update update);
+
+    Coordinate createCoordinate(String listCoordinates);
 
     FlyTo createFlyTo();
 
     FlyTo createFlyTo(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes, double duration,
             EnumFlyToMode flyToMOde, AbstractView view);
+
+    LatLonQuad createLatLonQuad();
+
+    LatLonQuad createLatLonQuad(List<SimpleTypeContainer> objectSimpleExtensions,
+            IdAttributes idAttributes, CoordinateSequence coordinates);
 
     PlayList createPlayList();
 
@@ -85,10 +103,11 @@ public interface GxFactory {
             List<AbstractObject> abstractFeatureObjectExtensions,
             List<PlayList> playLists);
 
-    LatLonQuad createLatLonQuad();
+    Track createTrack();
 
-    LatLonQuad createLatLonQuad(List<SimpleTypeContainer> objectSimpleExtensions,
-            IdAttributes idAttributes, Coordinates coordinates);
+    Track createTrack(AltitudeMode altitudeMode,
+            List<Calendar> whens, CoordinateSequence coord,
+            List<Angles> angleList, Model model, ExtendedData extendedData);
 
     SoundCue createSoundCue();
 

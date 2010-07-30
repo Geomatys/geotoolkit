@@ -47,11 +47,11 @@ public interface LabelStyle extends AbstractColorStyle {
      *
      * @return
      */
-    public double getScale();
+    double getScale();
 
     /**
      *
      * @param scale
      */
-    public void setScale(double scale);
+    void setScale(double scale);
 }

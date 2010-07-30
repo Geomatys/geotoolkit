@@ -17,6 +17,7 @@
 package org.geotoolkit.data.kml;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -26,7 +27,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.Boundary;
-import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.model.KmlModelConstants;
@@ -108,7 +108,7 @@ public class FolderTest {
             AbstractGeometry abstractGeometry0 = (AbstractGeometry) placemark0.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
             assertTrue(abstractGeometry0 instanceof Point);
             Point point = (Point) abstractGeometry0;
-            Coordinates coordinates0 = point.getCoordinateSequence();
+            CoordinateSequence coordinates0 = point.getCoordinateSequence();
             assertEquals(1, coordinates0.size());
             Coordinate coordinate00 = coordinates0.getCoordinate(0);
             assertEquals(-122.377588, coordinate00.x, DELTA);
@@ -128,7 +128,7 @@ public class FolderTest {
             Polygon polygon = (Polygon) abstractGeometry1;
             Boundary outerBoundaryIs = (Boundary) polygon.getOuterBoundary();
             LinearRing linearRing = outerBoundaryIs.getLinearRing();
-            Coordinates coordinates1 = linearRing.getCoordinateSequence();
+            CoordinateSequence coordinates1 = linearRing.getCoordinateSequence();
             assertEquals(4, coordinates1.size());
             Coordinate coordinate10 = coordinates1.getCoordinate(0);
             assertEquals(-122.377830, coordinate10.x, DELTA);
@@ -159,7 +159,7 @@ public class FolderTest {
             assertTrue(abstractGeometry2 instanceof LineString);
             LineString lineString = (LineString) abstractGeometry2;
             assertTrue(lineString.getTessellate());
-            Coordinates coordinates2 = lineString.getCoordinateSequence();
+            CoordinateSequence coordinates2 = lineString.getCoordinateSequence();
             assertEquals(2, coordinates2.size());
             Coordinate coordinate20 = coordinates2.getCoordinate(0);
             assertEquals(-122.378009, coordinate20.x, DELTA);
@@ -181,7 +181,7 @@ public class FolderTest {
         final double latitude00 = 37.830266;
         final double altitude00 = 0;
         final Coordinate coordinate00 = kmlFactory.createCoordinate(longitude00, latitude00, altitude00);
-        final Coordinates coordinates0 = kmlFactory.createCoordinates(Arrays.asList(coordinate00));
+        final CoordinateSequence coordinates0 = kmlFactory.createCoordinates(Arrays.asList(coordinate00));
         final Point point = kmlFactory.createPoint(coordinates0);
         final Collection<Property> placemark0Properties = placemark0.getProperties();
         placemark0Properties.add(FF.createAttribute(point, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
@@ -204,7 +204,7 @@ public class FolderTest {
         final Coordinate coordinate11 = kmlFactory.createCoordinate(longitude11, latitude11, altitude11);
         final Coordinate coordinate12 = kmlFactory.createCoordinate(longitude12, latitude12, altitude12);
         final Coordinate coordinate13 = kmlFactory.createCoordinate(longitude13, latitude13, altitude13);
-        final Coordinates coordinates1 = kmlFactory.createCoordinates(Arrays.asList(coordinate10, coordinate11, coordinate12, coordinate13));
+        final CoordinateSequence coordinates1 = kmlFactory.createCoordinates(Arrays.asList(coordinate10, coordinate11, coordinate12, coordinate13));
         final LinearRing linearRing = kmlFactory.createLinearRing(coordinates1);
         final Boundary outerBoundaryIs = kmlFactory.createBoundary();
         outerBoundaryIs.setLinearRing(linearRing);
@@ -222,7 +222,7 @@ public class FolderTest {
         final double altitude21 = 0;
         final Coordinate coordinate20 = kmlFactory.createCoordinate(longitude20, latitude20, altitude20);
         final Coordinate coordinate21 = kmlFactory.createCoordinate(longitude21, latitude21, altitude21);
-        final Coordinates coordinates2 = kmlFactory.createCoordinates(Arrays.asList(coordinate20, coordinate21));
+        final CoordinateSequence coordinates2 = kmlFactory.createCoordinates(Arrays.asList(coordinate20, coordinate21));
         final LineString lineString = kmlFactory.createLineString(coordinates2);
         lineString.setTessellate(true);
         final Collection<Property> placemark2Properties = placemark2.getProperties();

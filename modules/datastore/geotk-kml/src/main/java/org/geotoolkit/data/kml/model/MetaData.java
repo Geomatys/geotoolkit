@@ -29,10 +29,10 @@ public interface Metadata {
      *
      * @return
      */
-    public List<Object> getContent();
+    List<Object> getContent();
 
     /*
      * 
      */
-    public void setContent(List<Object> content);
+    void setContent(List<Object> content);
 }

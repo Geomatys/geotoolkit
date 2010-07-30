@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.kml.model;
 
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import java.util.List;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
@@ -38,7 +39,7 @@ public class DefaultLinearRing extends com.vividsolutions.jts.geom.LinearRing im
      * @param coordinates
      * @param factory
      */
-    public DefaultLinearRing(Coordinates coordinates, GeometryFactory factory) {
+    public DefaultLinearRing(CoordinateSequence coordinates, GeometryFactory factory) {
         super(coordinates, factory);
         this.extrude = DEF_EXTRUDE;
         this.tessellate = DEF_TESSELLATE;
@@ -65,7 +66,7 @@ public class DefaultLinearRing extends com.vividsolutions.jts.geom.LinearRing im
             List<Object> abstractGeometryObjectExtensions,
             boolean extrude, boolean tessellate,
             AltitudeMode altitudeMode,
-            Coordinates coordinates,
+            CoordinateSequence coordinates,
             List<SimpleTypeContainer> lineStringSimpleExtensions,
             List<Object> lineStringObjectExtensions,
             GeometryFactory factory) {
@@ -116,15 +117,6 @@ public class DefaultLinearRing extends com.vividsolutions.jts.geom.LinearRing im
     @Override
     public AltitudeMode getAltitudeMode() {
         return this.altitudeMode;
-    }
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public Coordinates getCoordinateSequence() {
-        return (Coordinates) super.getCoordinateSequence();
     }
 
     /**

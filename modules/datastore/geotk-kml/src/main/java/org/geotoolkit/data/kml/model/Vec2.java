@@ -36,48 +36,48 @@ public interface Vec2 {
      *
      * @return
      */
-    public double getX();
+    double getX();
 
     /**
      *
      * @return
      */
-    public double getY();
+    double getY();
 
     /**
      *
      * @return
      */
-    public Units getXUnits();
+    Units getXUnits();
 
     /**
      * 
      * @return
      */
-    public Units getYUnits();
+    Units getYUnits();
 
     /**
      *
      * @param x
      */
-    public void setX(double x);
+    void setX(double x);
 
     /**
      *
      * @param y
      */
-    public void setY(double y);
+    void setY(double y);
 
     /**
      *
      * @param xUnitx
      */
-    public void setXUnits(Units xUnit);
+    void setXUnits(Units xUnit);
 
     /**
      *
      * @param yUnits
      */
-    public void setYUnits(Units yUnit);
+    void setYUnits(Units yUnit);
 
 }

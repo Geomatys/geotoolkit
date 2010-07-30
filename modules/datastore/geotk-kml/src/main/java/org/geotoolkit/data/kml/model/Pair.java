@@ -50,36 +50,36 @@ public interface Pair extends AbstractObject {
      *
      * @return
      */
-    public StyleState getKey();
+    StyleState getKey();
 
     /**
      *
      * @return
      */
-    public URI getStyleUrl();
+    URI getStyleUrl();
 
     /**
      *
      * @return
      */
-    public AbstractStyleSelector getAbstractStyleSelector();
+    AbstractStyleSelector getAbstractStyleSelector();
 
     /**
      *
      * @param key
      */
-    public void setKey(StyleState key);
+    void setKey(StyleState key);
 
     /**
      *
      * @param styleUrl
      */
-    public void setStyleUrl(URI styleUrl);
+    void setStyleUrl(URI styleUrl);
 
     /**
      * 
      * @param styleSelector
      */
-    public void setAbstractStyleSelector(AbstractStyleSelector styleSelector);
+    void setAbstractStyleSelector(AbstractStyleSelector styleSelector);
 
 }

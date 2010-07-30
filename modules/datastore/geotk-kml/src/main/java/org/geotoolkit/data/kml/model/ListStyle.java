@@ -52,48 +52,48 @@ public interface ListStyle extends AbstractSubStyle {
      *
      * @return
      */
-    public ListItem getListItem();
+    ListItem getListItem();
 
     /**
      *
      * @return
      */
-    public Color getBgColor();
+    Color getBgColor();
 
     /**
      *
      * @return
      */
-    public List<ItemIcon> getItemIcons();
+    List<ItemIcon> getItemIcons();
 
     /**
      *
      * @return
      */
-    public int getMaxSnippetLines();
+    int getMaxSnippetLines();
     
     /**
      *
      * @param listItem
      */
-    public void setListItem(ListItem listItem);
+    void setListItem(ListItem listItem);
 
     /**
      *
      * @param bgColor
      */
-    public void setBgColor(Color bgColor);
+    void setBgColor(Color bgColor);
 
     /**
      *
      * @param itemIcons
      */
-    public void setItemIcons(List<ItemIcon> itemIcons);
+    void setItemIcons(List<ItemIcon> itemIcons);
 
     /**
      *
      * @param maxSnippetLines
      */
-    public void setMaxSnippetLines(int maxSnippetLines);
+    void setMaxSnippetLines(int maxSnippetLines);
 
 }

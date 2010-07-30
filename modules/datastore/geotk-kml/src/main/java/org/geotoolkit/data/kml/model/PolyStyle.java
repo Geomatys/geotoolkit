@@ -47,24 +47,24 @@ public interface PolyStyle extends AbstractColorStyle {
      *
      * @return
      */
-    public boolean getFill();
+    boolean getFill();
 
     /**
      *
      * @return
      */
-    public boolean getOutline();
+    boolean getOutline();
 
     /**
      *
      * @param fill
      */
-    public void setFill(boolean fill);
+    void setFill(boolean fill);
 
     /**
      *
      * @param outline
      */
-    public void setOutline(boolean outline);
+    void setOutline(boolean outline);
 
 }

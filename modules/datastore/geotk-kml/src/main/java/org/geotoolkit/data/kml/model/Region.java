@@ -47,24 +47,24 @@ public interface Region extends AbstractObject{
      *
      * @return
      */
-    public LatLonAltBox getLatLonAltBox();
+    LatLonAltBox getLatLonAltBox();
 
     /**
      *
      * @return
      */
-    public Lod getLod();
+    Lod getLod();
 
     /**
      *
      * @param latLonAltBox
      */
-    public void setLatLonAltBox(LatLonAltBox latLonAltBox);
+    void setLatLonAltBox(LatLonAltBox latLonAltBox);
 
     /**
      *
      * @param lod
      */
-    public void setLod(Lod lod);
+    void setLod(Lod lod);
 
 }

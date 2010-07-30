@@ -17,6 +17,7 @@
 package org.geotoolkit.data.kml;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import java.net.URISyntaxException;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import java.io.File;
@@ -26,7 +27,6 @@ import java.util.Arrays;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.Change;
-import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.model.NetworkLinkControl;
@@ -94,7 +94,7 @@ public class ChangeTest {
         point.getIdAttributes();
         assertEquals("point123", point.getIdAttributes().getTargetId());
 
-        Coordinates coordinates = point.getCoordinateSequence();
+        CoordinateSequence coordinates = point.getCoordinateSequence();
         assertEquals(1, point.getCoordinateSequence().size());
         Coordinate coordinate = point.getCoordinateSequence().getCoordinate(0);
         assertEquals(-95.48, coordinate.x, DELTA);
@@ -108,7 +108,7 @@ public class ChangeTest {
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Coordinate coordinate = kmlFactory.createCoordinate(-95.48, 40.43, 0);
-        final Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate));
+        final CoordinateSequence coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate));
 
         final Point point = kmlFactory.createPoint(coordinates);
         point.setIdAttributes(kmlFactory.createIdAttributes(null, "point123"));

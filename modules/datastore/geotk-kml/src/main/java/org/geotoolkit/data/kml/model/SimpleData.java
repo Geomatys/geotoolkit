@@ -39,12 +39,12 @@ public interface SimpleData {
      *
      * @return
      */
-    public String getName();
+    String getName();
 
     /**
      * 
      * @return
      */
-    public String getContent();
+    String getContent();
 
 }

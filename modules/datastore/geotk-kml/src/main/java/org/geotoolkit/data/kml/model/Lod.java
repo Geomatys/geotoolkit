@@ -49,48 +49,48 @@ public interface Lod extends AbstractObject{
      *
      * @return
      */
-    public double getMinLodPixels();
+    double getMinLodPixels();
 
     /**
      *
      * @return
      */
-    public double getMaxLodPixels();
+    double getMaxLodPixels();
 
     /**
      *
      * @return
      */
-    public double getMinFadeExtent();
+    double getMinFadeExtent();
 
     /**
      *
      * @return
      */
-    public double getMaxFadeExtent();
+    double getMaxFadeExtent();
 
     /**
      *
      * @param minLodPixels
      */
-    public void setMinLodPixels(double minLodPixels);
+    void setMinLodPixels(double minLodPixels);
 
     /**
      *
      * @param maxLodPixels
      */
-    public void setMaxLodPixels(double maxLodPixels);
+    void setMaxLodPixels(double maxLodPixels);
 
     /**
      *
      * @param minFadeExtent
      */
-    public void setMinFadeExtent(double minFadeExtent);
+    void setMinFadeExtent(double minFadeExtent);
 
     /**
      *
      * @param maxFadeExtent
      */
-    public void setMaxFadeExtent(double maxFadeExtent);
+    void setMaxFadeExtent(double maxFadeExtent);
 
 }

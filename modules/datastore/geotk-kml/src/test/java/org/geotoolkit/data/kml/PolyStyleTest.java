@@ -17,6 +17,7 @@
 package org.geotoolkit.data.kml;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -31,7 +32,6 @@ import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.EnumAltitudeMode;
 import org.geotoolkit.data.kml.model.Boundary;
 import org.geotoolkit.data.kml.model.ColorMode;
-import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
@@ -132,7 +132,7 @@ public class PolyStyleTest {
 
             Boundary outerBoundaryIs = polygon.getOuterBoundary();
             LinearRing linearRing = outerBoundaryIs.getLinearRing();
-            Coordinates coordinates = linearRing.getCoordinateSequence();
+            CoordinateSequence coordinates = linearRing.getCoordinateSequence();
             assertEquals(5, coordinates.size());
 
             Coordinate coordinate0 = coordinates.getCoordinate(0);
@@ -165,7 +165,7 @@ public class PolyStyleTest {
 
             Boundary innerBoundaryIs0 = innerBoundariesAre.get(0);
             LinearRing linearRing0 = innerBoundaryIs0.getLinearRing();
-            Coordinates coordinates0 = linearRing0.getCoordinateSequence();
+            CoordinateSequence coordinates0 = linearRing0.getCoordinateSequence();
             assertEquals(5, coordinates0.size());
 
             Coordinate coordinate00 = coordinates0.getCoordinate(0);
@@ -212,7 +212,7 @@ public class PolyStyleTest {
                 -122.36666937925, 37.81942987753481, 30);
         final Coordinate coordinate4 = kmlFactory.createCoordinate(
                 -122.3662784465226, 37.81884427772081, 30);
-        final Coordinates coordinates = kmlFactory.createCoordinates(
+        final CoordinateSequence coordinates = kmlFactory.createCoordinates(
                 Arrays.asList(coordinate0, coordinate1,
                 coordinate2, coordinate3, coordinate4));
 
@@ -226,7 +226,7 @@ public class PolyStyleTest {
                 -122.3664882465854, 37.81940249291773, 30);
         final Coordinate coordinate04 = kmlFactory.createCoordinate(
                 -122.366212593918, 37.81897719083808, 30);
-        final Coordinates coordinates0 = kmlFactory.createCoordinates(
+        final CoordinateSequence coordinates0 = kmlFactory.createCoordinates(
                 Arrays.asList(coordinate00, coordinate01,
                 coordinate02, coordinate03, coordinate04));
 

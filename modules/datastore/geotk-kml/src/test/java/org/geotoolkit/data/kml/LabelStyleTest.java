@@ -17,6 +17,7 @@
 package org.geotoolkit.data.kml;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +30,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.BasicLink;
 import org.geotoolkit.data.kml.model.ColorMode;
-import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
@@ -122,7 +122,7 @@ public class LabelStyleTest {
             assertEquals(new URI("#randomLabelColor"), placemark.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()).getValue());
             assertTrue(placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
             Point point = (Point) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
-            Coordinates coordinates = point.getCoordinateSequence();
+            CoordinateSequence coordinates = point.getCoordinateSequence();
             assertEquals(1, coordinates.size());
             Coordinate coordinate = coordinates.getCoordinate(0);
             assertEquals(-122.367375, coordinate.x, DELTA);
@@ -137,7 +137,7 @@ public class LabelStyleTest {
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Coordinate coordinate = kmlFactory.createCoordinate(-122.367375, 37.829192, 0);
-        final Coordinates coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate));
+        final CoordinateSequence coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate));
         final Point point = kmlFactory.createPoint(coordinates);
 
         final Feature placemark = kmlFactory.createPlacemark();

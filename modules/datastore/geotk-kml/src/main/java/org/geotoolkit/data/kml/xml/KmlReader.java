@@ -17,6 +17,7 @@
 package org.geotoolkit.data.kml.xml;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import java.net.URISyntaxException;
 import org.geotoolkit.xal.xml.XalReader;
 import org.geotoolkit.atom.xml.AtomReader;
@@ -53,7 +54,6 @@ import org.geotoolkit.data.kml.model.Boundary;
 import org.geotoolkit.data.kml.model.Camera;
 import org.geotoolkit.data.kml.model.Change;
 import org.geotoolkit.data.kml.model.ColorMode;
-import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Create;
 import org.geotoolkit.data.kml.model.Data;
 import org.geotoolkit.data.kml.model.Delete;
@@ -488,6 +488,10 @@ public class KmlReader extends StaxStreamReader {
                                 featureObjectExtensions.add(ext);
                             } else if(Extensions.Names.PLACEMARK.equals(extensionLevel)){
                                 placemarkObjectExtensions.add(ext);
+                            } else if(extensionLevel == null){
+                                if (ext instanceof AbstractGeometry){
+                                    abstractGeometry = (AbstractGeometry) ext;
+                                }
                             }
                         } else if ((r = this.getSimpleExtensionReader(TAG_PLACEMARK, eName)) != null){
                             Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_PLACEMARK, eName);
@@ -1413,7 +1417,7 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_TESSELLATE.equals(eName)) {
                             tessellate = parseBoolean(reader.getElementText());
                         } else if (TAG_ALTITUDE_MODE.equals(eName)) {
-                            altitudeMode = EnumAltitudeMode.transform(reader.getElementText());
+                            altitudeMode = this.readAltitudeMode();
                         } else if (TAG_OUTER_BOUNDARY_IS.equals(eName)) {
                             outerBoundaryIs = this.readBoundary();
                         } else if (TAG_INNER_BOUNDARY_IS.equals(eName)) {
@@ -1550,7 +1554,7 @@ public class KmlReader extends StaxStreamReader {
      * @throws KmlException
      * @throws URISyntaxException
      */
-    private Model readModel() 
+    public Model readModel()
             throws XMLStreamException, KmlException, URISyntaxException {
 
         // AbstractObject
@@ -1582,7 +1586,7 @@ public class KmlReader extends StaxStreamReader {
                     // MODEL
                     if (URI_KML.equals(eUri)) {
                         if (TAG_ALTITUDE_MODE.equals(eName)) {
-                            altitudeMode = EnumAltitudeMode.transform(reader.getElementText());
+                            altitudeMode = this.readAltitudeMode();
                         } else if (TAG_LOCATION.equals(eName)) {
                             location = this.readLocation();
                         } else if (TAG_ORIENTATION.equals(eName)) {
@@ -2036,7 +2040,7 @@ public class KmlReader extends StaxStreamReader {
         boolean extrude = DEF_EXTRUDE;
         boolean tessellate = DEF_TESSELLATE;
         AltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
-        Coordinates coordinates = null;
+        CoordinateSequence coordinates = null;
         List<SimpleTypeContainer> linearRingSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         List<Object> linearRingObjectExtensions = new ArrayList<Object>();
 
@@ -2055,7 +2059,7 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_TESSELLATE.equals(eName)) {
                             tessellate = parseBoolean(reader.getElementText());
                         } else if (TAG_ALTITUDE_MODE.equals(eName)) {
-                            altitudeMode = EnumAltitudeMode.transform(reader.getElementText());
+                            altitudeMode = this.readAltitudeMode();
                         } else if (TAG_COORDINATES.equals(eName)) {
                             coordinates = readCoordinates(reader.getElementText());
                         }
@@ -2128,7 +2132,7 @@ public class KmlReader extends StaxStreamReader {
         boolean extrude = DEF_EXTRUDE;
         boolean tessellate = DEF_TESSELLATE;
         AltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
-        Coordinates coordinates = null;
+        CoordinateSequence coordinates = null;
         List<SimpleTypeContainer> lineStringSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         List<Object> lineStringObjectExtensions = new ArrayList<Object>();
 
@@ -2147,7 +2151,7 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_TESSELLATE.equals(eName)) {
                             tessellate = parseBoolean(reader.getElementText());
                         } else if (TAG_ALTITUDE_MODE.equals(eName)) {
-                            altitudeMode = EnumAltitudeMode.transform(reader.getElementText());
+                            altitudeMode = this.readAltitudeMode();
                         } else if (TAG_COORDINATES.equals(eName)) {
                             coordinates = readCoordinates(reader.getElementText());
                         }
@@ -2247,6 +2251,10 @@ public class KmlReader extends StaxStreamReader {
                                 abstractGeometryObjectExtensions.add(ext);
                             } else if(Extensions.Names.MULTI_GEOMETRY.equals(extensionLevel)){
                                 multiGeometryObjectExtensions.add(ext);
+                            } else if(extensionLevel == null){
+                                if (ext instanceof AbstractGeometry){
+                                    geometries.add((AbstractGeometry) ext);
+                                }
                             }
                         } else if ((r = this.getSimpleExtensionReader(TAG_MULTI_GEOMETRY, eName)) != null){
                             Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_MULTI_GEOMETRY, eName);
@@ -2430,7 +2438,7 @@ public class KmlReader extends StaxStreamReader {
                         else if (TAG_ALTITUDE.equals(eName)) {
                             altitude = parseDouble(reader.getElementText());
                         } else if (TAG_ALTITUDE_MODE.equals(eName)) {
-                            altitudeMode = EnumAltitudeMode.transform(reader.getElementText());
+                            altitudeMode = this.readAltitudeMode();
                         } else if (TAG_LAT_LON_BOX.equals(eName)) {
                             latLonBox = this.readLatLonBox();
                         }
@@ -2794,7 +2802,7 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_MAX_ALTITUDE.equals(eName)) {
                             maxAltitude = parseDouble(reader.getElementText());
                         } else if (TAG_MIN_ALTITUDE.equals(eName)) {
-                            altitudeMode = EnumAltitudeMode.transform(reader.getElementText());
+                            altitudeMode = this.readAltitudeMode();
                         }
                     }
                     // EXTENSIONS
@@ -3469,7 +3477,7 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_RANGE.equals(eName)) {
                             range = parseDouble(reader.getElementText());
                         } else if (TAG_ALTITUDE_MODE.equals(eName)) {
-                            altitudeMode = EnumAltitudeMode.transform(reader.getElementText());
+                            altitudeMode = this.readAltitudeMode();
                         }
                     }
                     // EXTENSIONS
@@ -3570,7 +3578,7 @@ public class KmlReader extends StaxStreamReader {
                         } else if (TAG_ROLL.equals(eName)) {
                             roll = parseDouble(reader.getElementText());
                         } else if (TAG_ALTITUDE_MODE.equals(eName)) {
-                            altitudeMode = EnumAltitudeMode.transform(reader.getElementText());
+                            altitudeMode = this.readAltitudeMode();
                         }
                     }
                     // EXTENSIONS
@@ -4847,7 +4855,7 @@ public class KmlReader extends StaxStreamReader {
 
                     if (URI_KML.equals(eUri)) {
                         if (TAG_WHEN.equals(eName)) {
-                            when = (Calendar) fastDateParser.getCalendar(reader.getElementText()).clone();
+                            when = this.readCalendar();
                         }
                     }
                     // EXTENSIONS
@@ -5515,7 +5523,7 @@ public class KmlReader extends StaxStreamReader {
         // Point
         boolean extrude = DEF_EXTRUDE;
         AltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
-        Coordinates coordinates = null;
+        CoordinateSequence coordinates = null;
         List<SimpleTypeContainer> pointSimpleExtensions = new ArrayList<SimpleTypeContainer>();
         List<Object> pointObjectExtensions = new ArrayList<Object>();
 
@@ -5532,7 +5540,7 @@ public class KmlReader extends StaxStreamReader {
                         if (TAG_EXTRUDE.equals(eName)) {
                             extrude = parseBoolean(reader.getElementText());
                         } else if (TAG_ALTITUDE_MODE.equals(eName)) {
-                            altitudeMode = EnumAltitudeMode.transform(reader.getElementText());
+                            altitudeMode = this.readAltitudeMode();
                         } else if (TAG_COORDINATES.equals(eName)) {
                             coordinates = readCoordinates(reader.getElementText());
                         }
@@ -5588,7 +5596,7 @@ public class KmlReader extends StaxStreamReader {
      * @param coordinates The coordinates String.
      * @return
      */
-    public Coordinates readCoordinates(String coordinates) {
+    public CoordinateSequence readCoordinates(String coordinates) {
 
         List<Coordinate> coordinatesList = new ArrayList<Coordinate>();
         String[] coordinatesStringList = coordinates.split("[\\s]+");
@@ -5608,6 +5616,24 @@ public class KmlReader extends StaxStreamReader {
     public IdAttributes readIdAttributes() {
         return KmlReader.kmlFactory.createIdAttributes(
                 reader.getAttributeValue(null, ATT_ID), reader.getAttributeValue(null, ATT_TARGET_ID));
+    }
+
+    /**
+     *
+     * @return
+     * @throws XMLStreamException
+     */
+    public AltitudeMode readAltitudeMode() throws XMLStreamException{
+        return EnumAltitudeMode.transform(reader.getElementText());
+    }
+
+    /**
+     * 
+     * @return
+     * @throws XMLStreamException
+     */
+    public Calendar readCalendar() throws XMLStreamException{
+        return (Calendar) fastDateParser.getCalendar(reader.getElementText()).clone();
     }
 
     /*

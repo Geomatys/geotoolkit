@@ -48,12 +48,12 @@ public interface StyleMap extends AbstractStyleSelector {
      *
      * @return
      */
-    public List<Pair> getPairs();
+    List<Pair> getPairs();
 
     /**
      *
      * @param pairs
      */
-    public void setPairs(List<Pair> pairs);
+    void setPairs(List<Pair> pairs);
 
 }

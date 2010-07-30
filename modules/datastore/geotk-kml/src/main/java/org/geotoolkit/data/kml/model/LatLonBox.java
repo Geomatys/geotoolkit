@@ -54,12 +54,12 @@ public interface LatLonBox extends AbstractLatLonBox {
      *
      * @return
      */
-    public double getRotation();
+    double getRotation();
 
     /**
      *
      * @param rotation
      */
-    public void setRotation(double rotation);
+    void setRotation(double rotation);
 
 }

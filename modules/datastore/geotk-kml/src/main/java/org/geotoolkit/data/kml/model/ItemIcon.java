@@ -49,24 +49,24 @@ public interface ItemIcon extends AbstractObject {
      *
      * @return the list of icon states.
      */
-    public List<ItemIconState> getStates();
+    List<ItemIconState> getStates();
 
     /**
      *
      * @return the href.
      */
-    public String getHref();
+    String getHref();
 
     /**
      *
      * @param states
      */
-    public void setStates(List<ItemIconState> states);
+    void setStates(List<ItemIconState> states);
 
     /**
      *
      * @param href
      */
-    public void setHref(String href);
+    void setHref(String href);
 
 }

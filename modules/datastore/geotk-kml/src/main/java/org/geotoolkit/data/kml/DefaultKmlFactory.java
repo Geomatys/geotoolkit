@@ -17,7 +17,9 @@
 package org.geotoolkit.data.kml;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import java.awt.Color;
 import java.net.URI;
 import java.util.ArrayList;
@@ -32,7 +34,6 @@ import org.geotoolkit.data.kml.model.AbstractView;
 import org.geotoolkit.data.kml.model.Alias;
 import org.geotoolkit.data.kml.model.AltitudeMode;
 import org.geotoolkit.data.kml.model.DefaultAlias;
-import org.geotoolkit.data.kml.model.EnumAltitudeMode;
 import org.geotoolkit.data.kml.model.BalloonStyle;
 import org.geotoolkit.data.kml.model.DefaultBalloonStyle;
 import org.geotoolkit.data.kml.model.BasicLink;
@@ -44,8 +45,6 @@ import org.geotoolkit.data.kml.model.DefaultCamera;
 import org.geotoolkit.data.kml.model.Change;
 import org.geotoolkit.data.kml.model.DefaultChange;
 import org.geotoolkit.data.kml.model.ColorMode;
-import org.geotoolkit.data.kml.model.Coordinates;
-import org.geotoolkit.data.kml.model.DefaultCoordinates;
 import org.geotoolkit.data.kml.model.Create;
 import org.geotoolkit.data.kml.model.DefaultCreate;
 import org.geotoolkit.data.kml.model.Data;
@@ -371,8 +370,8 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public Coordinates createCoordinates(List<Coordinate> coordinates) {
-        return new DefaultCoordinates(coordinates.toArray(new Coordinate[coordinates.size()]));
+    public CoordinateSequence createCoordinates(List<Coordinate> coordinates) {
+        return new CoordinateArraySequence(coordinates.toArray(new Coordinate[coordinates.size()]));
     }
 
     /**
@@ -957,7 +956,7 @@ public class DefaultKmlFactory implements KmlFactory{
             List<Object> abstractGeometryObjectExtensions,
             boolean extrude, boolean tessellate,
             AltitudeMode altitudeMode,
-            Coordinates coordinates,
+            CoordinateSequence coordinates,
             List<SimpleTypeContainer> linearRingSimpleExtensions,
             List<Object> linearRingObjectExtensions) {
         return new DefaultLinearRing(objectSimpleExtensions, idAttributes,
@@ -972,7 +971,7 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public LinearRing createLinearRing(Coordinates coordinates){
+    public LinearRing createLinearRing(CoordinateSequence coordinates){
         return new DefaultLinearRing(coordinates, GF);
     }
 
@@ -987,7 +986,7 @@ public class DefaultKmlFactory implements KmlFactory{
             List<Object> abstractGeometryObjectExtensions,
             boolean extrude, boolean tessellate,
             AltitudeMode altitudeMode,
-            Coordinates coordinates,
+            CoordinateSequence coordinates,
             List<SimpleTypeContainer> lineStringSimpleExtensions,
             List<Object> lineStringObjectExtensions) {
         return new DefaultLineString(objectSimpleExtensions, idAttributes,
@@ -1004,7 +1003,7 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public LineString createLineString(Coordinates coordinates) {
+    public LineString createLineString(CoordinateSequence coordinates) {
         return new DefaultLineString(coordinates,GF);
     }
 
@@ -1604,7 +1603,7 @@ public class DefaultKmlFactory implements KmlFactory{
             List<Object> abstractGeometryObjectExtensions,
             boolean extrude,
             AltitudeMode altitudeMode,
-            Coordinates coordinates,
+            CoordinateSequence coordinates,
             List<SimpleTypeContainer> pointSimpleExtensions,
             List<Object> pointObjectExtensions) {
         return new DefaultPoint(objectSimpleExtensions, idAttributes,
@@ -1618,7 +1617,7 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public Point createPoint(Coordinates coordinates) {
+    public Point createPoint(CoordinateSequence coordinates) {
         return new DefaultPoint(coordinates, GF);
     }
 

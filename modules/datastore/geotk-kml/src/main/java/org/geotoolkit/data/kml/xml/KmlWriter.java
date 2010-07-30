@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.kml.xml;
 
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import org.geotoolkit.xal.xml.XalWriter;
 import org.geotoolkit.atom.xml.AtomWriter;
 import java.awt.Color;
@@ -47,7 +48,6 @@ import org.geotoolkit.data.kml.model.Boundary;
 import org.geotoolkit.data.kml.model.Camera;
 import org.geotoolkit.data.kml.model.Change;
 import org.geotoolkit.data.kml.model.ColorMode;
-import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Create;
 import org.geotoolkit.data.kml.model.Data;
 import org.geotoolkit.data.kml.model.Delete;
@@ -534,7 +534,6 @@ public class KmlWriter extends StaxStreamWriter {
         } else if (abstractFeature.getType().equals(KmlModelConstants.TYPE_PLACEMARK)){
             this.writePlacemark(abstractFeature);
         } else {
-            System.out.println("ABSTRACT FEATURE PAS COMMUN !!!");
             for(StaxStreamWriter candidate : this.extensionWriters){
                 if(((KmlExtensionWriter) candidate).canHandleComplex(null, abstractFeature)){
                     ((KmlExtensionWriter) candidate).writeComplexExtensionElement(abstractFeature);
@@ -705,7 +704,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeExtendedData(ExtendedData extendedData) 
+    public void writeExtendedData(ExtendedData extendedData)
             throws XMLStreamException, KmlException{
 
         writer.writeStartElement(URI_KML, TAG_EXTENDED_DATA);
@@ -1945,6 +1944,12 @@ public class KmlWriter extends StaxStreamWriter {
             this.writeLinearRing((LinearRing) abstractGeometry);
         } else if (abstractGeometry instanceof Model){
             this.writeModel((Model) abstractGeometry);
+        } else {
+            for(StaxStreamWriter candidate : this.extensionWriters){
+                if(((KmlExtensionWriter) candidate).canHandleComplex(null, abstractGeometry)){
+                    ((KmlExtensionWriter) candidate).writeComplexExtensionElement(abstractGeometry);
+                }
+            }
         }
     }
 
@@ -1956,7 +1961,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeCommonAbstractGeometry(AbstractGeometry abstractGeometry) 
+    public void writeCommonAbstractGeometry(AbstractGeometry abstractGeometry)
             throws XMLStreamException, KmlException{
 
         this.writeCommonAbstractObject(abstractGeometry);
@@ -1971,7 +1976,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeModel(Model model) 
+    public void writeModel(Model model)
             throws XMLStreamException, KmlException{
 
         writer.writeStartElement(URI_KML, TAG_MODEL);
@@ -2289,7 +2294,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param coordinates
      * @throws XMLStreamException
      */
-    public void writeCoordinates(Coordinates coordinates) 
+    public void writeCoordinates(CoordinateSequence coordinates)
             throws XMLStreamException{
 
         writer.writeStartElement(URI_KML, TAG_COORDINATES);
@@ -2775,7 +2780,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param altitudeMode
      * @throws XMLStreamException
      */
-    private void writeAltitudeMode(AltitudeMode altitudeMode) throws XMLStreamException, KmlException{
+    public void writeAltitudeMode(AltitudeMode altitudeMode) throws XMLStreamException, KmlException{
         if(DEF_ALTITUDE_MODE != altitudeMode){
             if (altitudeMode instanceof org.geotoolkit.data.kml.model.EnumAltitudeMode){
                 writer.writeStartElement(URI_KML, TAG_ALTITUDE_MODE);

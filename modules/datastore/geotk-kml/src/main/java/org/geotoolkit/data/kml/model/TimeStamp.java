@@ -48,12 +48,12 @@ public interface TimeStamp extends AbstractTimePrimitive{
      *
      * @return
      */
-    public Calendar getWhen();
+    Calendar getWhen();
 
     /**
      * 
      * @param when
      */
-    public void setWhen(Calendar when);
+    void setWhen(Calendar when);
 
 }

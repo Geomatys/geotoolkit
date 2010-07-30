@@ -50,47 +50,47 @@ public interface Update {
      *
      * @return
      */
-    public URI getTargetHref();
+    URI getTargetHref();
 
     /**
      *
      * @return
      */
-    public List<Object> getUpdates();
+    List<Object> getUpdates();
 
     /**
      *
      * @return
      */
-    public List<Object> getUpdateOpExtensions();
+    List<Object> getUpdateOpExtensions();
 
     /**
      * 
      * @return
      */
-    public List<Object> getUpdateExtensions();
+    List<Object> getUpdateExtensions();
 
     /**
      *
      * @param targetHref
      */
-    public void setTargetHref(URI targetHref);
+    void setTargetHref(URI targetHref);
 
     /**
      * 
      * @param updates
      */
-    public void setUpdates(List<Object> updates);
+    void setUpdates(List<Object> updates);
 
     /**
      *
      * @param updateOpEXtensions
      */
-    public void setUpdateOpExtensions(List<Object> updateOpEXtensions);
+    void setUpdateOpExtensions(List<Object> updateOpEXtensions);
 
     /**
      * 
      * @param updateExtensions
      */
-    public void setUpdateExtensions(List<Object> updateExtensions);
+    void setUpdateExtensions(List<Object> updateExtensions);
 }

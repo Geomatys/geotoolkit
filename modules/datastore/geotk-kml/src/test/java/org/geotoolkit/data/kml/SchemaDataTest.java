@@ -17,6 +17,7 @@
 package org.geotoolkit.data.kml;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import java.net.URISyntaxException;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import java.io.File;
@@ -27,7 +28,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
-import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.ExtendedData;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
@@ -126,7 +126,7 @@ public class SchemaDataTest {
 
             assertTrue(placemark0.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
             final Point point0 = (Point) placemark0.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
-            final Coordinates coordinates0 = point0.getCoordinateSequence();
+            final CoordinateSequence coordinates0 = point0.getCoordinateSequence();
             assertEquals(1, coordinates0.size());
 
             final Coordinate coordinate0 = coordinates0.getCoordinate(0);
@@ -164,7 +164,7 @@ public class SchemaDataTest {
 
             assertTrue(placemark1.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Point);
             final Point point1 = (Point) placemark1.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
-            final Coordinates coordinates1 = point1.getCoordinateSequence();
+            final CoordinateSequence coordinates1 = point1.getCoordinateSequence();
             assertEquals(1, coordinates1.size());
 
             final Coordinate coordinate1 = coordinates1.getCoordinate(0);
@@ -178,7 +178,7 @@ public class SchemaDataTest {
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final Coordinate coordinate0 = kmlFactory.createCoordinate(-122, 37.002);
-        final Coordinates coordinates0 = kmlFactory.createCoordinates(Arrays.asList(coordinate0));
+        final CoordinateSequence coordinates0 = kmlFactory.createCoordinates(Arrays.asList(coordinate0));
         final Point point0 = kmlFactory.createPoint(coordinates0);
 
         final SimpleData simpleData00 = kmlFactory.createSimpleData("TrailHeadName", "Pi in the sky");
@@ -199,7 +199,7 @@ public class SchemaDataTest {
         placemark0Properties.add(FF.createAttribute(point0, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
         final Coordinate coordinate1 = kmlFactory.createCoordinate(-122, 37.002);
-        final Coordinates coordinates1 = kmlFactory.createCoordinates(Arrays.asList(coordinate1));
+        final CoordinateSequence coordinates1 = kmlFactory.createCoordinates(Arrays.asList(coordinate1));
         final Point point1 = kmlFactory.createPoint(coordinates1);
 
         final SimpleData simpleData10 = kmlFactory.createSimpleData("TrailHeadName", "Mount Everest");

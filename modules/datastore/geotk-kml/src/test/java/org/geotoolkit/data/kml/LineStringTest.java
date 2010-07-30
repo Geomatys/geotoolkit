@@ -17,6 +17,7 @@
 package org.geotoolkit.data.kml;
 
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +27,6 @@ import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.kml.model.EnumAltitudeMode;
-import org.geotoolkit.data.kml.model.Coordinates;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.model.KmlModelConstants;
@@ -120,7 +120,7 @@ public class LineStringTest {
             assertTrue(lineString0.getExtrude());
             assertTrue(lineString0.getTessellate());
 
-            final Coordinates coordinates0 = lineString0.getCoordinateSequence();
+            final CoordinateSequence coordinates0 = lineString0.getCoordinateSequence();
             assertEquals(2, coordinates0.size());
 
             final Coordinate coordinate00 = coordinates0.getCoordinate(0);
@@ -147,7 +147,7 @@ public class LineStringTest {
             assertTrue(lineString1.getTessellate());
             assertEquals(EnumAltitudeMode.RELATIVE_TO_GROUND, lineString1.getAltitudeMode());
 
-            final Coordinates coordinates1 = lineString1.getCoordinateSequence();
+            final CoordinateSequence coordinates1 = lineString1.getCoordinateSequence();
             assertEquals(2, coordinates1.size());
 
             final Coordinate coordinate10 = coordinates1.getCoordinate(0);
@@ -174,8 +174,8 @@ public class LineStringTest {
         final Coordinate coordinate10 = kmlFactory.createCoordinate(-122.364167,37.824787,50.0);
         final Coordinate coordinate11 = kmlFactory.createCoordinate(-122.363917,37.824423,50.0);
 
-        final Coordinates coordinates0 = kmlFactory.createCoordinates(Arrays.asList(coordinate00, coordinate01));
-        final Coordinates coordinates1 = kmlFactory.createCoordinates(Arrays.asList(coordinate10, coordinate11));
+        final CoordinateSequence coordinates0 = kmlFactory.createCoordinates(Arrays.asList(coordinate00, coordinate01));
+        final CoordinateSequence coordinates1 = kmlFactory.createCoordinates(Arrays.asList(coordinate10, coordinate11));
 
         final LineString lineString0 = kmlFactory.createLineString(coordinates0);
         lineString0.setExtrude(true);

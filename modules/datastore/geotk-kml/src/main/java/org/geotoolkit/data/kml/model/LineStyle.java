@@ -46,12 +46,12 @@ public interface LineStyle extends AbstractColorStyle {
      *
      * @return
      */
-    public double getWidth();
+    double getWidth();
 
     /**
      *
      * @param width
      */
-    public void setWidth(double width);
+    void setWidth(double width);
 
 }

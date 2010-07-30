@@ -47,61 +47,61 @@ public interface Kml {
      *
      * @return
      */
-    public String getVersion();
+    String getVersion();
 
     /**
      *
      * @return The Kml NetworkLinkControl.
      */
-    public NetworkLinkControl getNetworkLinkControl();
+    NetworkLinkControl getNetworkLinkControl();
 
     /**
      *
      * @return The Kml AbstractFeature.
      */
-    public Feature getAbstractFeature();
+    Feature getAbstractFeature();
 
     /**
      *
      * @return A lis of extensions used by the Kml object.
      */
-    public Map<String, String> getExtensionsUris();
+    Map<String, String> getExtensionsUris();
 
     /**
      * 
      * @param version
      */
-    public void setVersion(String version) throws KmlException;
+    void setVersion(String version) throws KmlException;
 
     /**
      * 
      * @param networkLinkControl
      */
-    public void setNetworkLinkControl(NetworkLinkControl networkLinkControl);
+    void setNetworkLinkControl(NetworkLinkControl networkLinkControl);
 
     /**
      * 
      * @param feature
      */
-    public void setAbstractFeature(Feature feature);
+    void setAbstractFeature(Feature feature);
 
     /**
      *
      * @param extensionsUris
      */
-    public void setExtensionsUris(Map<String, String> extensionsUris);
+    void setExtensionsUris(Map<String, String> extensionsUris);
 
     /**
      * 
      * @param uri
      * @param prefix
      */
-    public void addExtensionUri(String uri, String prefix);
+    void addExtensionUri(String uri, String prefix);
 
     /**
      * 
      * @return
      */
-    public Extensions extensions();
+    Extensions extensions();
 
 }

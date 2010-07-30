@@ -52,47 +52,47 @@ public interface Polygon extends AbstractGeometry {
      *
      * @return
      */
-    public boolean getExtrude();
+    boolean getExtrude();
 
     /**
      *
      * @return
      */
-    public boolean getTessellate();
+    boolean getTessellate();
 
     /**
      *
      * @return
      */
-    public AltitudeMode getAltitudeMode();
+    AltitudeMode getAltitudeMode();
 
     /**
      * 
      * @return
      */
-    public Boundary getOuterBoundary();
+    Boundary getOuterBoundary();
 
     /**
      *
      * @return
      */
-    public List<Boundary> getInnerBoundaries();
+    List<Boundary> getInnerBoundaries();
 
     /**
      *
      * @param extrude
      */
-    public void setExtrude(boolean extrude);
+    void setExtrude(boolean extrude);
 
     /**
      *
      * @param tesselate
      */
-    public void setTessellate(boolean tesselate);
+    void setTessellate(boolean tesselate);
 
     /**
      *
      * @param altitudeMode
      */
-    public void setAltitudeMode(EnumAltitudeMode altitudeMode);
+    void setAltitudeMode(EnumAltitudeMode altitudeMode);
 }
