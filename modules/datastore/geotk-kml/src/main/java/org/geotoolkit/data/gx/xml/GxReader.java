@@ -833,14 +833,16 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
     }
 
     @Override
-    public Entry<Object, Extensions.Names> readExtensionElement(String containingTag, String contentsTag)
+    public Entry<Object, Extensions.Names> readExtensionElement(
+            String containingTag, String contentsTag)
             throws XMLStreamException, KmlException, URISyntaxException {
         Object resultat = null;
         Extensions.Names ext = null;
         if(GxConstants.TAG_ALTITUDE_MODE.equals(contentsTag)){
             resultat = readAltitudeMode();
         } else if(GxConstants.TAG_BALLOON_VISIBILITY.equals(contentsTag)){
-            resultat = KML_FACTORY.createSimpleTypeContainer(URI_GX, TAG_BALLOON_VISIBILITY,readBalloonVisibility());
+            resultat = KML_FACTORY.createSimpleTypeContainer(
+                    URI_GX, TAG_BALLOON_VISIBILITY,readBalloonVisibility());
             ext = Extensions.Names.FEATURE;
         } else if (GxConstants.TAG_LAT_LON_QUAD.equals(contentsTag)){
             resultat = readLatLonQuad();
@@ -859,6 +861,13 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
             resultat = readTrack();
         } else if(GxConstants.TAG_MULTI_TRACK.equals(contentsTag)){
             resultat = readMultiTrack();
+        } else if(GxConstants.TAG_H.equals(contentsTag)
+                || GxConstants.TAG_W.equals(contentsTag)
+                || GxConstants.TAG_X.equals(contentsTag)
+                || GxConstants.TAG_Y.equals(contentsTag)){
+            resultat = KML_FACTORY.createSimpleTypeContainer(
+                    URI_GX, contentsTag, Integer.parseInt(reader.getElementText()));
+            ext = Extensions.Names.BASIC_LINK;
         }
         return new SimpleImmutableEntry<Object, Extensions.Names>(resultat, ext);
     }
@@ -921,8 +930,24 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
         balloonVisibilityBinding.add(KmlConstants.TAG_SCREEN_OVERLAY);
         balloonVisibilityBinding.add(KmlConstants.TAG_PHOTO_OVERLAY);
 
+        List<String> hBinding = new ArrayList<String>();
+        hBinding.add(KmlConstants.TAG_ICON);
+
+        List<String> wBinding = new ArrayList<String>();
+        wBinding.add(KmlConstants.TAG_ICON);
+
+        List<String> xBinding = new ArrayList<String>();
+        xBinding.add(KmlConstants.TAG_ICON);
+
+        List<String> yBinding = new ArrayList<String>();
+        yBinding.add(KmlConstants.TAG_ICON);
+
         simpleTable = new HashMap<String, List<String>>();
         simpleTable.put(GxConstants.TAG_BALLOON_VISIBILITY, balloonVisibilityBinding);
+        simpleTable.put(GxConstants.TAG_H, hBinding);
+        simpleTable.put(GxConstants.TAG_W, wBinding);
+        simpleTable.put(GxConstants.TAG_X, xBinding);
+        simpleTable.put(GxConstants.TAG_Y, yBinding);
     }
 
 }

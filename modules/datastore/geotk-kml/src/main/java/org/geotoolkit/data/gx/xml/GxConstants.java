@@ -44,7 +44,9 @@ public class GxConstants {
     public static final String TAG_BALLOON_VISIBILITY = "balloonVisibility";
     public static final String TAG_DURATION = "duration";
     public static final String TAG_FLY_TO = "FlyTo";
+    public static final String TAG_H = "h";
     public static final String TAG_INTERPOLATE = "interpolate";
+    public static final String TAG_LAT_LON_QUAD = "LatLonQuad";
     public static final String TAG_MULTI_TRACK = "MultiTrack";
     public static final String TAG_PLAYLIST = "Playlist";
     public static final String TAG_SOUND_CUE = "SoundCue";
@@ -53,8 +55,10 @@ public class GxConstants {
     public static final String TAG_TIME_SPAN = "TimeSpan";
     public static final String TAG_TOUR_CONTROL = "TourControl";
     public static final String TAG_TRACK = "Track";
+    public static final String TAG_W = "w";
     public static final String TAG_WAIT = "Wait";
-    public static final String TAG_LAT_LON_QUAD = "LatLonQuad";
+    public static final String TAG_X = "x";
+    public static final String TAG_Y = "y";
 
     /*
      * DEFAULT VALUES

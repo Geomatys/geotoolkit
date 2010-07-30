@@ -2562,7 +2562,7 @@ public class KmlReader extends StaxStreamReader {
                         }
 
                         // SPECIFIQUE A LINK
-                        if (TAG_REFRESH_MODE.equals(eName)) {
+                        else if (TAG_REFRESH_MODE.equals(eName)) {
                             refreshMode = RefreshMode.transform(reader.getElementText());
                         } else if (TAG_REFRESH_INTERVAL.equals(eName)) {
                             refreshInterval = parseDouble(reader.getElementText());

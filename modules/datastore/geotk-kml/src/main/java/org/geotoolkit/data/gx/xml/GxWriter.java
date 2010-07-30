@@ -469,6 +469,50 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
 
     /**
      *
+     * @param inter
+     * @throws XMLStreamException
+     */
+    public void writeX(int abs) throws XMLStreamException{
+        writer.writeStartElement(URI_GX, TAG_X);
+        writer.writeCharacters(String.valueOf(abs));
+        writer.writeEndElement();
+    }
+
+    /**
+     *
+     * @param inter
+     * @throws XMLStreamException
+     */
+    public void writeY(int abs) throws XMLStreamException{
+        writer.writeStartElement(URI_GX, TAG_Y);
+        writer.writeCharacters(String.valueOf(abs));
+        writer.writeEndElement();
+    }
+
+    /**
+     *
+     * @param inter
+     * @throws XMLStreamException
+     */
+    public void writeW(int abs) throws XMLStreamException{
+        writer.writeStartElement(URI_GX, TAG_W);
+        writer.writeCharacters(String.valueOf(abs));
+        writer.writeEndElement();
+    }
+
+    /**
+     *
+     * @param inter
+     * @throws XMLStreamException
+     */
+    public void writeH(int abs) throws XMLStreamException{
+        writer.writeStartElement(URI_GX, TAG_H);
+        writer.writeCharacters(String.valueOf(abs));
+        writer.writeEndElement();
+    }
+
+    /**
+     *
      * @{@inheritDoc }
      */
     @Override
@@ -508,6 +552,14 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
 
         if(TAG_BALLOON_VISIBILITY.equals(contentsElement.getTagName())){
             writeBalloonVisibility((Boolean) contentsElement.getValue());
+        } else if (TAG_X.equals(contentsElement.getTagName())){
+            writeX((Integer) contentsElement.getValue());
+        } else if (TAG_Y.equals(contentsElement.getTagName())){
+            writeY((Integer) contentsElement.getValue());
+        } else if (TAG_W.equals(contentsElement.getTagName())){
+            writeW((Integer) contentsElement.getValue());
+        } else if (TAG_H.equals(contentsElement.getTagName())){
+            writeH((Integer) contentsElement.getValue());
         }
     }
 
@@ -582,9 +634,25 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      *
      */
     private void initSimpleTable(){
-        List<Names> featureExtensionsList = new ArrayList<Names>();
-        featureExtensionsList.add(Extensions.Names.FEATURE);
+        List<Names> balloonVisibilityList = new ArrayList<Names>();
+        balloonVisibilityList.add(Extensions.Names.FEATURE);
 
-        simpleTable.put(GxConstants.TAG_BALLOON_VISIBILITY, featureExtensionsList);
+        List<Names> hList = new ArrayList<Names>();
+        hList.add(Extensions.Names.BASIC_LINK);
+
+        List<Names> wList = new ArrayList<Names>();
+        wList.add(Extensions.Names.BASIC_LINK);
+
+        List<Names> xList = new ArrayList<Names>();
+        xList.add(Extensions.Names.BASIC_LINK);
+
+        List<Names> yList = new ArrayList<Names>();
+        yList.add(Extensions.Names.BASIC_LINK);
+
+        simpleTable.put(GxConstants.TAG_BALLOON_VISIBILITY, balloonVisibilityList);
+        simpleTable.put(GxConstants.TAG_H, hList);
+        simpleTable.put(GxConstants.TAG_W, wList);
+        simpleTable.put(GxConstants.TAG_X, xList);
+        simpleTable.put(GxConstants.TAG_Y, yList);
     }
 }
