@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
+import org.geotoolkit.data.kml.model.Extensions;
 import org.geotoolkit.data.kml.model.Extensions.Names;
 import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.xml.KmlExtensionWriter;
@@ -91,7 +92,7 @@ public class DataWriter extends StaxStreamWriter implements KmlExtensionWriter{
     }
 
     @Override
-    public boolean canHandleComplex(Names ext, Object contentObject) {
+    public boolean canHandleComplex(String kmlVersionUri, Names ext, Object contentObject) {
         if(contentObject instanceof List){
             return true;
         }
@@ -99,7 +100,7 @@ public class DataWriter extends StaxStreamWriter implements KmlExtensionWriter{
     }
 
     @Override
-    public boolean canHandleSimple(Names ext, String elementTag) {
+    public boolean canHandleSimple(String kmlVersionUri, Names ext, String elementTag) {
         if("element".equals(elementTag)){
             return true;
         }
@@ -107,15 +108,16 @@ public class DataWriter extends StaxStreamWriter implements KmlExtensionWriter{
     }
 
     @Override
-    public void writeComplexExtensionElement(Object contentElement) throws XMLStreamException, KmlException {
+    public void writeComplexExtensionElement(String kmlVersionUri, Extensions.Names ext, Object contentElement)
+            throws XMLStreamException, KmlException {
         if(contentElement instanceof List){
-        System.out.println(" C VRAI");
             this.writeRacine((List<String>) contentElement);
         }
     }
 
     @Override
-    public void writeSimpleExtensionElement(SimpleTypeContainer contentElement) throws XMLStreamException, KmlException {
+    public void writeSimpleExtensionElement(String kmlVersionUri, Extensions.Names ext, SimpleTypeContainer contentElement)
+            throws XMLStreamException, KmlException {
         if("element".equals(contentElement.getTagName())){
             this.writeElement(URI_DATA);
         }

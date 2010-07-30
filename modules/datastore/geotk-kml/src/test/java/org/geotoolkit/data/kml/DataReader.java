@@ -145,18 +145,22 @@ public class DataReader extends StaxStreamReader implements KmlExtensionReader{
     }
 
     @Override
-    public boolean canHandleComplexExtension(String containingTag, String contentsTag) {
+    public boolean canHandleComplexExtension(String containingUri,
+            String containingTag, String contentsUri, String contentsTag) {
         return false;
     }
 
     @Override
-    public boolean canHandleSimpleExtension(String containingTag, String contentsTag) {
+    public boolean canHandleSimpleExtension(String containingUri,
+            String containingTag, String contentsUri, String contentsTag) {
         return (("racine".equals(contentsTag))
                 || ("element".equals(contentsTag)));
     }
 
     @Override
-    public Entry<Object, Names> readExtensionElement(String containingTag, String contentsTag) throws XMLStreamException, KmlException, URISyntaxException {
+    public Entry<Object, Names> readExtensionElement(String containingUri, 
+            String containingTag, String contentsUri, String contentsTag)
+            throws XMLStreamException, KmlException, URISyntaxException {
         Object object = null;
         
         if("racine".equals(contentsTag)){

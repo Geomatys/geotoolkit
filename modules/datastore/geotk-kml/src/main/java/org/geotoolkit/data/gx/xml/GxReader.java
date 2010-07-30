@@ -815,7 +815,8 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
      */
 
     @Override
-    public boolean canHandleComplexExtension(String containingTag, String contentsTag) {
+    public boolean canHandleComplexExtension(String containingUri, 
+            String containingTag, String contentsUri, String contentsTag) {
         try {
             return this.complexTable.get(contentsTag).contains(containingTag);
         } catch (NullPointerException e){
@@ -824,7 +825,8 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
     }
 
     @Override
-    public boolean canHandleSimpleExtension(String containingTag, String contentsTag) {
+    public boolean canHandleSimpleExtension(String containingUri,
+            String containingTag, String contentsUri, String contentsTag) {
         try {
             return this.simpleTable.get(contentsTag).contains(containingTag);
         } catch (NullPointerException e){
@@ -833,8 +835,8 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
     }
 
     @Override
-    public Entry<Object, Extensions.Names> readExtensionElement(
-            String containingTag, String contentsTag)
+    public Entry<Object, Extensions.Names> readExtensionElement(String containingUri,
+            String containingTag, String contentsUri, String contentsTag)
             throws XMLStreamException, KmlException, URISyntaxException {
         Object resultat = null;
         Extensions.Names ext = null;

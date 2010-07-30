@@ -197,6 +197,13 @@ public class KmlReader extends StaxStreamReader {
         }
     }
 
+    /**
+     *
+     * @param reader
+     * @throws KmlException
+     * @throws IOException
+     * @throws XMLStreamException
+     */
     public void addDataReader(StaxStreamReader reader)
             throws KmlException, IOException, XMLStreamException{
         if (reader instanceof KmlExtensionReader){
@@ -207,10 +214,17 @@ public class KmlReader extends StaxStreamReader {
         }
     }
 
-    protected KmlExtensionReader getDataReader(String containingTag, String contentsTag){
+    /**
+     *
+     * @param containingTag
+     * @param contentsUri
+     * @param contentsTag
+     * @return
+     */
+    protected KmlExtensionReader getDataReader(String containingTag, String contentsUri, String contentsTag){
         for(KmlExtensionReader r : this.dataReaders){
-            if(r.canHandleComplexExtension(containingTag, contentsTag)
-                    || r.canHandleSimpleExtension(containingTag, contentsTag)){
+            if(r.canHandleComplexExtension(URI_KML, containingTag, contentsUri, contentsTag)
+                    || r.canHandleSimpleExtension(URI_KML, containingTag, contentsUri, contentsTag)){
                 return r;
             }
         }
@@ -220,13 +234,16 @@ public class KmlReader extends StaxStreamReader {
     /**
      *
      * @param containingTag
+     * @param contentsUri
      * @param contentsTag
      * @return
      * @throws KmlException
      */
-    protected KmlExtensionReader getComplexExtensionReader(String containingTag, String contentsTag) throws KmlException{
+    protected KmlExtensionReader getComplexExtensionReader(
+            String containingTag, String contentsUri, String contentsTag)
+            throws KmlException{
         for(KmlExtensionReader r : this.extensionReaders){
-            if(r.canHandleComplexExtension(containingTag, contentsTag)){
+            if(r.canHandleComplexExtension(URI_KML, containingTag, contentsUri, contentsTag)){
                 return r;
             }
         }
@@ -234,15 +251,18 @@ public class KmlReader extends StaxStreamReader {
     }
 
     /**
-     * 
+     *
      * @param containingTag
+     * @param contentsUri
      * @param contentsTag
      * @return
      * @throws KmlException
      */
-    protected KmlExtensionReader getSimpleExtensionReader(String containingTag, String contentsTag) throws KmlException{
+    protected KmlExtensionReader getSimpleExtensionReader(
+            String containingTag, String contentsUri, String contentsTag)
+            throws KmlException{
         for(KmlExtensionReader r : this.extensionReaders){
-            if(r.canHandleSimpleExtension(containingTag, contentsTag)){
+            if(r.canHandleSimpleExtension(URI_KML, containingTag, contentsUri, contentsTag)){
                 return r;
             }
         }
@@ -337,8 +357,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_KML, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_KML, eName);
+                        if((r = this.getComplexExtensionReader(TAG_KML, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_KML, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.KML.equals(extensionLevel)){
@@ -348,8 +368,8 @@ public class KmlReader extends StaxStreamReader {
                                    abstractFeature = (Feature) ext;
                                 }
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_KML, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_KML, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_KML, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_KML, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.KML.equals(extensionLevel)){
@@ -480,8 +500,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_PLACEMARK, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_PLACEMARK, eName);
+                        if((r = this.getComplexExtensionReader(TAG_PLACEMARK, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_PLACEMARK, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.FEATURE.equals(extensionLevel)){
@@ -493,8 +513,8 @@ public class KmlReader extends StaxStreamReader {
                                     abstractGeometry = (AbstractGeometry) ext;
                                 }
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_PLACEMARK, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_PLACEMARK, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_PLACEMARK, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_PLACEMARK, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -564,15 +584,15 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_REGION, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_REGION, eName);
+                        if((r = this.getComplexExtensionReader(TAG_REGION, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_REGION, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.REGION.equals(extensionLevel)){
                                 regionObjectExtentions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_REGION, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_REGION, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_REGION, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_REGION, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -642,15 +662,15 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_LOD, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_LOD, eName);
+                        if((r = this.getComplexExtensionReader(TAG_LOD, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_LOD, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.LOD.equals(extensionLevel)){
                                 lodObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_LOD, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_LOD, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_LOD, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_LOD, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -710,8 +730,8 @@ public class KmlReader extends StaxStreamReader {
                     // OTHER FREE DATA
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getDataReader(TAG_EXTENDED_DATA, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_EXTENDED_DATA, eName);
+                        if((r = this.getDataReader(TAG_EXTENDED_DATA, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_EXTENDED_DATA, eUri, eName);
                             Object ext = result.getKey();
                             anyOtherElements.add(ext);
                         }
@@ -753,8 +773,8 @@ public class KmlReader extends StaxStreamReader {
                     final String eUri = reader.getNamespaceURI();
 
                     KmlExtensionReader r;
-                    if((r = this.getDataReader(TAG_META_DATA, eName)) != null){
-                        Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_META_DATA, eName);
+                    if((r = this.getDataReader(TAG_META_DATA, eUri, eName)) != null){
+                        Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_META_DATA, eUri, eName);
                         content.add(result.getKey());
                     }
                     break;
@@ -947,15 +967,15 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_NETWORK_LINK_CONTROL, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_NETWORK_LINK_CONTROL, eName);
+                        if((r = this.getComplexExtensionReader(TAG_NETWORK_LINK_CONTROL, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_NETWORK_LINK_CONTROL, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.NETWORK_LINK_CONTROL.equals(extensionLevel)){
                                 networkLinkControlObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_NETWORK_LINK_CONTROL, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_NETWORK_LINK_CONTROL, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_NETWORK_LINK_CONTROL, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_NETWORK_LINK_CONTROL, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.NETWORK_LINK_CONTROL.equals(extensionLevel)){
@@ -1143,8 +1163,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_DELETE, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_DELETE, eName);
+                        if((r = this.getComplexExtensionReader(TAG_DELETE, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_DELETE, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(extensionLevel == null){
@@ -1427,8 +1447,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_POLYGON, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_POLYGON, eName);
+                        if((r = this.getComplexExtensionReader(TAG_POLYGON, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_POLYGON, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.GEOMETRY.equals(extensionLevel)){
@@ -1440,8 +1460,8 @@ public class KmlReader extends StaxStreamReader {
                                     altitudeMode = (AltitudeMode) ext;
                                 }
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_POLYGON, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_POLYGON, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_POLYGON, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_POLYGON, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -1501,29 +1521,29 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_OUTER_BOUNDARY_IS, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_OUTER_BOUNDARY_IS, eName);
+                        if((r = this.getComplexExtensionReader(TAG_OUTER_BOUNDARY_IS, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_OUTER_BOUNDARY_IS, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.BOUNDARY.equals(extensionLevel)){
                                 boundaryObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getComplexExtensionReader(TAG_INNER_BOUNDARY_IS, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_INNER_BOUNDARY_IS, eName);
+                        } else if ((r = this.getComplexExtensionReader(TAG_INNER_BOUNDARY_IS, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_INNER_BOUNDARY_IS, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.BOUNDARY.equals(extensionLevel)){
                                 boundaryObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_OUTER_BOUNDARY_IS, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_OUTER_BOUNDARY_IS, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_OUTER_BOUNDARY_IS, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_OUTER_BOUNDARY_IS, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.BOUNDARY.equals(extensionLevel)){
                                 boundarySimpleExtensions.add((SimpleTypeContainer) ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_INNER_BOUNDARY_IS, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_INNER_BOUNDARY_IS, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_INNER_BOUNDARY_IS, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_INNER_BOUNDARY_IS, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.BOUNDARY.equals(extensionLevel)){
@@ -1603,8 +1623,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_MODEL, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_MODEL, eName);
+                        if((r = this.getComplexExtensionReader(TAG_MODEL, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_MODEL, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.GEOMETRY.equals(extensionLevel)){
@@ -1616,8 +1636,8 @@ public class KmlReader extends StaxStreamReader {
                                     altitudeMode = (AltitudeMode) ext;
                                 }
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_MODEL, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_MODEL, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_MODEL, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_MODEL, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -1683,15 +1703,15 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_RESOURCE_MAP, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_RESOURCE_MAP, eName);
+                        if((r = this.getComplexExtensionReader(TAG_RESOURCE_MAP, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_RESOURCE_MAP, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.RESOURCE_MAP.equals(extensionLevel)){
                                 resourceMapObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_RESOURCE_MAP, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_RESOURCE_MAP, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_RESOURCE_MAP, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_RESOURCE_MAP, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -1757,15 +1777,15 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_ALIAS, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_ALIAS, eName);
+                        if((r = this.getComplexExtensionReader(TAG_ALIAS, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_ALIAS, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.ALIAS.equals(extensionLevel)){
                                 aliasObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_ALIAS, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_ALIAS, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_ALIAS, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_ALIAS, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -1834,15 +1854,15 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_SCALE_BIG, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_SCALE_BIG, eName);
+                        if((r = this.getComplexExtensionReader(TAG_SCALE_BIG, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_SCALE_BIG, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.SCALE.equals(extensionLevel)){
                                 scaleObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_SCALE_BIG, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_SCALE_BIG, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_SCALE_BIG, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_SCALE_BIG, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -1910,15 +1930,15 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_LOCATION, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_LOCATION, eName);
+                        if((r = this.getComplexExtensionReader(TAG_LOCATION, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_LOCATION, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.LOCATION.equals(extensionLevel)){
                                 locationObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_LOCATION, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_LOCATION, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_LOCATION, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_LOCATION, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -1985,15 +2005,15 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_ORIENTATION, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_ORIENTATION, eName);
+                        if((r = this.getComplexExtensionReader(TAG_ORIENTATION, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_ORIENTATION, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.ORIENTATION.equals(extensionLevel)){
                                 orientationObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_ORIENTATION, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_ORIENTATION, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_ORIENTATION, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_ORIENTATION, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -2067,8 +2087,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_LINEAR_RING, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_LINEAR_RING, eName);
+                        if((r = this.getComplexExtensionReader(TAG_LINEAR_RING, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_LINEAR_RING, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.GEOMETRY.equals(extensionLevel)){
@@ -2080,8 +2100,8 @@ public class KmlReader extends StaxStreamReader {
                                     altitudeMode = (AltitudeMode) ext;
                                 }
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_LINEAR_RING, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_LINEAR_RING, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_LINEAR_RING, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_LINEAR_RING, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -2159,8 +2179,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_LINE_STRING, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_LINE_STRING, eName);
+                        if((r = this.getComplexExtensionReader(TAG_LINE_STRING, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_LINE_STRING, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.GEOMETRY.equals(extensionLevel)){
@@ -2172,8 +2192,8 @@ public class KmlReader extends StaxStreamReader {
                                     altitudeMode = (AltitudeMode) ext;
                                 }
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_LINE_STRING, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_LINE_STRING, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_LINE_STRING, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_LINE_STRING, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -2243,8 +2263,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_MULTI_GEOMETRY, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_MULTI_GEOMETRY, eName);
+                        if((r = this.getComplexExtensionReader(TAG_MULTI_GEOMETRY, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_MULTI_GEOMETRY, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.GEOMETRY.equals(extensionLevel)){
@@ -2256,8 +2276,8 @@ public class KmlReader extends StaxStreamReader {
                                     geometries.add((AbstractGeometry) ext);
                                 }
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_MULTI_GEOMETRY, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_MULTI_GEOMETRY, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_MULTI_GEOMETRY, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_MULTI_GEOMETRY, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -2462,8 +2482,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_GROUND_OVERLAY, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_GROUND_OVERLAY, eName);
+                        if((r = this.getComplexExtensionReader(TAG_GROUND_OVERLAY, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_GROUND_OVERLAY, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.FEATURE.equals(extensionLevel)){
@@ -2477,8 +2497,8 @@ public class KmlReader extends StaxStreamReader {
                                     altitudeMode = (AltitudeMode) ext;
                                 }
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_GROUND_OVERLAY, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_GROUND_OVERLAY, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_GROUND_OVERLAY, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_GROUND_OVERLAY, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -2581,8 +2601,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(stopName, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(stopName, eName);
+                        if((r = this.getComplexExtensionReader(stopName, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, stopName, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.BASIC_LINK.equals(extensionLevel)){
@@ -2590,8 +2610,8 @@ public class KmlReader extends StaxStreamReader {
                             } else if(Extensions.Names.LINK.equals(extensionLevel)){
                                 linkObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(stopName, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(stopName, eName);
+                        } else if ((r = this.getSimpleExtensionReader(stopName, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, stopName, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -2708,8 +2728,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_LAT_LON_BOX, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_LAT_LON_BOX, eName);
+                        if((r = this.getComplexExtensionReader(TAG_LAT_LON_BOX, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_LAT_LON_BOX, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.ABSTRACT_LAT_LON_BOX.equals(extensionLevel)){
@@ -2717,8 +2737,8 @@ public class KmlReader extends StaxStreamReader {
                             } else if(Extensions.Names.LAT_LON_BOX.equals(extensionLevel)){
                                 latLonBoxObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_LAT_LON_BOX, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_LAT_LON_BOX, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_LAT_LON_BOX, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_LAT_LON_BOX, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -2808,8 +2828,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_LAT_LON_ALT_BOX, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_LAT_LON_ALT_BOX, eName);
+                        if((r = this.getComplexExtensionReader(TAG_LAT_LON_ALT_BOX, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_LAT_LON_ALT_BOX, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.ABSTRACT_LAT_LON_BOX.equals(extensionLevel)){
@@ -2821,8 +2841,8 @@ public class KmlReader extends StaxStreamReader {
                                     altitudeMode = (AltitudeMode) ext;
                                 }
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_LAT_LON_ALT_BOX, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_LAT_LON_ALT_BOX, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_LAT_LON_ALT_BOX, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_LAT_LON_ALT_BOX, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -2897,15 +2917,15 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_IMAGE_PYRAMID, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_IMAGE_PYRAMID, eName);
+                        if((r = this.getComplexExtensionReader(TAG_IMAGE_PYRAMID, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_IMAGE_PYRAMID, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.IMAGE_PYRAMID.equals(extensionLevel)){
                                 imagePyramidObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_IMAGE_PYRAMID, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_IMAGE_PYRAMID, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_IMAGE_PYRAMID, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_IMAGE_PYRAMID, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -2981,15 +3001,15 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_VIEW_VOLUME, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_VIEW_VOLUME, eName);
+                        if((r = this.getComplexExtensionReader(TAG_VIEW_VOLUME, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_VIEW_VOLUME, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.VIEW_VOLUME.equals(extensionLevel)){
                                 viewVolumeObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_VIEW_VOLUME, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_VIEW_VOLUME, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_VIEW_VOLUME, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_VIEW_VOLUME, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -3152,8 +3172,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_PHOTO_OVERLAY, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_PHOTO_OVERLAY, eName);
+                        if((r = this.getComplexExtensionReader(TAG_PHOTO_OVERLAY, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_PHOTO_OVERLAY, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.FEATURE.equals(extensionLevel)){
@@ -3163,8 +3183,8 @@ public class KmlReader extends StaxStreamReader {
                             } else if(Extensions.Names.PHOTO_OVERLAY.equals(extensionLevel)){
                                 photoOverlayObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_PHOTO_OVERLAY, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_PHOTO_OVERLAY, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_PHOTO_OVERLAY, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_PHOTO_OVERLAY, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -3334,8 +3354,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_SCREEN_OVERLAY, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_SCREEN_OVERLAY, eName);
+                        if((r = this.getComplexExtensionReader(TAG_SCREEN_OVERLAY, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_SCREEN_OVERLAY, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.FEATURE.equals(extensionLevel)){
@@ -3345,8 +3365,8 @@ public class KmlReader extends StaxStreamReader {
                             } else if(Extensions.Names.SCREEN_OVERLAY.equals(extensionLevel)){
                                 screenOverlayObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_SCREEN_OVERLAY, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_SCREEN_OVERLAY, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_SCREEN_OVERLAY, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_SCREEN_OVERLAY, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -3483,8 +3503,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_LOOK_AT, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_LOOK_AT, eName);
+                        if((r = this.getComplexExtensionReader(TAG_LOOK_AT, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_LOOK_AT, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.VIEW.equals(extensionLevel)){
@@ -3496,8 +3516,8 @@ public class KmlReader extends StaxStreamReader {
                                     altitudeMode = (AltitudeMode) ext;
                                 }
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_LOOK_AT, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_LOOK_AT, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_LOOK_AT, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_LOOK_AT, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -3584,8 +3604,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_CAMERA, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_CAMERA, eName);
+                        if((r = this.getComplexExtensionReader(TAG_CAMERA, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_CAMERA, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.VIEW.equals(extensionLevel)){
@@ -3597,8 +3617,8 @@ public class KmlReader extends StaxStreamReader {
                                     altitudeMode = (AltitudeMode) ext;
                                 }
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_CAMERA, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_CAMERA, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_CAMERA, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_CAMERA, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -3687,8 +3707,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_STYLE_MAP, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_STYLE_MAP, eName);
+                        if((r = this.getComplexExtensionReader(TAG_STYLE_MAP, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_STYLE_MAP, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.STYLE_SELECTOR.equals(extensionLevel)){
@@ -3696,8 +3716,8 @@ public class KmlReader extends StaxStreamReader {
                             } else if(Extensions.Names.STYLE_MAP.equals(extensionLevel)){
                                 styleMapObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_STYLE_MAP, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_STYLE_MAP, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_STYLE_MAP, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_STYLE_MAP, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -3769,15 +3789,15 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_PAIR, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_PAIR, eName);
+                        if((r = this.getComplexExtensionReader(TAG_PAIR, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_PAIR, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.PAIR.equals(extensionLevel)){
                                 pairObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_PAIR, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_PAIR, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_PAIR, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_PAIR, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -3858,8 +3878,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_STYLE, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_STYLE, eName);
+                        if((r = this.getComplexExtensionReader(TAG_STYLE, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_STYLE, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.STYLE_SELECTOR.equals(extensionLevel)){
@@ -3867,8 +3887,8 @@ public class KmlReader extends StaxStreamReader {
                             } else if(Extensions.Names.STYLE.equals(extensionLevel)){
                                 styleObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_STYLE, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_STYLE, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_STYLE, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_STYLE, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -3959,8 +3979,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_ICON_STYLE, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_ICON_STYLE, eName);
+                        if((r = this.getComplexExtensionReader(TAG_ICON_STYLE, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_ICON_STYLE, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.SUB_STYLE.equals(extensionLevel)){
@@ -3970,8 +3990,8 @@ public class KmlReader extends StaxStreamReader {
                             } else if(Extensions.Names.ICON_STYLE.equals(extensionLevel)){
                                 iconStyleObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_ICON_STYLE, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_ICON_STYLE, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_ICON_STYLE, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_ICON_STYLE, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -4059,8 +4079,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_LABEL_STYLE, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_LABEL_STYLE, eName);
+                        if((r = this.getComplexExtensionReader(TAG_LABEL_STYLE, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_LABEL_STYLE, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.SUB_STYLE.equals(extensionLevel)){
@@ -4070,8 +4090,8 @@ public class KmlReader extends StaxStreamReader {
                             } else if(Extensions.Names.LABEL_STYLE.equals(extensionLevel)){
                                 labelStyleObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_LABEL_STYLE, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_LABEL_STYLE, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_LABEL_STYLE, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_LABEL_STYLE, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -4157,8 +4177,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_LINE_STYLE, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_LINE_STYLE, eName);
+                        if((r = this.getComplexExtensionReader(TAG_LINE_STYLE, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_LINE_STYLE, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.SUB_STYLE.equals(extensionLevel)){
@@ -4168,8 +4188,8 @@ public class KmlReader extends StaxStreamReader {
                             } else if(Extensions.Names.LINE_STYLE.equals(extensionLevel)){
                                 lineStyleObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_LINE_STYLE, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_LINE_STYLE, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_LINE_STYLE, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_LINE_STYLE, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -4257,8 +4277,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_POLY_STYLE, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_POLY_STYLE, eName);
+                        if((r = this.getComplexExtensionReader(TAG_POLY_STYLE, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_POLY_STYLE, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.SUB_STYLE.equals(extensionLevel)){
@@ -4268,8 +4288,8 @@ public class KmlReader extends StaxStreamReader {
                             } else if(Extensions.Names.POLY_STYLE.equals(extensionLevel)){
                                 polyStyleObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_POLY_STYLE, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_POLY_STYLE, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_POLY_STYLE, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_POLY_STYLE, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -4357,8 +4377,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_BALLOON_STYLE, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_BALLOON_STYLE, eName);
+                        if((r = this.getComplexExtensionReader(TAG_BALLOON_STYLE, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_BALLOON_STYLE, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.SUB_STYLE.equals(extensionLevel)){
@@ -4366,8 +4386,8 @@ public class KmlReader extends StaxStreamReader {
                             } else if(Extensions.Names.BALLOON_STYLE.equals(extensionLevel)){
                                 balloonStyleObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_BALLOON_STYLE, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_BALLOON_STYLE, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_BALLOON_STYLE, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_BALLOON_STYLE, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -4476,8 +4496,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_LIST_STYLE, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_LIST_STYLE, eName);
+                        if((r = this.getComplexExtensionReader(TAG_LIST_STYLE, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_LIST_STYLE, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.SUB_STYLE.equals(extensionLevel)){
@@ -4485,8 +4505,8 @@ public class KmlReader extends StaxStreamReader {
                             } else if(Extensions.Names.LIST_STYLE.equals(extensionLevel)){
                                 listStyleObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_LIST_STYLE, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_LIST_STYLE, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_LIST_STYLE, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_LIST_STYLE, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -4557,15 +4577,15 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_ITEM_ICON, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_ITEM_ICON, eName);
+                        if((r = this.getComplexExtensionReader(TAG_ITEM_ICON, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_ITEM_ICON, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.ITEM_ICON.equals(extensionLevel)){
                                 itemIconObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_ITEM_ICON, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_ITEM_ICON, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_ITEM_ICON, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_ITEM_ICON, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -4647,15 +4667,15 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(stopTag, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(stopTag, eName);
+                        if((r = this.getComplexExtensionReader(stopTag, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, stopTag, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.BASIC_LINK.equals(extensionLevel)){
                                 basicLinkObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(stopTag, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(stopTag, eName);
+                        } else if ((r = this.getSimpleExtensionReader(stopTag, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, stopTag, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -4787,8 +4807,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_TIME_SPAN, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_TIME_SPAN, eName);
+                        if((r = this.getComplexExtensionReader(TAG_TIME_SPAN, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_TIME_SPAN, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.TIME_PRIMITIVE.equals(extensionLevel)){
@@ -4796,8 +4816,8 @@ public class KmlReader extends StaxStreamReader {
                             } else if(Extensions.Names.TIME_SPAN.equals(extensionLevel)){
                                 timeSpanObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_TIME_SPAN, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_TIME_SPAN, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_TIME_SPAN, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_TIME_SPAN, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -4861,8 +4881,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_TIME_STAMP, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_TIME_STAMP, eName);
+                        if((r = this.getComplexExtensionReader(TAG_TIME_STAMP, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_TIME_STAMP, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.TIME_PRIMITIVE.equals(extensionLevel)){
@@ -4870,8 +4890,8 @@ public class KmlReader extends StaxStreamReader {
                             } else if(Extensions.Names.TIME_STAMP.equals(extensionLevel)){
                                 timeStampObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_TIME_STAMP, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_TIME_STAMP, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_TIME_STAMP, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_TIME_STAMP, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -5048,8 +5068,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_FOLDER, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_FOLDER, eName);
+                        if((r = this.getComplexExtensionReader(TAG_FOLDER, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_FOLDER, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.FEATURE.equals(extensionLevel)){
@@ -5063,8 +5083,8 @@ public class KmlReader extends StaxStreamReader {
                                    features.add((Feature) ext);
                                 }
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_FOLDER, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_FOLDER, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_FOLDER, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_FOLDER, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -5213,8 +5233,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_DOCUMENT, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_DOCUMENT, eName);
+                        if((r = this.getComplexExtensionReader(TAG_DOCUMENT, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_DOCUMENT, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.FEATURE.equals(extensionLevel)){
@@ -5228,8 +5248,8 @@ public class KmlReader extends StaxStreamReader {
                                    features.add((Feature) ext);
                                 }
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_DOCUMENT, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_DOCUMENT, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_DOCUMENT, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_DOCUMENT, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -5462,8 +5482,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_NETWORK_LINK, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_NETWORK_LINK, eName);
+                        if((r = this.getComplexExtensionReader(TAG_NETWORK_LINK, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_NETWORK_LINK, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.FEATURE.equals(extensionLevel)){
@@ -5471,8 +5491,8 @@ public class KmlReader extends StaxStreamReader {
                             } else if(Extensions.Names.NETWORK_LINK.equals(extensionLevel)){
                                 networkLinkObjectExtensions.add(ext);
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_NETWORK_LINK, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_NETWORK_LINK, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_NETWORK_LINK, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_NETWORK_LINK, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -5548,8 +5568,8 @@ public class KmlReader extends StaxStreamReader {
                     // EXTENSIONS
                     else {
                         KmlExtensionReader r;
-                        if((r = this.getComplexExtensionReader(TAG_POINT, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_POINT, eName);
+                        if((r = this.getComplexExtensionReader(TAG_POINT, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_POINT, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.GEOMETRY.equals(extensionLevel)){
@@ -5561,8 +5581,8 @@ public class KmlReader extends StaxStreamReader {
                                     altitudeMode = (AltitudeMode) ext;
                                 }
                             }
-                        } else if ((r = this.getSimpleExtensionReader(TAG_POINT, eName)) != null){
-                            Entry<Object, Extensions.Names> result = r.readExtensionElement(TAG_POINT, eName);
+                        } else if ((r = this.getSimpleExtensionReader(TAG_POINT, eUri, eName)) != null){
+                            Entry<Object, Extensions.Names> result = r.readExtensionElement(URI_KML, TAG_POINT, eUri, eName);
                             Object ext = result.getKey();
                             Extensions.Names extensionLevel = result.getValue();
                             if(Extensions.Names.OBJECT.equals(extensionLevel)){
@@ -5793,18 +5813,5 @@ public class KmlReader extends StaxStreamReader {
      */
     public boolean checkVersionSimple(String version){
         return this.URI_KML.equals(version);
-    }
-
-    /*
-     * READING EXTENSIONS METHODS
-     */
-
-    public Object readExtensionsScheduler(String containingTag, String contentTag)
-            throws KmlException, XMLStreamException, URISyntaxException{
-        Object resultat = this.getComplexExtensionReader(containingTag, contentTag);
-        if (resultat == null){
-            resultat = this.getSimpleExtensionReader(containingTag, contentTag);
-        }
-        return resultat;
     }
 }

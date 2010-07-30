@@ -516,7 +516,7 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      * @{@inheritDoc }
      */
     @Override
-    public void writeComplexExtensionElement(Object contentsElement)
+    public void writeComplexExtensionElement(String kmlVersionUri, Extensions.Names ext, Object contentsElement)
             throws XMLStreamException, KmlException {
 
         // Feature element
@@ -547,7 +547,7 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      * @{@inheritDoc }
      */
     @Override
-    public void writeSimpleExtensionElement(SimpleTypeContainer contentsElement)
+    public void writeSimpleExtensionElement(String kmlVersionUri, Extensions.Names ext, SimpleTypeContainer contentsElement)
             throws XMLStreamException, KmlException {
 
         if(TAG_BALLOON_VISIBILITY.equals(contentsElement.getTagName())){
@@ -568,7 +568,7 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      * @{@inheritDoc }
      */
     @Override
-    public boolean canHandleComplex(Extensions.Names ext, Object contentObject){
+    public boolean canHandleComplex(String kmlVersionUri, Extensions.Names ext, Object contentObject){
         Boolean reponse = false;
         List<Extensions.Names> liste = null;
         if (contentObject instanceof Feature){
@@ -596,7 +596,7 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      * @{@inheritDoc }
      */
     @Override
-    public boolean canHandleSimple(Names ext, String elementTag) {
+    public boolean canHandleSimple(String kmlVersionUri, Names ext, String elementTag) {
         List<Names> liste = this.simpleTable.get(elementTag);
         Boolean reponse = false;
         if(liste != null

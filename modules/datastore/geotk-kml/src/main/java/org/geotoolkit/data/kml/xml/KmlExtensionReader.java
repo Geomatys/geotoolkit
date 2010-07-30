@@ -23,36 +23,63 @@ import org.geotoolkit.data.kml.model.Extensions;
 import org.geotoolkit.data.kml.model.KmlException;
 
 /**
+ * <p>This interface provides methods a StaxStreamReader needs to implement
+ * to be added as an extension reader to Kml main reader with method
+ * <span style="font-style: italic;">addExtensionReader()</span></p>
+ * <p>Here is an example of use:</p>
+ *
+ * <pre>
+ * <div style="background-color: #cccccc; color: red;">
+ * final KmlReader reader = new KmlReader();
+ * final GxReader gxReader = new GxReader(reader);
+ * reader.setInput(new File(pathToTestFile));
+ * reader.addExtensionReader(gxReader);
+ * </div>
+ * final Kml kmlObjects = reader.read();
+ * reader.dispose();
+ * </pre>
+ *
+ * <p>For a given extension reader, reading an extension object could depend on
+ * uri/tag of containing element and uri/tag of extension element itself.</p>
  *
  * @author Samuel Andrés
  */
 public interface KmlExtensionReader {
 
     /**
+     *
+     * @param containingUri
+     * @param containingTag
+     * @param contentsUri
+     * @param contentsTag
+     * @return
+     */
+    boolean canHandleComplexExtension(String containingUri, String containingTag,
+            String contentsUri, String contentsTag);
+
+    /**
+     *
+     * @param containingUri
+     * @param containingTag
+     * @param contentsUri
+     * @param contentsTag
+     * @return
+     */
+    boolean canHandleSimpleExtension(String containingUri, String containingTag,
+            String contentsUri, String contentsTag);
+
+    /**
      * 
+     * @param containingUri
      * @param containingTag
-     * @param contentsTag
-     * @return
-     */
-    boolean canHandleComplexExtension(String containingTag, String contentsTag);
-
-    /**
-     *
-     * @param containingTag
-     * @param contentsTag
-     * @return
-     */
-    boolean canHandleSimpleExtension(String containingTag, String contentsTag);
-
-    /**
-     *
-     * @param containingTag
+     * @param contentsUri
      * @param contentsTag
      * @return
      * @throws XMLStreamException
      * @throws KmlException
      * @throws URISyntaxException
      */
-    Entry<Object, Extensions.Names> readExtensionElement(String containingTag, String contentsTag)
+    Entry<Object, Extensions.Names> readExtensionElement(
+            String containingUri, String containingTag, String contentsUri, String contentsTag)
             throws XMLStreamException, KmlException, URISyntaxException;
 }

@@ -535,8 +535,8 @@ public class KmlWriter extends StaxStreamWriter {
             this.writePlacemark(abstractFeature);
         } else {
             for(StaxStreamWriter candidate : this.extensionWriters){
-                if(((KmlExtensionWriter) candidate).canHandleComplex(null, abstractFeature)){
-                    ((KmlExtensionWriter) candidate).writeComplexExtensionElement(abstractFeature);
+                if(((KmlExtensionWriter) candidate).canHandleComplex(URI_KML,null, abstractFeature)){
+                    ((KmlExtensionWriter) candidate).writeComplexExtensionElement(URI_KML, null, abstractFeature);
                 }
             }
         }
@@ -1946,8 +1946,8 @@ public class KmlWriter extends StaxStreamWriter {
             this.writeModel((Model) abstractGeometry);
         } else {
             for(StaxStreamWriter candidate : this.extensionWriters){
-                if(((KmlExtensionWriter) candidate).canHandleComplex(null, abstractGeometry)){
-                    ((KmlExtensionWriter) candidate).writeComplexExtensionElement(abstractGeometry);
+                if(((KmlExtensionWriter) candidate).canHandleComplex(URI_KML, null, abstractGeometry)){
+                    ((KmlExtensionWriter) candidate).writeComplexExtensionElement(URI_KML, null, abstractGeometry);
                 }
             }
         }
@@ -2788,8 +2788,8 @@ public class KmlWriter extends StaxStreamWriter {
                 writer.writeEndElement();
             } else {
                 for(StaxStreamWriter candidate : this.extensionWriters){
-                    if(((KmlExtensionWriter) candidate).canHandleComplex(null, altitudeMode)){
-                        ((KmlExtensionWriter) candidate).writeComplexExtensionElement(altitudeMode);
+                    if(((KmlExtensionWriter) candidate).canHandleComplex(URI_KML, null, altitudeMode)){
+                        ((KmlExtensionWriter) candidate).writeComplexExtensionElement(URI_KML, null, altitudeMode);
                     }
                 }
             }
@@ -3513,8 +3513,8 @@ public class KmlWriter extends StaxStreamWriter {
             throws KmlException, XMLStreamException{
         for(Object object : objectExtensions){
             for(StaxStreamWriter candidate : this.extensionWriters){
-                if(((KmlExtensionWriter) candidate).canHandleComplex(ext, object)){
-                    ((KmlExtensionWriter) candidate).writeComplexExtensionElement(object);
+                if(((KmlExtensionWriter) candidate).canHandleComplex(URI_KML, ext, object)){
+                    ((KmlExtensionWriter) candidate).writeComplexExtensionElement(URI_KML, ext, object);
                 }
             }
         }
@@ -3524,8 +3524,8 @@ public class KmlWriter extends StaxStreamWriter {
             throws KmlException, XMLStreamException{
         for(SimpleTypeContainer object : simpleExtensions){
             for(StaxStreamWriter candidate : this.extensionWriters){
-                if(((KmlExtensionWriter) candidate).canHandleSimple(ext, object.getTagName())){
-                    ((KmlExtensionWriter) candidate).writeSimpleExtensionElement(object);
+                if(((KmlExtensionWriter) candidate).canHandleSimple(URI_KML, ext, object.getTagName())){
+                    ((KmlExtensionWriter) candidate).writeSimpleExtensionElement(URI_KML, ext, object);
                 }
             }
         }
@@ -3545,10 +3545,10 @@ public class KmlWriter extends StaxStreamWriter {
             throws KmlException, XMLStreamException{
         for(Object object : objectExtensions){
             for(StaxStreamWriter candidate : this.dataWriters){
-                if(((KmlExtensionWriter) candidate).canHandleComplex(null, object)){
-                    ((KmlExtensionWriter) candidate).writeComplexExtensionElement(object);
-                } else if(((KmlExtensionWriter) candidate).canHandleSimple(null, ((SimpleTypeContainer) object).getTagName())){
-                    ((KmlExtensionWriter) candidate).writeSimpleExtensionElement((SimpleTypeContainer) object);
+                if(((KmlExtensionWriter) candidate).canHandleComplex(URI_KML, null, object)){
+                    ((KmlExtensionWriter) candidate).writeComplexExtensionElement(URI_KML, null, object);
+                } else if(((KmlExtensionWriter) candidate).canHandleSimple(URI_KML, null, ((SimpleTypeContainer) object).getTagName())){
+                    ((KmlExtensionWriter) candidate).writeSimpleExtensionElement(URI_KML, null, (SimpleTypeContainer) object);
                 }
             }
         }
