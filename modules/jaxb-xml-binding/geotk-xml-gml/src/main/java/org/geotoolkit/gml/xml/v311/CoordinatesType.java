@@ -25,13 +25,13 @@ import javax.xml.bind.annotation.XmlValue;
 
 /**
  * Tables or arrays of tuples.  
- *         May be used for text-encoding of values from a table.  
- *         Actually just a string, but allows the user to indicate which characters are used as separators.  
- *         The value of the 'cs' attribute is the separator for coordinate values, 
- *         and the value of the 'ts' attribute gives the tuple separator (a single space by default); 
- *         the default values may be changed to reflect local usage.
- *         Defaults to CSV within a tuple, space between tuples.  
- *         However, any string content will be schema-valid.  
+ * May be used for text-encoding of values from a table.  
+ * Actually just a string, but allows the user to indicate which characters are used as separators.  
+ * The value of the 'cs' attribute is the separator for coordinate values, 
+ * and the value of the 'ts' attribute gives the tuple separator (a single space by default); 
+ * the default values may be changed to reflect local usage.
+ * Defaults to CSV within a tuple, space between tuples.  
+ * However, any string content will be schema-valid.  
  * 
  * <p>Java class for CoordinatesType complex type.
  * 
@@ -59,13 +59,13 @@ import javax.xml.bind.annotation.XmlValue;
 public class CoordinatesType {
 
     @XmlValue
-    protected String value;
+    private String value;
     @XmlAttribute
-    protected String decimal;
+    private String decimal;
     @XmlAttribute
-    protected String cs;
+    private String cs;
     @XmlAttribute
-    protected String ts;
+    private String ts;
 
     /**
      * An empty constructor used by JAXB
@@ -129,11 +129,10 @@ public class CoordinatesType {
      *     
      */
     public String getDecimal() {
-        if (decimal == null) {
+        /*if (decimal == null) {
             return ".";
-        } else {
-            return decimal;
-        }
+        } else {*/
+        return decimal;
     }
 
     /**
@@ -157,11 +156,10 @@ public class CoordinatesType {
      *     
      */
     public String getCs() {
-        if (cs == null) {
+        /*if (cs == null) {
             return ",";
-        } else {
-            return cs;
-        }
+        } else {*/
+        return cs;
     }
 
     /**
@@ -185,11 +183,10 @@ public class CoordinatesType {
      *     
      */
     public String getTs() {
-        if (ts == null) {
+        /*if (ts == null) {
             return " ";
-        } else {
-            return ts;
-        }
+        } else {*/
+        return ts;
     }
 
     /**

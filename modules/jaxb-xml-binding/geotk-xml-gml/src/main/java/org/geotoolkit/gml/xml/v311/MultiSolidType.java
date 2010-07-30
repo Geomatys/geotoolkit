@@ -21,6 +21,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 
@@ -52,30 +53,14 @@ import org.opengis.filter.expression.ExpressionVisitor;
     "solidMember",
     "solidMembers"
 })
-public class MultiSolidType
-    extends AbstractGeometricAggregateType
-{
+public class MultiSolidType extends AbstractGeometricAggregateType {
 
-    protected List<SolidPropertyType> solidMember;
-    protected SolidArrayPropertyType solidMembers;
+    private List<SolidPropertyType> solidMember;
+    private SolidArrayPropertyType solidMembers;
 
     /**
      * Gets the value of the solidMember property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the solidMember property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getSolidMember().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link SolidPropertyType }
      * 
@@ -127,4 +112,49 @@ public class MultiSolidType
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * Return a String description of the object.
+     */
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(super.toString()).append('\n');
+        if (solidMember != null) {
+            s.append("solidMember: ").append('\n');
+            for (SolidPropertyType geoProp : solidMember)  {
+                s.append(geoProp).append('\n');
+            }
+        }
+
+        if (solidMembers != null) {
+            s.append("solidMembers: ").append(solidMembers).append('\n');
+        }
+
+        return s.toString();
+    }
+
+    /**
+     * Verify that the point is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof MultiSolidType && super.equals(object)) {
+            final MultiSolidType that = (MultiSolidType) object;
+            return  Utilities.equals(this.solidMember,  that.solidMember) &&
+                    Utilities.equals(this.solidMembers, that.solidMembers);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 53 * hash + (this.solidMember != null ? this.solidMember.hashCode() : 0);
+        hash = 53 * hash + (this.solidMembers != null ? this.solidMembers.hashCode() : 0);
+        return hash;
+    }
+
+    
 }

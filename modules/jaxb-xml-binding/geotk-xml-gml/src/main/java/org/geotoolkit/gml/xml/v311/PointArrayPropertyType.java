@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -54,35 +55,68 @@ import javax.xml.bind.annotation.XmlType;
 public class PointArrayPropertyType {
 
     @XmlElement(name = "Point")
-    protected List<PointType> point;
+    private List<PointType> point;
 
     /**
      * Gets the value of the point property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the point property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getPoint().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link PointType }
-     * 
-     * 
      */
     public List<PointType> getPoint() {
         if (point == null) {
             point = new ArrayList<PointType>();
         }
         return this.point;
+    }
+
+    public void setPoint(List<PointType> point) {
+        this.point = point;
+    }
+
+    public void setPoint(PointType point) {
+        if (point != null) {
+            if (this.point == null) {
+                this.point = new ArrayList<PointType>();
+            }
+            this.point.add(point);
+        }
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof PointArrayPropertyType) {
+            final PointArrayPropertyType that = (PointArrayPropertyType) object;
+
+            return Utilities.equals(this.point,  that.point);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 19 * hash + (this.point != null ? this.point.hashCode() : 0);
+        return hash;
+    }
+
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[PointArrayPropertyType]");
+        if (point != null) {
+            sb.append("point:").append('\n');
+            for (PointType sp : point) {
+                sb.append(sp).append('\n');
+            }
+        }
+        return sb.toString();
     }
 
 }

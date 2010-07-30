@@ -44,11 +44,13 @@ import org.opengis.referencing.operation.TransformException;
 
 
 /**
- * All geometry elements are derived directly or indirectly from this abstract supertype. A geometry element may 
- * 			have an identifying attribute ("gml:id"), a name (attribute "name") and a description (attribute "description"). It may be associated 
- * 			with a spatial reference system (attribute "srsName"). The following rules shall be adhered: - Every geometry type shall derive 
- * 			from this abstract type. - Every geometry element (i.e. an element of a geometry type) shall be directly or indirectly in the 
- * 			substitution group of _Geometry.
+ * All geometry elements are derived directly or indirectly from this abstract supertype. 
+ * A geometry element mayhave an identifying attribute ("gml:id"),
+ * a name (attribute "name") and a description (attribute "description").
+ * It may be associated with a spatial reference system (attribute "srsName").
+ * The following rules shall be adhered: - Every geometry type shall derive from this abstract type.
+ * - Every geometry element (i.e. an element of a geometry type) shall be directly or indirectly in the
+ * substitution group of _Geometry.
  * 
  * <p>Java class for AbstractGeometryType complex type.
  * 

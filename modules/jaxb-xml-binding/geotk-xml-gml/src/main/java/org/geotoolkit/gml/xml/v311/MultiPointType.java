@@ -21,6 +21,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 
@@ -77,6 +78,25 @@ public class MultiPointType extends AbstractGeometricAggregateType {
     }
 
     /**
+     * Sets the value of the pointMember property.
+     */
+    public void setPointMember(List<PointPropertyType> pointMember) {
+        this.pointMember = pointMember;
+    }
+
+    /**
+     * Sets the value of the pointMember property.
+     */
+    public void setPointMember(PointPropertyType pointMember) {
+        if (pointMember != null) {
+            if (this.pointMember == null) {
+                this.pointMember = new ArrayList<PointPropertyType>();
+            }
+            this.pointMember.add(pointMember);
+        }
+    }
+
+    /**
      * Gets the value of the pointMembers property.
      * 
      * @return
@@ -115,4 +135,44 @@ public class MultiPointType extends AbstractGeometricAggregateType {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+     /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof MultiPointType && super.equals(object)) {
+            final MultiPointType that = (MultiPointType) object;
+
+            return Utilities.equals(this.pointMember,  that.pointMember) &&
+                   Utilities.equals(this.pointMembers, that.pointMembers) ;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 19 * hash + (this.pointMember != null ? this.pointMember.hashCode() : 0);
+        hash = 19 * hash + (this.pointMembers != null ? this.pointMembers.hashCode() : 0);
+        return hash;
+    }
+
+   
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (pointMember != null) {
+            sb.append("pointMember:").append('\n');
+            for (PointPropertyType sp : pointMember) {
+                sb.append(sp).append('\n');
+            }
+        }
+        if (pointMembers != null) {
+            sb.append("pointMembers:").append(pointMembers).append('\n');
+        }
+        return sb.toString();
+    }
 }
