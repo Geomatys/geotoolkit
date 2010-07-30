@@ -34,6 +34,7 @@ import org.geotoolkit.data.gx.model.EnumPlayMode;
 import org.geotoolkit.data.gx.model.FlyTo;
 import org.geotoolkit.data.gx.model.GxModelConstants;
 import org.geotoolkit.data.gx.model.LatLonQuad;
+import org.geotoolkit.data.gx.model.MultiTrack;
 import org.geotoolkit.data.gx.model.PlayList;
 import org.geotoolkit.data.gx.model.SoundCue;
 import org.geotoolkit.data.gx.model.TourControl;
@@ -336,14 +337,46 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
         writer.writeEndElement();
     }
 
-    public void writeCoord(Coordinate coord) throws XMLStreamException{
+    /**
+     *
+     * @param multiTrack
+     * @throws XMLStreamException
+     * @throws KmlException
+     */
+    public void writeMultiTrack(MultiTrack multiTrack)
+            throws XMLStreamException, KmlException{
+        writer.writeStartElement(URI_GX, TAG_MULTI_TRACK);
+        kmlWriter.writeCommonAbstractGeometry(multiTrack);
+        if(multiTrack.getAltitudeMode() != null){
+            kmlWriter.writeAltitudeMode(multiTrack.getAltitudeMode());
+        }
+        this.writeInterpolate(multiTrack.getInterpolate());
+        for(Track track : multiTrack.getTracks()){
+            this.writeTrack(track);
+        }
+        writer.writeEndElement();
+    }
+
+    /**
+     *
+     * @param coord
+     * @throws XMLStreamException
+     */
+    public void writeCoord(Coordinate coord)
+            throws XMLStreamException{
 
         writer.writeStartElement(URI_GX, TAG_COORD);
         writer.writeCharacters(GxUtilities.toString(coord));
         writer.writeEndElement();
     }
 
-    public void writeAngles(Angles angles) throws XMLStreamException{
+    /**
+     * 
+     * @param angles
+     * @throws XMLStreamException
+     */
+    public void writeAngles(Angles angles)
+            throws XMLStreamException{
 
         writer.writeStartElement(URI_GX, TAG_ANGLES);
         writer.writeCharacters(GxUtilities.toString(angles));
@@ -406,10 +439,26 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      * @throws XMLStreamException
      */
     public void writeBalloonVisibility(Boolean bv) throws XMLStreamException{
-        boolean balloonVisibility = bv.booleanValue();
-        if (DEF_BALLOON_VISIBILITY != balloonVisibility){
+        if (DEF_BALLOON_VISIBILITY != bv.booleanValue()){
             writer.writeStartElement(URI_GX, TAG_BALLOON_VISIBILITY);
-            if(balloonVisibility){
+            if(bv){
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
+            } else {
+                writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
+            }
+            writer.writeEndElement();
+        }
+    }
+
+    /**
+     * 
+     * @param inter
+     * @throws XMLStreamException
+     */
+    public void writeInterpolate(Boolean inter) throws XMLStreamException{
+        if (DEF_INTERPOLATE != inter.booleanValue()){
+            writer.writeStartElement(URI_GX, TAG_INTERPOLATE);
+            if(inter){
                 writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
             } else {
                 writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
@@ -444,6 +493,8 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
             writeAltitudeMode((AltitudeMode) contentsElement);
         } else if(contentsElement instanceof Track){
             writeTrack((Track) contentsElement);
+        } else if(contentsElement instanceof MultiTrack){
+            writeMultiTrack((MultiTrack) contentsElement);
         }
     }
 
@@ -519,6 +570,7 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
 
         complexTable.put(GxModelConstants.TYPE_TOUR, EMPTY_LIST);
         complexTable.put(Track.class, EMPTY_LIST);
+        complexTable.put(MultiTrack.class, EMPTY_LIST);
         complexTable.put(TimeSpan.class, timeSpanContainers);
         complexTable.put(TimeStamp.class, timeStampContainers);
         complexTable.put(LatLonQuad.class, latLonQuadContainersList);

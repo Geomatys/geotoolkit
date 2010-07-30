@@ -42,6 +42,7 @@ import org.geotoolkit.data.gx.model.EnumFlyToMode;
 import org.geotoolkit.data.gx.model.EnumPlayMode;
 import org.geotoolkit.data.gx.model.FlyTo;
 import org.geotoolkit.data.gx.model.LatLonQuad;
+import org.geotoolkit.data.gx.model.MultiTrack;
 import org.geotoolkit.data.gx.model.PlayList;
 import org.geotoolkit.data.gx.model.SoundCue;
 import org.geotoolkit.data.gx.model.TourControl;
@@ -709,6 +710,49 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
         return GX_FACTORY.createTrack(altitudeMode, whens, coord, anglesList, model, extendedData);
     }
 
+    public MultiTrack readMultiTrack()
+            throws XMLStreamException, KmlException, URISyntaxException{
+
+        AltitudeMode altitudeMode = DEF_ALTITUDE_MODE;
+        boolean interpolate = DEF_INTERPOLATE;
+        List<Track> tracks = new ArrayList<Track>();
+
+        boucle:
+        while (reader.hasNext()) {
+
+            switch (reader.next()) {
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
+
+                    if (URI_GX.equals(eUri)) {
+                        if (TAG_ALTITUDE_MODE.equals(eName)) {
+                            altitudeMode = this.readAltitudeMode();
+                        } else if (TAG_INTERPOLATE.equals(eName)){
+                            interpolate = parseBoolean(this.reader.getElementText());
+                        } else if (TAG_TRACK.equals(eName)){
+                            tracks.add(this.readTrack());
+                        }
+                    } else if (this.kmlReader.getVersionUri().equals(eUri)) {
+                        if (KmlConstants.TAG_ALTITUDE_MODE.equals(eName)) {
+                            altitudeMode = kmlReader.readAltitudeMode();
+                        }
+                    }
+                    break;
+
+                case XMLStreamConstants.END_ELEMENT:
+                    if (TAG_MULTI_TRACK.equals(reader.getLocalName())
+                            && URI_GX.contains(reader.getNamespaceURI())) {
+                        break boucle;
+                    }
+                    break;
+            }
+
+        }
+
+        return GX_FACTORY.createMultiTrack(altitudeMode, interpolate, tracks);
+    }
+
     /**
      * 
      * @return
@@ -813,6 +857,8 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
             resultat = readTour();
         } else if(GxConstants.TAG_TRACK.equals(contentsTag)){
             resultat = readTrack();
+        } else if(GxConstants.TAG_MULTI_TRACK.equals(contentsTag)){
+            resultat = readMultiTrack();
         }
         return new SimpleImmutableEntry<Object, Extensions.Names>(resultat, ext);
     }
@@ -828,6 +874,10 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
         List<String> trackBinding = new ArrayList<String>();
         trackBinding.add(KmlConstants.TAG_PLACEMARK);
         trackBinding.add(KmlConstants.TAG_MULTI_GEOMETRY);
+
+        List<String> multiTrackBinding = new ArrayList<String>();
+        multiTrackBinding.add(KmlConstants.TAG_PLACEMARK);
+        multiTrackBinding.add(KmlConstants.TAG_MULTI_GEOMETRY);
 
         List<String> latLonQuadBinding = new ArrayList<String>();
         latLonQuadBinding.add(KmlConstants.TAG_GROUND_OVERLAY);
@@ -857,6 +907,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
         complexTable.put(GxConstants.TAG_TIME_STAMP, timeStamp);
         complexTable.put(GxConstants.TAG_TOUR, tourBinding);
         complexTable.put(GxConstants.TAG_TRACK, trackBinding);
+        complexTable.put(GxConstants.TAG_MULTI_TRACK, multiTrackBinding);
         complexTable.put(GxConstants.TAG_ALTITUDE_MODE, altitudeModeBinding);
     }
 

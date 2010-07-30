@@ -28,6 +28,8 @@ import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.gx.model.Angles;
+import org.geotoolkit.data.gx.model.EnumAltitudeMode;
+import org.geotoolkit.data.gx.model.MultiTrack;
 import org.geotoolkit.data.gx.model.Track;
 import org.geotoolkit.data.gx.xml.GxConstants;
 import org.geotoolkit.data.gx.xml.GxReader;
@@ -59,14 +61,14 @@ import static org.junit.Assert.*;
  *
  * @author Samuel Andrés
  */
-public class TrackTest {
+public class MultiTrackTest {
 
     private static final double DELTA = 0.000000000001;
-    private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/gx/track.kml";
+    private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/gx/multiTrack.kml";
     private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
             new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
-    public TrackTest() {
+    public MultiTrackTest() {
     }
 
     @BeforeClass
@@ -86,7 +88,7 @@ public class TrackTest {
     }
 
     @Test
-    public void trackReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
+    public void multiTrackReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
 
         Iterator i;
 
@@ -104,41 +106,55 @@ public class TrackTest {
         Feature placemark = (Feature) folder.getProperty(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).getValue();
         assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
         
-        assertTrue(placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof Track);
+        assertTrue(placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof MultiTrack);
 
-        final Track track = (Track) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
+        final MultiTrack multiTrack = (MultiTrack) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
+        assertEquals(EnumAltitudeMode.CLAMP_TO_SEA_FLOOR, multiTrack.getAltitudeMode());
+        assertTrue(multiTrack.getInterpolate());
 
-        assertEquals(2, track.getWhens().size());
-        assertEquals(2, track.getCoord().size());
+        assertEquals(2, multiTrack.getTracks().size());
+        final Track track0 = multiTrack.getTracks().get(0);
+
+        assertEquals(1, track0.getWhens().size());
+        assertEquals(1, track0.getCoord().size());
+        assertEquals(1, track0.getAngles().size());
 
         String when0 = "2010-05-28T02:02:09Z";
-        String when1 = "2010-05-28T02:02:35Z";
-
         FastDateParser du = new FastDateParser();
         Calendar cal = du.getCalendar(when0);
-        assertEquals(cal, track.getWhens().get(0));
-        cal = du.getCalendar(when1);
-        assertEquals(cal, track.getWhens().get(1));
-
-        CoordinateSequence coordinates = track.getCoord();
-        Coordinate coordinate0 = coordinates.getCoordinate(0);
-        Coordinate coordinate1 = coordinates.getCoordinate(1);
+        assertEquals(cal, track0.getWhens().get(0));
+        
+        CoordinateSequence coordinates0 = track0.getCoord();
+        Coordinate coordinate0 = coordinates0.getCoordinate(0);
 
         assertEquals(-122.207881, coordinate0.x, DELTA);
         assertEquals(37.371915, coordinate0.y, DELTA);
         assertEquals(156, coordinate0.z, DELTA);
-        assertEquals(-122.205712, coordinate1.x, DELTA);
-        assertEquals(37.373288, coordinate1.y, DELTA);
-        assertEquals(152, coordinate1.z, DELTA);
 
-        assertEquals(2, track.getAngles().size());
-
-        Angles angles0 = track.getAngles().get(0);
+        Angles angles0 = track0.getAngles().get(0);
         assertEquals(45.54676, angles0.getHeading(), DELTA);
         assertEquals(66.2342, angles0.getTilt(), DELTA);
         assertEquals(77, angles0.getRoll(), DELTA);
 
-        Angles angles1 = track.getAngles().get(1);
+
+        final Track track1 = multiTrack.getTracks().get(1);
+
+        assertEquals(1, track1.getWhens().size());
+        assertEquals(1, track1.getCoord().size());
+        assertEquals(1, track1.getAngles().size());
+
+        String when1 = "2010-05-28T02:02:35Z";
+        cal = du.getCalendar(when1);
+        assertEquals(cal, track1.getWhens().get(0));
+
+        CoordinateSequence coordinates1 = track1.getCoord();
+        Coordinate coordinate1 = coordinates1.getCoordinate(0);
+
+        assertEquals(-122.205712, coordinate1.x, DELTA);
+        assertEquals(37.373288, coordinate1.y, DELTA);
+        assertEquals(152, coordinate1.z, DELTA);
+
+        Angles angles1 = track1.getAngles().get(0);
         assertEquals(46.54676, angles1.getHeading(), DELTA);
         assertEquals(67.2342, angles1.getTilt(), DELTA);
         assertEquals(78, angles1.getRoll(), DELTA);
@@ -146,7 +162,7 @@ public class TrackTest {
     }
     
     @Test
-    public void trackWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
+    public void multiTrackWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
         final GxFactory gxFactory = DefaultGxFactory.getInstance();
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
@@ -157,7 +173,8 @@ public class TrackTest {
         final Coordinate coordinate0 = gxFactory.createCoordinate("-122.207881 37.371915 156.0");
         final Coordinate coordinate1 = kmlFactory.createCoordinate(-122.205712,37.373288, 152.0);
 
-        final CoordinateSequence coordinates = kmlFactory.createCoordinates(Arrays.asList(coordinate0, coordinate1));
+        final CoordinateSequence coordinates0 = kmlFactory.createCoordinates(Arrays.asList(coordinate0));
+        final CoordinateSequence coordinates1 = kmlFactory.createCoordinates(Arrays.asList(coordinate1));
 
         final Angles angles0 = gxFactory.createAngles(45.54676, 66.2342, 77);
 
@@ -166,14 +183,24 @@ public class TrackTest {
         angles1.setTilt(67.2342);
         angles1.setRoll(78);
 
-        final Track track = gxFactory.createTrack();
-        track.setCoord(coordinates);
-        track.setWhens(Arrays.asList(when0, when1));
-        track.setAngles(Arrays.asList(angles0, angles1));
+        final Track track0 = gxFactory.createTrack();
+        track0.setCoord(coordinates0);
+        track0.setWhens(Arrays.asList(when0));
+        track0.setAngles(Arrays.asList(angles0));
+
+        final Track track1 = gxFactory.createTrack();
+        track1.setCoord(coordinates1);
+        track1.setWhens(Arrays.asList(when1));
+        track1.setAngles(Arrays.asList(angles1));
+
+        final MultiTrack multiTrack = gxFactory.createMultiTrack();
+        multiTrack.setAltitudeMode(EnumAltitudeMode.CLAMP_TO_SEA_FLOOR);
+        multiTrack.setInterpolate(true);
+        multiTrack.setTracks(Arrays.asList(track0, track1));
 
         final Feature placemark = kmlFactory.createPlacemark();
         Collection<Property> placemarkProperties = placemark.getProperties();
-        placemarkProperties.add(FF.createAttribute(track, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
+        placemarkProperties.add(FF.createAttribute(multiTrack, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
 
 
         final Feature folder = kmlFactory.createFolder();
@@ -182,8 +209,8 @@ public class TrackTest {
         final Kml kml = kmlFactory.createKml(null, folder, null, null);
         kml.addExtensionUri(GxConstants.URI_GX, "gx");
 
-        final File temp = File.createTempFile("testTrack", ".kml");
-        temp.deleteOnExit();
+        final File temp = File.createTempFile("testMultiTrack", ".kml");
+        //temp.deleteOnExit();
 
         final KmlWriter writer = new KmlWriter();
         final GxWriter gxWriter = new GxWriter(writer);

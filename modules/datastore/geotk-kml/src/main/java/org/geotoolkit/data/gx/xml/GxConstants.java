@@ -44,6 +44,8 @@ public class GxConstants {
     public static final String TAG_BALLOON_VISIBILITY = "balloonVisibility";
     public static final String TAG_DURATION = "duration";
     public static final String TAG_FLY_TO = "FlyTo";
+    public static final String TAG_INTERPOLATE = "interpolate";
+    public static final String TAG_MULTI_TRACK = "MultiTrack";
     public static final String TAG_PLAYLIST = "Playlist";
     public static final String TAG_SOUND_CUE = "SoundCue";
     public static final String TAG_TOUR = "Tour";
@@ -61,6 +63,7 @@ public class GxConstants {
     public static final AltitudeMode DEF_ALTITUDE_MODE = KmlConstants.DEF_ALTITUDE_MODE;
     public static final boolean DEF_BALLOON_VISIBILITY = true;
     public static final double DEF_DURATION = 0.0;
+    public static final boolean DEF_INTERPOLATE = false;
     public static final EnumFlyToMode DEF_FLY_TO_MODE = EnumFlyToMode.BOUNCE;
     public static final EnumPlayMode DEF_PLAY_MODE = EnumPlayMode.PAUSE;
 

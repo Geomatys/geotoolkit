@@ -26,7 +26,7 @@ import static java.util.Collections.*;
  */
 public class DefaultMultiGeometry extends DefaultAbstractGeometry implements MultiGeometry {
 
-    private List<AbstractGeometry> geometries;
+    protected List<AbstractGeometry> geometries;
 
     /**
      * 

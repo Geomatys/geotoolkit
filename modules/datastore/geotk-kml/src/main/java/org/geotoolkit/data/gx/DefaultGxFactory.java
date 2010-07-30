@@ -31,6 +31,7 @@ import org.geotoolkit.data.gx.model.DefaultAngles;
 import org.geotoolkit.data.gx.model.DefaultAnimatedUpdate;
 import org.geotoolkit.data.gx.model.DefaultFlyTo;
 import org.geotoolkit.data.gx.model.DefaultLatLonQuad;
+import org.geotoolkit.data.gx.model.DefaultMultiTrack;
 import org.geotoolkit.data.gx.model.DefaultPlayList;
 import org.geotoolkit.data.gx.model.DefaultSoundCue;
 import org.geotoolkit.data.gx.model.DefaultTourControl;
@@ -41,6 +42,7 @@ import org.geotoolkit.data.gx.model.EnumPlayMode;
 import org.geotoolkit.data.gx.model.FlyTo;
 import org.geotoolkit.data.gx.model.GxModelConstants;
 import org.geotoolkit.data.gx.model.LatLonQuad;
+import org.geotoolkit.data.gx.model.MultiTrack;
 import org.geotoolkit.data.gx.model.PlayList;
 import org.geotoolkit.data.gx.model.SoundCue;
 import org.geotoolkit.data.gx.model.TourControl;
@@ -173,6 +175,25 @@ public class DefaultGxFactory implements GxFactory {
     public LatLonQuad createLatLonQuad(List<SimpleTypeContainer> objectSimpleExtensions,
             IdAttributes idAttributes, CoordinateSequence coordinates) {
         return new DefaultLatLonQuad(objectSimpleExtensions, idAttributes, coordinates);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public MultiTrack createMultiTrack() {
+        return new DefaultMultiTrack();
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public MultiTrack createMultiTrack(AltitudeMode altitudeMode,
+            boolean interpolate, List<Track> tracks) {
+        return new DefaultMultiTrack(altitudeMode, interpolate, tracks);
     }
 
     /**
