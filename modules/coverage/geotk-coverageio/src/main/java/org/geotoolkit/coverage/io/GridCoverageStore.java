@@ -48,7 +48,6 @@ import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
-import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
@@ -59,7 +58,10 @@ import org.geotoolkit.geometry.GeneralDirectPosition;
 
 
 /**
- * Base class of {@link GridCoverageReader} and {@link GridCoverageWriter}.
+ * Base class of {@link GridCoverageReader} and {@link GridCoverageWriter}. This base class
+ * provides common functionalities to {@linkplain #setLocale(Locale) set the locale} used
+ * for error messages, {@linkplain #abort() abort} a reading or writing process, and
+ * {@linkplain #reset() reset} or {@linkplain #dispose() dispose} the reader or writer.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.14
@@ -105,6 +107,23 @@ public abstract class GridCoverageStore implements Localized {
      * The locale to use for formatting messages, or {@code null} for a default locale.
      */
     Locale locale;
+
+    /**
+     * If {@code true}, the {@link #geodeticToPixelCoordinates geodeticToPixelCoordinates} method
+     * will not compute the difference between the requested coverage and the actual coverage that
+     * can be specified through {@link IIOParam}.
+     * <p>
+     * The value of this field is typically {@code true} for {@link GridCoverageReader} (readers
+     * can returns a coverage having a different envelope and resolution than the requested one)
+     * and {@code false} for {@link GridCoverageWriter} (writers have to write the coverage
+     * exactly as requested). However subclasses can change the value of this field, for example
+     * if they want to implement a stricter coverage reader.
+     *
+     * @see #geodeticToPixelCoordinates(GridGeometry2D, GridCoverageStoreParam, IIOParam)
+     *
+     * @since 3.14
+     */
+    protected boolean ignoreDifferenceTransform;
 
     /**
      * {@code true} if a request to abort the current read or write operation has been made.
@@ -263,6 +282,8 @@ public abstract class GridCoverageStore implements Localized {
      *         to the grid that he will get when reading the image using the {@code pixelParam}.
      *         If the conversion from the geodetic to pixel parameters can produce exactly the
      *         requested image, then the returned transform is approximatively an identity one.
+     *         If the {@link #ignoreDifferenceTransform} field is {@code true}, then the transform
+     *         is not computed and this method returns {@code null}.
      * @throws CoverageStoreException If the region can not be computed.
      *
      * @since 3.14
@@ -272,15 +293,16 @@ public abstract class GridCoverageStore implements Localized {
             throws CoverageStoreException
     {
         final MathTransform2D destToSourceGrid;
-        final double[] resolution = geodeticParam.getResolution();
         try {
-            destToSourceGrid = geodeticToPixelCoordinates(gridGeometry, geodeticParam.getValidEnvelope(),
-                    resolution, geodeticParam.getCoordinateReferenceSystem(), pixelParam);
+            destToSourceGrid = geodeticToPixelCoordinates(gridGeometry,
+                    geodeticParam.getValidEnvelope(),
+                    geodeticParam.getResolution(),
+                    geodeticParam.getCoordinateReferenceSystem(),
+                    pixelParam);
+        } catch (CoverageStoreException e) {
+            throw e;
         } catch (Exception e) { // There is many different exceptions thrown by the above.
             throw new CoverageStoreException(formatErrorMessage(e), e);
-        }
-        if (destToSourceGrid == null) {
-            throw new CoverageStoreException(formatErrorMessage(Errors.Keys.EMPTY_ENVELOPE));
         }
         return destToSourceGrid;
     }
@@ -298,16 +320,17 @@ public abstract class GridCoverageStore implements Localized {
      * @param resolution    The requested resolution or {@code null}.
      * @param requestCRS    The CRS of the {@code resolution} parameter, or {@code null}.
      *                      Should also be the envelope CRS, but the code is tolerant to mismatch.
-     * @return The transform from the requested grid to the actual grid, or {@code null}
-     *         if the coverage can't be read because the region to read is empty.
+     * @return The transform from the requested grid to the actual grid, or {@code null} if
+     *         {@link #ignoreDifferenceTransform} is {@code true}.
+     * @throws CoverageStoreException If the region to read is empty.
      */
-    private static MathTransform2D geodeticToPixelCoordinates(
+    private MathTransform2D geodeticToPixelCoordinates(
             final GridGeometry2D            gridGeometry,
             final Envelope                  envelope,
             final double[]                  resolution,
             final CoordinateReferenceSystem requestCRS,
             final IIOParam                  imageParam)
-            throws InvalidGridGeometryException, TransformException, FactoryException
+            throws InvalidGridGeometryException, TransformException, FactoryException, CoverageStoreException
     {
         final Rectangle       gridRange = gridGeometry.getGridRange2D();
         final MathTransform2D gridToCRS = gridGeometry.getGridToCRS2D(PixelOrientation.UPPER_LEFT);
@@ -327,7 +350,7 @@ public abstract class GridCoverageStore implements Localized {
         Rectangle2D geodeticBounds = (shapeToRead instanceof Rectangle2D) ?
                 (Rectangle2D) shapeToRead : shapeToRead.getBounds2D();
         if (geodeticBounds.isEmpty()) {
-            return null;
+            throw new CoverageStoreException(formatErrorMessage(Errors.Keys.EMPTY_ENVELOPE));
         }
         /*
          * Transform the envelope if needed. We will remember the MathTransform because it will
@@ -371,7 +394,7 @@ public abstract class GridCoverageStore implements Localized {
                     geodeticBounds = (shapeToRead = area).getBounds2D();
                 }
                 if (geodeticBounds.isEmpty()) {
-                    return null;
+                    throw new CoverageStoreException(formatErrorMessage(Errors.Keys.EMPTY_ENVELOPE));
                 }
             }
         }
@@ -461,6 +484,9 @@ public abstract class GridCoverageStore implements Localized {
             imageParam.setSourceRegion(new Rectangle(xmin, ymin, width, height));
             imageParam.setSourceSubsampling(xSubsampling, ySubsampling, 0, 0);
         }
+        if (ignoreDifferenceTransform) {
+            return null;
+        }
         /*
          * Compute the transform from target grid to source grid.  The target grid is the
          * one requested by the user, not the one that we would get if the parameters set
@@ -549,20 +575,12 @@ public abstract class GridCoverageStore implements Localized {
             sx = 1d / xSubsampling;
             sy = 1d / ySubsampling;
             crsToSubGrid = ConcatenatedTransform.create(crsToSubGrid,
-                    new AffineTransform2D(sx, 0, 0, sy, -xmin / xSubsampling, -ymin / ySubsampling));
+                    new AffineTransform2D(sx, 0, 0, sy,
+                            (double) -xmin / (double) xSubsampling,
+                            (double) -ymin / (double) ySubsampling));
         }
         // At this point, targetToSourceGrid == (targetGrid to sourceGrid).
         destToSourceGrid = ConcatenatedTransform.create(destToSourceGrid, crsToSubGrid);
-        /*
-         * Debugging code, to be enabled for testing purpose only.
-         */
-        if (false) {
-            Object print = destToSourceGrid;
-            if (print instanceof LinearTransform) {
-                print = ((LinearTransform) destToSourceGrid).getMatrix();
-            }
-            System.out.println(print);
-        }
         return (MathTransform2D) destToSourceGrid;
     }
 
@@ -585,12 +603,12 @@ public abstract class GridCoverageStore implements Localized {
      * Returns {@code true} if the given transform is null or the identity transform.
      * In the particular case of an affine transform, an arbitrary tolerance threshold
      * is used. The threshold shall be chosen in order to work well with the transforms
-     * returned by the {@link #geodeticToPixelCoordinates} method.
+     * returned by the {@link #geodeticToPixelCoordinates} method, despite rounding errors.
      */
     static boolean isIdentity(final MathTransform2D transform) {
         return (transform == null) || transform.isIdentity() ||
                 (transform instanceof AffineTransform &&
-                 XAffineTransform.isIdentity((AffineTransform) transform, 1E-10));
+                 XAffineTransform.isIdentity((AffineTransform) transform, EPS));
     }
 
     /**

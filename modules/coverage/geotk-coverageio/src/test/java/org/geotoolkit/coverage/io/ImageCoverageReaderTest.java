@@ -58,6 +58,11 @@ import org.geotoolkit.image.SampleModels;
 @Depend({TextMatrixImageReaderTest.class, WorldFileImageReaderTest.class})
 public final class ImageCoverageReaderTest {
     /**
+     * {@code true} for printing debugging information.
+     */
+    private static final boolean VERBOSE = false;
+
+    /**
      * Small number for comparison of floating point values.
      */
     private static final float EPS = 1E-9f;
@@ -94,7 +99,7 @@ public final class ImageCoverageReaderTest {
      */
     @Test
     public void readFull() throws IOException, CoverageStoreException {
-        final ImageCoverageReader reader = new ImageCoverageReader();
+        final ImageCoverageReaderInspector reader = new ImageCoverageReaderInspector("readFull");
         reader.setInput(TestData.file(TextMatrixImageReaderTest.class, "matrix.txt"));
         assertEquals(WorldFileImageReader.class, reader.imageReader.getClass());
         /*
@@ -117,13 +122,16 @@ public final class ImageCoverageReaderTest {
          * rendered image. The grid geometry should be equivalent to the one checked above.
          */
         final GridCoverage2D gridCoverage = reader.read(0, null);
+        if (VERBOSE) {
+            System.out.println(reader);
+        }
+        assertTrue("No transformation expected.", reader.getReadMatchesRequest());
         final RenderedImage image = gridCoverage.getRenderedImage();
         assertEquals("Image columns",  0, image.getMinX());
         assertEquals("Image rows",     0, image.getMinY());
         assertEquals("Image columns", 20, image.getWidth());
         assertEquals("Image rows",    42, image.getHeight());
         assertEquals("Grid geometry", gridGeometry, gridCoverage.getGridGeometry());
-        assertTrue("No transformation expected.", reader.getReadMatchesRequest());
         /*
          * Check the envelope, which should be the envelope of the full coverage.
          */
@@ -152,7 +160,7 @@ public final class ImageCoverageReaderTest {
      */
     @Test
     public void readRegion() throws IOException, CoverageStoreException {
-        final ImageCoverageReader reader = new ImageCoverageReader();
+        final ImageCoverageReaderInspector reader = new ImageCoverageReaderInspector("readRegion");
         reader.setInput(TestData.file(TextMatrixImageReaderTest.class, "matrix.txt"));
         assertEquals(WorldFileImageReader.class, reader.imageReader.getClass());
         /*
@@ -161,12 +169,15 @@ public final class ImageCoverageReaderTest {
         final GridCoverageReadParam param = new GridCoverageReadParam();
         param.setEnvelope(new Envelope2D(null, -1000, -2000, 8000 - -1000, 12000 - -2000));
         final GridCoverage2D gridCoverage = reader.read(0, param);
+        if (VERBOSE) {
+            System.out.println(reader);
+        }
+        assertTrue("No transformation expected.", reader.getReadMatchesRequest());
         final RenderedImage image = gridCoverage.getRenderedImage();
         assertEquals("Image columns",  0, image.getMinX());
         assertEquals("Image rows",     0, image.getMinY());
         assertEquals("Image columns",  9, image.getWidth());
         assertEquals("Image rows",    14, image.getHeight());
-        assertTrue("No transformation expected.", reader.getReadMatchesRequest());
         /*
          * Check the envelope, which should be the same than the requested one
          * (in this particular test case, since the reader does not have to clip
@@ -197,7 +208,7 @@ public final class ImageCoverageReaderTest {
      */
     @Test
     public void readSubsampledRegion() throws IOException, CoverageStoreException {
-        final ImageCoverageReader reader = new ImageCoverageReader();
+        final ImageCoverageReaderInspector reader = new ImageCoverageReaderInspector("readSubsampledRegion");
         reader.setInput(TestData.file(TextMatrixImageReaderTest.class, "matrix.txt"));
         assertEquals(WorldFileImageReader.class, reader.imageReader.getClass());
         /*
@@ -207,6 +218,10 @@ public final class ImageCoverageReaderTest {
         param.setEnvelope(new Envelope2D(null, -1000, -2000, 8000 - -1000, 12000 - -2000));
         param.setResolution(2000, 3000);
         final GridCoverage2D gridCoverage = reader.read(0, param);
+        if (VERBOSE) {
+            System.out.println(reader);
+        }
+        assertTrue("No transformation expected.", reader.getReadMatchesRequest());
         final RenderedImage image = gridCoverage.getRenderedImage();
         assertEquals("Image columns", 0, image.getMinX());
         assertEquals("Image rows",    0, image.getMinY());
@@ -243,13 +258,19 @@ public final class ImageCoverageReaderTest {
      */
     @Test
     public void readTwice() throws IOException, CoverageStoreException {
-        final ImageCoverageReader reader = new ImageCoverageReader();
+        final ImageCoverageReaderInspector reader = new ImageCoverageReaderInspector("readTwice");
         final File file = TestData.file(SampleModels.class, "Contour.png");
         reader.setInput(file);
         assertNotNull(reader.read(0, null));
+        if (VERBOSE) {
+            System.out.println(reader);
+        }
         reader.reset();
         reader.setInput(file);
         assertNotNull(reader.read(0, null));
+        if (VERBOSE) {
+            System.out.println(reader);
+        }
         reader.dispose();
     }
 }

@@ -207,11 +207,6 @@ public class ImageCoverageReader extends GridCoverageReader {
     private final GridCoverageFactory factory;
 
     /**
-     * {@code true} if the last read operation has been able to match the user request.
-     */
-    private transient boolean readMatchesRequest;
-
-    /**
      * Creates a new instance using the default
      * {@linkplain GridCoverageFactory grid coverage factory}.
      */
@@ -801,7 +796,7 @@ public class ImageCoverageReader extends GridCoverageReader {
              * Convert geodetic envelope and resolution to pixel coordinates.
              * Store the result of the above conversions in the ImageReadParam object.
              */
-            readMatchesRequest = isIdentity(geodeticToPixelCoordinates(gridGeometry, param, imageParam));
+            geodeticToPixelCoordinates(gridGeometry, param, imageParam);
             /*
              * Conceptually we could compute right now:
              *
@@ -818,7 +813,6 @@ public class ImageCoverageReader extends GridCoverageReader {
         } else {
             srcBands = null;
             dstBands = null;
-            readMatchesRequest = true;
         }
         /*
          * At this point, the standard parameters (source region, source bands) are set.
@@ -923,13 +917,6 @@ public class ImageCoverageReader extends GridCoverageReader {
     }
 
     /**
-     * Returns {@code true} if the last read operation has been able to match the user request.
-     */
-    final boolean getReadMatchesRequest() {
-        return readMatchesRequest;
-    }
-
-    /**
      * Cancels the read operation. The default implementation forward the call to the
      * {@linkplain #imageReader image reader}, if any. The content of the coverage
      * following the abort will be undefined.
@@ -960,11 +947,10 @@ public class ImageCoverageReader extends GridCoverageReader {
      * @throws IOException if an error occurs while closing the input.
      */
     private void close() throws IOException {
-        coverageNames      = null;
-        gridGeometry       = null;
-        sampleDimensions   = null;
-        input              = null; // Clear now in case the code below fails.
-        readMatchesRequest = false;
+        coverageNames    = null;
+        gridGeometry     = null;
+        sampleDimensions = null;
+        input            = null; // Clear now in case the code below fails.
         final ImageReader imageReader = this.imageReader; // Protect from changes.
         if (imageReader != null) {
             XImageIO.close(imageReader);

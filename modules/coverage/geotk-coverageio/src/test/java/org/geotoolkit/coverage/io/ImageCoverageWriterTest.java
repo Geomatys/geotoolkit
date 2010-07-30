@@ -25,7 +25,6 @@ import java.text.ParseException;
 import java.io.IOException;
 import java.io.StringWriter;
 import javax.imageio.ImageWriter;
-import java.awt.image.RenderedImage;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.TestData;
@@ -53,6 +52,11 @@ import static org.junit.Assert.*;
  */
 @Depend(ImageCoverageReaderTest.class)
 public class ImageCoverageWriterTest {
+    /**
+     * {@code true} for printing debugging information.
+     */
+    private static final boolean VERBOSE = false;
+
     /**
      * Tolerance factor when comparing values from the "matrix.txt" file.
      * We set the tolerance to the first decimal digit after the significant digits.
@@ -165,16 +169,14 @@ public class ImageCoverageWriterTest {
     @Test
     public void writeFull() throws IOException, CoverageStoreException, ParseException {
         final GridCoverage2D coverage = read("matrix.txt");
-        final ImageCoverageWriter writer = new ImageCoverageWriter() {
-            @Override protected ImageWriter createImageWriter(String formatName,
-                    Object output, RenderedImage image) throws IOException
-            {
-                return super.createImageWriter("matrix", output, image);
-            }
-        };
+        final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeFull", "matrix");
         final StringWriter buffer = new StringWriter();
         writer.setOutput(buffer);
         writer.write(coverage, null);
+        if (VERBOSE) {
+            System.out.println(writer);
+        }
+        assertTrue("No transformation expected.", writer.getReadMatchesRequest());
         writer.dispose();
         assertMatrixEqualsFile("matrix.txt", buffer.toString(), -9999);
     }
@@ -189,13 +191,17 @@ public class ImageCoverageWriterTest {
     @Test
     public void writeRegion() throws IOException, CoverageStoreException, ParseException {
         final GridCoverage2D coverage = read("matrix.txt");
-        final ImageCoverageWriter writer = new ImageCoverageWriter();
+        final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeRegion");
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         param.setFormatName("matrix");
         param.setEnvelope(new Envelope2D(null, -1000, -2000, 8000 - -1000, 12000 - -2000));
         final StringWriter buffer = new StringWriter();
         writer.setOutput(buffer);
         writer.write(coverage, param);
+        if (VERBOSE) {
+            System.out.println(writer);
+        }
+        assertTrue("No transformation expected.", writer.getReadMatchesRequest());
         writer.dispose();
         assertMatrixEquals(
             "12.783  12.499   -9999   -9999   -9999   -9999   -9999   -9999   -9999\n" +
@@ -225,7 +231,7 @@ public class ImageCoverageWriterTest {
     @Test
     public void writeSubsampledRegion() throws IOException, CoverageStoreException, ParseException {
         final GridCoverage2D coverage = read("matrix.txt");
-        final ImageCoverageWriter writer = new ImageCoverageWriter();
+        final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeSubsampledRegion");
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         param.setFormatName("matrix");
         param.setEnvelope(new Envelope2D(null, -1000, -2000, 8000 - -1000, 12000 - -2000));
@@ -233,6 +239,10 @@ public class ImageCoverageWriterTest {
         final StringWriter buffer = new StringWriter();
         writer.setOutput(buffer);
         writer.write(coverage, param);
+        if (VERBOSE) {
+            System.out.println(writer);
+        }
+        assertTrue("No transformation expected.", writer.getReadMatchesRequest());
         writer.dispose();
         assertMatrixEquals(
             "12.783   -9999   -9999   -9999   -9999\n" +
@@ -263,9 +273,13 @@ public class ImageCoverageWriterTest {
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         param.setFormatName("PNG");
 
-        final ImageCoverageWriter writer = new ImageCoverageWriter();
+        final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeTwice");
         writer.setOutput(out);
         writer.write(coverage, param);
+        if (VERBOSE) {
+            System.out.println(writer);
+        }
+        assertTrue("No transformation expected.", writer.getReadMatchesRequest());
         final long length = out.size();
         assertTrue("Empty file.", length > 0);
 
@@ -275,6 +289,10 @@ public class ImageCoverageWriterTest {
         param.setResolution(20, 30);
         writer.setOutput(out);
         writer.write(coverage, param);
+        if (VERBOSE) {
+            System.out.println(writer);
+        }
+        assertFalse("Translation expected.", writer.getReadMatchesRequest());
         assertTrue("Expected a smaller file", out.size() < length);
         writer.dispose();
     }

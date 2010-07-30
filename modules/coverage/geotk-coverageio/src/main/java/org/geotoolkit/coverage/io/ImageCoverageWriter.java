@@ -20,7 +20,6 @@ package org.geotoolkit.coverage.io;
 import java.util.Locale;
 import java.util.concurrent.CancellationException;
 import java.awt.image.RenderedImage;
-import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 import javax.imageio.IIOImage;
@@ -31,24 +30,15 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
 import javax.media.jai.RenderedImageAdapter;
 
-import org.opengis.geometry.Envelope;
-import org.opengis.util.FactoryException;
 import org.opengis.coverage.grid.GridCoverage;
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform2D;
 
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.mosaic.MosaicImageWriter;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.internal.io.IOUtilities;
-import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.resources.Errors;
-import org.opengis.referencing.operation.MathTransform2D;
 
 
 /**

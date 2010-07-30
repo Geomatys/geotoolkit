@@ -76,6 +76,7 @@ public abstract class GridCoverageReader extends GridCoverageStore {
      * Creates a new instance.
      */
     protected GridCoverageReader() {
+        ignoreDifferenceTransform = true;
     }
 
     /**

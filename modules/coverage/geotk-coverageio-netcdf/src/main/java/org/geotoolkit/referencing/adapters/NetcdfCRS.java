@@ -231,42 +231,67 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
         final List<CoordinateAxis>  axes = netcdfCS.getCoordinateAxes();
         for (int i=axes.size(); --i>=0;) {
             CoordinateAxis1D axis = (CoordinateAxis1D) axes.get(i);
-            switch (axis.getAxisType()) {
-                case Pressure:
-                case Height:
-                case GeoZ: {
-                    components.add(new Vertical(netcdfCS, axis));
-                    break;
-                }
-                case RunTime:
-                case Time: {
-                    components.add(new Temporal(netcdfCS, Temporal.complete(axis, file, logger)));
-                    break;
-                }
-                case Lat:
-                case Lon: {
-                    final int upper = i+1;
-                    i = lower(axes, i, AxisType.Lat, AxisType.Lon);
-                    components.add(new Geographic(netcdfCS, axes.subList(i, upper)));
-                    break;
-                }
-                case GeoX:
-                case GeoY: {
-                    final int upper = i+1;
-                    i = lower(axes, i, AxisType.GeoX, AxisType.GeoY);
-                    components.add(new Projected(netcdfCS, axes.subList(i, upper)));
-                    break;
-                }
-                default: {
-                    // Unknown axes: do not try to split.
-                    return new NetcdfCRS(netcdfCS, axes);
+            if (axis != null) {
+                final AxisType type = axis.getAxisType();
+                if (type != null) { // This is really null in some NetCDF file.
+                    switch (type) {
+                        case Pressure:
+                        case Height:
+                        case GeoZ: {
+                            components.add(new Vertical(netcdfCS, axis));
+                            continue;
+                        }
+                        case RunTime:
+                        case Time: {
+                            components.add(new Temporal(netcdfCS, Temporal.complete(axis, file, logger)));
+                            continue;
+                        }
+                        case Lat:
+                        case Lon: {
+                            final int upper = i+1;
+                            i = lower(axes, i, AxisType.Lat, AxisType.Lon);
+                            components.add(new Geographic(netcdfCS, axes.subList(i, upper)));
+                            continue;
+                        }
+                        case GeoX:
+                        case GeoY: {
+                            final int upper = i+1;
+                            i = lower(axes, i, AxisType.GeoX, AxisType.GeoY);
+                            components.add(new Projected(netcdfCS, axes.subList(i, upper)));
+                            continue;
+                        }
+                    }
                 }
             }
+            // Unknown axes: do not try to split.
+            components.clear();
+            break;
         }
         final int size = components.size();
         switch (size) {
-            case 0: return new NetcdfCRS(netcdfCS, axes);
-            case 1: return components.get(0);
+            /*
+             * If we have been unable to split the CRS ourself in various components,
+             * use the information provided by the NetCDF library as a fallback. Note
+             * that the CRS created that way may not be valid in the ISO 19111 sense.
+             */
+            case 0: {
+                if (netcdfCS.isLatLon()) {
+                    return new Geographic(netcdfCS, axes);
+                }
+                if (netcdfCS.isGeoXY()) {
+                    return new Projected(netcdfCS, axes);
+                }
+                return new NetcdfCRS(netcdfCS, axes);
+            }
+            /*
+             * If we have been able to create exactly one CRS, returns that CRS.
+             */
+            case 1: {
+                return components.get(0);
+            }
+            /*
+             * Otherwise create a CompoundCRS will all the components we have separated.
+             */
             default: {
                 return new Compound(netcdfCS, components.toArray(new NetcdfCRS[size]));
             }

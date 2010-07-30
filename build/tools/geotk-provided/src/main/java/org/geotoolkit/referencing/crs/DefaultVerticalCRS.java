@@ -31,11 +31,11 @@ import org.opengis.util.GenericName;
 
 
 /**
- * A placeholder for a class used be the {@code geotk-metadata} module while actually defined
- * in the {@code geotk-referencing} module. This class is not necessary when the user don't
- * want to marshall XML for a metadata having CRS objects. However if the user want to do
- * so, then he needs to include the {@code geotk-referencing} module in the classpath otherwise
- * he may get a {@link NoClassDefFoundError}.
+ * A placeholder for a class referenced in the {@code geotk-metadata} module while actually defined
+ * in the {@code geotk-referencing} module. This class is not necessary when the user don't want to
+ * marshall XML for a metadata having CRS objects. However if the user want to do so, then he needs
+ * to include the {@code geotk-referencing} module in the classpath otherwise he may get a
+ * {@link NoClassDefFoundError}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00
