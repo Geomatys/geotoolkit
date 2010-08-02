@@ -234,7 +234,7 @@ public class ParameterEditor extends JComponent {
      * if no explicit description was found.
      *
      * @param operation The operation node for the current parameter.
-     * @param index     The parameter index, or {@code -1} if unknow.
+     * @param index     The parameter index, or {@code -1} if unknown.
      *
      * @since 2.3
      */

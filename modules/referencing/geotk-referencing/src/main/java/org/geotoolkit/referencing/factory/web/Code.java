@@ -186,7 +186,7 @@ parse:  for (int i=0; i<MAXIMUM_FIELDS; i++) {
     }
 
     /**
-     * Creates an exception for an unknow authority code.
+     * Creates an exception for an unknown authority code.
      *
      * @param  type         The GeoAPI interface that was to be created.
      * @param  authority    Either {@code "AUTO"} or {@code "AUTO2"}.

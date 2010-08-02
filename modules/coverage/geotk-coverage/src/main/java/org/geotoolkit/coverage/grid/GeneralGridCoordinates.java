@@ -97,7 +97,7 @@ public class GeneralGridCoordinates implements GridCoordinates, Cloneable, Seria
     /**
      * Returns the number of dimensions. This method is equivalent to
      * <code>{@linkplain #getCoordinateValues()}.length</code>. It is
-     * provided for efficienty.
+     * provided for efficiency.
      */
     @Override
     public int getDimension() {
@@ -121,7 +121,7 @@ public class GeneralGridCoordinates implements GridCoordinates, Cloneable, Seria
     /**
      * Returns the coordinate value at the specified dimension. This method is equivalent to
      * <code>{@linkplain #getCoordinateValues()}[<var>i</var>]</code>. It is provided for
-     * efficienty.
+     * efficiency.
      *
      * @param  dimension The dimension from 0 inclusive to {@link #getDimension} exclusive.
      * @return The value at the requested dimension.

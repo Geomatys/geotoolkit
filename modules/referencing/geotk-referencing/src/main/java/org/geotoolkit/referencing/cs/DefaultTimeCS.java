@@ -96,7 +96,7 @@ public class DefaultTimeCS extends AbstractCS implements TimeCS {
     public static final DefaultTimeCS MILLISECONDS;
 
     /**
-     * Creates the constants, reusing some intermediate constructs for efficienty.
+     * Creates the constants, reusing some intermediate constructs for efficiency.
      */
     static {
         final Map<String,Object> properties = name(Vocabulary.Keys.TEMPORAL);

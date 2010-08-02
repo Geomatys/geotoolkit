@@ -660,7 +660,7 @@ copy:       while (true) {
      * This method is the converse of {@link #getNameOf}.
      *
      * @param  element The WKT element name.
-     * @return The GeoAPI class of the specified element, or {@code null} if unknow.
+     * @return The GeoAPI class of the specified element, or {@code null} if unknown.
      */
     public static Class<?> getClassOf(String element) {
         if (element == null) {
@@ -679,7 +679,7 @@ copy:       while (true) {
      * This method is the converse of {@link #getClassOf}.
      *
      * @param type The GeoAPI class of the specified element.
-     * @return The WKT element name, or {@code null} if unknow.
+     * @return The WKT element name, or {@code null} if unknown.
      */
     public static String getNameOf(final Class<?> type) {
         if (type != null) {

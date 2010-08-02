@@ -333,7 +333,7 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
          * created with the default (longitude,latitude) axis order. In such case this factory
          * is insensitive to the FORCE_LONGITUDE_FIRST_AXIS_ORDER hint  (in other words, every
          * CRS created by this instance are invariant under the above-cited hint value) and we
-         * can ommit them from the hint map. This omission allows the CRS.decode(..., true)
+         * can omit them from the hint map. This omission allows the CRS.decode(..., true)
          * convenience method to accept this factory (GEOT-1175).
          */
         if (!containsAxis) {

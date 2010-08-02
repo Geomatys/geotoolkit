@@ -203,7 +203,7 @@ public class ObjectiveAnalysis {
      * index. This is the spatial location of {@code values[index]} where {@code values} is the
      * array returned by the {@link #interpolate(double[]) interpolate(...)} method.
      * <p>
-     * If the {@code dest} argument is non-null, then the result will be writen in the given
+     * If the {@code dest} argument is non-null, then the result will be written in the given
      * {@code Point2D} instance and this method returns {@code dest}. Otherwise this method
      * returns a newly allocated {@code Point2D} instance.
      *

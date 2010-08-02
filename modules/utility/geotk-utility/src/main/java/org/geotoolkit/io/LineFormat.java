@@ -52,7 +52,7 @@ import org.geotoolkit.resources.Errors;
  *     });
  * }
  *
- * {@code LineFormat} may be used for reading a matrix with an unknow number of columns,
+ * {@code LineFormat} may be used for reading a matrix with an unknown number of columns,
  * while requiring that all lines have the same number of columns. The example below gets the
  * number of columns while reading the first line, and ensure that all subsequent lines have
  * the same number of columns. If one line violates this condition, then a {@link ParseException}

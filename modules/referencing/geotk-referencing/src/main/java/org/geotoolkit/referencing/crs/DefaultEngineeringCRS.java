@@ -86,7 +86,7 @@ public class DefaultEngineeringCRS extends AbstractSingleCRS implements Engineer
 
         /** Constructs a coordinate system with the given name. */
         public Cartesian(final int key, final CoordinateSystem cs) {
-            super(name(key), DefaultEngineeringDatum.UNKNOW, cs);
+            super(name(key), DefaultEngineeringDatum.UNKNOWN, cs);
         }
 
         /**

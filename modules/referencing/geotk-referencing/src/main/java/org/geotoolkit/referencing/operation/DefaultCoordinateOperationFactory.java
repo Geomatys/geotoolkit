@@ -1044,7 +1044,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
      * @throws FactoryException If the operation can't be constructed.
      *
      * @todo Rotation of prime meridian not yet implemented.
-     * @todo Transformation version set to "(unknow)". We should search this information somewhere.
+     * @todo Transformation version set to "(unknown)". We should search this information somewhere.
      */
     protected CoordinateOperation createOperationStep(final GeocentricCRS sourceCRS,
                                                       final GeocentricCRS targetCRS)
@@ -1345,7 +1345,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
             throws FactoryException
     {
         /*
-         * Try to find operations from source CRSs to target CRSs. All pairwise combinaisons are
+         * Try to find operations from source CRSs to target CRSs. All pairwise combinations are
          * tried, but the preference is given to CRS in the same order (source[0] with target[0],
          * source[1] with target[1], etc.). Operations found are stored in 'steps', but are not
          * yet given to pass through transforms. We need to know first if some ordinate values

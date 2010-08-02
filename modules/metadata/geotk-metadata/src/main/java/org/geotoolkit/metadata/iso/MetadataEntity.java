@@ -100,7 +100,7 @@ public class MetadataEntity extends ModifiableMetadata implements Serializable {
     /**
      * If a XML marshalling is under progress and the given collection is empty, returns
      * {@code null}. Otherwise returns the collection unchanged. This method is invoked
-     * by implementation having optional elements to ommit when empty.
+     * by implementation having optional elements to omit when empty.
      *
      * @param  <E> The type of elements in the given collection.
      * @param  elements The collection to return.

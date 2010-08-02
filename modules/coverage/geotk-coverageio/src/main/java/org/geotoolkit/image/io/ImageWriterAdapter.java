@@ -694,7 +694,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
          * to the subclass to initialize all other instance variables in order to provide working
          * versions of all methods.
          * <p>
-         * For efficienty reasons, the {@code outputTypes} field is initialized to a shared array.
+         * For efficiency reasons, the {@code outputTypes} field is initialized to a shared array.
          * Subclasses can assign new arrays, but should not modify the default array content.
          *
          * @param main The provider of the writers to use for writing the pixel values.

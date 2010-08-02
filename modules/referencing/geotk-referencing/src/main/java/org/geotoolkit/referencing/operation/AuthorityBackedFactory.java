@@ -265,7 +265,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
             }
         } catch (NoSuchAuthorityCodeException exception) {
             /*
-             * sourceCode or targetCode is unknow to the underlying authority factory.
+             * sourceCode or targetCode is unknown to the underlying authority factory.
              * Ignores the exception and fallback on the generic algorithm provided by
              * the super-class.
              */

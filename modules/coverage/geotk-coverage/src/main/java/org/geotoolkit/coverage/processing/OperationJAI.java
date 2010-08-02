@@ -843,7 +843,7 @@ public class OperationJAI extends Operation2D {
      *         {@code "GradientMagnitude"}, this array has a length of 1. For binary operations
      *         like {@code "add"} and {@code "multiply"}, this array has a length of 2.
      * @param  parameters Parameters, rendering hints and coordinate reference system to use.
-     * @return The range of values to use in the destination image, or {@code null} if unknow.
+     * @return The range of values to use in the destination image, or {@code null} if unknown.
      */
     protected NumberRange<?> deriveRange(final NumberRange<?>[] ranges, final Parameters parameters) {
         return null;
@@ -868,7 +868,7 @@ public class OperationJAI extends Operation2D {
      *         {@code "GradientMagnitude"}, this array has a length of 1. For binary operations
      *         like {@code "add"} and {@code "multiply"}, this array has a length of 2.
      * @param  parameters Parameters, rendering hints and coordinate reference system to use.
-     * @return The unit of data in the destination image, or {@code null} if unknow.
+     * @return The unit of data in the destination image, or {@code null} if unknown.
      */
     protected Unit<?> deriveUnit(final Unit<?>[] units, final Parameters parameters) {
         return null;

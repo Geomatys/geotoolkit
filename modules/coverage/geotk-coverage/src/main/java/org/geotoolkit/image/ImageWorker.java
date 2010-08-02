@@ -563,7 +563,7 @@ public class ImageWorker extends ImageInspector {
      * {@note The result is a usually a gray scale image. Nevertheless it is not the same than
      *        invoking <code>setColorSpaceType(PaletteInterpretation.GRAY)</code> because this
      *        <code>intensity()</code> method gives equal weight to all RGB bands, while
-     *        conversion to gray color space involve a more complex combinaison of bands.}
+     *        conversion to gray color space involve a more complex combination of bands.}
      *
      * @see BandCombineDescriptor
      */

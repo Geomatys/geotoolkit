@@ -392,7 +392,7 @@ public class DimensionFilter {
                     subFilter.addSourceDimension(n - subLower);
                 } else {
                     // Dimension n belong to heading or trailing dimensions.
-                    // Passthrough, after adjustement for trailing dimensions.
+                    // Passthrough, after adjustment for trailing dimensions.
                     if (n >= subUpper) {
                         n += dimDiff;
                     }

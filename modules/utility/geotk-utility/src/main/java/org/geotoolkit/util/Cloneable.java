@@ -21,7 +21,7 @@ package org.geotoolkit.util;
 /**
  * Indicates that it is legal to make a field-for-field copy of instances of implementing classes.
  * A cloneable class implements the J2SE's {@link java.lang.Cloneable} standard interface and
- * additionnaly overrides the {@link Object#clone()} method with public access.
+ * additionally overrides the {@link Object#clone()} method with public access.
  * <p>
  * Because the {@link Object#clone()} method has protected access, containers wanting to clone
  * theirs elements need to 1) use Java reflection (which is less efficient than standard method

@@ -167,7 +167,7 @@ public abstract class MathTransformProvider extends DefaultOperationMethod {
      *
      * @param  values The group of parameter values.
      * @return The created math transform.
-     * @throws InvalidParameterNameException if the values contains an unknow parameter.
+     * @throws InvalidParameterNameException if the values contains an unknown parameter.
      * @throws ParameterNotFoundException if a required parameter was not found.
      * @throws InvalidParameterValueException if a parameter has an invalid value.
      * @throws FactoryException if the math transform can't be created for some other reason
@@ -180,7 +180,7 @@ public abstract class MathTransformProvider extends DefaultOperationMethod {
     /**
      * Ensures that the given set of parameters contains only valid values.
      * This method compares all parameter names against the names declared in the
-     * {@linkplain #getParameters operation method parameter descriptor}. If an unknow
+     * {@linkplain #getParameters operation method parameter descriptor}. If an unknown
      * parameter name is found, then an {@link InvalidParameterNameException} is thrown.
      * This method also ensures that all values are assignable to the
      * {@linkplain ParameterDescriptor#getValueClass expected class}, are between the
@@ -193,7 +193,7 @@ public abstract class MathTransformProvider extends DefaultOperationMethod {
      * @return The parameter values to use for {@linkplain MathTransform math transform}
      *         construction. May be different than the supplied {@code values}
      *         argument if some missing values needed to be filled with default values.
-     * @throws InvalidParameterNameException if a parameter name is unknow.
+     * @throws InvalidParameterNameException if a parameter name is unknown.
      * @throws InvalidParameterValueException if a parameter has an invalid value.
      */
     protected ParameterValueGroup ensureValidValues(final ParameterValueGroup values)
@@ -231,7 +231,7 @@ public abstract class MathTransformProvider extends DefaultOperationMethod {
      *
      * @param  values The parameters values to copy.
      * @param  copy   The parameters values where to put the copy.
-     * @throws InvalidParameterNameException if a parameter name is unknow.
+     * @throws InvalidParameterNameException if a parameter name is unknown.
      * @throws InvalidParameterValueException if a parameter has an invalid value.
      */
     private static void copy(final ParameterValueGroup values, final ParameterValueGroup copy)

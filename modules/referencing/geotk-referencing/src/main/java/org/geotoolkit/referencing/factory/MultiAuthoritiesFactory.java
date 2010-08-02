@@ -350,7 +350,7 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
     }
 
     /**
-     * Returns a description of the underlying backing store, or {@code null} if unknow.
+     * Returns a description of the underlying backing store, or {@code null} if unknown.
      *
      * @throws FactoryException if a failure occurred while fetching the engine description.
      */
@@ -506,7 +506,7 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
          */
         String message = null;
         if (authority == null) {
-            authority = Vocabulary.format(Vocabulary.Keys.UNKNOW);
+            authority = Vocabulary.format(Vocabulary.Keys.UNKNOWN);
             message   = Errors.format(Errors.Keys.MISSING_AUTHORITY_$1, code);
         } else {
             /*

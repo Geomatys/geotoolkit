@@ -265,7 +265,7 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
      * @param gridEnvelope The grid envelope in integer coordinates.
      * @param anchor       Whatever grid coordinates map to pixel center or pixel corner.
      * @param gridToCRS    The transform (usually affine) from grid envelope to the CRS.
-     * @param crs          The CRS for the envelope to be created, or {@code null} if unknow.
+     * @param crs          The CRS for the envelope to be created, or {@code null} if unknown.
      *
      * @throws MismatchedDimensionException If one of the supplied object doesn't have
      *         a dimension compatible with the other objects.

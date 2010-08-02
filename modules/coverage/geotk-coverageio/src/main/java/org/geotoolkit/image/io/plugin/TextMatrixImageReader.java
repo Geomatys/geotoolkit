@@ -81,7 +81,7 @@ public class TextMatrixImageReader extends TextImageReader {
     private int height;
 
     /**
-     * The expected height, or 0 if unknow. This number
+     * The expected height, or 0 if unknown. This number
      * has no signification if {@link #data} is null.
      */
     private int expectedHeight;
@@ -479,7 +479,7 @@ public class TextMatrixImageReader extends TextImageReader {
          * documented in the <a href="#skip-navbar_top">class javadoc</a>. Subclasses can modify
          * those values if desired.
          * <p>
-         * For efficienty reasons, the above fields are initialized to shared arrays. Subclasses
+         * For efficiency reasons, the above fields are initialized to shared arrays. Subclasses
          * can assign new arrays, but should not modify the default array content.
          */
         public Spi() {

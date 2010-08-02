@@ -153,7 +153,7 @@ class RemoteService extends UnicastRemoteObject {
     }
 
     /**
-     * Returns the logger. We ommit the {@code "internal"} part in the package name since
+     * Returns the logger. We omit the {@code "internal"} part in the package name since
      * we don't want to expose the internal packages to the user.
      */
     static Logger logger() {

@@ -337,7 +337,7 @@ public class AbstractIdentifiedObject extends FormattableObject implements Ident
      * Constructs an object from a set of properties and copy unrecognized properties in the
      * specified map. The {@code properties} argument is treated as in the {@linkplain
      * AbstractIdentifiedObject#AbstractIdentifiedObject(Map) one argument constructor}. All
-     * properties unknow to this {@code AbstractIdentifiedObject} constructor are copied
+     * properties unknown to this {@code AbstractIdentifiedObject} constructor are copied
      * in the {@code subProperties} map, after their key has been normalized (usually
      * lower case, leading and trailing space removed).
      * <p>

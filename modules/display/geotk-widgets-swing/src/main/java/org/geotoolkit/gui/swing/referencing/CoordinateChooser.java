@@ -389,7 +389,7 @@ public class CoordinateChooser extends JComponent implements Dialog {
      * Sets the visible state of one or many selectors.
      * All selectors are visible by default.
      *
-     * @param  selectors Any bitwise combinaisons of {@link #GEOGRAPHIC_AREA},
+     * @param  selectors Any bitwise combinations of {@link #GEOGRAPHIC_AREA},
      *         {@link #TIME_RANGE} and/or {@link #RESOLUTION}.
      * @param  visible {@code true} to show the selectors, or {@code false} to hide them.
      * @throws IllegalArgumentException if {@code selectors} contains illegal bits.
@@ -402,9 +402,9 @@ public class CoordinateChooser extends JComponent implements Dialog {
     }
 
     /**
-     * Ensures that the specified bitwise combinaison of selectors is valid.
+     * Ensures that the specified bitwise combination of selectors is valid.
      *
-     * @param  selectors Any bitwise combinaisons of {@link #GEOGRAPHIC_AREA},
+     * @param  selectors Any bitwise combinations of {@link #GEOGRAPHIC_AREA},
      *         {@link #TIME_RANGE} and/or {@link #RESOLUTION}.
      * @throws IllegalArgumentException if {@code selectors} contains illegal bits.
      *
@@ -676,14 +676,14 @@ public class CoordinateChooser extends JComponent implements Dialog {
      * resolution field, etc. The watched values depend on the {@code selectors} arguments:
      * {@link #GEOGRAPHIC_AREA} will watches for the bounding box (East, West, North and South
      * value); {@link #TIME_RANGE} watches for start time and end time; {@link #RESOLUTION}
-     * watches for the resolution along East-West and North-South axis. Bitwise combinaisons
+     * watches for the resolution along East-West and North-South axis. Bitwise combinations
      * are allowed. For example, <code>GEOGRAPHIC_AREA | TIME_RANGE</code> will register a
      * listener for both geographic area and time range.
      * <p>
      * The source of {@link ChangeEvent}s delivered to {@link ChangeListener}s will be in most
      * case the {@link SpinnerModel} for the edited field.
      *
-     * @param  selectors Any bitwise combinaisons of
+     * @param  selectors Any bitwise combinations of
      *                   {@link #GEOGRAPHIC_AREA},
      *                   {@link #TIME_RANGE} and/or
      *                   {@link #RESOLUTION}.
@@ -712,7 +712,7 @@ public class CoordinateChooser extends JComponent implements Dialog {
     /**
      * Removes a change listener from the listener list.
      *
-     * @param  selectors Any bitwise combinaisons of
+     * @param  selectors Any bitwise combinations of
      *                   {@link #GEOGRAPHIC_AREA},
      *                   {@link #TIME_RANGE} and/or
      *                   {@link #RESOLUTION}.

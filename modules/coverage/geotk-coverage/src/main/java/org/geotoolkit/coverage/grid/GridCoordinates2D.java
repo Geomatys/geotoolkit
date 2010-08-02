@@ -91,7 +91,7 @@ public class GridCoordinates2D extends Point implements GridCoordinates, Cloneab
     /**
      * Returns the coordinate value at the specified dimension. This method is equivalent to
      * <code>{@linkplain #getCoordinateValues()}[<var>i</var>]</code>. It is provided for
-     * efficienty.
+     * efficiency.
      *
      * @param  dimension The dimension from 0 inclusive to {@link #getDimension} exclusive.
      * @return The value at the requested dimension.

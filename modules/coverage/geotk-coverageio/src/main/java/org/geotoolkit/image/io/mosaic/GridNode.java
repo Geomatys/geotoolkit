@@ -37,7 +37,7 @@ import static org.geotoolkit.image.io.mosaic.Tile.MASK;
  * organized in some form pyramid.
  * <p>
  * The value of the inherited rectangle is the {@linkplain Tile#getAbsoluteRegion absolute region}
- * of the tile, computed and stored once for ever for efficienty during searches. This class extends
+ * of the tile, computed and stored once for ever for efficiency during searches. This class extends
  * {@link Rectangle} for pure opportunist reasons, in order to reduce the amount of object created
  * (because we will have thousands of TreeNodes) and for direct (no indirection, no virtual calls)
  * invocation of {@link Rectangle} services. We authorize ourself this unrecommendable practice only

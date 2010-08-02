@@ -515,7 +515,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
         number = Classes.cast(number, type);
         /*
          * The 'type' bounds should actually be <? extends Number & Comparable> since the method
-         * signature expect a Comparable and we have additionnaly casted to a Number.  However I
+         * signature expect a Comparable and we have additionally casted to a Number.  However I
          * have not found a way to express that safely in a local variable with Java 6.
          */
         @SuppressWarnings({"unchecked","rawtypes"})

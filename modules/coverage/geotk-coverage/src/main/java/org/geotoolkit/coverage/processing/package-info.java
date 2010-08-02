@@ -32,7 +32,7 @@
  *     Coverage reprojected = Operations.DEFAULT.resample(myCoverage, newCRS);
  * }
  *
- * If the operation to apply is unknow at compile time, or if the operation is not listed in the
+ * If the operation to apply is unknown at compile time, or if the operation is not listed in the
  * {@code Operations} convenience class, then the generic way to invoke an operation is decribed
  * in the {@linkplain org.geotoolkit.coverage.processing.operation operation package}.
  *

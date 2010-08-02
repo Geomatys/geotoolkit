@@ -274,7 +274,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
      * {@link #ELLIPSOID_SHIFT}, the map will contains extra informations like positional
      * accuracy.
      *
-     * {@note In the datum shift case, an operation version is mandatory but unknow at this time.
+     * {@note In the datum shift case, an operation version is mandatory but unknown at this time.
      *        However, we noticed that the EPSG database do not always defines a version neither.
      *        Consequently, the Geotk implementation relax the rule requirying an operation
      *        version and we do not try to provide this information here for now.}

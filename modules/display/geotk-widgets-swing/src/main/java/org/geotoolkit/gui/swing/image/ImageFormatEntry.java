@@ -158,18 +158,18 @@ skip:   for (final Iterator<ImageReaderSpi> it=registry.getServiceProviders(Imag
      * replaces the current description by that format.
      */
     private void addFormat(final String format) {
-        this.format = longuest(this.format, format);
+        this.format = longest(this.format, format);
     }
 
     /**
-     * Selects the longuest format string. If two of them
+     * Selects the longest format string. If two of them
      * have the same length, favor the one in upper case.
      *
-     * @param current    The previous longuest format string, or {@code null} if none.
+     * @param current    The previous longest format string, or {@code null} if none.
      * @param candidate  The format string which may be longuer than the previous one.
-     * @return The format string which is the longuest one up to date.
+     * @return The format string which is the longest one up to date.
      */
-    static String longuest(final String current, final String candidate) {
+    static String longest(final String current, final String candidate) {
         if (current != null) {
             final int dl = candidate.length() - current.length();
             if (dl < 0 || (dl == 0 && candidate.compareTo(current) >= 0)) {

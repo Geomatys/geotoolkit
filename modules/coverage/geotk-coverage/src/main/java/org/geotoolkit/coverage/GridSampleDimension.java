@@ -1056,7 +1056,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      *
      * @todo What should we do when the value can't be formatted? {@code GridSampleDimension}
      *       returns {@code null} if there is no category or if an exception is thrown, but
-     *       {@code CategoryList} returns "Untitled" if the value is an unknow NaN, and try
+     *       {@code CategoryList} returns "Untitled" if the value is an unknown NaN, and try
      *       to format the number anyway in other cases.
      */
     public String getLabel(final double value, final Locale locale) {

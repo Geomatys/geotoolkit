@@ -141,8 +141,8 @@ public final class PassThroughTransformTest extends TransformTestCase {
             // This is the expected exception.
         }
         /*
-         * Tests many combinaisons of "first affected ordinate" and "number of trailing ordinates"
-         * parameters. For each combinaison we create a passthrough transform, test it with the
+         * Tests many combinations of "first affected ordinate" and "number of trailing ordinates"
+         * parameters. For each combination we create a passthrough transform, test it with the
          * "verifyTransform" method, then try to split it back to the original transform using
          * the DimensionFilter class.
          */

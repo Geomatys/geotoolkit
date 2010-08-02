@@ -351,7 +351,7 @@ public abstract class StreamImageReader extends SpatialImageReader {
          * up to the subclass to initialize all other instance variables in order to provide working
          * versions of all methods.
          * <p>
-         * For efficienty reasons, the {@code inputTypes} field is initialized to a shared array.
+         * For efficiency reasons, the {@code inputTypes} field is initialized to a shared array.
          * Subclasses can assign new arrays, but should not modify the default array content.
          */
         protected Spi() {

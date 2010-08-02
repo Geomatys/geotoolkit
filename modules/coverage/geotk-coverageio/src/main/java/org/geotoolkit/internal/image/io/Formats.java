@@ -404,7 +404,7 @@ attmpt: while (true) {
 
     /**
      * Returns the name of the given provider, or {@code null} if the name is unknown.
-     * If the provider declares many names, the longuest name is selected. If many names
+     * If the provider declares many names, the longest name is selected. If many names
      * have the same length, the first one having at least one upper-case character is
      * selected. This allows this method to return {@code "PNG"} instead than {@code "png"}.
      *

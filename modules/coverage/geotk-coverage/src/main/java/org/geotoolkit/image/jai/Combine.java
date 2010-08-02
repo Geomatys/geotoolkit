@@ -111,7 +111,7 @@ public class Combine extends PointOpImage {
      */
     public static interface Transform {
         /**
-         * Transforms the sample values for one pixel before the linear combinaison.
+         * Transforms the sample values for one pixel before the linear combination.
          *
          * @param values The sampel values to transformation. Transformation are performed in-place.
          */
@@ -139,7 +139,7 @@ public class Combine extends PointOpImage {
          *
          * A {@code true} value will allows some optimisations inside the
          * {@link Combine#computeRect Combine.computeRect(...)} method. This method
-         * may conservatly returns {@code false} if this information is unknow.
+         * may conservatly returns {@code false} if this information is unknown.
          *
          * @return {@code true} if the transformation does not depend on the ordering of sample values.
          */
@@ -150,7 +150,7 @@ public class Combine extends PointOpImage {
 
 
     /**
-     * The linear combinaison coefficients as a matrix. This matrix may not be the same
+     * The linear combination coefficients as a matrix. This matrix may not be the same
      * than the one specified to the constructor, in that the zero coefficients may have
      * been purged (and {@link #sources} and {@link #bands} arrays adjusted accordingly)
      * for performance reason.
@@ -176,7 +176,7 @@ public class Combine extends PointOpImage {
     final int numSamples;
 
     /**
-     * The transform to apply on sample values before the linear combinaison,
+     * The transform to apply on sample values before the linear combination,
      * or {@code null} if none.
      */
     protected final Transform transform;
@@ -187,8 +187,8 @@ public class Combine extends PointOpImage {
      * factory methods instead.
      *
      * @param images    The rendered sources.
-     * @param matrix    The linear combinaison coefficients as a matrix.
-     * @param transform The transform to apply on sample values before the linear combinaison,
+     * @param matrix    The linear combination coefficients as a matrix.
+     * @param transform The transform to apply on sample values before the linear combination,
      *                  or {@code null} if none.
      * @param hints     The rendering hints.
      *
@@ -381,7 +381,7 @@ public class Combine extends PointOpImage {
 
     /**
      * Optimized {@link Combine} operation for dyadic (two sources) image. This operation
-     * performs a linear combinaison of two images ({@code src0} and {@code src1}).
+     * performs a linear combination of two images ({@code src0} and {@code src1}).
      * The parameters {@code scale0} and {@code scale1} indicate the scale of source
      * images {@code src0} and {@code src1}. If we consider pixel at coordinate
      * (<var>x</var>,<var>y</var>), its value is determinate by the pseudo-code:
@@ -417,7 +417,7 @@ public class Combine extends PointOpImage {
          * Constructs a new instance of {@code Combine.Dyadic}.
          *
          * @param images  The rendered sources. This vector must contains exactly 2 sources.
-         * @param matrix  The linear combinaison coefficients as a matrix.
+         * @param matrix  The linear combination coefficients as a matrix.
          * @param hints   The rendering hints.
          *
          * @throws MismatchedSizeException if some rows in the {@code matrix} argument doesn't

@@ -722,7 +722,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     }
 
     /**
-     * Returns a description of the underlying backing store, or {@code null} if unknow.
+     * Returns a description of the underlying backing store, or {@code null} if unknown.
      *
      * @throws FactoryException if a failure occurred while fetching the engine description.
      */

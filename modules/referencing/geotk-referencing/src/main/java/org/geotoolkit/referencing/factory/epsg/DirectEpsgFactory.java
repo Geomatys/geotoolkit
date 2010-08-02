@@ -381,7 +381,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
     /**
      * The buffered authority factory, or {@code this} if none. This field is set
      * to a different value by {@link ThreadedEpsgFactory} only, which will point toward a
-     * buffered factory wrapping this {@code DirectEpsgFactory} for efficienty.
+     * buffered factory wrapping this {@code DirectEpsgFactory} for efficiency.
      */
     AbstractAuthorityFactory buffered = this;
 
@@ -2043,7 +2043,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     crs = factory.createEngineeringCRS(properties, datum, cs);
                 }
                 /* ----------------------------------------------------------------------
-                 *   UNKNOW CRS
+                 *   UNKNOWN CRS
                  * ---------------------------------------------------------------------- */
                 else {
                     result.close();
@@ -2672,7 +2672,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * @todo The ordering is not consistent among all database software, because the "accuracy"
      *       column may contains null values. When used in an "ORDER BY" clause, PostgreSQL put
      *       null values last, while Access and HSQL put them first. The PostgreSQL's behavior is
-     *       better for what we want (put operations with unknow accuracy last). Unfortunatly,
+     *       better for what we want (put operations with unknown accuracy last). Unfortunatly,
      *       I don't know yet how to instruct Access to put null values last using standard SQL
      *       ("IIF" is not standard, and Access doesn't seem to understand "CASE ... THEN" clauses).
      */

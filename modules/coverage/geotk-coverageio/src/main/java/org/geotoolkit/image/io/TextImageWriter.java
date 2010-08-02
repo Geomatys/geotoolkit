@@ -425,7 +425,7 @@ public abstract class TextImageWriter extends StreamImageWriter {
          * up to the subclass to initialize all other instance variables in order to provide
          * working versions of all methods.
          * <p>
-         * For efficienty reasons, the above fields are initialized to shared arrays. Subclasses
+         * For efficiency reasons, the above fields are initialized to shared arrays. Subclasses
          * can assign new arrays, but should not modify the default array content.
          */
         protected Spi() {

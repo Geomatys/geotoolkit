@@ -54,7 +54,7 @@ import org.geotoolkit.lang.ThreadSafe;
 
 /**
  * A factory for {@linkplain GridCoverage2D grid coverage} objects. This factory expects various
- * combinaisons of the following informations:
+ * combinations of the following informations:
  * <p>
  * <ul>
  *   <li>A name as a {@linkplain CharSequence character sequence}.</li>
@@ -319,7 +319,7 @@ public class GridCoverageFactory extends Factory {
      *          The maximal value for each band in the raster,
      *          or {@code null} for computing it automatically.
      * @param units
-     *          The units of sample values, or {@code null} if unknow.
+     *          The units of sample values, or {@code null} if unknown.
      * @param colors
      *          The colors to use for values from {@code minValues} to {@code maxValues} for each
      *          bands, or {@code null} for a default color palette. If non-null, each arrays
@@ -373,7 +373,7 @@ public class GridCoverageFactory extends Factory {
      *          The maximal value for each band in the raster,
      *          or {@code null} for computing it automatically.
      * @param units
-     *          The units of sample values, or {@code null} if unknow.
+     *          The units of sample values, or {@code null} if unknown.
      * @param colors
      *          The colors to use for values from {@code minValues} to {@code maxValues} for each
      *          bands, or {@code null} for a default color palette. If non-null, each arrays

@@ -70,7 +70,7 @@ final class EpsgDataPack extends ScriptRunner {
      */
     private static boolean omit(final String line) {
         if (line.startsWith("UPDATE epsg_datum SET realization_epoch = replace(realization_epoch, CHAR(182), CHAR(10))")) {
-            // We ommit this line because we changed the type from VARCHAR to SMALLINT.
+            // We omit this line because we changed the type from VARCHAR to SMALLINT.
             return true;
         }
         return false;

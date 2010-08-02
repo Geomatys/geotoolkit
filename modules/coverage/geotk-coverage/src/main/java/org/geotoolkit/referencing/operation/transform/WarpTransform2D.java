@@ -133,10 +133,10 @@ public class WarpTransform2D extends AbstractMathTransform implements MathTransf
      * given destination coordinates. The transformation is performed using some polynomial warp
      * with the degree supplied in argument.
      *
-     * @param srcBounds Bounding box of source coordinates, or {@code null} if unknow.
+     * @param srcBounds Bounding box of source coordinates, or {@code null} if unknown.
      * @param srcCoords Source coordinates.
      * @param srcOffset The inital entry of {@code srcCoords} to be used.
-     * @param dstBounds Bounding box of destination coordinates, or {@code null} if unknow.
+     * @param dstBounds Bounding box of destination coordinates, or {@code null} if unknown.
      * @param dstCoords Destination coordinates.
      * @param dstOffset The inital entry of {@code destCoords} to be used.
      * @param numCoords The number of coordinates from {@code srcCoords} and {@code destCoords} to be used.
@@ -169,10 +169,10 @@ public class WarpTransform2D extends AbstractMathTransform implements MathTransf
      * given destination coordinates. The transformation is performed using some polynomial warp
      * with the degree supplied in argument.
      *
-     * @param srcBounds Bounding box of source coordinates, or {@code null} if unknow.
+     * @param srcBounds Bounding box of source coordinates, or {@code null} if unknown.
      * @param srcCoords Source coordinates with <var>x</var> and <var>y</var> alternating.
      * @param srcOffset The inital entry of {@code srcCoords} to be used.
-     * @param dstBounds Bounding box of destination coordinates, or {@code null} if unknow.
+     * @param dstBounds Bounding box of destination coordinates, or {@code null} if unknown.
      * @param dstCoords Destination coordinates with <var>x</var> and <var>y</var> alternating.
      * @param dstOffset The inital entry of {@code destCoords} to be used.
      * @param numCoords The number of coordinates from {@code srcCoords} and {@code destCoords} to be used.
@@ -341,7 +341,7 @@ public class WarpTransform2D extends AbstractMathTransform implements MathTransf
             return new WarpAffine(tr);
         }
         if (name == null) {
-            name = Vocabulary.formatInternational(Vocabulary.Keys.UNKNOW);
+            name = Vocabulary.formatInternational(Vocabulary.Keys.UNKNOWN);
         }
         return new WarpAdapter(name, transform);
     }

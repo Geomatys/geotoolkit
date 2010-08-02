@@ -63,7 +63,7 @@ public class NumberGraduation extends AbstractGraduation {
     /**
      * Constructs a graduation with the supplied units.
      *
-     * @param unit The axis's units, or {@code null} if unknow.
+     * @param unit The axis's units, or {@code null} if unknown.
      */
     public NumberGraduation(final Unit<?> unit) {
         super(unit);
@@ -210,7 +210,7 @@ public class NumberGraduation extends AbstractGraduation {
      * Changes the graduation's units. This method will automatically convert minimum and
      * maximum values from the old units to the new one.
      *
-     * @param  unit The new units, or {@code null} if unknow.
+     * @param  unit The new units, or {@code null} if unknown.
      *         If null, minimum and maximum values are not converted.
      * @throws IllegalArgumentException if units are not convertible.
      */

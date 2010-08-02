@@ -254,7 +254,7 @@ public class Plot2D extends ZoomPane {
      * Construct an initially empty {@code Plot2D} with the specified zoom capacities.
      *
      * @param  zoomCapacities Allowed zoom types. It can be a
-     *         bitwise combinaison of the following constants:
+     *         bitwise combination of the following constants:
      *         {@link #SCALE_X SCALE_X}, {@link #SCALE_Y SCALE_Y},
      *         {@link #TRANSLATE_X TRANSLATE_X}, {@link #TRANSLATE_Y TRANSLATE_Y},
      *         {@link #ROTATE ROTATE}, {@link #RESET RESET} and {@link #DEFAULT_ZOOM DEFAULT_ZOOM}.

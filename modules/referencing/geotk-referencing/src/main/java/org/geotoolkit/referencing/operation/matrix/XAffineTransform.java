@@ -699,7 +699,7 @@ public class XAffineTransform extends AffineTransform {
      * }
      *
      * This method is similar to the following code, except that this method
-     * distinguish between "unflipped" and "unknow" states.
+     * distinguish between "unflipped" and "unknown" states.
      *
      * {@preformat java
      *     boolean flipped = (tr.getType() & TYPE_FLIP) != 0;

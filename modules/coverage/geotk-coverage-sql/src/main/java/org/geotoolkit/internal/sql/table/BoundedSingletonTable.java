@@ -36,7 +36,7 @@ import org.geotoolkit.coverage.sql.CoverageEnvelope;
  * Base class for tables with a {@code getEntry(...)} method restricted to the elements contained in
  * some spatio-temporal bounding box. The bounding box is defined either by a {@link CoverageEnvelope}
  * expressed in the {@linkplain CoverageEnvelope#getSpatioTemporalCRS CRS of this table}, or by a
- * combinaison of {@linkplain CoverageEnvelope#getHorizontalRange() horizontal envelope},
+ * combination of {@linkplain CoverageEnvelope#getHorizontalRange() horizontal envelope},
  * {@link #getVerticalRange() vertical range} and {@linkplain CoverageEnvelope#getTimeRange()
  * time range} expressed in standard CRS.
  *

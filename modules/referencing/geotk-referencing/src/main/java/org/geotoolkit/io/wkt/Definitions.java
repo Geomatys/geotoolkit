@@ -368,7 +368,7 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
         errorOffset -= shift;
         errorOffset += offset;
         if (errorOffset == exception.getErrorOffset()) {
-            return exception; // No adjustement needed.
+            return exception; // No adjustment needed.
         }
         ParseException adjusted = new ParseException(exception.getLocalizedMessage(), errorOffset);
         adjusted.setStackTrace(exception.getStackTrace());
@@ -413,7 +413,7 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
             if (type != null) {
                 classe = WKTFormat.getClassOf(type);
             } else {
-                type = resources.getString(Vocabulary.Keys.UNKNOW);
+                type = resources.getString(Vocabulary.Keys.UNKNOWN);
             }
             table.write(type);
             table.nextColumn();

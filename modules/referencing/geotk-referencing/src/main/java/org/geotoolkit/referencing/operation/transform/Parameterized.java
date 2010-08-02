@@ -44,7 +44,7 @@ import org.opengis.referencing.operation.SingleOperation;
  */
 public interface Parameterized {
     /**
-     * Returns the parameter descriptors for this math transform, or {@code null} if unknow.
+     * Returns the parameter descriptors for this math transform, or {@code null} if unknown.
      * This method is similar to {@link OperationMethod#getParameters}, except that typical
      * {@link MathTransform} implementations return parameters in standard units (usually
      * {@linkplain SI#METRE metres} or {@linkplain NonSI#DEGREE_ANGLE decimal degrees}).
@@ -56,7 +56,7 @@ public interface Parameterized {
     ParameterDescriptorGroup getParameterDescriptors();
 
     /**
-     * Returns a copy of the parameter values for this math transform, or {@code null} if unknow.
+     * Returns a copy of the parameter values for this math transform, or {@code null} if unknown.
      * This method is similar to {@link SingleOperation#getParameterValues}, except that typical
      * {@link MathTransform} implementations return parameters in standard units (usually
      * {@linkplain SI#METRE metres} or {@linkplain NonSI#DEGREE_ANGLE decimal degrees}).

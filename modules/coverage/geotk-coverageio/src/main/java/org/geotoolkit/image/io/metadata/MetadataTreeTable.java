@@ -74,7 +74,7 @@ public class MetadataTreeTable implements Localized {
     public static final int COLUMN_COUNT = 7;
 
     /**
-     * The column which contains the values. This is the column which is ommited if this
+     * The column which contains the values. This is the column which is omited if this
      * table describe only an {@link IIOMetadataFormat} without {@link IIOMetadata}.
      *
      * @since 3.05

@@ -273,7 +273,7 @@ public class AsciiGridWriter extends TextImageWriter {
             out.write(Strings.spaces(2 + Math.max(0, length - key.length())));
             out.write(entry.getValue());
         }
-        // We intentionaly ommit the line separator for the last line,
+        // We intentionaly omit the line separator for the last line,
         // because the write(...) method below will add it itself.
     }
 
@@ -411,7 +411,7 @@ public class AsciiGridWriter extends TextImageWriter {
          * documented in the <a href="#skip-navbar_top">class javadoc</a>. Subclasses can
          * modify those values if desired.
          * <p>
-         * For efficienty reasons, the above fields are initialized to shared arrays.
+         * For efficiency reasons, the above fields are initialized to shared arrays.
          * Subclasses can assign new arrays, but should not modify the default array content.
          */
         public Spi() {

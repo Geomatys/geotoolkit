@@ -269,7 +269,7 @@ final class EpsgScriptRunner extends ScriptRunner {
     }
 
     /**
-     * Modifies the SQL statement before to execute it, or ommit unsupported statements.
+     * Modifies the SQL statement before to execute it, or omit unsupported statements.
      *
      * @throws SQLException If an error occurred while executing the SQL statement.
      * @throws IOException If an I/O operation was required and failed.

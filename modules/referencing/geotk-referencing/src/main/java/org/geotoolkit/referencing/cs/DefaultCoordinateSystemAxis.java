@@ -658,7 +658,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
     private final RangeMeaning rangeMeaning;
 
     /**
-     * The axis with opposite direction, or {@code null} if unknow.
+     * The axis with opposite direction, or {@code null} if unknown.
      * Not serialized because only used for the predefined constants.
      */
     private transient DefaultCoordinateSystemAxis opposite;

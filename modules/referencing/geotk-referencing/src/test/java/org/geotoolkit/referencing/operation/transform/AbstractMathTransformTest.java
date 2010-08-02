@@ -73,7 +73,7 @@ public final class AbstractMathTransformTest {
         final int checksumFlt = Arrays.hashCode(srcFlt);
         final int checksumDbl = Arrays.hashCode(srcDbl);
         /*
-         * Tests transformation using different combinaisons of dimensions and offsets.
+         * Tests transformation using different combinations of dimensions and offsets.
          * The 'srcFlt' and 'srcDbl' array should never change in this test. We will
          * check that using checksums.
          */

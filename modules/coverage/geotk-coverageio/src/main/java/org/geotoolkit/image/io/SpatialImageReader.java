@@ -1293,7 +1293,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
         /**
          * Initializes a default provider for {@link SpatialImageReader}s.
          * <p>
-         * For efficienty reasons, the fields are initialized to a shared array.
+         * For efficiency reasons, the fields are initialized to a shared array.
          * Subclasses can assign new arrays, but should not modify the default array content.
          */
         protected Spi() {

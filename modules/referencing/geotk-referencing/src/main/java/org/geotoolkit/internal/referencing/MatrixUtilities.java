@@ -185,7 +185,7 @@ public final class MatrixUtilities {
             /*
              * Target points have fewer ordinates than source point. If a column contains ony
              * zero values, then this means that the ordinate at the corresponding column is
-             * simply deleted. We can ommit that column. We check the last columns before the
+             * simply deleted. We can omit that column. We check the last columns before the
              * first columns on the assumption that last dimensions are more likely to be
              * independant dimensions like time.
              */
@@ -205,7 +205,7 @@ skipColumn: for (int i=numCol; --i>=0;) {
             }
             if (oi == 0) {
                 /*
-                 * Now create a square matrix which ommit some or all columns
+                 * Now create a square matrix which omit some or all columns
                  * containing only 0 elements, and invert that matrix. Finally,
                  * create a new matrix with new rows added for the omitted ordinates.
                  */

@@ -215,7 +215,7 @@ final class PropertyTree {
             }
             Class<?> childType = accessor.type(index, TypeValuePolicy.ELEMENT_TYPE);
             if (childType == null) {
-                // The type of the parameter is unknow (actually the message is a bit
+                // The type of the parameter is unknown (actually the message is a bit
                 // misleading since it doesn't said that only the type is unknown).
                 throw new ParseException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_$1, name), 0);
             }
@@ -579,7 +579,7 @@ final class PropertyTree {
                  * If the node has no child and is a leaf, then it is some value like a number,
                  * a date or a string.  We just display this value, which is usually part of a
                  * collection. If the node has no child and is NOT a leaf, then it is an empty
-                 * metadata and we just ommit it.
+                 * metadata and we just omit it.
                  */
                 buffer.append(Strings.spaces(indent)).append(node).append(lineSeparator);
             }

@@ -168,7 +168,7 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
     }
 
     /**
-     * Returns the parameter descriptors for this math transform, or {@code null} if unknow.
+     * Returns the parameter descriptors for this math transform, or {@code null} if unknown.
      * The default implementation returns the descriptor associated to the object returned
      * by {@link #getUnmarshalledParameters} if there is one, or {@code null} otherwise.
      */

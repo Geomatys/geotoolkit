@@ -204,7 +204,7 @@ public class Line implements Cloneable, Serializable {
         mean_x /= count;
         mean_y /= count;
         /*
-         * We have to solve two equations with two unknows:
+         * We have to solve two equations with two unknowns:
          *
          *   1)    mean(y)  = b + m*mean(x)
          *   2)    mean(xy) = b*mean(x) + m*mean(x²)

@@ -319,7 +319,7 @@ public class DateGraduation extends AbstractGraduation {
      * Changes the graduation's units. This method will automatically convert minimum and maximum
      * values from the old units to the new one.
      *
-     * @param unit The new units, or {@code null} if unknow. If null, minimum and maximum values
+     * @param unit The new units, or {@code null} if unknown. If null, minimum and maximum values
      *             are not converted.
      * @throws IllegalArgumentException if the specified unit is not a time unit.
      */

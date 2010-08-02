@@ -335,7 +335,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
             if (titles != null) {
                 for (final InternationalString candidate : titles) {
                     /*
-                     * Uses the longuest title instead of the main one. In Geotk
+                     * Uses the longest title instead of the main one. In Geotk
                      * implementation, the alternate title may contains usefull informations
                      * like the EPSG database version number and the database engine.
                      */
@@ -430,7 +430,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
     }
 
     /**
-     * Returns a description of the underlying backing store, or {@code null} if unknow.
+     * Returns a description of the underlying backing store, or {@code null} if unknown.
      * This is for example the database software used for storing the data.
      *
      * @throws FactoryException if a failure occurred while fetching the engine description.

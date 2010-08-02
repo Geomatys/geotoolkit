@@ -737,7 +737,7 @@ public class MosaicImageReader extends ImageReader implements Disposable {
      *   <li>For {@link ImageTypePolicy#SUPPORTED_BY_ONE SUPPORTED_BY_ONE}, this method delegates
      *       directly to the reader of an arbitrary tile (typically the first one).</li>
      *   <li>For {@link ImageTypePolicy#SUPPORTED_BY_ALL SUPPORTED_BY_ALL}, this method invokes
-     *       {@code getRawImageType} for every tile readers, ommits the types that are not declared
+     *       {@code getRawImageType} for every tile readers, omits the types that are not declared
      *       in <code>{@linkplain ImageReader#getImageTypes getImageTypes}(imageIndex)</code> for
      *       every tile readers, and returns the most common remainding value. If none is found,
      *       then some {@linkplain ImageReader#getRawImageType default specifier} is returned.</li>

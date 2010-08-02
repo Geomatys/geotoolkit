@@ -106,7 +106,7 @@ public interface SampleDimension extends RangeDimension, SampleDomain {
 
     /**
      * The maximal value that can be stored in the designated band, or {@code null} if unspecified.
-     * In the particular case of a measurement in the electromagnetic spectrum, this is the longuest
+     * In the particular case of a measurement in the electromagnetic spectrum, this is the longest
      * wavelength that the sensor is capable of collecting.
      * <p>
      * This method is equivalent to the code below (null checks omitted for simplicity):

@@ -180,7 +180,7 @@ public class GradientMagnitude extends OperationJAI {
      * Returns a scale factor for the supplied kernel. If {@code kernel} computes horizontal
      * grandient, this method returns {@code scaleX}. Otherwise, if {@code kernel} computes
      * vertical gradient, then this method returns {@code scaleY}. Otherwise, returns a geometric
-     * combinaison of both.
+     * combination of both.
      */
     private static double getScaleFactor(final KernelJAI kernel, double scaleX, double scaleY) {
         scaleX *= scaleX;
@@ -197,7 +197,7 @@ public class GradientMagnitude extends OperationJAI {
      * with the square root of this value.
      *
      * @param  kernel The kernel for which to compute normalization factor.
-     * @param  type Any combinaison of {@link #HORIZONTAL} and {@link #VERTICAL}.
+     * @param  type Any combination of {@link #HORIZONTAL} and {@link #VERTICAL}.
      * @return The square of a normalization factor that could be applied on the kernel.
      */
     private static double getNormalizationFactorSquared(final KernelJAI kernel, final int type) {

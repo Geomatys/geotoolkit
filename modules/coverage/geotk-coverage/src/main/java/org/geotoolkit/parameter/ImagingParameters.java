@@ -139,13 +139,13 @@ public class ImagingParameters extends AbstractParameter implements ParameterVal
      *          The JAI descriptor.
      * @param names
      *          The array returned by {@code listDescriptor.getParamNames()},
-     *          obtained once for ever by the caller for efficienty.
+     *          obtained once for ever by the caller for efficiency.
      * @param types
      *          The array returned by {@code listDescriptor.getParamClasses()},
-     *          obtained once for ever by the caller for efficienty.
+     *          obtained once for ever by the caller for efficiency.
      * @param names
      *          The array returned by {@code listDescriptor.getEnumeratedParameterNames()},
-     *          obtained once for ever by the caller for efficienty.
+     *          obtained once for ever by the caller for efficiency.
      */
     private static boolean compatible(final ParameterDescriptor<?>  descriptor,
                                       final ParameterListDescriptor listDescriptor,

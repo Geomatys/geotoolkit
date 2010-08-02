@@ -34,7 +34,7 @@
  *     Coverage reprojected = Operations.DEFAULT.resample(myCoverage, newCRS);
  * }
  *
- * If the operation to apply is unknow at compile time (for example because it is
+ * If the operation to apply is unknown at compile time (for example because it is
  * selected at runtime by the user in some widget), or if the operation is not listed
  * in the {@code Operations} convenience class, then the generic way is to invoke the
  * {@link org.geotoolkit.coverage.processing.AbstractCoverageProcessor#doOperation doOperation} method

@@ -89,7 +89,7 @@ public final class URN_ParserTest {
     }
 
     /**
-     * Parses a URN with an unknow type.
+     * Parses a URN with an unknown type.
      */
     @Test
     public void testInvalidType() {

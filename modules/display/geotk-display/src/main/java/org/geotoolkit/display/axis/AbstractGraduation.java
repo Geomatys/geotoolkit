@@ -49,7 +49,7 @@ public abstract class AbstractGraduation implements Graduation, Serializable {
     private static final long serialVersionUID = 5215728323932315112L;
 
     /**
-     * The axis's units, or {@code null} if unknow.
+     * The axis's units, or {@code null} if unknown.
      */
     Unit<?> unit;
 
@@ -71,7 +71,7 @@ public abstract class AbstractGraduation implements Graduation, Serializable {
     /**
      * Constructs a graduation with the supplied units.
      *
-     * @param unit The axis's units, or {@code null} if unknow.
+     * @param unit The axis's units, or {@code null} if unknown.
      */
     public AbstractGraduation(final Unit<?> unit) {
         listenerList = new PropertyChangeSupport(this);
@@ -153,7 +153,7 @@ public abstract class AbstractGraduation implements Graduation, Serializable {
     }
 
     /**
-     * Returns the graduation's units, or {@code null} if unknow.
+     * Returns the graduation's units, or {@code null} if unknown.
      */
     @Override
     public synchronized Unit<?> getUnit() {
@@ -165,7 +165,7 @@ public abstract class AbstractGraduation implements Graduation, Serializable {
      * values from the old units to the new one. This method fires a property change event with the
      * {@code "unit"} property name.
      *
-     * @param  unit The new units, or {@code null} if unknow. If null, minimum and maximum values
+     * @param  unit The new units, or {@code null} if unknown. If null, minimum and maximum values
      *         are not converted.
      * @throws IllegalArgumentException if units are not convertible, or if the
      *         specified units is illegal for this graduation.

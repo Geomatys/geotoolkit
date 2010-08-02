@@ -366,7 +366,7 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
      * </ul>
      *
      * @param  operation The operation to inspect for accuracy.
-     * @return The accuracy estimate (always in meters), or NaN if unknow.
+     * @return The accuracy estimate (always in meters), or NaN if unknown.
      *
      * @since 2.2
      */
@@ -431,7 +431,7 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
         }
         /*
          * If the coordinate operation is a compound of other coordinate operations, returns
-         * the sum of their accuracy, skipping unknow ones. Making the sum is a conservative
+         * the sum of their accuracy, skipping unknown ones. Making the sum is a conservative
          * approach (not exactly the "worst case" scenario, since it could be worst if the
          * transforms are highly non-linear).
          */

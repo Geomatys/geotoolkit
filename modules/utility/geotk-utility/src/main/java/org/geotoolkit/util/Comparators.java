@@ -92,7 +92,7 @@ public final class Comparators {
      * <cite>less than</cite> the other, the result of that comparison is returned. Otherwise
      * the second element are compared, and so on until either non-equal elements are found,
      * or end-of-list are reached. In the later case, the shortest list is considered
-     * <cite>less than</cite> the longuest one.
+     * <cite>less than</cite> the longest one.
      * <p>
      * If both lists have the same length and equal elements in the sense of
      * {@link Comparable#compareTo}, then the comparator returns 0.

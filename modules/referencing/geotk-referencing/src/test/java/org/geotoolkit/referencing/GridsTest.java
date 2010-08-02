@@ -29,7 +29,7 @@ import static org.junit.Assume.assumeTrue;
 
 
 /**
- * Tests the combinaison of EPSG database with grids like NADCON.
+ * Tests the combination of EPSG database with grids like NADCON.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00

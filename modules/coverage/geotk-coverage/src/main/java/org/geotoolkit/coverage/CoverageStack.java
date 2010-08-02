@@ -362,7 +362,7 @@ public class CoverageStack extends AbstractCoverage {
     private final SampleDimension[] sampleDimensions;
 
     /**
-     * The number of sample dimensions for this coverage, or 0 is unknow.
+     * The number of sample dimensions for this coverage, or 0 is unknown.
      * Note: this attribute may be different than zero even if {@link #sampleDimensions} is null.
      */
     private final int numSampleDimensions;

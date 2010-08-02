@@ -837,7 +837,7 @@ public class Axis2D extends Line2D implements Cloneable, Serializable {
          * Constructs an iterator.
          *
          * @param fontContext Information needed to correctly measure text, or
-         *        {@code null} if unknow. This object is usually given by
+         *        {@code null} if unknown. This object is usually given by
          *        {@link Graphics2D#getFontRenderContext}.
          */
         @SuppressWarnings({"unchecked","rawtypes"})

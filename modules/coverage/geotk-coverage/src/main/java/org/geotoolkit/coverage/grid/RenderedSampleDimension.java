@@ -162,7 +162,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
      * @param  raster The raster.
      * @param  min The minimal value for each bands, or {@code null} for computing it automatically.
      * @param  max The maximal value for each bands, or {@code null} for computing it automatically.
-     * @param  units The units of sample values, or {@code null} if unknow.
+     * @param  units The units of sample values, or {@code null} if unknown.
      * @param  colors The colors to use for values from {@code min} to {@code max} for each
      *         bands, or {@code null} for a default color palette. If non-null, each arrays
      *         {@code colors[b]} may have any length; colors will be interpolated as needed.
@@ -198,7 +198,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
      * @param  model The image or raster sample model.
      * @param  min The minimal value, or {@code null} for computing it automatically.
      * @param  max The maximal value, or {@code null} for computing it automatically.
-     * @param  units The units of sample values, or {@code null} if unknow.
+     * @param  units The units of sample values, or {@code null} if unknown.
      * @param  colors The colors to use for values from {@code min} to {@code max} for each bands,
      *         or {@code null} for a default color palette. If non-null, each arrays
      *         {@code colors[b]} may have any length; colors will be interpolated as needed.

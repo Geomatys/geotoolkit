@@ -467,7 +467,7 @@ public final class Citations {
      */
     public static final Citation UNKNOWN;
     static {
-        final CitationConstant c = new CitationConstant(Vocabulary.formatInternational(Vocabulary.Keys.UNKNOW), "UNKNOWN");
+        final CitationConstant c = new CitationConstant(Vocabulary.formatInternational(Vocabulary.Keys.UNKNOWN), "UNKNOWN");
         c.freeze();
         UNKNOWN = c;
     }

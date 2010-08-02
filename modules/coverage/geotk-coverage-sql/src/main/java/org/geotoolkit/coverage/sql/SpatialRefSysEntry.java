@@ -101,7 +101,7 @@ final class SpatialRefSysEntry {
     private CoordinateReferenceSystem spatialCRS;
 
     /**
-     * The coordinate reference system made of the combinaison of all the above.
+     * The coordinate reference system made of the combination of all the above.
      * This is created by {@link #createSpatioTemporalCRS}.
      *
      * @see #getSpatioTemporalCRS(boolean)

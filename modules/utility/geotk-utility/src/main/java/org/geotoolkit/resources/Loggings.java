@@ -325,15 +325,15 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int UNEXPECTED_UNIT_$1 = 53;
 
         /**
-         * Ignoring unknow parameter: "{0}" = {1} {2}.
+         * Ignoring unknown parameter: "{0}" = {1} {2}.
          */
-        public static final int UNKNOW_PARAMETER_$3 = 54;
+        public static final int UNKNOWN_PARAMETER_$3 = 54;
 
         /**
          * Can't handle style of class {0}. Consequently, geometry "{1}" will ignore its style
          * information.
          */
-        public static final int UNKNOW_STYLE_$2 = 55;
+        public static final int UNKNOWN_STYLE_$2 = 55;
 
         /**
          * Unrecognized scale type: "{0}". Default to linear.

@@ -60,9 +60,9 @@ public final class CombineDescriptor extends OperationDescriptorImpl {
                              {"Description", "Combine rendered images using a linear relation."},
                              {"DocURL",      "http://www.geotoolkit.org/"}, // TODO: provides more accurate URL
                              {"Version",     "1.0"},
-                             {"arg0Desc",    "The coefficients for linear combinaison as a matrix."},
+                             {"arg0Desc",    "The coefficients for linear combination as a matrix."},
                              {"arg1Desc",    "An optional transform to apply on sample values "+
-                                             "before the linear combinaison."}},
+                                             "before the linear combination."}},
               new String[]   {RenderedRegistryMode.MODE_NAME}, 0,    // Supported modes
               new String[]   {"matrix", "transform"},                // Parameter names
               new Class<?>[] {double[][].class, Transform.class},    // Parameter classes

@@ -1228,7 +1228,7 @@ public class GeodeticCalculator {
          * Check if the azimuth is heading from P1 to P2 (TRUE) or in the opposite direction
          * (FALSE). Horizontal (X) and vertical (Y) components are checked separatly. A null
          * value means "don't know", because the path is perfectly vertical or horizontal or
-         * because a coordinate is NaN.  If both components are not null (unknow), then they
+         * because a coordinate is NaN.  If both components are not null (unknown), then they
          * must be consistent.
          */
         final Boolean xDirect = (x2>x1) ? Boolean.valueOf(azimuth >= 0) :

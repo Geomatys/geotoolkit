@@ -294,9 +294,9 @@ skip:   while (it.hasNext()) {
                 if (defaultFormat != null && defaultFormat.equalsIgnoreCase(format)) {
                     isPreferred = true;
                 }
-                // Remember the longuest format string. If two of them
+                // Remember the longest format string. If two of them
                 // have the same length, favor the one in upper case.
-                longFormat = ImageFormatEntry.longuest(longFormat, format);
+                longFormat = ImageFormatEntry.longest(longFormat, format);
             }
             if (longFormat == null) {
                 longFormat = spi.getDescription(locale);

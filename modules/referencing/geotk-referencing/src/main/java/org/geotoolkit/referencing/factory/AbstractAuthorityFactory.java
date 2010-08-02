@@ -928,12 +928,12 @@ public abstract class AbstractAuthorityFactory extends ReferencingFactory implem
     }
 
     /**
-     * Creates an exception for an unknow authority code. This convenience method is provided
+     * Creates an exception for an unknown authority code. This convenience method is provided
      * for implementation of {@code createXXX} methods.
      *
      * @param  type  The GeoAPI interface that was to be created
      *               (e.g. {@code CoordinateReferenceSystem.class}).
-     * @param  code  The unknow authority code.
+     * @param  code  The unknown authority code.
      * @param  cause The cause of this error, or {@code null}.
      * @return An exception initialized with an error message built from the specified informations.
      */
@@ -971,12 +971,12 @@ public abstract class AbstractAuthorityFactory extends ReferencingFactory implem
     }
 
     /**
-     * Creates an exception for an unknow authority code. This convenience method is provided
+     * Creates an exception for an unknown authority code. This convenience method is provided
      * for implementation of {@code createXXX} methods.
      *
      * @param  type  The GeoAPI interface that was to be created
      *               (e.g. {@code CoordinateReferenceSystem.class}).
-     * @param  code  The unknow authority code.
+     * @param  code  The unknown authority code.
      * @return An exception initialized with an error message built
      *         from the specified informations.
      */

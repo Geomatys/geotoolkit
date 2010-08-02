@@ -632,7 +632,7 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
          *
          * Note: the above assertion fails on PostgreSQL because its "ORDER BY" clause put null
          * values last, while Access and HSQL put them first. The PostgreSQL behavior is better
-         * for what we want (operations with unknow accuracy last). Unfortunatly, I don't know
+         * for what we want (operations with unknown accuracy last). Unfortunatly, I don't know
          * yet how to instructs Access to put null values last using standard SQL ("IIF" is not
          * standard, and Access doesn't seem to understand "CASE ... THEN" clauses).
          */

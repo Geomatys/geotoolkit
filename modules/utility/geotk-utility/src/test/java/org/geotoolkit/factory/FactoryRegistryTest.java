@@ -95,7 +95,7 @@ public final class FactoryRegistryTest {
      * Factory #2 uses factory #1.
      * Factory #3 uses factory #2, which implies an indirect dependency to factory #1.
      *
-     * Additionnaly, factory #1 uses a KEY_INTERPOLATION hint.
+     * Additionally, factory #1 uses a KEY_INTERPOLATION hint.
      */
     @Test
     public void testGetProvider() {

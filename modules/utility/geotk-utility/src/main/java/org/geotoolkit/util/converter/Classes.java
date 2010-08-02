@@ -1115,7 +1115,7 @@ compare:for (int i=0; i<c1.length; i++) {
      * constants for the given type. This is a commodity for usage in {@code switch} statememnts.
      *
      * @param type A type (usually either a primitive type or its wrapper).
-     * @return The constant for the given type, or {@link #OTHER} if unknow.
+     * @return The constant for the given type, or {@link #OTHER} if unknown.
      *
      * @category number
      */

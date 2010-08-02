@@ -184,7 +184,7 @@ public class Molodensky extends MathTransformProvider {
             });
 
     /**
-     * The providers for all combinaisons between 2D and 3D cases. Array length is 4.
+     * The providers for all combinations between 2D and 3D cases. Array length is 4.
      * Index is build with following rule:
      * <ul>
      *   <li>Bit 1: dimension of source coordinates (0 for 2D, 1 for 3D).</li>
@@ -219,7 +219,7 @@ public class Molodensky extends MathTransformProvider {
      * @param sourceDimension Number of dimensions in the source CRS of this operation method.
      * @param targetDimension Number of dimensions in the target CRS of this operation method.
      * @param parameters      The set of parameters (never {@code null}).
-     * @param complements     Providers for all combinaisons between 2D and 3D cases.
+     * @param complements     Providers for all combinations between 2D and 3D cases.
      */
     Molodensky(final int sourceDimension, final int targetDimension,
                final ParameterDescriptorGroup parameters, final Molodensky[] complements)

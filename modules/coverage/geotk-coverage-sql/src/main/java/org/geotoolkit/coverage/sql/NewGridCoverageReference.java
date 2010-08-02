@@ -553,7 +553,7 @@ public final class NewGridCoverageReference {
     }
 
     /**
-     * Returns the format name. Current implementation selects the longuest name,
+     * Returns the format name. Current implementation selects the longest name,
      * on the assumption that it is the most explicit name.
      *
      * @param  spi The image reader provider, or {@code null}.

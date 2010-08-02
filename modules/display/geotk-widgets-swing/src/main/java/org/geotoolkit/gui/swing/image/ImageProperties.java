@@ -625,7 +625,7 @@ public class ImageProperties extends JComponent implements Dialog {
                         break;
                     }
                     default: {
-                        text = resources.getString(Vocabulary.Keys.UNKNOW);
+                        text = resources.getString(Vocabulary.Keys.UNKNOWN);
                         break;
                     }
                 }

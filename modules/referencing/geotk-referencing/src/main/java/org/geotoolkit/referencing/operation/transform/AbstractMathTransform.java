@@ -988,7 +988,7 @@ public abstract class AbstractMathTransform extends FormattableObject
      * {@link DefaultMathTransformFactory} using a generic {@link ConcatenatedTransform}.
      * <p>
      * The default implementation always returns {@code null}. This method is ought to be
-     * overridden by subclasses capable of concatenating some combinaison of transforms in a
+     * overridden by subclasses capable of concatenating some combination of transforms in a
      * special way. Examples are {@link ExponentialTransform1D} and {@link LogarithmicTransform1D}.
      *
      * @param  other The math transform to apply.

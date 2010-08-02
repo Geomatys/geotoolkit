@@ -1121,7 +1121,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
          * documented in the <a href="#skip-navbar_top">class javadoc</a>. Subclasses can
          * modify those values if desired.
          * <p>
-         * For efficienty reasons, the fields are initialized to shared arrays.
+         * For efficiency reasons, the fields are initialized to shared arrays.
          * Subclasses can assign new arrays, but should not modify the default array content.
          */
         public Spi() {

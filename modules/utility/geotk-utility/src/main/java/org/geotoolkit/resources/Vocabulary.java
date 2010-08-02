@@ -1684,7 +1684,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         /**
          * Unknow
          */
-        public static final int UNKNOW = 309;
+        public static final int UNKNOWN = 309;
 
         /**
          * {0} bits unsigned integer ({1} bits/pixel)

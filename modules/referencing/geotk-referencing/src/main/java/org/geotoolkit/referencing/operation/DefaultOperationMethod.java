@@ -126,7 +126,7 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
                 return getProperties(parameters, null);
             }
         }
-        return Collections.singletonMap(NAME_KEY, Vocabulary.format(Vocabulary.Keys.UNKNOW));
+        return Collections.singletonMap(NAME_KEY, Vocabulary.format(Vocabulary.Keys.UNKNOWN));
     }
 
     /**
@@ -304,7 +304,7 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
 
     /**
      * Returns the operation type. Current implementation returns {@code Projection.class} for
-     * proper WKT formatting using an unknow implementation. But the {@link MathTransformProvider}
+     * proper WKT formatting using an unknown implementation. But the {@link MathTransformProvider}
      * subclass (with protected access) will overrides this method with a more conservative default
      * value.
      *

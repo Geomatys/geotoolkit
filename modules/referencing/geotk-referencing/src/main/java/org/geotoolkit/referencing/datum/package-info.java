@@ -39,7 +39,7 @@
  *     {@link org.geotoolkit.referencing.datum.DefaultTemporalDatum#UNIX             UNIX}
  *   </td></tr>
  *   <tr><td nowrap>Other datum:&nbsp;</td><td>
- *     {@link org.geotoolkit.referencing.datum.DefaultEngineeringDatum#UNKNOW        UNKNOW}
+ *     {@link org.geotoolkit.referencing.datum.DefaultEngineeringDatum#UNKNOWN       UNKNOWN}
  *   </td></tr>
  *   <tr><td nowrap>Ellipsoids:&nbsp;</td><td>
  *     {@link org.geotoolkit.referencing.datum.DefaultEllipsoid#WGS84                WGS84},

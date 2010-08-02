@@ -120,7 +120,7 @@ public interface Graduation extends Localized {
     String getTitle(boolean includeSymbol);
 
     /**
-     * Returns the graduation's units, or {@code null} if unknow.
+     * Returns the graduation's units, or {@code null} if unknown.
      *
      * @return The graduation units, or {@code null}.
      */

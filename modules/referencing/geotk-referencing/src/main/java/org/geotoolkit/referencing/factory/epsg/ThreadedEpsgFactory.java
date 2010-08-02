@@ -650,7 +650,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
         }
         if (isLoggable) {
             if (product == null) {
-                product = '<' + Vocabulary.format(Vocabulary.Keys.UNKNOW) + '>';
+                product = '<' + Vocabulary.format(Vocabulary.Keys.UNKNOWN) + '>';
             }
             if (url == null) {
                 url = product;

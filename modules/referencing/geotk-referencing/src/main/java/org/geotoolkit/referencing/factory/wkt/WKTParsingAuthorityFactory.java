@@ -437,7 +437,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
             if (type != null) {
                 typeName = type.getSimpleName();
             } else {
-                typeName = Vocabulary.format(Vocabulary.Keys.UNKNOW);
+                typeName = Vocabulary.format(Vocabulary.Keys.UNKNOWN);
             }
             message = Errors.format(Errors.Keys.DATABASE_FAILURE_$2, typeName, code) + ": " + message;
         }

@@ -91,7 +91,7 @@ public class AbridgedMolodensky extends Molodensky {
      * @param sourceDimension Number of dimensions in the source CRS of this operation method.
      * @param targetDimension Number of dimensions in the target CRS of this operation method.
      * @param parameters      The set of parameters (never {@code null}).
-     * @param complements     Providers for all combinaisons between 2D and 3D cases.
+     * @param complements     Providers for all combinations between 2D and 3D cases.
      */
     private AbridgedMolodensky(final int sourceDimension, final int targetDimension,
                final ParameterDescriptorGroup parameters, final Molodensky[] complements)

@@ -265,7 +265,7 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
      * only; accuracies are really relevant in transformations only.
      * <p>
      * There is also a technical reasons for ignoring conversions. If a concatenated operation
-     * contains a datum shift (i.e. a transformation) with unknow accuracy, and a projection
+     * contains a datum shift (i.e. a transformation) with unknown accuracy, and a projection
      * (i.e. a conversion) with a declared 0 meter error, we don't want to declare this 0 meter
      * error as the concatenated operation's accuracy; it would be a false information.
      * <p>

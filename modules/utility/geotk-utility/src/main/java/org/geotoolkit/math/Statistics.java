@@ -628,7 +628,7 @@ public class Statistics implements Cloneable, Serializable {
      * Holds some statistics about a series of sample values and the difference between them.
      * Given a series of sample values <var>s<sub>0</sub></var>, <var>s<sub>1</sub></var>,
      * <var>s<sub>2</sub></var>, <var>s<sub>3</sub></var>..., this class computes statistics
-     * in the same way than {@link Statistics} and additionnaly computes statistics for
+     * in the same way than {@link Statistics} and additionally computes statistics for
      * <var>s<sub>1</sub></var>-<var>s<sub>0</sub></var>,
      * <var>s<sub>2</sub></var>-<var>s<sub>1</sub></var>,
      * <var>s<sub>3</sub></var>-<var>s<sub>2</sub></var>...,

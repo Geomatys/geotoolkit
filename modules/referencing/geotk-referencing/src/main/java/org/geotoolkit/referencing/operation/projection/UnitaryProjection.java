@@ -91,7 +91,7 @@ import static org.geotoolkit.referencing.operation.provider.MapProjection.XY_PLA
  * used by subclasses. This separation removes ambiguity when testing for {@linkplain #equivalent
  * equivalence}. The ability to recognize two {@code UnitaryProjection}s as equivalent without
  * consideration for the scale factor (among other) allow more efficient concatenation in some
- * cases (typically some combinaisons of inverse projection followed by a direct projection).
+ * cases (typically some combinations of inverse projection followed by a direct projection).
  * <p>
  * All angles (either fields, method parameters or return values) in this class and subclasses are
  * in radians. This is the opposite of {@link Parameters} where all angles are in decimal degrees.
@@ -1341,7 +1341,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
             if (descriptor.getMinimumOccurs() == 0) {
                 /*
                  * Parameter is optional. Checks if its value is equals
-                 * to the default one. If it is, then we will ommit it.
+                 * to the default one. If it is, then we will omit it.
                  */
                 final Object df = descriptor.getDefaultValue();
                 if (df instanceof Number) {

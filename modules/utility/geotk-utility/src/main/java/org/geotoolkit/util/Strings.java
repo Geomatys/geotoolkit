@@ -560,7 +560,7 @@ cmp:    while (ia < lga) {
     }
 
     /**
-     * Returns the longuest sequence of characters which is found at the beginning of the
+     * Returns the longest sequence of characters which is found at the beginning of the
      * two given strings. If one of those string is {@code null}, then the other string is
      * returned.
      *
@@ -593,7 +593,7 @@ cmp:    while (ia < lga) {
     }
 
     /**
-     * Returns the longuest sequence of characters which is found at the end of the two given
+     * Returns the longest sequence of characters which is found at the end of the two given
      * strings. If one of those string is {@code null}, then the other string is returned.
      *
      * @param s1 The first string, or {@code null}.

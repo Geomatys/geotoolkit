@@ -237,7 +237,7 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
         addObjectValue("Dimension", SampleDimension.class, true, null); // Replace Band.class.
         /*
          * Adds the "SpatialRepresentation" node derived from ISO 19115.
-         * We ommit the information about spatial-temporal axis properties (the Dimension object)
+         * We omit the information about spatial-temporal axis properties (the Dimension object)
          * because it is redundant with the information provided in the CRS and offset vectors.
          */
         substitution.put(Dimension.class,           null);  // GridSpatialRepresentation.axisDimensionProperties
@@ -409,7 +409,7 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
      *   <td>&nbsp;{@link DefaultVerticalDatum#GEOIDAL}&nbsp;</td>
      * </tr><tr>
      *   <td>&nbsp;{@link EngineeringDatum}&nbsp;</td>
-     *   <td>&nbsp;{@link DefaultEngineeringDatum#UNKNOW}&nbsp;</td>
+     *   <td>&nbsp;{@link DefaultEngineeringDatum#UNKNOWN}&nbsp;</td>
      * </tr><tr>
      *   <td>&nbsp;{@link EllipsoidalCS}&nbsp;</td>
      *   <td>&nbsp;{@link DefaultEllipsoidalCS#GEODETIC_2D}&nbsp;</td>
@@ -449,7 +449,7 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
         } else if (VerticalDatum.class.isAssignableFrom(type)) {
             object = DefaultVerticalDatum.GEOIDAL;
         } else if (EngineeringDatum.class.isAssignableFrom(type)) {
-            object = DefaultEngineeringDatum.UNKNOW;
+            object = DefaultEngineeringDatum.UNKNOWN;
         } else if (EllipsoidalCS.class.isAssignableFrom(type)) {
             object = DefaultEllipsoidalCS.GEODETIC_2D;
         } else if (CartesianCS.class.isAssignableFrom(type)) {

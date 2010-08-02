@@ -427,7 +427,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
      *
      * @param  cs The coordinate system.
      * @return A constant similar to the specified {@code cs} with "standard" axis.
-     * @throws IllegalArgumentException if the specified coordinate system is unknow to this method.
+     * @throws IllegalArgumentException if the specified coordinate system is unknown to this method.
      *
      * @since 2.2
      */

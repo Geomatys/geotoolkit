@@ -106,7 +106,7 @@ public final class ColorUtilities {
 
     /**
      * Returns a string representation of the given color.
-     * This method ommits the alpha component if the color is opaque.
+     * This method omits the alpha component if the color is opaque.
      *
      * @param color The color.
      * @return A string representation of the given color.

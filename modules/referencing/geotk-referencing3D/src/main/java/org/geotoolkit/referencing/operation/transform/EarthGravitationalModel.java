@@ -408,7 +408,7 @@ public class EarthGravitationalModel extends VerticalTransform {
 
     /**
      * Returns a hash code for the given fields value. This value <strong>must</strong>
-     * be different for every legal combinaison of the arguments. This is required for
+     * be different for every legal combination of the arguments. This is required for
      * proper working of the pool.
      *
      * @param  {@code true} if the model is for the WGS84 datum.

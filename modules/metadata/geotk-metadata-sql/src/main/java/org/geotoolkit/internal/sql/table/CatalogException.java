@@ -126,7 +126,7 @@ public class CatalogException extends SQLNonTransientException {
      *
      * @param table   The table that produced the result set, or {@code null} if unknown.
      * @param results The result set in which a problem occurred, or {@code null} if none.
-     * @param column  The column index where a problem occurred (number starts at 1), or {@code 0} if unknow.
+     * @param column  The column index where a problem occurred (number starts at 1), or {@code 0} if unknown.
      * @param key     The key value for the record where a problem occurred, or {@code null} if none.
      *                The key shall be either a {@link String} or {@link Integer} instance.
      * @throws SQLException if the metadata can't be read from the result set.
