@@ -73,7 +73,7 @@ public abstract class GridCoverageWriter extends GridCoverageStore {
      * (e.g. {@link javax.imageio.stream.ImageOutputStream}) may be accepted
      * as well depending on the implementation.
      *
-     * @param  output The output (typically {@link java.io.File} or {@link String}) to be writen.
+     * @param  output The output (typically {@link java.io.File} or {@link String}) to be written.
      * @throws IllegalArgumentException if output is not a valid instance for this writer.
      * @throws CoverageStoreException if the operation failed.
      *

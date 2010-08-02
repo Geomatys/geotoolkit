@@ -47,7 +47,7 @@ final class ImageCoverageReaderInspector extends ImageCoverageReader {
      * Creates a new instance.
      */
     ImageCoverageReaderInspector(final String caller) {
-        ignoreDifferenceTransform = false;
+        ignoreGridTransforms = false;
         this.caller = caller;
     }
 

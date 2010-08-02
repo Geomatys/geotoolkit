@@ -22,10 +22,13 @@ import javax.imageio.IIOParam;
 import javax.imageio.ImageWriter;
 import java.awt.image.RenderedImage;
 
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
+
+import static org.junit.Assert.*;
 
 
 /**
@@ -38,6 +41,11 @@ import org.geotoolkit.referencing.operation.transform.LinearTransform;
  * @since 3.14
  */
 final class ImageCoverageWriterInspector extends ImageCoverageWriter {
+    /**
+     * Small number for comparison of floating point values.
+     */
+    private static final double EPS = 1E-10;
+
     /**
      * The caller method.
      */
@@ -96,11 +104,37 @@ final class ImageCoverageWriterInspector extends ImageCoverageWriter {
     }
 
     /**
-     * Returns {@code true} if the write operation matched the user request
-     * without the need for a resampling operation.
+     * Asserts that the write operation matched the user request without the need for
+     * a scaling of translation. Note however that a need for a expanding the bounds
+     * may still be present.
      */
-    boolean getReadMatchesRequest() {
-        return isIdentity(differenceTransform);
+    public void assertIdentityTransform() {
+        assertTrue("No scale or translation expected.", isIdentity(differenceTransform));
+    }
+
+    /**
+     * Asserts that the difference transform contains no translation terms,
+     * and only the scale term given to this method.
+     */
+    public void assertScaleTransform(final double scaleX, final double scaleY) {
+        assertFalse("Expected a scale factor.", isIdentity(differenceTransform));
+        assertTrue(differenceTransform instanceof LinearTransform);
+        final Matrix m = ((LinearTransform) differenceTransform).getMatrix();
+        for (int j=m.getNumRow(); --j>=0;) {
+            for (int i=m.getNumCol(); --i>=0;) {
+                final double expected;
+                if (i == j) {
+                    switch (i) {
+                        case GridCoverageStore.X_DIMENSION: expected = scaleX; break;
+                        case GridCoverageStore.Y_DIMENSION: expected = scaleY; break;
+                        default: expected = 1; break;
+                    }
+                } else {
+                    expected = 0;
+                }
+                assertEquals(expected, m.getElement(j, i), EPS);
+            }
+        }
     }
 
     /**

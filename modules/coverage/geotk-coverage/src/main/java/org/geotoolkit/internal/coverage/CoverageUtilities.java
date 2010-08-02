@@ -135,24 +135,27 @@ public final class CoverageUtilities {
      * @param coverage to use for guessing background values.
      * @return an array of double values to use as a background.
      */
-    public static double[] getBackgroundValues(GridCoverage2D coverage) {
+    public static double[] getBackgroundValues(final GridCoverage coverage) {
         /*
          * Get the sample value to use for background. We will try to fetch this
          * value from one of "no data" categories. For geophysics images, it is
          * usually NaN. For non-geophysics images, it is usually 0.
          */
-        final GridSampleDimension[] sampleDimensions = coverage.getSampleDimensions();
-        final double[] background = new double[sampleDimensions.length];
-        for (int i=0; i<background.length; i++) {
-            final NumberRange<?> range = sampleDimensions[i].getBackground().getRange();
-            final double min = range.getMinimum();
-            final double max = range.getMaximum();
-            if (range.isMinIncluded()) {
-                background[i] = min;
-            } else if (range.isMaxIncluded()) {
-                background[i] = max;
-            } else {
-                background[i] = 0.5 * (min + max);
+        final int numBands = coverage.getNumSampleDimensions();
+        final double[] background = new double[numBands];
+        for (int i=0; i<numBands; i++) {
+            final SampleDimension band = coverage.getSampleDimension(i);
+            if (band instanceof GridSampleDimension) {
+                final NumberRange<?> range = ((GridSampleDimension) band).getBackground().getRange();
+                final double min = range.getMinimum();
+                final double max = range.getMaximum();
+                if (range.isMinIncluded()) {
+                    background[i] = min;
+                } else if (range.isMaxIncluded()) {
+                    background[i] = max;
+                } else {
+                    background[i] = 0.5 * (min + max);
+                }
             }
         }
         return background;

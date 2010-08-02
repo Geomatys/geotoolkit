@@ -176,7 +176,7 @@ public class ImageCoverageWriterTest {
         if (VERBOSE) {
             System.out.println(writer);
         }
-        assertTrue("No transformation expected.", writer.getReadMatchesRequest());
+        writer.assertIdentityTransform();
         writer.dispose();
         assertMatrixEqualsFile("matrix.txt", buffer.toString(), -9999);
     }
@@ -201,7 +201,7 @@ public class ImageCoverageWriterTest {
         if (VERBOSE) {
             System.out.println(writer);
         }
-        assertTrue("No transformation expected.", writer.getReadMatchesRequest());
+        writer.assertIdentityTransform();
         writer.dispose();
         assertMatrixEquals(
             "12.783  12.499   -9999   -9999   -9999   -9999   -9999   -9999   -9999\n" +
@@ -242,7 +242,7 @@ public class ImageCoverageWriterTest {
         if (VERBOSE) {
             System.out.println(writer);
         }
-        assertTrue("No transformation expected.", writer.getReadMatchesRequest());
+        writer.assertIdentityTransform();
         writer.dispose();
         assertMatrixEquals(
             "12.783   -9999   -9999   -9999   -9999\n" +
@@ -250,6 +250,102 @@ public class ImageCoverageWriterTest {
             "19.766   -9999   -9999   -9999  22.195\n" +
             " -9999   -9999  28.365  29.445  29.871\n" +
             "25.454   -9999  28.810  29.633  28.902\n",
+            buffer.toString(), -9999);
+    }
+
+    /**
+     * Writes a small region, with a scale factor. It should force the {@link GridCoverageWriter}
+     * to perform a {@code WarpAffine} operation.
+     *
+     * @throws IOException If the text file can not be open (should not happen).
+     * @throws CoverageStoreException Should not happen.
+     * @throws ParseException Should not happen.
+     */
+    @Test
+    public void writeScaledRegion() throws IOException, CoverageStoreException, ParseException {
+        final GridCoverage2D coverage = read("matrix.txt");
+        final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeScaledRegion");
+        final GridCoverageWriteParam param = new GridCoverageWriteParam();
+        param.setFormatName("matrix");
+        param.setEnvelope(new Envelope2D(null, 4000, -2000, 8000 - 4000, 4000 - -2000));
+        param.setResolution(1000.0 / 2, 1000.0 / 3);
+        final StringWriter buffer = new StringWriter();
+        writer.setOutput(buffer);
+        writer.write(coverage, param);
+        if (VERBOSE) {
+            System.out.println(writer);
+        }
+        writer.assertScaleTransform(1.0 / 2, 1.0 / 3);
+        writer.dispose();
+        /*
+         * The expected matrix below is the 4×6 region in the lower right corner of the
+         * expected matrix declared in writeRegion() where each column is repeated once
+         * and echo row is repeated twice. The interpolation is nearest-neighbor.
+         */
+        assertMatrixEquals(
+            " -9999   -9999  29.741  29.741  27.922  27.922  29.127  29.127\n" +
+            " -9999   -9999  29.741  29.741  27.922  27.922  29.127  29.127\n" +
+            " -9999   -9999  29.741  29.741  27.922  27.922  29.127  29.127\n" +
+
+            " -9999   -9999  29.445  29.445  28.823  28.823  29.871  29.871\n" +
+            " -9999   -9999  29.445  29.445  28.823  28.823  29.871  29.871\n" +
+            " -9999   -9999  29.445  29.445  28.823  28.823  29.871  29.871\n" +
+
+            "28.951  28.951  29.540  29.540  29.253  29.253  29.824  29.824\n" +
+            "28.951  28.951  29.540  29.540  29.253  29.253  29.824  29.824\n" +
+            "28.951  28.951  29.540  29.540  29.253  29.253  29.824  29.824\n" +
+
+            "29.224  29.224  29.287  29.287  29.609  29.609  29.188  29.188\n" +
+            "29.224  29.224  29.287  29.287  29.609  29.609  29.188  29.188\n" +
+            "29.224  29.224  29.287  29.287  29.609  29.609  29.188  29.188\n" +
+
+            "29.347  29.347  29.633  29.633  29.522  29.522  28.902  28.902\n" +
+            "29.347  29.347  29.633  29.633  29.522  29.522  28.902  28.902\n" +
+            "29.347  29.347  29.633  29.633  29.522  29.522  28.902  28.902\n" +
+
+            "28.311  28.311  29.058  29.058  29.028  29.028  27.949  27.949\n" +
+            "28.311  28.311  29.058  29.058  29.028  29.028  27.949  27.949\n" +
+            "28.311  28.311  29.058  29.058  29.028  29.028  27.949  27.949\n",
+            buffer.toString(), -9999);
+    }
+
+    /**
+     * Writes a small region, with a portion outside the valid area of source data.
+     *
+     * @throws IOException If the text file can not be open (should not happen).
+     * @throws CoverageStoreException Should not happen.
+     * @throws ParseException Should not happen.
+     */
+    @Test
+    @Ignore
+    public void writeExpandedUpperLeftRegion() throws IOException, CoverageStoreException, ParseException {
+        final GridCoverage2D coverage = read("matrix.txt");
+        final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeOutsideRegion");
+        final GridCoverageWriteParam param = new GridCoverageWriteParam();
+        param.setFormatName("matrix");
+        param.setEnvelope(new Envelope2D(null, -12000, 24000 - 9000, 7000, 9000));
+        final StringWriter buffer = new StringWriter();
+        writer.setOutput(buffer);
+        writer.write(coverage, param);
+        if (VERBOSE) {
+            System.out.println(writer);
+        }
+        writer.assertIdentityTransform();
+        writer.dispose();
+        /*
+         * The expected matrix below is the upper-left corner of the full matrix, augmented
+         * by three rows and two columns of pad values.
+         */
+        assertMatrixEquals(
+            " -9999  -9999   -9999   -9999   -9999   -9999   -9999\n" +
+            " -9999  -9999   -9999   -9999   -9999   -9999   -9999\n" +
+            " -9999  -9999   -9999   -9999   -9999   -9999   -9999\n" +
+            " -9999  -9999  -1.123  -1.348  -1.477  -1.399  -1.141\n" +
+            " -9999  -9999  -0.513  -0.842  -1.062   -9999  -1.113\n" +
+            " -9999  -9999   0.349  -0.352  -0.173  -0.754  -0.965\n" +
+            " -9999  -9999   1.061   -9999   0.273  -0.743  -0.819\n" +
+            " -9999  -9999   1.316   -9999   -9999   -9999   -9999\n" +
+            " -9999  -9999   1.766   -9999   -9999   -9999   -9999\n",
             buffer.toString(), -9999);
     }
 
@@ -279,7 +375,7 @@ public class ImageCoverageWriterTest {
         if (VERBOSE) {
             System.out.println(writer);
         }
-        assertTrue("No transformation expected.", writer.getReadMatchesRequest());
+        writer.assertIdentityTransform();
         final long length = out.size();
         assertTrue("Empty file.", length > 0);
 
@@ -292,7 +388,6 @@ public class ImageCoverageWriterTest {
         if (VERBOSE) {
             System.out.println(writer);
         }
-        assertFalse("Translation expected.", writer.getReadMatchesRequest());
         assertTrue("Expected a smaller file", out.size() < length);
         writer.dispose();
     }

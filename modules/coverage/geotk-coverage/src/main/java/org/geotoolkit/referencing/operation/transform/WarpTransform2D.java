@@ -21,8 +21,10 @@ import java.util.Arrays;
 import java.io.Serializable;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.geom.AffineTransform;
 
 import javax.media.jai.Warp;
+import javax.media.jai.WarpAffine;
 import javax.media.jai.WarpOpImage;
 import javax.media.jai.WarpPolynomial;
 import javax.media.jai.operator.WarpDescriptor;
@@ -40,6 +42,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 import static org.geotoolkit.referencing.operation.provider.WarpPolynomial.*;
 
@@ -305,25 +308,37 @@ public class WarpTransform2D extends AbstractMathTransform implements MathTransf
      * if the warp object is going to be used in an image reprojection.
      *
      * @param  name The image name or {@linkplain org.geotoolkit.coverage.grid.GridCoverage2D coverage}
-     *         name, or {@code null} in unknow. Used only for formatting error message if some
+     *         name, or {@code null} in unknown. Used only for formatting error message if some
      *         {@link TransformException} are thrown by the supplied transform.
      * @param  transform The transform to returns as an image warp.
      * @return The warp for the given transform.
      *
      * @todo We should check for {@link ConcatenatedTransform}. If we detect that a
      * {@code WarpTransform2D} is concatenated with {@code AffineTransform} only, and if the
-     * {@code AffineTransform} has scale factors only, then we can ommit the {@code AffineTransform}
+     * {@code AffineTransform} has scale factors only, then we can omit the {@code AffineTransform}
      * and merge the scale factors with {@link WarpPolynomial} preScaleX, preScaleY, postScaleX and
-     * postScaleY. Additionnaly, the translation term for the post-AffineTransform may also be
+     * postScaleY. Additionally, the translation term for the post-AffineTransform may also be
      * merged with the first coefficients of WarpPolynomial.xCoeffs and yCoeffs. See GEOT-521.
      *
-     * @todo Move this method in some other factory class. Use the optimization applied by
-     *       Resampler2D in the case of AffineTransform, and remove that optimization from
-     *       Resampler2D.
+     * @todo Move this method in some other factory class.
      */
     public static Warp getWarp(CharSequence name, final MathTransform2D transform) {
         if (transform instanceof WarpTransform2D) {
             return ((WarpTransform2D) transform).getWarp();
+        }
+        if (transform instanceof AffineTransform) {
+            final AffineTransform tr = new AffineTransform((AffineTransform) transform);
+            /*
+             * A tolerance factor of 1E-6 shoud not make any visible difference for image
+             * having a width or height of less than 0.5 million pixels. For larger image,
+             * it is not sure that the unrounded transform is the accurate one. Typically,
+             * the transform was really expected to have integer scale factors.
+             *
+             * Integer scale factors can make the rendering much faster, by allowing JAI
+             * to use optimized code path (for example using integer arithmetic).
+             */
+            XAffineTransform.round(tr, 1E-6);
+            return new WarpAffine(tr);
         }
         if (name == null) {
             name = Vocabulary.formatInternational(Vocabulary.Keys.UNKNOW);

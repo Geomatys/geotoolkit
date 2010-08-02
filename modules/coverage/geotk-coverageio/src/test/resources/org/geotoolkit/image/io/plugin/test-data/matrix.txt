@@ -1,7 +1,7 @@
 #
 # World SST (Sea Surface Temperature) in °C
 # Extract from Coriolis numerical model (IFREMER)
-# Mercator projection (EPSG:3395), x: ±20000 km and y: ±13000 km.
+# Mercator projection (EPSG:3395), x: ±10000 km and y: ±21000 km.
 # Pad value is -9999.
 #
 # The values provided in this file are not accurate.

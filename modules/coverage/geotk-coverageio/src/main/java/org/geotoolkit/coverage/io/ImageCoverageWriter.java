@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.io;
 
 import java.util.Locale;
 import java.util.concurrent.CancellationException;
+import java.awt.RenderingHints;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -28,15 +29,24 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
+import javax.media.jai.JAI;
+import javax.media.jai.ImageLayout;
+import javax.media.jai.Interpolation;
 import javax.media.jai.RenderedImageAdapter;
+import javax.media.jai.operator.WarpDescriptor;
 
+import org.opengis.util.InternationalString;
+import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.referencing.operation.MathTransform2D;
 
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.mosaic.MosaicImageWriter;
+import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.AbstractCoverage;
+import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
 
@@ -383,28 +393,41 @@ public class ImageCoverageWriter extends GridCoverageWriter {
          */
         final IIOMetadata streamMetadata = null; // TODO
         final IIOMetadata imageMetadata  = null; // TODO
-        final IIOImage bundle = new IIOImage(image, null, imageMetadata);
-        MathTransform2D diff = null;
         try {
+            MathTransform2D dstToSource = null;
             final ImageWriteParam imageParam = createImageWriteParam(image);
             if (param != null) {
-                diff = geodeticToPixelCoordinates(gridGeometry, param, imageParam);
+                dstToSource = geodeticToPixelCoordinates(gridGeometry, param, imageParam);
                 imageParam.setSourceBands(param.getSourceBands());
             }
+            if (!isIdentity(dstToSource)) {
+                /*
+                 * We need to resample the image if:
+                 *
+                 *  - The transform from the source grid to the target grid is not affine;
+                 *  - The above transform is affine but more complex than scale and translations;
+                 *  - The translation or scale factors of the above transform are not integers;
+                 *  - The requested envelope is greater than the coverage envelope;
+                 */
+                final InternationalString name = (coverage instanceof AbstractCoverage) ?
+                        ((AbstractCoverage) coverage).getName() : null;
+                final GridEnvelope ge = destGridGeometry.getGridRange();
+                final ImageLayout layout = new ImageLayout(
+                        ge.getLow (X_DIMENSION), ge.getLow (Y_DIMENSION),
+                        ge.getSpan(X_DIMENSION), ge.getSpan(Y_DIMENSION));
+                final RenderingHints hints = new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout);
+                image = WarpDescriptor.create(image,
+                        WarpTransform2D.getWarp(name, (MathTransform2D) destGridToSource),
+                        Interpolation.getInstance(Interpolation.INTERP_NEAREST),
+                        CoverageUtilities.getBackgroundValues(coverage),
+                        hints);
+                imageParam.setSourceRegion(null);
+                imageParam.setSourceSubsampling(1, 1, 0, 0);
+            }
+            final IIOImage bundle = new IIOImage(image, null, imageMetadata);
             imageWriter.write(streamMetadata, bundle, imageParam);
         } catch (IOException e) {
             throw new CoverageStoreException(formatErrorMessage(e), e);
-        }
-        if (!isIdentity(diff)) {
-            /*
-             * We need to resample the image if:
-             *
-             *  - The transform from the source grid to the target grid is not affine;
-             *  - The above transform is affine but more complex than scale and translations;
-             *  - The translation of scale factors of the above transform are not integers;
-             *  - The requested envelope is greater than the coverage envelope;
-             */
-            // TODO
         }
     }
 

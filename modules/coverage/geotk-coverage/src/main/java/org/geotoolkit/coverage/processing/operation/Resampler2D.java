@@ -31,7 +31,6 @@ import java.util.logging.LogRecord;
 
 import javax.media.jai.JAI;
 import javax.media.jai.Warp;
-import javax.media.jai.WarpAffine;
 import javax.media.jai.RenderedOp;
 import javax.media.jai.PlanarImage;
 import javax.media.jai.ImageLayout;
@@ -108,7 +107,7 @@ final class Resampler2D extends GridCoverage2D {
     private static final PixelOrientation CORNER = PixelOrientation.CENTER; //UPPER_LEFT;
 
     /**
-     * When an empirical adjustement of the Warp transform seems necessary, the amount of
+     * When an empirical adjustment of the Warp transform seems necessary, the amount of
      * subdivisions to try.
      */
     private static final int EMPIRICAL_ADJUSTMENT_STEPS = 16;
@@ -119,7 +118,7 @@ final class Resampler2D extends GridCoverage2D {
     private static final double EPS = 1E-6;
 
     /**
-     * The logging level for defails about resampling operation applied.
+     * The logging level for details about resampling operation applied.
      */
     private static final Level LOGGING_LEVEL = Level.FINE;
 
@@ -586,8 +585,6 @@ final class Resampler2D extends GridCoverage2D {
                  *       on integer values, so as a workaround we restart the operation without
                  *       interpolation (which increase the chances to get it down on integers).
                  *       Remove this hack when this JAI bug will be fixed.
-                 *
-                 * TODO: Move the check for AffineTransform into WarpTransform2D.
                  */
                 boolean forceAdapter = false;
                 switch (sourceImage.getSampleModel().getTransferType()) {
@@ -899,12 +896,7 @@ final class Resampler2D extends GridCoverage2D {
              * Otherwise we assume that the difference is caused by rounding error and we will try
              * progressive empirical adjustment in order to get the rectangles to fit.
              */
-            final Warp warp;
-            if (transform instanceof AffineTransform) {
-                warp = new WarpAffine((AffineTransform) transform);
-            } else {
-                warp = WarpTransform2D.getWarp(name, transform);
-            }
+            final Warp warp = WarpTransform2D.getWarp(name, transform);
             if (true) {
                 return warp;
             }
