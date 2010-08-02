@@ -17,6 +17,7 @@
 package org.geotoolkit.metadata.geotiff;
 
 
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.util.Map;
 import java.io.IOException;
@@ -28,6 +29,8 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.util.converter.Classes;
+import org.opengis.metadata.spatial.CellGeometry;
+import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
@@ -47,13 +50,11 @@ import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
  */
 public final class GeoTiffMetaDataReader {
 
-    private final IIOMetadata imageMetadata;
     private final Node root;
     private final Node imgFileDir;
     private final Node geoKeyDir;
 
     public GeoTiffMetaDataReader(IIOMetadata imageMetadata) throws IOException{
-        this.imageMetadata = imageMetadata;
         
         root = imageMetadata.getAsTree(imageMetadata.getNativeMetadataFormatName());
         if(root == null) throw new IOException("No image metadatas");
@@ -115,7 +116,51 @@ public final class GeoTiffMetaDataReader {
      */
     private void fillGridMetaDatas(SpatialMetadata metadatas, Map<Integer,Object[]> entries) throws IOException{
         final GridDomainAccessor accesor = new GridDomainAccessor(metadatas);
-        throw new IOException("Not done yet.");
+
+        //get the raster type
+        final Object[] values = entries.get(GTRasterTypeGeoKey);
+        final CellGeometry cell;
+        if(values != null){
+            int type = (Integer)values[0];
+            if(type < 1 || type > 2){
+                throw new IOException("Unexpected raster type : "+ type);
+            }else{
+                cell = (type==RasterPixelIsArea)?CellGeometry.AREA:CellGeometry.POINT;
+            }
+        }else{
+            cell = CellGeometry.AREA;
+        }
+        
+        //read the image bounds
+        final Rectangle bounds = readBounds();
+
+        //check if a transformation is present /////////////////////////////////
+        final AffineTransform transform = readTransformation();
+        if(transform != null){
+            //we have the transformation directly, just copy values in the
+            //spatial metadatas
+            accesor.setAll(transform, bounds, cell, PixelOrientation.CENTER);
+            return;
+        }
+
+        //check for pixel scale and tie points /////////////////////////////////
+        final double[] pixelScale = readPixelScale();
+        final double[] tiePoint = readTiePoint();
+        if(pixelScale != null && tiePoint != null){
+            //TODO the is a third value in the tie point
+            final double scaleX         = pixelScale[0];
+            final double scaleY         = -pixelScale[1];
+            final double tiePointColumn = tiePoint[0] + ((cell==CellGeometry.AREA) ? -0.5: 0);
+            final double tiePointRow    = tiePoint[1] + ((cell==CellGeometry.AREA) ? -0.5 : 0);
+            final double translateX     = tiePoint[3] - (scaleX * tiePointColumn);
+            final double translateY     = tiePoint[4] - (scaleY * tiePointRow);
+            final AffineTransform gridToCRS = new AffineTransform(scaleX, 0, 0, scaleY, translateX, translateY);
+            accesor.setAll(gridToCRS, bounds, cell, PixelOrientation.CENTER);
+            return;
+        }
+
+        //unknowned definition /////////////////////////////////////////////////
+        throw new IOException("Unknowned Grid to CRS transformation definition.");
     }
 
     /**
@@ -159,13 +204,24 @@ public final class GeoTiffMetaDataReader {
         throw new IOException("Not done yet.");
     }
 
+    /**
+     * Read the image size from the tags : ImageWidth and ImageLenght.
+     */
+    private Rectangle readBounds() throws IOException {
+        final Rectangle rect = new Rectangle();
+        
+        final Node width = getNodeByNumber(imgFileDir, ImageWidth);
+        rect.width = readTiffShort(getNodeByLocalName(width, TAG_GEOTIFF_SHORT));
+        final Node height = getNodeByNumber(imgFileDir, ImageLenght);
+        rect.height = readTiffShort(getNodeByLocalName(height, TAG_GEOTIFF_SHORT));
 
-
+        return rect;
+    }
 
     /**
      * Read the transformation from the TAG_MODEL_TRANSFORMATION if it exist.
      */
-    private AffineTransform readGridToCRS() throws IOException {
+    private AffineTransform readTransformation() throws IOException {
 
         final Node node = getNodeByNumber(imgFileDir, TAG_MODEL_TRANSFORMATION);
         if (node == null) {
@@ -190,6 +246,42 @@ public final class GeoTiffMetaDataReader {
             throw new IOException("Unvalid transformation definition. expected 9 or 16 parameters but was "+matrix.length);
         }
 
+    }
+
+    /**
+     * Read the tie points from the TAG_MODEL_TIE_POINT if it exist.
+     */
+    private double[] readTiePoint() {
+
+        final Node node = getNodeByNumber(imgFileDir, TAG_MODEL_TIE_POINT);
+        if (node == null) {
+            return null;
+        }
+
+        final Node valueNode = getNodeByLocalName(node, TAG_GEOTIFF_DOUBLES);
+        if(valueNode == null){
+            return null;
+        }
+
+        return readTiffDoubles(valueNode);
+    }
+
+    /**
+     * Read the pixel scale from the TAG_MODEL_PIXEL_SCALE if it exist.
+     */
+    private double[] readPixelScale() {
+
+        final Node node = getNodeByNumber(imgFileDir, TAG_MODEL_PIXEL_SCALE);
+        if (node == null) {
+            return null;
+        }
+
+        final Node valueNode = getNodeByLocalName(node, TAG_GEOTIFF_DOUBLES);
+        if(valueNode == null){
+            return null;
+        }
+
+        return readTiffDoubles(valueNode);
     }
 
     /**
@@ -362,7 +454,11 @@ public final class GeoTiffMetaDataReader {
      */
     private static int[] readTiffShorts(final Node candidate) {
         final NodeList lst = candidate.getChildNodes();
-        final int[] shorts = new int[lst.getLength()];
+        final int size = lst.getLength();
+        if(size == 0){
+            return null;
+        }
+        final int[] shorts = new int[size];
         for(int i=0;i<shorts.length;i++){
             shorts[i] = readTiffShort(lst.item(i));
         }
@@ -381,7 +477,12 @@ public final class GeoTiffMetaDataReader {
      */
     private static long[] readTiffLongs(final Node candidate) {
         final NodeList lst = candidate.getChildNodes();
-        final long[] longs = new long[lst.getLength()];
+        final int size = lst.getLength();
+        if(size == 0){
+            return null;
+        }
+
+        final long[] longs = new long[size];
         for(int i=0;i<longs.length;i++){
             longs[i] = readTiffLong(lst.item(i));
         }
@@ -400,7 +501,12 @@ public final class GeoTiffMetaDataReader {
      */
     private static double[] readTiffDoubles(final Node candidate) {
         final NodeList lst = candidate.getChildNodes();
-        final double[] doubles = new double[lst.getLength()];
+        final int size = lst.getLength();
+        if(size == 0){
+            return null;
+        }
+
+        final double[] doubles = new double[size];
         for(int i=0;i<doubles.length;i++){
             doubles[i] = readTiffDouble(lst.item(i));
         }
