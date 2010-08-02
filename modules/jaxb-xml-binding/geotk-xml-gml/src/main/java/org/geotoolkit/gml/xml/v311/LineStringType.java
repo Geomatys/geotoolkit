@@ -210,7 +210,7 @@ public class LineStringType extends AbstractCurveType {
             if (this.getPosOrPointPropertyOrPointRep().size() == that.getPosOrPointPropertyOrPointRep().size()) {
                 jb = true;
                 for (int i = 0; i < this.getPosOrPointPropertyOrPointRep().size(); i++) {
-                    if (!JAXBElementEquals(this.getPosOrPointPropertyOrPointRep().get(i), this.getPosOrPointPropertyOrPointRep().get(i))) {
+                    if (!JAXBElementEquals(this.getPosOrPointPropertyOrPointRep().get(i), that.getPosOrPointPropertyOrPointRep().get(i))) {
                         jb = false;
                     }
                 }

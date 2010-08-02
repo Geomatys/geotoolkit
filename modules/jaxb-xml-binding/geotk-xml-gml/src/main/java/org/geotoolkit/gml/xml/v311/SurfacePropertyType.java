@@ -206,9 +206,6 @@ public class SurfacePropertyType {
      *     
      */
     public String getType() {
-        /*if (type == null) {
-            return "simple";
-        } else {*/
         return type;
     }
 

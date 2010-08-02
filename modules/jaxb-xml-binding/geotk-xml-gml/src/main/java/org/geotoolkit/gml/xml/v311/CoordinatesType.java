@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -212,27 +213,20 @@ public class CoordinatesType {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
+        if (object instanceof CoordinatesType) {
+            final CoordinatesType that = (CoordinatesType) object;
+
+
+            return Utilities.equals(this.cs,      that.cs) &&
+                   Utilities.equals(this.ts,      that.ts) &&
+                   Utilities.equals(this.value,   that.value) &&
+                   Utilities.equals(this.decimal, that.decimal);
         }
-        final CoordinatesType other = (CoordinatesType) obj;
-        if ((this.value == null) ? (other.value != null) : !this.value.equals(other.value)) {
-            return false;
-        }
-        if ((this.decimal == null) ? (other.decimal != null) : !this.decimal.equals(other.decimal)) {
-            return false;
-        }
-        if ((this.cs == null) ? (other.cs != null) : !this.cs.equals(other.cs)) {
-            return false;
-        }
-        if ((this.ts == null) ? (other.ts != null) : !this.ts.equals(other.ts)) {
-            return false;
-        }
-        return true;
+        return false;
     }
 
     @Override
