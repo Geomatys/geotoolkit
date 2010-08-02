@@ -245,13 +245,27 @@ public class GeometrytoJTS {
         final CoordinatesType coord = gmlLine.getCoordinates();
         if(coord != null){
             String s = coord.getValue();
+            final String cs;
+            if (coord.getCs() == null) {
+                cs = ",";
+            } else {
+                cs = coord.getCs();
+            }
+            double x1 = Double.parseDouble(s.substring(0, s.indexOf(cs)));
+            s = s.substring(s.indexOf(cs) + 1);
 
-            double x1 = Double.parseDouble(s.substring(0, s.indexOf(coord.getCs())));
-            s = s.substring(s.indexOf(coord.getCs()) + 1);
-            double y1 = Double.parseDouble(s.substring(0, s.indexOf(coord.getTs())));
-            s = s.substring(s.indexOf(coord.getTs()) + 1);
-            double x2 = Double.parseDouble(s.substring(0, s.indexOf(coord.getCs())));
-            s = s.substring(s.indexOf(coord.getCs()) + 1);
+            final String ts;
+            if (coord.getTs() == null) {
+                ts = " ";
+            } else {
+                ts = coord.getTs();
+            }
+
+            double y1 = Double.parseDouble(s.substring(0, s.indexOf(ts)));
+            s = s.substring(s.indexOf(ts) + 1);
+
+            double x2 = Double.parseDouble(s.substring(0, s.indexOf(cs)));
+            s = s.substring(s.indexOf(cs) + 1);
             double y2 = Double.parseDouble(s);
 
             final int srid = SRIDGenerator.toSRID(crsName, Version.V1);
