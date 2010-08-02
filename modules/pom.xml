@@ -120,6 +120,7 @@
     <module>referencing</module>
     <module>geometry</module>
     <module>feature</module>
+    <module>coverage</module>
     <module>index</module>
     <module>jaxp-xml-parser</module>
     <module>datastore</module>
