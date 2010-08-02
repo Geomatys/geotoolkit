@@ -97,7 +97,7 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
     private final transient Map<CoordinateReferenceSystem,MathTransform> transforms =
             new HashMap<CoordinateReferenceSystem,MathTransform>();
 
-    private CoordinateReferenceSystem objectiveCRS;
+    protected CoordinateReferenceSystem objectiveCRS;
 
     /**
      * The display coordinate reference system.
@@ -105,7 +105,7 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
      * @see #getDisplayCRS
      * @see #setDisplayCRS
      */
-    private DerivedCRS displayCRS;
+    protected DerivedCRS displayCRS;
 
     /**
      * The device coordinate reference system.
@@ -113,7 +113,7 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
      * @see #getDeviceCRS
      * @see #setDeviceCRS
      */
-    private DerivedCRS deviceCRS;
+    protected DerivedCRS deviceCRS;
 
     /**
      * Properties for the {@linkplain #displayCRS display CRS}. They are saved here because
@@ -392,7 +392,7 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
      * values increasing <strong>down</strong>.
      */
     @Override
-    public final synchronized DerivedCRS getDisplayCRS() {
+    public synchronized CoordinateReferenceSystem getDisplayCRS() {
         if (displayCRS == null) try {
             final ReferencingFactoryContainer crsFactories;
             final CoordinateReferenceSystem objectiveCRS;
@@ -475,8 +475,8 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
      * Returns the Coordinate Reference System associated with the device of this {@code Canvas}.
      */
     @Override
-    public final synchronized DerivedCRS getDeviceCRS() {
-        final DerivedCRS displayCRS = getDisplayCRS();
+    public synchronized CoordinateReferenceSystem getDeviceCRS() {
+        final DerivedCRS displayCRS = (DerivedCRS) getDisplayCRS();
         if (deviceCRS == null) try {
             final ReferencingFactoryContainer crsFactories;
             final CoordinateSystem deviceCS;
@@ -616,10 +616,10 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
         DerivedCRS crs;
         Map<String,?> properties;
         if (device) {
-            crs = getDeviceCRS();
+            crs = (DerivedCRS) getDeviceCRS();
             properties = deviceProperties;
         } else {
-            crs = getDisplayCRS();
+            crs = (DerivedCRS) getDisplayCRS();
             properties = displayProperties;
         }
         final ReferencingFactoryContainer crsFactories = getFactoryGroup();
@@ -700,7 +700,7 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
      * @return MathTransform
      */
     public synchronized MathTransform getObjectiveToDisplayTransform() {
-        final DerivedCRS displayCRS = getDisplayCRS();
+        final DerivedCRS displayCRS = (DerivedCRS) getDisplayCRS();
         assert displayCRS.getBaseCRS().equals(getObjectiveCRS()) : displayCRS;
         return displayCRS.getConversionFromBase().getMathTransform();
     }

@@ -383,7 +383,7 @@ public abstract class AbstractCanvas extends DisplayObject implements Canvas {
      * @return Display CRS
      * @see ReferencedCanvas#setDisplayCRS
      */
-    public abstract DerivedCRS getDisplayCRS();
+    public abstract CoordinateReferenceSystem getDisplayCRS();
 
     /**
      * Returns the Coordinate Reference System associated with the device of this {@code Canvas}.
@@ -413,7 +413,7 @@ public abstract class AbstractCanvas extends DisplayObject implements Canvas {
      * @return DerivedCRS
      * @see ReferencedCanvas#setDeviceCRS
      */
-    public DerivedCRS getDeviceCRS() {
+    public CoordinateReferenceSystem getDeviceCRS() {
         return getDisplayCRS();
     }
 
