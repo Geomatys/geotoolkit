@@ -91,7 +91,7 @@ public final class XMathTest {
     }
 
     /**
-     * Tests the {@link XMath#fixRoundingError} method.
+     * Tests the {@link XMath#trimDecimalFractionDigits} method.
      */
     @Test
     public void testTrimDecimalFractionDigits() {

@@ -39,8 +39,8 @@ import org.junit.*;
 /**
  * Tests the {@link WarpTransform2D} and {@link WarpAdapter} classes.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.14
  *
  * @since 2.1
  */
@@ -62,6 +62,10 @@ public final class WarpTransformTest extends TransformTestCase {
     /**
      * Constructs a warp and tests the transformations.
      * Coefficients will be tested later (by the caller).
+     *
+     * @param  formula The formula to use for generating points.
+     * @param  degree  The polynomial degree for the wrap transform to be created.
+     * @return The created warp transform, returned for information purpose.
      */
     private WarpPolynomial executeTest(final Formula formula, final int degree)
             throws TransformException
@@ -221,5 +225,39 @@ public final class WarpTransformTest extends TransformTestCase {
             assertEquals("X", exp[0], com[0], tolerance);
             assertEquals("Y", exp[1], com[1], tolerance);
         }
+    }
+
+    /**
+     * Creates a warp transform from the given affine transform coefficients,
+     * and ensure that it produces the same result than the original transform,
+     * taking in account the 0.5 offset.
+     *
+     * @since 3.14
+     */
+    private void createAffine(final double scaleX, final double scaleY,
+            final double translateX, final double translateY)
+    {
+        final AffineTransform2D tr = new AffineTransform2D(scaleX, 0, 0, scaleY, translateX, translateY);
+        transform = tr;
+        final Point2D.Double referencePoint = new Point2D.Double(0.5, 0.5);
+        assertSame(referencePoint, tr.transform(referencePoint, referencePoint));
+        final Warp warp = WarpTransform2D.getWarp(null, tr);
+        assertTrue(warp instanceof WarpAffine);
+
+        final float[] coordinates = warp.warpPoint(0, 0, null);
+        assertEquals(2, coordinates.length);
+        assertEquals("X value", referencePoint.x - 0.5, coordinates[0], tolerance);
+        assertEquals("Y value", referencePoint.y - 0.5, coordinates[1], tolerance);
+    }
+
+    /**
+     * Tests the {@link WarpTransform2D#getWarp} method with an affine transform.
+     *
+     * @since 3.14
+     */
+    @Test
+    public void testGetWarpAffine() {
+        createAffine(1, 1, 8, 9);
+        createAffine(2, 3, 8, 9);
     }
 }

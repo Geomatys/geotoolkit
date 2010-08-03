@@ -66,9 +66,9 @@ import static org.geotoolkit.referencing.operation.provider.WarpPolynomial.*;
  * <A HREF="http://java.sun.com/products/java-media/jai/forDevelopers/jai1_0_1guide-unc/Geom-image-manip.doc.html">Geometric
  * Image Manipulation</A> in the <cite>Programming in Java Advanced Imaging</cite> guide.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Alessio Fabiani (Geosolutions)
- * @version 3.00
+ * @version 3.14
  *
  * @see org.geotoolkit.referencing.operation.builder.LocalizationGrid#getPolynomialTransform(int)
  * @see Warp
@@ -245,7 +245,7 @@ public class WarpTransform2D extends AbstractMathTransform implements MathTransf
     }
 
     /**
-     * Returns the maximum minus the minimum ordinate int the specifie array.
+     * Returns the maximum minus the minimum ordinate in the specified array.
      * This is used internally for the above constructor only.
      */
     private static float getWidth(final float[] array, int offset, int num) {
@@ -303,24 +303,30 @@ public class WarpTransform2D extends AbstractMathTransform implements MathTransf
      * Returns a {@linkplain Warp image warp} for the specified transform. The
      * {@link Warp#warpPoint(int,int,float[]) Warp.warpPoint} method transforms coordinates from
      * source to target CRS. Note that JAI's {@linkplain WarpDescriptor warp operation} needs a
-     * warp object with the opposite semantic (i.e. the image warp must transforms coordinates from
+     * warp object with the opposite semantic (i.e. the image warp shall transform coordinates from
      * target to source CRS). Consequently, consider invoking {@code getWarp(transform.inverse())}
      * if the warp object is going to be used in an image reprojection.
+     *
+     * {@section Transforming pixel center coordinate}
+     * The <cite>Java Advanced Imaging</cite> {@code Warp} semantic is to apply the transforms
+     * as below:
+     * <p>
+     * <ul>
+     *   <li>Offset all input ordinates by 0.5 in order to get the coordinates of pixel centers.</li>
+     *   <li>Apply the transform.</li>
+     *   <li>Offset all output ordinates by -0.5 in order to compensate for the input offset.</li>
+     * </ul>
+     * <p>
+     * This semantic implies that
+     * {@linkplain org.opengis.coverage.grid.GridGeometry#getGridToCRS() grid to CRS} transforms
+     * were computed using {@link org.opengis.metadata.spatial.PixelOrientation#UPPER_LEFT}, as
+     * in Java2D usage.
      *
      * @param  name The image name or {@linkplain org.geotoolkit.coverage.grid.GridCoverage2D coverage}
      *         name, or {@code null} in unknown. Used only for formatting error message if some
      *         {@link TransformException} are thrown by the supplied transform.
      * @param  transform The transform to returns as an image warp.
      * @return The warp for the given transform.
-     *
-     * @todo We should check for {@link ConcatenatedTransform}. If we detect that a
-     * {@code WarpTransform2D} is concatenated with {@code AffineTransform} only, and if the
-     * {@code AffineTransform} has scale factors only, then we can omit the {@code AffineTransform}
-     * and merge the scale factors with {@link WarpPolynomial} preScaleX, preScaleY, postScaleX and
-     * postScaleY. Additionally, the translation term for the post-AffineTransform may also be
-     * merged with the first coefficients of WarpPolynomial.xCoeffs and yCoeffs. See GEOT-521.
-     *
-     * @todo Move this method in some other factory class.
      */
     public static Warp getWarp(CharSequence name, final MathTransform2D transform) {
         if (transform instanceof WarpTransform2D) {

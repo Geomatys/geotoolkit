@@ -114,7 +114,7 @@ final class ImageCoverageWriterInspector extends ImageCoverageWriter {
 
     /**
      * Asserts that the difference transform contains no translation terms,
-     * and only the scale term given to this method.
+     * and only the scale terms given to this method.
      */
     public void assertScaleTransform(final double scaleX, final double scaleY) {
         assertFalse("Expected a scale factor.", isIdentity(differenceTransform));
@@ -124,13 +124,39 @@ final class ImageCoverageWriterInspector extends ImageCoverageWriter {
             for (int i=m.getNumCol(); --i>=0;) {
                 final double expected;
                 if (i == j) {
-                    switch (i) {
+                    switch (j) {
                         case GridCoverageStore.X_DIMENSION: expected = scaleX; break;
                         case GridCoverageStore.Y_DIMENSION: expected = scaleY; break;
                         default: expected = 1; break;
                     }
                 } else {
                     expected = 0;
+                }
+                assertEquals(expected, m.getElement(j, i), EPS);
+            }
+        }
+    }
+
+    /**
+     * Asserts that the difference transform contains no scale terms,
+     * and only the translation terms given to this method.
+     */
+    public void assertTranslateTransform(final double tx, final double ty) {
+        assertFalse("Expected translation terms.", isIdentity(differenceTransform));
+        assertTrue(differenceTransform instanceof LinearTransform);
+        final Matrix m = ((LinearTransform) differenceTransform).getMatrix();
+        final int tc = m.getNumCol() - 1;
+        for (int j=m.getNumRow(); --j>=0;) {
+            for (int i=m.getNumCol(); --i>=0;) {
+                final double expected;
+                if (i == tc) {
+                    switch (j) {
+                        case GridCoverageStore.X_DIMENSION: expected = tx; break;
+                        case GridCoverageStore.Y_DIMENSION: expected = ty; break;
+                        default: expected = 1; break;
+                    }
+                } else {
+                    expected = (i == j) ? 1 : 0;
                 }
                 assertEquals(expected, m.getElement(j, i), EPS);
             }

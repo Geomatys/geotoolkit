@@ -17,8 +17,10 @@
  */
 package org.geotoolkit.coverage.io;
 
+import java.util.Arrays;
 import java.util.Locale;
 import java.util.concurrent.CancellationException;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
@@ -30,20 +32,22 @@ import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
 import javax.media.jai.JAI;
+import javax.media.jai.Warp;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.Interpolation;
 import javax.media.jai.RenderedImageAdapter;
 import javax.media.jai.operator.WarpDescriptor;
 
 import org.opengis.util.InternationalString;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.referencing.operation.MathTransform2D;
 
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.mosaic.MosaicImageWriter;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
+import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
@@ -389,18 +393,25 @@ public class ImageCoverageWriter extends GridCoverageWriter {
             throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_OUTPUT));
         }
         /*
-         * Now process to the coverage writing.
+         * Convert the geodetic coordinates to pixel coordinates.
          */
         final IIOMetadata streamMetadata = null; // TODO
         final IIOMetadata imageMetadata  = null; // TODO
+        final ImageWriteParam imageParam;
         try {
-            MathTransform2D dstToSource = null;
-            final ImageWriteParam imageParam = createImageWriteParam(image);
-            if (param != null) {
-                dstToSource = geodeticToPixelCoordinates(gridGeometry, param, imageParam);
-                imageParam.setSourceBands(param.getSourceBands());
-            }
-            if (!isIdentity(dstToSource)) {
+            imageParam = createImageWriteParam(image);
+        } catch (IOException e) {
+            throw new CoverageStoreException(formatErrorMessage(e), e);
+        }
+        if (param != null) {
+            final MathTransform2D destToExtractedGrid = geodeticToPixelCoordinates(gridGeometry, param, imageParam);
+            imageParam.setSourceBands(param.getSourceBands());
+            final Rectangle sourceRegion  = imageParam.getSourceRegion();
+            final Rectangle requestRegion = destGridGeometry.getGridRange2D();
+            if (!isIdentity(destToExtractedGrid) ||
+                    greater(requestRegion.width,  imageParam.getSourceXSubsampling(), sourceRegion.width) ||
+                    greater(requestRegion.height, imageParam.getSourceYSubsampling(), sourceRegion.height))
+            {
                 /*
                  * We need to resample the image if:
                  *
@@ -411,24 +422,88 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                  */
                 final InternationalString name = (coverage instanceof AbstractCoverage) ?
                         ((AbstractCoverage) coverage).getName() : null;
-                final GridEnvelope ge = destGridGeometry.getGridRange();
-                final ImageLayout layout = new ImageLayout(
-                        ge.getLow (X_DIMENSION), ge.getLow (Y_DIMENSION),
-                        ge.getSpan(X_DIMENSION), ge.getSpan(Y_DIMENSION));
+                final ImageLayout layout = new ImageLayout(requestRegion.x, requestRegion.y,
+                        requestRegion.width, requestRegion.height);
                 final RenderingHints hints = new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout);
-                image = WarpDescriptor.create(image,
-                        WarpTransform2D.getWarp(name, (MathTransform2D) destGridToSource),
+                final Warp warp = WarpTransform2D.getWarp(name, (MathTransform2D) destGridToSource);
+                if (false) {
+                    /*
+                     * To be enabled only when debugging.
+                     * Simplified output example from the writeSubsampledRegion() test:
+                     *
+                     * Grid to source:   ┌         ┐
+                     *                   │ 2  0  9 │
+                     *                   │ 0  3  9 │
+                     *                   │ 0  0  1 │
+                     *                   └         ┘
+                     * Source region:    Rectangle[x=9, y=9, width=9, height=15]
+                     * Warp origin:      [9.5, 10.0]
+                     *
+                     * If we had no scale factor, the Warp origin would be the same than the
+                     * translations. If we have scale factors be were mapping pixel corners,
+                     * then the warp origin would also be the same.
+                     *
+                     * But the JAI Warp operation maps pixel center. It does so by adding 0.5
+                     * to pixel coordinates before applying the Warp, and removing 0.5 to the
+                     * result (see WarpTransform2D.getWarp(...) javadoc). This is actually the
+                     * desired behavior, as we can see with the picture below which represents
+                     * only the first pixel of the destination image. The cell are the source
+                     * pixels, the transform is the above matrix, and the coordinates are
+                     * relative to the source grid:
+                     *
+                     *       (9,9)
+                     *         ┌─────┬─────┐
+                     *         │     │     │
+                     *         ├─────┼─────┤
+                     *         │ (10,10.5) │     after the -0.5 final offset, become (9.5, 10).
+                     *         ├─────┼─────┤
+                     *         │     │     │
+                     *         └─────┴─────┘
+                     *                   (11,12)
+                     */
+                    Object tr = destGridToSource;
+                    if (tr instanceof LinearTransform) {
+                        tr = ((LinearTransform) tr).getMatrix();
+                    }
+                    final TableWriter table = new TableWriter(null, 1);
+                    table.setMultiLinesCells(true);
+                    table.writeHorizontalSeparator();
+                    table.write("Warping coverage:");                         table.nextColumn();
+                    table.write(String.valueOf(name));                        table.nextLine();
+                    table.write("Grid to source:");                           table.nextColumn();
+                    table.write(String.valueOf(tr));                          table.nextLine();
+                    table.write("Source region:");                            table.nextColumn();
+                    table.write(String.valueOf(sourceRegion));                table.nextLine();
+                    table.write("Warp origin:");                              table.nextColumn();
+                    table.write(Arrays.toString(warp.warpPoint(0, 0, null))); table.nextLine();
+                    table.writeHorizontalSeparator();
+                    System.out.println(table);
+                }
+                image = WarpDescriptor.create(image, warp,
                         Interpolation.getInstance(Interpolation.INTERP_NEAREST),
                         CoverageUtilities.getBackgroundValues(coverage),
                         hints);
                 imageParam.setSourceRegion(null);
                 imageParam.setSourceSubsampling(1, 1, 0, 0);
             }
-            final IIOImage bundle = new IIOImage(image, null, imageMetadata);
+        }
+        /*
+         * Now process to the coverage writing.
+         */
+        final IIOImage bundle = new IIOImage(image, null, imageMetadata);
+        try {
             imageWriter.write(streamMetadata, bundle, imageParam);
         } catch (IOException e) {
             throw new CoverageStoreException(formatErrorMessage(e), e);
         }
+    }
+
+    /**
+     * Returns {@code true} if the given request dimension scaled by the given subsampling
+     * is greater than the given source dimension.
+     */
+    private static boolean greater(final int request, final int subsampling, final int source) {
+        return request * subsampling - (subsampling - 1) > source;
     }
 
     /**

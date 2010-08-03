@@ -319,7 +319,7 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
                     denormalize = d = POOL.unique(d);
                 }
             }
-            return (MathTransform2D) ConcatenatedTransform.create(n, kernel, d);
+            return ConcatenatedTransform.create(n, kernel, d);
         }
 
         /**

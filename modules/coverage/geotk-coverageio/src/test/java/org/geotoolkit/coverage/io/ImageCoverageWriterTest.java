@@ -317,7 +317,6 @@ public class ImageCoverageWriterTest {
      * @throws ParseException Should not happen.
      */
     @Test
-    @Ignore
     public void writeExpandedUpperLeftRegion() throws IOException, CoverageStoreException, ParseException {
         final GridCoverage2D coverage = read("matrix.txt");
         final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeOutsideRegion");
@@ -330,7 +329,7 @@ public class ImageCoverageWriterTest {
         if (VERBOSE) {
             System.out.println(writer);
         }
-        writer.assertIdentityTransform();
+        writer.assertTranslateTransform(-2, -3);
         writer.dispose();
         /*
          * The expected matrix below is the upper-left corner of the full matrix, augmented

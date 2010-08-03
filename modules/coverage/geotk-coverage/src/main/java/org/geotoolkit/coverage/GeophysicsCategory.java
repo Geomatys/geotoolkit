@@ -154,8 +154,8 @@ final class GeophysicsCategory extends Category {
         if (sampleToGeophysics.isIdentity()) {
             return this;
         }
-        sampleToGeophysics = (MathTransform1D) ConcatenatedTransform.create(
-                             inverse.getSampleToGeophysics(), sampleToGeophysics);
+        sampleToGeophysics = ConcatenatedTransform.create(
+                inverse.getSampleToGeophysics(), sampleToGeophysics);
         return inverse.rescale(sampleToGeophysics).inverse;
     }
 

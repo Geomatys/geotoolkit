@@ -996,7 +996,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
      *         relative to this {@code ZoomPane} widget. <strong>Do not
      *         change the returned rectangle!</strong>
      */
-    private final Rectangle getZoomableBounds() {
+    private Rectangle getZoomableBounds() {
         return cachedBounds = getZoomableBounds(cachedBounds);
     }
 
@@ -1816,9 +1816,9 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
 
     /**
      * Method called automatically when user moves the mouse wheel. This method
-     * performs a zoom centred on the mouse position.
+     * performs a zoom centered on the mouse position.
      */
-    private final void mouseWheelMoved(final MouseWheelEvent event) {
+    private void mouseWheelMoved(final MouseWheelEvent event) {
         if (event.getScrollType() == MouseWheelEvent.WHEEL_UNIT_SCROLL) {
             int rotation  = event.getUnitsToScroll();
             double scale  = 1 + (AMOUNT_SCALE - 1) * Math.abs(rotation);
@@ -1844,7 +1844,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
      * really changed; we have simply discovered a part of the window which was hidden before.
      * However, we still need to adjust the scrollbars.
      */
-    private final void processSizeEvent(final ComponentEvent event) {
+    private void processSizeEvent(final ComponentEvent event) {
         if (zoomIsReset || !isValid(visibleArea)) {
             disableRepaint = true;
             try {
@@ -2358,7 +2358,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
      * bar could cover the range {@code [0..viewSize.width]} whilst the vertical bar could cover
      * the range {@code [0..viewSize.height]}.
      */
-    private final Dimension getViewSize() {
+    private Dimension getViewSize() {
         if (!visibleArea.isEmpty()) {
             Rectangle2D area = getArea();
             if (isValid(area)) {

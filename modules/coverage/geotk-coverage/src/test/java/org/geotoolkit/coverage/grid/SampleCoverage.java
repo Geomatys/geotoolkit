@@ -26,7 +26,6 @@ import java.awt.image.WritableRaster;
 import javax.media.jai.RasterFactory;
 import java.io.IOException;
 
-import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.image.SampleImage;
@@ -101,7 +100,7 @@ public enum SampleCoverage {
                 new Category("Land",    decode("#000000"), create(255, 255)),
                 new Category("No data", decode("#FFFFFF"), create(  0,   0)),
                 new Category("Chl-a",   null,              create(  1, 254),
-                        (MathTransform1D) ConcatenatedTransform.create(
+                        ConcatenatedTransform.create(
                         LinearTransform1D.create(0.015, -1.985),
                         ExponentialTransform1D.create(10, 1)))
         }, MetricPrefix.MILLI(GRAM).divide(CUBIC_METRE))),

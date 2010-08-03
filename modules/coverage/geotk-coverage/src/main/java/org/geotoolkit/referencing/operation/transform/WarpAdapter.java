@@ -47,6 +47,16 @@ final class WarpAdapter extends Warp {
     private static final long serialVersionUID = -8679060848877065181L;
 
     /**
+     * The transform to apply before the transform given at construction time.
+     */
+    private static final AffineTransform2D PRE_TRANSFORM = new AffineTransform2D(1, 0, 0, 1, 0.5, 0.5);
+
+    /**
+     * The transform to apply after the transform given at construction time.
+     */
+    private static final AffineTransform2D POST_TRANSFORM = new AffineTransform2D(1, 0, 0, 1, -0.5, -0.5);
+
+    /**
      * The coverage name. Used for formatting error message.
      */
     private final CharSequence name;
@@ -66,11 +76,11 @@ final class WarpAdapter extends Warp {
      */
     public WarpAdapter(final CharSequence name, final MathTransform2D inverse) {
         this.name    = name;
-        this.inverse = inverse;
+        this.inverse = ConcatenatedTransform.create(PRE_TRANSFORM, inverse, POST_TRANSFORM);
     }
 
     /**
-     * Returns the transform from image's destination pixels to source pixels.
+     * Returns the transform from image destination pixels to source pixels.
      */
     public MathTransform2D getTransform() {
         return inverse;
@@ -98,8 +108,8 @@ final class WarpAdapter extends Warp {
         int index = 0;
         for (int y=ymin; y<ymax; y+=periodY) {
             for (int x=xmin; x<xmax; x+=periodX) {
-                destRect[index++] = x + 0.5f;
-                destRect[index++] = y + 0.5f;
+                destRect[index++] = x;
+                destRect[index++] = y;
             }
         }
         try {
@@ -112,9 +122,6 @@ final class WarpAdapter extends Warp {
             e.initCause(exception);
             throw e;
         }
-        while (--index >= 0) {
-            destRect[index] -= 0.5f;
-        }
         return destRect;
     }
 
@@ -126,15 +133,12 @@ final class WarpAdapter extends Warp {
      */
     @Override
     public Point2D mapDestPoint(final Point2D destPt) {
-        Point2D result = new Point2D.Double(destPt.getX() + 0.5, destPt.getY() + 0.5);
         try {
-            result = inverse.transform(result, result);
+            return inverse.transform(destPt, null);
         } catch (TransformException exception) {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.BAD_PARAMETER_$2, "destPt", destPt), exception);
         }
-        result.setLocation(result.getX()-0.5, result.getY()-0.5);
-        return result;
     }
 
     /**
@@ -145,14 +149,11 @@ final class WarpAdapter extends Warp {
      */
     @Override
     public Point2D mapSourcePoint(final Point2D sourcePt) {
-        Point2D result = new Point2D.Double(sourcePt.getX() + 0.5, sourcePt.getY() + 0.5);
         try {
-            result = inverse.inverse().transform(result, result);
+            return inverse.inverse().transform(sourcePt, null);
         } catch (TransformException exception) {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.BAD_PARAMETER_$2, "sourcePt", sourcePt), exception);
         }
-        result.setLocation(result.getX()-0.5, result.getY()-0.5);
-        return result;
     }
 }

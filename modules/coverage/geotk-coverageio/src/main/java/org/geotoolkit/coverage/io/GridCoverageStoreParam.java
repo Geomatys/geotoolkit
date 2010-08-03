@@ -206,22 +206,23 @@ public abstract class GridCoverageStoreParam implements Serializable {
 
     /**
      * Returns the {@linkplain #getEnvelope() envelope}, ensuring that it is contained
-     * inside the coordinate system domain of validity.
+     * inside the coordinate system domain of validity.  This method also ensures that
+     * the returned envelope is not a direct reference to the {@link #envelope} field,
+     * so it is safe for modification.
      */
-    final Envelope getValidEnvelope() {
-        Envelope env = getEnvelope();
-        if (env != null) {
-            final GeneralEnvelope ge;
-            if (env instanceof GeneralEnvelope && env != envelope) {
-                ge = (GeneralEnvelope) env;
-            } else {
-                ge = new GeneralEnvelope(env);
-            }
-            if (ge.reduceToDomain(false)) {
-                env = ge;
-            }
+    final GeneralEnvelope getValidEnvelope() {
+        final Envelope env = getEnvelope();
+        if (env == null) {
+            return null;
         }
-        return env;
+        final GeneralEnvelope ge;
+        if (env instanceof GeneralEnvelope && env != envelope) {
+            ge = (GeneralEnvelope) env;
+        } else {
+            ge = new GeneralEnvelope(env);
+        }
+        ge.reduceToDomain(false);
+        return ge;
     }
 
     /**

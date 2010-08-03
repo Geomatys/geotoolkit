@@ -51,8 +51,8 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  * Base class for concatenated transform. Concatenated transforms are
  * serializable if all their step transforms are serializables.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.14
  *
  * @since 1.2
  * @module
@@ -171,7 +171,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      * @param tr2 The second math transform.
      * @return    The concatenated transform.
      *
-     * @todo We could add one more optimisation: if one transform is a matrix and the
+     * @todo We could add one more optimization: if one transform is a matrix and the
      *       other transform is a PassThroughTransform, and if the matrix as 0 elements
      *       for all rows matching the PassThrough sub-transform, then we can get ride
      *       of the whole PassThroughTransform object.
@@ -249,6 +249,36 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
     }
 
     /**
+     * Concatenates the given two-dimensional transforms. This is a convenience methods
+     * delegating to {@link #create(MathTransform, MathTransform)} and casting the result
+     * to a {@link MathTransform2D} instance.
+     *
+     * @param tr1 The first math transform.
+     * @param tr2 The second math transform.
+     * @return    The concatenated transform.
+     *
+     * @since 3.14
+     */
+    public static MathTransform2D create(MathTransform2D tr1, MathTransform2D tr2) {
+        return (MathTransform2D) create((MathTransform) tr1, (MathTransform) tr2);
+    }
+
+    /**
+     * Concatenates the given one-dimensional transforms. This is a convenience methods
+     * delegating to {@link #create(MathTransform, MathTransform)} and casting the result
+     * to a {@link MathTransform1D} instance.
+     *
+     * @param tr1 The first math transform.
+     * @param tr2 The second math transform.
+     * @return    The concatenated transform.
+     *
+     * @since 3.14
+     */
+    public static MathTransform1D create(MathTransform1D tr1, MathTransform1D tr2) {
+        return (MathTransform1D) create((MathTransform) tr1, (MathTransform) tr2);
+    }
+
+    /**
      * Concatenates the three given transforms. This is a convenience methods doing its job
      * as two consecutive concatenations.
      *
@@ -261,6 +291,38 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      */
     public static MathTransform create(MathTransform tr1, MathTransform tr2, MathTransform tr3) {
         return create(create(tr1, tr2), tr3);
+    }
+
+    /**
+     * Concatenates the three given two-dimensional transforms. This is a convenience methods
+     * delegating to {@link #create(MathTransform, MathTransform, MathTransform)} and casting
+     * the result to a {@link MathTransform2D} instance.
+     *
+     * @param tr1 The first math transform.
+     * @param tr2 The second math transform.
+     * @param tr3 The third math transform.
+     * @return    The concatenated transform.
+     *
+     * @since 3.14
+     */
+    public static MathTransform2D create(MathTransform2D tr1, MathTransform2D tr2, MathTransform2D tr3) {
+        return (MathTransform2D) create((MathTransform) tr1, (MathTransform) tr2, (MathTransform) tr3);
+    }
+
+    /**
+     * Concatenates the three given one-dimensional transforms. This is a convenience methods
+     * delegating to {@link #create(MathTransform, MathTransform, MathTransform)} and casting
+     * the result to a {@link MathTransform1D} instance.
+     *
+     * @param tr1 The first math transform.
+     * @param tr2 The second math transform.
+     * @param tr3 The third math transform.
+     * @return    The concatenated transform.
+     *
+     * @since 3.14
+     */
+    public static MathTransform1D create(MathTransform1D tr1, MathTransform1D tr2, MathTransform1D tr3) {
+        return (MathTransform1D) create((MathTransform) tr1, (MathTransform) tr2, (MathTransform) tr3);
     }
 
     /**
