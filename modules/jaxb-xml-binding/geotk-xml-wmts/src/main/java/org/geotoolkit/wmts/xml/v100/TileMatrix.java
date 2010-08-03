@@ -57,11 +57,10 @@ import org.geotoolkit.util.Utilities;
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "TileMatrixType", propOrder = {
+@XmlType(name = "", propOrder = {
     "identifier",
     "scaleDenominator",
     "topLeftCorner",
-    "topLeftPoint",
     "tileWidth",
     "tileHeight",
     "matrixWidth",
@@ -77,9 +76,6 @@ public class TileMatrix extends DescriptionType {
     @XmlList
     @XmlElement(name = "TopLeftCorner", type = Double.class)
     private List<Double> topLeftCorner;
-    @XmlElement(name = "TopLeftPoint")
-    private TopLeftPoint topLeftPoint;
-    
     @XmlElement(name = "TileWidth", required = true)
     @XmlSchemaType(name = "positiveInteger")
     private Integer tileWidth;
@@ -97,7 +93,7 @@ public class TileMatrix extends DescriptionType {
 
     }
 
-    public TileMatrix(CodeType identifier, double scaleDenominator, TopLeftPoint topLeftPoint, Integer tileWidth, Integer tileHeight,
+    public TileMatrix(CodeType identifier, double scaleDenominator, Integer tileWidth, Integer tileHeight,
             Integer matrixWidth, Integer matrixHeight) {
         this.identifier       = identifier;
         this.scaleDenominator = scaleDenominator;
@@ -105,11 +101,11 @@ public class TileMatrix extends DescriptionType {
         this.matrixWidth      = matrixWidth;
         this.tileHeight       = tileHeight;
         this.tileWidth        = tileWidth;
-        this.topLeftPoint     = topLeftPoint;
     }
 
     /**
-     * Tile matrix identifier. Typically an abreviation of the ScaleDenominator value or its equivalent pixel size
+     * Tile matrix identifier.
+     * Typically an abreviation of the ScaleDenominator value or its equivalent pixel size
      * 
      * @return
      *     possible object is
@@ -121,7 +117,8 @@ public class TileMatrix extends DescriptionType {
     }
 
     /**
-     * Tile matrix identifier. Typically an abreviation of the ScaleDenominator value or its equivalent pixel size
+     * Tile matrix identifier.
+     * Typically an abreviation of the ScaleDenominator value or its equivalent pixel size
      * 
      * @param value
      *     allowed object is
@@ -257,20 +254,6 @@ public class TileMatrix extends DescriptionType {
     }
 
     /**
-     * @return the topLeftPoint
-     */
-    public TopLeftPoint getTopLeftPoint() {
-        return topLeftPoint;
-    }
-
-    /**
-     * @param topLeftPoint the topLeftPoint to set
-     */
-    public void setTopLeftPoint(TopLeftPoint topLeftPoint) {
-        this.topLeftPoint = topLeftPoint;
-    }
-
-    /**
      * Vérifie que cette station est identique à l'objet spécifié
      */
     @Override
@@ -286,8 +269,7 @@ public class TileMatrix extends DescriptionType {
                     Utilities.equals(this.scaleDenominator, that.scaleDenominator) &&
                     Utilities.equals(this.tileHeight, that.tileHeight) &&
                     Utilities.equals(this.tileWidth, that.tileWidth) &&
-                    Utilities.equals(this.topLeftCorner, that.topLeftCorner) &&
-                    Utilities.equals(this.topLeftPoint, that.topLeftPoint);
+                    Utilities.equals(this.topLeftCorner, that.topLeftCorner);
         }
         return false;
     }
@@ -298,7 +280,6 @@ public class TileMatrix extends DescriptionType {
         hash = 41 * hash + (this.identifier != null ? this.identifier.hashCode() : 0);
         hash = 41 * hash + (int) (Double.doubleToLongBits(this.scaleDenominator) ^ (Double.doubleToLongBits(this.scaleDenominator) >>> 32));
         hash = 41 * hash + (this.topLeftCorner != null ? this.topLeftCorner.hashCode() : 0);
-        hash = 41 * hash + (this.topLeftPoint != null ? this.topLeftPoint.hashCode() : 0);
         hash = 41 * hash + (this.tileWidth != null ? this.tileWidth.hashCode() : 0);
         hash = 41 * hash + (this.tileHeight != null ? this.tileHeight.hashCode() : 0);
         hash = 41 * hash + (this.matrixWidth != null ? this.matrixWidth.hashCode() : 0);
@@ -316,9 +297,6 @@ public class TileMatrix extends DescriptionType {
 
         if (topLeftCorner != null) {
             sb.append("topLeftCorner").append(topLeftCorner).append('\n');
-        }
-        if (topLeftPoint != null) {
-            sb.append("topLeftPoint").append(topLeftPoint).append('\n');
         }
         if (tileWidth != null) {
             sb.append("tileWidth").append(tileWidth).append('\n');

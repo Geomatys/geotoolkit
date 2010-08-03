@@ -56,7 +56,7 @@ import org.geotoolkit.ows.xml.v110.DescriptionType;
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "TileMatrixSetType", propOrder = {
+@XmlType(name = "", propOrder = {
     "identifier",
     "boundingBox",
     "supportedCRS",
@@ -94,7 +94,7 @@ public class TileMatrixSet extends DescriptionType {
         this.boundingBox       = bbox;
         this.wellKnownScaleSet = wellKnownScaleSet;
     }
-    
+
     /**
      * Tile matrix set identifier
      * 
@@ -120,7 +120,7 @@ public class TileMatrixSet extends DescriptionType {
     }
 
     /**
-     * Minimum bounding rectangle surrounding the visible layer presented by this tile matrix set, in the supported CRS 
+     * Minimum bounding rectangle surrounding the visible layer presented by this tile matrix set, in the supported CRS
      * 
      * @return
      *     possible object is
@@ -133,7 +133,7 @@ public class TileMatrixSet extends DescriptionType {
     }
 
     /**
-     * Minimum bounding rectangle surrounding the visible layer presented by this tile matrix set, in the supported CRS 
+     * Minimum bounding rectangle surrounding the visible layer presented by this tile matrix set, in the supported CRS
      * 
      * @param value
      *     allowed object is
@@ -205,7 +205,7 @@ public class TileMatrixSet extends DescriptionType {
 
     public void setTileMatrix(List<TileMatrix> tm) {
         this.tileMatrix = tm;
-    }
+}
 
     public TileMatrix getTileMatrixByName(String name) {
         if (tileMatrix == null) {

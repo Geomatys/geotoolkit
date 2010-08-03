@@ -42,7 +42,7 @@ import org.geotoolkit.ows.xml.v110.DomainMetadataType;
  *         &lt;element ref="{http://www.opengis.net/ows/1.1}UOM" minOccurs="0"/>
  *         &lt;element name="UnitSymbol" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="Default" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
- *         &lt;element name="Current" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="Current" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="Value" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/extension>
@@ -54,7 +54,7 @@ import org.geotoolkit.ows.xml.v110.DomainMetadataType;
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "DimensionType", propOrder = {
+@XmlType(name = "", propOrder = {
     "identifier",
     "uom",
     "unitSymbol",
@@ -74,7 +74,7 @@ public class Dimension extends DescriptionType {
     @XmlElement(name = "Default")
     private String _default;
     @XmlElement(name = "Current")
-    private String current;
+    private Boolean current;
     @XmlElement(name = "Value", required = true)
     private List<String> value;
 
@@ -110,7 +110,7 @@ public class Dimension extends DescriptionType {
     }
 
     /**
-     * A name of dimensional axis
+     * Sets the value of the identifier property.
      * 
      * @param value
      *     allowed object is
@@ -134,7 +134,7 @@ public class Dimension extends DescriptionType {
     }
 
     /**
-     * Units of measure of dimensional axis.
+     * Sets the value of the uom property.
      * 
      * @param value
      *     allowed object is
@@ -198,10 +198,10 @@ public class Dimension extends DescriptionType {
      * 
      * @return
      *     possible object is
-     *     {@link String }
+     *     {@link Boolean }
      *     
      */
-    public String getCurrent() {
+    public Boolean isCurrent() {
         return current;
     }
 
@@ -210,10 +210,10 @@ public class Dimension extends DescriptionType {
      * 
      * @param value
      *     allowed object is
-     *     {@link String }
+     *     {@link Boolean }
      *     
      */
-    public void setCurrent(String value) {
+    public void setCurrent(Boolean value) {
         this.current = value;
     }
 
@@ -229,7 +229,7 @@ public class Dimension extends DescriptionType {
 
     public void setValue(List<String> value) {
         this.value = value;
-    }
+}
 
     public void setValue(String value) {
         if (this.value == null) {

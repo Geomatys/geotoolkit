@@ -41,7 +41,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="Format" type="{http://www.opengis.net/ows/1.1}MimeType"/>
- *         &lt;element name="PayloadContent" type="{http://www.w3.org/2001/XMLSchema}base64Binary"/>
+ *         &lt;element name="BinaryContent" type="{http://www.w3.org/2001/XMLSchema}base64Binary"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -52,17 +52,17 @@ import javax.xml.bind.annotation.XmlType;
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "BinaryPayloadType", propOrder = {
+@XmlType(name = "", propOrder = {
     "format",
-    "payloadContent"
+    "binaryContent"
 })
 @XmlRootElement(name = "BinaryPayload")
 public class BinaryPayload {
 
     @XmlElement(name = "Format", required = true)
     private String format;
-    @XmlElement(name = "PayloadContent", required = true)
-    private byte[] payloadContent;
+    @XmlElement(name = "BinaryContent", required = true)
+    private byte[] binaryContent;
 
     /**
      * Gets the value of the format property.
@@ -89,25 +89,25 @@ public class BinaryPayload {
     }
 
     /**
-     * Gets the value of the payloadContent property.
+     * Gets the value of the binaryContent property.
      * 
      * @return
      *     possible object is
      *     byte[]
      */
-    public byte[] getPayloadContent() {
-        return payloadContent;
+    public byte[] getBinaryContent() {
+        return binaryContent;
     }
 
     /**
-     * Sets the value of the payloadContent property.
+     * Sets the value of the binaryContent property.
      * 
      * @param value
      *     allowed object is
      *     byte[]
      */
-    public void setPayloadContent(byte[] value) {
-        this.payloadContent = ((byte[]) value);
+    public void setBinaryContent(byte[] value) {
+        this.binaryContent = ((byte[]) value);
     }
 
     /**
@@ -119,7 +119,7 @@ public class BinaryPayload {
      */
     public BufferedImage getBufferedImageByFormatName(final String format) throws IOException {
 
-        ByteArrayInputStream in = new ByteArrayInputStream(payloadContent);
+        ByteArrayInputStream in = new ByteArrayInputStream(binaryContent);
         ImageInputStream st = ImageIO.createImageInputStream(in);
 
         Iterator<ImageReader> rs = ImageIO.getImageReadersByFormatName(format);
@@ -131,7 +131,7 @@ public class BinaryPayload {
         in.close();//un-necessary but good practice.
 
         return bi;
-    }
+}
 
     /**
      * Convert the Tile image to a BufferedImage.
@@ -142,7 +142,7 @@ public class BinaryPayload {
      */
     public BufferedImage getBufferedImageByMimeType(final String mimeType) throws IOException {
 
-        ByteArrayInputStream in = new ByteArrayInputStream(payloadContent);
+        ByteArrayInputStream in = new ByteArrayInputStream(binaryContent);
         ImageInputStream st = ImageIO.createImageInputStream(in);
 
         Iterator<ImageReader> rs = ImageIO.getImageReadersByMIMEType(mimeType);

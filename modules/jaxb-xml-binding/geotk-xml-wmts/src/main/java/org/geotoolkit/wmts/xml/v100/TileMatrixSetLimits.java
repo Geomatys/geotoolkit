@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2010, Geomatys
+ *    (C) 2008 - 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,6 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
+
 package org.geotoolkit.wmts.xml.v100;
 
 import java.util.ArrayList;
@@ -35,7 +36,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://www.opengis.net/wmts/1.0}Theme" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element ref="{http://www.opengis.net/wmts/1.0}TileMatrixLimits" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -43,27 +44,32 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  * 
  * 
- * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "theme"
+    "tileMatrixLimits"
 })
-@XmlRootElement(name = "Themes")
-public class Themes {
+@XmlRootElement(name = "TileMatrixSetLimits")
+public class TileMatrixSetLimits {
 
-    @XmlElement(name = "Theme")
-    private List<Theme> theme;
+    @XmlElement(name = "TileMatrixLimits", required = true)
+    private List<TileMatrixLimits> tileMatrixLimits;
 
     /**
-     * Metadata describing the top-level themes where layers available on this server can be classified.
-     * Gets the value of the theme property.
+     * Metadata describing the limits of the TileMatrixSet indices. 
+     * Multiplicity must be the multiplicity of TileMatrix in this TileMatrixSet.
+     * Gets the value of the tileMatrixLimits property.
+     * 
+     * Objects of the following type(s) are allowed in the list
+     * {@link TileMatrixLimits }
+     * 
+     * 
      */
-    public List<Theme> getTheme() {
-        if (theme == null) {
-            theme = new ArrayList<Theme>();
+    public List<TileMatrixLimits> getTileMatrixLimits() {
+        if (tileMatrixLimits == null) {
+            tileMatrixLimits = new ArrayList<TileMatrixLimits>();
         }
-        return this.theme;
+        return this.tileMatrixLimits;
     }
 
 }

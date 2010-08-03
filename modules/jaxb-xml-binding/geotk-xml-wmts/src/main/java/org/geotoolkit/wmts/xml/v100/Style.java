@@ -48,10 +48,9 @@ import org.geotoolkit.ows.xml.v110.DescriptionType;
  * </pre>
  * 
  * 
- * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "StyleType", propOrder = {
+@XmlType(name = "", propOrder = {
     "identifier",
     "legendURL"
 })
@@ -73,7 +72,7 @@ public class Style extends DescriptionType {
         this.identifier = identifier;
         this.legendURL  = legendURL;
     }
-    
+
     /**
      * An unambiguous reference to this style, identifying a specific version when needed, normally used by software
      * 

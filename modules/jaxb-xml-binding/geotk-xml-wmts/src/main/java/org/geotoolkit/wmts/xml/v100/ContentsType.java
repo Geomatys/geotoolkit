@@ -22,7 +22,6 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.ContentsBaseType;
 import org.geotoolkit.ows.xml.v110.DatasetDescriptionSummaryBaseType;
@@ -46,20 +45,22 @@ import org.geotoolkit.ows.xml.v110.DatasetDescriptionSummaryBaseType;
  * </pre>
  * 
  * 
- * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ContentsType", propOrder = {
     "tileMatrixSet"
 })
-@XmlRootElement(name="ContentsType")
 public class ContentsType extends ContentsBaseType {
 
     @XmlElement(name = "TileMatrixSet")
     private List<TileMatrixSet> tileMatrixSet;
 
     /**
-     * A description of the geometry of a tile cut Gets the value of the tileMatrixSet property.
+     * A description of the geometry of a tile fragmentation Gets the value of the tileMatrixSet property.
+     * 
+     * Objects of the following type(s) are allowed in the list
+     * {@link TileMatrixSet }
+     * 
      * 
      */
     public List<TileMatrixSet> getTileMatrixSet() {
@@ -79,7 +80,7 @@ public class ContentsType extends ContentsBaseType {
             final Object candidate = elem.getValue();
             if (candidate instanceof LayerType) {
                 layers.add((LayerType)candidate);
-            }
+}
         }
         return layers;
     }

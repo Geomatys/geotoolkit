@@ -38,7 +38,7 @@ import javax.xml.bind.annotation.XmlType;
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
  *         &lt;element name="Layer" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="Style" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
+ *         &lt;element name="Style" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="Format" type="{http://www.opengis.net/ows/1.1}MimeType"/>
  *         &lt;element ref="{http://www.opengis.net/wmts/1.0}DimensionNameValue" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element name="TileMatrixSet" type="{http://www.w3.org/2001/XMLSchema}string"/>
@@ -54,10 +54,9 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  * 
  * 
- * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "GetTileType", propOrder = {
+@XmlType(name = "", propOrder = {
     "layer",
     "style",
     "format",
@@ -72,7 +71,7 @@ public class GetTile {
 
     @XmlElement(name = "Layer", required = true)
     private String layer;
-    @XmlElement(name = "Style")
+    @XmlElement(name = "Style", required = true)
     private String style;
     @XmlElement(name = "Format", required = true)
     private String format;

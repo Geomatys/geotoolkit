@@ -51,7 +51,7 @@ import org.geotoolkit.ows.xml.v110.DescriptionType;
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "ThemeType", propOrder = {
+@XmlType(name = "", propOrder = {
     "identifier",
     "theme",
     "layerRef"
@@ -92,9 +92,8 @@ public class Theme extends DescriptionType {
     }
 
     /**
-     * Metadata describing the child (subordinate) themes of this theme where layers available on this server can be classified Gets the value of the theme property.
-     * 
-     * 
+     * Metadata describing the child (subordinate) themes of this theme where layers available on this server can be classified
+     * Gets the value of the theme property.
      */
     public List<Theme> getTheme() {
         if (theme == null) {

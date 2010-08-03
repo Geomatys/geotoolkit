@@ -48,6 +48,7 @@ public class WmtsXmlBindingTest {
         pool = new MarshallerPool(Collections.singletonMap(MarshallerPool.ROOT_NAMESPACE_KEY, "http://www.opengis.net/wmts/1.0"),
                  "org.geotoolkit.wmts.xml.v100:" +
                  "org.geotoolkit.gml.xml.v311:" +
+                 "org.geotoolkit.internal.jaxb.referencing:" +
                  "org.geotoolkit.ows.xml.v110");
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();
@@ -91,7 +92,6 @@ public class WmtsXmlBindingTest {
         PointType pt = new PointType("p1", new DirectPositionType(-90.080000, 29.982000));
         TileMatrix expResult = new TileMatrix(new CodeType("16d"),
                                               55218.001386,
-                                              new TopLeftPoint(pt),
                                               256,
                                               256,
                                               3,
@@ -112,7 +112,6 @@ public class WmtsXmlBindingTest {
         PointType pt = new PointType("p1", new DirectPositionType(-90.080000, 29.982000));
         TileMatrix matrix = new TileMatrix(new CodeType("16d"),
                                               55218.001386,
-                                              new TopLeftPoint(pt),
                                               256,
                                               256,
                                               3,
@@ -138,11 +137,6 @@ public class WmtsXmlBindingTest {
                      "<TileMatrix>" + '\n' +
                      "    <ows:Identifier>16d</ows:Identifier>" + '\n' +
                      "    <ScaleDenominator>55218.001386</ScaleDenominator>" + '\n' +
-                     "    <TopLeftPoint>" + '\n' +
-                     "        <gml:Point gml:id=\"p1\">" + '\n' +
-                     "            <gml:pos>-90.08 29.982</gml:pos>" + '\n' +
-                     "        </gml:Point>" + '\n' +
-                     "    </TopLeftPoint>" + '\n' +
                      "    <TileWidth>256</TileWidth>" + '\n' +
                      "    <TileHeight>256</TileHeight>" + '\n' +
                      "    <MatrixWidth>3</MatrixWidth>" + '\n' +
