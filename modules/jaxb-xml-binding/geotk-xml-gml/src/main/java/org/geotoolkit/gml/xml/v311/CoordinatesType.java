@@ -21,17 +21,18 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.util.Utilities;
 
 
 /**
  * Tables or arrays of tuples.  
- *         May be used for text-encoding of values from a table.  
- *         Actually just a string, but allows the user to indicate which characters are used as separators.  
- *         The value of the 'cs' attribute is the separator for coordinate values, 
- *         and the value of the 'ts' attribute gives the tuple separator (a single space by default); 
- *         the default values may be changed to reflect local usage.
- *         Defaults to CSV within a tuple, space between tuples.  
- *         However, any string content will be schema-valid.  
+ * May be used for text-encoding of values from a table.  
+ * Actually just a string, but allows the user to indicate which characters are used as separators.  
+ * The value of the 'cs' attribute is the separator for coordinate values, 
+ * and the value of the 'ts' attribute gives the tuple separator (a single space by default); 
+ * the default values may be changed to reflect local usage.
+ * Defaults to CSV within a tuple, space between tuples.  
+ * However, any string content will be schema-valid.  
  * 
  * <p>Java class for CoordinatesType complex type.
  * 
@@ -59,13 +60,13 @@ import javax.xml.bind.annotation.XmlValue;
 public class CoordinatesType {
 
     @XmlValue
-    protected String value;
+    private String value;
     @XmlAttribute
-    protected String decimal;
+    private String decimal;
     @XmlAttribute
-    protected String cs;
+    private String cs;
     @XmlAttribute
-    protected String ts;
+    private String ts;
 
     /**
      * An empty constructor used by JAXB
@@ -129,11 +130,10 @@ public class CoordinatesType {
      *     
      */
     public String getDecimal() {
-        if (decimal == null) {
+        /*if (decimal == null) {
             return ".";
-        } else {
-            return decimal;
-        }
+        } else {*/
+        return decimal;
     }
 
     /**
@@ -157,11 +157,10 @@ public class CoordinatesType {
      *     
      */
     public String getCs() {
-        if (cs == null) {
+        /*if (cs == null) {
             return ",";
-        } else {
-            return cs;
-        }
+        } else {*/
+        return cs;
     }
 
     /**
@@ -185,11 +184,10 @@ public class CoordinatesType {
      *     
      */
     public String getTs() {
-        if (ts == null) {
+        /*if (ts == null) {
             return " ";
-        } else {
-            return ts;
-        }
+        } else {*/
+        return ts;
     }
 
     /**
@@ -215,27 +213,20 @@ public class CoordinatesType {
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
+        if (object instanceof CoordinatesType) {
+            final CoordinatesType that = (CoordinatesType) object;
+
+
+            return Utilities.equals(this.cs,      that.cs) &&
+                   Utilities.equals(this.ts,      that.ts) &&
+                   Utilities.equals(this.value,   that.value) &&
+                   Utilities.equals(this.decimal, that.decimal);
         }
-        final CoordinatesType other = (CoordinatesType) obj;
-        if ((this.value == null) ? (other.value != null) : !this.value.equals(other.value)) {
-            return false;
-        }
-        if ((this.decimal == null) ? (other.decimal != null) : !this.decimal.equals(other.decimal)) {
-            return false;
-        }
-        if ((this.cs == null) ? (other.cs != null) : !this.cs.equals(other.cs)) {
-            return false;
-        }
-        if ((this.ts == null) ? (other.ts != null) : !this.ts.equals(other.ts)) {
-            return false;
-        }
-        return true;
+        return false;
     }
 
     @Override

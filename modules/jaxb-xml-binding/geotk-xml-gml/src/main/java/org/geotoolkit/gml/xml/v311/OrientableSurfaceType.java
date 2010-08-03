@@ -50,9 +50,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "OrientableSurfaceType", propOrder = {
     "baseSurface"
 })
-public class OrientableSurfaceType
-    extends AbstractSurfaceType
-{
+public class OrientableSurfaceType extends AbstractSurfaceType {
 
     @XmlElement(required = true)
     protected SurfacePropertyType baseSurface;

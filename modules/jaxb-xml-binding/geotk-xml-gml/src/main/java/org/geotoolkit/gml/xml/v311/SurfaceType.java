@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -55,12 +56,10 @@ import javax.xml.bind.annotation.XmlType;
     TriangulatedSurfaceType.class,
     PolyhedralSurfaceType.class
 })
-public class SurfaceType
-    extends AbstractSurfaceType
-{
+public class SurfaceType extends AbstractSurfaceType {
 
     @XmlElementRef(name = "patches", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected JAXBElement<? extends SurfacePatchArrayPropertyType> patches;
+    private JAXBElement<? extends SurfacePatchArrayPropertyType> patches;
 
     /**
      * This element encapsulates the patches of the surface.
@@ -72,7 +71,7 @@ public class SurfaceType
      *     {@link JAXBElement }{@code <}{@link PolygonPatchArrayPropertyType }{@code >}
      *     
      */
-    public JAXBElement<? extends SurfacePatchArrayPropertyType> getPatches() {
+    public JAXBElement<? extends SurfacePatchArrayPropertyType> getJbPatches() {
         return patches;
     }
 
@@ -86,8 +85,81 @@ public class SurfaceType
      *     {@link JAXBElement }{@code <}{@link PolygonPatchArrayPropertyType }{@code >}
      *     
      */
-    public void setPatches(JAXBElement<? extends SurfacePatchArrayPropertyType> value) {
+    public void setJbPatches(JAXBElement<? extends SurfacePatchArrayPropertyType> value) {
         this.patches = ((JAXBElement<? extends SurfacePatchArrayPropertyType> ) value);
     }
 
+    /**
+     * This element encapsulates the patches of the surface.
+     *
+     * @return
+     *     possible object is
+     *     {@code <}{@link SurfacePatchArrayPropertyType }{@code >}
+     *     {@code <}{@link TrianglePatchArrayPropertyType }{@code >}
+     *     {@code <}{@link PolygonPatchArrayPropertyType }{@code >}
+     *
+     */
+    public SurfacePatchArrayPropertyType getPatches() {
+        if (patches != null) {
+            return patches.getValue();
+        }
+        return null;
+    }
+
+    /**
+     * This element encapsulates the patches of the surface.
+     *
+     * @param value
+     *     allowed object is
+     *     {@code <}{@link SurfacePatchArrayPropertyType }{@code >}
+     *     {@code <}{@link TrianglePatchArrayPropertyType }{@code >}
+     *     {@code <}{@link PolygonPatchArrayPropertyType }{@code >}
+     *
+     */
+    public void setPatches(SurfacePatchArrayPropertyType value) {
+        if (value != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            if (value instanceof TrianglePatchArrayPropertyType) {
+                this.patches = factory.createTrianglePatches((TrianglePatchArrayPropertyType) value);
+            } else if (value instanceof PolygonPatchArrayPropertyType) {
+                this.patches = factory.createPolygonPatches((PolygonPatchArrayPropertyType) value);
+            } else {
+                this.patches = factory.createPatches( value);
+            }
+        } else {
+            this.patches = null;
+        }
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(super.toString()).append('\n');
+        if (patches != null) {
+            s.append("patches:").append(patches.getValue()).append('\n');
+        }
+        return s.toString();
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof SurfaceType && super.equals(object)) {
+            final SurfaceType that = (SurfaceType) object;
+
+            return Utilities.equals(this.getPatches(), that.getPatches());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + (this.getPatches() != null ? this.getPatches().hashCode() : 0);
+        return hash;
+    }
 }

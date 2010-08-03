@@ -63,8 +63,8 @@ import org.opengis.geometry.primitive.Point;
 @XmlRootElement(name="Point")
 public class PointType extends AbstractGeometricPrimitiveType implements Point {
 
-    protected DirectPositionType pos;
-    protected CoordinatesType coordinates;
+    private DirectPositionType pos;
+    private CoordinatesType coordinates;
 
     /**
      * An empty constructor used by JAXB.
@@ -81,7 +81,7 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point {
         super.setId(id);
         this.pos = (pos instanceof DirectPositionType) ? (DirectPositionType)pos : new DirectPositionType(pos);
         if (this.pos.srsName == null) {
-            this.pos.setSrsName(this.srsName);
+            this.pos.setSrsName(getSrsName());
         }
     }
 

@@ -81,7 +81,7 @@ public class J2DLegendUtilities {
         float Y = bounds.y;
 
         final Dimension estimation = estimate(g2d, context, template, false);
-        
+
         final BackgroundTemplate background = template.getBackground();
         if(background != null){
             final Rectangle area = new Rectangle(estimation);
@@ -225,7 +225,7 @@ public class J2DLegendUtilities {
 
             Y += glyphHeight + gapSize;
         }
-        
+
     }
 
 

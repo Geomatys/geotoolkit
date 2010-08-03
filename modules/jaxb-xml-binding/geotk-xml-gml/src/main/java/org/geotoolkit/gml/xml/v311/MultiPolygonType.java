@@ -21,6 +21,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 
@@ -50,29 +51,13 @@ import org.opengis.filter.expression.ExpressionVisitor;
 @XmlType(name = "MultiPolygonType", propOrder = {
     "polygonMember"
 })
-public class MultiPolygonType
-    extends AbstractGeometricAggregateType
-{
+public class MultiPolygonType extends AbstractGeometricAggregateType {
 
-    protected List<PolygonPropertyType> polygonMember;
+    private List<PolygonPropertyType> polygonMember;
 
     /**
      * Gets the value of the polygonMember property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the polygonMember property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getPolygonMember().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link PolygonPropertyType }
      * 
@@ -83,6 +68,19 @@ public class MultiPolygonType
             polygonMember = new ArrayList<PolygonPropertyType>();
         }
         return this.polygonMember;
+    }
+
+    public void setPolygonMember(List<PolygonPropertyType> polygonMember) {
+        this.polygonMember = polygonMember;
+    }
+
+    public void setPolygonMember(PolygonPropertyType polygonMember) {
+        if (polygonMember != null) {
+            if (this.polygonMember == null) {
+                this.polygonMember = new ArrayList<PolygonPropertyType>();
+            }
+            this.polygonMember.add(polygonMember);
+        }
     }
 
     @Override
@@ -100,4 +98,40 @@ public class MultiPolygonType
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+     /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof MultiPolygonType && super.equals(object)) {
+            final MultiPolygonType that = (MultiPolygonType) object;
+
+            return Utilities.equals(this.polygonMember, that.polygonMember);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (this.polygonMember != null ? this.polygonMember.hashCode() : 0);
+        return hash;
+    }
+
+
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (polygonMember != null) {
+            sb.append("polygonMember:").append('\n');
+            for (PolygonPropertyType sp : polygonMember) {
+                sb.append(sp).append('\n');
+            }
+        }
+        return sb.toString();
+    }
 }

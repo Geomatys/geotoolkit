@@ -218,10 +218,10 @@ public class GeometrytoJTS {
         final AbstractRingPropertyType ext = gml.getExterior().getValue();
         final List<JAXBElement<AbstractRingPropertyType>> ints = gml.getInterior();
 
-        final LinearRing exterior = toJTS(ext.getAbstractRing().getValue());
+        final LinearRing exterior = toJTS(ext.getAbstractRing());
         final LinearRing[] holes = new LinearRing[ints.size()];
         for(int i=0;i<holes.length;i++){
-            holes[i] = toJTS(ints.get(i).getValue().getAbstractRing().getValue());
+            holes[i] = toJTS(ints.get(i).getValue().getAbstractRing());
         }
 
         final Polygon polygon = GF.createPolygon(exterior, holes);
@@ -245,13 +245,27 @@ public class GeometrytoJTS {
         final CoordinatesType coord = gmlLine.getCoordinates();
         if(coord != null){
             String s = coord.getValue();
+            final String cs;
+            if (coord.getCs() == null) {
+                cs = ",";
+            } else {
+                cs = coord.getCs();
+            }
+            double x1 = Double.parseDouble(s.substring(0, s.indexOf(cs)));
+            s = s.substring(s.indexOf(cs) + 1);
 
-            double x1 = Double.parseDouble(s.substring(0, s.indexOf(coord.getCs())));
-            s = s.substring(s.indexOf(coord.getCs()) + 1);
-            double y1 = Double.parseDouble(s.substring(0, s.indexOf(coord.getTs())));
-            s = s.substring(s.indexOf(coord.getTs()) + 1);
-            double x2 = Double.parseDouble(s.substring(0, s.indexOf(coord.getCs())));
-            s = s.substring(s.indexOf(coord.getCs()) + 1);
+            final String ts;
+            if (coord.getTs() == null) {
+                ts = " ";
+            } else {
+                ts = coord.getTs();
+            }
+
+            double y1 = Double.parseDouble(s.substring(0, s.indexOf(ts)));
+            s = s.substring(s.indexOf(ts) + 1);
+
+            double x2 = Double.parseDouble(s.substring(0, s.indexOf(cs)));
+            s = s.substring(s.indexOf(cs) + 1);
             double y2 = Double.parseDouble(s);
 
             final int srid = SRIDGenerator.toSRID(crsName, Version.V1);
@@ -352,7 +366,7 @@ public class GeometrytoJTS {
         final Polygon[] members = new Polygon[pos.size()];
 
         for(int i=0,n=pos.size(); i<n; i++){
-            members[i] = toJTS((PolygonType)pos.get(i).getRealAbstractSurface());
+            members[i] = toJTS((PolygonType)pos.get(i).getAbstractSurface());
         }
 
         final MultiPolygon geom = GF.createMultiPolygon(members);
@@ -372,7 +386,7 @@ public class GeometrytoJTS {
         }else if(gml instanceof RingType){
             return toJTS((RingType)gml);
         }else{
-            Logging.getLogger(GeometrytoJTS.class).log(Level.WARNING, "Unssupported geometry type : " + gml);
+            Logging.getLogger(GeometrytoJTS.class).log(Level.WARNING, "Unssupported geometry type : {0}", gml);
             return GF.createLinearRing(new Coordinate[]{new Coordinate(0, 0),new Coordinate(0, 0),
             new Coordinate(0, 0),new Coordinate(0, 0)});
         }
@@ -406,11 +420,11 @@ public class GeometrytoJTS {
         final LinkedList<Coordinate> coords = new LinkedList<Coordinate>();
 
         for(CurvePropertyType cpt :gml.getCurveMember()){
-            AbstractCurveType act = cpt.getAbstractCurve().getValue();
+            AbstractCurveType act = cpt.getAbstractCurve();
 
             if(act instanceof CurveType){
                 final CurveType ct = (CurveType) act;
-                for(JAXBElement<? extends AbstractCurveSegmentType> jax : ct.getSegments().getAbstractCurveSegment()){
+                for(JAXBElement<? extends AbstractCurveSegmentType> jax : ct.getSegments().getJbAbstractCurveSegment()){
                     AbstractCurveSegmentType acst = jax.getValue();
 
                     if(acst instanceof ClothoidType){

@@ -266,6 +266,16 @@ public class XmlFeatureTest {
     }
 
     @Test
+    public void testReadSimpleFeatureType2() throws JAXBException {
+        final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
+        final List<FeatureType> types = reader.read(XmlFeatureTest.class
+                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleType2.xsd"));
+
+        assertEquals(1, types.size());
+        assertEquals(simpleTypeFull, types.get(0));
+    }
+
+    @Test
     public void testReadComplexFeatureType() throws JAXBException {
         final XmlFeatureTypeReader reader = new JAXBFeatureTypeReader();
         final List<FeatureType> types = reader.read(XmlFeatureTest.class

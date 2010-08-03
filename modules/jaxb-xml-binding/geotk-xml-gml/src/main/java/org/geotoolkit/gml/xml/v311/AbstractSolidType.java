@@ -46,9 +46,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     SolidType.class
 })
-public class AbstractSolidType
-    extends AbstractGeometricPrimitiveType
-{
+public class AbstractSolidType extends AbstractGeometricPrimitiveType {
 
 
 }

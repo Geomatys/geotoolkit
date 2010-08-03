@@ -59,27 +59,27 @@ import org.geotoolkit.util.Utilities;
 public class GeometryPropertyType {
 
     @XmlElementRef(name = "AbstractGeometry", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected JAXBElement<? extends AbstractGeometryType> abstractGeometry;
+    private JAXBElement<? extends AbstractGeometryType> abstractGeometry;
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
-    protected String remoteSchema;
+    private String remoteSchema;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    protected String type;
-    @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    @XmlSchemaType(name = "anyURI")
-    protected String href;
+    private String type;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     @XmlSchemaType(name = "anyURI")
-    protected String role;
+    private String href;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     @XmlSchemaType(name = "anyURI")
-    protected String arcrole;
+    private String role;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    protected String title;
+    @XmlSchemaType(name = "anyURI")
+    private String arcrole;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    protected String show;
+    private String title;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    protected String actuate;
+    private String show;
+    @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
+    private String actuate;
 
      @XmlTransient
     private ObjectFactory factory = new ObjectFactory();
@@ -91,6 +91,14 @@ public class GeometryPropertyType {
     public GeometryPropertyType(AbstractGeometryType value) {
         if (value instanceof PolygonType) {
             abstractGeometry = factory.createPolygon((PolygonType) value);
+        } else if (value instanceof OrientableSurfaceType) {
+            abstractGeometry = factory.createOrientableSurface((OrientableSurfaceType) value);
+        } else if (value instanceof LinearRingType) {
+            abstractGeometry = factory.createLinearRing((LinearRingType) value);
+        } else if (value instanceof RingType) {
+            abstractGeometry = factory.createRing((RingType) value);
+        } else if (value instanceof PolyhedralSurfaceType) {
+            abstractGeometry = factory.createPolyhedralSurface((PolyhedralSurfaceType) value);
         } else if (value instanceof CurveType) {
             abstractGeometry = factory.createCurve((CurveType) value);
         } else if (value instanceof PointType) {
@@ -150,7 +158,7 @@ public class GeometryPropertyType {
      *     {@link JAXBElement }{@code <}{@link MultiSolidType }{@code >}
      *     
      */
-    public JAXBElement<? extends AbstractGeometryType> getAbstractGeometry() {
+    public JAXBElement<? extends AbstractGeometryType> getJbAbstractGeometry() {
         return abstractGeometry;
     }
 
@@ -188,8 +196,119 @@ public class GeometryPropertyType {
      *     {@link JAXBElement }{@code <}{@link MultiSolidType }{@code >}
      *     
      */
-    public void setAbstractGeometry(JAXBElement<? extends AbstractGeometryType> value) {
+    public void setJbAbstractGeometry(JAXBElement<? extends AbstractGeometryType> value) {
         this.abstractGeometry = ((JAXBElement<? extends AbstractGeometryType> ) value);
+    }
+
+    /**
+     * Gets the value of the abstractGeometry property.
+     *
+     * @return
+     *     possible object is
+     *     {@code <}{@link OrientableSurfaceType }{@code >}
+     *     {@code <}{@link AbstractSolidType }{@code >}
+     *     {@code <}{@link MultiSurfaceType }{@code >}
+     *     {@code <}{@link AbstractGeometricAggregateType }{@code >}
+     *     {@code <}{@link SolidType }{@code >}
+     *     {@code <}{@link TinType }{@code >}
+     *     {@code <}{@link MultiGeometryType }{@code >}
+     *     {@code <}{@link SurfaceType }{@code >}
+     *     {@code <}{@link MultiPointType }{@code >}
+     *     {@code <}{@link LineStringType }{@code >}
+     *     {@code <}{@link AbstractCurveType }{@code >}
+     *     {@code <}{@link AbstractSurfaceType }{@code >}
+     *     {@code <}{@link LinearRingType }{@code >}
+     *     {@code <}{@link AbstractRingType }{@code >}
+     *     {@code <}{@link TriangulatedSurfaceType }{@code >}
+     *     {@code <}{@link PolyhedralSurfaceType }{@code >}
+     *     {@code <}{@link CurveType }{@code >}
+     *     {@code <}{@link MultiLineStringType }{@code >}
+     *     {@code <}{@link AbstractGeometryType }{@code >}
+     *     {@code <}{@link OrientableCurveType }{@code >}
+     *     {@code <}{@link MultiPolygonType }{@code >}
+     *     {@code <}{@link PolygonType }{@code >}
+     *     {@code <}{@link RingType }{@code >}
+     *     {@code <}{@link MultiCurveType }{@code >}
+     *     {@code <}{@link AbstractGeometricPrimitiveType }{@code >}
+     *     {@code <}{@link PointType }{@code >}
+     *     {@code <}{@link MultiSolidType }{@code >}
+     *
+     */
+    public AbstractGeometryType getAbstractGeometry() {
+        if (abstractGeometry != null) {
+            return abstractGeometry.getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Sets the value of the abstractGeometry property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@code <}{@link OrientableSurfaceType }{@code >}
+     *     {@code <}{@link AbstractSolidType }{@code >}
+     *     {@code <}{@link MultiSurfaceType }{@code >}
+     *     {@code <}{@link AbstractGeometricAggregateType }{@code >}
+     *     {@code <}{@link SolidType }{@code >}
+     *     {@code <}{@link TinType }{@code >}
+     *     {@code <}{@link MultiGeometryType }{@code >}
+     *     {@code <}{@link SurfaceType }{@code >}
+     *     {@code <}{@link MultiPointType }{@code >}
+     *     {@code <}{@link LineStringType }{@code >}
+     *     {@code <}{@link AbstractCurveType }{@code >}
+     *     {@code <}{@link AbstractSurfaceType }{@code >}
+     *     {@code <}{@link LinearRingType }{@code >}
+     *     {@code <}{@link AbstractRingType }{@code >}
+     *     {@code <}{@link TriangulatedSurfaceType }{@code >}
+     *     {@code <}{@link PolyhedralSurfaceType }{@code >}
+     *     {@code <}{@link CurveType }{@code >}
+     *     {@code <}{@link MultiLineStringType }{@code >}
+     *     {@code <}{@link AbstractGeometryType }{@code >}
+     *     {@code <}{@link OrientableCurveType }{@code >}
+     *     {@code <}{@link MultiPolygonType }{@code >}
+     *     {@code <}{@link PolygonType }{@code >}
+     *     {@code <}{@link RingType }{@code >}
+     *     {@code <}{@link MultiCurveType }{@code >}
+     *     {@code <}{@link AbstractGeometricPrimitiveType }{@code >}
+     *     {@code <}{@link PointType }{@code >}
+     *     {@code <}{@link MultiSolidType }{@code >}
+     *
+     */
+    public void setAbstractGeometry(AbstractGeometryType value) {
+        if (value instanceof PolygonType) {
+            abstractGeometry = factory.createPolygon((PolygonType) value);
+        } else if (value instanceof CurveType) {
+            abstractGeometry = factory.createCurve((CurveType) value);
+        } else if (value instanceof OrientableSurfaceType) {
+            abstractGeometry = factory.createOrientableSurface((OrientableSurfaceType) value);
+        } else if (value instanceof LinearRingType) {
+            abstractGeometry = factory.createLinearRing((LinearRingType) value);
+        } else if (value instanceof RingType) {
+            abstractGeometry = factory.createRing((RingType) value);
+        } else if (value instanceof PolyhedralSurfaceType) {
+            abstractGeometry = factory.createPolyhedralSurface((PolyhedralSurfaceType) value);
+        } else if (value instanceof PointType) {
+            abstractGeometry = factory.createPoint((PointType) value);
+        } else if (value instanceof LineStringType) {
+            abstractGeometry = factory.createLineString((LineStringType) value);
+        } else if (value instanceof PolyhedralSurfaceType) {
+            abstractGeometry = factory.createPolyhedralSurface((PolyhedralSurfaceType) value);
+        } else if (value instanceof MultiCurveType) {
+            abstractGeometry = factory.createMultiCurve((MultiCurveType) value);
+        } else if (value instanceof MultiLineStringType) {
+            abstractGeometry = factory.createMultiLineString((MultiLineStringType) value);
+        } else if (value instanceof MultiPointType) {
+            abstractGeometry = factory.createMultiPoint((MultiPointType) value);
+        } else if (value instanceof MultiPolygonType) {
+            abstractGeometry = factory.createMultiPolygon((MultiPolygonType) value);
+        } else if (value instanceof MultiSolidType) {
+            abstractGeometry = factory.createMultiSolid((MultiSolidType) value);
+        } else if (value instanceof MultiSurfaceType) {
+            abstractGeometry = factory.createMultiSurface((MultiSurfaceType) value);
+        } else {
+            throw new IllegalArgumentException("unexpected geometry type:" + value);
+        }
     }
 
     /**
@@ -225,11 +344,7 @@ public class GeometryPropertyType {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**

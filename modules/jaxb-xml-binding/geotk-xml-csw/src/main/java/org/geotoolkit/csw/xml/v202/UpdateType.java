@@ -17,7 +17,6 @@
 package org.geotoolkit.csw.xml.v202;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -25,7 +24,6 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
@@ -110,6 +108,10 @@ public class UpdateType {
         return any;
     }
 
+    public void setAny(Object any) {
+        this.any = any;
+    }
+
     /**
      * Gets the value of the recordProperty property.
      * (unmodifiable)
@@ -118,7 +120,11 @@ public class UpdateType {
         if (recordProperty == null) {
             recordProperty = new ArrayList<RecordPropertyType>();
         }
-        return Collections.unmodifiableList(recordProperty);
+        return recordProperty;
+    }
+
+    public void setRecordProperty(List<RecordPropertyType> recordProperty) {
+        this.recordProperty = recordProperty;
     }
 
     /**
@@ -128,11 +134,19 @@ public class UpdateType {
         return constraint;
     }
 
+    public void setConstraint(QueryConstraintType constraint) {
+        this.constraint = constraint;
+    }
+    
     /**
      * Gets the value of the handle property.
      */
     public String getHandle() {
         return handle;
+    }
+
+    public void setHandle(String handle) {
+        this.handle = handle;
     }
 
     /**

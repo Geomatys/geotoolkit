@@ -28,4 +28,15 @@ public interface AbstractOperation {
     
     List<? extends AbstractDCP> getDCP();
 
+    List<? extends AbstractDomain> getParameter();
+
+    AbstractDomain getParameter(String name);
+
+    AbstractDomain getParameterIgnoreCase(String name);
+
+    List<? extends AbstractDomain> getConstraint();
+
+    AbstractDomain getConstraint(String name);
+
+    AbstractDomain getConstraintIgnoreCase(String name);
 }

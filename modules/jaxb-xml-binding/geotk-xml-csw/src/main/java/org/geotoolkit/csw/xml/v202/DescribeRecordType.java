@@ -109,7 +109,11 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
         if (typeName == null) {
             typeName = new ArrayList<QName>();
         }
-        return Collections.unmodifiableList(typeName);
+        return typeName;
+    }
+
+    public void setTypeName(List<QName> typeName) {
+        this.typeName = typeName;
     }
 
     /**
@@ -135,6 +139,10 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
         } else {
             return schemaLanguage;
         }
+    }
+
+    public void setSchemaLanguage(String schemaLanguage) {
+        this.schemaLanguage = schemaLanguage;
     }
 
     /**

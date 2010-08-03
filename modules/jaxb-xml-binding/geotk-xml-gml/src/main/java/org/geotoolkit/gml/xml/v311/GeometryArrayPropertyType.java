@@ -56,25 +56,11 @@ import org.geotoolkit.util.Utilities;
 public class GeometryArrayPropertyType {
 
     @XmlElementRef(name = "AbstractGeometry", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected List<JAXBElement<? extends AbstractGeometryType>> abstractGeometry;
+    private List<JAXBElement<? extends AbstractGeometryType>> abstractGeometry;
 
     /**
      * Gets the value of the abstractGeometry property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the abstractGeometry property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAbstractGeometry().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link OrientableSurfaceType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractSolidType }{@code >}
@@ -106,11 +92,171 @@ public class GeometryArrayPropertyType {
      * 
      * 
      */
-    public List<JAXBElement<? extends AbstractGeometryType>> getAbstractGeometry() {
+    public List<JAXBElement<? extends AbstractGeometryType>> getJbAbstractGeometry() {
         if (abstractGeometry == null) {
             abstractGeometry = new ArrayList<JAXBElement<? extends AbstractGeometryType>>();
         }
         return this.abstractGeometry;
+    }
+
+    /**
+     * Gets the value of the abstractGeometry property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@link JAXBElement }{@code <}{@link OrientableSurfaceType }{@code >}
+     * {@link JAXBElement }{@code <}{@link AbstractSolidType }{@code >}
+     * {@link JAXBElement }{@code <}{@link MultiSurfaceType }{@code >}
+     * {@link JAXBElement }{@code <}{@link AbstractGeometricAggregateType }{@code >}
+     * {@link JAXBElement }{@code <}{@link SolidType }{@code >}
+     * {@link JAXBElement }{@code <}{@link TinType }{@code >}
+     * {@link JAXBElement }{@code <}{@link MultiGeometryType }{@code >}
+     * {@link JAXBElement }{@code <}{@link SurfaceType }{@code >}
+     * {@link JAXBElement }{@code <}{@link MultiPointType }{@code >}
+     * {@link JAXBElement }{@code <}{@link LineStringType }{@code >}
+     * {@link JAXBElement }{@code <}{@link AbstractCurveType }{@code >}
+     * {@link JAXBElement }{@code <}{@link AbstractSurfaceType }{@code >}
+     * {@link JAXBElement }{@code <}{@link LinearRingType }{@code >}
+     * {@link JAXBElement }{@code <}{@link AbstractRingType }{@code >}
+     * {@link JAXBElement }{@code <}{@link TriangulatedSurfaceType }{@code >}
+     * {@link JAXBElement }{@code <}{@link PolyhedralSurfaceType }{@code >}
+     * {@link JAXBElement }{@code <}{@link CurveType }{@code >}
+     * {@link JAXBElement }{@code <}{@link MultiLineStringType }{@code >}
+     * {@link JAXBElement }{@code <}{@link AbstractGeometryType }{@code >}
+     * {@link JAXBElement }{@code <}{@link OrientableCurveType }{@code >}
+     * {@link JAXBElement }{@code <}{@link MultiPolygonType }{@code >}
+     * {@link JAXBElement }{@code <}{@link PolygonType }{@code >}
+     * {@link JAXBElement }{@code <}{@link RingType }{@code >}
+     * {@link JAXBElement }{@code <}{@link MultiCurveType }{@code >}
+     * {@link JAXBElement }{@code <}{@link AbstractGeometricPrimitiveType }{@code >}
+     * {@link JAXBElement }{@code <}{@link PointType }{@code >}
+     * {@link JAXBElement }{@code <}{@link MultiSolidType }{@code >}
+     *
+     *
+     */
+    public void setJbAbstractGeometry(List<JAXBElement<? extends AbstractGeometryType>> abstractGeometry) {
+        this.abstractGeometry = abstractGeometry;
+    }
+
+    /**
+     * Gets the value of the abstractGeometry property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@code <}{@link OrientableSurfaceType }{@code >}
+     * {@code <}{@link AbstractSolidType }{@code >}
+     * {@code <}{@link MultiSurfaceType }{@code >}
+     * {@code <}{@link AbstractGeometricAggregateType }{@code >}
+     * {@code <}{@link SolidType }{@code >}
+     * {@code <}{@link TinType }{@code >}
+     * {@code <}{@link MultiGeometryType }{@code >}
+     * {@code <}{@link SurfaceType }{@code >}
+     * {@code <}{@link MultiPointType }{@code >}
+     * {@code <}{@link LineStringType }{@code >}
+     * {@code <}{@link AbstractCurveType }{@code >}
+     * {@code <}{@link AbstractSurfaceType }{@code >}
+     * {@code <}{@link LinearRingType }{@code >}
+     * {@code <}{@link AbstractRingType }{@code >}
+     * {@code <}{@link TriangulatedSurfaceType }{@code >}
+     * {@code <}{@link PolyhedralSurfaceType }{@code >}
+     * {@code <}{@link CurveType }{@code >}
+     * {@code <}{@link MultiLineStringType }{@code >}
+     * {@code <}{@link AbstractGeometryType }{@code >}
+     * {@code <}{@link OrientableCurveType }{@code >}
+     * {@code <}{@link MultiPolygonType }{@code >}
+     * {@code <}{@link PolygonType }{@code >}
+     * {@code <}{@link RingType }{@code >}
+     * {@code <}{@link MultiCurveType }{@code >}
+     * {@code <}{@link AbstractGeometricPrimitiveType }{@code >}
+     * {@code <}{@link PointType }{@code >}
+     * {@code <}{@link MultiSolidType }{@code >}
+     *
+     *
+     */
+    public List<? extends AbstractGeometryType> getAbstractGeometry() {
+        if (abstractGeometry == null) {
+            abstractGeometry = new ArrayList<JAXBElement<? extends AbstractGeometryType>>();
+        }
+        final List<AbstractGeometryType> result = new ArrayList<AbstractGeometryType>();
+        for (JAXBElement<? extends AbstractGeometryType> jb : abstractGeometry) {
+            result.add(jb.getValue());
+        }
+        return result;
+    }
+
+    /**
+     * Gets the value of the abstractGeometry property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@code <}{@link OrientableSurfaceType }{@code >}
+     * {@code <}{@link AbstractSolidType }{@code >}
+     * {@code <}{@link MultiSurfaceType }{@code >}
+     * {@code <}{@link AbstractGeometricAggregateType }{@code >}
+     * {@code <}{@link SolidType }{@code >}
+     * {@code <}{@link TinType }{@code >}
+     * {@code <}{@link MultiGeometryType }{@code >}
+     * {@code <}{@link SurfaceType }{@code >}
+     * {@code <}{@link MultiPointType }{@code >}
+     * {@code <}{@link LineStringType }{@code >}
+     * {@code <}{@link AbstractCurveType }{@code >}
+     * {@code <}{@link AbstractSurfaceType }{@code >}
+     * {@code <}{@link LinearRingType }{@code >}
+     * {@code <}{@link AbstractRingType }{@code >}
+     * {@code <}{@link TriangulatedSurfaceType }{@code >}
+     * {@code <}{@link PolyhedralSurfaceType }{@code >}
+     * {@code <}{@link CurveType }{@code >}
+     * {@code <}{@link MultiLineStringType }{@code >}
+     * {@code <}{@link AbstractGeometryType }{@code >}
+     * {@code <}{@link OrientableCurveType }{@code >}
+     * {@code <}{@link MultiPolygonType }{@code >}
+     * {@code <}{@link PolygonType }{@code >}
+     * {@code <}{@link RingType }{@code >}
+     * {@code <}{@link MultiCurveType }{@code >}
+     * {@code <}{@link AbstractGeometricPrimitiveType }{@code >}
+     * {@code <}{@link PointType }{@code >}
+     * {@code <}{@link MultiSolidType }{@code >}
+     *
+     *
+     */
+    public void setAbstractGeometry(List<? extends AbstractGeometryType> abstractGeometry) {
+        if (this.abstractGeometry == null) {
+            this.abstractGeometry = new ArrayList<JAXBElement<? extends AbstractGeometryType>>();
+        }
+        final ObjectFactory factory = new ObjectFactory();
+        for (AbstractGeometryType value : abstractGeometry) {
+            if (value instanceof PolygonType) {
+                this.abstractGeometry.add(factory.createPolygon((PolygonType) value));
+            } else if (value instanceof OrientableSurfaceType) {
+                this.abstractGeometry.add(factory.createOrientableSurface((OrientableSurfaceType) value));
+            } else if (value instanceof LinearRingType) {
+                this.abstractGeometry.add(factory.createLinearRing((LinearRingType) value));
+            } else if (value instanceof RingType) {
+                this.abstractGeometry.add(factory.createRing((RingType) value));
+            } else if (value instanceof PolyhedralSurfaceType) {
+                this.abstractGeometry.add(factory.createPolyhedralSurface((PolyhedralSurfaceType) value));
+            } else if (value instanceof CurveType) {
+                this.abstractGeometry.add(factory.createCurve((CurveType) value));
+            } else if (value instanceof PointType) {
+                this.abstractGeometry.add(factory.createPoint((PointType) value));
+            } else if (value instanceof LineStringType) {
+                this.abstractGeometry.add(factory.createLineString((LineStringType) value));
+            } else if (value instanceof PolyhedralSurfaceType) {
+                this.abstractGeometry.add(factory.createPolyhedralSurface((PolyhedralSurfaceType) value));
+            } else if (value instanceof MultiCurveType) {
+                this.abstractGeometry.add(factory.createMultiCurve((MultiCurveType) value));
+            } else if (value instanceof MultiLineStringType) {
+                this.abstractGeometry.add(factory.createMultiLineString((MultiLineStringType) value));
+            } else if (value instanceof MultiPointType) {
+                this.abstractGeometry.add(factory.createMultiPoint((MultiPointType) value));
+            } else if (value instanceof MultiPolygonType) {
+                this.abstractGeometry.add(factory.createMultiPolygon((MultiPolygonType) value));
+            } else if (value instanceof MultiSolidType) {
+                this.abstractGeometry.add(factory.createMultiSolid((MultiSolidType) value));
+            } else if (value instanceof MultiSurfaceType) {
+                this.abstractGeometry.add(factory.createMultiSurface((MultiSurfaceType) value));
+            } else {
+                throw new IllegalArgumentException("unexpected geometry type:" + value);
+            }
+        }
+
     }
 
     /**

@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -54,36 +55,105 @@ import javax.xml.bind.annotation.XmlType;
 public class SolidArrayPropertyType {
 
     @XmlElementRef(name = "AbstractSolid", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected List<JAXBElement<? extends AbstractSolidType>> abstractSolid;
+    private List<JAXBElement<? extends AbstractSolidType>> abstractSolid;
 
     /**
      * Gets the value of the abstractSolid property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the abstractSolid property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAbstractSolid().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AbstractSolidType }{@code >}
      * {@link JAXBElement }{@code <}{@link SolidType }{@code >}
      * 
-     * 
      */
-    public List<JAXBElement<? extends AbstractSolidType>> getAbstractSolid() {
+    public List<JAXBElement<? extends AbstractSolidType>> getJbAbstractSolid() {
         if (abstractSolid == null) {
             abstractSolid = new ArrayList<JAXBElement<? extends AbstractSolidType>>();
         }
         return this.abstractSolid;
     }
 
+    /**
+     * Sets the value of the abstractSolid property.
+     * Objects of the following type(s) are allowed in the list
+     * {@link JAXBElement }{@code <}{@link AbstractSolidType }{@code >}
+     * {@link JAXBElement }{@code <}{@link SolidType }{@code >}
+     *
+     */
+    public void setJbAbstractSolid(List<JAXBElement<? extends AbstractSolidType>> abstractSolid) {
+        this.abstractSolid = abstractSolid;
+    }
+
+    /**
+     * Gets the value of the abstractSolid property.
+     * Objects of the following type(s) are allowed in the list
+     * {@link JAXBElement }{@code <}{@link AbstractSolidType }{@code >}
+     * {@link JAXBElement }{@code <}{@link SolidType }{@code >}
+     *
+     */
+    public List<? extends AbstractSolidType> getAbstractSolid() {
+        if (abstractSolid == null) {
+            abstractSolid = new ArrayList<JAXBElement<? extends AbstractSolidType>>();
+        }
+        final List<AbstractSolidType> result = new ArrayList<AbstractSolidType>();
+        for (JAXBElement<? extends AbstractSolidType> jb : abstractSolid) {
+            result.add(jb.getValue());
+        }
+        return result;
+    }
+
+    /**
+     * Gets the value of the abstractSolid property.
+     * Objects of the following type(s) are allowed in the list
+     * {@link JAXBElement }{@code <}{@link AbstractSolidType }{@code >}
+     * {@link JAXBElement }{@code <}{@link SolidType }{@code >}
+     *
+     */
+    public void setAbstractSolid(List<? extends AbstractSolidType> abstractSolid) {
+        if (abstractSolid != null) {
+            if (this.abstractSolid == null) {
+               this.abstractSolid = new ArrayList<JAXBElement<? extends AbstractSolidType>>();
+            }
+            final ObjectFactory factory = new ObjectFactory();
+            for (AbstractSolidType solid : abstractSolid) {
+                if (solid instanceof SolidType) {
+                    this.abstractSolid.add(factory.createSolid((SolidType) solid));
+                } else if (solid instanceof AbstractSolidType) {
+                    this.abstractSolid.add(factory.createAbstractSolid((AbstractSolidType) solid));
+                }
+            }
+        }
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof SolidArrayPropertyType) {
+            final SolidArrayPropertyType that = (SolidArrayPropertyType) object;
+
+            if (this.abstractSolid != null && that.abstractSolid != null) {
+                for (int i = 0; i < abstractSolid.size(); i++) {
+                    AbstractSolidType thisGeom = this.abstractSolid.get(i).getValue();
+                    AbstractSolidType thatGeom = that.abstractSolid.get(i).getValue();
+
+                    if (!Utilities.equals(thisGeom,   thatGeom))
+                        return false;
+                }
+                return true;
+            } else if (this.abstractSolid == null && that.abstractSolid == null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + (this.abstractSolid != null ? this.abstractSolid.hashCode() : 0);
+        return hash;
+    }
 }

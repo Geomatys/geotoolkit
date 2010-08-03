@@ -21,6 +21,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 
@@ -52,33 +53,13 @@ import org.opengis.filter.expression.ExpressionVisitor;
     "surfaceMember",
     "surfaceMembers"
 })
-public class MultiSurfaceType
-    extends AbstractGeometricAggregateType
-{
+public class MultiSurfaceType extends AbstractGeometricAggregateType {
 
-    protected List<SurfacePropertyType> surfaceMember;
-    protected SurfaceArrayPropertyType surfaceMembers;
+    private List<SurfacePropertyType> surfaceMember;
+    private SurfaceArrayPropertyType surfaceMembers;
 
     /**
      * Gets the value of the surfaceMember property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the surfaceMember property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getSurfaceMember().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link SurfacePropertyType }
-     * 
      * 
      */
     public List<SurfacePropertyType> getSurfaceMember() {
@@ -86,6 +67,17 @@ public class MultiSurfaceType
             surfaceMember = new ArrayList<SurfacePropertyType>();
         }
         return this.surfaceMember;
+    }
+
+    public void setSurfaceMember(List<SurfacePropertyType> surfaceMember) {
+        this.surfaceMember = surfaceMember;
+    }
+
+    public void setSurfaceMember(SurfacePropertyType surfaceMember) {
+        if (this.surfaceMember == null) {
+            this.surfaceMember = new ArrayList<SurfacePropertyType>();
+        }
+        this.surfaceMember.add(surfaceMember);
     }
 
     /**
@@ -127,4 +119,43 @@ public class MultiSurfaceType
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof MultiSurfaceType && super.equals(object)) {
+            final MultiSurfaceType that = (MultiSurfaceType) object;
+
+            return Utilities.equals(this.surfaceMember,  that.surfaceMember) &&
+                   Utilities.equals(this.surfaceMembers, that.surfaceMembers);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (this.surfaceMember != null ? this.surfaceMember.hashCode() : 0);
+        hash = 97 * hash + (this.surfaceMembers != null ? this.surfaceMembers.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (surfaceMembers != null) {
+            sb.append("surfaceMembers:").append(surfaceMembers).append('\n');
+        }
+        if (surfaceMember != null) {
+            sb.append("surfaceMember:").append('\n');
+            for (SurfacePropertyType sp : surfaceMember) {
+                sb.append(sp).append('\n');
+            }
+        }
+        return sb.toString();
+    }
 }

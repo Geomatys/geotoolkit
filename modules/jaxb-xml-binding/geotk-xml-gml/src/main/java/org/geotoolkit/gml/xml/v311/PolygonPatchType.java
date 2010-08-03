@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -58,11 +59,11 @@ import javax.xml.bind.annotation.XmlType;
 public class PolygonPatchType extends AbstractSurfacePatchType {
 
     @XmlElementRef(name = "exterior", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected JAXBElement<AbstractRingPropertyType> exterior;
+    private JAXBElement<AbstractRingPropertyType> exterior;
     @XmlElementRef(name = "interior", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected List<JAXBElement<AbstractRingPropertyType>> interior;
+    private List<JAXBElement<AbstractRingPropertyType>> interior;
     @XmlAttribute
-    protected SurfaceInterpolationType interpolation;
+    private SurfaceInterpolationType interpolation;
 
     PolygonPatchType() {}
 
@@ -89,7 +90,7 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
      *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
      *     
      */
-    public JAXBElement<AbstractRingPropertyType> getExterior() {
+    public JAXBElement<AbstractRingPropertyType> getJbExterior() {
         return exterior;
     }
 
@@ -102,38 +103,130 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
      *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
      *     
      */
-    public void setExterior(JAXBElement<AbstractRingPropertyType> value) {
+    public void setJbExterior(JAXBElement<AbstractRingPropertyType> value) {
         this.exterior = ((JAXBElement<AbstractRingPropertyType> ) value);
+    }
+
+    /**
+     * Gets the value of the exterior property.
+     *
+     * @return
+     *     possible object is
+     *     {@code <}{@link AbstractRingPropertyType }{@code >}
+     *     {@code <}{@link AbstractRingPropertyType }{@code >}
+     *
+     */
+    public AbstractRingPropertyType getExterior() {
+        if (exterior != null) {
+            return exterior.getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Sets the value of the exterior property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@code <}{@link AbstractRingPropertyType }{@code >}
+     *     {@code <}{@link AbstractRingPropertyType }{@code >}
+     *
+     */
+    public void setExterior(AbstractRingPropertyType value) {
+        ObjectFactory factory = new ObjectFactory();
+        this.exterior =  factory.createExterior(value);
     }
 
     /**
      * Gets the value of the interior property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the interior property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getInterior().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
      * 
      * 
      */
-    public List<JAXBElement<AbstractRingPropertyType>> getInterior() {
+    public List<JAXBElement<AbstractRingPropertyType>> getJbInterior() {
         if (interior == null) {
             interior = new ArrayList<JAXBElement<AbstractRingPropertyType>>();
         }
         return this.interior;
+    }
+
+    /**
+     * Sets the value of the interior property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
+     * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
+     *
+     *
+     */
+    public void setJbInterior(List<JAXBElement<AbstractRingPropertyType>> interior) {
+        this.interior = interior;
+    }
+
+
+    /**
+     * Gets the value of the interior property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
+     * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
+     *
+     *
+     */
+    public List<AbstractRingPropertyType> getInterior() {
+        if (interior == null) {
+            interior = new ArrayList<JAXBElement<AbstractRingPropertyType>>();
+        }
+        final List<AbstractRingPropertyType> result = new ArrayList<AbstractRingPropertyType>();
+        for (JAXBElement<AbstractRingPropertyType> jb : interior) {
+            result.add(jb.getValue());
+        }
+        return result;
+    }
+
+    /**
+     * Sets the value of the interior property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
+     * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
+     *
+     *
+     */
+    public void setInterior(List<AbstractRingPropertyType> interior) {
+        if (interior != null) {
+            if (this.interior == null) {
+                this.interior = new ArrayList<JAXBElement<AbstractRingPropertyType>>();
+            }
+            final ObjectFactory factory = new ObjectFactory();
+            for (AbstractRingPropertyType jb : interior) {
+                this.interior.add(factory.createInterior(jb));
+            }
+        } else {
+            this.interior = null;
+        }
+    }
+
+    /**
+     * Sets the value of the interior property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
+     * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
+     *
+     *
+     */
+    public void setInterior(AbstractRingPropertyType interior) {
+        if (interior != null) {
+            if (this.interior == null) {
+                this.interior = new ArrayList<JAXBElement<AbstractRingPropertyType>>();
+            }
+            final ObjectFactory factory = new ObjectFactory();
+            this.interior.add(factory.createInterior(interior));
+        } 
     }
 
     /**
@@ -145,11 +238,10 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
      *     
      */
     public SurfaceInterpolationType getInterpolation() {
-        if (interpolation == null) {
+        /*if (interpolation == null) {
             return SurfaceInterpolationType.PLANAR;
-        } else {
-            return interpolation;
-        }
+        } else {*/
+        return interpolation;
     }
 
     /**
@@ -162,6 +254,51 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
      */
     public void setInterpolation(SurfaceInterpolationType value) {
         this.interpolation = value;
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof PolygonPatchType) {
+            final PolygonPatchType that = (PolygonPatchType) object;
+
+            return Utilities.equals(this.getExterior(),    that.getExterior()) &&
+                   Utilities.equals(this.getInterior(),    that.getInterior()) &&
+                   Utilities.equals(this.interpolation,    that.interpolation);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + (this.getExterior() != null ? this.getExterior().hashCode() : 0);
+        hash = 37 * hash + (this.getInterior() != null ? this.getInterior().hashCode() : 0);
+        hash = 37 * hash + (this.interpolation != null ? this.interpolation.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder("[PolygonPatchType]").append("\n");
+        if (interpolation != null) {
+            sb.append("interpolation:").append(interpolation).append('\n');
+        }
+        if (interior != null) {
+            sb.append("interior:").append('\n');
+            for (JAXBElement<AbstractRingPropertyType> inte : interior) {
+                sb.append(inte.getValue()).append('\n');
+            }
+        }
+        if (exterior != null) {
+            sb.append("exterior:").append(exterior.getValue()).append('\n');
+        }
+        return sb.toString();
     }
 
 }

@@ -109,11 +109,19 @@ public class InsertType {
         return typeName;
     }
 
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
+    }
+
     /**
      * Gets the value of the handle property.
      */
     public String getHandle() {
         return handle;
+    }
+
+    public void setHandle(String handle) {
+        this.handle = handle;
     }
 
     /**

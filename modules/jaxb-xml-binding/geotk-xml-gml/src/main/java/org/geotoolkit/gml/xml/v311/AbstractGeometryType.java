@@ -44,11 +44,13 @@ import org.opengis.referencing.operation.TransformException;
 
 
 /**
- * All geometry elements are derived directly or indirectly from this abstract supertype. A geometry element may 
- * 			have an identifying attribute ("gml:id"), a name (attribute "name") and a description (attribute "description"). It may be associated 
- * 			with a spatial reference system (attribute "srsName"). The following rules shall be adhered: - Every geometry type shall derive 
- * 			from this abstract type. - Every geometry element (i.e. an element of a geometry type) shall be directly or indirectly in the 
- * 			substitution group of _Geometry.
+ * All geometry elements are derived directly or indirectly from this abstract supertype. 
+ * A geometry element mayhave an identifying attribute ("gml:id"),
+ * a name (attribute "name") and a description (attribute "description").
+ * It may be associated with a spatial reference system (attribute "srsName").
+ * The following rules shall be adhered: - Every geometry type shall derive from this abstract type.
+ * - Every geometry element (i.e. an element of a geometry type) shall be directly or indirectly in the
+ * substitution group of _Geometry.
  * 
  * <p>Java class for AbstractGeometryType complex type.
  * 
@@ -78,17 +80,17 @@ import org.opengis.referencing.operation.TransformException;
 public abstract class AbstractGeometryType extends AbstractGMLEntry implements Geometry, Expression {
 
     @XmlAttribute
-    protected String gid;
+    private String gid;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
-    protected String srsName;
+    private String srsName;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    protected Integer srsDimension;
+    private Integer srsDimension;
     @XmlAttribute
-    protected List<String> axisLabels;
+    private List<String> axisLabels;
     @XmlAttribute
-    protected List<String> uomLabels;
+    private List<String> uomLabels;
 
     /**
      * empty constructor used by JAXB
@@ -186,20 +188,6 @@ public abstract class AbstractGeometryType extends AbstractGMLEntry implements G
     /**
      * Gets the value of the axisLabels property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the axisLabels property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAxisLabels().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 
@@ -215,23 +203,8 @@ public abstract class AbstractGeometryType extends AbstractGMLEntry implements G
     /**
      * Gets the value of the uomLabels property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the uomLabels property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getUomLabels().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
-     * 
      * 
      */
     public List<String> getUomLabels() {

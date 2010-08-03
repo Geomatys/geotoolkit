@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -55,27 +56,27 @@ import javax.xml.bind.annotation.XmlType;
 public class SolidPropertyType {
 
     @XmlElementRef(name = "AbstractSolid", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected JAXBElement<? extends AbstractSolidType> abstractSolid;
+    private JAXBElement<? extends AbstractSolidType> abstractSolid;
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
-    protected String remoteSchema;
+    private String remoteSchema;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    protected String type;
-    @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    @XmlSchemaType(name = "anyURI")
-    protected String href;
+    private String type;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     @XmlSchemaType(name = "anyURI")
-    protected String role;
+    private String href;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     @XmlSchemaType(name = "anyURI")
-    protected String arcrole;
+    private String role;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    protected String title;
+    @XmlSchemaType(name = "anyURI")
+    private String arcrole;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    protected String show;
+    private String title;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    protected String actuate;
+    private String show;
+    @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
+    private String actuate;
 
     /**
      * Gets the value of the abstractSolid property.
@@ -86,7 +87,7 @@ public class SolidPropertyType {
      *     {@link JAXBElement }{@code <}{@link SolidType }{@code >}
      *     
      */
-    public JAXBElement<? extends AbstractSolidType> getAbstractSolid() {
+    public JAXBElement<? extends AbstractSolidType> getJbAbstractSolid() {
         return abstractSolid;
     }
 
@@ -99,9 +100,46 @@ public class SolidPropertyType {
      *     {@link JAXBElement }{@code <}{@link SolidType }{@code >}
      *     
      */
-    public void setAbstractSolid(JAXBElement<? extends AbstractSolidType> value) {
+    public void setJbAbstractSolid(JAXBElement<? extends AbstractSolidType> value) {
         this.abstractSolid = ((JAXBElement<? extends AbstractSolidType> ) value);
     }
+
+     /**
+     * Gets the value of the abstractSolid property.
+     *
+     * @return
+     *     possible object is
+     *     {@link JAXBElement }{@code <}{@link AbstractSolidType }{@code >}
+     *     {@link JAXBElement }{@code <}{@link SolidType }{@code >}
+     *
+     */
+    public AbstractSolidType getAbstractSolid() {
+        if (abstractSolid != null) {
+            return abstractSolid.getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Sets the value of the abstractSolid property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link JAXBElement }{@code <}{@link AbstractSolidType }{@code >}
+     *     {@link JAXBElement }{@code <}{@link SolidType }{@code >}
+     *
+     */
+    public void setAbstractSolid(AbstractSolidType value) {
+        if (value != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            if (value instanceof SolidType) {
+                this.abstractSolid = factory.createSolid((SolidType) value);
+            } else if (value instanceof AbstractSolidType) {
+                this.abstractSolid = factory.createAbstractSolid(value);
+            }
+        }
+    }
+
 
     /**
      * Gets the value of the remoteSchema property.
@@ -136,11 +174,7 @@ public class SolidPropertyType {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**
@@ -299,4 +333,49 @@ public class SolidPropertyType {
         this.actuate = value;
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof SolidPropertyType) {
+            final SolidPropertyType that = (SolidPropertyType) object;
+
+            boolean geom = false;
+            if (this.abstractSolid != null && that.abstractSolid != null) {
+                geom = Utilities.equals(this.abstractSolid.getValue(),   that.abstractSolid.getValue());
+            } else if (this.abstractSolid == null && that.abstractSolid == null) {
+                geom = true;
+            }
+
+            return Utilities.equals(this.actuate,            that.actuate)          &&
+                   Utilities.equals(this.arcrole,            that.arcrole)          &&
+                   Utilities.equals(this.type,               that.type)             &&
+                   Utilities.equals(this.href,               that.href)             &&
+                   Utilities.equals(this.remoteSchema,       that.remoteSchema)     &&
+                   Utilities.equals(this.show,               that.show)             &&
+                   Utilities.equals(this.role,               that.role)             &&
+                   Utilities.equals(this.title,              that.title)            &&
+                   geom;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + (this.abstractSolid != null ? this.abstractSolid.hashCode() : 0);
+        hash = 79 * hash + (this.remoteSchema != null ? this.remoteSchema.hashCode() : 0);
+        hash = 79 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        hash = 79 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 79 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 79 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 79 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 79 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 79 * hash + (this.type != null ? this.type.hashCode() : 0);
+        return hash;
+    }
 }

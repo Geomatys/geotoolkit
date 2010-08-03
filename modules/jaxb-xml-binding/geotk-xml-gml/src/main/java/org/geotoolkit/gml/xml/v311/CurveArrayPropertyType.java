@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -55,38 +56,148 @@ import javax.xml.bind.annotation.XmlType;
 public class CurveArrayPropertyType {
 
     @XmlElementRef(name = "AbstractCurve", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected List<JAXBElement<? extends AbstractCurveType>> abstractCurve;
+    private List<JAXBElement<? extends AbstractCurveType>> abstractCurve;
 
     /**
      * Gets the value of the abstractCurve property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the abstractCurve property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAbstractCurve().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link LineStringType }{@code >}
      * {@link JAXBElement }{@code <}{@link CurveType }{@code >}
      * {@link JAXBElement }{@code <}{@link AbstractCurveType }{@code >}
      * {@link JAXBElement }{@code <}{@link OrientableCurveType }{@code >}
      * 
-     * 
      */
-    public List<JAXBElement<? extends AbstractCurveType>> getAbstractCurve() {
+    public List<JAXBElement<? extends AbstractCurveType>> getJbAbstractCurve() {
         if (abstractCurve == null) {
             abstractCurve = new ArrayList<JAXBElement<? extends AbstractCurveType>>();
         }
         return this.abstractCurve;
     }
 
+    /**
+     * Sets the value of the abstractCurve property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@link JAXBElement }{@code <}{@link LineStringType }{@code >}
+     * {@link JAXBElement }{@code <}{@link CurveType }{@code >}
+     * {@link JAXBElement }{@code <}{@link AbstractCurveType }{@code >}
+     * {@link JAXBElement }{@code <}{@link OrientableCurveType }{@code >}
+     *
+     */
+    public void setJbAbstractCurve(List<JAXBElement<? extends AbstractCurveType>> abstractCurve) {
+        this.abstractCurve = abstractCurve;
+    }
+
+    /**
+     * Gets the value of the abstractCurve property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@link JAXBElement }{@code <}{@link LineStringType }{@code >}
+     * {@link JAXBElement }{@code <}{@link CurveType }{@code >}
+     * {@link JAXBElement }{@code <}{@link AbstractCurveType }{@code >}
+     * {@link JAXBElement }{@code <}{@link OrientableCurveType }{@code >}
+     *
+     */
+    public List<? extends AbstractCurveType> getAbstractCurve() {
+        if (abstractCurve == null) {
+            abstractCurve = new ArrayList<JAXBElement<? extends AbstractCurveType>>();
+        }
+        final List<AbstractCurveType> result = new ArrayList<AbstractCurveType>();
+        for (JAXBElement<? extends AbstractCurveType> jb : abstractCurve) {
+            result.add(jb.getValue());
+        }
+        return result;
+    }
+
+    /**
+     * Sets the value of the abstractCurve property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@link JAXBElement }{@code <}{@link LineStringType }{@code >}
+     * {@link JAXBElement }{@code <}{@link CurveType }{@code >}
+     * {@link JAXBElement }{@code <}{@link AbstractCurveType }{@code >}
+     * {@link JAXBElement }{@code <}{@link OrientableCurveType }{@code >}
+     *
+     */
+    public void setAbstractCurve(List<? extends AbstractCurveType> abstractCurve) {
+        if (abstractCurve != null) {
+            this.abstractCurve = new ArrayList<JAXBElement<? extends AbstractCurveType>>();
+            final ObjectFactory factory = new ObjectFactory();
+            for (AbstractCurveType curve : abstractCurve) {
+                if (curve instanceof LineStringType) {
+                    this.abstractCurve.add(factory.createLineString((LineStringType) curve));
+                } else if (curve instanceof CurveType) {
+                    this.abstractCurve.add(factory.createCurve((CurveType) curve));
+                } else if (curve instanceof OrientableCurveType) {
+                    this.abstractCurve.add(factory.createOrientableCurve((OrientableCurveType) curve));
+                } else if (curve instanceof AbstractCurveType) {
+                    this.abstractCurve.add(factory.createAbstractCurve((AbstractCurveType) curve));
+                }
+            }
+        }
+    }
+
+    /**
+     * Sets the value of the abstractCurve property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@link JAXBElement }{@code <}{@link LineStringType }{@code >}
+     * {@link JAXBElement }{@code <}{@link CurveType }{@code >}
+     * {@link JAXBElement }{@code <}{@link AbstractCurveType }{@code >}
+     * {@link JAXBElement }{@code <}{@link OrientableCurveType }{@code >}
+     *
+     */
+    public void setAbstractCurve(AbstractCurveType abstractCurve) {
+        if (abstractCurve != null) {
+            if (this.abstractCurve == null) {
+                this.abstractCurve = new ArrayList<JAXBElement<? extends AbstractCurveType>>();
+            }
+            final ObjectFactory factory = new ObjectFactory();
+            if (abstractCurve instanceof LineStringType) {
+                this.abstractCurve.add(factory.createLineString((LineStringType) abstractCurve));
+            } else if (abstractCurve instanceof CurveType) {
+                this.abstractCurve.add(factory.createCurve((CurveType) abstractCurve));
+            } else if (abstractCurve instanceof OrientableCurveType) {
+                this.abstractCurve.add(factory.createOrientableCurve((OrientableCurveType) abstractCurve));
+            } else if (abstractCurve instanceof AbstractCurveType) {
+                this.abstractCurve.add(factory.createAbstractCurve((AbstractCurveType) abstractCurve));
+            }
+
+        }
+    }
+
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof CurveArrayPropertyType) {
+            final CurveArrayPropertyType that = (CurveArrayPropertyType) object;
+
+            if (this.abstractCurve != null && that.abstractCurve != null) {
+                for (int i = 0; i < abstractCurve.size(); i++) {
+                    AbstractCurveType thisGeom = this.abstractCurve.get(i).getValue();
+                    AbstractCurveType thatGeom = that.abstractCurve.get(i).getValue();
+
+                    if (!Utilities.equals(thisGeom,   thatGeom))
+                        return false;
+                }
+                return true;
+            } else if (this.abstractCurve == null && that.abstractCurve == null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + (this.abstractCurve != null ? this.abstractCurve.hashCode() : 0);
+        return hash;
+    }
 }

@@ -52,12 +52,10 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "CurveType", propOrder = {
     "segments"
 })
-public class CurveType
-    extends AbstractCurveType
-{
+public class CurveType extends AbstractCurveType {
 
     @XmlElement(required = true)
-    protected CurveSegmentArrayPropertyType segments;
+    private CurveSegmentArrayPropertyType segments;
 
     CurveType() {}
 
@@ -109,5 +107,14 @@ public class CurveType
         int hash = 7;
         hash = 89 * hash + (this.segments != null ? this.segments.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString()).append('\n');
+        if (segments != null) {
+            sb.append("segments:").append(segments).append('\n');
+        }
+        return sb.toString();
     }
 }

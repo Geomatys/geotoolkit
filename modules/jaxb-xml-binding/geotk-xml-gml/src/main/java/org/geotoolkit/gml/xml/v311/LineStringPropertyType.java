@@ -139,11 +139,7 @@ public class LineStringPropertyType {
      *     
      */
     public String getType() {
-        if (type == null) {
-            return "simple";
-        } else {
-            return type;
-        }
+        return type;
     }
 
     /**
@@ -369,7 +365,7 @@ public class LineStringPropertyType {
             s.append("title=").append(title).append('\n');
         }
         if(title != null) {
-            s.append("title=").append(title).append('\n');
+            s.append("type=").append(type).append('\n');
         }
         return s.toString();
     }

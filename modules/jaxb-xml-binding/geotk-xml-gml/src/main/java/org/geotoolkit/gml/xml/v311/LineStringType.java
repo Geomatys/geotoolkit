@@ -132,20 +132,6 @@ public class LineStringType extends AbstractCurveType {
     /**
      * Gets the value of the posOrPointPropertyOrPointRep property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the posOrPointPropertyOrPointRep property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getPosOrPointPropertyOrPointRep().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link DirectPositionType }{@code >}
@@ -224,7 +210,7 @@ public class LineStringType extends AbstractCurveType {
             if (this.getPosOrPointPropertyOrPointRep().size() == that.getPosOrPointPropertyOrPointRep().size()) {
                 jb = true;
                 for (int i = 0; i < this.getPosOrPointPropertyOrPointRep().size(); i++) {
-                    if (!JAXBElementEquals(this.getPosOrPointPropertyOrPointRep().get(i), this.getPosOrPointPropertyOrPointRep().get(i))) {
+                    if (!JAXBElementEquals(this.getPosOrPointPropertyOrPointRep().get(i), that.getPosOrPointPropertyOrPointRep().get(i))) {
                         jb = false;
                     }
                 }

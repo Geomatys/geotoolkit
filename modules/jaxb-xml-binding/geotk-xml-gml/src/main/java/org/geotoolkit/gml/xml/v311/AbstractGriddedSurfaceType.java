@@ -85,31 +85,15 @@ import javax.xml.bind.annotation.XmlType;
 public class AbstractGriddedSurfaceType extends AbstractParametricCurveSurfaceType {
 
     @XmlElement(required = true)
-    protected List<AbstractGriddedSurfaceType.Row> row;
-    protected Integer rows;
-    protected Integer columns;
+    private List<AbstractGriddedSurfaceType.Row> row;
+    private Integer rows;
+    private Integer columns;
 
     /**
      * Gets the value of the row property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the row property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getRow().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AbstractGriddedSurfaceType.Row }
-     * 
-     * 
      */
     public List<AbstractGriddedSurfaceType.Row> getRow() {
         if (row == null) {
@@ -193,12 +177,12 @@ public class AbstractGriddedSurfaceType extends AbstractParametricCurveSurfaceTy
     })
     public static class Row {
 
-        protected DirectPositionListType posList;
+        private DirectPositionListType posList;
         @XmlElements({
             @XmlElement(name = "pointProperty", type = PointPropertyType.class),
             @XmlElement(name = "pos", type = DirectPositionType.class)
         })
-        protected List<Object> geometricPositionGroup;
+        private List<Object> geometricPositionGroup;
 
         /**
          * Gets the value of the posList property.
@@ -226,25 +210,10 @@ public class AbstractGriddedSurfaceType extends AbstractParametricCurveSurfaceTy
 
         /**
          * Gets the value of the geometricPositionGroup property.
-         * 
-         * <p>
-         * This accessor method returns a reference to the live list,
-         * not a snapshot. Therefore any modification you make to the
-         * returned list will be present inside the JAXB object.
-         * This is why there is not a <CODE>set</CODE> method for the geometricPositionGroup property.
-         * 
-         * <p>
-         * For example, to add a new item, do as follows:
-         * <pre>
-         *    getGeometricPositionGroup().add(newItem);
-         * </pre>
-         * 
-         * 
-         * <p>
+         *
          * Objects of the following type(s) are allowed in the list
          * {@link PointPropertyType }
          * {@link DirectPositionType }
-         * 
          * 
          */
         public List<Object> getGeometricPositionGroup() {

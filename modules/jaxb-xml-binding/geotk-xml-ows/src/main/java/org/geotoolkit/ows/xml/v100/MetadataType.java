@@ -22,11 +22,16 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.AbstractMetadata;
 import org.geotoolkit.util.Utilities;
 
 
 /**
- * This element either references or contains more metadata about the element that includes this element. To reference metadata stored remotely, at least the xlinks:href attribute in xlink:simpleLink shall be included. Either at least one of the attributes in xlink:simpleLink or a substitute for the AbstractMetaData element shall be included, but not both. An Implementation Specification can restrict the contents of this element to always be a reference or always contain metadata. (Informative: This element was adapted from the metaDataProperty element in GML 3.0.) 
+ * This element either references or contains more metadata about the element that includes this element. 
+ * To reference metadata stored remotely, at least the xlinks:href attribute in xlink:simpleLink shall be included.
+ * Either at least one of the attributes in xlink:simpleLink or a substitute for the AbstractMetaData element shall be included, but not both.
+ * An Implementation Specification can restrict the contents of this element to always be a reference or always contain metadata.
+ * (Informative: This element was adapted from the metaDataProperty element in GML 3.0.)
  * 
  * <p>Java class for MetadataType complex type.
  * 
@@ -53,7 +58,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "MetadataType", propOrder = {
     "abstractMetaData"
 })
-public class MetadataType {
+public class MetadataType implements AbstractMetadata {
 
     @XmlElement(name = "AbstractMetaData")
     private Object abstractMetaData;

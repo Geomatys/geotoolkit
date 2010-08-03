@@ -74,7 +74,7 @@ public class InsertResultType {
         if (briefRecord == null) {
             briefRecord = new ArrayList<BriefRecordType>();
         }
-        return Collections.unmodifiableList(briefRecord);
+        return briefRecord;
     }
 
     /**
@@ -82,6 +82,13 @@ public class InsertResultType {
      */
     public String getHandleRef() {
         return handleRef;
+    }
+
+    /**
+     * Gets the value of the handleRef property.
+     */
+    public void setHandleRef(String handleRef) {
+        this.handleRef = handleRef;
     }
 
     /**

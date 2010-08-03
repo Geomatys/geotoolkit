@@ -64,11 +64,11 @@ import org.geotoolkit.util.Utilities;
 public abstract class AbstractCurveSegmentType {
 
     @XmlAttribute
-    protected Integer numDerivativesAtStart;
+    private Integer numDerivativesAtStart;
     @XmlAttribute
-    protected Integer numDerivativesAtEnd;
+    private Integer numDerivativesAtEnd;
     @XmlAttribute
-    protected Integer numDerivativeInterior;
+    private Integer numDerivativeInterior;
 
     AbstractCurveSegmentType() {
 
@@ -88,11 +88,10 @@ public abstract class AbstractCurveSegmentType {
      *     
      */
     public Integer getNumDerivativesAtStart() {
-        if (numDerivativesAtStart == null) {
+        /*if (numDerivativesAtStart == null) {
             return 0;
-        } else {
-            return numDerivativesAtStart;
-        }
+        } else {*/
+        return numDerivativesAtStart;
     }
 
     /**
@@ -116,11 +115,10 @@ public abstract class AbstractCurveSegmentType {
      *     
      */
     public Integer getNumDerivativesAtEnd() {
-        if (numDerivativesAtEnd == null) {
+        /*if (numDerivativesAtEnd == null) {
             return 0;
-        } else {
-            return numDerivativesAtEnd;
-        }
+        } else {*/
+        return numDerivativesAtEnd;
     }
 
     /**
@@ -144,11 +142,10 @@ public abstract class AbstractCurveSegmentType {
      *     
      */
     public Integer getNumDerivativeInterior() {
-        if (numDerivativeInterior == null) {
+        /*if (numDerivativeInterior == null) {
             return 0;
-        } else {
-            return numDerivativeInterior;
-        }
+        } else {*/
+        return numDerivativeInterior;
     }
 
     /**
@@ -187,5 +184,20 @@ public abstract class AbstractCurveSegmentType {
         hash = 31 * hash + (this.numDerivativesAtEnd   != null ? this.numDerivativesAtEnd.hashCode()   : 0);
         hash = 31 * hash + (this.numDerivativeInterior != null ? this.numDerivativeInterior.hashCode() : 0);
         return hash;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append("]\n");
+        if (numDerivativesAtStart != null) {
+            sb.append("numDerivativesAtStart:").append(numDerivativesAtStart).append('\n');
+        }
+        if (numDerivativesAtEnd != null) {
+            sb.append("numDerivativesAtEnd:").append(numDerivativesAtEnd).append('\n');
+        }
+        if (numDerivativeInterior != null) {
+            sb.append("numDerivativeInterior:").append(numDerivativeInterior).append('\n');
+        }
+        return sb.toString();
     }
 }

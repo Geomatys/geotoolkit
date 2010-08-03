@@ -86,6 +86,10 @@ public class DeleteType {
         return constraint;
     }
 
+    public void setConstraint(QueryConstraintType constraint) {
+        this.constraint = constraint;
+    }
+
     /**
      * Gets the value of the typeName property.
      */
@@ -93,11 +97,20 @@ public class DeleteType {
         return typeName;
     }
 
+    public void setTypeName(String typeName) {
+        this.typeName = typeName;
+    }
+
+
     /**
      * Gets the value of the handle property.
      */
     public String getHandle() {
         return handle;
+    }
+
+    public void setHandle(String handle) {
+        this.handle = handle;
     }
 
     /**

@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.DirectPosition;
 
 
@@ -66,20 +67,18 @@ import org.opengis.geometry.DirectPosition;
     "posList",
     "coordinates"
 })
-public class LineStringSegmentType
-    extends AbstractCurveSegmentType
-{
+public class LineStringSegmentType extends AbstractCurveSegmentType {
 
     @XmlElementRefs({
         @XmlElementRef(name = "pointProperty", namespace = "http://www.opengis.net/gml", type = JAXBElement.class),
         @XmlElementRef(name = "pos", namespace = "http://www.opengis.net/gml", type = JAXBElement.class),
         @XmlElementRef(name = "pointRep", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     })
-    protected List<JAXBElement<?>> posOrPointPropertyOrPointRep;
-    protected DirectPositionListType posList;
-    protected CoordinatesType coordinates;
+    private List<JAXBElement<?>> posOrPointPropertyOrPointRep;
+    private DirectPositionListType posList;
+    private CoordinatesType coordinates;
     @XmlAttribute
-    protected CurveInterpolationType interpolation;
+    private CurveInterpolationType interpolation;
 
     public LineStringSegmentType() {
 
@@ -100,20 +99,6 @@ public class LineStringSegmentType
     /**
      * Gets the value of the posOrPointPropertyOrPointRep property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the posOrPointPropertyOrPointRep property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getPosOrPointPropertyOrPointRep().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link JAXBElement }{@code <}{@link DirectPositionType }{@code >}
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
@@ -185,11 +170,10 @@ public class LineStringSegmentType
      *     
      */
     public CurveInterpolationType getInterpolation() {
-        if (interpolation == null) {
+        /*if (interpolation == null) {
             return CurveInterpolationType.LINEAR;
-        } else {
-            return interpolation;
-        }
+        } else {*/
+        return interpolation;
     }
 
     /**
@@ -204,4 +188,70 @@ public class LineStringSegmentType
         this.interpolation = value;
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof LineStringSegmentType) {
+            final LineStringSegmentType that = (LineStringSegmentType) object;
+
+            boolean jb = false;
+            if (this.getPosOrPointPropertyOrPointRep().size() == that.getPosOrPointPropertyOrPointRep().size()) {
+                jb = true;
+                for (int i = 0; i < this.getPosOrPointPropertyOrPointRep().size(); i++) {
+                    if (!JAXBElementEquals(this.getPosOrPointPropertyOrPointRep().get(i), this.getPosOrPointPropertyOrPointRep().get(i))) {
+                        jb = false;
+                    }
+                }
+            }
+            return Utilities.equals(this.coordinates,    that.coordinates)   &&
+                   Utilities.equals(this.posList,        that.posList)       &&
+                   Utilities.equals(this.interpolation,  that.interpolation) &&
+                   jb;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + (this.posOrPointPropertyOrPointRep != null ? this.posOrPointPropertyOrPointRep.hashCode() : 0);
+        hash = 79 * hash + (this.posList != null ? this.posList.hashCode() : 0);
+        hash = 79 * hash + (this.coordinates != null ? this.coordinates.hashCode() : 0);
+        return hash;
+    }
+
+    private boolean JAXBElementEquals(JAXBElement a, JAXBElement b) {
+        if (a  != null && b != null) {
+            return Utilities.equals(a.getValue(), b.getValue());
+        } else if (a == null && b == null) {
+            return true;
+        }
+        return false;
+    }
+
+     @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (interpolation != null) {
+            sb.append("interpolation:").append(interpolation).append('\n');
+        }
+        if (coordinates != null) {
+            sb.append("coordinates:").append(coordinates).append('\n');
+        }
+        if (posList != null) {
+            sb.append("posList:").append(posList).append('\n');
+        }
+        if (posOrPointPropertyOrPointRep != null) {
+            sb.append("posOrPointPropertyOrPointRep:").append('\n');
+            for (JAXBElement<?>  inte : posOrPointPropertyOrPointRep) {
+                sb.append(inte.getValue()).append('\n');
+            }
+        }
+        return sb.toString();
+    }
 }

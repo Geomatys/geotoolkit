@@ -53,12 +53,10 @@ import org.opengis.filter.expression.ExpressionVisitor;
     "geometryMember",
     "geometryMembers"
 })
-public class MultiGeometryType
-    extends AbstractGeometricAggregateType
-{
+public class MultiGeometryType extends AbstractGeometricAggregateType {
 
-    protected List<GeometryPropertyType> geometryMember;
-    protected GeometryArrayPropertyType geometryMembers;
+    private List<GeometryPropertyType> geometryMember;
+    private GeometryArrayPropertyType geometryMembers;
 
     MultiGeometryType() {}
 
@@ -69,24 +67,8 @@ public class MultiGeometryType
     /**
      * Gets the value of the geometryMember property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the geometryMember property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getGeometryMember().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link GeometryPropertyType }
-     * 
-     * 
      */
     public List<GeometryPropertyType> getGeometryMember() {
         if (geometryMember == null) {

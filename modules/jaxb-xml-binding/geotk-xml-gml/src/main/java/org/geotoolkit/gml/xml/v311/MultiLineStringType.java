@@ -21,6 +21,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 
@@ -50,29 +51,13 @@ import org.opengis.filter.expression.ExpressionVisitor;
 @XmlType(name = "MultiLineStringType", propOrder = {
     "lineStringMember"
 })
-public class MultiLineStringType
-    extends AbstractGeometricAggregateType
-{
+public class MultiLineStringType extends AbstractGeometricAggregateType {
 
-    protected List<LineStringPropertyType> lineStringMember;
+    private List<LineStringPropertyType> lineStringMember;
 
     /**
      * Gets the value of the lineStringMember property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the lineStringMember property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getLineStringMember().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link LineStringPropertyType }
      * 
@@ -83,6 +68,19 @@ public class MultiLineStringType
             lineStringMember = new ArrayList<LineStringPropertyType>();
         }
         return this.lineStringMember;
+    }
+
+    public void setLineStringMember(List<LineStringPropertyType> lineStringMember) {
+        this.lineStringMember = lineStringMember;
+    }
+
+    public void setLineStringMember(LineStringPropertyType lineStringMember) {
+        if (lineStringMember != null) {
+            if (this.lineStringMember == null) {
+                this.lineStringMember = new ArrayList<LineStringPropertyType>();
+            }
+            this.lineStringMember.add(lineStringMember);
+        }
     }
 
     @Override
@@ -100,4 +98,40 @@ public class MultiLineStringType
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    /**
+     * Verify if this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof MultiLineStringType && super.equals(object)) {
+            final MultiLineStringType that = (MultiLineStringType) object;
+
+            return Utilities.equals(this.lineStringMember, that.lineStringMember);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (this.lineStringMember != null ? this.lineStringMember.hashCode() : 0);
+        return hash;
+    }
+
+    
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (lineStringMember != null) {
+            sb.append("lineStringMember:").append('\n');
+            for (LineStringPropertyType sp : lineStringMember) {
+                sb.append(sp).append('\n');
+            }
+        }
+        return sb.toString();
+    }
 }

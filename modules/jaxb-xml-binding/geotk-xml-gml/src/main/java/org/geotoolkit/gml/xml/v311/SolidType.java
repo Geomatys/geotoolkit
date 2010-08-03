@@ -21,6 +21,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -51,12 +52,10 @@ import javax.xml.bind.annotation.XmlType;
     "exterior",
     "interior"
 })
-public class SolidType
-    extends AbstractSolidType
-{
+public class SolidType extends AbstractSolidType {
 
-    protected SurfacePropertyType exterior;
-    protected List<SurfacePropertyType> interior;
+    private SurfacePropertyType exterior;
+    private List<SurfacePropertyType> interior;
 
     /**
      * Gets the value of the exterior property.
@@ -85,20 +84,6 @@ public class SolidType
     /**
      * Gets the value of the interior property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the interior property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getInterior().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link SurfacePropertyType }
      * 
@@ -109,6 +94,47 @@ public class SolidType
             interior = new ArrayList<SurfacePropertyType>();
         }
         return this.interior;
+    }
+
+    /**
+     * Verify that the point is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof SolidType && super.equals(object)) {
+            final SolidType that = (SolidType) object;
+            return  Utilities.equals(this.exterior, that.exterior) &&
+                    Utilities.equals(this.interior, that.interior);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 23 * hash + (this.exterior != null ? this.exterior.hashCode() : 0);
+        hash = 23 * hash + (this.interior != null ? this.interior.hashCode() : 0);
+        return hash;
+    }
+
+    
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString()).append('\n');
+        if (exterior != null) {
+            sb.append("exterior:").append(exterior).append('\n');
+        }
+        if (interior != null) {
+            sb.append("interior:").append('\n');
+            for (SurfacePropertyType s : interior) {
+                sb.append(s).append('\n');
+            }
+        }
+        return sb.toString();
     }
 
 }

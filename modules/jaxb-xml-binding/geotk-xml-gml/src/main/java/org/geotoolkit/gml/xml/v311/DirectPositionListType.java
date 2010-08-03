@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -55,42 +56,27 @@ import javax.xml.bind.annotation.XmlValue;
 public class DirectPositionListType {
 
     @XmlValue
-    protected List<Double> value;
+    private List<Double> value;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    protected Integer count;
+    private Integer count;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
-    protected String srsName;
+    private String srsName;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    protected Integer srsDimension;
+    private Integer srsDimension;
     @XmlAttribute
-    protected List<String> axisLabels;
+    private List<String> axisLabels;
     @XmlAttribute
-    protected List<String> uomLabels;
+    private List<String> uomLabels;
 
     /**
-     * XML List based on XML Schema double type.  An element of this type contains a space-separated list of double values Gets the value of the value property.
+     * XML List based on XML Schema double type.
+     * An element of this type contains a space-separated list of double values Gets the value of the value property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the value property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getValue().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Double }
-     * 
-     * 
      */
     public List<Double> getValue() {
         if (value == null) {
@@ -99,6 +85,31 @@ public class DirectPositionListType {
         return this.value;
     }
 
+    /**
+     * XML List based on XML Schema double type.
+     * An element of this type contains a space-separated list of double values Gets the value of the value property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@link Double }
+     */
+    public void setValue(List<Double> value) {
+        this.value = value;
+    }
+
+    /**
+     * XML List based on XML Schema double type.
+     * An element of this type contains a space-separated list of double values Gets the value of the value property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@link Double }
+     */
+    public void setValue(Double value) {
+        if (this.value == null) {
+            this.value = new ArrayList<Double>();
+        }
+        this.value.add(value);
+    }
+    
     /**
      * Gets the value of the count property.
      * 
@@ -174,20 +185,6 @@ public class DirectPositionListType {
     /**
      * Gets the value of the axisLabels property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the axisLabels property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getAxisLabels().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 
@@ -203,20 +200,6 @@ public class DirectPositionListType {
     /**
      * Gets the value of the uomLabels property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the uomLabels property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getUomLabels().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 
@@ -228,5 +211,74 @@ public class DirectPositionListType {
         }
         return this.uomLabels;
     }
+
+    /**
+     * Return a String description of the object.
+     */
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[DirectPositionListType}\n");
+        if (count != null) {
+            s.append("count : ").append(count).append('\n');
+        }
+        if (srsDimension != null) {
+            s.append("srsDimension : ").append(srsDimension).append('\n');
+        }
+        if (srsName != null) {
+            s.append("srsName : ").append(srsName).append('\n');
+        }
+        if (axisLabels != null) {
+            s.append("axisLabels : ").append('\n');
+            for (String a : axisLabels) {
+                s.append(a).append('\n');
+            }
+        }
+        if (uomLabels != null) {
+            s.append("uomLabels : ").append('\n');
+            for (String a : uomLabels) {
+                s.append(a).append('\n');
+            }
+        }
+        if (value != null) {
+            s.append("value : ").append('\n');
+            for (Double a : value) {
+                s.append(a).append('\n');
+            }
+        }
+        return s.toString();
+    }
+
+    /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof DirectPositionListType) {
+            final DirectPositionListType that = (DirectPositionListType) object;
+            return  Utilities.equals(this.getAxisLabels(), that.getAxisLabels()) &&
+                    Utilities.equals(this.srsDimension,    that.srsDimension)    &&
+                    Utilities.equals(this.srsName,         that.srsName)         &&
+                    Utilities.equals(this.count,           that.count)           &&
+                    Utilities.equals(this.getUomLabels(),  that.getUomLabels())  &&
+                    Utilities.equals(this.value,           that.value);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + (this.value != null ? this.value.hashCode() : 0);
+        hash = 53 * hash + (this.count != null ? this.count.hashCode() : 0);
+        hash = 53 * hash + (this.srsName != null ? this.srsName.hashCode() : 0);
+        hash = 53 * hash + (this.srsDimension != null ? this.srsDimension.hashCode() : 0);
+        hash = 53 * hash + (this.axisLabels != null ? this.axisLabels.hashCode() : 0);
+        hash = 53 * hash + (this.uomLabels != null ? this.uomLabels.hashCode() : 0);
+        return hash;
+    }
+
 
 }

@@ -98,6 +98,7 @@ public class Operation implements AbstractOperation {
      * At present, only the HTTP DCP is defined, so this element will appear only once.
      * Gets the value of the dcp property.
      */
+    @Override
     public List<DCP> getDCP() {
         return dcp;
     }
@@ -105,6 +106,7 @@ public class Operation implements AbstractOperation {
     /**
      * Gets the value of the parameter property.
      */
+    @Override
     public List<DomainType> getParameter() {
         if (parameter == null) {
             parameter = new ArrayList<DomainType>();
@@ -115,6 +117,7 @@ public class Operation implements AbstractOperation {
     /**
      * Get a parameter from the specified parameter name
      */
+    @Override
     public DomainType getParameter(String name) {
         if (parameter == null) {
             return null;
@@ -130,6 +133,7 @@ public class Operation implements AbstractOperation {
     /**
      * Get a parameter from the specified parameter name
      */
+    @Override
     public DomainType getParameterIgnoreCase(String name) {
         if (parameter == null) {
             return null;
@@ -145,13 +149,15 @@ public class Operation implements AbstractOperation {
     /**
      * Gets the value of the constraint property.
      */
+    @Override
     public List<DomainType> getConstraint() {
         if (constraint == null) {
             constraint = new ArrayList<DomainType>();
         }
         return Collections.unmodifiableList(constraint);
     }
-    
+
+    @Override
     public DomainType getConstraint(String name) {
         if (constraint != null) {
             for (DomainType d : constraint) {
@@ -163,6 +169,21 @@ public class Operation implements AbstractOperation {
             return d;
         } else {
             return null; 
+        }
+    }
+
+    @Override
+    public DomainType getConstraintIgnoreCase(String name) {
+        if (constraint != null) {
+            for (DomainType d : constraint) {
+                if (d.getName().equalsIgnoreCase(name))
+                    return d;
+            }
+            DomainType d = new DomainType(name, new ArrayList<String>());
+            constraint.add(d);
+            return d;
+        } else {
+            return null;
         }
     }
 

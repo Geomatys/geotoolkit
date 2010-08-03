@@ -205,4 +205,12 @@ public class WebMapServer implements Server{
         }
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("WebMapServer[");
+        sb.append("serverUrl: ").append(serverURL).append(", ")
+          .append("version: ").append(version).append("]");
+        return sb.toString();
+    }
+
 }
