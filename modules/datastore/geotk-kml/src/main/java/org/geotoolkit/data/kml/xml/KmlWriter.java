@@ -533,7 +533,7 @@ public class KmlWriter extends StaxStreamWriter {
             this.writeAbstractOverlay(abstractFeature);
         } else if (abstractFeature.getType().equals(KmlModelConstants.TYPE_PLACEMARK)){
             this.writePlacemark(abstractFeature);
-        } else {
+        } else { //FEATURE EXTENSIONS SUBSTITUTION
             for(StaxStreamWriter candidate : this.extensionWriters){
                 if(((KmlExtensionWriter) candidate).canHandleComplex(URI_KML,null, abstractFeature)){
                     ((KmlExtensionWriter) candidate).writeComplexExtensionElement(URI_KML, null, abstractFeature);
@@ -2143,10 +2143,10 @@ public class KmlWriter extends StaxStreamWriter {
             this.writeAltitudeMode(polygon.getAltitudeMode());
         }
         if (polygon.getOuterBoundary() != null){
-            this.writeOuterBoundaryIs(polygon.getOuterBoundary());
+            this.writeOuterBoundary(polygon.getOuterBoundary());
         }
-        for(Boundary innerBoundaryIs : polygon.getInnerBoundaries()){
-            this.writeInnerBoundaryIs(innerBoundaryIs);
+        for(Boundary innerBoundary : polygon.getInnerBoundaries()){
+            this.writeInnerBoundary(innerBoundary);
         }
         this.writeStandardExtensionLevel(
                 polygon.extensions(),
@@ -2160,7 +2160,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeOuterBoundaryIs(Boundary boundary) 
+    private void writeOuterBoundary(Boundary boundary)
             throws XMLStreamException, KmlException{
 
         writer.writeStartElement(URI_KML, TAG_OUTER_BOUNDARY_IS);
@@ -2174,7 +2174,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeInnerBoundaryIs(Boundary boundary) 
+    private void writeInnerBoundary(Boundary boundary)
             throws XMLStreamException, KmlException{
 
         writer.writeStartElement(URI_KML, TAG_INNER_BOUNDARY_IS);
