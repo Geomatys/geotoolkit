@@ -19,24 +19,26 @@ package org.geotoolkit.metadata.geotiff;
 /**
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @Static
  */
 public final class GeoTiffConstants {
+
+    private GeoTiffConstants(){}
 
     ////////////////////////////////////////////////////////////////////////////
     // TIFF TAGS
     ////////////////////////////////////////////////////////////////////////////
 
-//    ResolutionUnit (296)
-//    XResolution    (282)
-//    YResolution    (283)
-//    Orientation    (274)
-//    XPosition      (286)
-//    YPosition      (287)
-
     public static final int ImageWidth = 256;
     public static final int ImageLenght = 257;
+    public static final int ResolutionUnit = 296;
+    public static final int XResolution = 282;
+    public static final int YResolution = 283;
+    public static final int Orientation = 274;
+    public static final int XPosition = 286;
+    public static final int YPosition = 287;
 
-
+    
     ////////////////////////////////////////////////////////////////////////////
     // GEOTIFF TAGS
     ////////////////////////////////////////////////////////////////////////////
@@ -172,6 +174,10 @@ public final class GeoTiffConstants {
     // Codes
     ////////////////////////////////////////////////////////////////////////////
 
+
+    public static final short GTUserDefinedGeoKey = 32767;
+    public static final String GTUserDefinedGeoKey_String = "32767";
+
     /*
      * 6.3.1.1 Model Type Codes
      *
@@ -206,6 +212,55 @@ public final class GeoTiffConstants {
      */
     public static final int RasterPixelIsArea  = 1;
     public static final int RasterPixelIsPoint = 2;
+
+
+    /*
+     * 6.3.3.3 Coordinate Transformation Codes
+     * Ranges:
+     * 0 = undefined
+     * [    1, 16383] = GeoTIFF Coordinate Transformation codes
+     * [16384, 32766] = Reserved by GeoTIFF
+     * 32767          = user-defined
+     * [32768, 65535] = Private User Implementations
+     *
+     */
+    public static final int CT_TransverseMercator =             1;
+    public static final int CT_TransvMercator_Modified_Alaska = 2;
+    public static final int CT_ObliqueMercator =                3;
+    public static final int CT_ObliqueMercator_Laborde =        4;
+    public static final int CT_ObliqueMercator_Rosenmund =      5;
+    public static final int CT_ObliqueMercator_Spherical =      6;
+    public static final int CT_Mercator =                       7;
+    public static final int CT_LambertConfConic_2SP =           8;
+    public static final int CT_LambertConfConic_1SP =           9;
+    public static final int CT_LambertAzimEqualArea =           10;
+    public static final int CT_AlbersEqualArea =                11;
+    public static final int CT_AzimuthalEquidistant =           12;
+    public static final int CT_EquidistantConic =               13;
+    public static final int CT_Stereographic =                  14;
+    public static final int CT_PolarStereographic =             15;
+    public static final int CT_ObliqueStereographic =           16;
+    public static final int CT_Equirectangular =                17;
+    public static final int CT_CassiniSoldner =                 18;
+    public static final int CT_Gnomonic =                       19;
+    public static final int CT_MillerCylindrical =              20;
+    public static final int CT_Orthographic =                   21;
+    public static final int CT_Polyconic =                      22;
+    public static final int CT_Robinson =                       23;
+    public static final int CT_Sinusoidal =                     24;
+    public static final int CT_VanDerGrinten =                  25;
+    public static final int CT_NewZealandMapGrid =              26;
+    public static final int CT_TransvMercator_SouthOriented=    27;
+    //Aliases:
+    public static final int CT_AlaskaConformal =                CT_TransvMercator_Modified_Alaska;
+    public static final int CT_TransvEquidistCylindrical =      CT_CassiniSoldner;
+    public static final int CT_ObliqueMercator_Hotine =         CT_ObliqueMercator;
+    public static final int CT_SwissObliqueCylindrical =        CT_ObliqueMercator_Rosenmund;
+    public static final int CT_GaussBoaga =                     CT_TransverseMercator;
+    public static final int CT_GaussKruger =                    CT_TransverseMercator;
+    public static final int CT_LambertConfConic =               CT_LambertConfConic_2SP ;
+    public static final int CT_LambertConfConic_Helmert =       CT_LambertConfConic_1SP;
+    public static final int CT_SouthOrientedGaussConformal =    CT_TransvMercator_SouthOriented;
 
 
 }
