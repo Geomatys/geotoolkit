@@ -48,7 +48,7 @@ public class WmtsXmlBindingTest {
         pool = new MarshallerPool(Collections.singletonMap(MarshallerPool.ROOT_NAMESPACE_KEY, "http://www.opengis.net/wmts/1.0"),
                  "org.geotoolkit.wmts.xml.v100:" +
                  "org.geotoolkit.gml.xml.v311:" +
-                 "org.geotoolkit.internal.jaxb.referencing:" +
+                 //"org.geotoolkit.internal.jaxb.referencing:" +
                  "org.geotoolkit.ows.xml.v110");
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();
