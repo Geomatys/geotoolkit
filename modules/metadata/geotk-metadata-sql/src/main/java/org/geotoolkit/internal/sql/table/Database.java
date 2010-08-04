@@ -200,7 +200,7 @@ public class Database implements Localized {
         }
 
         /**
-         * Invoked in a backround thread when the user thread exits its outer {@code synchronized}
+         * Invoked in a background thread when the user thread exits its outer {@code synchronized}
          * statement. This method declares that this object is available for reuse. If all JDBC
          * resources have been closed, we will let the garbage collector collects this object.
          */
@@ -217,12 +217,19 @@ public class Database implements Localized {
         }
 
         /**
-         * Returns a string representation for debugging purpose.
+         * Returns a string representation for debugging purpose. This string appears in the
+         * {@code assert} statements of the enclosing class, especially when checking if the
+         * thread holds the expected monitor.
+         * <p>
+         * This method creates a list of all {@code Session} instances (not just this instance)
+         * managed by the enclosing class. This instance is flagged by a "{@code .this}" prefix
+         * in front of the line.
          */
         @Override
         public String toString() {
             final long currentID = Thread.currentThread().getId();
-            final StringBuilder buffer = new StringBuilder("Sessions:");
+            final StringBuilder buffer = new StringBuilder("Sessions: (this.threadID=")
+                    .append(currentID).append(')');
             synchronized (sessions) {
                 for (final Map.Entry<Long,Session> entry : sessions.entrySet()) {
                     final Session session = entry.getValue();
@@ -234,6 +241,9 @@ public class Database implements Localized {
                     if (id == currentID) {
                         buffer.append(" (current thread)");
                     }
+                    if (Thread.holdsLock(session)) {
+                        buffer.append(" (holds lock)");
+                    }
                 }
             }
             return buffer.toString();
@@ -241,7 +251,7 @@ public class Database implements Localized {
     }
 
     /**
-     * Incremented everytime a modification is applied in the configuration of a table.
+     * Incremented every time a modification is applied in the configuration of a table.
      * This is for internal use by {@link Table#fireStateChanged(String)} only.
      */
     final AtomicInteger modificationCount = new AtomicInteger();

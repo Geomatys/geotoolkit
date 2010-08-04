@@ -35,9 +35,12 @@ import org.geotoolkit.image.SampleModels;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReaderTest;
+import org.geotoolkit.test.PlatformDependentTest;
+import org.geotoolkit.internal.OS;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import static org.junit.Assume.*;
 
 
 /**
@@ -315,9 +318,16 @@ public class ImageCoverageWriterTest {
      * @throws IOException If the text file can not be open (should not happen).
      * @throws CoverageStoreException Should not happen.
      * @throws ParseException Should not happen.
+     *
+     * @todo Platforms other than MacOS produce random numbers in the area where pad values
+     *       are expected. This is related to the JAI issue documented in the Resample2D
+     *       class (nearest neighbor interpolation of floating point values).
      */
     @Test
+    @PlatformDependentTest
     public void writeExpandedUpperLeftRegion() throws IOException, CoverageStoreException, ParseException {
+        assumeTrue(OS.MAC_OS.equals(OS.current()));
+
         final GridCoverage2D coverage = read("matrix.txt");
         final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeOutsideRegion");
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
