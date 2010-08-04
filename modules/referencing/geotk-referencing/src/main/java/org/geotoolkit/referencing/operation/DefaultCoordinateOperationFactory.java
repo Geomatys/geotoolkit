@@ -1416,7 +1416,7 @@ search: for (int j=0; j<targets.size(); j++) {
         CoordinateReferenceSystem stepSourceCRS = sourceCRS;
         if (!select.isIdentity()) {
             if (orderedSources.length == 1) {
-                // Slight optimisation of the next block (in the 'else' case).
+                // Slight optimization of the next block (in the 'else' case).
                 stepSourceCRS = orderedSources[0];
             } else {
                 stepSourceCRS = factories.getCRSFactory().createCompoundCRS(
@@ -1456,7 +1456,7 @@ search: for (int j=0; j<targets.size(); j++) {
                 // equal. So we don't need to create a new stepTargetCRS.
                 stepTargetCRS = stepSourceCRS;
             } else if (orderedSources.length == 1) {
-                // Slight optimisation of the next block, keeping in mind
+                // Slight optimization of the next block, keeping in mind
                 // that orderedSources[0] has been set to 'target' above.
                 stepTargetCRS = target;
             } else {

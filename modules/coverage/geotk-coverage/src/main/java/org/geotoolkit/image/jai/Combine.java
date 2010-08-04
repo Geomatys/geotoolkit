@@ -137,7 +137,7 @@ public class Combine extends PointOpImage {
          *     }
          * }
          *
-         * A {@code true} value will allows some optimisations inside the
+         * A {@code true} value will allows some optimizations inside the
          * {@link Combine#computeRect Combine.computeRect(...)} method. This method
          * may conservatly returns {@code false} if this information is unknown.
          *

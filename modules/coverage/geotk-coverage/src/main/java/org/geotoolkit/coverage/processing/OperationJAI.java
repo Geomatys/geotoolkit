@@ -982,7 +982,7 @@ public class OperationJAI extends Operation2D {
     @Override
     public boolean equals(final Object object) {
         if (object == this) {
-            // Slight optimisation
+            // Slight optimization
             return true;
         }
         if (super.equals(object)) {

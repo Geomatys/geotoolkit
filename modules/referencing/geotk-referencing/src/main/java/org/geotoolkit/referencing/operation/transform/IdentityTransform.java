@@ -36,7 +36,7 @@ import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
  * The identity transform. The data are only copied without any transformation. Instance of this
  * class are created for identity transform of dimension greater than 2. For 1D and 2D identity
  * transforms, {@link LinearTransform1D} and {@link AffineTransform2D} already provide their own
- * optimisations.
+ * optimizations.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00

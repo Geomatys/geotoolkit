@@ -1306,7 +1306,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
         }
         if (transform.isIdentity()) {
             /*
-             * Slight optimisation: Just copy the envelope. Note that we need to set the CRS
+             * Slight optimization: Just copy the envelope. Note that we need to set the CRS
              * to null because we don't know what the target CRS was supposed to be. Even if
              * an identity transform often imply that the target CRS is the same one than the
              * source CRS, it is not always the case. The metadata may be differents, or the

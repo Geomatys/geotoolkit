@@ -332,7 +332,7 @@ scan:   for (int i=0; i<numBands; i++) {
     {
         /*
          * STEP 1 - Gets the source image and prepare the target bands (sample dimensions).
-         *          As a slight optimisation, we skip the "Null" operation since such image
+         *          As a slight optimization, we skip the "Null" operation since such image
          *          may be the result of some operation (e.g. "Colormap").
          */
         RenderedImage image = coverage.image;

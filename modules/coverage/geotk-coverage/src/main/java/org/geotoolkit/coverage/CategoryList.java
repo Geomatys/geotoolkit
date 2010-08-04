@@ -962,7 +962,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
      * same. Locale variables still {@code double} because this is the type used in
      * {@link Category} objects.
      *
-     * @todo We could add an optimisation after the loops checking for category change:
+     * @todo We could add an optimization after the loops checking for category change:
      *       if we were allowed to search for nearest category (overflowFallback!=null),
      *       then make sure that the category really changed. There is already a slight
      *       optimization for the most common cases, but maybe we could go a little bit
