@@ -29,6 +29,7 @@ import java.awt.geom.NoninvertibleTransformException;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
+import org.opengis.referencing.operation.MathTransform2D; // For Javadoc
 
 import static java.lang.Math.*;
 
@@ -39,13 +40,13 @@ import static java.lang.Math.*;
  * <ul>
  *   <li>A set of public static methods working on any {@link AffineTransform}.</li>
  *   <li>An abstract base class that override all mutable {@link AffineTransform} methods
- *       in order to check for permission before changing the transform's state.
+ *       in order to check for permission before changing the transform state.
  *       If {@link #checkPermission} is defined to always throw an exception,
  *       then {@code XAffineTransform} is immutable.</li>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.14
  *
  * @since 1.2
  * @module
@@ -524,8 +525,7 @@ public class XAffineTransform extends AffineTransform {
      *
      * @return The direct transform of the {@code bounds} rectangle.
      *
-     * @see org.geotoolkit.referencing.CRS#transform(
-     *      org.opengis.referencing.operation.MathTransform2D, Rectangle2D, Rectangle2D)
+     * @see org.geotoolkit.referencing.CRS#transform(MathTransform2D, Rectangle2D, Rectangle2D)
      */
     public static Rectangle2D transform(final AffineTransform transform,
                                         final Rectangle2D     bounds,
@@ -786,7 +786,7 @@ public class XAffineTransform extends AffineTransform {
      * If scale and shear coefficients are close to integers, replaces their current values by
      * their rounded values. The scale and shear coefficients are handled in a "all or nothing"
      * way; either all of them are rounded, or either none of them. The translation terms are
-     * handled separatly, provided that the scale and shear coefficients has been rounded.
+     * handled separately, provided that the scale and shear coefficients has been rounded.
      * <p>
      * This rounding up is useful for example in order to speedup image displays.
      *
@@ -794,11 +794,12 @@ public class XAffineTransform extends AffineTransform {
      * @param tolerance The maximal departure from integers in order to allow rounding.
      *        It is typically a small number like {@code 1E-6}.
      *
+     * @see org.geotoolkit.math.XMath#roundIfAlmostInteger(double, int)
      * @see org.geotoolkit.image.io.metadata.MetadataHelper#adjustForRoundingError(double)
      *
-     * @since 2.3.1
+     * @since 3.14 (derived from 2.3.1)
      */
-    public static void round(final AffineTransform tr, final double tolerance) {
+    public static void roundIfAlmostInteger(final AffineTransform tr, final double tolerance) {
         double r;
         final double m00, m01, m10, m11;
         if (abs((m00 = rint(r=tr.getScaleX())) - r) <= tolerance &&
@@ -817,5 +818,17 @@ public class XAffineTransform extends AffineTransform {
                 tr.setTransform(m00, m10, m01, m11, m02, m12);
             }
         }
+    }
+
+    /**
+     * @deprecated Renamed {@link #roundIfAlmostInteger(AffineTransform, double)}.
+     *
+     * @param tr The matrix to round. Rounding will be applied in place.
+     * @param tolerance The maximal departure from integers in order to allow rounding.
+     *        It is typically a small number like {@code 1E-6}.
+     */
+    @Deprecated
+    public static void round(final AffineTransform tr, final double tolerance) {
+        roundIfAlmostInteger(tr, tolerance);
     }
 }

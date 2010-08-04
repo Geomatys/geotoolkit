@@ -981,7 +981,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
                          (mask & SCALE_Y    ) != 0 ? sy                   : 1);
         change.translate((mask & TRANSLATE_X) != 0 ? -source.getCenterX() : 0,
                          (mask & TRANSLATE_Y) != 0 ? -source.getCenterY() : 0);
-        XAffineTransform.round(change, EPS);
+        XAffineTransform.roundIfAlmostInteger(change, EPS);
         return change;
     }
 
@@ -1121,7 +1121,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
             return;
         }
         change.concatenate(tr);
-        XAffineTransform.round(change, EPS);
+        XAffineTransform.roundIfAlmostInteger(change, EPS);
         transform(change);
     }
 
@@ -1143,7 +1143,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
     public void transform(final AffineTransform change) {
         if (!change.isIdentity()) {
             zoom.concatenate(change);
-            XAffineTransform.round(zoom, EPS);
+            XAffineTransform.roundIfAlmostInteger(zoom, EPS);
             fireZoomChanged(change);
             if (!disableRepaint) {
                 repaint(getZoomableBounds());
@@ -1183,7 +1183,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
             }
             logical.concatenate(change);
             logical.concatenate(zoom);
-            XAffineTransform.round(logical, EPS);
+            XAffineTransform.roundIfAlmostInteger(logical, EPS);
             transform(logical);
         }
     }
@@ -1316,7 +1316,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
             }
         }
         change.concatenate(zoom);
-        XAffineTransform.round(change, EPS);
+        XAffineTransform.roundIfAlmostInteger(change, EPS);
         transform(change);
     }
 

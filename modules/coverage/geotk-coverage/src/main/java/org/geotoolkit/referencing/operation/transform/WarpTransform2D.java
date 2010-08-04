@@ -343,7 +343,7 @@ public class WarpTransform2D extends AbstractMathTransform implements MathTransf
              * Integer scale factors can make the rendering much faster, by allowing JAI
              * to use optimized code path (for example using integer arithmetic).
              */
-            XAffineTransform.round(tr, 1E-6);
+            XAffineTransform.roundIfAlmostInteger(tr, 1E-6);
             return new WarpAffine(tr);
         }
         if (name == null) {

@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
  * Tests {@link XAffineTransform} static methods.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.14
  *
  * @since 2.3
  */
@@ -135,22 +135,22 @@ public final class XAffineTransformTest {
     }
 
     /**
-     * Tests the {@link XAffineTransform#round} method.
+     * Tests the {@link XAffineTransform#roundIfAlmostInteger} method.
      */
     @Test
-    public void testRound() {
+    public void testRoundIfAlmostInteger() {
         final AffineTransform test = new AffineTransform(4, 0, 0, 4, -400, -1186);
         final AffineTransform copy = new AffineTransform(test);
-        XAffineTransform.round(test, 1E-6);
+        XAffineTransform.roundIfAlmostInteger(test, 1E-6);
         assertEquals("Translation terms were already integers, so the " +
                 "transform should not have been modified.", copy, test);
 
         test.translate(1E-8, 2E-8);
-        XAffineTransform.round(test, 1E-9);
+        XAffineTransform.roundIfAlmostInteger(test, 1E-9);
         assertFalse("Treshold was smaller than the translation, so the " +
                 "transform should not have been modified.", copy.equals(test));
 
-        XAffineTransform.round(test, 1E-6);
+        XAffineTransform.roundIfAlmostInteger(test, 1E-6);
         assertEquals("Translation terms should have been rounded.", copy, test);
     }
 }
