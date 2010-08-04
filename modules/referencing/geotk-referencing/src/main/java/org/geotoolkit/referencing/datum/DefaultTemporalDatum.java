@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.opengis.referencing.datum.TemporalDatum;
 
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.lang.Immutable;
@@ -35,7 +36,7 @@ import org.geotoolkit.lang.Immutable;
  * A temporal datum defines the origin of a temporal coordinate reference system.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.14
  *
  * @since 1.2
  * @module
@@ -169,16 +170,17 @@ public class DefaultTemporalDatum extends AbstractDatum implements TemporalDatum
      * Compares this temporal datum with the specified object for equality.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
-        if (super.equals(object, compareMetadata)) {
+        if (super.equals(object, mode)) {
             final DefaultTemporalDatum that = (DefaultTemporalDatum) object;
             return this.origin == that.origin;
         }

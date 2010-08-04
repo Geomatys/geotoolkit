@@ -41,7 +41,7 @@ import org.geotoolkit.util.Utilities;
  * identify the exact type.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.14
  *
  * @since 2.1
  * @module
@@ -164,14 +164,15 @@ public class AbstractReferenceSystem extends AbstractIdentifiedObject implements
      * the {@linkplain #getScope scope}.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
-        if (super.equals(object, compareMetadata)) {
-            if (!compareMetadata) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+        if (super.equals(object, mode)) {
+            if (!mode.equals(ComparisonMode.STRICT)) {
                 return true;
             }
             final AbstractReferenceSystem that = (AbstractReferenceSystem) object;

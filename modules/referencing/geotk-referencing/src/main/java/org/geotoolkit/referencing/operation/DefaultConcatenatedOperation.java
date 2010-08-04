@@ -39,6 +39,7 @@ import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
@@ -56,8 +57,8 @@ import org.geotoolkit.lang.Immutable;
  * coordinate reference system of the last step are the source and target coordinate reference
  * system associated with the concatenated operation.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.14
  *
  * @since 2.0
  * @module
@@ -317,18 +318,19 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
      * {@linkplain #getScope scope}.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
-        if (super.equals(object, compareMetadata)) {
+        if (super.equals(object, mode)) {
             final DefaultConcatenatedOperation that = (DefaultConcatenatedOperation) object;
-            return equals(this.operations, that.operations, compareMetadata);
+            return equals(this.operations, that.operations, mode);
         }
         return false;
     }

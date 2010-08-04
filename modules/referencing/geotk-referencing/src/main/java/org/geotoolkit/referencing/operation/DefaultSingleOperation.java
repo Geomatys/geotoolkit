@@ -35,6 +35,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.transform.Parameterized;
 import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
@@ -59,7 +60,7 @@ import org.geotoolkit.lang.Immutable;
  * coordinate operation.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.01
+ * @version 3.14
  *
  * @since 2.0
  * @module
@@ -238,16 +239,17 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
      * are compared including the {@linkplain DefaultOperationMethod#getFormula formula}.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
-        if (super.equals(object, compareMetadata)) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+        if (super.equals(object, mode)) {
             final DefaultSingleOperation that = (DefaultSingleOperation) object;
-            if (compareMetadata) {
-                return equals(this.method, that.method, compareMetadata);
+            if (mode.equals(ComparisonMode.STRICT)) {
+                return equals(this.method, that.method, mode);
             }
             /*
              * We consider the operation method as metadata. We could argue that OperationMethod's

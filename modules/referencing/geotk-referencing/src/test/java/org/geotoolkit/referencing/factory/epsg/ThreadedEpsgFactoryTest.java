@@ -35,6 +35,7 @@ import org.opengis.geometry.Envelope;
 
 import org.geotoolkit.test.crs.WKT;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.crs.AbstractCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -653,7 +654,7 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
     }
 
     /**
-     * Fetchs the accuracy declared in all coordinate operations found in the database.
+     * Fetches the accuracy declared in all coordinate operations found in the database.
      *
      * @throws FactoryException if an error occurred while querying the factory.
      */
@@ -825,15 +826,15 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
         final String      wkt     = epsgCrs.toWKT();
         final AbstractCRS wktCrs  = (AbstractCRS) CRS.parseWKT(wkt);
 
-        assertTrue   ("equals ignore metadata",  epsgCrs.equals(wktCrs, false));
-        assertFalse  ("equals compare metadata", epsgCrs.equals(wktCrs, true));
+        assertTrue   ("equals ignore metadata",  epsgCrs.equals(wktCrs, ComparisonMode.IGNORE_METADATA));
+        assertFalse  ("equals compare metadata", epsgCrs.equals(wktCrs, ComparisonMode.STRICT));
         assertFalse  ("equals",   epsgCrs.equals(wktCrs));
         assertNotSame("identity", epsgCrs, wktCrs);
 
         // Parsing the same thing twice?
         final AbstractCRS wktCrs2 = (AbstractCRS) CRS.parseWKT(wkt);
-        assertTrue  ("equals ignore metadata",  wktCrs.equals(wktCrs2, false));
-        assertTrue  ("equals compare metadata", wktCrs.equals(wktCrs2, true));
+        assertTrue  ("equals ignore metadata",  wktCrs.equals(wktCrs2, ComparisonMode.IGNORE_METADATA));
+        assertTrue  ("equals compare metadata", wktCrs.equals(wktCrs2, ComparisonMode.STRICT));
         assertEquals("equals",   wktCrs, wktCrs2);
         assertSame  ("identity", wktCrs, wktCrs2);
     }

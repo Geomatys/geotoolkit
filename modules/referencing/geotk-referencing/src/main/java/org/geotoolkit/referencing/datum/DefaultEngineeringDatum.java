@@ -24,6 +24,8 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.opengis.referencing.datum.EngineeringDatum;
+
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.wkt.Formatter;
@@ -37,7 +39,7 @@ import org.geotoolkit.lang.Immutable;
  * ship or satellite).
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.14
  *
  * @since 1.2
  * @module
@@ -112,16 +114,17 @@ public class DefaultEngineeringDatum extends AbstractDatum implements Engineerin
      * Compare this datum with the specified object for equality.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
-        return super.equals(object, compareMetadata);
+        return super.equals(object, mode);
     }
 
     /**

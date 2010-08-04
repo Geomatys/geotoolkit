@@ -85,7 +85,7 @@ import org.geotoolkit.xml.Namespaces;
  * situation, a plain {@link org.geotoolkit.referencing.cs.AbstractCS} object may be instantiated.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.14
  *
  * @since 1.2
  * @module
@@ -98,12 +98,12 @@ import org.geotoolkit.xml.Namespaces;
 })
 public class AbstractIdentifiedObject extends FormattableObject implements IdentifiedObject, Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -5173281694258483264L;
 
     /**
-     * An empty array of identifiers. This is usefull for fetching identifiers as an array,
+     * An empty array of identifiers. This is useful for fetching identifiers as an array,
      * using the following idiom:
      *
      * {@preformat java
@@ -115,7 +115,7 @@ public class AbstractIdentifiedObject extends FormattableObject implements Ident
     public static final ReferenceIdentifier[] EMPTY_IDENTIFIER_ARRAY = new ReferenceIdentifier[0];
 
     /**
-     * An empty array of alias. This is usefull for fetching alias as an array,
+     * An empty array of alias. This is useful for fetching alias as an array,
      * using the following idiom:
      *
      * {@preformat java
@@ -658,7 +658,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
     }
 
     /**
-     * Returns the informations provided in the specified indentified object as a map of
+     * Returns the informations provided in the specified identified object as a map of
      * properties. The returned map contains key such as {@link #NAME_KEY NAME_KEY}, and
      * values from methods such as {@link #getName}.
      *
@@ -706,7 +706,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      * Citation) matching} the specified authority.
      *
      * @param  authority The authority for the identifier to return, or {@code null} for
-     *         the first identifier regarless its authority.
+     *         the first identifier regardless its authority.
      * @return The object's identifier, or {@code null} if no identifier matching the specified
      *         authority was found.
      *
@@ -722,7 +722,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      *
      * @param  info The object to get the identifier from.
      * @param  authority The authority for the identifier to return, or {@code null} for
-     *         the first identifier regarless its authority.
+     *         the first identifier regardless its authority.
      * @return The object's identifier, or {@code null} if no identifier matching the specified
      *         authority was found.
      *
@@ -964,22 +964,24 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
     @Override
     public final boolean equals(final Object object) {
         return (object instanceof AbstractIdentifiedObject) &&
-                equals((AbstractIdentifiedObject) object, true);
+                equals((AbstractIdentifiedObject) object, ComparisonMode.STRICT);
     }
 
     /**
      * Compares this object with the specified object for equality.
-     *
-     * If {@code compareMetadata} is {@code true}, then all available properties are
-     * compared including {@linkplain #getName() name}, {@linkplain #getRemarks remarks},
-     * {@linkplain #getIdentifiers identifiers code}, etc.
-     *
-     * If {@code compareMetadata} is {@code false}, then this method compare
-     * only the properties needed for computing transformations. In other words,
-     * {@code sourceCS.equals(targetCS, false)} returns {@code true} only if
-     * the transformation from {@code sourceCS} to {@code targetCS} is
-     * the identity transform, no matter what {@link #getName()} saids.
-     * <P>
+     * The strictness level is controlled by the second argument:
+     * <p>
+     * <ul>
+     *   <li>If {@code mode} is {@link ComparisonMode#STRICT STRICT}, then all available properties
+     *       are compared including {@linkplain #getName() name}, {@linkplain #getRemarks remarks},
+     *       {@linkplain #getIdentifiers identifiers code}, etc.</li>
+     *   <li>If {@code mode} is {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA}, then this
+     *       method compare only the properties needed for computing transformations. In other
+     *       words, {@code sourceCS.equals(targetCS, false)} returns {@code true} only if the
+     *       transformation from {@code sourceCS} to {@code targetCS} is the identity transform,
+     *       no matter what {@link #getName()} said.</li>
+     * </ul>
+     * <p>
      * Some subclasses (especially {@link org.geotoolkit.referencing.datum.AbstractDatum}
      * and {@link org.geotoolkit.parameter.AbstractParameterDescriptor}) will test for the
      * {@linkplain #getName() name}, since objects with different name have completely
@@ -988,13 +990,16 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      * however, i.e. we may accept a name matching an alias.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
+     *
+     * @since 3.14
      */
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
         if (object!=null && object.getClass().equals(getClass())) {
-            if (!compareMetadata) {
+            if (!mode.equals(ComparisonMode.STRICT)) {
                 return true;
             }
             return Utilities.equals(name,        object.name       ) &&
@@ -1006,22 +1011,16 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
     }
 
     /**
-     * Compares two Geotk's {@code AbstractIdentifiedObject} objects for equality. This
-     * method is equivalent to {@code object1.<b>equals</b>(object2, <var>compareMetadata</var>)}
-     * except that one or both arguments may be null. This convenience method is provided for
-     * implementation of {@code equals} in subclasses.
+     * @deprecated Replaced by {@link #equals(AbstractIdentifiedObject, ComparisonMode)}.
      *
-     * @param  object1 The first object to compare (may be {@code null}).
-     * @param  object2 The second object to compare (may be {@code null}).
+     * @param  object The object to compare to {@code this}.
      * @param  compareMetadata {@code true} for performing a strict comparison, or
      *         {@code false} for comparing only properties relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
-    static boolean equals(final AbstractIdentifiedObject object1,
-                          final AbstractIdentifiedObject object2,
-                          final boolean          compareMetadata)
-    {
-        return (object1 == object2) || (object1!=null && object1.equals(object2, compareMetadata));
+    @Deprecated
+    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
+        return equals(object, compareMetadata ? ComparisonMode.STRICT : ComparisonMode.IGNORE_METADATA);
     }
 
     /**
@@ -1030,18 +1029,42 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      *
      * @param  object1 The first object to compare (may be {@code null}).
      * @param  object2 The second object to compare (may be {@code null}).
+     * @param  mode {@code STRICT} for performing a strict comparison, or {@code IGNORE_METADATA}
+     *         for comparing only properties relevant to transformations.
+     * @return {@code true} if both objects are equal.
+     *
+     * @since 3.14
+     */
+    protected static boolean equals(final IdentifiedObject object1,
+                                    final IdentifiedObject object2,
+                                    final ComparisonMode mode)
+    {
+        if (object1 == object2) {
+            return true;
+        }
+        if (object1 == null || object2 == null) {
+            return false;
+        }
+        if (!(object1 instanceof AbstractIdentifiedObject)) return object1.equals(object2);
+        if (!(object2 instanceof AbstractIdentifiedObject)) return object2.equals(object1);
+        return ((AbstractIdentifiedObject) object1).equals((AbstractIdentifiedObject) object2, mode);
+    }
+
+    /**
+     * @deprecated Replaced by {@link #equals(IdentifiedObject, IdentifiedObject, ComparisonMode)}.
+     *
+     * @param  object1 The first object to compare (may be {@code null}).
+     * @param  object2 The second object to compare (may be {@code null}).
      * @param  compareMetadata {@code true} for performing a strict comparison, or
      *         {@code false} for comparing only properties relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
+    @Deprecated
     protected static boolean equals(final IdentifiedObject object1,
                                     final IdentifiedObject object2,
                                     final boolean  compareMetadata)
     {
-        if (!(object1 instanceof AbstractIdentifiedObject)) return Utilities.equals(object1, object2);
-        if (!(object2 instanceof AbstractIdentifiedObject)) return Utilities.equals(object2, object1);
-        return equals((AbstractIdentifiedObject) object1,
-                      (AbstractIdentifiedObject) object2, compareMetadata);
+        return equals(object1, object2, compareMetadata ? ComparisonMode.STRICT : ComparisonMode.IGNORE_METADATA);
     }
 
     /**
@@ -1050,20 +1073,22 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      *
      * @param  array1 The first array to compare (may be {@code null}).
      * @param  array2 The second array to compare (may be {@code null}).
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@code STRICT} for performing a strict comparison, or {@code IGNORE_METADATA}
+     *         for comparing only properties relevant to transformations.
      * @return {@code true} if both arrays are equal.
+     *
+     * @since 3.14
      */
     protected static boolean equals(final IdentifiedObject[] array1,
                                     final IdentifiedObject[] array2,
-                                    final boolean   compareMetadata)
+                                    final ComparisonMode mode)
     {
         if (array1 != array2) {
             if ((array1 == null) || (array2 == null) || (array1.length != array2.length)) {
                 return false;
             }
             for (int i=array1.length; --i>=0;) {
-                if (!equals(array1[i], array2[i], compareMetadata)) {
+                if (!equals(array1[i], array2[i], mode)) {
                     return false;
                 }
             }
@@ -1072,20 +1097,39 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
     }
 
     /**
-     * Compares two collectionss of OpenGIS's {@code IdentifiedObject} objects for equality. The
+     * @deprecated Replaced by {@link #equals(IdentifiedObject[], IdentifiedObject[], ComparisonMode)}.
+     *
+     * @param  array1 The first array to compare (may be {@code null}).
+     * @param  array2 The second array to compare (may be {@code null}).
+     * @param  compareMetadata {@code true} for performing a strict comparison, or
+     *         {@code false} for comparing only properties relevant to transformations.
+     * @return {@code true} if both arrays are equal.
+     */
+    @Deprecated
+    protected static boolean equals(final IdentifiedObject[] array1,
+                                    final IdentifiedObject[] array2,
+                                    final boolean   compareMetadata)
+    {
+        return equals(array1, array2, compareMetadata ? ComparisonMode.STRICT : ComparisonMode.IGNORE_METADATA);
+    }
+
+    /**
+     * Compares two collections of OpenGIS's {@code IdentifiedObject} objects for equality. The
      * comparison take order in account, which make it more appropriate for {@link java.util.List}
      * or {@link LinkedHashSet} comparisons. This convenience method is provided for
      * implementation of {@code equals} method in subclasses.
      *
      * @param  collection1 The first collection to compare (may be {@code null}).
      * @param  collection2 The second collection to compare (may be {@code null}).
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@code STRICT} for performing a strict comparison, or {@code IGNORE_METADATA}
+     *         for comparing only properties relevant to transformations.
      * @return {@code true} if both collections are equal.
+     *
+     * @since 3.14
      */
     protected static boolean equals(final Collection<? extends IdentifiedObject> collection1,
                                     final Collection<? extends IdentifiedObject> collection2,
-                                    final boolean compareMetadata)
+                                    final ComparisonMode mode)
     {
         if (collection1 == collection2) {
             return true;
@@ -1096,11 +1140,28 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
         final Iterator<? extends IdentifiedObject> it1 = collection1.iterator();
         final Iterator<? extends IdentifiedObject> it2 = collection2.iterator();
         while (it1.hasNext()) {
-            if (!it2.hasNext() || !equals(it1.next(), it2.next(), compareMetadata)) {
+            if (!it2.hasNext() || !equals(it1.next(), it2.next(), mode)) {
                 return false;
             }
         }
         return !it2.hasNext();
+    }
+
+    /**
+     * @deprecated Replaced by {@link #equals(Collection<IdentifiedObject>, Collection<IdentifiedObject>, ComparisonMode)}.
+     *
+     * @param  collection1 The first collection to compare (may be {@code null}).
+     * @param  collection2 The second collection to compare (may be {@code null}).
+     * @param  compareMetadata {@code true} for performing a strict comparison, or
+     *         {@code false} for comparing only properties relevant to transformations.
+     * @return {@code true} if both collections are equal.
+     */
+    @Deprecated
+    protected static boolean equals(final Collection<? extends IdentifiedObject> collection1,
+                                    final Collection<? extends IdentifiedObject> collection2,
+                                    final boolean compareMetadata)
+    {
+        return equals(collection1, collection2, compareMetadata ? ComparisonMode.STRICT : ComparisonMode.IGNORE_METADATA);
     }
 
     /**

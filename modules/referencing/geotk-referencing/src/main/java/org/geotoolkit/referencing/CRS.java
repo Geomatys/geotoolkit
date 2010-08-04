@@ -1126,7 +1126,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
             object2 instanceof AbstractIdentifiedObject)
         {
             return ((AbstractIdentifiedObject) object1).equals(
-                   ((AbstractIdentifiedObject) object2), false);
+                   ((AbstractIdentifiedObject) object2), ComparisonMode.IGNORE_METADATA);
         }
         if (object2 instanceof MathTransform && object1 instanceof AbstractMathTransform) {
             return ((AbstractMathTransform) object1).equivalent((MathTransform) object2, false);

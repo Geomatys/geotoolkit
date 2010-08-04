@@ -30,6 +30,7 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.EngineeringCRS;
 import org.opengis.referencing.datum.EngineeringDatum;
 
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.datum.DefaultEngineeringDatum;
@@ -64,7 +65,7 @@ import org.geotoolkit.lang.Immutable;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.04
+ * @version 3.14
  *
  * @since 1.2
  * @module
@@ -95,9 +96,9 @@ public class DefaultEngineeringCRS extends AbstractSingleCRS implements Engineer
          * equals when metadata are ignored.
          */
         @Override
-        public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
-            if (super.equals(object, compareMetadata)) {
-                if (compareMetadata) {
+        public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+            if (super.equals(object, mode)) {
+                if (mode.equals(ComparisonMode.STRICT)) {
                     // No need to performs the check below if metadata were already compared.
                     return true;
                 }

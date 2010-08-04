@@ -29,14 +29,15 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 
 
 /**
  * Abstract definition of a parameter or group of parameters used by an operation method.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.14
  *
  * @see AbstractParameter
  *
@@ -136,13 +137,14 @@ public abstract class AbstractParameterDescriptor extends AbstractIdentifiedObje
      * Compares the specified object with this parameter for equality.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
-        if (super.equals(object, compareMetadata)) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+        if (super.equals(object, mode)) {
             final AbstractParameterDescriptor that = (AbstractParameterDescriptor) object;
             return this.minimumOccurs == that.minimumOccurs;
         }

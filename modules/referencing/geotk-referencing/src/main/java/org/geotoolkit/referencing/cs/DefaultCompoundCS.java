@@ -28,6 +28,7 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 import org.geotoolkit.lang.Immutable;
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 
 
@@ -40,8 +41,8 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
  *   {@link org.geotoolkit.referencing.crs.DefaultCompoundCRS Compound}
  * </TD></TR></TABLE>
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.14
  *
  * @since 2.0
  * @module
@@ -141,18 +142,19 @@ public class DefaultCompoundCS extends AbstractCS {
      * Compares this coordinate system with the specified object for equality.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
-        if (super.equals(object, compareMetadata)) {
+        if (super.equals(object, mode)) {
             final DefaultCompoundCS that = (DefaultCompoundCS) object;
-            return equals(this.cs, that.cs, compareMetadata);
+            return equals(this.cs, that.cs, mode);
         }
         return false;
     }

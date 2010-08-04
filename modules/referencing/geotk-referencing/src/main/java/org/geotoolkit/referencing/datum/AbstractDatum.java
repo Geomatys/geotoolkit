@@ -30,6 +30,7 @@ import org.opengis.metadata.extent.Extent;
 import org.opengis.referencing.datum.Datum;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
@@ -56,7 +57,7 @@ import org.geotoolkit.lang.Immutable;
  * identify the exact type.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.04
+ * @version 3.14
  *
  * @see org.geotoolkit.referencing.cs.AbstractCS
  * @see org.geotoolkit.referencing.crs.AbstractCRS
@@ -278,14 +279,15 @@ public class AbstractDatum extends AbstractIdentifiedObject implements Datum {
      * Compares the specified object with this datum for equality.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
-        if (super.equals(object, compareMetadata)) {
-            if (!compareMetadata) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+        if (super.equals(object, mode)) {
+            if (!mode.equals(ComparisonMode.STRICT)) {
                 /*
                  * Tests for name, since datum with different name have completely
                  * different meaning. We don't perform this comparison if the user

@@ -31,6 +31,7 @@ import org.opengis.referencing.crs.GeneralDerivedCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.MismatchedDimensionException;
 
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.operation.DefaultConversion;
@@ -55,7 +56,7 @@ import org.geotoolkit.lang.Immutable;
  * identify the exact type.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.14
  *
  * @since 2.1
  * @module
@@ -293,18 +294,19 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
      * Compares this coordinate reference system with the specified object for equality.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
-        if (super.equals(object, compareMetadata)) {
+        if (super.equals(object, mode)) {
             final AbstractDerivedCRS that = (AbstractDerivedCRS) object;
-            if (equals(this.baseCRS, that.baseCRS, compareMetadata)) {
+            if (equals(this.baseCRS, that.baseCRS, mode)) {
                 /*
                  * Avoid never-ending recursivity: Conversion has a 'targetCRS' field (inherited from
                  * the AbstractCoordinateOperation super-class) that is set to this AbstractDerivedCRS.
@@ -313,7 +315,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
                     return true;
                 }
                 try {
-                    return equals(this.conversionFromBase, that.conversionFromBase, compareMetadata);
+                    return equals(this.conversionFromBase, that.conversionFromBase, mode);
                 } finally {
                     Semaphores.clear(Semaphores.COMPARING);
                 }

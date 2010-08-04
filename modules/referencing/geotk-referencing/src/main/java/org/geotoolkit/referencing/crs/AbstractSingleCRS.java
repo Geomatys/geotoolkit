@@ -29,6 +29,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.geotoolkit.internal.referencing.NullReferencingObject;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.lang.Immutable;
 
@@ -56,7 +57,7 @@ import org.geotoolkit.lang.Immutable;
  * identify the exact type.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.04
+ * @version 3.14
  *
  * @see org.geotoolkit.referencing.cs.AbstractCS
  * @see org.geotoolkit.referencing.datum.AbstractDatum
@@ -175,15 +176,16 @@ public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
      * the {@linkplain #getScope scope}.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
-        if (super.equals(object, compareMetadata)) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+        if (super.equals(object, mode)) {
             final AbstractSingleCRS that = (AbstractSingleCRS) object;
-            return equals(this.datum, that.datum, compareMetadata);
+            return equals(this.datum, that.datum, mode);
         }
         return false;
     }

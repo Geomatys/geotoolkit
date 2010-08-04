@@ -43,6 +43,7 @@ import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.measure.Units;
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.internal.referencing.AxisDirections;
@@ -68,7 +69,7 @@ import org.geotoolkit.resources.Vocabulary;
  * situation, a plain {@code AbstractCS} object may be instantiated.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.04
+ * @version 3.14
  *
  * @see DefaultCoordinateSystemAxis
  * @see javax.measure.unit.Unit
@@ -629,18 +630,19 @@ next:   for (int i=0; i<axis.length; i++) {
      * Compares the specified object with this coordinate system for equality.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
-        if (super.equals(object, compareMetadata)) {
+        if (super.equals(object, mode)) {
             final AbstractCS that = (AbstractCS) object;
-            return equals(this.axis, that.axis, compareMetadata);
+            return equals(this.axis, that.axis, mode);
         }
         return false;
     }

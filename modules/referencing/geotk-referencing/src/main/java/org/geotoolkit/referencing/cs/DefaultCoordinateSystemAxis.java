@@ -42,6 +42,7 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.Utilities;
@@ -61,7 +62,7 @@ import org.geotoolkit.util.Utilities;
  * Conversely, these names shall not be used in any other context.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.04
+ * @version 3.14
  *
  * @see AbstractCS
  * @see Unit
@@ -1246,17 +1247,18 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
      * Compares the specified object with this axis for equality.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
-        if (super.equals(object, compareMetadata)) {
-            return equals((DefaultCoordinateSystemAxis) object, compareMetadata, true);
+        if (super.equals(object, mode)) {
+            return equals((DefaultCoordinateSystemAxis) object, mode.equals(ComparisonMode.STRICT), true);
         }
         return false;
     }

@@ -37,6 +37,7 @@ import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -56,8 +57,8 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @param <T> The type of elements to be returned by {@link ParameterValue#getValue}.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.14
  *
  * @see Parameter
  * @see DefaultParameterDescriptorGroup
@@ -506,17 +507,18 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
      * Compares the specified object with this parameter for equality.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
-        if (super.equals(object, compareMetadata)) {
-            if (!compareMetadata) {
+        if (super.equals(object, mode)) {
+            if (!mode.equals(ComparisonMode.STRICT)) {
                 /*
                  * Tests for name, since parameters with different name have
                  * completely different meaning. For example there is no difference

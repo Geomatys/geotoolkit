@@ -27,6 +27,7 @@ import org.opengis.referencing.datum.ImageDatum;
 import org.opengis.referencing.datum.PixelInCell;
 
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.lang.Immutable;
@@ -38,7 +39,7 @@ import org.geotoolkit.lang.Immutable;
  * or the corner of the image.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.14
  *
  * @since 2.0
  * @module
@@ -117,16 +118,17 @@ public class DefaultImageDatum extends AbstractDatum implements ImageDatum {
      * Compare this datum with the specified object for equality.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
-        if (super.equals(object, compareMetadata)) {
+        if (super.equals(object, mode)) {
             final DefaultImageDatum that = (DefaultImageDatum) object;
             return Utilities.equals(this.pixelInCell, that.pixelInCell);
         }

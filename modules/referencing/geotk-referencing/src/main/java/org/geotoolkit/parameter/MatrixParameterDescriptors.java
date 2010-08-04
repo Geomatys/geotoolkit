@@ -34,6 +34,7 @@ import org.opengis.referencing.operation.Matrix;
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
@@ -59,8 +60,8 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  *     elt_<num_row-1>_<num_col-1>
  * }
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.14
  *
  * @see MatrixParameters
  *
@@ -410,13 +411,14 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
      * Compares the specified object with this parameter group for equality.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
-        if (super.equals(object, compareMetadata)) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+        if (super.equals(object, mode)) {
             final MatrixParameterDescriptors that = (MatrixParameterDescriptors) object;
             return this.separator == that.separator && Utilities.equals(this.prefix, that.prefix);
         }

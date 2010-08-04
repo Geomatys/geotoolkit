@@ -24,6 +24,7 @@ import org.opengis.util.InternationalString;
 import org.opengis.referencing.cs.AxisDirection;
 
 import org.geotoolkit.test.Depend;
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.IdentifiedObjectTest;
 
 import org.junit.*;
@@ -115,15 +116,15 @@ public final class CoordinateSystemAxisTest extends ReferencingTestCase {
      */
     @Test
     public void testEqualsIgnoreMetadata() {
-        assertFalse("X",         X        .equals(GEOCENTRIC_X,        false));
-        assertFalse("Longitude", LONGITUDE.equals(GEODETIC_LONGITUDE,  true ));
-        assertFalse("Longitude", LONGITUDE.equals(SPHERICAL_LONGITUDE, true ));
-        assertFalse("Longitude", LONGITUDE.equals(SPHERICAL_LONGITUDE, false));
+        assertFalse("X",         X        .equals(GEOCENTRIC_X,        ComparisonMode.IGNORE_METADATA));
+        assertFalse("Longitude", LONGITUDE.equals(GEODETIC_LONGITUDE,  ComparisonMode.STRICT));
+        assertFalse("Longitude", LONGITUDE.equals(SPHERICAL_LONGITUDE, ComparisonMode.STRICT));
+        assertFalse("Longitude", LONGITUDE.equals(SPHERICAL_LONGITUDE, ComparisonMode.IGNORE_METADATA));
 
         // Tests aliases in the special "longitude" and "latitude" cases.
-        assertTrue ("Longitude", LONGITUDE.equals(GEODETIC_LONGITUDE,  false));
-        assertTrue ("Latitude",  LATITUDE .equals(GEODETIC_LATITUDE,   false));
-        assertFalse("Lon/Lat",   LATITUDE .equals(LONGITUDE,           false));
+        assertTrue ("Longitude", LONGITUDE.equals(GEODETIC_LONGITUDE,  ComparisonMode.IGNORE_METADATA));
+        assertTrue ("Latitude",  LATITUDE .equals(GEODETIC_LATITUDE,   ComparisonMode.IGNORE_METADATA));
+        assertFalse("Lon/Lat",   LATITUDE .equals(LONGITUDE,           ComparisonMode.IGNORE_METADATA));
     }
 
     /**

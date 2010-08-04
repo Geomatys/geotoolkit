@@ -42,6 +42,7 @@ import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy;
@@ -67,8 +68,8 @@ import org.geotoolkit.measure.Units;
  * {@code Default} prefix instead. An exception to this rule may occurs when it is not possible to
  * identify the exact type.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.01
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.14
  *
  * @since 1.2
  * @module
@@ -505,20 +506,21 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
      * {@linkplain #getScope scope}.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
-        if (super.equals(object, compareMetadata)) {
+        if (super.equals(object, mode)) {
             final AbstractCoordinateOperation that = (AbstractCoordinateOperation) object;
-            if (equals(this.sourceCRS, that.sourceCRS, compareMetadata)) {
+            if (equals(this.sourceCRS, that.sourceCRS, mode)) {
                 // See comment in DefaultSingleOperation.equals(...) about why we compare MathTransform.
-                if (compareMetadata) {
+                if (mode.equals(ComparisonMode.STRICT)) {
                     if (!Utilities.equals(transform,                   that.transform)        ||
                         !Utilities.equals(domainOfValidity,            that.domainOfValidity) ||
                         !Utilities.equals(scope,                       that.scope)            ||
@@ -550,7 +552,7 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
                     return true;
                 }
                 try {
-                    return equals(this.targetCRS, that.targetCRS, compareMetadata);
+                    return equals(this.targetCRS, that.targetCRS, mode);
                 } finally {
                     Semaphores.clear(Semaphores.COMPARING);
                 }

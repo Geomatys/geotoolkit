@@ -39,6 +39,7 @@ import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.internal.jaxb.referencing.datum.SecondDefiningParameter;
 import org.geotoolkit.internal.jaxb.uom.Measure;
 import org.geotoolkit.measure.CoordinateFormat;
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
@@ -60,7 +61,7 @@ import org.geotoolkit.lang.Immutable;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.06
+ * @version 3.14
  *
  * @since 1.2
  * @module
@@ -652,18 +653,19 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
      * Compare this ellipsoid with the specified object for equality.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
-        if (super.equals(object, compareMetadata)) {
+        if (super.equals(object, mode)) {
             final DefaultEllipsoid that = (DefaultEllipsoid) object;
-            return (!compareMetadata || this.ivfDefinitive == that.ivfDefinitive)   &&
+            return (!mode.equals(ComparisonMode.STRICT) || ivfDefinitive == that.ivfDefinitive) &&
                    Utilities.equals(this.semiMajorAxis,     that.semiMajorAxis)     &&
                    Utilities.equals(this.semiMinorAxis,     that.semiMinorAxis)     &&
                    Utilities.equals(this.inverseFlattening, that.inverseFlattening) &&

@@ -36,6 +36,7 @@ import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.metadata.iso.citation.Citations;
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.NamedIdentifier;
@@ -49,7 +50,7 @@ import org.geotoolkit.lang.Immutable;
  * system centered in this ellipsoid (or sphere).
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.14
  *
  * @see Ellipsoid
  * @see PrimeMeridian
@@ -274,7 +275,7 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
         if (bursaWolf != null) {
             for (int i=0; i<bursaWolf.length; i++) {
                 final BursaWolfParameters candidate = bursaWolf[i];
-                if (equals(target, candidate.targetDatum, false)) {
+                if (equals(target, candidate.targetDatum, ComparisonMode.IGNORE_METADATA)) {
                     return candidate.clone();
                 }
             }
@@ -321,7 +322,7 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
             if (bursaWolf != null) {
                 for (int i=0; i<bursaWolf.length; i++) {
                     final BursaWolfParameters transformation = bursaWolf[i];
-                    if (equals(target, transformation.targetDatum, false)) {
+                    if (equals(target, transformation.targetDatum, ComparisonMode.IGNORE_METADATA)) {
                         return transformation.getAffineTransform();
                     }
                 }
@@ -336,7 +337,7 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
             if (bursaWolf != null) {
                 for (int i=0; i<bursaWolf.length; i++) {
                     final BursaWolfParameters transformation = bursaWolf[i];
-                    if (equals(source, transformation.targetDatum, false)) {
+                    if (equals(source, transformation.targetDatum, ComparisonMode.IGNORE_METADATA)) {
                         final XMatrix matrix = transformation.getAffineTransform();
                         matrix.invert();
                         return matrix;
@@ -362,7 +363,7 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
                     sourceStep = sourceParam[i].targetDatum;
                     for (int j=0; j<targetParam.length; j++) {
                         targetStep = targetParam[j].targetDatum;
-                        if (equals(sourceStep, targetStep, false)) {
+                        if (equals(sourceStep, targetStep, ComparisonMode.IGNORE_METADATA)) {
                             final XMatrix step1, step2;
                             if (exclusion == null) {
                                 exclusion = new HashSet<GeodeticDatum>();
@@ -406,7 +407,7 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
      */
     public static boolean isWGS84(final Datum datum) {
         if (datum instanceof AbstractIdentifiedObject) {
-            return WGS84.equals((AbstractIdentifiedObject) datum, false);
+            return WGS84.equals((AbstractIdentifiedObject) datum, ComparisonMode.IGNORE_METADATA);
         }
         // Maybe the specified object has its own test...
         return datum!=null && datum.equals(WGS84);
@@ -416,19 +417,20 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
      * Compare this datum with the specified object for equality.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
-        if (super.equals(object, compareMetadata)) {
+        if (super.equals(object, mode)) {
             final DefaultGeodeticDatum that = (DefaultGeodeticDatum) object;
-            if (equals(this.ellipsoid,     that.ellipsoid,     compareMetadata) &&
-                equals(this.primeMeridian, that.primeMeridian, compareMetadata))
+            if (equals(this.ellipsoid,     that.ellipsoid,     mode) &&
+                equals(this.primeMeridian, that.primeMeridian, mode))
             {
                 /*
                  * HACK: We do not consider Bursa Wolf parameters as a non-metadata field.
@@ -440,7 +442,7 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
                  *       more of those transformation informations (which is nice, but doesn't
                  *       change the CRS itself).
                  */
-                return !compareMetadata || Arrays.equals(this.bursaWolf, that.bursaWolf);
+                return !mode.equals(ComparisonMode.STRICT) || Arrays.equals(this.bursaWolf, that.bursaWolf);
             }
         }
         return false;

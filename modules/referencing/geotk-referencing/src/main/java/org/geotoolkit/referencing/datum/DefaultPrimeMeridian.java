@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.referencing.datum.PrimeMeridian;
 
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
@@ -44,7 +45,7 @@ import org.geotoolkit.lang.Immutable;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.04
+ * @version 3.14
  *
  * @since 1.2
  * @module
@@ -179,18 +180,19 @@ public class DefaultPrimeMeridian extends AbstractIdentifiedObject implements Pr
      * Compare this prime meridian with the specified object for equality.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
-        if (super.equals(object, compareMetadata)) {
+        if (super.equals(object, mode)) {
             final DefaultPrimeMeridian that = (DefaultPrimeMeridian) object;
-            if (compareMetadata) {
+            if (mode.equals(ComparisonMode.STRICT)) {
                 return Double.doubleToLongBits(this.greenwichLongitude) ==
                        Double.doubleToLongBits(that.greenwichLongitude) &&
                        Utilities.equals(this.angularUnit, that.angularUnit);

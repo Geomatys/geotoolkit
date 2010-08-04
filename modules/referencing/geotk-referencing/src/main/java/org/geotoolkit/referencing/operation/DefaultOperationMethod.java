@@ -38,6 +38,7 @@ import org.opengis.metadata.citation.Citation;
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.parameter.Parameters;
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.transform.Parameterized;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
@@ -54,7 +55,7 @@ import org.geotoolkit.io.wkt.Formatter;
  * use none. Each coordinate operation using the method assigns values to these parameters.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.03
+ * @version 3.14
  *
  * @see DefaultSingleOperation
  *
@@ -320,22 +321,23 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
      * properties are compared including {@linkplain #getFormula formula}.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
-        if (super.equals(object, compareMetadata)) {
+        if (super.equals(object, mode)) {
             final DefaultOperationMethod that = (DefaultOperationMethod) object;
             if (Utilities.equals(this.sourceDimension, that.sourceDimension) &&
                 Utilities.equals(this.targetDimension, that.targetDimension) &&
-                equals(this.parameters, that.parameters, compareMetadata))
+                equals(this.parameters, that.parameters, mode))
             {
-                return !compareMetadata || Utilities.equals(this.formula, that.formula);
+                return !mode.equals(ComparisonMode.STRICT) || Utilities.equals(this.formula, that.formula);
             }
         }
         return false;

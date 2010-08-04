@@ -32,6 +32,7 @@ import org.opengis.util.InternationalString;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.referencing.cs.AbstractCS;
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.util.UnsupportedImplementationException;
@@ -45,7 +46,7 @@ import org.geotoolkit.internal.referencing.NullReferencingObject;
  * Abstract coordinate reference system, usually defined by a coordinate system and a datum.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.04
+ * @version 3.14
  *
  * @see AbstractCS
  * @see org.geotoolkit.referencing.datum.AbstractDatum
@@ -183,15 +184,16 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
      * the {@linkplain #getScope scope}.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
-        if (super.equals(object, compareMetadata)) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+        if (super.equals(object, mode)) {
             final AbstractCRS that = (AbstractCRS) object;
-            return equals(this.coordinateSystem, that.coordinateSystem, compareMetadata);
+            return equals(this.coordinateSystem, that.coordinateSystem, mode);
         }
         return false;
     }

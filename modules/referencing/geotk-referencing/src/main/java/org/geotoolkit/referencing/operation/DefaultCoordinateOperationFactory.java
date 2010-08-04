@@ -42,6 +42,7 @@ import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
@@ -72,7 +73,7 @@ import static org.geotoolkit.referencing.operation.ProjectionAnalyzer.createLine
  * override those methods in order to extend the factory capability to some more CRS.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.14
  *
  * @since 1.2
  * @module
@@ -483,7 +484,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
      * by Greenwich. This datum is processed in a special way by {@link #equalsIgnorePrimeMeridian}.
      */
     private static final class TemporaryDatum extends DefaultGeodeticDatum {
-        /** For cros-version compatibility. */
+        /** For cross-version compatibility. */
         private static final long serialVersionUID = -8964199103509187219L;
 
         /** The wrapped datum. */
@@ -505,10 +506,13 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
 
         /** Compares this datum with the specified object for equality. */
         @Override
-        public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
-            if (super.equals(object, compareMetadata)) {
+        public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+            if (super.equals(object, mode)) {
                 final GeodeticDatum other = ((TemporaryDatum) object).datum;
-                return compareMetadata ? datum.equals(other) : equalsIgnoreMetadata(datum, other);
+                switch (mode) {
+                    case STRICT: return datum.equals(other);
+                    default:     return equalsIgnoreMetadata(datum, other);
+                }
             }
             return false;
         }

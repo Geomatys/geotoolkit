@@ -28,6 +28,7 @@ import org.opengis.referencing.datum.VerticalDatumType;
 
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
@@ -203,16 +204,17 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
      * Compare this vertical datum with the specified object for equality.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
-        if (super.equals(object, compareMetadata)) {
+        if (super.equals(object, mode)) {
             final DefaultVerticalDatum that = (DefaultVerticalDatum) object;
             return Utilities.equals(this.type, that.type);
         }

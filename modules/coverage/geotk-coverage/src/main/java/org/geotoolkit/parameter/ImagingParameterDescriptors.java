@@ -59,6 +59,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.factory.Factories;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultContact;
@@ -75,8 +76,8 @@ import org.geotoolkit.util.NullArgumentException;
  * This adaptor make it easier to access parameters for a JAI operation through the general GeoAPI
  * parameters framework.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.14
  *
  * @since 2.2
  * @module
@@ -547,17 +548,18 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
      * Compares the specified object with this parameter group for equality.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
         if (object == this) {
             // Slight optimization
             return true;
         }
-        if (super.equals(object, compareMetadata)) {
+        if (super.equals(object, mode)) {
             final ImagingParameterDescriptors that = (ImagingParameterDescriptors) object;
             return Utilities.equals(this.operation,  that.operation) &&
                    Utilities.equals(this.descriptor, that.descriptor);

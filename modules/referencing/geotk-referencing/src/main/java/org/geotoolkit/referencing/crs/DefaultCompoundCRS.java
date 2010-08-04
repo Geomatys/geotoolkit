@@ -34,6 +34,7 @@ import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.datum.Datum;
 
+import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.cs.DefaultCompoundCS;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
@@ -52,7 +53,7 @@ import org.geotoolkit.lang.Immutable;
  * {@link CoordinateReferenceSystem}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.01
+ * @version 3.14
  *
  * @since 1.2
  * @module
@@ -297,18 +298,19 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
      * Compares this coordinate reference system with the specified object for equality.
      *
      * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
+     * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
+     *         {@link ComparisonMode#IGNORE_METADATA IGNORE_METADATA} for comparing only properties
+     *         relevant to transformations.
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
+    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
-        if (super.equals(object, compareMetadata)) {
+        if (super.equals(object, mode)) {
             final DefaultCompoundCRS that = (DefaultCompoundCRS) object;
-            return equals(this.crs, that.crs, compareMetadata);
+            return equals(this.crs, that.crs, mode);
         }
         return false;
     }
