@@ -70,6 +70,26 @@ public class ContentsType extends ContentsBaseType {
         return this.tileMatrixSet;
     }
 
+    /**
+     * Returns the {@link TileMatrixSet} with the matching identifier, or {@code null}
+     * if the given argument is null or if no one matches.
+     *
+     * @param indentifier The identifier of a matrix set.
+     * @return A {@link TileMatrixSet} with the matching identifier, or {@code null}
+     *         if none.
+     */
+    public TileMatrixSet getTileMatrixSetByIdentifier(final String indentifier) {
+        if (tileMatrixSet == null || indentifier == null) {
+            return null;
+        }
+        for (TileMatrixSet matrix : tileMatrixSet) {
+            if (indentifier.equalsIgnoreCase(matrix.getIdentifier().getValue())) {
+                return matrix;
+            }
+        }
+        return null;
+    }
+
     public void setTileMatrixSet(List<TileMatrixSet> tms) {
         this.tileMatrixSet = tms;
     }
@@ -80,7 +100,7 @@ public class ContentsType extends ContentsBaseType {
             final Object candidate = elem.getValue();
             if (candidate instanceof LayerType) {
                 layers.add((LayerType)candidate);
-}
+            }
         }
         return layers;
     }
