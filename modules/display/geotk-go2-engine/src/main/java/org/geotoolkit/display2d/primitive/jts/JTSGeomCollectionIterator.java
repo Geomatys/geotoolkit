@@ -49,8 +49,10 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
     public void reset(){
         currentGeom = 0;
         done = false;
-        if(geometry != null){
+        if(geometry != null && nbGeom > 0){
             prepareIterator(geometry.getGeometryN(0));
+        }else{
+            done = true;
         }
     }
 
