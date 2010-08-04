@@ -393,7 +393,7 @@ public class DefaultNameSpace implements NameSpace, Serializable {
     /**
      * Returns a name which is local in this namespace. The returned name will have this
      * namespace as its {@linkplain DefaultLocalName#scope scope}. This method may returns
-     * an existing instance on a "best effort" basis, but this is not garanteed.
+     * an existing instance on a "best effort" basis, but this is not guaranteed.
      *
      * @param  name      The name of the instance to create.
      * @param  candidate The instance to cache if no instance was found for the given name,

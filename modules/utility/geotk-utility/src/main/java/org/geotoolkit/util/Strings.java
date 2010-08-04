@@ -374,7 +374,7 @@ public final class Strings {
                     wantChar = true;
                 } else if (Character.isUpperCase(c)) {
                     // Test for mixed-case (e.g. "northEast").
-                    // Note that the buffer is garanteed to contain at least 1 character.
+                    // Note that the buffer is guaranteed to contain at least 1 character.
                     if (Character.isLowerCase(buffer.charAt(buffer.length() - 1))) {
                         buffer.append(c);
                     }

@@ -378,7 +378,7 @@ public abstract class GridCoverageStore implements Localized {
         final MathTransform2D crsToGrid = gridToCRS.inverse();
         /*
          * Get the full coverage envelope in the coverage CRS. The returned shape is likely
-         * (but not garanteed) to be an instance of Rectangle2D. It can be freely modified.
+         * (but not guaranteed) to be an instance of Rectangle2D. It can be freely modified.
          *
          * IMPLEMENTATION NOTE: It could have been more efficient to compute the transform
          * from the requested envelope to the source grid (by concatenation of the various

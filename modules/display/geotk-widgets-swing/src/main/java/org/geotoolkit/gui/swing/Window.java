@@ -98,7 +98,7 @@ public interface Window extends WindowConstants {
      * If {@code listener} is null, no exception is thrown and no action is performed.
      * <p>
      * The listener given to this method shall be tolerant to null {@code WindowEvent}
-     * argument value, since it is not garanteed that the events fired by the actual
+     * argument value, since it is not guaranteed that the events fired by the actual
      * window implementation can be converted to {@code WindowEvent} in every cases.
      *
      * @param listener the window listener to add.

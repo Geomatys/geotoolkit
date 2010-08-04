@@ -275,7 +275,7 @@ public class MosaicImageReadParam extends ImageReadParam {
      */
     @Override
     public IIOParamController getDefaultController() {
-        // Overriden only for documentation purpose.
+        // Overridden only for documentation purpose.
         return super.getDefaultController();
     }
 }

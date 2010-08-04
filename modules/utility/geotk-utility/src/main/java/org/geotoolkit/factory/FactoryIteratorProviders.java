@@ -71,7 +71,7 @@ final class FactoryIteratorProviders {
     final FactoryIteratorProvider[] synchronizeIteratorProviders() {
         /*
          * Do not synchronize "this". Only the GLOBAL instance needs to be synchronized. We
-         * make no thread-safety garantee for the others, as in the FactoryRegistry contract.
+         * make no thread-safety guarantee for the others, as in the FactoryRegistry contract.
          */
         FactoryIteratorProvider[] newProviders = null;
         int count = 0;

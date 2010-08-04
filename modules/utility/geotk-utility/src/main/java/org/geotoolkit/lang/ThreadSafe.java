@@ -39,8 +39,8 @@ import java.lang.annotation.RetentionPolicy;
  *       subject to changes). Unless otherwise known, class without annotation should be
  *       considered <strong>not</strong> thread-safe.</p></li>
  *
- *   <li><p>Classes with {@code @ThreadSafe} annotation are garanteed to be thread safe.
- *       This garantee is expected to apply to all subclasses as well. The later may be
+ *   <li><p>Classes with {@code @ThreadSafe} annotation are guaranteed to be thread safe.
+ *       This guarantee is expected to apply to all subclasses as well. The later may be
  *       annotated explicitly for clarity, but don't have too.</p></li>
  * </ul>
  *

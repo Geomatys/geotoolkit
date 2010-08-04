@@ -884,7 +884,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * More specifically, this method uses the first non-null element found in
      * <code>object.{@linkplain IdentifiedObject#getIdentifiers() getIdentifiers()}</code>. If there
      * is none, then it uses <code>object.{@linkplain IdentifiedObject#getName() getName()}</code> -
-     * which is not garanteed to be a valid identifier.
+     * which is not guaranteed to be a valid identifier.
      *
      * {@section Recommanded alternatives}
      * <ul>

@@ -80,7 +80,7 @@ import org.geotoolkit.resources.Errors;
  *
  * {@section Synchronization}
  * Instances of {@code LineFormat} are not thread-safe, since the underlying {@link Format}
- * implementations are not garanteed to be thread-safe neither.
+ * implementations are not guaranteed to be thread-safe neither.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00

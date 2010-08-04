@@ -504,7 +504,7 @@ public class ReferencingBuilder {
                 if (abbreviation == null) {
                     /*
                      * If no abbreviation has been explicitly specified, use the first letter of the
-                     * name. Note that if non-null, the name is garanteed to have a length greater
+                     * name. Note that if non-null, the name is guaranteed to have a length greater
                      * than 0 has of MetadataAccessor.getAttribute(String) method implementation.
                      */
                     abbreviation = axesProperties.get(IdentifiedObject.NAME_KEY).toString();

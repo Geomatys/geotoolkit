@@ -61,7 +61,7 @@ import org.geotoolkit.util.logging.Logging;
  * </ol>
  *
  * {@section Thread safety}
- * {@code IdentifiedObjectFinder} are <strong>not</strong> garanteed to be thread-safe
+ * {@code IdentifiedObjectFinder} are <strong>not</strong> guaranteed to be thread-safe
  * even if the underlying factory is thread-safe. If concurrent searches are desired,
  * then a new instance should be created for each thread.
  *

@@ -142,7 +142,7 @@ public abstract class Operation2D extends AbstractOperation {
     /**
      * Returns the view of {@link GridCoverage2D} to use for computation purpose. The default
      * implementation conservatively returns {@link ViewType#GEOPHYSICS} in all case. This is
-     * a "conservative" implementation because this is often the only view which is garanteed
+     * a "conservative" implementation because this is often the only view which is guaranteed
      * to be mainfull (assuming that a grid coverage has defined such a view). If computation
      * should be performed on the data "as is" without any "<cite>samples to geophysics values</cite>"
      * conversion, then subclasses should override this method and returns {@link ViewType#SAME}.

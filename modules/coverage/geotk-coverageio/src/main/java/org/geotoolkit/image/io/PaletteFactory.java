@@ -175,7 +175,7 @@ public class PaletteFactory {
 
     /**
      * The locale to use for formatting error messages, or {@code null} for the current default.
-     * This locale is informative only; there is no garantee that this locale will be really used.
+     * This locale is informative only; there is no guarantee that this locale will be really used.
      */
     private transient ThreadLocal<Locale> warningLocales;
 
@@ -422,7 +422,7 @@ public class PaletteFactory {
     /**
      * Sets the locale to use for formatting warning or error messages. This is typically the
      * {@linkplain javax.imageio.ImageReader#getLocale image reader locale}. This locale is
-     * informative only; there is no garantee that this locale will be really used.
+     * informative only; there is no guarantee that this locale will be really used.
      * <p>
      * This method sets the locale for the current thread only. It is safe to use this palette
      * factory concurrently in many threads, each with their own locale.

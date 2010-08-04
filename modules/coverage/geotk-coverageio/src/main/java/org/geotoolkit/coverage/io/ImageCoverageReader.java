@@ -759,7 +759,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      *       setSubsamplingChangeAllowed}(true)</code> in order to allow {@link MosaicImageReader}
      *       to use a different resolution than the requested one. This is crucial from a
      *       performance point of view. Since the {@code GridCoverageReader} contract does not
-     *       garantee that the grid geometry of the returned coverage is the requested geometry,
+     *       guarantee that the grid geometry of the returned coverage is the requested geometry,
      *       we are allowed to do that.</li>
      * </ul>
      * <p>
@@ -818,7 +818,7 @@ public class ImageCoverageReader extends GridCoverageReader {
          * At this point, the standard parameters (source region, source bands) are set.
          * The following is Geotk-specific. First, allow MosaicImageReader to use a different
          * resolution than the requested one. This is crucial from a performance point of view.
-         * Since the GridCoverageReader contract does not garantee that the grid geometry of the
+         * Since the GridCoverageReader contract does not guarantee that the grid geometry of the
          * returned coverage is the requested geometry, we are allowed to do that.
          */
         if (imageParam instanceof MosaicImageReadParam) {

@@ -308,7 +308,7 @@ final class GridGeometryEntry extends DefaultEntry {
 
     /**
      * Returns the coverage shape in coverage CRS (not database CRS). The returned shape is likely
-     * (but not garanteed) to be an instance of {@link Rectangle2D}. It can be freely modified.
+     * (but not guaranteed) to be an instance of {@link Rectangle2D}. It can be freely modified.
      */
     private Shape getHorizontalEnvelope() {
         final GridEnvelope gridRange = geometry.getGridRange();

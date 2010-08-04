@@ -476,7 +476,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
         if (super.sameAuthorityCodes(factory)) {
             return true;
         }
-        if (!isCodeMethodOverriden()) {
+        if (!isCodeMethodOverridden()) {
             /*
              * Tests wrapped factories only if the 'toBackingFactoryCode(String)' method is not
              * overwritten, otherwise we can't assume that the authority codes are the same. The
@@ -1585,7 +1585,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     /**
      * Returns {@code true} if the {@link #toBackingFactoryCode} method is overridden.
      */
-    final boolean isCodeMethodOverriden() {
+    final boolean isCodeMethodOverridden() {
         final Class<?>[] arguments = new Class<?>[] {String.class};
         Class<?> type = getClass();
         while (!AuthorityFactoryAdapter.class.equals(type)) {

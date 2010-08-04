@@ -213,7 +213,7 @@ public final class AbstractMathTransformTest {
                     if (completed) {
                         completedCount++;
                     } else {
-                        // If the transform has given up, then there is no garantee about the state
+                        // If the transform has given up, then there is no guarantee about the state
                         // of the destination array so we can not continue the tests in this run.
                         tr.failures.clear();
                         abandonCount++;

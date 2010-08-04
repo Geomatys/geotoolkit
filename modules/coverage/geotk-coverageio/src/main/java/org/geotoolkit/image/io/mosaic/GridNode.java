@@ -380,7 +380,7 @@ final class GridNode extends TreeNode implements Comparable<GridNode> {
             if (tile != null) {
                 final int xSubsampling, ySubsampling;
                 if (isLeaf()) {
-                    // Slight optimization: if we are a leaf, x/ySubsampling are garanteed
+                    // Slight optimization: if we are a leaf, x/ySubsampling are guaranteed
                     // to be equal to the value returned by Tile.getSubsampling().
                     xSubsampling = (this.xSubsampling & MASK);
                     ySubsampling = (this.ySubsampling & MASK);

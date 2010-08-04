@@ -263,7 +263,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      * never wrapped into {@link BackingStoreException}.
      *
      * @param n The number of object to resolve. If this number is equals or greater than the
-     *          {@linkplain #size set's size}, then the creation of all objects is garanteed
+     *          {@linkplain #size set's size}, then the creation of all objects is guaranteed
      *          successful.
      * @throws FactoryException if an {@linkplain #createObject object creation} failed.
      */

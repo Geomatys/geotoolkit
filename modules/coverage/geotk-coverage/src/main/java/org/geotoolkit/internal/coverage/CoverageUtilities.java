@@ -73,7 +73,7 @@ public final class CoverageUtilities {
 
     /**
      * Returns a two-dimensional CRS for the given coverage. This method performs a
-     * <cite>best effort</cite>; the returned CRS is not garanteed to be the most
+     * <cite>best effort</cite>; the returned CRS is not guaranteed to be the most
      * appropriate one.
      *
      * @param  coverage The coverage for which to obtains a two-dimensional CRS.
@@ -102,7 +102,7 @@ public final class CoverageUtilities {
 
     /**
      * Returns a two-dimensional envelope for the given coverage. This method performs a
-     * <cite>best effort</cite>; the returned envelope is not garanteed to be the most
+     * <cite>best effort</cite>; the returned envelope is not guaranteed to be the most
      * appropriate one.
      *
      * @param  coverage The coverage for which to obtains a two-dimensional envelope.

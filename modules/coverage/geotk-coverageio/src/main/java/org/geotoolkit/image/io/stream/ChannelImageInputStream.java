@@ -936,7 +936,7 @@ loop:   while ((c = read()) >= 0) {
      *
      * {@section Intentional side effects}
      * The {@link #bitOffset} is indirectly set to zero (through the call to
-     * {@link #ensureRemaining(int)}), and the {@linkplain #buffer} is garanteed
+     * {@link #ensureRemaining(int)}), and the {@linkplain #buffer} is guaranteed
      * to have at least {@code dataSize} bytes.
      *
      * @param  target   The buffer to synchronize with the {@link #buffer}.

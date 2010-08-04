@@ -82,7 +82,7 @@ final class FormatEntry extends DefaultEntry {
 
     /**
      * The sample dimensions for coverages encoded with this format, or {@code null} if undefined.
-     * If non-null, then the list is garanteed to be non-empty and the list size is equals to the
+     * If non-null, then the list is guaranteed to be non-empty and the list size is equals to the
      * expected number of bands.
      * <p>
      * Empty lists are not allowed because our Image I/O framework interprets that as "no bands",
@@ -272,7 +272,7 @@ final class FormatEntry extends DefaultEntry {
     }
 
     /**
-     * Overriden as a safety, but should not be necessary since identifiers are supposed
+     * Overridden as a safety, but should not be necessary since identifiers are supposed
      * to be unique in a given database. We don't compare the sample dimensions because
      * it may be costly.
      */

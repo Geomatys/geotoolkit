@@ -470,7 +470,7 @@ public class MosaicBuilder {
      * #setSubsamplings(Dimension[]) explicitly set}, then this method computes automatically
      * some subsamplings from the {@linkplain #getUntiledImageBounds untiled image bounds} and
      * {@linkplain #getTileSize tile size}, with the following properties (note that those
-     * properties are not garanteed if the subsampling was explicitly specified rather than
+     * properties are not guaranteed if the subsampling was explicitly specified rather than
      * computed):
      * <p>
      * <ul>

@@ -408,7 +408,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
      * {@linkplain org.opengis.referencing.cs.CartesianCS Cartesian CS}, this method may
      * create a new instance on the fly. In every cases this method attempts to return a
      * <A HREF="http://en.wikipedia.org/wiki/Right_hand_rule">right-handed</A> coordinate
-     * system, but this is not garanteed.
+     * system, but this is not guaranteed.
      * <p>
      * This method is typically used together with {@link #swapAndScaleAxis swapAndScaleAxis}
      * for the creation of a transformation step before some

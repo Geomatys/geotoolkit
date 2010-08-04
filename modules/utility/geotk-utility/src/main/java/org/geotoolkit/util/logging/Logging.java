@@ -323,7 +323,7 @@ public final class Logging {
     /**
      * Sets a new logger factory from a fully qualified class name. This method should be
      * preferred to {@link #setLoggerFactory(LoggerFactory)} when the underlying logging
-     * framework is not garanteed to be on the classpath.
+     * framework is not guaranteed to be on the classpath.
      *
      * @param  className The fully qualified factory class name.
      * @throws ClassNotFoundException if the specified class was not found.

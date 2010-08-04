@@ -783,7 +783,7 @@ public class MosaicImageReader extends ImageReader implements Disposable {
      * given set of tiles. If none is found, returns {@code null}.
      * <p>
      * If there is more than one supported types, this method will give preference to the type
-     * having transparency. We do that because we have no garantee that a tile exists for every
+     * having transparency. We do that because we have no guarantee that a tile exists for every
      * area in an image to be read, and the empty area typically need to remain transparent.
      *
      * @param  tiles The tiles to iterate over.

@@ -267,7 +267,7 @@ public class LayerCoverageReader extends GridCoverageReader {
 
     /**
      * Reads the data of a two-dimensional slice and returns them as a coverage. Note that the
-     * returned two-dimensional slice is not garanteed to have exactly the requested envelope.
+     * returned two-dimensional slice is not guaranteed to have exactly the requested envelope.
      * Callers may need to check the geometry of the returned envelope and perform an additional
      * resampling if needed.
      *

@@ -54,14 +54,14 @@ public class URN_EPSG_Test extends ReferencingTestCase {
     }
 
     /**
-     * Tests {@link AuthorityFactoryAdapter#isCodeMethodOverriden}.
+     * Tests {@link AuthorityFactoryAdapter#isCodeMethodOverridden}.
      */
     @Test
-    public void testMethodOverriden() {
+    public void testMethodOverridden() {
         assumeTrue(isEpsgFactoryAvailable());
 
         final AuthorityFactoryAdapter test = new Versioned();
-        assertTrue(test.isCodeMethodOverriden());
+        assertTrue(test.isCodeMethodOverridden());
     }
 
     /**

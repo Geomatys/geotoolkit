@@ -246,7 +246,7 @@ public final class MetadataStandard {
     /**
      * Returns {@code true} if the given type is assignable to a type from this standard.
      * If this method returns {@code true}, then invoking {@link #getInterface(Class)} is
-     * garanteed to succeed without throwing an exception.
+     * guaranteed to succeed without throwing an exception.
      *
      * @param  type The implementation class (can be {@code null}).
      * @return {@code true} if the given class is an interface of this standard,

@@ -209,7 +209,7 @@ public abstract class AbstractMetadata {
          * Opportunist usage of hash code if they are already computed. If they are not, we will
          * not compute them - they are not sure to be faster than checking directly for equality,
          * and hash code could be invalidated later anyway if the object change. Note that we
-         * don't need to synchronize since reading int fields are garanteed to be atomic in Java.
+         * don't need to synchronize since reading int fields are guaranteed to be atomic in Java.
          */
         final int c0 = hashCode;
         if (c0 != 0) {
@@ -224,7 +224,7 @@ public abstract class AbstractMetadata {
          * in an other thread (see http://jira.codehaus.org/browse/GEOT-1777). Ideally we would
          * synchronize on 'this' and 'object' atomically (RFE #4210659). Since we can't in Java
          * a workaround is to always get the locks in the same order. Unfortunatly we have no
-         * garantee that the caller didn't looked the object himself. For now the safest approach
+         * guarantee that the caller didn't looked the object himself. For now the safest approach
          * is to not synchronize at all.
          */
         return standard.shallowEquals(this, object, false);

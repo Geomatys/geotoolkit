@@ -243,7 +243,7 @@ public class Molodensky extends MathTransformProvider {
 
     /**
      * Returns the dimension declared in the given parameter value, or 0 if none. If
-     * this method returns a non-zero value, then it is garanteed to be either 2 or 3.
+     * this method returns a non-zero value, then it is guaranteed to be either 2 or 3.
      *
      * @param  descriptor The descriptor of the dimension to get.
      * @param  values The values from which to get the dimension.

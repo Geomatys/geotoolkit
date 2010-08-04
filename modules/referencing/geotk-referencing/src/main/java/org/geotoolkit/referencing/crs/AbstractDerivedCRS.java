@@ -166,7 +166,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
     /**
      * Constructs a derived CRS from a set of properties. A {@linkplain DefaultOperationMethod
      * default operation method} is inferred from the {@linkplain AbstractMathTransform math
-     * transform}. This is a convenience constructor that is not garanteed to work reliably for
+     * transform}. This is a convenience constructor that is not guaranteed to work reliably for
      * non-Geotk implementations. Use the constructor expecting a {@linkplain DefiningConversion
      * defining conversion} for more determinist result.
      * <p>

@@ -96,7 +96,7 @@ public final class FactoryUtilities {
          * Do NOT change the parameter signature to Map<?,?>. We want to keep type safety.
          * Use hints.putAll(...) if you have a Map<RenderingHints.Key,?>,  or this method
          * if you have a RenderingHints map. Furthermore this method implementation needs
-         * the garantee that the map do not contains null value (otherwise the 'changed'
+         * the guarantee that the map do not contains null value (otherwise the 'changed'
          * computation could be inacurate) - this condition is enforced by RenderingHints
          * but not by Map.
          *

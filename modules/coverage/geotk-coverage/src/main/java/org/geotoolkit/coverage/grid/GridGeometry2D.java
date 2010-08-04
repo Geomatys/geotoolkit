@@ -93,7 +93,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * GridEnvelope#getSpan span} greater than 1 in the {@linkplain #getGridRange grid envelope}.
      * Their values are usually 0 and 1 respectively.
      * <p>
-     * It is garanteed that {@link #gridDimensionX} &lt; {@link #gridDimensionY}.
+     * It is guaranteed that {@link #gridDimensionX} &lt; {@link #gridDimensionY}.
      */
     public final int gridDimensionX, gridDimensionY;
 
@@ -102,10 +102,10 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * They are index of (<var>x</var>, <var>y</var>) ordinates in a direct position after the
      * {@linkplain #getGridToCRS grid to CRS} transform.
      * <p>
-     * There is no garantee that {@link #gridDimensionX} maps to {@link #axisDimensionX} and
+     * There is no guarantee that {@link #gridDimensionX} maps to {@link #axisDimensionX} and
      * {@link #gridDimensionY} maps to {@link #axisDimensionY}, since axis may be interchanged.
      * <p>
-     * It is garanteed that {@link #axisDimensionX} &lt; {@link #axisDimensionY}.
+     * It is guaranteed that {@link #axisDimensionX} &lt; {@link #axisDimensionY}.
      */
     public final int axisDimensionX, axisDimensionY;
 
@@ -697,7 +697,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
     public CoordinateReferenceSystem reduce(final CoordinateReferenceSystem crs)
             throws FactoryException
     {
-        // Reminder: is is garanteed that axisDimensionX < axisDimensionY
+        // Reminder: is is guaranteed that axisDimensionX < axisDimensionY
         if (crs == null || crs.getCoordinateSystem().getDimension() <= 2) {
             return crs;
         }
@@ -716,7 +716,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * Returns the two-dimensional part of this grid geometry CRS. If the
      * {@linkplain #getCoordinateReferenceSystem complete CRS} is two-dimensional, then this
      * method returns the same CRS. Otherwise it returns a CRS for ({@link #axisDimensionX},
-     * {@link #axisDimensionY}) axis. Note that those axis are garanteed to appears in the
+     * {@link #axisDimensionY}) axis. Note that those axis are guaranteed to appears in the
      * same order than in the complete CRS.
      *
      * @return The coordinate reference system (never {@code null}).

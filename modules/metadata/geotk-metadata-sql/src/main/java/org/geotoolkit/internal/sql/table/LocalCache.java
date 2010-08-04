@@ -29,7 +29,7 @@ import org.geotoolkit.internal.sql.StatementEntry;
  * A thread-local pool of {@linkplain PreparedStatement prepared statements}. Every {@link Table}
  * instances created by the same {@link Database} will share the same cache when executed in the
  * same thread. However if more than one thread is using the same {@code Table} then each thread
- * will have its own {@code LocalCache}. With this approach, we garanteed that a JDBC connection
+ * will have its own {@code LocalCache}. With this approach, we guaranteed that a JDBC connection
  * is used only from the same thread.
  *
  * {@section Synchronization}

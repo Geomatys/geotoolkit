@@ -161,7 +161,7 @@ public final class MosaicProfilerTest extends TestBase {
         }
         /*
          * Empirical values determined from previous run of this test. This test is performed only
-         * in order to avoid regression; it doesn't not garantee that the values are correct (this
+         * in order to avoid regression; it doesn't not guarantee that the values are correct (this
          * was the job of the previous test methods). For updating the empirical values, set the
          * "if (false)" statement to "if (true)" in the block below. The columns are:
          *

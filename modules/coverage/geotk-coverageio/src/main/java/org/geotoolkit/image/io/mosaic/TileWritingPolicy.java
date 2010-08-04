@@ -40,7 +40,7 @@ public enum TileWritingPolicy {
 
     /**
      * Skip existing tiles. This option works only for {@linkplain Tile#getInput tile input}
-     * of type {@link java.io.File}. Other types like {@link java.net.URL} are not garanteed
+     * of type {@link java.io.File}. Other types like {@link java.net.URL} are not guaranteed
      * to be checked for existence; they may be always overwritten.
      */
     WRITE_NEWS_ONLY(false, true),

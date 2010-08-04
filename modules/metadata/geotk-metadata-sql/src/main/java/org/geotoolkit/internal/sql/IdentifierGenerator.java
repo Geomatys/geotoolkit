@@ -38,7 +38,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * order for scaning a slightly smaller amount of records (however the advantage is
  * significant only in some special cases - generally speaking this class is not for
  * table having thousands of identifier beginning with the given prefix). However the
- * selected numbers are not garanteed to be in increasing order if there is "holes"
+ * selected numbers are not guaranteed to be in increasing order if there is "holes"
  * in the sequence of numbers (i.e. if some old records have been deleted). Generating
  * strictly increasing sequence is not a goal of this class, since it would be too costly.
  *

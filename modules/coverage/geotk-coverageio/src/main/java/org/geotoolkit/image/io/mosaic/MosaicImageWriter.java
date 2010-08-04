@@ -807,7 +807,7 @@ public class MosaicImageWriter extends ImageWriter implements Disposable {
      * @param imageSubsampling Where to store the subsampling to use for reading the tile.
      *        This is an output parameter only.
      * @param maximumPixelCount Tries to return a tile having an area smaller than this limit.
-     *        This is only a hint honored on a "best effort" basis: there is no garantees that
+     *        This is only a hint honored on a "best effort" basis: there is no guarantees that
      *        this limit will actually be respected.
      */
     private static Tile getEnclosingTile(final List<Tile> tiles, final TreeNode tree,
@@ -941,7 +941,7 @@ search: for (final Tile tile : tiles) {
      * the current JVM. Subclasses can override this method for returning a different value.
      * <p>
      * The returned value will be considered on a <cite>best effort</cite> basis. There is no
-     * garantee that no more memory than the returned value will be used.
+     * guarantee that no more memory than the returned value will be used.
      *
      * @return An estimation of the maximum amount of memory allowed for allocation, in bytes.
      */

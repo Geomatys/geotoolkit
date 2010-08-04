@@ -468,7 +468,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
                 if (value == null) {
                     /*
                      * We succeed in adding the handler in the map (we know that because all our
-                     * map.put(...) or map.replace(...) operations are garanteed to put non-null
+                     * map.put(...) or map.replace(...) operations are guaranteed to put non-null
                      * values). We are done. But before to leave, lock again for canceling the
                      * effect of unlock in the finally clause (we want the lock to still active).
                      */
@@ -638,7 +638,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
          * rather than the end user.
          *
          * {@note An alternative would have been to store the result in the map anyway.
-         *        But doing so is unsafe because we have no lock; we have no garantee that
+         *        But doing so is unsafe because we have no lock; we have no guarantee that
          *        nothing has happened in an other thread between peek and putAndUnlock.}
          */
         @Override
@@ -746,7 +746,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
              * rather than the end user.
              *
              * {@note An alternative would have been to store the result in the map anyway.
-             *        But doing so is unsafe because we have no lock; we have no garantee and
+             *        But doing so is unsafe because we have no lock; we have no guarantee and
              *        nothing has happened in an other thread between peek and putAndUnlock.}
              */
             @Override

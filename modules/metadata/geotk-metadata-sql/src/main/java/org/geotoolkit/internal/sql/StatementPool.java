@@ -151,7 +151,7 @@ public class StatementPool<K,V extends StatementEntry> extends LinkedHashMap<K,V
     }
 
     /**
-     * Overriden in order to check for synchronization if assertions are enabled.
+     * Overridden in order to check for synchronization if assertions are enabled.
      * See class-javadoc for why the synchronization must be performed by the caller.
      */
     @Override
@@ -161,7 +161,7 @@ public class StatementPool<K,V extends StatementEntry> extends LinkedHashMap<K,V
     }
 
     /**
-     * Overriden in order to check for synchronization if assertions are enabled.
+     * Overridden in order to check for synchronization if assertions are enabled.
      * See class-javadoc for why the synchronization must be performed by the caller.
      * <p>
      * <b>NOTE:</b> If this method returns a non-null value, then the caller
@@ -175,7 +175,7 @@ public class StatementPool<K,V extends StatementEntry> extends LinkedHashMap<K,V
     }
 
     /**
-     * Overriden in order to check for synchronization if assertions are enabled.
+     * Overridden in order to check for synchronization if assertions are enabled.
      * See class-javadoc for why the synchronization must be performed by the caller.
      * <p>
      * <b>NOTE:</b> If this method returns a non-null value, then the caller
@@ -282,7 +282,7 @@ sleep:  while (true) {
     }
 
     /**
-     * Invoked in a backround thread when the user thread exits its {@code synchronized} statement.
+     * Invoked in a background thread when the user thread exits its {@code synchronized} statement.
      * If there is many nested {@code synchronized} statements, then this method is invoked only
      * after the outer one.
      * <p>
@@ -300,7 +300,7 @@ sleep:  while (true) {
      * It may be invoked with a delay up to {@value #TIMEOUT} milliseconds (or a bit more).
      *
      * @param closed {@code true} if this method is invoked after the connection has been closed.
-     *        In such case, this {@code HashMap} is garanteed to be empty.
+     *        In such case, this {@code HashMap} is guaranteed to be empty.
      *
      * @since 3.12
      */

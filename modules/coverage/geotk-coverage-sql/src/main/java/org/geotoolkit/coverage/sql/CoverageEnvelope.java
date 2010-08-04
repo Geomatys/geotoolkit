@@ -103,7 +103,7 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
     /**
      * The preferred resolution along the <var>x</var> and <var>y</var> axis. Units shall be the
      * same than for the horizontal bounding box (determined by {@link SpatialDatabase#horizontalCRS}).
-     * This information is only approximative; there is no garantee that an image to be read will
+     * This information is only approximative; there is no guarantee that an image to be read will
      * have that resolution. A null value (zero) means that the best resolution should be used.
      */
     private float xResolution, yResolution;
@@ -194,7 +194,7 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
      * Returns the CRS of this envelope containing only the requested dimensions. If an argument
      * is {@code true}, then the returned CRS will contain the corresponding dimension if the
      * database CRS has such dimension. If an argument is {@code false}, then the returned CRS
-     * is garanteed to not have the corresponding dimension. If all arguments are {@code false},
+     * is guaranteed to not have the corresponding dimension. If all arguments are {@code false},
      * then this method returns {@code null}.
      *
      * @param  horizontal {@code false} for excluding the horizontal component in the returned CRS.
@@ -503,7 +503,7 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
 
     /**
      * Sets the preferred resolution in units of the {@linkplain #getHorizontalRange horizontal
-     * envelope}. This is only an approximative hint, since there is no garantee that an image
+     * envelope}. This is only an approximative hint, since there is no guarantee that an image
      * will be read with that resolution. A null values means that the best available resolution
      * should be used.
      *

@@ -380,7 +380,7 @@ public class About extends JComponent implements Dialog {
 
     /**
      * Patch the mime type, replacing "" by "(untitled)" for JAI I/O codec.
-     * This happen mostly for RAW format, but we have no garanteed that it
+     * This happen mostly for RAW format, but we have no guaranteed that it
      * doesn't happen for other format.
      */
     private String[] patchMimes(String[] mimes) {

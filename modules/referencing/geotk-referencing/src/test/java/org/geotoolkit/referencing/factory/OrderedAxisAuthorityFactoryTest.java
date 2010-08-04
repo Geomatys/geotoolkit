@@ -88,7 +88,7 @@ public final class OrderedAxisAuthorityFactoryTest extends ReferencingTestCase {
 
         assertTrue(factory.getClass().toString(), factory instanceof LongitudeFirstEpsgFactory);
         final OrderedAxisAuthorityFactory asLongitudeFirst = (LongitudeFirstEpsgFactory) factory;
-        assertFalse("Expected default toBackingFactoryCode(...)", asLongitudeFirst.isCodeMethodOverriden());
+        assertFalse("Expected default toBackingFactoryCode(...)", asLongitudeFirst.isCodeMethodOverridden());
 
         final Map<RenderingHints.Key, ?> implementationHints = asLongitudeFirst.getImplementationHints();
         factory = (CRSAuthorityFactory) implementationHints.get(Hints.CRS_AUTHORITY_FACTORY);

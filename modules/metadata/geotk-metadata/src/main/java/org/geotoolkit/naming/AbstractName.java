@@ -232,9 +232,9 @@ public abstract class AbstractName implements GenericName, Serializable {
      * that the result may or may not be fully qualified. Special cases:
      * <p>
      * <ul>
-     *   <li><code>{@linkplain #toFullyQualifiedName()}.toString()</code> is garanteed to
+     *   <li><code>{@linkplain #toFullyQualifiedName()}.toString()</code> is guaranteed to
      *       contains the {@linkplain #scope scope} (if any).</li>
-     *   <li><code>{@linkplain #tip()}.toString()</code> is garanteed to not contains
+     *   <li><code>{@linkplain #tip()}.toString()</code> is guaranteed to not contains
      *       any scope.</li>
      * </ul>
      */

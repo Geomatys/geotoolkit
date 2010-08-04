@@ -48,7 +48,7 @@ import static javax.media.jai.ImageLayout.SAMPLE_MODEL_MASK;
  * happen to have the same color than the background color.
  * <p>
  * Current implementation is rather simple and works for images in which the content
- * is inside a rotated rectangle. More complex outline are not garanteed to work.
+ * is inside a rotated rectangle. More complex outline are not guaranteed to work.
  * Example:
  * <p>
  * <table align="center" cellpadding="15" border="1">

@@ -624,7 +624,7 @@ public class CoverageDatabase implements Localized {
 
     /**
      * Reads the data of a two-dimensional slice and returns them as a coverage.
-     * Note that the returned two-dimensional slice is not garanteed to have exactly
+     * Note that the returned two-dimensional slice is not guaranteed to have exactly
      * the {@linkplain CoverageQuery#getEnvelope() requested envelope}. Callers may
      * need to check the geometry of the returned envelope and perform an additional
      * resampling if needed.

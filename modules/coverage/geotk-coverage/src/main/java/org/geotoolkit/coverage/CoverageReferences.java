@@ -36,7 +36,7 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
  * Every call to the {@link #reference} method with the same {@code Coverage} instance will return
  * the same {@code WeakReference} instance. If all weak references to a coverage have been created
  * by the same instance of {@code CoverageReferences} (typically the {@link #DEFAULT} one), then it
- * is garanteed that given:
+ * is guaranteed that given:
  *
  * {@preformat java
  *     Coverage coverageA = ...;
@@ -109,7 +109,7 @@ public class CoverageReferences {
         }
         /*
          * We really want identity equality, not Object.equals(...), otherwise we have
-         * no garantee that the coverage is not garbage-collected before the user invokes
+         * no guarantee that the coverage is not garbage-collected before the user invokes
          * Reference.get().
          */
         assert ref.get() == coverage;
@@ -235,7 +235,7 @@ public class CoverageReferences {
          * Removes this reference from the pool after it has been cleared by the garbage-collector.
          * This method may be invoked either by the user or from the {@link Disposer} thread.
          * However explicit invocations do not clear the referent, because if we did we would
-         * have no garantee that the reference returned by {@link CoverageReferences#reference}
+         * have no guarantee that the reference returned by {@link CoverageReferences#reference}
          * has a non-null referent.
          */
         @Override

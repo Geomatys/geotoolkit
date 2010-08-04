@@ -460,7 +460,7 @@ public final class DeferredPlanarImage extends PlanarImage
                 /*
                  * Notify the 'getTile(...)' method in only ONE thread that a tile is available.
                  * If tiles computation occurs in two or more background thread, then there is no
-                 * garantee that the notified thread is really the one waiting for this particular
+                 * guarantee that the notified thread is really the one waiting for this particular
                  * tile. However, this is not a damageable problem; the delay hint may just not be
                  * accuratly respected (the actual delay may be shorter for wrongly notified tile).
                  */

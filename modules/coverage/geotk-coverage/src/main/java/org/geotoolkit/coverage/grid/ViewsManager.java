@@ -654,7 +654,7 @@ testLinear: for (int i=0; i<numBands; i++) {
             final double[] scales, final double[] offsets)
     {
         /*
-         * We can't do any garantee if pixel values are modifiable.
+         * We can't do any guarantee if pixel values are modifiable.
          */
         if (image instanceof WritableRenderedImage) {
             return false;
@@ -690,7 +690,7 @@ testLinear: for (int i=0; i<numBands; i++) {
         }
         /*
          * Apparently, there is nothing preventing us to query the "extrema" property. Note that
-         * the above test did not garantee that this property is defined - only that if defined,
+         * the above test did not guarantee that this property is defined - only that if defined,
          * it looks like suitable. Now ensure that the range after conversion does not includes 0.
          */
         final Object property = image.getProperty("extrema");

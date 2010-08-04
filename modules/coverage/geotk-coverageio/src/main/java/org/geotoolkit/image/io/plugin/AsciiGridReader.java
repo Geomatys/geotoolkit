@@ -334,7 +334,7 @@ public class AsciiGridReader extends TextImageReader {
      *
      * @param  name  The name of the properties to be tested.
      * @param  value The value of the properties.
-     * @return The given value, garanteed to be non-null.
+     * @return The given value, guaranteed to be non-null.
      * @throws IIOException If the given value was null.
      */
     private String ensureDefined(final String name, final String value) throws IIOException {

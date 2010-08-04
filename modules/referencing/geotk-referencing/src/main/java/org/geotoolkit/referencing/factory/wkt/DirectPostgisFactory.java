@@ -263,7 +263,7 @@ public class DirectPostgisFactory extends WKTParsingAuthorityFactory implements 
      * @param  type The type of the object being created (usually
      *         <code>{@linkplain CoordinateReferenceSystem}.class</code>).
      * @param  code The authority code to convert to primary key value.
-     * @return The primary key for the supplied code. There is no garantee that this key exists
+     * @return The primary key for the supplied code. There is no guarantee that this key exists
      *         (this method may or may not query the database).
      * @throws NoSuchAuthorityCodeException if a code can't be parsed as an integer or can't
      *         be found in the database.

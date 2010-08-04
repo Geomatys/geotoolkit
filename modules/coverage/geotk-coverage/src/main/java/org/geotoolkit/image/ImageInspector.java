@@ -641,7 +641,7 @@ public class ImageInspector {
      *
      * {@section Relationship with Color Space type}
      *
-     * If this method returns {@code false}, then it is garanteed that {@link #getColorSpaceType}
+     * If this method returns {@code false}, then it is guaranteed that {@link #getColorSpaceType}
      * will not return {@link PaletteInterpretation#GRAY}. However the converse is not necessarily
      * true. See the <cite>Index Color Model</cite> section in {@code getColorSpaceType()}.
      *

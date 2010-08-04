@@ -369,7 +369,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      * {@linkplain #getCoordinateReferenceSystem complete CRS} is two-dimensional, then this
      * method returns the same CRS. Otherwise it returns a CRS for the two first axis having
      * a {@linkplain GridEnvelope#getSpan span} greater than 1 in the grid envelope. Note that
-     * those axis are garanteed to appears in the same order than in the complete CRS.
+     * those axis are guaranteed to appears in the same order than in the complete CRS.
      *
      * @return The two-dimensional part of the grid coverage CRS.
      *
@@ -916,7 +916,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      * if a given coverage can share its views with an other coverage. The condition tested
      * by {@link ViewsManager} (namely: coverages have the same image, same grid geometry and
      * same sample dimensions) are suffisient only if the coverages build the views in the same
-     * way. The last condition can be garantee only if we know how {@link #specialize} is
+     * way. The last condition can be guarantee only if we know how {@link #specialize} is
      * implemented. It is safe for non-{@link Calculator2D} classes (because users can not
      * override {@link #specialize} and for final classes like {@link Interpolator2D}, but
      * the later must returns a different class in order to tells {@link ViewsManager} that

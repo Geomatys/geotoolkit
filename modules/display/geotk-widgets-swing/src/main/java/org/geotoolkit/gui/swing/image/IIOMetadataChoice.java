@@ -199,7 +199,7 @@ final class IIOMetadataChoice implements Serializable {
     }
 
     /**
-     * Overriden for consistency with {@link #equals(Object)}, but not used.
+     * Overridden for consistency with {@link #equals(Object)}, but not used.
      */
     @Override
     public int hashCode() {

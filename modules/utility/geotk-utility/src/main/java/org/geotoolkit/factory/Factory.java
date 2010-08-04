@@ -727,7 +727,7 @@ public abstract class Factory {
      * Returns a hash value for this factory. This method computes the hash value using
      * only immutable properties. This computation does <strong>not</strong> rely on
      * {@linkplain #getImplementationHints implementation hints}, since there is no
-     * garantee that they will not change.
+     * guarantee that they will not change.
      *
      * @since 2.3
      */

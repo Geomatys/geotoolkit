@@ -223,7 +223,7 @@ final class MetadataProxy<T> implements InvocationHandler {
      *
      * @param  name The element name.
      * @param  methodType The type inferred from the method signature, or {@code null} if unknown.
-     * @return The type to use, which is garanteed to be assignable to the method type.
+     * @return The type to use, which is guaranteed to be assignable to the method type.
      * @throws IllegalArgumentException If the named element does not exist or does not define objects.
      */
     private Class<?> getElementClass(final String name, final Class<?> methodType) throws IllegalArgumentException {
