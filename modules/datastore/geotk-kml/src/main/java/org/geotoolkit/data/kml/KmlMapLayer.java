@@ -16,9 +16,13 @@
  */
 package org.geotoolkit.data.kml;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import java.awt.BasicStroke;
-import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Rectangle;
@@ -43,11 +47,11 @@ import org.geotoolkit.data.kml.model.IconStyle;
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlModelConstants;
 import org.geotoolkit.data.kml.model.LabelStyle;
+import org.geotoolkit.data.kml.model.LatLonAltBox;
 import org.geotoolkit.data.kml.model.LatLonBox;
 import org.geotoolkit.data.kml.model.LineString;
 import org.geotoolkit.data.kml.model.LineStyle;
 import org.geotoolkit.data.kml.model.LinearRing;
-import org.geotoolkit.data.kml.model.Model;
 import org.geotoolkit.data.kml.model.MultiGeometry;
 import org.geotoolkit.data.kml.model.Point;
 import org.geotoolkit.data.kml.model.PolyStyle;
@@ -61,12 +65,18 @@ import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.map.AbstractMapLayer;
 import org.geotoolkit.map.DynamicMapLayer;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.MutableStyle;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.geometry.Envelope;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  *
@@ -75,11 +85,12 @@ import org.opengis.geometry.Envelope;
  */
 public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
 
-    private Kml kml;
+    private static final GeometryFactory GF = new GeometryFactory();
+    private final Kml kml;
     private RenderingContext2D context2d;
     private Map<String,Style> styles = new HashMap<String, Style>();
-    private static final Font FONT = new Font("Fonte coco", Font.ROMAN_BASELINE, 1);
-    //private static final FontMetrics FONT_METRICS = new X11FontMetrics(FONT);
+    private Map<String,StyleMap> styleMaps = new HashMap<String, StyleMap>();
+    private final Font FONT = new Font("KmlMapLayerFont", Font.ROMAN_BASELINE, 10);
 
     public KmlMapLayer(MutableStyle style, Kml kml) {
         super(style);
@@ -115,15 +126,22 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         }
     }
 
+    /**
+     *
+     * @param kml
+     * @throws IOException
+     */
     private void portrayKml(Kml kml) throws IOException{
         if (kml.getAbstractFeature() != null){
             this.portrayAbstractFeature(kml.getAbstractFeature());
         }
-//        this.portrayStandardExtensionLevel(
-//                kml.extensions(),
-//                Names.KML);
     }
 
+    /**
+     * 
+     * @param abstractFeature
+     * @throws IOException
+     */
     private void portrayAbstractFeature(Feature abstractFeature) throws IOException{
         if (FeatureTypeUtilities.isDecendedFrom(abstractFeature.getType(), KmlModelConstants.TYPE_CONTAINER)){
             this.portrayAbstractContainer(abstractFeature);
@@ -132,15 +150,13 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         } else if (abstractFeature.getType().equals(KmlModelConstants.TYPE_PLACEMARK)){
             this.portrayPlacemark(abstractFeature);
         }
-//        else {
-//            for(StaxStreamWriter candidate : this.extensionWriters){
-//                if(((KmlExtensionWriter) candidate).canHandleComplex(URI_KML,null, abstractFeature)){
-//                    ((KmlExtensionWriter) candidate).writeComplexExtensionElement(URI_KML, null, abstractFeature);
-//                }
-//            }
-//        }
     }
 
+    /**
+     *
+     * @param abstractContainer
+     * @throws IOException
+     */
     private void portrayAbstractContainer(Feature abstractContainer) throws IOException {
         if (abstractContainer.getType().equals(KmlModelConstants.TYPE_FOLDER)){
             this.portrayFolder(abstractContainer);
@@ -149,6 +165,11 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         }
     }
 
+    /**
+     *
+     * @param placemark
+     * @throws IOException
+     */
     private void portrayPlacemark(Feature placemark) throws IOException{
         this.portrayCommonAbstractFeature(placemark);
 
@@ -168,22 +189,21 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
 
         Region region = ((Region) placemark.getProperty(KmlModelConstants.ATT_REGION.getName()).getValue());
         if(region != null){
-            portrayBalloonStyle(
-                    (int) region.getLatLonAltBox().getEast(),
-                    (int) region.getLatLonAltBox().getNorth(),
-                    s);
-            portrayLabelStyle(
-                    (int) region.getLatLonAltBox().getEast(),
-                    (int) region.getLatLonAltBox().getNorth(),
+            LatLonAltBox latLonAltBox = region.getLatLonAltBox();
+            portrayBalloonStyle((latLonAltBox.getEast()+latLonAltBox.getWest())/2,
+                    (latLonAltBox.getNorth()+latLonAltBox.getSouth())/2,
+                    s, false);
+            portrayLabelStyle((latLonAltBox.getEast()+latLonAltBox.getWest())/2,
+                    (latLonAltBox.getNorth()+latLonAltBox.getSouth())/2,
                     s,
                     (String) placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
         }
-
-//        this.writeStandardExtensionLevel(
-//                (Extensions) placemark.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
-//                Names.PLACEMARK);
     }
 
+    /**
+     *
+     * @param abstractFeature
+     */
     private void portrayCommonAbstractFeature(Feature abstractFeature){
         Iterator i;
         if (abstractFeature.getProperty(KmlModelConstants.ATT_STYLE_SELECTOR.getName()) != null){
@@ -192,87 +212,124 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                 this.portrayAbstractStyleSelector((AbstractStyleSelector) ((Property) i.next()).getValue());
             }
         }
-
-//        this.writeStandardExtensionLevel(
-//                (Extensions) abstractFeature.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
-//                Names.FEATURE);
     }
 
+    /**
+     *
+     * @param abstractGeometry
+     * @param style
+     * @throws IOException
+     */
     private void portrayAbstractGeometry(AbstractGeometry abstractGeometry, Style style) throws IOException{
         if (abstractGeometry instanceof MultiGeometry){
             this.portrayMultiGeometry((MultiGeometry) abstractGeometry, style);
         } else if (abstractGeometry instanceof LineString){
             this.portrayLineString((LineString) abstractGeometry, style);
-        }
-        else if (abstractGeometry instanceof Polygon){
+        } else if (abstractGeometry instanceof Polygon){
             this.portrayPolygon((Polygon) abstractGeometry, style);
         } else if (abstractGeometry instanceof Point){
             this.portrayPoint((Point) abstractGeometry, style);
         } else if (abstractGeometry instanceof LinearRing){
             this.portrayLinearRing((LinearRing) abstractGeometry, style);
-        } else if (abstractGeometry instanceof Model){
-            this.portrayModel((Model) abstractGeometry);
-//        } else {
-//            for(StaxStreamWriter candidate : this.extensionWriters){
-//                if(((KmlExtensionWriter) candidate).canHandleComplex(URI_KML, null, abstractGeometry)){
-//                    ((KmlExtensionWriter) candidate).writeComplexExtensionElement(URI_KML, null, abstractGeometry);
-//                }
-//            }
         }
     }
 
+    /**
+     *
+     * @param abstractObject
+     */
     public void portrayCommonAbstractObject(AbstractObject abstractObject){
-
-//        this.writeSimpleExtensionsScheduler(Names.OBJECT,
-//                abstractObject.extensions().simples(Names.OBJECT));
     }
 
+    /**
+     *
+     * @param abstractGeometry
+     */
     public void portrayCommonAbstractGeometry(AbstractGeometry abstractGeometry){
 
         this.portrayCommonAbstractObject(abstractGeometry);
-//        this.writeStandardExtensionLevel(
-//                abstractGeometry.extensions(),
-//                Names.GEOMETRY);
     }
 
+    /**
+     *
+     * @param lineString
+     * @param style
+     */
     private void portrayLineString(LineString lineString, Style style){
         this.portrayCommonAbstractGeometry(lineString);
 
-        context2d.switchToObjectiveCRS();
+        // MathTransform
+        MathTransform transform = null;
+        context2d.switchToDisplayCRS();
         Graphics2D graphic = context2d.getGraphics();
+        com.vividsolutions.jts.geom.Geometry ls = null;
 
-        // Apply styles
-        LineStyle lineStyle = style.getLineStyle();
-        if(lineStyle != null){
-            graphic.setColor(style.getLineStyle().getColor());
-            graphic.setStroke(new BasicStroke((float) (style.getLineStyle().getWidth() * 0.01)));
+        try {
+            transform = context2d.getMathTransform(DefaultGeographicCRS.WGS84, context2d.getDisplayCRS());
+            ls = JTS.transform((com.vividsolutions.jts.geom.LineString) lineString, transform);
+        } catch (MismatchedDimensionException ex) {
+            context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
+            return;
+        } catch (TransformException ex) {
+            context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
+            return;
+        } catch (FactoryException ex) {
+            context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
+            return;
         }
 
-        Shape shape = new JTSGeometryJ2D((com.vividsolutions.jts.geom.Geometry) lineString);
-        graphic.draw(shape);
+        LineStyle lineStyle = style.getLineStyle();
+        if(lineStyle != null){
+            graphic.setColor(lineStyle.getColor());
+            graphic.setStroke(new BasicStroke((float) (lineStyle.getWidth())));
+        }
 
-//        this.writeStandardExtensionLevel(
-//                lineString.extensions(),
-//                Names.LINE_STRING);
+        Shape shape = new JTSGeometryJ2D(ls);
+        graphic.draw(shape);
     }
 
+    /**
+     *
+     * @param multiGeometry
+     * @param style
+     * @throws IOException
+     */
     private void portrayMultiGeometry(MultiGeometry multiGeometry, Style style) throws IOException {
         this.portrayCommonAbstractGeometry(multiGeometry);
         for (AbstractGeometry abstractGeometry : multiGeometry.getGeometries()){
             this.portrayAbstractGeometry(abstractGeometry, style);
         }
-//        this.writeStandardExtensionLevel(
-//                multiGeometry.extensions(),
-//                Names.MULTI_GEOMETRY);
     }
 
+    /**
+     *
+     * @param polygon
+     * @param style
+     */
     private void portrayPolygon(Polygon polygon, Style style) {
         this.portrayCommonAbstractGeometry(polygon);
 
-        context2d.switchToObjectiveCRS();
+        // MathTransform
+        MathTransform transform = null;
+        context2d.switchToDisplayCRS();
         Graphics2D graphic = context2d.getGraphics();
+        com.vividsolutions.jts.geom.Geometry pol = null;
 
-        Shape shape = new JTSGeometryJ2D((com.vividsolutions.jts.geom.Geometry) polygon);
+        try {
+            transform = context2d.getMathTransform(DefaultGeographicCRS.WGS84, context2d.getDisplayCRS());
+            pol = JTS.transform((com.vividsolutions.jts.geom.Polygon) polygon, transform);
+        } catch (MismatchedDimensionException ex) {
+            context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
+            return;
+        } catch (TransformException ex) {
+            context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
+            return;
+        } catch (FactoryException ex) {
+            context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
+            return;
+        }
+
+        Shape shape = new JTSGeometryJ2D(pol);
 
         // Apply styles
         PolyStyle polyStyle = style.getPolyStyle();
@@ -285,18 +342,28 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         }
 
         graphic.draw(shape);
-//        this.writeStandardExtensionLevel(
-//                polygon.extensions(),
-//                Names.POLYGON);
     }
 
+    /**
+     *
+     * @param point
+     * @param style
+     * @throws IOException
+     */
     private void portrayPoint(Point point, Style style) throws IOException {
         this.portrayCommonAbstractGeometry(point);
 
-        context2d.switchToObjectiveCRS();
+        // MathTransform
+        MathTransform transform;
+        try {
+            transform = context2d.getMathTransform(DefaultGeographicCRS.WGS84, context2d.getDisplayCRS());
+        } catch (FactoryException ex) {
+            context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
+            return;
+        }
+
+        context2d.switchToDisplayCRS();
         Graphics2D graphic = context2d.getGraphics();
-        graphic.setColor(Color.BLACK);
-        graphic.setStroke(new BasicStroke((float) 1));
 
         // Apply styles
         IconStyle iconStyle = style.getIconStyle();
@@ -305,51 +372,70 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             BasicLink icon = iconStyle.getIcon();
             File img = new File(icon.getHref());
             BufferedImage image = ImageIO.read(img);
-            graphic.drawImage(image,(int) point.getCoordinateSequence().getCoordinate(0).x,
-                    (int) point.getCoordinateSequence().getCoordinate(0).y, null);
+            com.vividsolutions.jts.geom.Point p = (com.vividsolutions.jts.geom.Point) point;
+            double[] tab = new double[]{p.getX(), p.getY()};
+            try {
+                transform.transform(tab, 0, tab, 0, 1);
+            } catch (TransformException ex) {
+                context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
+                return;
+            }
+            graphic.drawImage(image, (int) tab[0]+image.getWidth()/2,
+                    (int) tab[1]+image.getHeight()/2, null);
         }
-
-        // Display image
-
-        Shape shape = new JTSGeometryJ2D((com.vividsolutions.jts.geom.Geometry) point);
-        graphic.fill(shape);
-
-//        this.writeStandardExtensionLevel(
-//                point.extensions(),
-//                Names.POINT);
     }
 
+    /**
+     *
+     * @param linearRing
+     * @param style
+     */
     private void portrayLinearRing(LinearRing linearRing, Style style) {
         this.portrayCommonAbstractGeometry(linearRing);
 
-        context2d.switchToObjectiveCRS();
+        // MathTransform
+        MathTransform transform = null;
+        context2d.switchToDisplayCRS();
         Graphics2D graphic = context2d.getGraphics();
-        Shape shape = new JTSGeometryJ2D((com.vividsolutions.jts.geom.Geometry) linearRing);
+        com.vividsolutions.jts.geom.Geometry lr = null;
+
+        try {
+            transform = context2d.getMathTransform(DefaultGeographicCRS.WGS84, context2d.getDisplayCRS());    
+            lr = JTS.transform((com.vividsolutions.jts.geom.LinearRing) linearRing, transform);
+        } catch (MismatchedDimensionException ex) {
+            context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
+            return;
+        } catch (TransformException ex) {
+            context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
+            return;
+        } catch (FactoryException ex) {
+            context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
+            return;
+        }
 
         LineStyle lineStyle = style.getLineStyle();
         if(lineStyle != null){
             graphic.setColor(lineStyle.getColor());
-            graphic.setStroke(new BasicStroke((float) (lineStyle.getWidth() * 0.01)));
+            graphic.setStroke(new BasicStroke((float) (lineStyle.getWidth())));
         }
 
+        Shape shape = new JTSGeometryJ2D(lr);
         graphic.draw(shape);
-        
-//        this.writeStandardExtensionLevel(
-//                linearRing.extensions(),
-//                Names.LINEAR_RING);
     }
 
-    private void portrayModel(Model model) {
-        throw new UnsupportedOperationException("Not yet implemented");
-    }
-
+    /**
+     *
+     * @param abstractContainer
+     */
     private void portrayCommonAbstractContainer(Feature abstractContainer) {
         this.portrayCommonAbstractFeature(abstractContainer);
-//        this.writeStandardExtensionLevel(
-//                (Extensions) abstractContainer.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
-//                Names.CONTAINER);
     }
 
+    /**
+     *
+     * @param folder
+     * @throws IOException
+     */
     private void portrayFolder(Feature folder) throws IOException {
         Iterator i;
         this.portrayCommonAbstractContainer(folder);
@@ -359,11 +445,13 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                 this.portrayAbstractFeature((Feature) ((Property) i.next()).getValue());
             }
         }
-//        this.writeStandardExtensionLevel(
-//                (Extensions) folder.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
-//                Names.FOLDER);
     }
 
+    /**
+     *
+     * @param document
+     * @throws IOException
+     */
     private void portrayDocument(Feature document) throws IOException {
         Iterator i;
         this.portrayCommonAbstractContainer(document);
@@ -373,32 +461,48 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                 this.portrayAbstractFeature((Feature) ((Property) i.next()).getValue());
             }
         }
-//        this.writeStandardExtensionLevel(
-//                (Extensions) document.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
-//                Names.DOCUMENT);
     }
 
+    /**
+     *
+     * @param abstractStyleSelector
+     */
     private void portrayAbstractStyleSelector(AbstractStyleSelector abstractStyleSelector) {
         if (abstractStyleSelector instanceof Style){
-            this.portrayStyle((Style)abstractStyleSelector);
+            this.indexStyle((Style)abstractStyleSelector);
         } else if (abstractStyleSelector instanceof StyleMap){
-            this.portrayStyleMap((StyleMap)abstractStyleSelector);
+            this.indexStyleMap((StyleMap)abstractStyleSelector);
         }
     }
 
-    private void portrayStyle(Style style) {
+    /**
+     *
+     * @param style
+     */
+    private void indexStyle(Style style) {
         if (style.getIdAttributes().getId() != null){
             this.styles.put("#"+style.getIdAttributes().getId(), style);
         }
-//        this.writeStandardExtensionLevel(
-//                style.extensions(),
-//                Names.STYLE);
     }
 
-    private void portrayStyleMap(StyleMap styleMap) {
-        throw new UnsupportedOperationException("Not yet implemented");
+    /**
+     *
+     * @param styleMap
+     */
+    private void indexStyleMap(StyleMap styleMap) {
+        if (styleMap.getIdAttributes().getId() != null){
+            this.styleMaps.put("#"+styleMap.getIdAttributes().getId(), styleMap);
+        }
+//        for(Pair pair : styleMap.getPairs()){
+//            pair.
+//        }
     }
 
+    /**
+     *
+     * @param abstractOverlay
+     * @throws IOException
+     */
     private void portrayAbstractOverlay(Feature abstractOverlay) throws IOException {
         if (abstractOverlay.getType().equals(KmlModelConstants.TYPE_GROUND_OVERLAY)){
             this.portrayGroundOverlay(abstractOverlay);
@@ -409,6 +513,11 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         }
     }
 
+    /**
+     *
+     * @param groundOverlay
+     * @throws IOException
+     */
     private void portrayGroundOverlay(Feature groundOverlay) throws IOException {
         this.portrayCommonAbstractOverlay(groundOverlay);
         context2d.switchToObjectiveCRS();
@@ -428,20 +537,22 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
 
         // Apply styles
         Style s = this.retrieveStyle(groundOverlay);
-        portrayBalloonStyle(x+width, y+height,s);
-        
-//        this.writeStandardExtensionLevel(
-//                (Extensions) groundOverlay.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
-//                Names.GROUND_OVERLAY);
+        portrayBalloonStyle(x+width, y+height, s, false);
     }
 
+    /**
+     *
+     * @param abstractOverlay
+     */
     private void portrayCommonAbstractOverlay(Feature abstractOverlay) {
         this.portrayCommonAbstractFeature(abstractOverlay);
-//        this.writeStandardExtensionLevel(
-//                (Extensions) abstractOverlay.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
-//                Names.OVERLAY);
     }
 
+    /**
+     *
+     * @param screenOverlay
+     * @throws IOException
+     */
     private void portrayScreenOverlay(Feature screenOverlay) throws IOException {
         this.portrayCommonAbstractOverlay(screenOverlay);
         File img = new File(
@@ -465,47 +576,136 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
 
         // Apply styles
         Style s = this.retrieveStyle(screenOverlay);
-        portrayBalloonStyle(x+width, y+height,s);
+        portrayBalloonStyle(x+width, y, s, true);
     }
 
-    private void portrayBalloonStyle(int x, int y, Style style){
+    /**
+     *
+     * @param x
+     * @param y
+     * @param style
+     * @param font
+     */
+    private void portrayBalloonStyle(double x, double y, Style style, boolean fixedToScreen){
+        
+        // MathTransform
+        MathTransform transform = null;
+        if(!fixedToScreen){
+            try {
+                transform = context2d.getMathTransform(DefaultGeographicCRS.WGS84, context2d.getDisplayCRS());
+            } catch (FactoryException ex) {
+                context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
+                return;
+            }
+        }
 
+        context2d.switchToDisplayCRS();
         Graphics2D graphic = context2d.getGraphics();
-        int linewidth = 40, lineheight = 1;
-        BalloonStyle balloonStyle = style.getBalloonStyle();
-        if(balloonStyle != null){
-                int length = balloonStyle.getText().toString().length();
-                Rectangle rectangle = new Rectangle(x-1, y-2*lineheight,
-                        3*length/linewidth+2,
-                        (int) 1.5*lineheight*(length/linewidth)+4);
-                graphic.setColor(balloonStyle.getBgColor());
-                graphic.fill(rectangle);
-                graphic.setColor(balloonStyle.getTextColor());
-                graphic.setFont(new Font(FONT.getName(), FONT.getStyle(), 1));
 
-            int begin = 0, interligne = 0;
-            while (begin+linewidth < balloonStyle.getText().toString().length()){
-                graphic.drawString(balloonStyle.getText().toString().substring(begin, begin+linewidth), x, y+interligne);
+        graphic.setFont(FONT);
+        FontMetrics fm = graphic.getFontMetrics();
+
+        int linewidth = 40;
+        BalloonStyle balloonStyle = style.getBalloonStyle();
+
+        if(balloonStyle != null){
+            int length = balloonStyle.getText().toString().length();
+            int begin = 0, interligne = 0, balloonWidth = 0, balloonLines = 0;
+
+            // set balloon width
+            do{
+                int end = Math.min(begin+linewidth, length);
+                balloonWidth = Math.max(balloonWidth,
+                        fm.stringWidth(balloonStyle.getText().toString().substring(begin, end)));
                 begin+= linewidth;
-                interligne+= lineheight;
+                balloonLines++;
+            }while (begin+linewidth < length);
+            if(begin < length){
+                balloonLines++;
+            }
+
+            // print balloon
+            double[] tab = new double[]{x, y};
+
+            if(!fixedToScreen){
+                try {
+                    transform.transform(tab, 0, tab, 0, 1);
+                } catch (TransformException ex) {
+                    context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
+                    return;
+                }
+            }
+            Rectangle rectangle = new Rectangle((int)tab[0], (int) tab[1],
+                    balloonWidth+2,
+                    balloonLines*fm.getHeight()+2);
+            graphic.setColor(balloonStyle.getBgColor());
+            graphic.fill(rectangle);
+            graphic.setColor(balloonStyle.getTextColor());
+
+            // set balloonText
+            begin = 0; interligne = fm.getHeight();
+            tab = new double[]{x, y};
+            if(!fixedToScreen){
+                try {
+                    transform.transform(tab, 0, tab, 0, 1);
+                } catch (TransformException ex) {
+                    context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
+                    return;
+                }
+            }
+            while (begin+linewidth < length){
+                graphic.drawString(
+                        balloonStyle.getText().toString().substring(
+                        begin, begin+linewidth),(int) tab[0]+1, (int) tab[1]+interligne);
+                begin+= linewidth;
+                interligne+= fm.getHeight();
             }
             if(begin < length){
-                graphic.drawString(balloonStyle.getText().toString().substring(begin, length), x, y+interligne);
+                graphic.drawString(
+                        balloonStyle.getText().toString().substring(
+                        begin, length), (int) tab[0]+1, (int) tab[1]+interligne);
             }
         }
     }
 
-    private void portrayLabelStyle(int x, int y, Style style, String content){
-
+    /**
+     *
+     * @param x
+     * @param y
+     * @param style
+     * @param content
+     */
+    private void portrayLabelStyle(double x, double y, Style style, String content){
+        // MathTransform
+        MathTransform transform;
+        try {
+            transform = context2d.getMathTransform(DefaultGeographicCRS.WGS84, context2d.getDisplayCRS());
+        } catch (FactoryException ex) {
+            context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
+            return;
+        }
         Graphics2D graphic = context2d.getGraphics();
         LabelStyle labelStyle = style.getLabelStyle();
         if(labelStyle != null){
-            graphic.setFont(new Font(graphic.getFont().getName(), graphic.getFont().getStyle(), (int) labelStyle.getScale()));
+            graphic.setFont(new Font(FONT.getName(),
+                    FONT.getStyle(), FONT.getSize() * (int) labelStyle.getScale()));
             graphic.setColor(labelStyle.getColor());
-            graphic.drawString(content, x, y);
+            double[] tab = new double[]{x, y};
+            try {
+                transform.transform(tab, 0, tab, 0, 1);
+            } catch (TransformException ex) {
+                context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
+                return;
+            }
+            graphic.drawString(content, (int) tab[0], (int) tab[1]);
         }
     }
 
+    /**
+     *
+     * @param feature
+     * @return
+     */
     private Style retrieveStyle(Feature feature){
         final Style s;
         if(feature.getProperty(KmlModelConstants.ATT_STYLE_SELECTOR.getName())!= null
