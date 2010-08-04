@@ -50,7 +50,7 @@ import org.geotoolkit.lang.ThreadSafe;
 })
 public class AbstractLogicalConsistency extends AbstractElement implements LogicalConsistency {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -2470752876057569947L;
 

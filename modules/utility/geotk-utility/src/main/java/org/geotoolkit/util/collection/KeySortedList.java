@@ -50,7 +50,7 @@ public class KeySortedList<K extends Comparable<K>,V> extends AbstractSequential
         implements Serializable
 {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 6969483179756527012L;
 

@@ -48,7 +48,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlRootElement(name = "MI_RequestedDate")
 public class DefaultRequestedDate extends MetadataEntity implements RequestedDate {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -8884795189934200802L;
 

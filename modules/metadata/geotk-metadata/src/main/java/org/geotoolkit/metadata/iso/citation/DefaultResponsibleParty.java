@@ -60,7 +60,7 @@ import org.geotoolkit.util.SimpleInternationalString;
 @XmlRootElement(name = "CI_ResponsibleParty")
 public class DefaultResponsibleParty extends MetadataEntity implements ResponsibleParty {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -2477962229031486552L;
 

@@ -49,7 +49,7 @@ import org.geotoolkit.util.Utilities;
 @Immutable
 public class AbstractReferenceSystem extends AbstractIdentifiedObject implements ReferenceSystem {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 3337659819553899435L;
 

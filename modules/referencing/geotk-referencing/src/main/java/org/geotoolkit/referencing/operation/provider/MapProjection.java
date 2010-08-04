@@ -67,7 +67,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createOptionalDesc
 @Immutable
 public abstract class MapProjection extends MathTransformProvider {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 6280666068007678702L;
 

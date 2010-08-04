@@ -52,7 +52,7 @@ import org.geotoolkit.lang.Immutable;
 @Immutable
 public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 380347456670516572L;
 

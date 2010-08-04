@@ -40,7 +40,7 @@ import org.geotoolkit.coverage.GridSampleDimension;
 @Immutable
 public class BilevelOperation extends OperationJAI {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 8975871552152978976L;
 

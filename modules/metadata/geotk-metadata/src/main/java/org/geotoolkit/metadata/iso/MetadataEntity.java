@@ -43,7 +43,7 @@ import org.geotoolkit.metadata.InvalidMetadataException;
 @ThreadSafe
 public class MetadataEntity extends ModifiableMetadata implements Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 5730550742604669102L;
 

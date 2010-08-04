@@ -41,7 +41,7 @@ import org.geotoolkit.xml.Namespaces;
 @XmlRootElement(name = "QE_Usability", namespace = Namespaces.GMI)
 public class DefaultUsability extends AbstractElement implements Usability {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -2834763269479082042L;
 

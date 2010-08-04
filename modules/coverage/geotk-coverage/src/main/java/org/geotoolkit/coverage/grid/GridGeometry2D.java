@@ -71,7 +71,7 @@ import org.geotoolkit.lang.Immutable;
 @Immutable
 public class GridGeometry2D extends GeneralGridGeometry {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -3989363771504614419L;
 
@@ -799,7 +799,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * @return The transform which allows for the transformations from grid coordinates
      *         to real world earth coordinates, operating only on two dimensions.
      *         The returned transform is often an instance of {@link AffineTransform}, which
-     *         make it convenient for interoperability with Java2D.
+     *         make it convenient for inter-operability with Java2D.
      * @throws InvalidGridGeometryException if a two-dimensional transform is not available
      *         for this grid geometry.
      *

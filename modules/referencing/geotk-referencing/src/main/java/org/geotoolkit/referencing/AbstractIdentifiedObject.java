@@ -370,7 +370,7 @@ public class AbstractIdentifiedObject extends FormattableObject implements Ident
          *   2) Find localized remarks.
          *
          * This algorithm is sub-optimal if the map contains a lot of entries of no interest to
-         * this object. Hopefully, most users will fill a map only with usefull entries.
+         * this object. Hopefully, most users will fill a map only with useful entries.
          */
 nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
             String    key   = entry.getKey().trim().toLowerCase();

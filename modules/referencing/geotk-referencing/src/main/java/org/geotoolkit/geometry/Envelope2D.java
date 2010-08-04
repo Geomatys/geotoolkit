@@ -34,7 +34,7 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 /**
  * A two-dimensional envelope on top of {@link Rectangle2D}. This implementation is provided for
- * interoperability between Java2D and GeoAPI.
+ * inter-operability between Java2D and GeoAPI.
  * <p>
  * This class inherits {@linkplain #x x} and {@linkplain #y y} fields. But despite their names,
  * they don't need to be oriented toward {@linkplain AxisDirection#EAST East} and
@@ -55,7 +55,7 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
  */
 public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -3319231220761419350L;
 

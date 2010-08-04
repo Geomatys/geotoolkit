@@ -75,7 +75,7 @@ import org.geotoolkit.lang.Immutable;
 
 /**
  *
- * Wraps a JAI's {@link OperationDescriptor} for interoperability with
+ * Wraps a JAI's {@link OperationDescriptor} for inter-operability with
  * <A HREF="http://java.sun.com/products/java-media/jai/">Java Advanced Imaging</A>.
  * This class help to leverage the rich set of JAI operators in an GeoAPI framework.
  * {@code OperationJAI} inherits operation name and argument types from {@link OperationDescriptor},
@@ -119,7 +119,7 @@ import org.geotoolkit.lang.Immutable;
 @Deprecated
 public class OperationJAI extends Operation2D {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -5974520239347639965L;
 

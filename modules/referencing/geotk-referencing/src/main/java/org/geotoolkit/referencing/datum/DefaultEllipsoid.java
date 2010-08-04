@@ -74,7 +74,7 @@ import org.geotoolkit.lang.Immutable;
 @XmlRootElement(name = "Ellipsoid")
 public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellipsoid {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -1149451543954764081L;
 
@@ -314,7 +314,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
     }
 
     /**
-     * Wraps an arbitrary ellipsoid into a Geotk implementation. This method is usefull if
+     * Wraps an arbitrary ellipsoid into a Geotk implementation. This method is useful if
      * {@link #orthodromicDistance orthodromic distance computation} (for example) are desired.
      * If the supplied ellipsoid is already an instance of {@code DefaultEllipsoid} or is
      * {@code null}, then it is returned unchanged.

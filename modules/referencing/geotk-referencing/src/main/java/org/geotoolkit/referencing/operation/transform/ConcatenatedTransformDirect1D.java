@@ -36,7 +36,7 @@ import org.geotoolkit.lang.Immutable;
 @Immutable
 final class ConcatenatedTransformDirect1D extends ConcatenatedTransformDirect implements MathTransform1D {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 1064398659892864966L;
 

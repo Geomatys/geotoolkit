@@ -216,7 +216,7 @@ public abstract class AbstractCoverageProcessor extends Factory implements GridC
         } catch (ParameterNotFoundException exception) {
             /*
              * "Source" parameter may not exists. Conservatively
-             * assumes that the operation will do some usefull work.
+             * assumes that the operation will do some useful work.
              */
             return null;
         }

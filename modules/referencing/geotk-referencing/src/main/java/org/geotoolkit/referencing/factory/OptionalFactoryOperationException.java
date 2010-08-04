@@ -34,7 +34,7 @@ import org.opengis.util.FactoryException;
  */
 public class OptionalFactoryOperationException extends FactoryException {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 7434897698526502211L;
 

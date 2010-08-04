@@ -42,7 +42,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * {@code [0..height-1]} inclusive. Output coordinates are the values stored in the grid of
  * localization at the specified index.
  * <p>
- * The {@code LocalizationGrid} class is usefull when the "{@linkplain GridGeometry#getGridToCRS
+ * The {@code LocalizationGrid} class is useful when the "{@linkplain GridGeometry#getGridToCRS
  * grid to CRS}" transform for a coverage is not some kind of global mathematical relationship
  * like an {@linkplain AffineTransform affine transform}. Instead, the "real world" coordinates
  * are explicitly specified for each pixels. If the real world coordinates are know only for some
@@ -86,7 +86,7 @@ import org.geotoolkit.lang.ThreadSafe;
  *             DefaultCartesianCS.GRID);
  *     //
  *     // Constructs the grid coverage using the grid coordinate system (not the "real world"
- *     // one). It is usefull to display the coverage in its native CRS before we resample it.
+ *     // one). It is useful to display the coverage in its native CRS before we resample it.
  *     // Note that if the grid of localization does not define the geographic location for
  *     // all pixels, then we need to specify some affine transform in place of the call to
  *     // IdentityTransform. For example if the grid of localization defines the location of

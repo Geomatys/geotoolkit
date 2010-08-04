@@ -38,7 +38,7 @@ import org.geotoolkit.lang.Immutable;
 @Immutable
 class ConcatenatedTransformDirect extends ConcatenatedTransform {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -3568975979013908920L;
 

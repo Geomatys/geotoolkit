@@ -34,7 +34,7 @@ import org.geotoolkit.resources.Errors;
  */
 public class InvalidGridGeometryException extends IllegalStateException {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -7386283388753448743L;
 

@@ -844,7 +844,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
         clearAbortRequest();
         prepareVariable(imageIndex);
         /*
-         * Fetchs the parameters that are not already processed by utility
+         * Fetches the parameters that are not already processed by utility
          * methods like 'getDestination' or 'computeRegions' (invoked below).
          */
         final int strideX, strideY;

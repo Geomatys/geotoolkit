@@ -50,7 +50,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlRootElement(name = "MX_DataFile")
 public class DefaultDataFile extends MetadataEntity implements DataFile {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 5737775725403867273L;
 

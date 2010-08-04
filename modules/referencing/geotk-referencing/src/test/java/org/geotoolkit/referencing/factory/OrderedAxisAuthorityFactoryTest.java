@@ -203,7 +203,7 @@ public final class OrderedAxisAuthorityFactoryTest extends ReferencingTestCase {
         assertTrue(factory1 instanceof LongitudeFirstEpsgFactory);
         /*
          * The local variables to be used for all remaining tests
-         * (usefull to setup in the debugger).
+         * (useful to setup in the debugger).
          */
         String code;
         CoordinateReferenceSystem crs0, crs1;

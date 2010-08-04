@@ -26,7 +26,7 @@ import org.geotoolkit.util.Cloneable;
 
 /**
  * Defines a range of two-dimensional grid coverage coordinates. This implementation extends
- * {@link Rectangle} for interoperability with Java2D. Note that at the opposite of
+ * {@link Rectangle} for inter-operability with Java2D. Note that at the opposite of
  * {@link GeneralGridEnvelope}, this class is mutable.
  * <p>
  * <b>CAUTION:</b>
@@ -45,7 +45,7 @@ import org.geotoolkit.util.Cloneable;
 @Immutable
 public class GridEnvelope2D extends Rectangle implements GridEnvelope, Cloneable {
     /**
-     * For cross-version interoperability.
+     * For cross-version inter-operability.
      */
     private static final long serialVersionUID = -3370515914148690059L;
 

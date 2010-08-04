@@ -71,7 +71,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
 @Immutable
 public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -7386537348359343836L;
 

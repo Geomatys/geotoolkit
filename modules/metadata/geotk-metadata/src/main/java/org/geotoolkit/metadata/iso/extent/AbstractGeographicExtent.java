@@ -48,7 +48,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlRootElement(name = "EX_GeographicExtent")
 public class AbstractGeographicExtent extends MetadataEntity implements GeographicExtent {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -8844015895495563161L;
 

@@ -61,7 +61,7 @@ import org.geotoolkit.xml.Namespaces;
 @XmlRootElement(name = "LI_Lineage", namespace = Namespaces.GMI)
 public class DefaultLineage extends MetadataEntity implements Lineage {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 3351230301999744987L;
 

@@ -67,7 +67,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
         implements GeographicBoundingBox
 {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -3278089380004172514L;
 

@@ -68,7 +68,7 @@ public class LinearTransform1D extends AbstractMathTransform
         implements MathTransform1D, LinearTransform, Serializable
 {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -7595037195668813000L;
 

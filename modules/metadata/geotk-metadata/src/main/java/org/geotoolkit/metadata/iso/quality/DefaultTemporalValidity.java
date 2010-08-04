@@ -41,7 +41,7 @@ import org.geotoolkit.lang.ThreadSafe;
 @XmlRootElement(name = "DQ_TemporalValidity")
 public class DefaultTemporalValidity extends AbstractTemporalAccuracy implements TemporalValidity {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 2866684429712027839L;
 

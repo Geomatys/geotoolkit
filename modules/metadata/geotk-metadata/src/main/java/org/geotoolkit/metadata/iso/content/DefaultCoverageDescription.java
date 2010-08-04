@@ -58,7 +58,7 @@ import org.geotoolkit.xml.Namespaces;
 @XmlRootElement(name = "MD_CoverageDescription")
 public class DefaultCoverageDescription extends AbstractContentInformation implements CoverageDescription {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 5943716957630930520L;
 

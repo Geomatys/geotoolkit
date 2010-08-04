@@ -74,7 +74,7 @@ import org.geotoolkit.lang.Immutable;
 @XmlRootElement(name = "EngineeringCRS")
 public class DefaultEngineeringCRS extends AbstractSingleCRS implements EngineeringCRS {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 6695541732063382701L;
 
@@ -82,7 +82,7 @@ public class DefaultEngineeringCRS extends AbstractSingleCRS implements Engineer
      * A cartesian local coordinate system.
      */
     private static final class Cartesian extends DefaultEngineeringCRS {
-        /** Serial number for interoperability with different versions. */
+        /** Serial number for inter-operability with different versions. */
         private static final long serialVersionUID = -1773381554353809683L;
 
         /** Constructs a coordinate system with the given name. */
@@ -142,7 +142,7 @@ public class DefaultEngineeringCRS extends AbstractSingleCRS implements Engineer
      * factory} with loose transformation rules: if no transformation path were found (for example
      * through a {@linkplain DefaultDerivedCRS derived CRS}), then the transformation from this
      * CRS to any CRS with a compatible number of dimensions is assumed to be the identity
-     * transform. This CRS is usefull as a kind of wildcard when no CRS were explicitly specified.
+     * transform. This CRS is useful as a kind of wildcard when no CRS were explicitly specified.
      */
     public static final DefaultEngineeringCRS GENERIC_2D =
             new Cartesian(Vocabulary.Keys.GENERIC_CARTESIAN_2D, DefaultCartesianCS.GENERIC_2D);
@@ -158,7 +158,7 @@ public class DefaultEngineeringCRS extends AbstractSingleCRS implements Engineer
      * factory} with loose transformation rules: if no transformation path were found (for example
      * through a {@linkplain DefaultDerivedCRS derived CRS}), then the transformation from this
      * CRS to any CRS with a compatible number of dimensions is assumed to be the identity
-     * transform. This CRS is usefull as a kind of wildcard when no CRS were explicitly specified.
+     * transform. This CRS is useful as a kind of wildcard when no CRS were explicitly specified.
      */
     public static final DefaultEngineeringCRS GENERIC_3D =
             new Cartesian(Vocabulary.Keys.GENERIC_CARTESIAN_3D, DefaultCartesianCS.GENERIC_3D);

@@ -58,7 +58,7 @@ import org.geotoolkit.resources.Errors;
  */
 public class GeneralDirectPosition extends AbstractDirectPosition implements Serializable, Cloneable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 9071833698385715524L;
 
@@ -304,7 +304,7 @@ public class GeneralDirectPosition extends AbstractDirectPosition implements Ser
 
     /**
      * Returns a {@link Point2D} with the same coordinate as this direct position.
-     * This is a convenience method for interoperability with Java2D.
+     * This is a convenience method for inter-operability with Java2D.
      *
      * @return This position as a two-dimensional point.
      * @throws IllegalStateException if this coordinate point is not two-dimensional.

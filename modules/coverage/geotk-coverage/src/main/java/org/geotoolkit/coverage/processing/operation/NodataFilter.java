@@ -75,7 +75,7 @@ import org.geotoolkit.coverage.processing.FilterOperation;
 @Immutable
 public class NodataFilter extends FilterOperation {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 6818008657792977519L;
 

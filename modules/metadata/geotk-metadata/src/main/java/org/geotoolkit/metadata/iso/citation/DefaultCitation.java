@@ -69,7 +69,7 @@ import org.geotoolkit.util.SimpleInternationalString;
 @XmlRootElement(name = "CI_Citation")
 public class DefaultCitation extends MetadataEntity implements Citation {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 490722440306018256L;
 

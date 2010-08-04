@@ -58,7 +58,7 @@ import org.geotoolkit.internal.jaxb.primitive.RealNumberAdapter;
 @XmlRootElement(name = "MD_DigitalTransferOptions")
 public class DefaultDigitalTransferOptions extends MetadataEntity implements DigitalTransferOptions {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -1533064478468754337L;
 

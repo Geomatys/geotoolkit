@@ -36,7 +36,7 @@ import org.geotoolkit.lang.Immutable;
 @Immutable
 final class PassThroughTransform2D extends PassThroughTransform implements MathTransform2D {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -5637760772953973708L;
 

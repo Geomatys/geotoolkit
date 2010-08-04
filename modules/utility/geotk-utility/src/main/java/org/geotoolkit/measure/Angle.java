@@ -44,7 +44,7 @@ import org.geotoolkit.util.converter.ConverterRegistry;
 @Immutable
 public class Angle implements Comparable<Angle>, Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 1158747349433104534L;
 

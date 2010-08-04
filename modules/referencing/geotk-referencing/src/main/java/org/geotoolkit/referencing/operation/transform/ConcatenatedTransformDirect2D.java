@@ -41,7 +41,7 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
 @Immutable
 final class ConcatenatedTransformDirect2D extends ConcatenatedTransformDirect implements MathTransform2D {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 6009454091075588885L;
 

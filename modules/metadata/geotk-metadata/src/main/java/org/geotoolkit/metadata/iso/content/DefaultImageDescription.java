@@ -61,7 +61,7 @@ import org.geotoolkit.lang.ValueRange;
 @XmlRootElement(name = "MD_ImageDescription")
 public class DefaultImageDescription extends DefaultCoverageDescription implements ImageDescription {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -6168624828802439062L;
 

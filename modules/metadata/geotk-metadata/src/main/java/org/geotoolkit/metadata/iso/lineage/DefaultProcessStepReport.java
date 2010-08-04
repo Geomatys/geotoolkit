@@ -50,7 +50,7 @@ import org.geotoolkit.xml.Namespaces;
 @XmlRootElement(name = "LE_ProcessStepReport", namespace = Namespaces.GMI)
 public class DefaultProcessStepReport extends MetadataEntity implements ProcessStepReport {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -7054783651586763896L;
 

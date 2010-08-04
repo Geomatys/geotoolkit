@@ -58,7 +58,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlRootElement(name = "MD_MaintenanceInformation")
 public class DefaultMaintenanceInformation extends MetadataEntity implements MaintenanceInformation {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 8523463344581266776L;
 

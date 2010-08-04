@@ -63,7 +63,7 @@ import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 @Immutable
 public class DefaultDerivedCRS extends AbstractDerivedCRS implements DerivedCRS {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -8149602276542469876L;
 

@@ -36,7 +36,7 @@ import org.geotoolkit.internal.referencing.MatrixUtilities;
  */
 public class Matrix2 implements XMatrix, Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 7116561372481474290L;
 

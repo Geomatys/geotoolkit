@@ -30,7 +30,7 @@ package org.geotoolkit.coverage.processing;
  */
 public class CannotReprojectException extends CoverageProcessingException {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -8145425848361056027L;
 

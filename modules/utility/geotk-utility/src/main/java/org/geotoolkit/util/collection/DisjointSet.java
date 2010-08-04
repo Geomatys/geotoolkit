@@ -53,7 +53,7 @@ import java.io.Serializable;
  */
 public class DisjointSet<E> extends AbstractSet<E> implements Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -7933552571588598563L;
 

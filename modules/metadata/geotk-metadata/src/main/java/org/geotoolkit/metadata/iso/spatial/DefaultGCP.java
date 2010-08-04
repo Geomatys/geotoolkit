@@ -51,7 +51,7 @@ import org.geotoolkit.xml.Namespaces;
 @XmlRootElement(name = "MI_GCP", namespace = Namespaces.GMI)
 public class DefaultGCP extends MetadataEntity implements GCP {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -5517470507848931237L;
 

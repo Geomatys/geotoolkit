@@ -106,7 +106,7 @@
  * {@link org.geotoolkit.referencing.operation.provider.MapProjection#Y_SCALE Y_SCALE} and
  * {@link org.geotoolkit.referencing.operation.provider.MapProjection#XY_PLANE_ROTATION XY_PLANE_ROTATION}.
  * Those parameters are not OGC standards, but are nevertheless provided in Geotk for better
- * interoperability with ESRI definitions of coordinate reference systems.
+ * inter-operability with ESRI definitions of coordinate reference systems.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Rueben Schulz (UBC)

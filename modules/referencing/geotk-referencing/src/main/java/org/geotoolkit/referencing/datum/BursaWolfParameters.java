@@ -54,7 +54,7 @@ import org.geotoolkit.util.Cloneable;
  */
 public class BursaWolfParameters extends FormattableObject implements Cloneable, Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 754825592343010900L;
 

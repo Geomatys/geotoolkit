@@ -57,7 +57,7 @@ import org.geotoolkit.internal.referencing.NullReferencingObject;
 @Immutable
 public abstract class AbstractCRS extends AbstractReferenceSystem implements CoordinateReferenceSystem {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -7433284548909530047L;
 

@@ -47,7 +47,7 @@ import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
 @Immutable
 public class DefaultPassThroughOperation extends DefaultSingleOperation implements PassThroughOperation {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 4308173919747248695L;
 

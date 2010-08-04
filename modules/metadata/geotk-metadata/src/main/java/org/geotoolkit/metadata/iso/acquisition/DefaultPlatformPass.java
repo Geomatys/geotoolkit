@@ -52,7 +52,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlRootElement(name = "MI_PlatformPass")
 public class DefaultPlatformPass extends MetadataEntity implements PlatformPass {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -1695097227120034433L;
 

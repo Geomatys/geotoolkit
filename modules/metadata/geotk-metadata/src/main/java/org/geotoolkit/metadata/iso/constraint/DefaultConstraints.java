@@ -53,7 +53,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlRootElement(name = "MD_Constraints")
 public class DefaultConstraints extends MetadataEntity implements Constraints {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 1771854790746022204L;
 

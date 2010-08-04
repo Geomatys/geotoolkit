@@ -73,7 +73,7 @@ import org.geotoolkit.referencing.operation.provider.PositionVector7Param;
 @Immutable
 public class GeocentricAffineTransform extends ProjectiveTransform {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -3588786513463289242L;
 

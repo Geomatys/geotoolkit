@@ -56,7 +56,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlRootElement(name = "MI_Plan")
 public class DefaultPlan extends MetadataEntity implements Plan {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -8457900515677160271L;
 

@@ -48,7 +48,7 @@ import org.geotoolkit.resources.Errors;
  */
 public class RGF93 extends MathTransformProvider {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 4049217192968903800L;
 

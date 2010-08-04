@@ -44,7 +44,7 @@ import org.geotoolkit.util.converter.Classes;
 @Immutable
 public class MeasurementRange<T extends Number & Comparable<? super T>> extends NumberRange<T> {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 3980319420337513745L;
 

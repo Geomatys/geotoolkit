@@ -80,7 +80,7 @@ import org.geotoolkit.coverage.processing.OperationJAI;
 @Immutable
 public class Rescale extends OperationJAI {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -9150531690336265741L;
 

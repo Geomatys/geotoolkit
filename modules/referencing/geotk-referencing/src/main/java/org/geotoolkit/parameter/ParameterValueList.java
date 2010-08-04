@@ -48,7 +48,7 @@ final class ParameterValueList extends AbstractList<GeneralParameterValue>
         implements RandomAccess, Serializable
 {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -7446077551686135264L;
 

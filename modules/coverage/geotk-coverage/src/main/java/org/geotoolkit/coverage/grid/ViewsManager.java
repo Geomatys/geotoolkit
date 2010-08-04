@@ -646,7 +646,7 @@ testLinear: for (int i=0; i<numBands; i++) {
      * mapping exactly to the index value 0, then the "<cite>geophysics to native</cite>" transform
      * can be optimized to the {@code "Rescale"} operation because {@link Float#NaN} casted to the
      * {@code int} primitive type equals 0. This case is very common, which make this optimization
-     * a usefull one. Unfortunatly there is nothing in {@code "Rescale"} preventing some real number
+     * a useful one. Unfortunatly there is nothing in {@code "Rescale"} preventing some real number
      * (not NaN) to maps to 0 through the normal linear relationship. We need to make sure that the
      * range of transformed values doesn't contains 0.
      */

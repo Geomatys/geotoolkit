@@ -49,7 +49,7 @@ import org.geotoolkit.xml.Namespaces;
 @XmlRootElement(name = "LE_NominalResolution", namespace = Namespaces.GMI)
 public class DefaultNominalResolution extends MetadataEntity implements NominalResolution {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -3337606314192690008L;
 

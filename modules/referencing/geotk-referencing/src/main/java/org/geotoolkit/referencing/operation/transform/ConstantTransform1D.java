@@ -37,7 +37,7 @@ import org.geotoolkit.lang.Immutable;
 @Immutable
 final class ConstantTransform1D extends LinearTransform1D {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -1583675681650985947L;
 

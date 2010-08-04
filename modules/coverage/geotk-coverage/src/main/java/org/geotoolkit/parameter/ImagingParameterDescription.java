@@ -42,7 +42,7 @@ import org.geotoolkit.util.AbstractInternationalString;
 @Immutable
 final class ImagingParameterDescription extends AbstractInternationalString implements Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -325584046563057577L;
 

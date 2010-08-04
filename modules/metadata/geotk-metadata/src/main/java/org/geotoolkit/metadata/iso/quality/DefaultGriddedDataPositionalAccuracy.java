@@ -43,7 +43,7 @@ public class DefaultGriddedDataPositionalAccuracy extends AbstractPositionalAccu
         implements GriddedDataPositionalAccuracy
 {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -3852184823135498458L;
 

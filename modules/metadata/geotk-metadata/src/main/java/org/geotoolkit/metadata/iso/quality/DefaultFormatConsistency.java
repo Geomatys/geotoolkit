@@ -42,7 +42,7 @@ import org.geotoolkit.lang.ThreadSafe;
 @XmlRootElement(name = "DQ_FormatConsistency")
 public class DefaultFormatConsistency extends AbstractLogicalConsistency implements FormatConsistency {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -1204766930140154729L;
 

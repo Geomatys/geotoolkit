@@ -53,7 +53,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
 @Immutable
 public class AbridgedMolodensky extends Molodensky {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -3889456253400732280L;
 

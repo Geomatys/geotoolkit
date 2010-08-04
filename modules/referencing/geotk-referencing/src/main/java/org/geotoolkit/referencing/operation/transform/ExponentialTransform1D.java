@@ -63,7 +63,7 @@ import static java.lang.Double.doubleToLongBits;
 @Immutable
 public class ExponentialTransform1D extends AbstractMathTransform implements MathTransform1D, Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 5331178990358868947L;
 

@@ -189,7 +189,7 @@ public interface GridCoverageReference extends CoverageStack.Element {
 
     /**
      * Gets a grid coverage reader which can be used for reading the coverage represented by
-     * this {@code GridCoverageReference}. This method is provided for interoperability with
+     * this {@code GridCoverageReference}. This method is provided for inter-operability with
      * API requirying {@code GridCoverageReader} instances. When possible, callers are encouraged
      * to use the {@link #read(CoverageEnvelope, IIOListeners)} method instead.
      * <p>

@@ -59,7 +59,7 @@ import org.geotoolkit.lang.Immutable;
 @Immutable
 final class LocalizationGridTransform2D extends GridTransform implements MathTransform2D {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 1067560328828441295L;
 
@@ -429,7 +429,7 @@ final class LocalizationGridTransform2D extends GridTransform implements MathTra
             implements MathTransform2D, Serializable
     {
         /**
-         * Serial number for interoperability with different versions.
+         * Serial number for inter-operability with different versions.
          */
         private static final long serialVersionUID = 4876426825123740986L;
 

@@ -105,7 +105,7 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
 @Immutable
 public class ProjectiveTransform extends AbstractMathTransform implements LinearTransform, Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -2104496465933824935L;
 
@@ -182,7 +182,7 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
 
     /**
      * Creates a transform for the specified matrix as a Java2D object.
-     * This method is provided for interoperability with
+     * This method is provided for inter-operability with
      * <A HREF="http://java.sun.com/products/java-media/2D/index.jsp">Java2D</A>.
      *
      * @param matrix The affine transform as a matrix.

@@ -44,7 +44,7 @@ import org.geotoolkit.internal.image.ImageUtilities;
  *
  * {@section Geotoolkit.org extension}
  * The Geotk implementation provides two extensions to OpenGIS specification: First,
- * it accepts also an {@link Interpolation} argument type, for interoperability with
+ * it accepts also an {@link Interpolation} argument type, for inter-operability with
  * <A HREF="http://java.sun.com/products/java-media/jai/">Java Advanced Imaging</A>.
  * Second, it accepts also an array of {@link String} or {@link Interpolation} objects.
  * When an array is specified, the first interpolation in the array is applied. If this
@@ -104,7 +104,7 @@ import org.geotoolkit.internal.image.ImageUtilities;
 @Immutable
 public class Interpolate extends Operation2D {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 6742127682733620661L;
 

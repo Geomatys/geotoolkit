@@ -77,12 +77,12 @@ import org.geotoolkit.measure.Units;
 @Immutable
 public class AbstractCoordinateOperation extends AbstractIdentifiedObject implements CoordinateOperation {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 1237358357729193885L;
 
     /**
-     * An empty array of positional accuracy. This is usefull for fetching accuracies as an array,
+     * An empty array of positional accuracy. This is useful for fetching accuracies as an array,
      * using the following idiom:
      *
      * {@preformat java

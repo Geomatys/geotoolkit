@@ -39,7 +39,7 @@ import org.geotoolkit.resources.Errors;
  */
 final class FilenameFormatter implements Serializable {
     /**
-     * For cross-version interoperability.
+     * For cross-version inter-operability.
      */
     private static final long serialVersionUID = 67144666748146079L;
 

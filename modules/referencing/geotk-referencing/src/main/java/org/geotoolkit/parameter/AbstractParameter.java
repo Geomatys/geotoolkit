@@ -60,7 +60,7 @@ public abstract class AbstractParameter extends FormattableObject
            implements GeneralParameterValue, Serializable, Cloneable
 {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 8458179223988766398L;
 

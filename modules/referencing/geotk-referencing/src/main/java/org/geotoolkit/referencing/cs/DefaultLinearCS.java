@@ -51,7 +51,7 @@ import org.geotoolkit.measure.Measure;
 @Immutable
 public class DefaultLinearCS extends AbstractCS implements LinearCS {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -6890723478287625763L;
 

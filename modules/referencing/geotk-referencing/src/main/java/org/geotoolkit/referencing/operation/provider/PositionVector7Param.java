@@ -60,7 +60,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createOptionalDesc
 @Immutable
 public class PositionVector7Param extends MathTransformProvider {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -6398226638364450229L;
 

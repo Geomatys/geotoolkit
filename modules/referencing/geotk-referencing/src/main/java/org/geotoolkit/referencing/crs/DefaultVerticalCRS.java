@@ -65,7 +65,7 @@ import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
 @XmlRootElement(name = "VerticalCRS")
 public class DefaultVerticalCRS extends AbstractSingleCRS implements VerticalCRS {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 3565878468719941800L;
 

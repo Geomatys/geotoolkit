@@ -61,7 +61,7 @@ import org.geotoolkit.lang.Immutable;
 @Immutable
 public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 8832100095648302943L;
 

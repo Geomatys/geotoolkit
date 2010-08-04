@@ -57,7 +57,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlRootElement(name = "CI_OnlineResource")
 public class DefaultOnlineResource extends MetadataEntity implements OnlineResource {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 5412370008274334799L;
 

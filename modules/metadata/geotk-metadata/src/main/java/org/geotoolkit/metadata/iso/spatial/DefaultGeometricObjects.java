@@ -51,7 +51,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlRootElement(name = "MD_GeometricObjects")
 public class DefaultGeometricObjects extends MetadataEntity implements GeometricObjects {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 8755950031078638313L;
 

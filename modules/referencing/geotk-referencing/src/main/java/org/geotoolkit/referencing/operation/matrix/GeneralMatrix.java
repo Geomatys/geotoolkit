@@ -63,7 +63,7 @@ import org.geotoolkit.internal.referencing.MatrixUtilities;
  */
 public class GeneralMatrix extends GMatrix implements XMatrix {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 8447482612423035360L;
 
@@ -484,7 +484,7 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
 
     /**
      * Returns an affine transform for this matrix.
-     * This is a convenience method for interoperability with Java2D.
+     * This is a convenience method for inter-operability with Java2D.
      *
      * @return The affine transform for this matrix.
      * @throws IllegalStateException if this matrix is not 3&times;3,

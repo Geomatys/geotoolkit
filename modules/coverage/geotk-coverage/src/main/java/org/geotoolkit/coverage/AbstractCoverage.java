@@ -675,7 +675,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
 
     /**
      * Returns 2D view of this grid coverage as a renderable image. This method
-     * allows interoperability with Java2D.
+     * allows inter-operability with Java2D.
      *
      * @param xAxis Dimension to use for the <var>x</var> display axis.
      * @param yAxis Dimension to use for the <var>y</var> display axis.
@@ -697,7 +697,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
 
     /**
      * A view of a {@linkplain AbstractCoverage coverage} as a renderable image. Renderable images
-     * allow interoperability with <A HREF="http://java.sun.com/products/java-media/2D/">Java2D</A>
+     * allow inter-operability with <A HREF="http://java.sun.com/products/java-media/2D/">Java2D</A>
      * for a two-dimensional slice of a coverage (which may or may not be a
      * {@linkplain org.geotoolkit.coverage.grid.GridCoverage2D grid coverage}).
      *

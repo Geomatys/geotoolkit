@@ -64,7 +64,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlRootElement(name = "EX_Extent")
 public class DefaultExtent extends MetadataEntity implements Extent {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 7812213837337326257L;
 

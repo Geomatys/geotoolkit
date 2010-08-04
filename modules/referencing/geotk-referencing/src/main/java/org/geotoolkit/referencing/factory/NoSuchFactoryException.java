@@ -32,7 +32,7 @@ import org.opengis.util.FactoryException;
  */
 public class NoSuchFactoryException extends FactoryException {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -661925454228937249L;
 

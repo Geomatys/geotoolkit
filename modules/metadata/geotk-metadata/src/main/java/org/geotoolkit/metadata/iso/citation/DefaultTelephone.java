@@ -50,7 +50,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlRootElement(name = "CI_Telephone")
 public class DefaultTelephone extends MetadataEntity implements Telephone {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 4920157673337669241L;
 

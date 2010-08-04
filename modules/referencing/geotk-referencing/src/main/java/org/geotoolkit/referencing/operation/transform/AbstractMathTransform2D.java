@@ -124,7 +124,7 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
      */
     protected abstract class Inverse extends AbstractMathTransform.Inverse implements MathTransform2D {
         /**
-         * Serial number for interoperability with different versions.
+         * Serial number for inter-operability with different versions.
          */
         private static final long serialVersionUID = 5751908928042026412L;
 

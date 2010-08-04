@@ -65,7 +65,7 @@ import org.geotoolkit.io.wkt.Formatter;
 @Immutable
 public class DefaultOperationMethod extends AbstractIdentifiedObject implements OperationMethod {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -8181774670648793964L;
 

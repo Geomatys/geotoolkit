@@ -53,7 +53,7 @@ import org.opengis.referencing.operation.OperationNotFoundException;
  */
 public class TransformPathNotFoundException extends TransformException {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 5072333160296464925L;
 

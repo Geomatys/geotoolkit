@@ -44,7 +44,7 @@ import static org.geotoolkit.measure.Units.MILLISECOND;
  */
 public class DateGraduation extends AbstractGraduation {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -7590383805990568769L;
 

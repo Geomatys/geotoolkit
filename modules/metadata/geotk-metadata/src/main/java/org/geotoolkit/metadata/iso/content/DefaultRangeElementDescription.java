@@ -53,7 +53,7 @@ import org.geotoolkit.xml.Namespaces;
 @XmlRootElement(name = "MI_RangeElementDescription", namespace = Namespaces.GMI)
 public class DefaultRangeElementDescription extends MetadataEntity implements RangeElementDescription {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -2869953851390143207L;
 

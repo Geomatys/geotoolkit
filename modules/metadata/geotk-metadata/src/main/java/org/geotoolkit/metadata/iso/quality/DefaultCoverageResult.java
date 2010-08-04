@@ -55,7 +55,7 @@ import org.geotoolkit.xml.Namespaces;
 @XmlRootElement(name = "QE_CoverageResult")
 public class DefaultCoverageResult extends AbstractResult implements CoverageResult {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -5014701989643853577L;
 

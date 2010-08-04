@@ -34,7 +34,7 @@ package org.geotoolkit.referencing.operation.projection;
  */
 final class ProjectionError extends ProjectionException {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -6489823740587786542L;
 

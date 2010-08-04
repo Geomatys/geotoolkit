@@ -58,7 +58,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlRootElement(name = "LE_Processing")
 public class DefaultProcessing extends MetadataEntity implements Processing {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -8032712379901591271L;
 

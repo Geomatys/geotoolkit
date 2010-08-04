@@ -73,7 +73,7 @@ import org.geotoolkit.lang.Immutable;
 @XmlRootElement(name = "ProjectedCRS")
 public class DefaultProjectedCRS extends AbstractDerivedCRS implements ProjectedCRS {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -4502680112031773028L;
 

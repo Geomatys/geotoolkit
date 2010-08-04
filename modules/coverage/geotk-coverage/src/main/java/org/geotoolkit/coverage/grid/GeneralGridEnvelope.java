@@ -54,7 +54,7 @@ import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 @Immutable
 public class GeneralGridEnvelope implements GridEnvelope, Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -1695224412095031712L;
 
@@ -394,7 +394,7 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
 
     /**
      * Returns a {@link Rectangle} with the same bounds as this {@code GeneralGridEnvelope}.
-     * This is a convenience method for interoperability with Java2D.
+     * This is a convenience method for inter-operability with Java2D.
      *
      * @return A rectangle with the same bounds than this grid envelope.
      * @throws IllegalStateException if this grid envelope is not two-dimensional.

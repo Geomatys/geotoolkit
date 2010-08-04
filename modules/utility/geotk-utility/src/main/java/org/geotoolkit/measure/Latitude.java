@@ -36,7 +36,7 @@ import org.geotoolkit.lang.Immutable;
 @Immutable
 public final class Latitude extends Angle {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -4496748683919618976L;
 

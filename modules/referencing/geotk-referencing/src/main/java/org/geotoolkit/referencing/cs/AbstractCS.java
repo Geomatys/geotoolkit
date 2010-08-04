@@ -82,7 +82,7 @@ import org.geotoolkit.resources.Vocabulary;
 @Immutable
 public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSystem {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 6757665252533744744L;
 

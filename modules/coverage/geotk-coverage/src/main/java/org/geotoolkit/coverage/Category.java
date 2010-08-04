@@ -84,7 +84,7 @@ import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 @Immutable
 public class Category implements Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 6215962897884256696L;
 
@@ -506,7 +506,7 @@ public class Category implements Serializable {
      * @todo The algorithm for finding minimum and maximum values is very simple for
      *       now and will not work if the transformation has local extremas. We would
      *       need some more sophesticated algorithm for the most general cases. Such
-     *       a general algorithm would be usefull in {@link GeophysicsCategory#getRange}
+     *       a general algorithm would be useful in {@link GeophysicsCategory#getRange}
      *       as well.
      */
     Category(final Category inverse, final boolean isQuantitative) throws TransformException {

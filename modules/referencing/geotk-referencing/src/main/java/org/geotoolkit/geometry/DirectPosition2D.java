@@ -71,7 +71,7 @@ import org.geotoolkit.resources.Errors;
  */
 public class DirectPosition2D extends Point2D.Double implements DirectPosition, Serializable, Cloneable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 835130287438466996L;
 

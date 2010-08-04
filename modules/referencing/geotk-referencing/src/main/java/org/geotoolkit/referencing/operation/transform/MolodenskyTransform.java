@@ -77,7 +77,7 @@ import org.geotoolkit.referencing.operation.provider.AbridgedMolodensky;
 @Immutable
 public class MolodenskyTransform extends AbstractMathTransform implements Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 7536566033885338422L;
 

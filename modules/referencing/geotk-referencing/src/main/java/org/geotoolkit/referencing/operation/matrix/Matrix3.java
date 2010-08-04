@@ -37,7 +37,7 @@ import org.geotoolkit.internal.referencing.MatrixUtilities;
  */
 public class Matrix3 extends Matrix3d implements XMatrix {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 8902061778871586611L;
 
@@ -217,7 +217,7 @@ public class Matrix3 extends Matrix3d implements XMatrix {
 
     /**
      * Returns an affine transform for this matrix.
-     * This is a convenience method for interoperability with Java2D.
+     * This is a convenience method for inter-operability with Java2D.
      *
      * @return The affine transform for this matrix.
      * @throws IllegalStateException if the last row is not {@code [0 0 1]}.

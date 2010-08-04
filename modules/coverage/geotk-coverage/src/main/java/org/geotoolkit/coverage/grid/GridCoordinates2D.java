@@ -29,7 +29,7 @@ import org.geotoolkit.resources.Errors;
 /**
  * Holds the set of two-dimensional grid coordinates that specifies the location of the
  * {@linkplain GridPoint grid point} within the {@linkplain Grid grid}. This class extends
- * {@link Point} for interoperability with Java2D.
+ * {@link Point} for inter-operability with Java2D.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00

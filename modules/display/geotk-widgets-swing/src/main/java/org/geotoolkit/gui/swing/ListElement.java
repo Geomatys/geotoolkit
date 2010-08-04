@@ -26,7 +26,7 @@ import org.geotoolkit.util.Utilities;
 
 /**
  * An element to be put in a list with a string representation more elaborated than the
- * element's default {@link Object#toString} method. This is specially usefull for
+ * element's default {@link Object#toString} method. This is specially useful for
  * localizable elements.
  *
  * @author Martin Desruisseaux (IRD)

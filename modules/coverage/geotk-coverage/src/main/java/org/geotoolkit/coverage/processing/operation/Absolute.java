@@ -59,7 +59,7 @@ import org.geotoolkit.coverage.processing.OperationJAI;
 @Immutable
 public class Absolute extends OperationJAI {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 3723059532452772794L;
 

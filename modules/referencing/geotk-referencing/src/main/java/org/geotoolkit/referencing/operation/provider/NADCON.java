@@ -64,7 +64,7 @@ import org.geotoolkit.util.logging.Logging;
 @Immutable
 public class NADCON extends MathTransformProvider {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -4707304160205218546L;
 

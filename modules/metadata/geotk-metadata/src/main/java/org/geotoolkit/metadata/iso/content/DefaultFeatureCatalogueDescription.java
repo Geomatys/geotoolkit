@@ -57,7 +57,7 @@ public class DefaultFeatureCatalogueDescription extends AbstractContentInformati
         implements FeatureCatalogueDescription
 {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 1984922846251567908L;
 

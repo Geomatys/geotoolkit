@@ -47,7 +47,7 @@ import org.geotoolkit.lang.Immutable;
 @Immutable
 public class DefaultImageDatum extends AbstractDatum implements ImageDatum {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -4304193511244150936L;
 

@@ -52,7 +52,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
 @XmlRootElement(name = "ScopedName")
 public class DefaultScopedName extends AbstractName implements ScopedName {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -5215955533541748481L;
 

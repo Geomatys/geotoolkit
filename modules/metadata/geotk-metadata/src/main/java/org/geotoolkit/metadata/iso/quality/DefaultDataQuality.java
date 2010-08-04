@@ -53,7 +53,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlRootElement(name = "DQ_DataQuality")
 public class DefaultDataQuality extends MetadataEntity implements DataQuality {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 7964896551368382214L;
 

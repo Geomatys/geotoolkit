@@ -70,7 +70,7 @@ public class AffineTransform2D extends XAffineTransform
         implements MathTransform2D, LinearTransform, Parameterized, Formattable, Cloneable
 {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -5299837898367149069L;
 

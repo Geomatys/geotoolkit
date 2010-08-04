@@ -51,7 +51,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlRootElement(name = "EX_VerticalExtent")
 public class DefaultVerticalExtent extends MetadataEntity implements VerticalExtent {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -3214554246909844079L;
 

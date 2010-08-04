@@ -108,6 +108,6 @@ public class OrthographicTest extends ProjectionTestCase {
         transform = error.projection();
         validate();
         error.fit(90, 90);
-        // Northing usefull here; finding a model would require more work.
+        // Northing useful here; finding a model would require more work.
     }
 }

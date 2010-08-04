@@ -54,7 +54,7 @@ import org.geotoolkit.lang.Immutable;
 @XmlRootElement(name = "PrimeMeridian")
 public class DefaultPrimeMeridian extends AbstractIdentifiedObject implements PrimeMeridian {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 541978454643213305L;;
 

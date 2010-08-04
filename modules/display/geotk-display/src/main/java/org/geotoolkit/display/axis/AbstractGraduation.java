@@ -44,7 +44,7 @@ import org.geotoolkit.util.NullArgumentException;
 @ThreadSafe
 public abstract class AbstractGraduation implements Graduation, Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 5215728323932315112L;
 

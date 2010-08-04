@@ -70,7 +70,7 @@ import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 public class WebCRSFactory extends DirectAuthorityFactory implements CRSAuthorityFactory {
     /**
      * An optional prefix put in front of code. For example a code may be {@code "CRS84"}
-     * instead of a plain {@code "84"}. This is usefull in order to understand URN syntax
+     * instead of a plain {@code "84"}. This is useful in order to understand URN syntax
      * like {@code "urn:ogc:def:crs:OGC:1.3:CRS84"}. Must be uppercase for this implementation
      * (but parsing will be case-insensitive).
      */

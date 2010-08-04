@@ -57,7 +57,7 @@ import org.geotoolkit.io.wkt.UnformattableObjectException;
 @Decorator(MathTransform.class)
 public final class MathTransformDecorator implements MathTransform, Formattable, Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 8844242705205498128L;
 

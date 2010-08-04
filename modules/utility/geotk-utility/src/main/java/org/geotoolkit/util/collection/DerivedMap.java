@@ -51,7 +51,7 @@ import org.geotoolkit.lang.Decorator;
 @Decorator(Map.class)
 public abstract class DerivedMap<BK,K,V> extends AbstractMap<K,V> implements Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -6994867383669885934L;
 

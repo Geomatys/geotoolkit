@@ -61,7 +61,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlRootElement(name = "MI_Requirement")
 public class DefaultRequirement extends MetadataEntity implements Requirement {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 7305276418007196949L;
 

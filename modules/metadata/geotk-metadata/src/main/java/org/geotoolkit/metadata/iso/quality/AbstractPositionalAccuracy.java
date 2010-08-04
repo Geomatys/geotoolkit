@@ -51,7 +51,7 @@ import org.geotoolkit.resources.Descriptions;
 })
 public class AbstractPositionalAccuracy extends AbstractElement implements PositionalAccuracy {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 6043381860937480828L;
 

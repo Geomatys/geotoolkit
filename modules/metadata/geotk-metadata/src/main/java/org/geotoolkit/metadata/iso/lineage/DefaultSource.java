@@ -64,7 +64,7 @@ import org.geotoolkit.xml.Namespaces;
 @XmlRootElement(name = "LI_Source")
 public class DefaultSource extends MetadataEntity implements Source {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 6277132009549470021L;
 

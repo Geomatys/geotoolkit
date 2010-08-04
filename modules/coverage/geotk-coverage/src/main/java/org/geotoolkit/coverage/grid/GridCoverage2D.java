@@ -707,7 +707,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
 
     /**
      * Returns 2D view of this grid coverage as a renderable image.
-     * This method allows interoperability with Java2D.
+     * This method allows inter-operability with Java2D.
      *
      * @param  xAxis Dimension to use for <var>x</var> axis.
      * @param  yAxis Dimension to use for <var>y</var> axis.
@@ -756,7 +756,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
 
     /**
      * A view of a {@linkplain GridCoverage2D grid coverage} as a renderable image. Renderable images
-     * allow interoperability with <A HREF="http://java.sun.com/products/java-media/2D/">Java2D</A>
+     * allow inter-operability with <A HREF="http://java.sun.com/products/java-media/2D/">Java2D</A>
      * for a two-dimensional slice of a grid coverage.
      *
      * @author Martin Desruisseaux (IRD)

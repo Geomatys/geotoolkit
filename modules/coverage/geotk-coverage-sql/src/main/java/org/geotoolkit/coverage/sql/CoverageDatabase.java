@@ -677,7 +677,7 @@ public class CoverageDatabase implements Localized {
     /**
      * Configures and returns a {@link GridCoverageReader} for the given layer. This provides an
      * alternative way (as compared to {@link #readSlice readSlice}) for reading two-dimensional
-     * slices of coverage. This method is provided for interoperability with library which want
+     * slices of coverage. This method is provided for inter-operability with library which want
      * to access to the data through the {@link GridCoverageReader} API only.
      *
      * @param  layer The name of the initial layer to be read by the returned reader, or {@code null}.

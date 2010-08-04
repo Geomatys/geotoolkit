@@ -46,7 +46,7 @@ import org.geotoolkit.util.converter.Classes;
  */
 public class XRectangle2D extends Rectangle2D implements Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -1918221103635749436L;
 

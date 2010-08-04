@@ -52,7 +52,7 @@ import org.geotoolkit.util.SimpleInternationalString;
 @XmlRootElement(name = "CI_Series")
 public class DefaultSeries extends MetadataEntity implements Series {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 2784101441023323052L;
 

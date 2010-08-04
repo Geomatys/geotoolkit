@@ -275,7 +275,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
          *   2) Find localized remarks.
          *
          * This algorithm is sub-optimal if the map contains a lot of entries of no interest to
-         * this identifier. Hopefully, most users will fill a map with only usefull entries.
+         * this identifier. Hopefully, most users will fill a map with only useful entries.
          */
         String key   = null;
         Object value = null;

@@ -117,7 +117,7 @@ public final class TypeMap {
 
     /**
      * The range of positive sample values (excluding 0). This range is non-null only for unsigned
-     * type. A range excluding 0 is sometime usefull when the 0 value is reserved for a "no data"
+     * type. A range excluding 0 is sometime useful when the 0 value is reserved for a "no data"
      * category.
      */
     private final NumberRange<?> positiveRange;
@@ -429,7 +429,7 @@ public final class TypeMap {
 
     /**
      * Returns the range of positive sample values (excluding 0). This range is non-null only for
-     * unsigned type. A range excluding 0 is sometime usefull when the 0 value is reserved for a
+     * unsigned type. A range excluding 0 is sometime useful when the 0 value is reserved for a
      * "no data" category.
      *
      * @param type The sample dimension type for which to get its data range.

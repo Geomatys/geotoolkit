@@ -44,7 +44,7 @@ import org.geotoolkit.lang.Immutable;
 @Immutable
 public class DefaultTemporalDatum extends AbstractDatum implements TemporalDatum {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 3357241732140076884L;
 

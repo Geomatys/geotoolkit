@@ -53,7 +53,7 @@ import static org.geotoolkit.parameter.Parameters.*;
 @Immutable
 public class GeocentricToEllipsoid extends MathTransformProvider {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 8459294628751497567L;
 

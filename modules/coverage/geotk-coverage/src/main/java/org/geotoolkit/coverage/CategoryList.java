@@ -66,7 +66,7 @@ import org.geotoolkit.lang.Immutable;
 @Immutable
 class CategoryList extends AbstractList<Category> implements MathTransform1D, Comparator<Category>, Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 2647846361059903365L;
 

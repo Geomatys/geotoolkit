@@ -70,7 +70,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
         implements CheckedCollection<Range<T>>, SortedSet<Range<T>>, Cloneable, Serializable
 {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -6085227672036239981L;
 

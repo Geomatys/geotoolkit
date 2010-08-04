@@ -53,7 +53,7 @@ import org.geotoolkit.xml.Namespaces;
 @XmlRootElement(name = "MI_GCPCollection", namespace = Namespaces.GMI)
 public class DefaultGCPCollection extends AbstractGeolocationInformation implements GCPCollection {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -5267006706468159746L;
 

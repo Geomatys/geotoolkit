@@ -79,7 +79,7 @@ import org.geotoolkit.lang.Immutable;
 @Immutable
 public class GeneralGridGeometry implements GridGeometry, Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 124700383873732132L;
 

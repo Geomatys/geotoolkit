@@ -44,7 +44,7 @@ import org.geotoolkit.util.collection.FrequencySortedSet;
  */
 final class GridTileManager extends TileManager {
     /**
-     * For cross-version interoperability.
+     * For cross-version inter-operability.
      */
     private static final long serialVersionUID = -3140767174475649400L;
 

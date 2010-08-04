@@ -50,7 +50,7 @@ import org.geotoolkit.xml.Namespaces;
 @XmlRootElement(name = "MI_GeolocationInformation", namespace = Namespaces.GMI)
 public class AbstractGeolocationInformation extends MetadataEntity implements GeolocationInformation {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -2929163425440282342L;
 

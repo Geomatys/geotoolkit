@@ -68,7 +68,7 @@ import org.geotoolkit.lang.Immutable;
 @Immutable
 public class DefaultSingleOperation extends AbstractCoordinateOperation implements SingleOperation {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -2635450075620911309L;
 

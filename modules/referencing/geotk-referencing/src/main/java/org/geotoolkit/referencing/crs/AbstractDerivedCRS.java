@@ -64,7 +64,7 @@ import org.geotoolkit.lang.Immutable;
 @Immutable
 public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDerivedCRS {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -175151161496419854L;
 

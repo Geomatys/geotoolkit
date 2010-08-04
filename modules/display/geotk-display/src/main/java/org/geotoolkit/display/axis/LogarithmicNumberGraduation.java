@@ -32,7 +32,7 @@ import javax.measure.unit.Unit;
  */
 public class LogarithmicNumberGraduation extends NumberGraduation {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -8514854171546232887L;
 

@@ -52,7 +52,7 @@ import org.geotoolkit.lang.ThreadSafe;
 @XmlRootElement(name = "MD_SecurityConstraints")
 public class DefaultSecurityConstraints extends DefaultConstraints implements SecurityConstraints {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 6412833018607679734L;;
 

@@ -29,7 +29,7 @@ package org.geotoolkit.coverage.processing;
  */
 public class CoverageProcessingException extends RuntimeException {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -2199436135615396946L;
 

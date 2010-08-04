@@ -54,7 +54,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlRootElement(name = "MD_Distribution")
 public class DefaultDistribution extends MetadataEntity implements Distribution {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -5899590027802365131L;
 

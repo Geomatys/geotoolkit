@@ -48,7 +48,7 @@ import org.geotoolkit.lang.ThreadSafe;
 @XmlRootElement(name = "MD_FeatureTypeList")
 public class DefaultFeatureTypeList extends MetadataEntity implements FeatureTypeList {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 5417914796207743856L;
 

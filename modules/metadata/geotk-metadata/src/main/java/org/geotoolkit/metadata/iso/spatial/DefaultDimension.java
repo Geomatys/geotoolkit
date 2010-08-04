@@ -52,7 +52,7 @@ import org.geotoolkit.lang.ValueRange;
 @XmlRootElement(name = "MD_Dimension")
 public class DefaultDimension extends MetadataEntity implements Dimension {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -2572515000574007266L;
 

@@ -52,7 +52,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlRootElement(name = "CI_Date")
 public class DefaultCitationDate extends MetadataEntity implements CitationDate {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -2884791484254008454L;
 

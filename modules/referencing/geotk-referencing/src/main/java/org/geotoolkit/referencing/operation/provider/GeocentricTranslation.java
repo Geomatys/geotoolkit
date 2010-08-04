@@ -44,7 +44,7 @@ import org.geotoolkit.internal.referencing.Identifiers;
 @Immutable
 public class GeocentricTranslation extends PositionVector7Param {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -7160250630666911608L;
 

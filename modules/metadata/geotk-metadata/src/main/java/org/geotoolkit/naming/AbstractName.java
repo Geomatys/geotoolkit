@@ -65,7 +65,7 @@ import org.geotoolkit.util.SimpleInternationalString;
 @XmlType(name = "GenericName")
 public abstract class AbstractName implements GenericName, Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 3362498790089164525L;
 
@@ -284,7 +284,7 @@ public abstract class AbstractName implements GenericName, Serializable {
     @Immutable
     private static final class International extends SimpleInternationalString {
         /**
-         * Serial number for interoperability with different versions.
+         * Serial number for inter-operability with different versions.
          */
         private static final long serialVersionUID = -6422809765366372062L;
 

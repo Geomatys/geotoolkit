@@ -60,7 +60,7 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
 @Immutable
 public class ConcatenatedTransform extends AbstractMathTransform implements Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 5772066656987558634L;
 

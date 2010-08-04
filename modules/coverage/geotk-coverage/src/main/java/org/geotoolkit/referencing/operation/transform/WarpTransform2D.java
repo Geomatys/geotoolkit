@@ -81,7 +81,7 @@ import static org.geotoolkit.referencing.operation.provider.WarpPolynomial.*;
 @Immutable
 public class WarpTransform2D extends AbstractMathTransform implements MathTransform2D, Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -7949539694656719923L;
 

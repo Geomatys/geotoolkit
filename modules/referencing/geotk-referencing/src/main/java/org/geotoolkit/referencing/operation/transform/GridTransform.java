@@ -91,7 +91,7 @@ import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 @Immutable
 public class GridTransform extends AbstractMathTransform implements Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -7973466015425546562L;
 

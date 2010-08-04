@@ -66,7 +66,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlRootElement(name = "MI_Operation")
 public class DefaultOperation extends MetadataEntity implements Operation {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -4247450339144267882L;
 

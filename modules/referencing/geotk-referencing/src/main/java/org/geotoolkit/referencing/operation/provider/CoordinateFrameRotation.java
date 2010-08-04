@@ -38,7 +38,7 @@ import org.geotoolkit.referencing.datum.BursaWolfParameters;
 @Immutable
 public class CoordinateFrameRotation extends PositionVector7Param {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 5513675854809530038L;
 

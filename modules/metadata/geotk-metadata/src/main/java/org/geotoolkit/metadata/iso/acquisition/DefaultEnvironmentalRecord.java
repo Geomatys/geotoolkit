@@ -51,7 +51,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlRootElement(name = "MI_EnvironmentalRecord")
 public class DefaultEnvironmentalRecord extends MetadataEntity implements EnvironmentalRecord {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -8553651678708627947L;
 

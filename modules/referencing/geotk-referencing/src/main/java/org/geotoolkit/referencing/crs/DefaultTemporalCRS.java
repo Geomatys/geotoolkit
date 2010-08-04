@@ -58,7 +58,7 @@ import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
 @XmlRootElement(name = "TemporalCRS")
 public class DefaultTemporalCRS extends AbstractSingleCRS implements TemporalCRS {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 3000119849197222007L;
 
@@ -216,7 +216,7 @@ public class DefaultTemporalCRS extends AbstractSingleCRS implements TemporalCRS
     }
 
     /**
-     * Wraps an arbitrary temporal CRS into a Geotk implementation. This method is usefull
+     * Wraps an arbitrary temporal CRS into a Geotk implementation. This method is useful
      * if the user wants to take advantage of {@link #toDate} and {@link #toValue} methods.
      * If the supplied CRS is already an instance of {@code DefaultTemporalCRS} or is {@code null},
      * then it is returned unchanged.

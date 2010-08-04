@@ -47,7 +47,7 @@ import org.geotoolkit.util.Cloneable;
  */
 public class AffineMatrix3 extends AffineTransform implements Matrix, Cloneable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -9104194268576601386L;
 

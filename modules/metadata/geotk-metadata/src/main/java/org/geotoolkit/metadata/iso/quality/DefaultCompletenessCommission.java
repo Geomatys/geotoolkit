@@ -41,7 +41,7 @@ import org.geotoolkit.lang.ThreadSafe;
 @XmlRootElement(name = "DQ_CompletenessCommission")
 public class DefaultCompletenessCommission extends AbstractCompleteness implements CompletenessCommission {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 1565144822249562765L;
 

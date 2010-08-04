@@ -74,7 +74,7 @@ import static java.lang.Double.doubleToLongBits;
 @Immutable
 public class GeocentricTransform extends AbstractMathTransform implements Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -3352045463953828140L;
 
@@ -580,7 +580,7 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
      */
     private final class Inverse extends AbstractMathTransform.Inverse implements Serializable {
         /**
-         * Serial number for interoperability with different versions.
+         * Serial number for inter-operability with different versions.
          */
         private static final long serialVersionUID = 6942084702259211803L;
 

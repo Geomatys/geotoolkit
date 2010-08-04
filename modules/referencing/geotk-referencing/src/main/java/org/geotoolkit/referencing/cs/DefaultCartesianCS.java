@@ -63,7 +63,7 @@ import org.geotoolkit.resources.Vocabulary;
 @Immutable
 public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -6182037957705712945L;
 

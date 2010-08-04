@@ -53,7 +53,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
 @Immutable
 public class LongitudeRotation extends MathTransformProvider {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -2104496465933824935L;
 

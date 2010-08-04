@@ -55,7 +55,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlRootElement(name = "CI_Address")
 public class DefaultAddress extends MetadataEntity implements Address {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 2278687294173262546L;
 

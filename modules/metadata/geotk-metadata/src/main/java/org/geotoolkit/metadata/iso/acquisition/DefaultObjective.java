@@ -62,7 +62,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlRootElement(name = "MI_Objective")
 public class DefaultObjective extends MetadataEntity implements Objective {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -4633298523976029384L;
 

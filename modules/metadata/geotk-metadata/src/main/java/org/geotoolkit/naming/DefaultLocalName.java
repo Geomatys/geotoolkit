@@ -52,7 +52,7 @@ import org.geotoolkit.xml.Namespaces;
 @XmlRootElement(name = "LocalName")
 public class DefaultLocalName extends AbstractName implements LocalName {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 8747478206456790138L;
 

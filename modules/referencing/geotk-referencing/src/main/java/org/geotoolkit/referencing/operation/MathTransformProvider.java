@@ -69,7 +69,7 @@ import org.geotoolkit.io.wkt.Formatter;
 @Immutable
 public abstract class MathTransformProvider extends DefaultOperationMethod {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 7530475536803158473L;
 

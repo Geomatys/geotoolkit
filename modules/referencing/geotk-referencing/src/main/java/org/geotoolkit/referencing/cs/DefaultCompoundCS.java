@@ -50,7 +50,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
 @Immutable
 public class DefaultCompoundCS extends AbstractCS {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -5726410275278843372L;
 

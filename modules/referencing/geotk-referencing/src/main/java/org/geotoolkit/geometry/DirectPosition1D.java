@@ -41,7 +41,7 @@ import org.geotoolkit.resources.Errors;
  */
 public class DirectPosition1D extends AbstractDirectPosition implements Serializable, Cloneable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 3235094562875693710L;
 

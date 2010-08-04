@@ -71,7 +71,7 @@ import org.geotoolkit.coverage.processing.FilterOperation;
 @Immutable
 public class MedianFilter extends FilterOperation {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -8604321975842276962L;
 

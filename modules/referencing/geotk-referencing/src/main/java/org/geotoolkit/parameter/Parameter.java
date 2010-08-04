@@ -70,7 +70,7 @@ import org.geotoolkit.resources.Errors;
  */
 public class Parameter<T> extends AbstractParameter implements ParameterValue<T> {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -5837826787089486776L;
 

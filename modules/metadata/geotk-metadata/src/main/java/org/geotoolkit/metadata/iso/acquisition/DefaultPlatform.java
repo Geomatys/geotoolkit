@@ -56,7 +56,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlRootElement(name = "MI_Platform")
 public class DefaultPlatform extends MetadataEntity implements Platform {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -6870357428019309409L;
 

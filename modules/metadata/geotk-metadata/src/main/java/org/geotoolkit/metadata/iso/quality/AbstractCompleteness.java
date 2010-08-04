@@ -43,7 +43,7 @@ import org.geotoolkit.lang.ThreadSafe;
 @XmlSeeAlso({DefaultCompletenessCommission.class, DefaultCompletenessOmission.class})
 public class AbstractCompleteness extends AbstractElement implements Completeness {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -7893993264874215741L;
 

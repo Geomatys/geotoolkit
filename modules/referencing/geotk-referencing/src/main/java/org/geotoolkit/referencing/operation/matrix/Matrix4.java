@@ -37,7 +37,7 @@ import org.geotoolkit.internal.referencing.MatrixUtilities;
  */
 public class Matrix4 extends Matrix4d implements XMatrix {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 5685762518066856310L;
 

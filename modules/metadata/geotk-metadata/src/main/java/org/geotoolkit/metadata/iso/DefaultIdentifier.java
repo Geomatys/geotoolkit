@@ -49,7 +49,7 @@ import org.geotoolkit.lang.ThreadSafe;
 @XmlRootElement(name = "MD_Identifier")
 public class DefaultIdentifier extends MetadataEntity implements Identifier {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 7459062382170865919L;
 

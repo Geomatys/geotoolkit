@@ -45,7 +45,7 @@ import org.geotoolkit.lang.Immutable;
 @Immutable
 final class GeophysicsCategory extends Category {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -7164422654831370784L;
 
@@ -87,7 +87,7 @@ final class GeophysicsCategory extends Category {
      * @todo The algorithm for finding minimum and maximum values is very simple for
      *       now and will not work if the transformation has local extremas. We would
      *       need some more sophesticated algorithm for the most general cases. Such
-     *       a general algorithm would be usefull in the super-class constructor as well.
+     *       a general algorithm would be useful in the super-class constructor as well.
      */
     @Override
     public NumberRange<?> getRange() throws IllegalStateException {
@@ -192,7 +192,7 @@ final class GeophysicsCategory extends Category {
      */
     private static final class Range extends NumberRange<Double> {
         /**
-         * Serial number for interoperability with different versions.
+         * Serial number for inter-operability with different versions.
          */
         private static final long serialVersionUID = -1416908614729956928L;
 

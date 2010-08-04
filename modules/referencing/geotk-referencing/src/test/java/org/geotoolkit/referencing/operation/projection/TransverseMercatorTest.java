@@ -82,7 +82,7 @@ public class TransverseMercatorTest extends ProjectionTestCase {
                 }
             }
         }
-        // Not doing anything usefull with the errors array at this time.
+        // Not doing anything useful with the errors array at this time.
         // The above test was mostly to ensure that no assertion failure occur.
     }
 

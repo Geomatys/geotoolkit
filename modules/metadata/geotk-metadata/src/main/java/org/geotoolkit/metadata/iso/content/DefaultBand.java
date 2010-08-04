@@ -71,7 +71,7 @@ import org.geotoolkit.xml.Namespaces;
 @XmlRootElement(name = "MD_Band")
 public class DefaultBand extends DefaultRangeDimension implements Band {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -3543010637264725421L;
 

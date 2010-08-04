@@ -52,7 +52,7 @@ import org.geotoolkit.internal.referencing.AxisDirections;
 @Immutable
 public class DefaultCylindricalCS extends AbstractCS implements CylindricalCS {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -8290402732390917907L;
 

@@ -64,7 +64,7 @@ import org.geotoolkit.xml.Namespaces;
 @XmlRootElement(name = "LI_ProcessStep")
 public class DefaultProcessStep extends MetadataEntity implements ProcessStep {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 8151975419390308233L;
 

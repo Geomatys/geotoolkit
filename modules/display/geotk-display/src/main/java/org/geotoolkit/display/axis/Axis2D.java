@@ -80,7 +80,7 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
  */
 public class Axis2D extends Line2D implements Cloneable, Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -8396436909942389360L;
 

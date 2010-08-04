@@ -59,7 +59,7 @@ import org.geotoolkit.referencing.operation.matrix.XMatrix;
 @Immutable
 final class CopyTransform extends AbstractMathTransform implements LinearTransform, Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 5457032501070947956L;
 

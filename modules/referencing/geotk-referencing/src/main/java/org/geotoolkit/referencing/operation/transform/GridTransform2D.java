@@ -53,7 +53,7 @@ import org.geotoolkit.geometry.DirectPosition2D;
 @Immutable
 public class GridTransform2D extends GridTransform implements MathTransform2D {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -5797129125459758798L;
 
@@ -142,7 +142,7 @@ public class GridTransform2D extends GridTransform implements MathTransform2D {
     @Immutable
     private final class Inverse extends AbstractMathTransform.Inverse implements MathTransform2D {
         /**
-         * Serial number for interoperability with different versions.
+         * Serial number for inter-operability with different versions.
          */
         private static final long serialVersionUID = -6779719408779847014L;
 

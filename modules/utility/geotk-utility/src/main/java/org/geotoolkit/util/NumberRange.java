@@ -52,7 +52,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     //
 
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -818167965963008231L;
 

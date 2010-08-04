@@ -44,7 +44,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlSeeAlso({DefaultConformanceResult.class, DefaultQuantitativeResult.class})
 public class AbstractResult extends MetadataEntity implements Result {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 2961355780515174732L;
 

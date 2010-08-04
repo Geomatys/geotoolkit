@@ -39,7 +39,7 @@ import org.geotoolkit.geometry.DirectPosition1D;
 @Immutable
 final class ConcatenatedTransform1D extends ConcatenatedTransform implements MathTransform1D {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 8150427971141078395L;
 

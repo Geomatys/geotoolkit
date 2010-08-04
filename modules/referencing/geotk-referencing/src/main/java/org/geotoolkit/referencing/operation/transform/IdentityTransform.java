@@ -47,7 +47,7 @@ import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 @Immutable
 public class IdentityTransform extends AbstractMathTransform implements LinearTransform, Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -5339040282922138164L;
 

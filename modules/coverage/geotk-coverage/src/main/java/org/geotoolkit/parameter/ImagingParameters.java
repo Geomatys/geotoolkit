@@ -50,7 +50,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
 /**
  * Wraps a JAI's {@link ParameterList}. Any change to a {@linkplain #parameter parameter value}
  * in this group is reflected into the {@linkplain #parameters underlying parameter list}, and
- * conversely. This adaptor is provided for interoperability with
+ * conversely. This adaptor is provided for inter-operability with
  * <A HREF="http://java.sun.com/products/java-media/jai/">Java Advanced Imaging</A>.
  *
  * A typical usage is to wrap a JAI {@linkplain OperationDescriptor operation descriptor} into an
@@ -66,7 +66,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  */
 public class ImagingParameters extends AbstractParameter implements ParameterValueGroup {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 1378692626023992530L;
 

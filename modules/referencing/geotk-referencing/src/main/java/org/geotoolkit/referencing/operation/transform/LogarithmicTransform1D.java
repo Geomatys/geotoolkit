@@ -67,7 +67,7 @@ import static java.lang.Double.doubleToLongBits;
 @Immutable
 public class LogarithmicTransform1D extends AbstractMathTransform implements MathTransform1D, Serializable {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 1535101265352133948L;
 

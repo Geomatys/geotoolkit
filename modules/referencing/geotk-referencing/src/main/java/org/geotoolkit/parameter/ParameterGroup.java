@@ -62,7 +62,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
  */
 public class ParameterGroup extends AbstractParameter implements ParameterValueGroup {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -1985309386356545126L;
 

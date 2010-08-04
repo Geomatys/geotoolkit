@@ -41,7 +41,7 @@ import org.geotoolkit.resources.Errors;
  */
 final class ImagingParameter<T> extends AbstractParameter implements ParameterValue<T> {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -170895429717041733L;
 
@@ -220,7 +220,7 @@ final class ImagingParameter<T> extends AbstractParameter implements ParameterVa
     /**
      * Returns a reference to a file or a part of a file containing one or more parameter value.
      *
-     * @todo Add automatic conversions, if it appears usefull for JAI parameters.
+     * @todo Add automatic conversions, if it appears useful for JAI parameters.
      */
     @Override
     public URI valueFile() throws InvalidParameterTypeException {

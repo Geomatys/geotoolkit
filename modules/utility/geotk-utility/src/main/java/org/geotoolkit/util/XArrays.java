@@ -888,7 +888,7 @@ public final class XArrays {
 
     /**
      * Returns {@code true} if all elements in the specified array are in increasing order.
-     * This method is usefull in assertions.
+     * This method is useful in assertions.
      *
      * @param <E>         The type of array elements.
      * @param array       The array to test for order.
@@ -910,7 +910,7 @@ public final class XArrays {
     /**
      * Returns {@code true} if all elements in the specified array are in increasing order.
      * Since {@code NaN} values are unordered, they may appears anywhere in the array; they
-     * will be ignored. This method is usefull in assertions.
+     * will be ignored. This method is useful in assertions.
      *
      * @param array  The array to test for order.
      * @param strict {@code true} if elements should be strictly sorted (i.e. equal elements
@@ -935,7 +935,7 @@ public final class XArrays {
     /**
      * Returns {@code true} if all elements in the specified array are in increasing order.
      * Since {@code NaN} values are unordered, they may appears anywhere in the array; they
-     * will be ignored. This method is usefull in assertions.
+     * will be ignored. This method is useful in assertions.
      *
      * @param array  The array to test for order.
      * @param strict {@code true} if elements should be strictly sorted (i.e. equal elements
@@ -959,7 +959,7 @@ public final class XArrays {
 
     /**
      * Returns {@code true} if all elements in the specified array are in increasing order.
-     * This method is usefull in assertions.
+     * This method is useful in assertions.
      *
      * @param array  The array to test for order.
      * @param strict {@code true} if elements should be strictly sorted (i.e. equal elements
@@ -979,7 +979,7 @@ public final class XArrays {
 
     /**
      * Returns {@code true} if all elements in the specified array are in increasing order.
-     * This method is usefull in assertions.
+     * This method is useful in assertions.
      *
      * @param array  The array to test for order.
      * @param strict {@code true} if elements should be strictly sorted (i.e. equal elements
@@ -999,7 +999,7 @@ public final class XArrays {
 
     /**
      * Returns {@code true} if all elements in the specified array are in increasing order.
-     * This method is usefull in assertions.
+     * This method is useful in assertions.
      *
      * @param array  The array to test for order.
      * @param strict {@code true} if elements should be strictly sorted (i.e. equal elements
@@ -1019,7 +1019,7 @@ public final class XArrays {
 
     /**
      * Returns {@code true} if all elements in the specified array are in increasing order.
-     * This method is usefull in assertions.
+     * This method is useful in assertions.
      *
      * @param array  The array to test for order.
      * @param strict {@code true} if elements should be strictly sorted (i.e. equal elements
@@ -1039,7 +1039,7 @@ public final class XArrays {
 
     /**
      * Returns {@code true} if all elements in the specified array are in increasing order.
-     * This method is usefull in assertions.
+     * This method is useful in assertions.
      *
      * @param array  The array to test for order.
      * @param strict {@code true} if elements should be strictly sorted (i.e. equal elements

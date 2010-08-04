@@ -124,7 +124,7 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 @Immutable
 public class GradientMagnitude extends OperationJAI {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -1514713427236924048L;
 

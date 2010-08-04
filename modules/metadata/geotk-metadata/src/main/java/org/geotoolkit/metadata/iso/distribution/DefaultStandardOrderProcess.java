@@ -56,7 +56,7 @@ import org.geotoolkit.internal.jaxb.uom.DateTimeAdapter;
 @XmlRootElement(name = "MD_StandardOrderProcess")
 public class DefaultStandardOrderProcess extends MetadataEntity implements StandardOrderProcess {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -6503378937452728631L;
 

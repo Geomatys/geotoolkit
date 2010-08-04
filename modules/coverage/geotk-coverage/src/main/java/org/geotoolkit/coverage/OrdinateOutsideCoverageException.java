@@ -38,7 +38,7 @@ import org.geotoolkit.resources.Errors;
  */
 public class OrdinateOutsideCoverageException extends PointOutsideCoverageException {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -4718948524305632185L;
 

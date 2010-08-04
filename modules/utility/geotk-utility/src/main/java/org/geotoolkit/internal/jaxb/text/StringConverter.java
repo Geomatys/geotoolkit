@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  * JAXB adapter in order to wrap a string to a string, without any operations done
- * except {@link String#trim()}. This adapter is usefull when you do not want to do
+ * except {@link String#trim()}. This adapter is useful when you do not want to do
  * anything on the string, for example to annulate the use of a unintended adapter
  * like {@link StringAdapter} which could be defined in a package-info class.
  * <p>

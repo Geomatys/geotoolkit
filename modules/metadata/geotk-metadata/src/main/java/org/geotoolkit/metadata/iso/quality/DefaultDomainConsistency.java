@@ -41,7 +41,7 @@ import org.geotoolkit.lang.ThreadSafe;
 @XmlRootElement(name = "DQ_DomainConsistency")
 public class DefaultDomainConsistency extends AbstractLogicalConsistency implements DomainConsistency {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -358082990944183859L;
 

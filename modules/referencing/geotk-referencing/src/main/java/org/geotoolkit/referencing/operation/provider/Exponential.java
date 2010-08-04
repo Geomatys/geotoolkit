@@ -52,7 +52,7 @@ import static org.geotoolkit.internal.referencing.Identifiers.createDescriptorGr
 @Immutable
 public class Exponential extends MathTransformProvider {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -5838840021166379987L;
 

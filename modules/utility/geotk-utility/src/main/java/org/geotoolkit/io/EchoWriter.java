@@ -28,7 +28,7 @@ import org.geotoolkit.lang.ThreadSafe;
 /**
  * A writer that copy all output to an other stream. This writer can be used for perfoming
  * an exact copy of what is sent to an other writer. For example, it may be used for echoing
- * to the standard output the content sent to a file. This writer is usefull for debugging
+ * to the standard output the content sent to a file. This writer is useful for debugging
  * purpose.
  *
  * @author Martin Desruisseaux (IRD)

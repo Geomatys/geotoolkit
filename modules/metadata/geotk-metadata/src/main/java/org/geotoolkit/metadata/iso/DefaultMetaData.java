@@ -91,7 +91,7 @@ import org.geotoolkit.xml.Namespaces;
 @XmlRootElement(name = "MD_Metadata")
 public class DefaultMetadata extends MetadataEntity implements Metadata {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 7254025230235329493L;
 

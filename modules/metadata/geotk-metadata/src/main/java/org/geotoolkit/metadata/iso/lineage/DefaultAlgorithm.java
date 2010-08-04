@@ -51,7 +51,7 @@ import org.geotoolkit.xml.Namespaces;
 @XmlRootElement(name = "LE_Algorithm", namespace = Namespaces.GMI)
 public class DefaultAlgorithm extends MetadataEntity implements Algorithm {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 6343760610092069341L;
 

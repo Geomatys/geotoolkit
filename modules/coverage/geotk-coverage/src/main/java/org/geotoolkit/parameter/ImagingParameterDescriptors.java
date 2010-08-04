@@ -70,7 +70,7 @@ import org.geotoolkit.util.NullArgumentException;
 
 
 /**
- * Wraps a JAI's {@link ParameterListDescriptor}. This adaptor is provided for interoperability
+ * Wraps a JAI's {@link ParameterListDescriptor}. This adaptor is provided for inter-operability
  * with <A HREF="http://java.sun.com/products/java-media/jai/">Java Advanced Imaging</A>. A JAI
  * parameter list descriptor is part of an {@linkplain OperationDescriptor operation descriptor}.
  * This adaptor make it easier to access parameters for a JAI operation through the general GeoAPI
@@ -85,7 +85,7 @@ import org.geotoolkit.util.NullArgumentException;
 @Immutable
 public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 2127050865911951239L;
 

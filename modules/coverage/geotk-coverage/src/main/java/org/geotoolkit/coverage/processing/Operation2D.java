@@ -62,7 +62,7 @@ import org.geotoolkit.resources.Errors;
 @Deprecated
 public abstract class Operation2D extends AbstractOperation {
     /**
-     * Serial number for interoperability with different versions.
+     * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = 574096338873406394L;
 
