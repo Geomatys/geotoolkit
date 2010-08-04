@@ -266,7 +266,7 @@ public class DefaultController2D implements CanvasController2D{
         final AffineTransform change = AffineTransform.getTranslateInstance(dest.getCenterX(),dest.getCenterY());
         change.scale(sx,sy);
         change.translate(-source.getCenterX(), -source.getCenterY());
-        XAffineTransform.round(change, EPS);
+        XAffineTransform.roundIfAlmostInteger(change, EPS);
         return change;
     }
 
@@ -337,7 +337,7 @@ public class DefaultController2D implements CanvasController2D{
         }
 
         change.concatenate(canvas.objectiveToDisplay);
-        XAffineTransform.round(change, EPS);
+        XAffineTransform.roundIfAlmostInteger(change, EPS);
         transform(change);
     }
     
@@ -368,7 +368,7 @@ public class DefaultController2D implements CanvasController2D{
         }
 
         change.concatenate(canvas.objectiveToDisplay);
-        XAffineTransform.round(change, EPS);
+        XAffineTransform.roundIfAlmostInteger(change, EPS);
         transform(change);
 
     }   
@@ -384,7 +384,7 @@ public class DefaultController2D implements CanvasController2D{
         change.translate(x,y);
 
         change.concatenate(canvas.objectiveToDisplay);
-        XAffineTransform.round(change, EPS);
+        XAffineTransform.roundIfAlmostInteger(change, EPS);
         transform(change);
     }
 
@@ -410,7 +410,7 @@ public class DefaultController2D implements CanvasController2D{
 
         if (!change.isIdentity()) {
             canvas.objectiveToDisplay.concatenate(change);
-            XAffineTransform.round(canvas.objectiveToDisplay, EPS);
+            XAffineTransform.roundIfAlmostInteger(canvas.objectiveToDisplay, EPS);
             if(autoRepaint)repaint();
         }
     }
@@ -429,7 +429,7 @@ public class DefaultController2D implements CanvasController2D{
             }
             logical.concatenate(change);
             logical.concatenate(canvas.objectiveToDisplay);
-            XAffineTransform.round(logical, EPS);
+            XAffineTransform.roundIfAlmostInteger(logical, EPS);
             transform(logical);
         }
     }
