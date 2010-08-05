@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 import org.geotoolkit.gml.xml.v311.PointPropertyType;
 import org.geotoolkit.gml.xml.v311.PointType;
@@ -84,6 +85,31 @@ public class SamplingPointEntry extends SamplingFeatureEntry implements Sampling
     {
         super(identifier, name, remarks, sampledFeature);
         this.position = location;
+    }
+
+    /**
+      * Build an entry to the identifier of the spécified station .
+      * adapted for the BRGM model.
+      *
+      */
+    public SamplingPointEntry(final String              identifier,
+                              final String              name,
+                              final DirectPositionType  location) {
+        super(identifier, name, null, new FeaturePropertyType(""));
+        this.position = new PointPropertyType(new PointType(null, location));
+    }
+
+    /**
+      * Build an entry to the identifier of the spécified station .
+      * adapted for the BRGM model.
+      *
+      */
+    public SamplingPointEntry(final String       identifier,
+                              final String       name,
+                              final String       srsName,
+                              final List<Double> coord) {
+        super(identifier, name, null, new FeaturePropertyType(""));
+        this.position = new PointPropertyType(new PointType(null, new DirectPositionType(srsName, coord.size(), coord)));
     }
     
     /**

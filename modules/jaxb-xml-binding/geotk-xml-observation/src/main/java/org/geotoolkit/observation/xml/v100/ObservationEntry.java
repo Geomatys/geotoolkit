@@ -496,6 +496,15 @@ public class ObservationEntry implements Observation, Entry {
     /**
      * {@inheritDoc}
      */
+    public void extendSamplingTime(String newEndBound) {
+        if (samplingTime != null && samplingTime.getTimeGeometricPrimitive() instanceof TimePeriodType) {
+            ((TimePeriodType)samplingTime.getTimeGeometricPrimitive()).setEndPosition(new TimePositionType(newEndBound));
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Metadata getObservationMetadata() {
         return observationMetadata;
