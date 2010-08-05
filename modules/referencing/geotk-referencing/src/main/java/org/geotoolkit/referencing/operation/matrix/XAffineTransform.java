@@ -819,16 +819,4 @@ public class XAffineTransform extends AffineTransform {
             }
         }
     }
-
-    /**
-     * @deprecated Renamed {@link #roundIfAlmostInteger(AffineTransform, double)}.
-     *
-     * @param tr The matrix to round. Rounding will be applied in place.
-     * @param tolerance The maximal departure from integers in order to allow rounding.
-     *        It is typically a small number like {@code 1E-6}.
-     */
-    @Deprecated
-    public static void round(final AffineTransform tr, final double tolerance) {
-        roundIfAlmostInteger(tr, tolerance);
-    }
 }

@@ -62,12 +62,6 @@ public class DefaultEngineeringDatum extends AbstractDatum implements Engineerin
             new DefaultEngineeringDatum(name(Vocabulary.Keys.UNKNOWN));
 
     /**
-     * @deprecated Renamed {@link #UNKNOWN}.
-     */
-    @Deprecated
-    public static final DefaultEngineeringDatum UNKNOW = UNKNOWN;
-
-    /**
      * Constructs a new object in which every attributes are set to a default value.
      * <strong>This is not a valid object.</strong> This constructor is strictly
      * reserved to JAXB, which will assign values to the fields using reflexion.

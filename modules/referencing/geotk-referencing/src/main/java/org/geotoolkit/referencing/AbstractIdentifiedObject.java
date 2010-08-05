@@ -1011,19 +1011,6 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
     }
 
     /**
-     * @deprecated Replaced by {@link #equals(AbstractIdentifiedObject, ComparisonMode)}.
-     *
-     * @param  object The object to compare to {@code this}.
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
-     * @return {@code true} if both objects are equal.
-     */
-    @Deprecated
-    public boolean equals(final AbstractIdentifiedObject object, final boolean compareMetadata) {
-        return equals(object, compareMetadata ? ComparisonMode.STRICT : ComparisonMode.IGNORE_METADATA);
-    }
-
-    /**
      * Compares two OpenGIS's {@code IdentifiedObject} objects for equality. This convenience
      * method is provided for implementation of {@code equals} in subclasses.
      *
@@ -1048,23 +1035,6 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
         if (!(object1 instanceof AbstractIdentifiedObject)) return object1.equals(object2);
         if (!(object2 instanceof AbstractIdentifiedObject)) return object2.equals(object1);
         return ((AbstractIdentifiedObject) object1).equals((AbstractIdentifiedObject) object2, mode);
-    }
-
-    /**
-     * @deprecated Replaced by {@link #equals(IdentifiedObject, IdentifiedObject, ComparisonMode)}.
-     *
-     * @param  object1 The first object to compare (may be {@code null}).
-     * @param  object2 The second object to compare (may be {@code null}).
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
-     * @return {@code true} if both objects are equal.
-     */
-    @Deprecated
-    protected static boolean equals(final IdentifiedObject object1,
-                                    final IdentifiedObject object2,
-                                    final boolean  compareMetadata)
-    {
-        return equals(object1, object2, compareMetadata ? ComparisonMode.STRICT : ComparisonMode.IGNORE_METADATA);
     }
 
     /**
@@ -1094,23 +1064,6 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
             }
         }
         return true;
-    }
-
-    /**
-     * @deprecated Replaced by {@link #equals(IdentifiedObject[], IdentifiedObject[], ComparisonMode)}.
-     *
-     * @param  array1 The first array to compare (may be {@code null}).
-     * @param  array2 The second array to compare (may be {@code null}).
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
-     * @return {@code true} if both arrays are equal.
-     */
-    @Deprecated
-    protected static boolean equals(final IdentifiedObject[] array1,
-                                    final IdentifiedObject[] array2,
-                                    final boolean   compareMetadata)
-    {
-        return equals(array1, array2, compareMetadata ? ComparisonMode.STRICT : ComparisonMode.IGNORE_METADATA);
     }
 
     /**
@@ -1145,23 +1098,6 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
             }
         }
         return !it2.hasNext();
-    }
-
-    /**
-     * @deprecated Replaced by {@link #equals(Collection, Collection, ComparisonMode)}.
-     *
-     * @param  collection1 The first collection to compare (may be {@code null}).
-     * @param  collection2 The second collection to compare (may be {@code null}).
-     * @param  compareMetadata {@code true} for performing a strict comparison, or
-     *         {@code false} for comparing only properties relevant to transformations.
-     * @return {@code true} if both collections are equal.
-     */
-    @Deprecated
-    protected static boolean equals(final Collection<? extends IdentifiedObject> collection1,
-                                    final Collection<? extends IdentifiedObject> collection2,
-                                    final boolean compareMetadata)
-    {
-        return equals(collection1, collection2, compareMetadata ? ComparisonMode.STRICT : ComparisonMode.IGNORE_METADATA);
     }
 
     /**
