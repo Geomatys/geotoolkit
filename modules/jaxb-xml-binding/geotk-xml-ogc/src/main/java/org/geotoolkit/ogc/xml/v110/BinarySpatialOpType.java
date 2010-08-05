@@ -24,10 +24,20 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
+import org.geotoolkit.gml.xml.v311.CurveType;
 import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
 import org.geotoolkit.gml.xml.v311.LineStringType;
+import org.geotoolkit.gml.xml.v311.LinearRingType;
+import org.geotoolkit.gml.xml.v311.MultiCurveType;
+import org.geotoolkit.gml.xml.v311.MultiLineStringType;
+import org.geotoolkit.gml.xml.v311.MultiPointType;
+import org.geotoolkit.gml.xml.v311.MultiPolygonType;
+import org.geotoolkit.gml.xml.v311.MultiSolidType;
+import org.geotoolkit.gml.xml.v311.MultiSurfaceType;
+import org.geotoolkit.gml.xml.v311.OrientableSurfaceType;
 import org.geotoolkit.gml.xml.v311.PointType;
-import org.geotoolkit.gml.xml.v311.PolygonType;
+import org.geotoolkit.gml.xml.v311.PolyhedralSurfaceType;
+import org.geotoolkit.gml.xml.v311.RingType;
 import org.geotoolkit.util.Utilities;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
@@ -96,21 +106,8 @@ public class BinarySpatialOpType extends SpatialOpsType {
      * Build a new Binary spatial operator
      */
     public BinarySpatialOpType(String propertyName, AbstractGeometryType geometry) {
-        
-        this.propertyName = ogcFactory.createPropertyName(new PropertyNameType(propertyName));
-
-        if (geometry instanceof PointType) {
-            abstractGeometry = gmlFactory.createPoint((PointType)geometry);
-        
-        } else if (geometry instanceof LineStringType) {
-            abstractGeometry = gmlFactory.createLineString((LineStringType)geometry);
-        
-        } else if (geometry instanceof PolygonType) {
-            abstractGeometry = gmlFactory.createPolygon((PolygonType)geometry);
-        
-        } else {
-            abstractGeometry = gmlFactory.createAbstractGeometry(geometry);
-        }
+        this.propertyName     = ogcFactory.createPropertyName(new PropertyNameType(propertyName));
+        this.abstractGeometry = getCorrectJaxbElement(geometry);
         
     }
     
@@ -118,28 +115,52 @@ public class BinarySpatialOpType extends SpatialOpsType {
      * Build a new Binary spatial operator
      */
     public BinarySpatialOpType(PropertyNameType propertyName, Object geometry) {
-        
-        this.propertyName = ogcFactory.createPropertyName(propertyName);
-        
-        
-        if (geometry instanceof PointType) {
-            abstractGeometry = gmlFactory.createPoint((PointType)geometry);
-            
-        } else if (geometry instanceof PolygonType) {
-            abstractGeometry = gmlFactory.createPolygon((PolygonType)geometry);
-        
-        } else if (geometry instanceof LineStringType) {
-            abstractGeometry = gmlFactory.createLineString((LineStringType)geometry);
-            
-        } else if (geometry instanceof EnvelopeEntry) {
+        this.propertyName     = ogcFactory.createPropertyName(propertyName);
+        if (geometry instanceof EnvelopeEntry) {
             this.envelope = gmlFactory.createEnvelope((EnvelopeEntry)geometry);
-        
-        } else if (geometry instanceof AbstractGeometryType) {
-            abstractGeometry = gmlFactory.createAbstractGeometry((AbstractGeometryType)geometry);
+        } else {
+            this.abstractGeometry = getCorrectJaxbElement(geometry);
         }
         
     }
-    
+
+    private JAXBElement<? extends AbstractGeometryType> getCorrectJaxbElement(Object geometry) {
+        if (geometry instanceof PointType) {
+            return gmlFactory.createPoint((PointType)geometry);
+        } else if (geometry instanceof OrientableSurfaceType) {
+            return gmlFactory.createOrientableSurface((OrientableSurfaceType) geometry);
+        } else if (geometry instanceof LinearRingType) {
+            return gmlFactory.createLinearRing((LinearRingType) geometry);
+        } else if (geometry instanceof RingType) {
+            return gmlFactory.createRing((RingType) geometry);
+        } else if (geometry instanceof PolyhedralSurfaceType) {
+            return gmlFactory.createPolyhedralSurface((PolyhedralSurfaceType) geometry);
+        } else if (geometry instanceof CurveType) {
+            return gmlFactory.createCurve((CurveType) geometry);
+        } else if (geometry instanceof PointType) {
+            return gmlFactory.createPoint((PointType) geometry);
+        } else if (geometry instanceof LineStringType) {
+            return gmlFactory.createLineString((LineStringType) geometry);
+        } else if (geometry instanceof PolyhedralSurfaceType) {
+            return gmlFactory.createPolyhedralSurface((PolyhedralSurfaceType) geometry);
+        } else if (geometry instanceof MultiCurveType) {
+            return gmlFactory.createMultiCurve((MultiCurveType) geometry);
+        } else if (geometry instanceof MultiLineStringType) {
+            return gmlFactory.createMultiLineString((MultiLineStringType) geometry);
+        } else if (geometry instanceof MultiPointType) {
+            return gmlFactory.createMultiPoint((MultiPointType) geometry);
+        } else if (geometry instanceof MultiPolygonType) {
+            return gmlFactory.createMultiPolygon((MultiPolygonType) geometry);
+        } else if (geometry instanceof MultiSolidType) {
+            return gmlFactory.createMultiSolid((MultiSolidType) geometry);
+        } else if (geometry instanceof MultiSurfaceType) {
+            return gmlFactory.createMultiSurface((MultiSurfaceType) geometry);
+
+        } else if (geometry != null){
+            throw new IllegalArgumentException("unexpected Geometry type:" + geometry.getClass().getName());
+        }
+        return null;
+    }
     /**
      * Verify that this entry is identical to the specified object.
      */
