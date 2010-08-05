@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.spi.ImageReaderSpi;
 
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.image.io.XImageIO;
@@ -134,6 +135,14 @@ public class GridCoverageReaders {
         final CoordinateReferenceSystem crs = visit(folder, tiles);
 
         final TileManager[] managers = TileManagerFactory.DEFAULT.create(tiles);
+
+        if(managers.length == 0){
+            throw new CoverageStoreException("No files could be handle as tiles.");
+        }else if(managers.length > 1){
+            throw new CoverageStoreException("Coverage tiles are not aligned, "
+                    + "verify that images don't overlaps and overviews preserve ratio.");
+        }
+
         final TileManager manager = managers[0];
 
         final ImageCoverageReader reader = new ImageCoverageReader() {
@@ -190,17 +199,36 @@ public class GridCoverageReaders {
     private static CoordinateReferenceSystem test(final File candidate, Collection<Tile> tiles){
         if (candidate.isFile()){
             try {
-                final ImageReader reader = XImageIO.getReader(candidate, Boolean.TRUE, Boolean.FALSE);
+                final ImageReader reader = XImageIO.getReader(candidate, Boolean.FALSE, Boolean.FALSE);
                 final IIOMetadata metadata = reader.getImageMetadata(0);
+                final ImageReaderSpi spi = org.geotoolkit.image.io.ImageReaderAdapter.Spi.unwrap(reader.getOriginatingProvider());
 
                 if(metadata instanceof SpatialMetadata){
                     final SpatialMetadata meta = (SpatialMetadata) metadata;
                     final CoordinateReferenceSystem crs = meta.getInstanceForType(CoordinateReferenceSystem.class);
                     final RectifiedGrid grid = meta.getInstanceForType(RectifiedGrid.class);
                     final MathTransform trs = MetadataHelper.INSTANCE.getGridToCRS(grid);
+                    final AffineTransform af = new AffineTransform((AffineTransform)trs);
+                    final int totalWidth = reader.getWidth(0);
+                    final int totalHeight = reader.getHeight(0);
 
-                    final Tile tile = new Tile(reader.getOriginatingProvider(), candidate, 0,null,(AffineTransform)trs);
-                    tiles.add(tile);
+                    //image may contain some overview, we must register all overviews as tiles
+                    final int nbImg = reader.getNumImages(true);
+                    for(int i=0;i<nbImg;i++){
+                        final double scaleX = (totalWidth/(double)reader.getWidth(i));
+                        final double scaleY = (totalHeight/(double)reader.getHeight(i));
+                        final AffineTransform c = new AffineTransform(
+                                af.getScaleX() * scaleX,
+                                af.getShearY() * scaleY,
+                                af.getShearX() * scaleX,
+                                af.getScaleY() * scaleY,
+                                af.getTranslateX(),
+                                af.getTranslateY());
+
+                        final Tile tile = new Tile(spi, candidate, i,null,c);
+                        tiles.add(tile);
+                    }
+
                     return crs;
                 }
 
