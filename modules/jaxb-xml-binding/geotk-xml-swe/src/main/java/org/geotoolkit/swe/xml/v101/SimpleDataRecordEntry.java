@@ -92,6 +92,29 @@ public class SimpleDataRecordEntry extends AbstractDataRecordEntry implements Si
     /**
      * {@inheritDoc}
      */
+    public void addField(AnyScalarPropertyType field) {
+        if (field != null) {
+            this.field.add(field);
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public boolean containsField(String fieldName) {
+        if (field != null) {
+            for (AnyScalarPropertyType f : field) {
+                if (f.getName().equals(fieldName)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public void setField(Collection<AnyScalarPropertyType> field) {
         this.field = field;
     }
