@@ -655,14 +655,14 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
      * in order to provide working versions of every methods.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.10
+     * @version 3.14
      *
      * @see ImageReaderAdapter.Spi
      *
      * @since 3.07
      * @module
      */
-    protected static abstract class Spi extends SpatialImageWriter.Spi {
+    public static abstract class Spi extends SpatialImageWriter.Spi {
         /**
          * List of legal input and output types for {@link ImageWriterAdapter}.
          * The {@link ImageOutputStream} type is mandatory even if the adapter
@@ -820,6 +820,25 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
         @SuppressWarnings({"unchecked","rawtypes"})
         public void onRegistration(final ServiceRegistry registry, final Class<?> category) {
             registry.setOrdering((Class) category, main, this);
+        }
+
+        /**
+         * If the given provider is an instance of {@code ImageWriterAdapter.Spi}, returns the
+         * underlying {@linkplain #main} provider. Otherwise returns the given provider unchanged.
+         * <p>
+         * This method is convenient when the caller is not interested in spatial metadata,
+         * in order to ensure that the cost of writing TFW, PRJ or similar files is avoided.
+         *
+         * @param  spi An image writer provider, or {@code null}.
+         * @return The wrapped image writer provider, or {@code null}.
+         *
+         * @since 3.14
+         */
+        public static ImageWriterSpi unwrap(ImageWriterSpi spi) {
+            while (spi instanceof Spi) {
+                spi = ((Spi) spi).main;
+            }
+            return spi;
         }
     }
 }

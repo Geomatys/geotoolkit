@@ -979,14 +979,14 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      * in order to provide working versions of every methods.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.07
+     * @version 3.14
      *
      * @see ImageWriterAdapter.Spi
      *
      * @since 3.07
      * @module
      */
-    protected static abstract class Spi extends SpatialImageReader.Spi {
+    public static abstract class Spi extends SpatialImageReader.Spi {
         /**
          * The {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME} value
          * in an array, for assignment to {@code extra[Stream|Image]MetadataFormatNames} fields.
@@ -1185,6 +1185,25 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
         @SuppressWarnings({"unchecked","rawtypes"})
         public void onRegistration(final ServiceRegistry registry, final Class<?> category) {
             registry.setOrdering((Class) category, main, this);
+        }
+
+        /**
+         * If the given provider is an instance of {@code ImageReaderAdapter.Spi}, returns the
+         * underlying {@linkplain #main} provider. Otherwise returns the given provider unchanged.
+         * <p>
+         * This method is convenient when the caller is not interested in spatial metadata,
+         * in order to ensure that the cost of parsing TFW, PRJ or similar files is avoided.
+         *
+         * @param  spi An image reader provider, or {@code null}.
+         * @return The wrapped image reader provider, or {@code null}.
+         *
+         * @since 3.14
+         */
+        public static ImageReaderSpi unwrap(ImageReaderSpi spi) {
+            while (spi instanceof Spi) {
+                spi = ((Spi) spi).main;
+            }
+            return spi;
         }
     }
 }

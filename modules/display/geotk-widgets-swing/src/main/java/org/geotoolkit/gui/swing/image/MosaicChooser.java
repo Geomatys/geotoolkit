@@ -46,7 +46,7 @@ import org.jdesktop.swingx.JXBusyLabel;
 import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.mosaic.TileManager;
-import org.geotoolkit.image.io.plugin.WorldFileImageReader;
+import org.geotoolkit.image.io.ImageReaderAdapter;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.internal.swing.SwingUtilities;
@@ -357,7 +357,7 @@ public class MosaicChooser extends JComponent implements Dialog {
                 progress = null;
             } else {
                 files    = fileChooser.getSelectedFiles();
-                provider = WorldFileImageReader.Spi.unwrap((ImageReaderSpi) fileChooser.getCurrentProvider());
+                provider = ImageReaderAdapter.Spi.unwrap((ImageReaderSpi) fileChooser.getCurrentProvider());
                 progress = new ProgressWindow(MosaicChooser.this);
             }
         }
@@ -365,7 +365,7 @@ public class MosaicChooser extends JComponent implements Dialog {
         /**
          * Returns the format name of the reader used for reading tile headers,
          * or {@code null} if it can not be determined. This method is safe for
-         * invocation from any thread, since it acceed only immutable fields.
+         * invocation from any thread, since it access only immutable fields.
          */
         public String getFormat() {
             if (provider != null) {

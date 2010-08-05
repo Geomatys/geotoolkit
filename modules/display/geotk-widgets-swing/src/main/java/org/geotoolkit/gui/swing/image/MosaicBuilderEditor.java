@@ -52,7 +52,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.MosaicBuilder;
-import org.geotoolkit.image.io.plugin.WorldFileImageReader;
+import org.geotoolkit.image.io.ImageReaderAdapter;
 import org.geotoolkit.gui.swing.Dialog;
 import org.geotoolkit.gui.swing.ListTableModel;
 import org.geotoolkit.internal.swing.SwingUtilities;
@@ -628,7 +628,7 @@ public class MosaicBuilderEditor extends JComponent implements MosaicPerformance
             builder.setTileDirectory(directory);
             builder.setTileSize(tileSize);
             builder.setSubsamplings(subsamplings);
-            builder.setTileReaderSpi(WorldFileImageReader.Spi.unwrap(tileFormat.getReader()));
+            builder.setTileReaderSpi(ImageReaderAdapter.Spi.unwrap(tileFormat.getReader()));
             return run ? builder.createTileManager() : null;
         }
     }

@@ -1148,7 +1148,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
     }
 
     /**
-     * @deprecated Replaced by {@link #equals(Collection<IdentifiedObject>, Collection<IdentifiedObject>, ComparisonMode)}.
+     * @deprecated Replaced by {@link #equals(Collection, Collection, ComparisonMode)}.
      *
      * @param  collection1 The first collection to compare (may be {@code null}).
      * @param  collection2 The second collection to compare (may be {@code null}).

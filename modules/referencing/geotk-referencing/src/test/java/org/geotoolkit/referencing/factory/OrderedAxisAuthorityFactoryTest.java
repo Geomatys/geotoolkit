@@ -66,8 +66,8 @@ import static org.junit.Assume.assumeTrue;
 public final class OrderedAxisAuthorityFactoryTest extends ReferencingTestCase {
     /**
      * {@code true} if metadata (especially identifiers) should be erased, or {@code false} if
-     * they should be kepts. The {@code true} value matches the pre GEOT-854 state, while the
-     * {@code false} value mathes the post GEOT-854 state.
+     * they should be kept. The {@code true} value matches the pre GEOT-854 state, while the
+     * {@code false} value matches the post GEOT-854 state.
      *
      * @see http://jira.codehaus.org/browse/GEOT-854
      */

@@ -201,7 +201,7 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
      * users must invoke {@link #registerDefaults(ServiceRegistry)} explicitly.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.14
+     * @version 3.12
      *
      * @see WorldFileImageReader.Spi
      *
@@ -231,26 +231,6 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
          */
         public Spi(final String format) throws IllegalArgumentException {
             this(Formats.getWriterByFormatName(format, Spi.class));
-        }
-
-        /**
-         * If the given provider is an instance of {@code WorldFileImageWriter.Spi}, returns
-         * the underlying {@linkplain #main main} provider. Otherwise returns the given provider
-         * unchanged.
-         * <p>
-         * This method is convenient when the caller is not interested in spatial metadata,
-         * in order to ensure that the cost of writing TFW and PRJ files is avoided.
-         *
-         * @param  spi An image writer provider, or {@code null}.
-         * @return The wrapped image writer provider, or {@code null}.
-         *
-         * @since 3.14
-         */
-        public static ImageWriterSpi unwrap(ImageWriterSpi spi) {
-            while (spi instanceof Spi) {
-                spi = ((Spi) spi).main;
-            }
-            return spi;
         }
 
         /**

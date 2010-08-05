@@ -47,8 +47,8 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.image.io.SupportFiles;
-import org.geotoolkit.image.io.plugin.WorldFileImageReader;
-import org.geotoolkit.image.io.plugin.WorldFileImageWriter;
+import org.geotoolkit.image.io.ImageReaderAdapter;
+import org.geotoolkit.image.io.ImageWriterAdapter;
 import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 
 import static java.lang.Math.min;
@@ -445,7 +445,7 @@ public class Tile implements Comparable<Tile>, Serializable {
 
     /**
      * Returns {@code true} if we recommend to ignore the given provider. This method returns
-     * {@code true} if the given provider is an instance of {@link WorldFileImageReader.Spi},
+     * {@code true} if the given provider is an instance of {@link ImageReaderAdapter.Spi},
      * or other providers which may be added in the future. Those providers are wrapper around
      * "native" providers, adding support for {@link org.geotoolkit.image.io.metadata.SpatialMetadata}.
      * Because {@code Tile} do not use those metadata, the overhead of using those wrappers is
@@ -454,13 +454,13 @@ public class Tile implements Comparable<Tile>, Serializable {
      * @param  provider An image reader provider.
      * @return {@code true} if the given provider should be ignored for usage with {@code Tile}.
      *
-     * @see WorldFileImageReader.Spi#unwrap(ImageReaderSpi)
+     * @see org.geotoolkit.image.io.ImageReaderAdapter.Spi#unwrap(ImageReaderSpi)
      *
      * @since 3.14
      */
     public static boolean ignore(final ImageReaderSpi provider) {
         ensureNonNull("provider", provider);
-        return (provider instanceof WorldFileImageReader.Spi);
+        return (provider instanceof ImageReaderAdapter.Spi);
     }
 
     /**
@@ -469,13 +469,13 @@ public class Tile implements Comparable<Tile>, Serializable {
      * @param  provider An image writer provider.
      * @return {@code true} if the given provider should be ignored for usage with {@code Tile}.
      *
-     * @see WorldFileImageWriter.Spi#unwrap(ImageReaderSpi)
+     * @see org.geotoolkit.image.io.ImageWriterAdapter.Spi#unwrap(ImageWriterSpi)
      *
      * @since 3.14
      */
     static boolean ignore(final ImageWriterSpi provider) {
         ensureNonNull("provider", provider);
-        return (provider instanceof WorldFileImageWriter.Spi);
+        return (provider instanceof ImageWriterAdapter.Spi);
     }
 
     /**
