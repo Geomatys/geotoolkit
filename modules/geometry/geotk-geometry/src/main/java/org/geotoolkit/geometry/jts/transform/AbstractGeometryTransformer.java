@@ -106,17 +106,17 @@ public abstract class AbstractGeometryTransformer implements GeometryTransformer
                 cs.setX(i, coord.x);
                 cs.setY(i, coord.y);
             }
-            return gf.createMultiPoint(transform(cs));
+            return gf.createMultiPoint(transform(cs,1));
         }
     }
 
     protected LineString transform(LineString geom) throws TransformException{
-        final CoordinateSequence seq = transform(geom.getCoordinateSequence());
+        final CoordinateSequence seq = transform(geom.getCoordinateSequence(),2);
         return gf.createLineString(seq);
     }
 
     protected LinearRing transform(LinearRing geom) throws TransformException{
-        final CoordinateSequence seq = transform(geom.getCoordinateSequence());
+        final CoordinateSequence seq = transform(geom.getCoordinateSequence(),4);
         return gf.createLinearRing(seq);
     }
 

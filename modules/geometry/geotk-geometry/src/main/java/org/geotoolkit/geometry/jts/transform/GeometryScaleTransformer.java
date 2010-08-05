@@ -37,9 +37,9 @@ public class GeometryScaleTransformer extends AbstractGeometryTransformer{
     }
 
     @Override
-    public CoordinateSequence transform(CoordinateSequence cs) {
+    public CoordinateSequence transform(CoordinateSequence cs, int minpoints) {
         final Coordinate[] coords = cs.toCoordinateArray();
-        final Coordinate[] deci = decimate(coords,2);
+        final Coordinate[] deci = decimate(coords,minpoints);
         if(deci.length == coords.length){
             //nothing to decimate
             return cs;
@@ -85,11 +85,10 @@ public class GeometryScaleTransformer extends AbstractGeometryTransformer{
             }
             
             //ensure it forms a closed line string if asked for
-            if(closed && coords[0].equals2D(coords[lenght-1])){
-                coords[lenght] = coords[0];
+            if(closed && !coords[0].equals2D(coords[lenght-1])){
+                coords[lenght] = new Coordinate(coords[0]);
                 lenght++;
             }
-
 
             final Coordinate[] cs = new Coordinate[lenght];
             System.arraycopy(coords, 0, cs, 0, lenght);

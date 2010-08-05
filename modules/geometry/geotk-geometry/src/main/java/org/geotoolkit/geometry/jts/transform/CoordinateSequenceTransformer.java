@@ -40,6 +40,6 @@ public interface CoordinateSequenceTransformer {
      * @param  sequence The sequence to transform.
      * @throws TransformException if at least one coordinate can't be transformed.
      */
-    public CoordinateSequence transform(CoordinateSequence sequence) throws TransformException;
+    public CoordinateSequence transform(CoordinateSequence sequence, int minpoints) throws TransformException;
     
 }

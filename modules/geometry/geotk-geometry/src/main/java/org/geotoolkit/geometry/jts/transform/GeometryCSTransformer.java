@@ -173,7 +173,7 @@ public class GeometryCSTransformer implements GeometryTransformer{
      */
     public CoordinateSequence projectCoordinateSequence(CoordinateSequence cs)
         throws TransformException {
-        return csTransformer.transform(cs);
+        return csTransformer.transform(cs,1);
     }
 
     /**
@@ -195,7 +195,7 @@ public class GeometryCSTransformer implements GeometryTransformer{
     }
 
     @Override
-    public CoordinateSequence transform(CoordinateSequence sequence) throws TransformException {
-        return csTransformer.transform(sequence);
+    public CoordinateSequence transform(CoordinateSequence sequence, int minpoints) throws TransformException {
+        return csTransformer.transform(sequence,minpoints);
     }
 }

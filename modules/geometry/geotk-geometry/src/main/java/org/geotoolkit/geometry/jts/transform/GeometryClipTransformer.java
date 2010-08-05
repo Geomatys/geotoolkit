@@ -146,7 +146,7 @@ public class GeometryClipTransformer extends AbstractGeometryTransformer{
     }
 
     @Override
-    public CoordinateSequence transform(CoordinateSequence cs) {
+    public CoordinateSequence transform(CoordinateSequence cs, int minpoints) {
 
         double[] result = null;
 

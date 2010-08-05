@@ -91,7 +91,7 @@ public class CoordinateSequenceMathTransformer implements CoordinateSequenceTran
      * {@inheritDoc}
      */
     @Override
-    public CoordinateSequence transform(final CoordinateSequence sequence)
+    public CoordinateSequence transform(final CoordinateSequence sequence, int minpoints)
             throws TransformException {
         final int sourceDim = transform.getSourceDimensions();
         final int targetDim = transform.getTargetDimensions();

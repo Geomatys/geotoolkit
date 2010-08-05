@@ -69,6 +69,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
     //List of attributs currently in the cached features
     //the cache must be cleared when the content of the style attributs needed changes
     private Name[] cachedAttributs = null;
+    private double[] oldRes = null;
     
     public StatefullFeatureLayerJ2D(ReferencedCanvas2D canvas, FeatureMapLayer layer){
         super(canvas, layer);
@@ -89,6 +90,12 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         if(sourceCRS == null){
             //layer has no projection ? we will assume it is the objective crs
             sourceCRS = objectiveCRS;
+        }
+
+        final double[] newRes = context.getResolution(dataCRS);
+        if(oldRes == null || newRes[0]!= oldRes[0] || newRes[1] != oldRes[1]){
+            //resolution change, so has features
+            cache.clear();
         }
 
         if(objectiveCRS != lastObjectiveCRS){

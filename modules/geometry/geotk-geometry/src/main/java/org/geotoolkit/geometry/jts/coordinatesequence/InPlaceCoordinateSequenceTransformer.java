@@ -66,7 +66,7 @@ public class InPlaceCoordinateSequenceTransformer implements CoordinateSequenceT
      * {@inheritDoc }
      */
     @Override
-    public CoordinateSequence transform( CoordinateSequence cs) throws TransformException {
+    public CoordinateSequence transform( CoordinateSequence cs, int minpoints) throws TransformException {
         if( cs instanceof PackedCoordinateSequence ){
             return transformInternal( (PackedCoordinateSequence) cs, transform);
         }
