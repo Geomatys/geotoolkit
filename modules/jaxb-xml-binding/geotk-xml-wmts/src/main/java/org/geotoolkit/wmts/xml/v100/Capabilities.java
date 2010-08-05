@@ -16,12 +16,15 @@
  */
 package org.geotoolkit.wmts.xml.v100;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.CapabilitiesBaseType;
+import org.geotoolkit.ows.xml.v110.OnlineResourceType;
 import org.geotoolkit.ows.xml.v110.OperationsMetadata;
 import org.geotoolkit.ows.xml.v110.ServiceIdentification;
 import org.geotoolkit.ows.xml.v110.ServiceProvider;
@@ -37,8 +40,10 @@ import org.geotoolkit.ows.xml.v110.ServiceProvider;
  *   &lt;complexContent>
  *     &lt;extension base="{http://www.opengis.net/ows/1.1}CapabilitiesBaseType">
  *       &lt;sequence>
- *         &lt;element name="Contents" type="{http://www.opengis.net/wmts/1.0}ContentsType"/>
- *         &lt;element ref="{http://www.opengis.net/wmts/1.0}Themes" minOccurs="0"/>
+ *         &lt;element name="Contents" type="{http://www.opengis.net/wmts/1.0}ContentsType" minOccurs="0"/>
+ *         &lt;element ref="{http://www.opengis.net/wmts/1.0}Themes" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="WSDL" type="{http://www.opengis.net/ows/1.1}OnlineResourceType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="ServiceMetadataURL" type="{http://www.opengis.net/ows/1.1}OnlineResourceType" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/extension>
  *   &lt;/complexContent>
@@ -49,24 +54,30 @@ import org.geotoolkit.ows.xml.v110.ServiceProvider;
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CapabilitiesType", propOrder = {
+@XmlType(name = "", propOrder = {
     "contents",
-    "themes"
+    "themes",
+    "wsdl",
+    "serviceMetadataURL"
 })
 @XmlRootElement(name = "Capabilities")
 public class Capabilities extends CapabilitiesBaseType {
 
-    @XmlElement(name = "Contents", required = true)
+    @XmlElement(name = "Contents")
     private ContentsType contents;
     @XmlElement(name = "Themes")
-    private Themes themes;
+    private List<Themes> themes;
+    @XmlElement(name = "WSDL")
+    private List<OnlineResourceType> wsdl;
+    @XmlElement(name = "ServiceMetadataURL")
+    private List<OnlineResourceType> serviceMetadataURL;
 
     public Capabilities() {
 
     }
 
     public Capabilities(ServiceIdentification serviceIdentification, ServiceProvider serviceProvider,
-            OperationsMetadata operationsMetadata, String version, String updateSequence, ContentsType con, Themes them) {
+            OperationsMetadata operationsMetadata, String version, String updateSequence, ContentsType con, List<Themes> them) {
         super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence);
         this.contents = con;
         this.themes = them;
@@ -98,26 +109,46 @@ public class Capabilities extends CapabilitiesBaseType {
 
     /**
      * Metadata describing a theme hierarchy for the layers
+     * Gets the value of the themes property.
      * 
-     * @return
-     *     possible object is
-     *     {@link Themes }
-     *     
+     * Objects of the following type(s) are allowed in the list
+     * {@link Themes }
+     * 
      */
-    public Themes getThemes() {
-        return themes;
+    public List<Themes> getThemes() {
+        if (themes == null) {
+            themes = new ArrayList<Themes>();
+        }
+        return this.themes;
     }
 
     /**
-     * Metadata describing a theme hierarchy for the layers
+     * Gets the value of the wsdl property.
      * 
-     * @param value
-     *     allowed object is
-     *     {@link Themes }
-     *     
+     * Objects of the following type(s) are allowed in the list
+     * {@link OnlineResourceType }
+     * 
+     * 
      */
-    public void setThemes(Themes value) {
-        this.themes = value;
+    public List<OnlineResourceType> getWSDL() {
+        if (wsdl == null) {
+            wsdl = new ArrayList<OnlineResourceType>();
+        }
+        return this.wsdl;
+    }
+
+    /**
+     * Gets the value of the serviceMetadataURL property.
+     * 
+     * Objects of the following type(s) are allowed in the list
+     * {@link OnlineResourceType }
+     * 
+     */
+    public List<OnlineResourceType> getServiceMetadataURL() {
+        if (serviceMetadataURL == null) {
+            serviceMetadataURL = new ArrayList<OnlineResourceType>();
+        }
+        return this.serviceMetadataURL;
     }
 
 }

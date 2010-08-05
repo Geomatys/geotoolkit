@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlValue;
 
 
 /**
+ * Dimension value
+ * 
  * <p>Java class for anonymous complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
@@ -43,7 +45,7 @@ import javax.xml.bind.annotation.XmlValue;
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "DimensionNameValueType", propOrder = {
+@XmlType(name = "", propOrder = {
     "value"
 })
 @XmlRootElement(name = "DimensionNameValue")

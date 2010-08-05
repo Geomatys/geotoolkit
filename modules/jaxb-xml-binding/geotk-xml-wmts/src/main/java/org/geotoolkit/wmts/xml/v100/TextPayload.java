@@ -14,10 +14,10 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
+
+
 package org.geotoolkit.wmts.xml.v100;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -35,7 +35,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element ref="{http://www.opengis.net/wmts/1.0}Theme" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="Format" type="{http://www.opengis.net/ows/1.1}MimeType"/>
+ *         &lt;element name="TextContent" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -43,27 +44,66 @@ import javax.xml.bind.annotation.XmlType;
  * </pre>
  * 
  * 
- * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-    "theme"
+    "format",
+    "textContent"
 })
-@XmlRootElement(name = "Themes")
-public class Themes {
+@XmlRootElement(name = "TextPayload")
+public class TextPayload {
 
-    @XmlElement(name = "Theme")
-    private List<Theme> theme;
+    @XmlElement(name = "Format", required = true)
+    private String format;
+    @XmlElement(name = "TextContent", required = true)
+    private String textContent;
 
     /**
-     * Metadata describing the top-level themes where layers available on this server can be classified.
-     * Gets the value of the theme property.
+     * Gets the value of the format property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
      */
-    public List<Theme> getTheme() {
-        if (theme == null) {
-            theme = new ArrayList<Theme>();
-        }
-        return this.theme;
+    public String getFormat() {
+        return format;
+    }
+
+    /**
+     * Sets the value of the format property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setFormat(String value) {
+        this.format = value;
+    }
+
+    /**
+     * Gets the value of the textContent property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getTextContent() {
+        return textContent;
+    }
+
+    /**
+     * Sets the value of the textContent property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setTextContent(String value) {
+        this.textContent = value;
     }
 
 }

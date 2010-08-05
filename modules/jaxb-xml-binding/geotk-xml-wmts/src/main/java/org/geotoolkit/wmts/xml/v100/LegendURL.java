@@ -20,7 +20,6 @@ import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
@@ -35,16 +34,13 @@ import org.geotoolkit.ows.xml.v110.OnlineResourceType;
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
- *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
- *       &lt;sequence>
- *         &lt;element name="Format" type="{http://www.opengis.net/ows/1.1}MimeType"/>
- *         &lt;element name="OnlineResource" type="{http://www.opengis.net/ows/1.1}OnlineResourceType"/>
- *       &lt;/sequence>
+ *     &lt;extension base="{http://www.opengis.net/ows/1.1}OnlineResourceType">
+ *       &lt;attribute name="format" type="{http://www.opengis.net/ows/1.1}MimeType" />
  *       &lt;attribute name="minScaleDenominator" type="{http://www.w3.org/2001/XMLSchema}double" />
  *       &lt;attribute name="maxScaleDenominator" type="{http://www.w3.org/2001/XMLSchema}double" />
  *       &lt;attribute name="width" type="{http://www.w3.org/2001/XMLSchema}positiveInteger" />
  *       &lt;attribute name="height" type="{http://www.w3.org/2001/XMLSchema}positiveInteger" />
- *     &lt;/restriction>
+ *     &lt;/extension>
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
@@ -53,17 +49,12 @@ import org.geotoolkit.ows.xml.v110.OnlineResourceType;
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "LegendURLType", propOrder = {
-    "format",
-    "onlineResource"
-})
+@XmlType(name = "")
 @XmlRootElement(name = "LegendURL")
-public class LegendURL {
+public class LegendURL extends OnlineResourceType {
 
-    @XmlElement(name = "Format", required = true)
+    @XmlAttribute
     private String format;
-    @XmlElement(name = "OnlineResource", required = true)
-    private OnlineResourceType onlineResource;
     @XmlAttribute
     private Double minScaleDenominator;
     @XmlAttribute
@@ -79,16 +70,15 @@ public class LegendURL {
 
     }
 
-    public LegendURL(final String format, final OnlineResourceType onlineResource, final BigInteger width,
+    public LegendURL(final String format, final BigInteger width,
             final BigInteger height, Double minScaleDenominator, Double maxScaleDenominator) {
         this.format              = format;
         this.height              = height;
-        this.onlineResource      = onlineResource;
         this.width               = width;
         this.minScaleDenominator = minScaleDenominator;
         this.maxScaleDenominator = maxScaleDenominator;
     }
-    
+
     /**
      * Gets the value of the format property.
      * 
@@ -111,30 +101,6 @@ public class LegendURL {
      */
     public void setFormat(String value) {
         this.format = value;
-    }
-
-    /**
-     * Gets the value of the onlineResource property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link OnlineResourceType }
-     *     
-     */
-    public OnlineResourceType getOnlineResource() {
-        return onlineResource;
-    }
-
-    /**
-     * Sets the value of the onlineResource property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link OnlineResourceType }
-     *     
-     */
-    public void setOnlineResource(OnlineResourceType value) {
-        this.onlineResource = value;
     }
 
     /**

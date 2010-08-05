@@ -22,7 +22,6 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.BoundingBoxType;
 import org.geotoolkit.ows.xml.v110.DatasetDescriptionSummaryBaseType;
@@ -39,10 +38,11 @@ import org.geotoolkit.ows.xml.v110.DatasetDescriptionSummaryBaseType;
  *     &lt;extension base="{http://www.opengis.net/ows/1.1}DatasetDescriptionSummaryBaseType">
  *       &lt;sequence>
  *         &lt;element ref="{http://www.opengis.net/wmts/1.0}Style" maxOccurs="unbounded"/>
- *         &lt;element name="Format" type="{http://www.opengis.net/wmts/1.0}FormatType" maxOccurs="unbounded"/>
- *         &lt;element name="InfoFormat" type="{http://www.opengis.net/wmts/1.0}FormatType" maxOccurs="unbounded" minOccurs="0"/>
+ *         &lt;element name="Format" type="{http://www.opengis.net/ows/1.1}MimeType" maxOccurs="unbounded"/>
+ *         &lt;element name="InfoFormat" type="{http://www.opengis.net/ows/1.1}MimeType" maxOccurs="unbounded" minOccurs="0"/>
  *         &lt;element ref="{http://www.opengis.net/wmts/1.0}Dimension" maxOccurs="unbounded" minOccurs="0"/>
- *         &lt;element name="TileMatrixSet" type="{http://www.w3.org/2001/XMLSchema}string" maxOccurs="unbounded"/>
+ *         &lt;element ref="{http://www.opengis.net/wmts/1.0}TileMatrixSetLink" maxOccurs="unbounded"/>
+ *         &lt;element name="ResourceURL" type="{http://www.opengis.net/wmts/1.0}URLTemplateType" maxOccurs="unbounded" minOccurs="0"/>
  *       &lt;/sequence>
  *     &lt;/extension>
  *   &lt;/complexContent>
@@ -50,7 +50,6 @@ import org.geotoolkit.ows.xml.v110.DatasetDescriptionSummaryBaseType;
  * </pre>
  * 
  * 
- * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LayerType", propOrder = {
@@ -58,21 +57,23 @@ import org.geotoolkit.ows.xml.v110.DatasetDescriptionSummaryBaseType;
     "format",
     "infoFormat",
     "dimension",
-    "tileMatrixSet"
+    "tileMatrixSetLink",
+    "resourceURL"
 })
-@XmlRootElement(name="LayerType")
 public class LayerType extends DatasetDescriptionSummaryBaseType {
 
     @XmlElement(name = "Style", required = true)
     private List<Style> style;
     @XmlElement(name = "Format", required = true)
-    private List<FormatType> format;
+    private List<String> format;
     @XmlElement(name = "InfoFormat")
-    private List<FormatType> infoFormat;
+    private List<String> infoFormat;
     @XmlElement(name = "Dimension")
     private List<Dimension> dimension;
-    @XmlElement(name = "TileMatrixSet", required = true)
-    private List<String> tileMatrixSet;
+    @XmlElement(name = "TileMatrixSetLink", required = true)
+    private List<TileMatrixSetLink> tileMatrixSetLink;
+    @XmlElement(name = "ResourceURL")
+    private List<URLTemplateType> resourceURL;
 
     public LayerType() {
 
@@ -97,9 +98,9 @@ public class LayerType extends DatasetDescriptionSummaryBaseType {
     /**
      * Gets the value of the format property.
      */
-    public List<FormatType> getFormat() {
+    public List<String> getFormat() {
         if (format == null) {
-            format = new ArrayList<FormatType>();
+            format = new ArrayList<String>();
         }
         return this.format;
     }
@@ -107,9 +108,9 @@ public class LayerType extends DatasetDescriptionSummaryBaseType {
     /**
      * Gets the value of the infoFormat property.
      */
-    public List<FormatType> getInfoFormat() {
+    public List<String> getInfoFormat() {
         if (infoFormat == null) {
-            infoFormat = new ArrayList<FormatType>();
+            infoFormat = new ArrayList<String>();
         }
         return this.infoFormat;
     }
@@ -126,15 +127,26 @@ public class LayerType extends DatasetDescriptionSummaryBaseType {
     }
 
     /**
-     * Gets the value of the tileMatrixSet property.
+     * Reference to a tileMatrixSet and limits Gets the value of the tileMatrixSetLink property.
      * 
      */
-    public List<String> getTileMatrixSet() {
-        if (tileMatrixSet == null) {
-            tileMatrixSet = new ArrayList<String>();
+    public List<TileMatrixSetLink> getTileMatrixSetLink() {
+        if (tileMatrixSetLink == null) {
+            tileMatrixSetLink = new ArrayList<TileMatrixSetLink>();
         }
-        return this.tileMatrixSet;
+        return this.tileMatrixSetLink;
     }
+
+    /**
+     * Gets the value of the resourceURL property.
+     */
+    public List<URLTemplateType> getResourceURL() {
+        if (resourceURL == null) {
+            resourceURL = new ArrayList<URLTemplateType>();
+        }
+        return this.resourceURL;
+    }
+
 
     @Override
     public String toString() {
@@ -145,19 +157,19 @@ public class LayerType extends DatasetDescriptionSummaryBaseType {
              s.append(st).append('\n');
         }
         s.append("format:").append('\n');
-        for (FormatType f:getFormat()) {
+        for (String f:getFormat()) {
              s.append(f).append('\n');
         }
         s.append("infoFormat:").append('\n');
-        for (FormatType infoForm:getInfoFormat()) {
+        for (String infoForm:getInfoFormat()) {
              s.append(infoForm).append('\n');
         }
         s.append("dimension:").append('\n');
         for (Dimension dim:getDimension()) {
              s.append(dim).append('\n');
         }
-        s.append("tileMatrixSet:").append('\n');
-        for (String tms:getTileMatrixSet()) {
+        s.append("tileMatrixSetLink:").append('\n');
+        for (TileMatrixSetLink tms:getTileMatrixSetLink()) {
              s.append(tms).append('\n');
         }
         return s.toString();

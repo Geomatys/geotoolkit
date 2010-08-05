@@ -25,7 +25,7 @@ import javax.xml.namespace.QName;
 /**
  * This object contains factory methods for each 
  * Java content interface and Java element interface 
- * generated in the org.geotoolkit.wmts.xml.v100 package.
+ * generated in the net.opengis.wmts._1 package. 
  * <p>An ObjectFactory allows you to programatically 
  * construct new instances of the Java representation 
  * for XML content. The Java representation of XML 
@@ -35,35 +35,17 @@ import javax.xml.namespace.QName;
  * groups.  Factory methods for each of these are 
  * provided in this class.
  * 
- * @module pending
  */
 @XmlRegistry
 public class ObjectFactory {
 
-    private static final QName _Layer_QNAME = new QName("http://www.opengis.net/wmts/1.0", "Layer");
-    private static final QName _FeatureInfoResponse_QNAME = new QName("http://www.opengis.net/wmts/1.0", "FeatureInfoResponse");
+    private final static QName _Layer_QNAME = new QName("http://www.opengis.net/wmts/1.0", "Layer");
 
     /**
-     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: org.geotoolkit.wmts.xml.v100
+     * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.wmts._1
      * 
      */
     public ObjectFactory() {
-    }
-
-    /**
-     * Create an instance of {@link GetTile }
-     * 
-     */
-    public GetTile createGetTile() {
-        return new GetTile();
-    }
-
-    /**
-     * Create an instance of {@link Operations }
-     * 
-     */
-    public Operations createOperations() {
-        return new Operations();
     }
 
     /**
@@ -83,27 +65,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link DimensionNameValue }
+     * Create an instance of {@link Dimension }
      * 
      */
-    public DimensionNameValue createDimensionNameValue() {
-        return new DimensionNameValue();
+    public Dimension createDimension() {
+        return new Dimension();
     }
 
     /**
-     * Create an instance of {@link GetFeatureInfo }
+     * Create an instance of {@link TileMatrixSetLimits }
      * 
      */
-    public GetFeatureInfo createGetFeatureInfo() {
-        return new GetFeatureInfo();
-    }
-
-    /**
-     * Create an instance of {@link Style }
-     * 
-     */
-    public Style createStyle() {
-        return new Style();
+    public TileMatrixSetLimits createTileMatrixSetLimits() {
+        return new TileMatrixSetLimits();
     }
 
     /**
@@ -115,19 +89,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Themes }
+     * Create an instance of {@link ContentsType }
      * 
      */
-    public Themes createThemes() {
-        return new Themes();
-    }
-
-    /**
-     * Create an instance of {@link LayerType }
-     * 
-     */
-    public LayerType createLayerType() {
-        return new LayerType();
+    public ContentsType createContentsType() {
+        return new ContentsType();
     }
 
     /**
@@ -139,6 +105,14 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Themes }
+     * 
+     */
+    public Themes createThemes() {
+        return new Themes();
+    }
+
+    /**
      * Create an instance of {@link Capabilities }
      * 
      */
@@ -147,35 +121,35 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GetCapabilities }
+     * Create an instance of {@link LayerType }
      * 
      */
-    public GetCapabilities createGetCapabilities() {
-        return new GetCapabilities();
+    public LayerType createLayerType() {
+        return new LayerType();
     }
 
     /**
-     * Create an instance of {@link FormatType }
+     * Create an instance of {@link TileMatrixLimits }
      * 
      */
-    public FormatType createFormatType() {
-        return new FormatType();
+    public TileMatrixLimits createTileMatrixLimits() {
+        return new TileMatrixLimits();
     }
 
     /**
-     * Create an instance of {@link ContentsType }
+     * Create an instance of {@link GetTile }
      * 
      */
-    public ContentsType createContentsType() {
-        return new ContentsType();
+    public GetTile createGetTile() {
+        return new GetTile();
     }
 
     /**
-     * Create an instance of {@link Dimension }
+     * Create an instance of {@link GetFeatureInfo }
      * 
      */
-    public Dimension createDimension() {
-        return new Dimension();
+    public GetFeatureInfo createGetFeatureInfo() {
+        return new GetFeatureInfo();
     }
 
     /**
@@ -187,21 +161,68 @@ public class ObjectFactory {
     }
 
     /**
+     * Create an instance of {@link Style }
+     * 
+     */
+    public Style createStyle() {
+        return new Style();
+    }
+
+    /**
+     * Create an instance of {@link URLTemplateType }
+     * 
+     */
+    public URLTemplateType createURLTemplateType() {
+        return new URLTemplateType();
+    }
+
+    /**
+     * Create an instance of {@link TextPayload }
+     * 
+     */
+    public TextPayload createTextPayload() {
+        return new TextPayload();
+    }
+
+    /**
+     * Create an instance of {@link FeatureInfoResponse }
+     * 
+     */
+    public FeatureInfoResponse createFeatureInfoResponse() {
+        return new FeatureInfoResponse();
+    }
+
+    /**
+     * Create an instance of {@link GetCapabilities }
+     * 
+     */
+    public GetCapabilities createGetCapabilities() {
+        return new GetCapabilities();
+    }
+
+    /**
+     * Create an instance of {@link TileMatrixSetLink }
+     * 
+     */
+    public TileMatrixSetLink createTileMatrixSetLink() {
+        return new TileMatrixSetLink();
+    }
+
+    /**
+     * Create an instance of {@link DimensionNameValue }
+     * 
+     */
+    public DimensionNameValue createDimensionNameValue() {
+        return new DimensionNameValue();
+    }
+
+    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link LayerType }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wmts/1.0", name = "Layer", substitutionHeadNamespace = "http://www.opengis.net/ows/1.1", substitutionHeadName = "DatasetDescriptionSummary")
     public JAXBElement<LayerType> createLayer(LayerType value) {
         return new JAXBElement<LayerType>(_Layer_QNAME, LayerType.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.opengis.net/wmts/1.0", name = "FeatureInfoResponse")
-    public JAXBElement<Object> createFeatureInfoResponse(Object value) {
-        return new JAXBElement<Object>(_FeatureInfoResponse_QNAME, Object.class, null, value);
     }
 
 }

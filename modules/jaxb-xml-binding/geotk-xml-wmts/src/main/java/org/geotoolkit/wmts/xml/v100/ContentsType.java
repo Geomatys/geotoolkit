@@ -22,7 +22,6 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.ContentsBaseType;
 import org.geotoolkit.ows.xml.v110.DatasetDescriptionSummaryBaseType;
@@ -46,20 +45,22 @@ import org.geotoolkit.ows.xml.v110.DatasetDescriptionSummaryBaseType;
  * </pre>
  * 
  * 
- * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ContentsType", propOrder = {
     "tileMatrixSet"
 })
-@XmlRootElement(name="ContentsType")
 public class ContentsType extends ContentsBaseType {
 
     @XmlElement(name = "TileMatrixSet")
     private List<TileMatrixSet> tileMatrixSet;
 
     /**
-     * A description of the geometry of a tile cut Gets the value of the tileMatrixSet property.
+     * A description of the geometry of a tile fragmentation Gets the value of the tileMatrixSet property.
+     * 
+     * Objects of the following type(s) are allowed in the list
+     * {@link TileMatrixSet }
+     * 
      * 
      */
     public List<TileMatrixSet> getTileMatrixSet() {
@@ -67,6 +68,26 @@ public class ContentsType extends ContentsBaseType {
             tileMatrixSet = new ArrayList<TileMatrixSet>();
         }
         return this.tileMatrixSet;
+    }
+
+    /**
+     * Returns the {@link TileMatrixSet} with the matching identifier, or {@code null}
+     * if the given argument is null or if no one matches.
+     *
+     * @param indentifier The identifier of a matrix set.
+     * @return A {@link TileMatrixSet} with the matching identifier, or {@code null}
+     *         if none.
+     */
+    public TileMatrixSet getTileMatrixSetByIdentifier(final String indentifier) {
+        if (tileMatrixSet == null || indentifier == null) {
+            return null;
+        }
+        for (TileMatrixSet matrix : tileMatrixSet) {
+            if (indentifier.equalsIgnoreCase(matrix.getIdentifier().getValue())) {
+                return matrix;
+            }
+        }
+        return null;
     }
 
     public void setTileMatrixSet(List<TileMatrixSet> tms) {
