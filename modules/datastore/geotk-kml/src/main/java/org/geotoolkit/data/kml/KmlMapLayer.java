@@ -16,17 +16,16 @@
  */
 package org.geotoolkit.data.kml;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -37,6 +36,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
+import javax.swing.JLabel;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.AbstractObject;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
@@ -60,6 +60,7 @@ import org.geotoolkit.data.kml.model.Region;
 import org.geotoolkit.data.kml.model.Style;
 import org.geotoolkit.data.kml.model.StyleMap;
 import org.geotoolkit.data.kml.model.Vec2;
+import org.geotoolkit.data.kml.xsd.Cdata;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -533,11 +534,11 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         int y = (int) latLonBox.getNorth();
         int width = (int) ((latLonBox.getEast() - latLonBox.getWest())*1000);
         int height = (int) ((latLonBox.getNorth() - latLonBox.getSouth())*1000);       
-        graphic.drawImage(image, x, y, width, height, null);
+        graphic.drawImage(image, x-width/2, y-height/2, width, height, null);
 
         // Apply styles
         Style s = this.retrieveStyle(groundOverlay);
-        portrayBalloonStyle(x+width, y+height, s, false);
+        portrayBalloonStyle(x, y, s, false);
     }
 
     /**
@@ -590,6 +591,8 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         
         // MathTransform
         MathTransform transform = null;
+
+        //Fixed to screen for ScrenOverlays
         if(!fixedToScreen){
             try {
                 transform = context2d.getMathTransform(DefaultGeographicCRS.WGS84, context2d.getDisplayCRS());
@@ -611,8 +614,10 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         if(balloonStyle != null){
             int length = balloonStyle.getText().toString().length();
             int begin = 0, interligne = 0, balloonWidth = 0, balloonLines = 0;
+            boolean cdata = balloonStyle.getText() instanceof Cdata;
+            JLabel jep = null;//JEditorPane
 
-            // set balloon width
+            // balloon dimensions
             do{
                 int end = Math.min(begin+linewidth, length);
                 balloonWidth = Math.max(balloonWidth,
@@ -623,10 +628,9 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             if(begin < length){
                 balloonLines++;
             }
-
-            // print balloon
+     
             double[] tab = new double[]{x, y};
-
+            //Fixed to screen for ScrenOverlays
             if(!fixedToScreen){
                 try {
                     transform.transform(tab, 0, tab, 0, 1);
@@ -635,35 +639,72 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                     return;
                 }
             }
-            Rectangle rectangle = new Rectangle((int)tab[0], (int) tab[1],
-                    balloonWidth+2,
-                    balloonLines*fm.getHeight()+2);
+            int left = (int)tab[0]-(balloonWidth+2)/2;
+            int right;
+            int top = (int) tab[1]-2*(balloonLines*fm.getHeight()+2);
+            int bottom;
+            int VExc = (balloonWidth+2)/10;
+            int HExc = (balloonLines*fm.getHeight()+2)/7;
+
+            if(cdata){
+                //jep = new JEditorPane("text/html", balloonStyle.getText().toString());
+                jep = new JLabel("<html>"+balloonStyle.getText().toString()+"</html>");
+
+                jep.setOpaque(false);
+                Dimension preferredDim = jep.getPreferredSize();
+                jep.setSize(preferredDim);
+                bottom = preferredDim.height+top;
+                right = preferredDim.width+left;
+                //jep.setBounds(left, top, balloonWidth, bottom-top);
+                //System.out.println("w : "+jep.getWidth()+" h : "+jep.getHeight());
+                //jep.setBackground(balloonStyle.getBgColor());
+            }else{
+                right = (int)tab[0]+(balloonWidth+2)/2;
+                bottom = (int)tab[1]-balloonLines*fm.getHeight()+2;
+            }
+
+            // Print balloon structure
             graphic.setColor(balloonStyle.getBgColor());
-            graphic.fill(rectangle);
+
+            Path2D p = new java.awt.geom.Path2D.Double();
+            p.moveTo(left, top);
+            p.curveTo(left+(right-left)/4, top-VExc, left+3*(right-left)/4, top-VExc, right, top);
+            p.curveTo(right+HExc, bottom+5*(top-bottom)/6, right+HExc, bottom+(top-bottom)/6, right, bottom);
+
+            p.curveTo(left+8*(right-left)/9, bottom+HExc, left+7*(right-left)/9, bottom, left+2*(right-left)/3, bottom+VExc);
+            p.lineTo((int)tab[0], (int)tab[1]);
+            p.lineTo(left+(right-left)/3, bottom+VExc);
+            p.curveTo(left+2*(right-left)/9, bottom, left+(right-left)/9, bottom+HExc, left, bottom);
+
+
+            p.curveTo(left-HExc, bottom+(top-bottom)/6, left-HExc, bottom+5*(top-bottom)/6, left, top);
+            p.closePath();
+            graphic.fill(p);
+            graphic.setColor(new Color(255-balloonStyle.getBgColor().getRed(),
+                    255-balloonStyle.getBgColor().getGreen(), 255-balloonStyle.getBgColor().getBlue()));
+            graphic.draw(p);
+            
             graphic.setColor(balloonStyle.getTextColor());
 
-            // set balloonText
-            begin = 0; interligne = fm.getHeight();
-            tab = new double[]{x, y};
-            if(!fixedToScreen){
-                try {
-                    transform.transform(tab, 0, tab, 0, 1);
-                } catch (TransformException ex) {
-                    context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
-                    return;
+            // print balloon text
+            if(cdata){
+                graphic.translate(left, top);
+                jep.paint(graphic);
+                graphic.translate(-left, -top);
+            }else{
+                begin = 0; interligne = fm.getHeight();
+                while (begin+linewidth < length){
+                    graphic.drawString(
+                            balloonStyle.getText().toString().substring(
+                            begin, begin+linewidth), left+1, top+interligne);
+                    begin+= linewidth;
+                    interligne+= fm.getHeight();
                 }
-            }
-            while (begin+linewidth < length){
-                graphic.drawString(
-                        balloonStyle.getText().toString().substring(
-                        begin, begin+linewidth),(int) tab[0]+1, (int) tab[1]+interligne);
-                begin+= linewidth;
-                interligne+= fm.getHeight();
-            }
-            if(begin < length){
-                graphic.drawString(
-                        balloonStyle.getText().toString().substring(
-                        begin, length), (int) tab[0]+1, (int) tab[1]+interligne);
+                if(begin < length){
+                    graphic.drawString(
+                            balloonStyle.getText().toString().substring(
+                            begin, length), left+1, top+interligne);
+                }
             }
         }
     }
