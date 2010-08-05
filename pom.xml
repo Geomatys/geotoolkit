@@ -147,7 +147,7 @@
     <javadoc.exclude>
       org.geotoolkit.test:org.geotoolkit.demo:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.geotoolkit.metadata.fra:com
     </javadoc.exclude>
-    <derby.version>10.5.3.0_1</derby.version>
+    <derby.version>10.6.1.0</derby.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- TODO: Use <sourceEncoding>UTF-8</sourceEncoding> with Maven 3 -->
   </properties>
@@ -161,6 +161,7 @@
   <!--     dependencies are ignored.                               -->
   <!--                                                             -->
   <!--     Reference: http://repo1.maven.org/maven2/               -->
+  <!--                http://download.java.net/maven/2/            -->
   <!-- =========================================================== -->
   <dependencyManagement>
     <dependencies>
@@ -247,7 +248,7 @@
       <dependency>
         <groupId>org.swinglabs</groupId>
         <artifactId>swingx</artifactId>
-        <version>1.6</version>
+        <version>1.6.1</version>
       </dependency>
       <dependency>
         <groupId>org.netbeans</groupId>
@@ -264,7 +265,7 @@
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.7</version>
+        <version>4.8.1</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
