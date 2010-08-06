@@ -75,7 +75,7 @@ import org.geotoolkit.resources.Errors;
  * {@link #reset()} or {@link #dispose()} methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @since 3.14
  * @module
@@ -348,7 +348,8 @@ public class ImageCoverageWriter extends GridCoverageWriter {
      * is invoked by the {@link #write(GridCoverage, GridCoverageWriteParam)} method in
      * order to get the Java parameter object to use for controlling the writing process.
      * <p>
-     * The default implementation returns {@link ImageWriter#getDefaultWriteParam()}.
+     * The default implementation returns {@link ImageWriter#getDefaultWriteParam()} with
+     * tiling, progressive mode and compression set to {@link ImageWriteParam#MODE_DEFAULT}.
      * Subclasses can override this method in order to perform additional parameter
      * settings. Note however that any
      * {@linkplain ImageWriteParam#setSourceRegion source region},
@@ -363,7 +364,17 @@ public class ImageCoverageWriter extends GridCoverageWriter {
      * @see #write(GridCoverage, GridCoverageWriteParam)
      */
     protected ImageWriteParam createImageWriteParam(RenderedImage image) throws IOException {
-        return imageWriter.getDefaultWriteParam();
+        final ImageWriteParam param = imageWriter.getDefaultWriteParam();
+        if (param.canWriteTiles()) {
+            param.setTilingMode(ImageWriteParam.MODE_DEFAULT);
+        }
+        if (param.canWriteProgressive()) {
+            param.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
+        }
+        if (param.canWriteCompressed()) {
+            param.setCompressionMode(ImageWriteParam.MODE_DEFAULT);
+        }
+        return param;
     }
 
     /**
@@ -479,12 +490,25 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                     table.writeHorizontalSeparator();
                     System.out.println(table);
                 }
+                double[] backgroundValues = param.getBackgroundValues();
+                if (backgroundValues == null) {
+                    backgroundValues = CoverageUtilities.getBackgroundValues(coverage);
+                }
                 image = WarpDescriptor.create(image, warp,
                         Interpolation.getInstance(Interpolation.INTERP_NEAREST),
-                        CoverageUtilities.getBackgroundValues(coverage),
-                        hints);
+                        backgroundValues, hints);
                 imageParam.setSourceRegion(null);
                 imageParam.setSourceSubsampling(1, 1, 0, 0);
+                /*
+                 * Set other parameters inferred from the GridCoverageWriteParam.
+                 */
+                if (imageParam.canWriteCompressed()) {
+                    final Float compression = param.getCompressionQuality();
+                    if (compression != null) {
+                        imageParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                        imageParam.setCompressionQuality(compression);
+                    }
+                }
             }
         }
         /*

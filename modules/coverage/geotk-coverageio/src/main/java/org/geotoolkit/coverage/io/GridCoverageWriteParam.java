@@ -18,6 +18,8 @@
 package org.geotoolkit.coverage.io;
 
 import javax.imageio.ImageWriter;
+import javax.imageio.ImageWriteParam;
+import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -29,9 +31,9 @@ import javax.imageio.ImageWriter;
  * works with geodetic coordinates while <code>ImageWriteParam</code> works with pixel coordinates.}
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.15
  *
- * @see javax.imageio.ImageWriteParam
+ * @see ImageWriteParam
  *
  * @since 3.14
  * @module
@@ -48,6 +50,22 @@ public class GridCoverageWriteParam extends GridCoverageStoreParam {
      * suffix.
      */
     private String formatName;
+
+    /**
+     * The compression quality as a value between 0 and 1, or {@code null} if not defined.
+     * Value 0 is for more compression, at the cost of either quality for lossy formats or
+     * speed for lossless formats.
+     *
+     * @since 3.15
+     */
+    private Float compressionQuality;
+
+    /**
+     * The sample values to use for filling empty areas, or {@code null} for the default values.
+     *
+     * @since 3.15
+     */
+    private double[] backgroundValues;
 
     /**
      * Creates a new {@code GridCoverageWriteParam} instance. All properties are
@@ -78,5 +96,78 @@ public class GridCoverageWriteParam extends GridCoverageStoreParam {
      */
     public void setFormatName(final String name) {
         formatName = name;
+    }
+
+    /**
+     * Returns the compression quality as a value between 0 and 1, or {@code null} if not defined.
+     * Value 0 stands for more compression, at the cost of either quality for lossy formats or
+     * speed for lossless formats.
+     *
+     * @return The compression quality, or {@code null} for the format-dependent default value.
+     *
+     * @see ImageWriteParam#getCompressionQuality()
+     *
+     * @since 3.15
+     */
+    public Float getCompressionQuality() {
+        return compressionQuality;
+    }
+
+    /**
+     * Sets the compression quality as a value between 0 and 1, or {@code null} for the default.
+     * Value 0 stands for more compression, at the cost of either quality for lossy formats or
+     * speed for lossless formats.
+     *
+     * @param quality The compression quality, or {@code null} for the format-dependent default value.
+     * @throws IllegalArgumentException If the given value is not null but not in the [0&hellip;1] range.
+     *
+     * @see ImageWriteParam#setCompressionQuality(float)
+     *
+     * @since 3.15
+     */
+    public void setCompressionQuality(final Float quality) throws IllegalArgumentException {
+        if (quality != null) {
+            final float value = quality;
+            if (!(value >= 0f && value <= 1f)) {
+                throw new IllegalArgumentException(Errors.format(
+                        Errors.Keys.VALUE_OUT_OF_BOUNDS_$3, value, 0, 1));
+            }
+        }
+    }
+
+    /**
+     * Returns the sample values to use for filling empty areas during reprojection,
+     * or {@code null} for the default. If non-null, the array length shall be equals
+     * to the number of bands.
+     *
+     * @return The background values for each bands, or {@code null} for the default.
+     *
+     * @since 3.15
+     */
+    public double[] getBackgroundValues() {
+        double[] values = backgroundValues;
+        if (values != null) {
+            values = values.clone();
+        }
+        return values;
+    }
+
+    /**
+     * Sets the sample values to use for filling empty areas during reprojection, or
+     * {@code null} for the default. If non-null, the array length shall be equals to
+     * the number of bands.
+     * <p>
+     * The values provided to this method will be casted to the appropriate type (typically
+     * {@code byte}) at writing time.
+     *
+     * @param values The background values for each bands, or {@code null} for the default.
+     *
+     * @since 3.15
+     */
+    public void setBackgroundValues(double[] values) {
+        if (values != null) {
+            values = values.clone();
+        }
+        backgroundValues = values;
     }
 }
