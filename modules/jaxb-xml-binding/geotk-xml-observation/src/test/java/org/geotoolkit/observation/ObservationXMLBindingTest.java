@@ -68,7 +68,8 @@ public class ObservationXMLBindingTest {
                 "org.geotoolkit.sampling.xml.v100:" +
                 "org.geotoolkit.swe.xml.v101:" +
                 "org.geotoolkit.observation.xml.v100:" +
-                "org.geotoolkit.gml.xml.v311");
+                "org.geotoolkit.gml.xml.v311:" +
+                "org.geotoolkit.internal.jaxb.geometry");
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();
     }

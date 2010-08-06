@@ -169,7 +169,7 @@ public class OGCforSLD110Test extends TestCase{
     
     static {
         try {
-            POOL = new MarshallerPool(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class);
+            POOL = new MarshallerPool(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class, org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class);
         } catch (JAXBException ex) {ex.printStackTrace();}
         
         TRANSFORMER_GT = new OGC110toGTTransformer(FILTER_FACTORY);

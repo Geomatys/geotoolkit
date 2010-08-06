@@ -80,13 +80,23 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureEntry
     }
 
     /**
+     * Gets the value of the featureMember property.
+     */
+    public void addFeatureMember(FeaturePropertyType feature) {
+        if (featureMember == null) {
+            featureMember = new ArrayList<FeaturePropertyType>();
+        }
+        this.featureMember.add(feature);
+    }
+
+    /**
      * Return true if the feature colelction contains the specified feature.
      *
      * @param featureId
      * @return
      */
     public boolean containsFeature(String featureId) {
-        if (featureMember == null) {
+        if (featureMember != null) {
             for (FeaturePropertyType feat : featureMember) {
                 if (feat.getHref() != null && feat.getHref().equals(featureId)) {
                     return true;

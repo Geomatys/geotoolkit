@@ -105,13 +105,14 @@ public class CswXMLBindingTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool202 = new MarshallerPool(org.geotoolkit.csw.xml.v202.ObjectFactory.class, DefaultMetadata.class);
+        pool202 = new MarshallerPool(org.geotoolkit.csw.xml.v202.ObjectFactory.class, DefaultMetadata.class, org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class);
         recordUnmarshaller202    = pool202.acquireUnmarshaller();
         recordMarshaller202      = pool202.acquireMarshaller();
         
         pool200 = new MarshallerPool(org.geotoolkit.csw.xml.v200.ObjectFactory.class,
                                      org.geotoolkit.dublincore.xml.v1.terms.ObjectFactory.class,
-                                     org.geotoolkit.dublincore.xml.v2.terms.ObjectFactory.class);
+                                     org.geotoolkit.dublincore.xml.v2.terms.ObjectFactory.class,
+                                     org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class);
         recordUnmarshaller200    = pool200.acquireUnmarshaller();
         recordMarshaller200      = pool200.acquireMarshaller();
     }

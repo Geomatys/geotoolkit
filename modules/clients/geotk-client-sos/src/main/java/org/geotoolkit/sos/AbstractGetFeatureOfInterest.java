@@ -58,7 +58,8 @@ public abstract class AbstractGetFeatureOfInterest extends AbstractRequest imple
                                       "org.geotoolkit.observation.xml.v100:" +
                                       "org.geotoolkit.sampling.xml.v100:" +
                                       "org.geotoolkit.sml.xml.v100:" +
-                                      "org.geotoolkit.sml.xml.v101");
+                                      "org.geotoolkit.sml.xml.v101:" +
+                                      "org.geotoolkit.internal.jaxb.geometry");
         } catch (JAXBException ex) {
             LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
         }

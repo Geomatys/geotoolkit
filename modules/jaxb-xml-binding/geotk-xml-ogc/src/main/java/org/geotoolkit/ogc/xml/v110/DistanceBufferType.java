@@ -24,11 +24,22 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
+import org.geotoolkit.gml.xml.v311.CurveType;
+import org.geotoolkit.gml.xml.v311.LineStringType;
+import org.geotoolkit.gml.xml.v311.LinearRingType;
+import org.geotoolkit.gml.xml.v311.MultiCurveType;
+import org.geotoolkit.gml.xml.v311.MultiLineStringType;
+import org.geotoolkit.gml.xml.v311.MultiPointType;
+import org.geotoolkit.gml.xml.v311.MultiPolygonType;
+import org.geotoolkit.gml.xml.v311.MultiSolidType;
+import org.geotoolkit.gml.xml.v311.MultiSurfaceType;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
 import org.geotoolkit.gml.xml.v311.ObjectFactory;
+import org.geotoolkit.gml.xml.v311.OrientableSurfaceType;
 import org.geotoolkit.gml.xml.v311.PointType;
-import org.geotoolkit.gml.xml.v311.PolygonType;
+import org.geotoolkit.gml.xml.v311.PolyhedralSurfaceType;
+import org.geotoolkit.gml.xml.v311.RingType;
 
 
 /**
@@ -93,17 +104,47 @@ public class DistanceBufferType extends SpatialOpsType {
      * build a new Distance buffer
      */
     public DistanceBufferType(String propertyName, AbstractGeometryType geometry, double distance, String unit) {
-        this.propertyName = new PropertyNameType(propertyName);
-        this.distance     = new DistanceType(distance, unit);
-        
-        //TODO rajouter les autre type possible
+        this.propertyName     = new PropertyNameType(propertyName);
+        this.distance         = new DistanceType(distance, unit);
+        this.abstractGeometry = getCorrectJaxbElement(geometry);
+    }
+
+    private JAXBElement<? extends AbstractGeometryType> getCorrectJaxbElement(Object geometry) {
         if (geometry instanceof PointType) {
-            this.abstractGeometry = factory.createPoint((PointType)geometry);
-        } else if (geometry instanceof PolygonType) {
-            this.abstractGeometry = factory.createPolygon((PolygonType)geometry);
-        } else {
-            this.abstractGeometry = factory.createAbstractGeometry(geometry);
+            return factory.createPoint((PointType)geometry);
+        } else if (geometry instanceof OrientableSurfaceType) {
+            return factory.createOrientableSurface((OrientableSurfaceType) geometry);
+        } else if (geometry instanceof LinearRingType) {
+            return factory.createLinearRing((LinearRingType) geometry);
+        } else if (geometry instanceof RingType) {
+            return factory.createRing((RingType) geometry);
+        } else if (geometry instanceof PolyhedralSurfaceType) {
+            return factory.createPolyhedralSurface((PolyhedralSurfaceType) geometry);
+        } else if (geometry instanceof CurveType) {
+            return factory.createCurve((CurveType) geometry);
+        } else if (geometry instanceof PointType) {
+            return factory.createPoint((PointType) geometry);
+        } else if (geometry instanceof LineStringType) {
+            return factory.createLineString((LineStringType) geometry);
+        } else if (geometry instanceof PolyhedralSurfaceType) {
+            return factory.createPolyhedralSurface((PolyhedralSurfaceType) geometry);
+        } else if (geometry instanceof MultiCurveType) {
+            return factory.createMultiCurve((MultiCurveType) geometry);
+        } else if (geometry instanceof MultiLineStringType) {
+            return factory.createMultiLineString((MultiLineStringType) geometry);
+        } else if (geometry instanceof MultiPointType) {
+            return factory.createMultiPoint((MultiPointType) geometry);
+        } else if (geometry instanceof MultiPolygonType) {
+            return factory.createMultiPolygon((MultiPolygonType) geometry);
+        } else if (geometry instanceof MultiSolidType) {
+            return factory.createMultiSolid((MultiSolidType) geometry);
+        } else if (geometry instanceof MultiSurfaceType) {
+            return factory.createMultiSurface((MultiSurfaceType) geometry);
+
+        } else if (geometry != null){
+            throw new IllegalArgumentException("unexpected Geometry type:" + geometry.getClass().getName());
         }
+        return null;
     }
     
     /**

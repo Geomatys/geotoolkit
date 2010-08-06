@@ -180,12 +180,6 @@
         <artifactId>slf4j-jdk14</artifactId> <!-- Logging system used by NetCDF. -->
         <version>1.4.0</version>
       </dependency>
-      <!-- Raster formats -->
-      <dependency>
-        <groupId>edu.ucar</groupId>
-        <artifactId>netcdf</artifactId>
-        <version>2.2.20</version>
-      </dependency>
       <!-- Server -->
       <dependency>
         <groupId>postgresql</groupId>
@@ -195,7 +189,7 @@
       <dependency>
         <groupId>org.apache.derby</groupId>
         <artifactId>derby</artifactId>
-        <version>10.5.3.0_1</version>
+        <version>10.6.1.0</version>
         <scope>provided</scope> <!-- Already included in JDK as JavaDB -->
       </dependency>
       <dependency>
@@ -208,7 +202,7 @@
       <dependency>
         <groupId>org.swinglabs</groupId>
         <artifactId>swingx</artifactId>
-        <version>1.6</version>
+        <version>1.6.1</version>
       </dependency>
       <dependency>
         <groupId>org.swinglabs</groupId>
@@ -225,7 +219,7 @@
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.7</version>
+        <version>4.8.1</version>
         <scope>test</scope>
       </dependency>
 

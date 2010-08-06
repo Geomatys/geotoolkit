@@ -23,6 +23,8 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
@@ -39,6 +41,7 @@ import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.TileManagerFactory;
 import org.geotoolkit.image.io.mosaic.TileWritingPolicy;
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.coverage.grid.RectifiedGrid;
@@ -53,6 +56,8 @@ import org.opengis.referencing.operation.MathTransform;
  */
 @Static
 public class GridCoverageReaders {
+
+    private static final Logger LOGGER = Logging.getLogger(GridCoverageReaders.class);
 
     private static final File TILE_CACHE_FOLDER = new File(System.getProperty("java.io.tmpdir") + File.separator + "imageTiles");
 
@@ -139,7 +144,7 @@ public class GridCoverageReaders {
         if(managers.length == 0){
             throw new CoverageStoreException("No files could be handle as tiles.");
         }else if(managers.length > 1){
-            throw new CoverageStoreException("Coverage tiles are not aligned, "
+            LOGGER.log(Level.WARNING, "Coverage tiles are not aligned, "
                     + "verify that images don't overlaps and overviews preserve ratio.");
         }
 

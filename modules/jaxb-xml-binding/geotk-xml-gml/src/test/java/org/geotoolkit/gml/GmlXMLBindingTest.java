@@ -41,7 +41,7 @@ public class GmlXMLBindingTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool = new MarshallerPool("org.geotoolkit.gml.xml.v311");
+        pool = new MarshallerPool("org.geotoolkit.gml.xml.v311:org.geotoolkit.internal.jaxb.geometry");
         marshaller = pool.acquireMarshaller();
     }
 

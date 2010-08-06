@@ -43,7 +43,7 @@ public class WcsXMLBindingTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool = new MarshallerPool("org.geotoolkit.wcs.xml.v100:org.geotoolkit.wcs.xml.v111");
+        pool = new MarshallerPool("org.geotoolkit.wcs.xml.v100:org.geotoolkit.wcs.xml.v111:org.geotoolkit.internal.jaxb.geometry");
         marshaller = pool.acquireMarshaller();
     }
 

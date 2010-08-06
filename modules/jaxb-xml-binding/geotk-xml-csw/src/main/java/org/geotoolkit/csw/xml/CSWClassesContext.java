@@ -76,6 +76,9 @@ public class CSWClassesContext {
         classeList.addAll(Arrays.asList(org.geotoolkit.csw.xml.v200.ObjectFactory.class,
                                         org.geotoolkit.dublincore.xml.v1.terms.ObjectFactory.class));
 
+        // GML base factory
+        classeList.add(org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class);
+
         // we add the extensions classes
         classeList.add(org.geotoolkit.service.ServiceIdentificationImpl.class);
         classeList.addAll(Arrays.asList(org.geotoolkit.feature.catalog.AssociationRoleImpl.class,

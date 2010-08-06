@@ -100,7 +100,7 @@ public class SmlXMLBindingTest {
 
     @Before
     public void setUp() throws Exception {
-        marshallerPool = new MarshallerPool("org.geotoolkit.sml.xml.v101");
+        marshallerPool = new MarshallerPool("org.geotoolkit.sml.xml.v101:org.geotoolkit.internal.jaxb.geometry");
     }
 
     @After

@@ -81,7 +81,7 @@ public class SLD110Test extends TestCase{
     
     static {
         try {
-            POOL = new MarshallerPool(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class);
+            POOL = new MarshallerPool(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class, org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class);
         } catch (JAXBException ex) {ex.printStackTrace();}
         
         TRANSFORMER_GT = new SLD110toGTTransformer(FILTER_FACTORY, STYLE_FACTORY, SLD_FACTORY);

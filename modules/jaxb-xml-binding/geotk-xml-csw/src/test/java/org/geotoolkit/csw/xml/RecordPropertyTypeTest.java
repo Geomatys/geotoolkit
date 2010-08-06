@@ -44,7 +44,7 @@ public class RecordPropertyTypeTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool = new MarshallerPool(org.geotoolkit.csw.xml.v202.ObjectFactory.class, DefaultMetadata.class);
+        pool = new MarshallerPool(org.geotoolkit.csw.xml.v202.ObjectFactory.class, DefaultMetadata.class, org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class);
         marshaller = pool.acquireMarshaller();
         unmarshaller = pool.acquireUnmarshaller();
     }

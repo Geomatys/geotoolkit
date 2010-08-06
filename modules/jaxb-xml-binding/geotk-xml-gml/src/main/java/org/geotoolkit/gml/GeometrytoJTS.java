@@ -251,8 +251,8 @@ public class GeometrytoJTS {
             } else {
                 cs = coord.getCs();
             }
-            double x1 = Double.parseDouble(s.substring(0, s.indexOf(cs)));
-            s = s.substring(s.indexOf(cs) + 1);
+            int csIndex = s.indexOf(cs);
+            double x1 = Double.parseDouble(s.substring(0, csIndex));
 
             final String ts;
             if (coord.getTs() == null) {
@@ -261,12 +261,12 @@ public class GeometrytoJTS {
                 ts = coord.getTs();
             }
 
-            double y1 = Double.parseDouble(s.substring(0, s.indexOf(ts)));
-            s = s.substring(s.indexOf(ts) + 1);
+            int tsIndex =  s.indexOf(ts, csIndex);
+            double y1 = Double.parseDouble(s.substring(csIndex + 1, tsIndex));
 
-            double x2 = Double.parseDouble(s.substring(0, s.indexOf(cs)));
-            s = s.substring(s.indexOf(cs) + 1);
-            double y2 = Double.parseDouble(s);
+            csIndex = s.indexOf(cs, tsIndex + 1);
+            double x2 = Double.parseDouble(s.substring(tsIndex + 1, csIndex));
+            double y2 = Double.parseDouble(s.substring(csIndex + 1));
 
             final int srid = SRIDGenerator.toSRID(crsName, Version.V1);
             ls = GF.createLineString(new Coordinate[]{

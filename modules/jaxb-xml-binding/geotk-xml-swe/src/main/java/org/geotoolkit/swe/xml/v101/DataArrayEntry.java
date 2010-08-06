@@ -147,6 +147,11 @@ public class DataArrayEntry extends AbstractDataArrayEntry implements DataArray 
         this.values = values;
     }
 
+    public void updateArray(String values, int nbValues) {
+        this.values = values;
+        this.setElementCount(nbValues);
+    }
+    
     public AbstractDataValueProperty getDataValues() {
         return null;
     }

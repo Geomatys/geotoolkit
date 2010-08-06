@@ -50,7 +50,7 @@ import org.xml.sax.InputSource;
     static{
         MarshallerPool temp = null;
         try{
-            temp = new MarshallerPool(org.geotoolkit.wms.xml.v111.WMT_MS_Capabilities.class);
+            temp = new MarshallerPool(org.geotoolkit.wms.xml.v111.WMT_MS_Capabilities.class, org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class);
         }catch(JAXBException ex){
             ex.printStackTrace();
         }
@@ -58,7 +58,7 @@ import org.xml.sax.InputSource;
 
         temp = null;
         try{
-            temp = new MarshallerPool(org.geotoolkit.wms.xml.v130.WMSCapabilities.class);
+            temp = new MarshallerPool(org.geotoolkit.wms.xml.v130.WMSCapabilities.class, org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class);
         }catch(JAXBException ex){
             ex.printStackTrace();
         }
