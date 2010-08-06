@@ -108,7 +108,7 @@ final class LayerTable extends SingletonTable<LayerEntry> {
             return false;
         }
         final LayerQuery query = (LayerQuery) super.query;
-        final LocalCache lc = getLock();
+        final LocalCache lc = getLocalCache();
         synchronized (lc) {
             boolean success = false;
             transactionBegin(lc);
@@ -133,7 +133,7 @@ final class LayerTable extends SingletonTable<LayerEntry> {
      * @since 3.11
      */
     public String searchFreeIdentifier(final String base) throws SQLException {
-        final LocalCache lc = getLock();
+        final LocalCache lc = getLocalCache();
         synchronized (lc) {
             return searchFreeIdentifier(lc, base);
         }

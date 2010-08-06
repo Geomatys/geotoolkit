@@ -128,7 +128,7 @@ final class TileTable extends Table implements Comparator<TileManager> {
     public boolean exists(final LayerEntry layer) throws SQLException {
         final TileQuery query = (TileQuery) this.query;
         final boolean exists;
-        final LocalCache lc = getLock();
+        final LocalCache lc = getLocalCache();
         synchronized (lc) {
             final LocalCache.Stmt ce = getStatement(lc, QueryType.EXISTS);
             final PreparedStatement statement = ce.statement;
@@ -166,7 +166,7 @@ final class TileTable extends Table implements Comparator<TileManager> {
                 if (managers == null) {
                     final TileQuery query   = (TileQuery) this.query;
                     final List<Tile> tiles  = new ArrayList<Tile>();
-                    final LocalCache lc = getLock();
+                    final LocalCache lc = getLocalCache();
                     synchronized (lc) {
                         final Calendar calendar = getCalendar(lc);
                         final LocalCache.Stmt ce = getStatement(lc, QueryType.LIST);

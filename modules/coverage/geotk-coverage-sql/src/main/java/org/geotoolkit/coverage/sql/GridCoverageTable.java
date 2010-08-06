@@ -357,7 +357,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
     public final SortedSet<Date> getAvailableTimes() throws SQLException {
         final Set<Long> dates = new HashSet<Long>();
         final GridCoverageQuery query = (GridCoverageQuery) super.query;
-        final LocalCache lc = getLock();
+        final LocalCache lc = getLocalCache();
         synchronized (lc) {
             final LocalCache.Stmt ce = getStatement(lc, QueryType.AVAILABLE_DATA);
             final int startTimeIndex = indexOf(query.startTime);
@@ -404,7 +404,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
         final int startTimeIndex = indexOf(query.startTime);
         final int   endTimeIndex = indexOf(query.endTime);
         long  lastEndTime = Long.MIN_VALUE;
-        final LocalCache lc = getLock();
+        final LocalCache lc = getLocalCache();
         synchronized (lc) {
             final Calendar calendar = getCalendar(lc);
             final LocalCache.Stmt ce = getStatement(lc, QueryType.AVAILABLE_DATA);
@@ -581,7 +581,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
     final Map<Integer,Integer> count(final SeriesEntry series, final boolean groupByExtent) throws SQLException {
         final GridCoverageQuery query = (GridCoverageQuery) this.query;
         final Map<Integer,Integer> count = new HashMap<Integer,Integer>();
-        final LocalCache lc = getLock();
+        final LocalCache lc = getLocalCache();
         synchronized (lc) {
             final SeriesEntry oldSeries = specificSeries;
             specificSeries = series;

@@ -149,7 +149,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
         final int timeColumn = (byTimeRange     != null) ? byTimeRange    .column.indexOf(type) : 0;
         final int bboxColumn = (bySpatialExtent != null) ? bySpatialExtent.column.indexOf(type) : 0;
         if (timeColumn != 0 || bboxColumn != 0) {
-            final LocalCache lc = getLock();
+            final LocalCache lc = getLocalCache();
             synchronized (lc) {
                 final LocalCache.Stmt ce = getStatement(lc, type);
                 final PreparedStatement statement = ce.statement;
@@ -195,7 +195,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      * {@linkplain #fireStateChanged changed its state}. The default implementation
      * set the parameter values to the spatio-temporal bounding box.
      *
-     * @param  lc The {@link #getLock()} value.
+     * @param  lc The {@link #getLocalCache()} value.
      * @param  type The query type (mat be {@code null}).
      * @param  statement The statement to configure (never {@code null}).
      * @throws SQLException if a SQL error occurred while configuring the statement.

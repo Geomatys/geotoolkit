@@ -130,7 +130,7 @@ final class CategoryTable extends Table {
         MathTransformFactory mtFactory = null;  // Will be fetched only if needed.
         MathTransform      exponential = null;  // Will be fetched only if needed.
         int bandOfPreviousCategory = 0;
-        final LocalCache lc = getLock();
+        final LocalCache lc = getLocalCache();
         synchronized (lc) {
             final LocalCache.Stmt ce = getStatement(lc, QueryType.LIST);
             final PreparedStatement statement = ce.statement;
@@ -295,7 +295,7 @@ final class CategoryTable extends Table {
     public void addCategories(final String format, final List<List<Category>> categories) throws SQLException {
         final CategoryQuery query = (CategoryQuery) this.query;
         final Locale locale = getLocale();
-        final LocalCache lc = getLock();
+        final LocalCache lc = getLocalCache();
         synchronized (lc) {
             boolean success = false;
             transactionBegin(lc);

@@ -230,7 +230,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * Creates an {@link Element} object for the current {@linkplain ResultSet result set} row.
      * This method is invoked automatically by {@link #getEntry(String)} and {@link #getEntries()}.
      *
-     * @param  lc The {@link #getLock()} value.
+     * @param  lc The {@link #getLocalCache()} value.
      * @param  results The result set to use for fetching data. Only the current row should
      *         be used, i.e. {@link ResultSet#next} should <strong>not</strong> be invoked.
      * @param  identifier The identifier of the entry being created.
@@ -287,7 +287,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
             try {
                 entry = handler.peek();
                 if (entry == null) {
-                    final LocalCache lc = getLock();
+                    final LocalCache lc = getLocalCache();
                     synchronized (lc) {
                         final LocalCache.Stmt ce = getStatement(lc, QueryType.SELECT);
                         final PreparedStatement statement = ce.statement;
@@ -325,7 +325,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      */
     public Set<E> getEntries() throws SQLException {
         final Set<E> entries = new LinkedHashSet<E>();
-        final LocalCache lc = getLock();
+        final LocalCache lc = getLocalCache();
         synchronized (lc) {
             final LocalCache.Stmt ce = getStatement(lc, QueryType.LIST);
             final int[] pkIndices = getPrimaryKeyColumns();
@@ -376,7 +376,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      */
     public Set<String> getIdentifiers() throws SQLException {
         final Set<String> identifiers = new LinkedHashSet<String>();
-        final LocalCache lc = getLock();
+        final LocalCache lc = getLocalCache();
         synchronized (lc) {
             final LocalCache.Stmt ce = getStatement(lc, QueryType.LIST_ID);
             final ResultSet results = ce.statement.executeQuery();
@@ -406,7 +406,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
             return true;
         }
         final boolean hasNext;
-        final LocalCache lc = getLock();
+        final LocalCache lc = getLocalCache();
         synchronized (lc) {
             final LocalCache.Stmt ce = getStatement(lc, QueryType.EXISTS);
             final PreparedStatement statement = ce.statement;
@@ -432,7 +432,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
         }
         final int count;
         boolean success = false;
-        final LocalCache lc = getLock();
+        final LocalCache lc = getLocalCache();
         synchronized (lc) {
             transactionBegin(lc);
             try {
@@ -463,7 +463,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
     public int deleteAll() throws SQLException {
         final int count;
         boolean success = false;
-        final LocalCache lc = getLock();
+        final LocalCache lc = getLocalCache();
         synchronized (lc) {
             transactionBegin(lc);
             try {
@@ -523,7 +523,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * This method is suitable for {@link String} identifiers. Numerical identifiers shall
      * use an auto-increment field instead.
      *
-     * @param  lc The value returned by {@link #getLock()}.
+     * @param  lc The value returned by {@link #getLocalCache()}.
      * @param  base The base for the identifier.
      * @return A unused identifier.
      * @throws SQLException if an error occurred while reading the database.

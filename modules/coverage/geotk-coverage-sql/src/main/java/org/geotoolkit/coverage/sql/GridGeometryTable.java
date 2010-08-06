@@ -268,7 +268,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
         ensureNonNull("gridToCRS", gridToCRS);
         Integer id = null;
         final GridGeometryQuery query = (GridGeometryQuery) super.query;
-        final LocalCache lc = getLock();
+        final LocalCache lc = getLocalCache();
         synchronized (lc) {
             final LocalCache.Stmt ce = getStatement(lc, QueryType.LIST);
             final PreparedStatement statement = ce.statement;
@@ -359,7 +359,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
                      final double[] verticalOrdinates, final int verticalSRID)
             throws SQLException
     {
-        final LocalCache lc = getLock();
+        final LocalCache lc = getLocalCache();
         synchronized (lc) {
             boolean success = false;
             transactionBegin(lc);

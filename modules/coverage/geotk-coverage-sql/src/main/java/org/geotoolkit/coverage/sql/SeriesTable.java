@@ -152,7 +152,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
     /**
      * Creates a series from the current row in the specified result set.
      *
-     * @param  lc The {@link #getLock()} value.
+     * @param  lc The {@link #getLocalCache()} value.
      * @param  results The result set to read.
      * @param  identifier The identifier of the series to create.
      * @return The entry for current row in the specified result set.
@@ -206,7 +206,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
         ensureNonNull("format",    format);
         Integer id = null;
         final SeriesQuery query = (SeriesQuery) super.query;
-        final LocalCache lc = getLock();
+        final LocalCache lc = getLocalCache();
         synchronized (lc) {
             final LocalCache.Stmt ce = getStatement(lc, QueryType.LIST);
             final PreparedStatement statement = ce.statement;
@@ -255,7 +255,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
      * @throws SQLException if an error occurred while reading from or writing to the database.
      */
     int findOrCreate(final String path, final String extension, final String format) throws SQLException {
-        final LocalCache lc = getLock();
+        final LocalCache lc = getLocalCache();
         synchronized (lc) {
             boolean success = false;
             transactionBegin(lc);

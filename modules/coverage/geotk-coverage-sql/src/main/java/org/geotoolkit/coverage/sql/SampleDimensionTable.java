@@ -133,7 +133,7 @@ final class SampleDimensionTable extends Table {
         String[]  names = new String [8];
         Unit<?>[] units = new Unit<?>[8];
         int numSampleDimensions = 0;
-        final LocalCache lc = getLock();
+        final LocalCache lc = getLocalCache();
         synchronized (lc) {
             final LocalCache.Stmt ce = getStatement(lc, QueryType.LIST);
             final PreparedStatement statement = ce.statement;
@@ -215,7 +215,7 @@ final class SampleDimensionTable extends Table {
      */
     public void addSampleDimensions(final String format, final List<GridSampleDimension> bands) throws SQLException {
         final SampleDimensionQuery query = (SampleDimensionQuery) super.query;
-        final LocalCache lc = getLock();
+        final LocalCache lc = getLocalCache();
         synchronized (lc) {
             boolean success = false;
             transactionBegin(lc);

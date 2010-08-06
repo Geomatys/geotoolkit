@@ -127,7 +127,7 @@ final class FormatTable extends SingletonTable<FormatEntry> {
     /**
      * Creates a format from the current row in the specified result set.
      *
-     * @param  lc The {@link #getLock()} value.
+     * @param  lc The {@link #getLocalCache()} value.
      * @param  results The result set to read.
      * @param  identifier The identifier of the format to create.
      * @return The entry for current row in the specified result set.
@@ -329,7 +329,7 @@ check:  for (final GridSampleDimension band : bands) {
          * insertion, we will check for existing entries inside the write lock.
          */
         final FormatQuery query = (FormatQuery) super.query;
-        final LocalCache lc = getLock();
+        final LocalCache lc = getLocalCache();
         synchronized (lc) {
             boolean success = false;
             transactionBegin(lc);
@@ -377,7 +377,7 @@ check:  for (final GridSampleDimension band : bands) {
      * @since 3.15
      */
     public String searchFreeIdentifier(final String base) throws SQLException {
-        final LocalCache lc = getLock();
+        final LocalCache lc = getLocalCache();
         synchronized (lc) {
             return searchFreeIdentifier(lc, base);
         }

@@ -184,7 +184,7 @@ final class WritableGridCoverageTable extends GridCoverageTable {
             final NewGridCoverageIterator iterator = new NewGridCoverageIterator(listeners,
                     controller, (SpatialDatabase) getDatabase(), null, imageIndex, it, next);
             final SeriesEntry oldSeries = specificSeries;
-            final LocalCache lc = getLock();
+            final LocalCache lc = getLocalCache();
             synchronized (lc) {
                 transactionBegin(lc);
                 try {
@@ -409,7 +409,7 @@ final class WritableGridCoverageTable extends GridCoverageTable {
         int count = 0;
         boolean success = false;
         final SeriesEntry oldSeries = specificSeries;
-        final LocalCache lc = getLock();
+        final LocalCache lc = getLocalCache();
         synchronized (lc) {
             transactionBegin(lc);
             try {

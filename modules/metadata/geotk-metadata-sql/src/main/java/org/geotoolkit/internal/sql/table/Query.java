@@ -551,7 +551,7 @@ scan:       while (!tables.isEmpty()) {
      * Creates the SQL statement for the query of the given type with no {@code WHERE} clause.
      * This is mostly used for debugging purpose.
      *
-     * @param  lc The value returned by {@link Table#getLock()}.
+     * @param  lc The value returned by {@link Table#getLocalCache()}.
      * @param  type The query type.
      * @return The SQL statement.
      * @throws SQLException if an error occurred while reading the database.
@@ -567,7 +567,7 @@ scan:       while (!tables.isEmpty()) {
     /**
      * Creates the SQL statement for the query of the given type.
      *
-     * @param  lc The value returned by {@link Table#getLock()}.
+     * @param  lc The value returned by {@link Table#getLocalCache()}.
      * @param  type The query type.
      * @return The SQL statement.
      * @throws SQLException if an error occurred while reading the database.
@@ -593,7 +593,7 @@ scan:       while (!tables.isEmpty()) {
      * Creates the SQL statement for inserting elements in the table.
      * This method should be invoked only for queries of type {@link QueryType#INSERT}.
      *
-     * @param  lc The value returned by {@link Table#getLock()}.
+     * @param  lc The value returned by {@link Table#getLocalCache()}.
      * @param  type The query type (should be {@link QueryType#INSERT}).
      * @return The SQL statement, or {@code null} if there is no column in the query.
      * @throws SQLException if an error occurred while reading the database.
@@ -657,7 +657,7 @@ scan:       while (!tables.isEmpty()) {
      * Creates the SQL statement for deleting elements from the table.
      * This method should be invoked only for queries of type {@link QueryType#DELETE}.
      *
-     * @param  lc The value returned by {@link Table#getLock()}.
+     * @param  lc The value returned by {@link Table#getLocalCache()}.
      * @param  type The query type (should be {@link QueryType#DELETE}).
      * @return The SQL statement, or {@code null} if none.
      * @throws SQLException if an error occurred while reading the database.
@@ -686,7 +686,7 @@ scan:       while (!tables.isEmpty()) {
      * Creates the SQL statement for counting elements in a table. The query type is used
      * only for determining the parameters - it is not used for the column values.
      *
-     * @param  lc The value returned by {@link Table#getLock()}.
+     * @param  lc The value returned by {@link Table#getLocalCache()}.
      * @param  type The query type (typically {@link QueryType#COUNT}).
      * @param  column The column to be counted.
      * @return The SQL statement, or {@code null} if none.

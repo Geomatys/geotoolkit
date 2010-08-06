@@ -83,7 +83,7 @@ final class DomainOfLayerTable extends SingletonTable<DomainOfLayerEntry> {
     /**
      * Creates a layer from the current row in the specified result set.
      *
-     * @param  lc The {@link #getLock()} value.
+     * @param  lc The {@link #getLocalCache()} value.
      * @param  results The result set to read.
      * @param  identifier The name of the layer for the entry being read.
      * @return The entry for current row in the specified result set.
