@@ -53,12 +53,14 @@ import org.geotoolkit.data.kml.model.LineString;
 import org.geotoolkit.data.kml.model.LineStyle;
 import org.geotoolkit.data.kml.model.LinearRing;
 import org.geotoolkit.data.kml.model.MultiGeometry;
+import org.geotoolkit.data.kml.model.Pair;
 import org.geotoolkit.data.kml.model.Point;
 import org.geotoolkit.data.kml.model.PolyStyle;
 import org.geotoolkit.data.kml.model.Polygon;
 import org.geotoolkit.data.kml.model.Region;
 import org.geotoolkit.data.kml.model.Style;
 import org.geotoolkit.data.kml.model.StyleMap;
+import org.geotoolkit.data.kml.model.StyleState;
 import org.geotoolkit.data.kml.model.Vec2;
 import org.geotoolkit.data.kml.xsd.Cdata;
 import org.geotoolkit.display.canvas.RenderingContext;
@@ -100,7 +102,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
 
     @Override
     public Envelope getBounds() {
-        return null;
+        return this.kml.getAbstractFeature().getBounds();
     }
 
     @Override
@@ -110,8 +112,67 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
 
     @Override
     public Image getLegend() throws PortrayalException {
-        return null;
+        BufferedImage image = new BufferedImage(50, 50, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D graphic = (Graphics2D) image.getGraphics();
+//        this.legendAbstractFeature(this.kml.getAbstractFeature(), graphic);
+        graphic.setColor(Color.red);
+        graphic.draw3DRect(20, 20, 20, 20, true);
+        return image;
     }
+//
+//    public void legendAbstractFeature(Feature abstractFeature, Graphics2D graphic) throws IOException{
+//        if (FeatureTypeUtilities.isDecendedFrom(abstractFeature.getType(), KmlModelConstants.TYPE_CONTAINER)){
+//            this.legendAbstractContainer(abstractFeature, graphic);
+//        } else if (FeatureTypeUtilities.isDecendedFrom(abstractFeature.getType(), KmlModelConstants.TYPE_OVERLAY)){
+//            this.legendAbstractOverlay(abstractFeature, graphic);
+//        } else if (abstractFeature.getType().equals(KmlModelConstants.TYPE_PLACEMARK)){
+//            this.legendPlacemark(abstractFeature, graphic);
+//        }
+//    }
+//
+//    private void legendAbstractContainer(Feature abstractContainer, Graphics2D graphic) throws IOException {
+//        if (abstractContainer.getType().equals(KmlModelConstants.TYPE_FOLDER)){
+//            this.legendFolder(abstractContainer, graphic);
+//        } else if (abstractContainer.getType().equals(KmlModelConstants.TYPE_DOCUMENT)){
+//            this.legendDocument(abstractContainer, graphic);
+//        }
+//    }
+//
+//    private void legendCommonAbstractContainer(Feature abstractContainer, Graphics2D graphic) {
+//        this.legendCommonAbstractFeature(abstractContainer, graphic);
+//    }
+//
+//    /**
+//     *
+//     * @param folder
+//     * @throws IOException
+//     */
+//    private void legendFolder(Feature folder, Graphics2D graphic) throws IOException {
+//        Iterator i;
+//        this.portrayCommonAbstractContainer(folder);
+//        if(folder.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()) != null){
+//            i = folder.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()).iterator();
+//            while(i.hasNext()){
+//                this.legendAbstractFeature((Feature) ((Property) i.next()).getValue(), graphic);
+//            }
+//        }
+//    }
+//
+//    /**
+//     *
+//     * @param document
+//     * @throws IOException
+//     */
+//    private void legendDocument(Feature document, Graphics2D graphic) throws IOException {
+//        Iterator i;
+//        this.portrayCommonAbstractContainer(document);
+//        if(document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()) != null){
+//            i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
+//            while(i.hasNext()){
+//                this.legendAbstractFeature((Feature) ((Property) i.next()).getValue(), graphic);
+//            }
+//        }
+//    }
 
     @Override
     public void portray(RenderingContext context) throws PortrayalException {
@@ -210,7 +271,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         if (abstractFeature.getProperty(KmlModelConstants.ATT_STYLE_SELECTOR.getName()) != null){
             i = abstractFeature.getProperties(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).iterator();
             while(i.hasNext()){
-                this.portrayAbstractStyleSelector((AbstractStyleSelector) ((Property) i.next()).getValue());
+                this.indexAbstractStyleSelector((AbstractStyleSelector) ((Property) i.next()).getValue());
             }
         }
     }
@@ -381,8 +442,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                 context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
                 return;
             }
-            graphic.drawImage(image, (int) tab[0]+image.getWidth()/2,
-                    (int) tab[1]+image.getHeight()/2, null);
+            graphic.drawImage(image, (int) tab[0], (int) tab[1], null);
         }
     }
 
@@ -468,7 +528,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      *
      * @param abstractStyleSelector
      */
-    private void portrayAbstractStyleSelector(AbstractStyleSelector abstractStyleSelector) {
+    private void indexAbstractStyleSelector(AbstractStyleSelector abstractStyleSelector) {
         if (abstractStyleSelector instanceof Style){
             this.indexStyle((Style)abstractStyleSelector);
         } else if (abstractStyleSelector instanceof StyleMap){
@@ -521,24 +581,55 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      */
     private void portrayGroundOverlay(Feature groundOverlay) throws IOException {
         this.portrayCommonAbstractOverlay(groundOverlay);
-        context2d.switchToObjectiveCRS();
+
+        // MathTransform
+        MathTransform transform;
+        try {
+            transform = context2d.getMathTransform(DefaultGeographicCRS.WGS84, context2d.getDisplayCRS());
+        } catch (FactoryException ex) {
+            context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
+            return;
+        }
+
+        context2d.switchToDisplayCRS();
+        Graphics2D graphic = context2d.getGraphics();
 
         // Display image
         File img = new File(
-                ((Icon) groundOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_ICON.getName()).getValue())
+                ((Icon) groundOverlay.getProperty(
+                KmlModelConstants.ATT_OVERLAY_ICON.getName()).getValue())
                 .getHref());
         BufferedImage image = ImageIO.read(img);
-        Graphics2D graphic = context2d.getGraphics();
-        LatLonBox latLonBox = (LatLonBox) groundOverlay.getProperty(KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX.getName()).getValue();
-        int x = (int) latLonBox.getEast();
-        int y = (int) latLonBox.getNorth();
-        int width = (int) ((latLonBox.getEast() - latLonBox.getWest())*1000);
-        int height = (int) ((latLonBox.getNorth() - latLonBox.getSouth())*1000);       
-        graphic.drawImage(image, x-width/2, y-height/2, width, height, null);
+        LatLonBox latLonBox = (LatLonBox) groundOverlay.getProperty(
+                KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX.getName()).getValue();
+        double n = latLonBox.getNorth();
+        double e = latLonBox.getEast();
+        double s = latLonBox.getSouth();
+        double w = latLonBox.getWest();
+
+        double[] tab = new double[]{
+            w, n,
+            e, n,
+            e, s,
+            w, s};
+
+        try {
+            transform.transform(tab, 0, tab, 0, 4);
+        } catch (TransformException ex) {
+            context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
+            return;
+        }
+
+        graphic.drawImage(image,
+                (int) tab[0],
+                (int) tab[1],
+                (int) (tab[2]-tab[0]),
+                (int) (tab[5]- tab[3]),
+                null);
 
         // Apply styles
-        Style s = this.retrieveStyle(groundOverlay);
-        portrayBalloonStyle(x, y, s, false);
+        Style sty = this.retrieveStyle(groundOverlay);
+        portrayBalloonStyle((e+w)/2, (n+s)/2, sty, false);
     }
 
     /**
@@ -615,7 +706,9 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             int length = balloonStyle.getText().toString().length();
             int begin = 0, interligne = 0, balloonWidth = 0, balloonLines = 0;
             boolean cdata = balloonStyle.getText() instanceof Cdata;
-            JLabel jep = null;//JEditorPane
+            if(balloonStyle.getBgColor().equals(new Color(255,255,0)))
+                System.out.println("MARSEILLE : "+cdata);
+            JLabel jep = null;
 
             // balloon dimensions
             do{
@@ -639,49 +732,64 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                     return;
                 }
             }
-            int left = (int)tab[0]-(balloonWidth+2)/2;
+
+            int left;
             int right;
-            int top = (int) tab[1]-2*(balloonLines*fm.getHeight()+2);
+            int top;
             int bottom;
-            int VExc = (balloonWidth+2)/10;
-            int HExc = (balloonLines*fm.getHeight()+2)/7;
+            int VExc;
+            int HExc;
 
             if(cdata){
-                //jep = new JEditorPane("text/html", balloonStyle.getText().toString());
-                jep = new JLabel("<html>"+balloonStyle.getText().toString()+"</html>");
-
+                String s = "";
+                if("<html>".equals(balloonStyle.getText().toString().substring(0, 5))){
+                    jep = new JLabel(balloonStyle.getText().toString());
+                }else{
+                    jep = new JLabel("<html>"+balloonStyle.getText().toString()+"</html>");
+                }
                 jep.setOpaque(false);
                 Dimension preferredDim = jep.getPreferredSize();
                 jep.setSize(preferredDim);
-                bottom = preferredDim.height+top;
-                right = preferredDim.width+left;
-                //jep.setBounds(left, top, balloonWidth, bottom-top);
-                //System.out.println("w : "+jep.getWidth()+" h : "+jep.getHeight());
-                //jep.setBackground(balloonStyle.getBgColor());
+                left = (int)tab[0]-(preferredDim.width+2)/2;
+                right = left+preferredDim.width+1;
+                top = (int) tab[1]-2*(preferredDim.height+2);
+                bottom = top+preferredDim.height+1;
+                right = left+preferredDim.width+1;
+                VExc = (preferredDim.width+2)/10;
+                HExc = (preferredDim.height+2)/7;
             }else{
+                left = (int)tab[0]-(balloonWidth+2)/2;
                 right = (int)tab[0]+(balloonWidth+2)/2;
-                bottom = (int)tab[1]-balloonLines*fm.getHeight()+2;
+                top = (int) tab[1]-((2*balloonLines+1)*fm.getHeight()+2);
+                bottom = (int)tab[1]-(balloonLines+1)*fm.getHeight()+1;
+                VExc = (balloonWidth+2)/10;
+                HExc = (balloonLines*fm.getHeight()+2)/7;
             }
 
             // Print balloon structure
             graphic.setColor(balloonStyle.getBgColor());
-
             Path2D p = new java.awt.geom.Path2D.Double();
             p.moveTo(left, top);
+
+            //top and right sides
             p.curveTo(left+(right-left)/4, top-VExc, left+3*(right-left)/4, top-VExc, right, top);
             p.curveTo(right+HExc, bottom+5*(top-bottom)/6, right+HExc, bottom+(top-bottom)/6, right, bottom);
 
-            p.curveTo(left+8*(right-left)/9, bottom+HExc, left+7*(right-left)/9, bottom, left+2*(right-left)/3, bottom+VExc);
+            //bottom
+            p.curveTo(left+8*(right-left)/9, bottom+VExc, left+7*(right-left)/9, bottom, left+2*(right-left)/3, bottom+VExc);
             p.lineTo((int)tab[0], (int)tab[1]);
+            //p.curveTo(left+7*(right-left)/12, bottom+(bottom-top)/3, left+7*(right-left)/12, bottom+2*(bottom-top)/3, (int)tab[0], (int)tab[1]);
             p.lineTo(left+(right-left)/3, bottom+VExc);
-            p.curveTo(left+2*(right-left)/9, bottom, left+(right-left)/9, bottom+HExc, left, bottom);
+            //p.curveTo(left+5*(right-left)/12, bottom+(bottom-top)/2, left+5*(right-left)/12, bottom+(bottom-top)/2, left+(right-left)/3, bottom+VExc);
+            p.curveTo(left+2*(right-left)/9, bottom, left+(right-left)/9, bottom+VExc, left, bottom);
 
-
+            // left side
             p.curveTo(left-HExc, bottom+(top-bottom)/6, left-HExc, bottom+5*(top-bottom)/6, left, top);
             p.closePath();
             graphic.fill(p);
-            graphic.setColor(new Color(255-balloonStyle.getBgColor().getRed(),
-                    255-balloonStyle.getBgColor().getGreen(), 255-balloonStyle.getBgColor().getBlue()));
+
+            // grey border
+            graphic.setColor(new Color(40,40,40));
             graphic.draw(p);
             
             graphic.setColor(balloonStyle.getTextColor());
@@ -748,12 +856,46 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      * @return
      */
     private Style retrieveStyle(Feature feature){
-        final Style s;
-        if(feature.getProperty(KmlModelConstants.ATT_STYLE_SELECTOR.getName())!= null
-                && feature.getProperty(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).getValue() instanceof Style){
-            s = (Style) feature.getProperty(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).getValue();
+        Style styleSelector = null;
+
+        if(feature.getProperty(KmlModelConstants.ATT_STYLE_SELECTOR.getName())!= null){
+            if(feature.getProperty(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).getValue() instanceof Style){
+                styleSelector = (Style) feature.getProperty(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).getValue();
+            }
+            else if(styleSelector instanceof StyleMap){
+                StyleMap styleMap = (StyleMap) styleSelector;
+                styleSelector = retrieveStyle(styleMap, StyleState.NORMAL);
+            }
         } else {
-            s = this.styles.get(((URI) feature.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()).getValue()).toString());
+            styleSelector = this.styles.get(((URI) feature.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()).getValue()).toString());
+            if(styleSelector == null){
+                StyleMap styleMap = this.styleMaps.get(((URI) feature.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()).getValue()).toString());
+                styleSelector = retrieveStyle(styleMap, StyleState.NORMAL);
+            }
+        }
+        return styleSelector;
+    }
+
+    private Style retrieveStyle(StyleMap styleMap, StyleState styleState){
+        Style s = null;
+        for(Pair pair : styleMap.getPairs()){
+            if(styleState.equals(pair.getKey())){
+                AbstractStyleSelector styleSelector = pair.getAbstractStyleSelector();
+                if(styleSelector instanceof StyleMap){
+                    s = retrieveStyle((StyleMap) styleSelector, styleState);
+                } else if(styleSelector != null){
+                    s = (Style) styleSelector;
+                    break;
+                }
+
+                if(s == null){
+                    s = styles.get(pair.getStyleUrl().toString());
+                    if(s == null
+                            && this.styleMaps.get(pair.getStyleUrl().toString()) != null){
+                        s = retrieveStyle(this.styleMaps.get(pair.getStyleUrl().toString()), styleState);
+                    }
+                }
+            }
         }
         return s;
     }
