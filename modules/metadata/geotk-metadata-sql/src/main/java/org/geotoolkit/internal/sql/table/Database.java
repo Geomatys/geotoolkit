@@ -58,7 +58,7 @@ import org.geotoolkit.internal.sql.AuthenticatedDataSource;
  * and to recycle those threads, because this class may use a new connection for each thread.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.13
+ * @version 3.15
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -373,8 +373,8 @@ public class Database implements Localized {
      * databases ({@code "yyyy/mm/dd"}). We don't use {@link Calendar#getInstance()}
      * because it may be a totally different and incompatible calendar for our purpose.
      */
-    final Calendar getCalendar() {
-        final Session s = getLocalCache();
+    final Calendar getCalendar(final LocalCache cache) {
+        final Session s = (Session) cache;
         assert Thread.holdsLock(s) : s;
         Calendar calendar = s.calendar;
         if (calendar == null) {
@@ -446,8 +446,8 @@ public class Database implements Localized {
      * Put the given statement back in the pool. This method is invoked by
      * {@link LocalCache.Stmt#release()} only. The later is the API to use.
      */
-    final void release(final LocalCache.Stmt entry) throws SQLException {
-        final LocalCache.Stmt old = getLocalCache().put(entry.sql, entry);
+    static void release(final LocalCache cache, final LocalCache.Stmt entry) throws SQLException {
+        final LocalCache.Stmt old = ((Session) cache).put(entry.sql, entry);
         if (old != null) {
             old.statement.close();
         }
@@ -492,19 +492,19 @@ public class Database implements Localized {
      *     final LocalCache cache = getLocalCache();
      *     synchronized (cache) {
      *         boolean success = false;
-     *         transactionBegin();
+     *         transactionBegin(cache);
      *         try {
      *             // Do some operation here...
      *             success = true;
      *         } finally {
-     *             transactionEnd(success);
+     *             transactionEnd(cache, success);
      *         }
      *     }
      * }
      *
      * @throws SQLException If the operation failed.
      */
-    final void transactionBegin() throws SQLException {
+    final void transactionBegin(final LocalCache sp) throws SQLException {
         boolean success = false;
         final boolean locked;
         try {
@@ -514,7 +514,6 @@ public class Database implements Localized {
         }
         if (locked) try {
             if (transactionLock.getHoldCount() == 1) {
-                final LocalCache sp = getLocalCache();
                 assert Thread.holdsLock(sp) : sp; // Necessary for blocking the cleaner thread.
                 final Connection connection = sp.connection();
                 connection.setReadOnly(false);
@@ -534,15 +533,14 @@ public class Database implements Localized {
      * Invoked after the {@code INSERT}, {@code UPDATE} or {@code DELETE}
      * SQL statement finished.
      *
-     * @param  success {@code true} if the operation succeed and should be commited,
+     * @param  success {@code true} if the operation succeed and should be committed,
      *         or {@code false} if we should rollback.
      * @throws SQLException If the commit or the rollback failed.
      */
-    final void transactionEnd(final boolean success) throws SQLException {
+    final void transactionEnd(final LocalCache sp, final boolean success) throws SQLException {
         ensureOngoingTransaction();
         try {
             if (transactionLock.getHoldCount() == 1) {
-                final LocalCache sp = getLocalCache();
                 assert Thread.holdsLock(sp) : sp; // Necessary for blocking the cleaner thread.
                 final Connection connection = sp.connection();
                 if (success) {
@@ -575,8 +573,8 @@ public class Database implements Localized {
      * @return An identifier generator for the given column.
      * @throws SQLException If an error occurred while creating the generator.
      */
-    final NameGenerator getIdentifierGenerator(final String pk) throws SQLException {
-        final Session s = getLocalCache();
+    final NameGenerator getIdentifierGenerator(final LocalCache cache, final String pk) throws SQLException {
+        final Session s = (Session) cache;
         Map<String, NameGenerator> generators = s.generators;
         NameGenerator generator;
         if (generators != null) {

@@ -53,7 +53,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Sam Hiatt
- * @version 3.12
+ * @version 3.15
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -357,11 +357,12 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
     public final SortedSet<Date> getAvailableTimes() throws SQLException {
         final Set<Long> dates = new HashSet<Long>();
         final GridCoverageQuery query = (GridCoverageQuery) super.query;
-        synchronized (getLock()) {
-            final LocalCache.Stmt ce = getStatement(QueryType.AVAILABLE_DATA);
+        final LocalCache lc = getLock();
+        synchronized (lc) {
+            final LocalCache.Stmt ce = getStatement(lc, QueryType.AVAILABLE_DATA);
             final int startTimeIndex = indexOf(query.startTime);
             final int endTimeIndex   = indexOf(query.endTime);
-            final Calendar calendar  = getCalendar();
+            final Calendar calendar  = getCalendar(lc);
             final PreparedStatement statement = ce.statement;
             final ResultSet results = statement.executeQuery();
             while (results.next()) {
@@ -382,7 +383,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
                 dates.add(time);
             }
             results.close();
-            release(ce);
+            release(lc, ce);
         }
         if (dates.isEmpty()) {
             return XCollections.emptySortedSet();
@@ -403,9 +404,10 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
         final int startTimeIndex = indexOf(query.startTime);
         final int   endTimeIndex = indexOf(query.endTime);
         long  lastEndTime = Long.MIN_VALUE;
-        final Calendar calendar = getCalendar();
-        synchronized (getLock()) {
-            final LocalCache.Stmt ce = getStatement(QueryType.AVAILABLE_DATA);
+        final LocalCache lc = getLock();
+        synchronized (lc) {
+            final Calendar calendar = getCalendar(lc);
+            final LocalCache.Stmt ce = getStatement(lc, QueryType.AVAILABLE_DATA);
             final PreparedStatement statement = ce.statement;
             final ResultSet results = statement.executeQuery();
             final LayerEntry layer  = this.layer; // Don't use getLayerEntry() because we want to accept null.
@@ -434,7 +436,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
                 }
             }
             results.close();
-            release(ce);
+            release(lc, ce);
         }
         return addTo;
     }
@@ -446,8 +448,10 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
      * @throws SQLException if a SQL error occurred while configuring the statement.
      */
     @Override
-    protected final void configure(final QueryType type, final PreparedStatement statement) throws SQLException {
-        super.configure(type, statement);
+    protected final void configure(final LocalCache lc, final QueryType type, final PreparedStatement statement)
+            throws SQLException
+    {
+        super.configure(lc, type, statement);
         final GridCoverageQuery query = (GridCoverageQuery) super.query;
         int index = query.byLayer.indexOf(type);
         if (index != 0) {
@@ -515,11 +519,11 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
      * @throws SQLException if an error occurred while reading the database.
      */
     @Override
-    protected final GridCoverageEntry createEntry(final ResultSet results, final Comparable<?> identifier)
+    protected final GridCoverageEntry createEntry(final LocalCache lc, final ResultSet results, final Comparable<?> identifier)
             throws SQLException
     {
         final GridCoverageIdentifier id = (GridCoverageIdentifier) identifier;
-        final Calendar calendar = getCalendar();
+        final Calendar calendar = getCalendar(lc);
         final GridCoverageQuery query = (GridCoverageQuery) super.query;
         final Timestamp startTime = results.getTimestamp(indexOf(query.startTime), calendar);
         final Timestamp endTime   = results.getTimestamp(indexOf(query.endTime),   calendar);
@@ -568,7 +572,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
 
     /**
      * Returns the number of coverages for the given series. The keys of the returned map are
-     * the identifiers found for the current series. The values are the number of occurences.
+     * the identifiers found for the current series. The values are the number of occurrences.
      *
      * @param  series The series for which to count
      * @param  groupByExtent {@code true} for grouping by extents.
@@ -577,11 +581,12 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
     final Map<Integer,Integer> count(final SeriesEntry series, final boolean groupByExtent) throws SQLException {
         final GridCoverageQuery query = (GridCoverageQuery) this.query;
         final Map<Integer,Integer> count = new HashMap<Integer,Integer>();
-        synchronized (getLock()) {
+        final LocalCache lc = getLock();
+        synchronized (lc) {
             final SeriesEntry oldSeries = specificSeries;
             specificSeries = series;
             try {
-                final LocalCache.Stmt ce = getStatement(QueryType.COUNT,
+                final LocalCache.Stmt ce = getStatement(lc, QueryType.COUNT,
                         groupByExtent ? query.spatialExtent : query.series);
                 final PreparedStatement stmt = ce.statement;
                 final ResultSet results = stmt.executeQuery();
@@ -594,7 +599,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
                     }
                 }
                 results.close();
-                release(ce);
+                release(lc, ce);
             } finally {
                 specificSeries = oldSeries;
             }

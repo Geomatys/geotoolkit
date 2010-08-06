@@ -22,6 +22,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -43,7 +44,7 @@ import org.geotoolkit.resources.Errors;
  * A SQL query build from {@linkplain Column columns} and {@linkplain Parameter parameters}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.11
+ * @version 3.15
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -113,7 +114,7 @@ public class Query {
     /**
      * SQL queries cached up to date.
      */
-    private final Map<QueryType,String> cachedSQL = new HashMap<QueryType,String>();
+    private final Map<QueryType,String> cachedSQL = new EnumMap<QueryType,String>(QueryType.class);
 
     /**
      * Creates an initially empty query for a table in the default schema.
@@ -541,8 +542,7 @@ scan:       while (!tables.isEmpty()) {
      * {@link Database#getLocalCache()}. This synchronization must be performed by
      * the {@code Query} user; we can not perform it inside the {@code Query} class.
      */
-    private DatabaseMetaData getMetaData() throws SQLException {
-        final LocalCache cache = database.getLocalCache();
+    private static DatabaseMetaData getMetaData(final LocalCache cache) throws SQLException {
         assert Thread.holdsLock(cache); // Necessary for blocking the cleaner thread.
         return cache.connection().getMetaData();
     }
@@ -551,12 +551,13 @@ scan:       while (!tables.isEmpty()) {
      * Creates the SQL statement for the query of the given type with no {@code WHERE} clause.
      * This is mostly used for debugging purpose.
      *
+     * @param  lc The value returned by {@link Table#getLock()}.
      * @param  type The query type.
      * @return The SQL statement.
      * @throws SQLException if an error occurred while reading the database.
      */
-    final String selectAll(final QueryType type) throws SQLException {
-        final DatabaseMetaData metadata = getMetaData();
+    final String selectAll(final LocalCache lc, final QueryType type) throws SQLException {
+        final DatabaseMetaData metadata = getMetaData(lc);
         final StringBuilder buffer = new StringBuilder();
         selectAll(buffer, type, metadata, false);
         appendOrdering(buffer, type, metadata);
@@ -566,16 +567,17 @@ scan:       while (!tables.isEmpty()) {
     /**
      * Creates the SQL statement for the query of the given type.
      *
+     * @param  lc The value returned by {@link Table#getLock()}.
      * @param  type The query type.
      * @return The SQL statement.
      * @throws SQLException if an error occurred while reading the database.
      */
-    public String select(final QueryType type) throws SQLException {
+    public String select(final LocalCache lc, final QueryType type) throws SQLException {
         String sql;
         synchronized (cachedSQL) {
             sql = cachedSQL.get(type);
             if (sql == null) {
-                final DatabaseMetaData metadata = getMetaData();
+                final DatabaseMetaData metadata = getMetaData(lc);
                 final StringBuilder buffer = new StringBuilder();
                 selectAll       (buffer, type, metadata, true);
                 appendParameters(buffer, type, metadata);
@@ -591,16 +593,17 @@ scan:       while (!tables.isEmpty()) {
      * Creates the SQL statement for inserting elements in the table.
      * This method should be invoked only for queries of type {@link QueryType#INSERT}.
      *
+     * @param  lc The value returned by {@link Table#getLock()}.
      * @param  type The query type (should be {@link QueryType#INSERT}).
      * @return The SQL statement, or {@code null} if there is no column in the query.
      * @throws SQLException if an error occurred while reading the database.
      */
-    public String insert(final QueryType type) throws SQLException {
+    public String insert(final LocalCache lc, final QueryType type) throws SQLException {
         String sql;
         synchronized (cachedSQL) {
             sql = cachedSQL.get(type);
             if (sql == null) {
-                final DatabaseMetaData metadata = getMetaData();
+                final DatabaseMetaData metadata = getMetaData(lc);
                 final String quote = metadata.getIdentifierQuoteString().trim();
                 final Set<String> columnNames = getColumnNames(metadata, table);
                 final StringBuilder buffer = new StringBuilder("INSERT INTO ");
@@ -654,16 +657,17 @@ scan:       while (!tables.isEmpty()) {
      * Creates the SQL statement for deleting elements from the table.
      * This method should be invoked only for queries of type {@link QueryType#DELETE}.
      *
+     * @param  lc The value returned by {@link Table#getLock()}.
      * @param  type The query type (should be {@link QueryType#DELETE}).
      * @return The SQL statement, or {@code null} if none.
      * @throws SQLException if an error occurred while reading the database.
      */
-    public String delete(final QueryType type) throws SQLException {
+    public String delete(final LocalCache lc, final QueryType type) throws SQLException {
         String sql;
         synchronized (cachedSQL) {
             sql = cachedSQL.get(type);
             if (sql == null) {
-                final DatabaseMetaData metadata = getMetaData();
+                final DatabaseMetaData metadata = getMetaData(lc);
                 final String quote = metadata.getIdentifierQuoteString().trim();
                 final StringBuilder buffer = new StringBuilder("DELETE FROM ");
                 if (!isIncludingChildTables()) {
@@ -682,6 +686,7 @@ scan:       while (!tables.isEmpty()) {
      * Creates the SQL statement for counting elements in a table. The query type is used
      * only for determining the parameters - it is not used for the column values.
      *
+     * @param  lc The value returned by {@link Table#getLock()}.
      * @param  type The query type (typically {@link QueryType#COUNT}).
      * @param  column The column to be counted.
      * @return The SQL statement, or {@code null} if none.
@@ -689,8 +694,8 @@ scan:       while (!tables.isEmpty()) {
      *
      * @since 3.10
      */
-    public String count(final QueryType type, final Column column) throws SQLException {
-        final DatabaseMetaData metadata = getMetaData();
+    public String count(final LocalCache lc, final QueryType type, final Column column) throws SQLException {
+        final DatabaseMetaData metadata = getMetaData(lc);
         final String quote = metadata.getIdentifierQuoteString().trim();
         final StringBuilder buffer = new StringBuilder("SELECT ");
         column.appendName(buffer, quote);

@@ -56,7 +56,7 @@ import static java.lang.reflect.Array.getDouble;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Antoine Hnawia (IRD)
- * @version 3.10
+ * @version 3.15
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -140,7 +140,9 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
      */
     @Override
     @SuppressWarnings("fallthrough")
-    protected GridGeometryEntry createEntry(final ResultSet results, final Comparable<?> identifier) throws SQLException {
+    protected GridGeometryEntry createEntry(final LocalCache lc, final ResultSet results, final Comparable<?> identifier)
+            throws SQLException
+    {
         final GridGeometryQuery query  = (GridGeometryQuery) super.query;
         final SpatialDatabase database = (SpatialDatabase) getDatabase();
         final int    width             = results.getInt   (indexOf(query.width));
@@ -266,8 +268,9 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
         ensureNonNull("gridToCRS", gridToCRS);
         Integer id = null;
         final GridGeometryQuery query = (GridGeometryQuery) super.query;
-        synchronized (getLock()) {
-            final LocalCache.Stmt ce = getStatement(QueryType.LIST);
+        final LocalCache lc = getLock();
+        synchronized (lc) {
+            final LocalCache.Stmt ce = getStatement(lc, QueryType.LIST);
             final PreparedStatement statement = ce.statement;
             statement.setInt   (indexOf(query.byWidth),          size.width );
             statement.setInt   (indexOf(query.byHeight),         size.height);
@@ -332,7 +335,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
                 foundStrictlyEquals = isStrictlyEquals;
             }
             results.close();
-            release(ce);
+            release(lc, ce);
         }
         return id;
     }
@@ -356,9 +359,10 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
                      final double[] verticalOrdinates, final int verticalSRID)
             throws SQLException
     {
-        synchronized (getLock()) {
+        final LocalCache lc = getLock();
+        synchronized (lc) {
             boolean success = false;
-            transactionBegin();
+            transactionBegin(lc);
             try {
                 Integer id = find(size, gridToCRS, horizontalSRID, verticalOrdinates, verticalSRID);
                 if (id == null) {
@@ -366,7 +370,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
                      * No match found. Add a new record in the database.
                      */
                     final GridGeometryQuery query = (GridGeometryQuery) super.query;
-                    final LocalCache.Stmt ce = getStatement(QueryType.INSERT);
+                    final LocalCache.Stmt ce = getStatement(lc, QueryType.INSERT);
                     final PreparedStatement statement = ce.statement;
                     statement.setInt   (indexOf(query.width),          size.width );
                     statement.setInt   (indexOf(query.height),         size.height);
@@ -400,11 +404,11 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
                         id = keys.getInt(query.identifier.name);
                     }
                     keys.close();
-                    release(ce);
+                    release(lc, ce);
                 }
                 return id;
             } finally {
-                transactionEnd(success);
+                transactionEnd(lc, success);
             }
         }
     }

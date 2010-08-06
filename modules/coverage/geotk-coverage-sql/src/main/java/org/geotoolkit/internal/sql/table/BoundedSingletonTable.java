@@ -47,7 +47,7 @@ import org.geotoolkit.coverage.sql.CoverageEnvelope;
  * @param <E> The kind of entries to be created by this table.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.15
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -148,41 +148,44 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
         final QueryType type = QueryType.BOUNDING_BOX;
         final int timeColumn = (byTimeRange     != null) ? byTimeRange    .column.indexOf(type) : 0;
         final int bboxColumn = (bySpatialExtent != null) ? bySpatialExtent.column.indexOf(type) : 0;
-        if (timeColumn != 0 || bboxColumn != 0) synchronized (getLock()) {
-            final LocalCache.Stmt ce = getStatement(type);
-            final PreparedStatement statement = ce.statement;
-            final ResultSet results = statement.executeQuery();
-            while (results.next()) { // Should contains only one record.
-                if (timeColumn != 0) {
-                    final Calendar calendar = getCalendar();
-                    final Date tMin = results.getTimestamp(timeColumn,   calendar);
-                    final Date tMax = results.getTimestamp(timeColumn+1, calendar);
-                    // Computes the intersection with the time range that we found.
-                    Date t;
-                    final DateRange range = envelope.getTimeRange();
-                    if ((t = range.getMinValue()) != null && t.after (tMin)) tMin.setTime(t.getTime());
-                    if ((t = range.getMaxValue()) != null && t.before(tMax)) tMax.setTime(t.getTime());
-                    envelope.setTimeRange(tMin, tMax);
-                }
-                if (bboxColumn != 0) {
-                    final String bbox = results.getString(bboxColumn);
-                    if (bbox == null) {
-                        continue;
+        if (timeColumn != 0 || bboxColumn != 0) {
+            final LocalCache lc = getLock();
+            synchronized (lc) {
+                final LocalCache.Stmt ce = getStatement(lc, type);
+                final PreparedStatement statement = ce.statement;
+                final ResultSet results = statement.executeQuery();
+                while (results.next()) { // Should contains only one record.
+                    if (timeColumn != 0) {
+                        final Calendar calendar = getCalendar(lc);
+                        final Date tMin = results.getTimestamp(timeColumn,   calendar);
+                        final Date tMax = results.getTimestamp(timeColumn+1, calendar);
+                        // Computes the intersection with the time range that we found.
+                        Date t;
+                        final DateRange range = envelope.getTimeRange();
+                        if ((t = range.getMinValue()) != null && t.after (tMin)) tMin.setTime(t.getTime());
+                        if ((t = range.getMaxValue()) != null && t.before(tMax)) tMax.setTime(t.getTime());
+                        envelope.setTimeRange(tMin, tMax);
                     }
-                    final GeneralEnvelope ge;
-                    try {
-                        ge = new GeneralEnvelope(bbox);
-                    } catch (RuntimeException e) {
-                        throw new IllegalRecordException(e, this, results, bboxColumn, null);
+                    if (bboxColumn != 0) {
+                        final String bbox = results.getString(bboxColumn);
+                        if (bbox == null) {
+                            continue;
+                        }
+                        final GeneralEnvelope ge;
+                        try {
+                            ge = new GeneralEnvelope(bbox);
+                        } catch (RuntimeException e) {
+                            throw new IllegalRecordException(e, this, results, bboxColumn, null);
+                        }
+                        final XRectangle2D region = (XRectangle2D) ge.toRectangle2D();
+                        region.intersect(envelope.getHorizontalRange());
+                        envelope.setHorizontalRange(region);
                     }
-                    final XRectangle2D region = (XRectangle2D) ge.toRectangle2D();
-                    region.intersect(envelope.getHorizontalRange());
-                    envelope.setHorizontalRange(region);
                 }
+                results.close();
+                release(lc, ce);
+                fireStateChanged("Envelope");
             }
-            results.close();
-            release(ce);
-            fireStateChanged("Envelope");
         }
         trimmed = true;
     }
@@ -192,13 +195,16 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
      * {@linkplain #fireStateChanged changed its state}. The default implementation
      * set the parameter values to the spatio-temporal bounding box.
      *
+     * @param  lc The {@link #getLock()} value.
      * @param  type The query type (mat be {@code null}).
      * @param  statement The statement to configure (never {@code null}).
      * @throws SQLException if a SQL error occurred while configuring the statement.
      */
     @Override
-    protected void configure(final QueryType type, final PreparedStatement statement) throws SQLException {
-        super.configure(type, statement);
+    protected void configure(final LocalCache lc, final QueryType type, final PreparedStatement statement)
+            throws SQLException
+    {
+        super.configure(lc, type, statement);
         if (byTimeRange != null) {
             final int index = byTimeRange.indexOf(type);
             if (index != 0) {
@@ -217,7 +223,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
                 if (tMax == null) {
                     tMax = new Date();
                 }
-                final Calendar calendar = getCalendar();
+                final Calendar calendar = getCalendar(lc);
                 statement.setTimestamp(index,   new Timestamp(tMax.getTime()), calendar);
                 statement.setTimestamp(index+1, new Timestamp(tMin.getTime()), calendar);
             }

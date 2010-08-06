@@ -29,6 +29,7 @@ import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.display.shape.DoubleDimension2D;
 
 import org.geotoolkit.internal.sql.table.Database;
+import org.geotoolkit.internal.sql.table.LocalCache;
 import org.geotoolkit.internal.sql.table.SingletonTable;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 
@@ -37,7 +38,7 @@ import org.geotoolkit.internal.sql.table.SpatialDatabase;
  * Connection to a table of domain of layers. For internal use by {@link LayerTable} only.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.15
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -82,15 +83,18 @@ final class DomainOfLayerTable extends SingletonTable<DomainOfLayerEntry> {
     /**
      * Creates a layer from the current row in the specified result set.
      *
+     * @param  lc The {@link #getLock()} value.
      * @param  results The result set to read.
      * @param  identifier The name of the layer for the entry being read.
      * @return The entry for current row in the specified result set.
      * @throws SQLException if an error occurred while reading the database.
      */
     @Override
-    protected DomainOfLayerEntry createEntry(final ResultSet results, final Comparable<?> identifier) throws SQLException {
+    protected DomainOfLayerEntry createEntry(final LocalCache lc, final ResultSet results, final Comparable<?> identifier)
+            throws SQLException
+    {
         final DomainOfLayerQuery query = (DomainOfLayerQuery) super.query;
-        final Calendar calendar = getCalendar();
+        final Calendar calendar = getCalendar(lc);
         Date   startTime   = results.getTimestamp(indexOf(query.startTime), calendar);
         Date   endTime     = results.getTimestamp(indexOf(query.endTime), calendar);
         double west        = results.getDouble(indexOf(query.west));  if (results.wasNull()) west  = Longitude.MIN_VALUE;

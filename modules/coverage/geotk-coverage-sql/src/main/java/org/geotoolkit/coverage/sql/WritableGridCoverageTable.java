@@ -62,7 +62,7 @@ import org.geotoolkit.internal.io.IOUtilities;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Antoine Hnawia (IRD)
- * @version 3.12
+ * @version 3.15
  *
  * @since 3.12 (derived from Seagis)
  * @module
@@ -184,14 +184,15 @@ final class WritableGridCoverageTable extends GridCoverageTable {
             final NewGridCoverageIterator iterator = new NewGridCoverageIterator(listeners,
                     controller, (SpatialDatabase) getDatabase(), null, imageIndex, it, next);
             final SeriesEntry oldSeries = specificSeries;
-            synchronized (getLock()) {
-                transactionBegin();
+            final LocalCache lc = getLock();
+            synchronized (lc) {
+                transactionBegin(lc);
                 try {
-                    count = addEntries(iterator);
+                    count = addEntries(lc, iterator);
                     success = true; // Must be the very last line in the try block.
                 } finally {
                     specificSeries = oldSeries;
-                    transactionEnd(success);
+                    transactionEnd(lc, success);
                 }
             }
         }
@@ -200,17 +201,17 @@ final class WritableGridCoverageTable extends GridCoverageTable {
 
     /**
      * Adds entries without the protection provided by the database rollback mechanism.
-     * The synchronisation, commit or rollback must be performed by the caller.
+     * The synchronization, commit or rollback must be performed by the caller.
      *
      * @return The number of images inserted.
      */
-    private int addEntries(final NewGridCoverageIterator entries)
+    private int addEntries(final LocalCache lc, final NewGridCoverageIterator entries)
             throws SQLException, IOException, FactoryException, DatabaseVetoException
     {
         int count = 0;
         final GridCoverageQuery query     = (GridCoverageQuery) this.query;
-        final Calendar          calendar  = getCalendar();
-        final LocalCache.Stmt   ce        = getStatement(QueryType.INSERT);
+        final Calendar          calendar  = getCalendar(lc);
+        final LocalCache.Stmt   ce        = getStatement(lc, QueryType.INSERT);
         final PreparedStatement statement = ce.statement;
         final GridGeometryTable gridTable = getDatabase().getTable(GridGeometryTable.class);
         final int bySeries    = indexOf(query.series);
@@ -408,49 +409,52 @@ final class WritableGridCoverageTable extends GridCoverageTable {
         int count = 0;
         boolean success = false;
         final SeriesEntry oldSeries = specificSeries;
-        transactionBegin();
-        try {
-            if (UpdatePolicy.CLEAR_BEFORE_UPDATE.equals(policy)) {
-                deleteAll();
-            } else for (final Iterator<Map.Entry<Object,SeriesEntry>> it=inputs.entrySet().iterator(); it.hasNext();) {
-                final Map.Entry<Object,SeriesEntry> entry = it.next();
-                final Object input = IOUtilities.tryToFile(entry.getKey());
-                if (input instanceof File) {
-                    String filename = ((File) input).getName();
-                    final int split = filename.lastIndexOf('.');
-                    if (split >= 0) {
-                        filename = filename.substring(0, split);
-                    }
-                    specificSeries = entry.getValue();
-                    if (replaceExisting) {
-                        delete(filename);
-                    } else if (exists(filename)) {
-                        it.remove();
+        final LocalCache lc = getLock();
+        synchronized (lc) {
+            transactionBegin(lc);
+            try {
+                if (UpdatePolicy.CLEAR_BEFORE_UPDATE.equals(policy)) {
+                    deleteAll();
+                } else for (final Iterator<Map.Entry<Object,SeriesEntry>> it=inputs.entrySet().iterator(); it.hasNext();) {
+                    final Map.Entry<Object,SeriesEntry> entry = it.next();
+                    final Object input = IOUtilities.tryToFile(entry.getKey());
+                    if (input instanceof File) {
+                        String filename = ((File) input).getName();
+                        final int split = filename.lastIndexOf('.');
+                        if (split >= 0) {
+                            filename = filename.substring(0, split);
+                        }
+                        specificSeries = entry.getValue();
+                        if (replaceExisting) {
+                            delete(filename);
+                        } else if (exists(filename)) {
+                            it.remove();
+                        }
                     }
                 }
+                /*
+                 * Now process to the insertions in the database.
+                 *
+                 * TODO: We need to decide what to do with new series (i.e. when specificSeries == null).
+                 *       In current state of affairs, we will get a NullPointerException.
+                 */
+                Iterator<Map.Entry<Object,SeriesEntry>> it;
+                while ((it = inputs.entrySet().iterator()).hasNext()) {
+                    final Map.Entry<Object,SeriesEntry> entry = it.next();
+                    specificSeries = entry.getValue();
+                    final Object next = entry.getKey();
+                    it.remove();
+                    final int imageIndex = 0; // TODO: Do we have a better value to provide?
+                    final NewGridCoverageIterator iterator = new NewGridCoverageIterator(
+                            listeners, controller, (SpatialDatabase) getDatabase(),
+                            specificSeries, imageIndex, it, next);
+                    count += addEntries(lc, iterator);
+                }
+                success = true; // Must be the very last line in the try block.
+            } finally {
+                specificSeries = oldSeries;
+                transactionEnd(lc, success);
             }
-            /*
-             * Now process to the insertions in the database.
-             *
-             * TODO: We need to decide what to do with new series (i.e. when specificSeries == null).
-             *       In current state of affairs, we will get a NullPointerException.
-             */
-            Iterator<Map.Entry<Object,SeriesEntry>> it;
-            while ((it = inputs.entrySet().iterator()).hasNext()) {
-                final Map.Entry<Object,SeriesEntry> entry = it.next();
-                specificSeries = entry.getValue();
-                final Object next = entry.getKey();
-                it.remove();
-                final int imageIndex = 0; // TODO: Do we have a better value to provide?
-                final NewGridCoverageIterator iterator = new NewGridCoverageIterator(
-                        listeners, controller, (SpatialDatabase) getDatabase(),
-                        specificSeries, imageIndex, it, next);
-                count += addEntries(iterator);
-            }
-            success = true; // Must be the very last line in the try block.
-        } finally {
-            specificSeries = oldSeries;
-            transactionEnd(success);
         }
         return count;
     }

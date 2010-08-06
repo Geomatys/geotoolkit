@@ -55,7 +55,7 @@ import org.geotoolkit.resources.Errors;
  * Connection to a table of {@linkplain Tiles tiles}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.15
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -128,14 +128,15 @@ final class TileTable extends Table implements Comparator<TileManager> {
     public boolean exists(final LayerEntry layer) throws SQLException {
         final TileQuery query = (TileQuery) this.query;
         final boolean exists;
-        synchronized (getLock()) {
-            final LocalCache.Stmt ce = getStatement(QueryType.EXISTS);
+        final LocalCache lc = getLock();
+        synchronized (lc) {
+            final LocalCache.Stmt ce = getStatement(lc, QueryType.EXISTS);
             final PreparedStatement statement = ce.statement;
             statement.setString(indexOf(query.byLayer), layer.getName());
             final ResultSet results = statement.executeQuery();
             exists = results.next();
             results.close();
-            release(ce);
+            release(lc, ce);
         }
         return exists;
     }
@@ -164,10 +165,11 @@ final class TileTable extends Table implements Comparator<TileManager> {
                 managers = handler.peek();
                 if (managers == null) {
                     final TileQuery query   = (TileQuery) this.query;
-                    final Calendar calendar = getCalendar();
                     final List<Tile> tiles  = new ArrayList<Tile>();
-                    synchronized (getLock()) {
-                        final LocalCache.Stmt ce = getStatement(QueryType.LIST);
+                    final LocalCache lc = getLock();
+                    synchronized (lc) {
+                        final Calendar calendar = getCalendar(lc);
+                        final LocalCache.Stmt ce = getStatement(lc, QueryType.LIST);
                         final PreparedStatement statement = ce.statement;
                         statement.setString   (indexOf(query.byLayer), layer.getName());
                         statement.setTimestamp(indexOf(query.byStartTime), startTime, calendar);
@@ -229,7 +231,7 @@ final class TileTable extends Table implements Comparator<TileManager> {
                             tiles.add(tile);
                         }
                         results.close();
-                        release(ce);
+                        release(lc, ce);
                     }
                     /*
                      * Get the array of TileManager. The array should contains only one element.

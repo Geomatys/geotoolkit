@@ -47,7 +47,7 @@ import org.geotoolkit.resources.Errors;
  * @param <E> The kind of entries to be created by this table.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.11
+ * @version 3.15
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -230,14 +230,15 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * Creates an {@link Element} object for the current {@linkplain ResultSet result set} row.
      * This method is invoked automatically by {@link #getEntry(String)} and {@link #getEntries()}.
      *
-     * @param  results  The result set to use for fetching data. Only the current row should be
-     *                  used, i.e. {@link ResultSet#next} should <strong>not</strong> be invoked.
+     * @param  lc The {@link #getLock()} value.
+     * @param  results The result set to use for fetching data. Only the current row should
+     *         be used, i.e. {@link ResultSet#next} should <strong>not</strong> be invoked.
      * @param  identifier The identifier of the entry being created.
      * @return The element for the current row in the specified {@code results}.
      * @throws CatalogException if a logical error has been detected in the database content.
      * @throws SQLException if an error occurred will reading from the database.
      */
-    protected abstract E createEntry(final ResultSet results, final Comparable<?> identifier)
+    protected abstract E createEntry(final LocalCache lc, final ResultSet results, final Comparable<?> identifier)
             throws CatalogException, SQLException;
 
     /**
@@ -246,15 +247,15 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      *
      * @throws CatalogException If an error occurred during {@link #createEntry(ResultSet)}.
      * @throws SQLException If an error occurred during {@link CatalogException#setMetadata}.
-     *         Note that this is not an error occuring during normal execution, but rather
-     *         an error occuring while querying database metadata for building the exception.
+     *         Note that this is not an error occurring during normal execution, but rather
+     *         an error occurring while querying database metadata for building the exception.
      */
-    private E createEntryCatchSQL(final ResultSet results, final Comparable<?> identifier)
+    private E createEntryCatchSQL(final LocalCache lc, final ResultSet results, final Comparable<?> identifier)
             throws CatalogException, SQLException
     {
         CatalogException exception;
         try {
-            return createEntry(results, identifier);
+            return createEntry(lc, results, identifier);
         } catch (CatalogException cause) {
             if (cause.isMetadataInitialized()) {
                 throw cause;
@@ -285,26 +286,29 @@ public abstract class SingletonTable<E extends Entry> extends Table {
             final Cache.Handler<E> handler = cache.lock(identifier);
             try {
                 entry = handler.peek();
-                if (entry == null) synchronized (getLock()) {
-                    final LocalCache.Stmt ce = getStatement(QueryType.SELECT);
-                    final PreparedStatement statement = ce.statement;
-                    setPrimaryKeyParameter(statement, identifier);
-                    final ResultSet results = statement.executeQuery();
-                    while (results.next()) {
-                        final E candidate = createEntryCatchSQL(results, identifier);
-                        if (entry == null) {
-                            entry = candidate;
-                        } else if (!entry.equals(candidate)) {
-                            // The ResultSet will be closed by the constructor below.
-                            throw new DuplicatedRecordException(this, results, getPrimaryKeyColumn(), identifier);
+                if (entry == null) {
+                    final LocalCache lc = getLock();
+                    synchronized (lc) {
+                        final LocalCache.Stmt ce = getStatement(lc, QueryType.SELECT);
+                        final PreparedStatement statement = ce.statement;
+                        setPrimaryKeyParameter(statement, identifier);
+                        final ResultSet results = statement.executeQuery();
+                        while (results.next()) {
+                            final E candidate = createEntryCatchSQL(lc, results, identifier);
+                            if (entry == null) {
+                                entry = candidate;
+                            } else if (!entry.equals(candidate)) {
+                                // The ResultSet will be closed by the constructor below.
+                                throw new DuplicatedRecordException(this, results, getPrimaryKeyColumn(), identifier);
+                            }
                         }
+                        if (entry == null) {
+                            // The ResultSet will be closed by the constructor below.
+                            throw new NoSuchRecordException(this, results, getPrimaryKeyColumn(), identifier);
+                        }
+                        results.close();
+                        release(lc, ce);
                     }
-                    if (entry == null) {
-                        // The ResultSet will be closed by the constructor below.
-                        throw new NoSuchRecordException(this, results, getPrimaryKeyColumn(), identifier);
-                    }
-                    results.close();
-                    release(ce);
                 }
             } finally {
                 handler.putAndUnlock(entry);
@@ -321,8 +325,9 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      */
     public Set<E> getEntries() throws SQLException {
         final Set<E> entries = new LinkedHashSet<E>();
-        synchronized (getLock()) {
-            final LocalCache.Stmt ce = getStatement(QueryType.LIST);
+        final LocalCache lc = getLock();
+        synchronized (lc) {
+            final LocalCache.Stmt ce = getStatement(lc, QueryType.LIST);
             final int[] pkIndices = getPrimaryKeyColumns();
             final int pkIndex = getPrimaryKeyColumn(pkIndices);
             final ResultSet results = ce.statement.executeQuery();
@@ -345,7 +350,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
                     try {
                         entry = handler.peek();
                         if (entry == null) {
-                            entry = createEntryCatchSQL(results, identifier);
+                            entry = createEntryCatchSQL(lc, results, identifier);
                         }
                     } finally {
                         handler.putAndUnlock(entry);
@@ -357,7 +362,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
                 }
             }
             results.close();
-            release(ce);
+            release(lc, ce);
         }
         return entries;
     }
@@ -371,15 +376,16 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      */
     public Set<String> getIdentifiers() throws SQLException {
         final Set<String> identifiers = new LinkedHashSet<String>();
-        synchronized (getLock()) {
-            final LocalCache.Stmt ce = getStatement(QueryType.LIST_ID);
+        final LocalCache lc = getLock();
+        synchronized (lc) {
+            final LocalCache.Stmt ce = getStatement(lc, QueryType.LIST_ID);
             final ResultSet results = ce.statement.executeQuery();
             final int index = getPrimaryKeyColumn();
             while (results.next()) {
                 identifiers.add(results.getString(index));
             }
             results.close();
-            release(ce);
+            release(lc, ce);
         }
         return identifiers;
     }
@@ -400,14 +406,15 @@ public abstract class SingletonTable<E extends Entry> extends Table {
             return true;
         }
         final boolean hasNext;
-        synchronized (getLock()) {
-            final LocalCache.Stmt ce = getStatement(QueryType.EXISTS);
+        final LocalCache lc = getLock();
+        synchronized (lc) {
+            final LocalCache.Stmt ce = getStatement(lc, QueryType.EXISTS);
             final PreparedStatement statement = ce.statement;
             setPrimaryKeyParameter(statement, identifier);
             final ResultSet results = statement.executeQuery();
             hasNext = results.next();
             results.close();
-            release(ce);
+            release(lc, ce);
         }
         return hasNext;
     }
@@ -425,17 +432,18 @@ public abstract class SingletonTable<E extends Entry> extends Table {
         }
         final int count;
         boolean success = false;
-        synchronized (getLock()) {
-            transactionBegin();
+        final LocalCache lc = getLock();
+        synchronized (lc) {
+            transactionBegin(lc);
             try {
-                final LocalCache.Stmt ce = getStatement(QueryType.DELETE);
+                final LocalCache.Stmt ce = getStatement(lc, QueryType.DELETE);
                 final PreparedStatement statement = ce.statement;
                 setPrimaryKeyParameter(statement, identifier);
                 count = update(statement);
-                release(ce);
+                release(lc, ce);
                 success = true;
             } finally {
-                transactionEnd(success);
+                transactionEnd(lc, success);
             }
         }
         // Update the cache only on successfuly deletion.
@@ -446,7 +454,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
     /**
      * Deletes many elements. "Many" depends on the configuration set by {@link #configure}.
      * It may be the whole table. Note that this action may be blocked if the user doesn't
-     * have the required database authorisations, or if some records are still referenced in
+     * have the required database authorizations, or if some records are still referenced in
      * foreigner tables.
      *
      * @return The number of elements deleted.
@@ -455,15 +463,16 @@ public abstract class SingletonTable<E extends Entry> extends Table {
     public int deleteAll() throws SQLException {
         final int count;
         boolean success = false;
-        synchronized (getLock()) {
-            transactionBegin();
+        final LocalCache lc = getLock();
+        synchronized (lc) {
+            transactionBegin(lc);
             try {
-                final LocalCache.Stmt ce = getStatement(QueryType.DELETE_ALL);
+                final LocalCache.Stmt ce = getStatement(lc, QueryType.DELETE_ALL);
                 count = update(ce.statement);
-                release(ce);
+                release(lc, ce);
                 success = true;
             } finally {
-                transactionEnd(success);
+                transactionEnd(lc, success);
             }
         }
         // Update the cache only on successfuly deletion.
@@ -514,18 +523,19 @@ public abstract class SingletonTable<E extends Entry> extends Table {
      * This method is suitable for {@link String} identifiers. Numerical identifiers shall
      * use an auto-increment field instead.
      *
+     * @param  lc The value returned by {@link #getLock()}.
      * @param  base The base for the identifier.
      * @return A unused identifier.
      * @throws SQLException if an error occurred while reading the database.
      *
      * @since 3.11
      */
-    public String searchFreeIdentifier(final String base) throws SQLException {
+    protected final String searchFreeIdentifier(final LocalCache lc, final String base) throws SQLException {
         if (generator == null) {
             if (pkParam.length == 0) {
                 throw new UnsupportedOperationException();
             }
-            generator = getDatabase().getIdentifierGenerator(pkParam[0].column.name);
+            generator = getDatabase().getIdentifierGenerator(lc, pkParam[0].column.name);
         }
         return generator.identifier(query.schema, query.table, base);
     }

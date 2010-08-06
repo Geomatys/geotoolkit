@@ -59,7 +59,7 @@ import org.geotoolkit.internal.sql.table.SpatialDatabase;
  * required for creating a {@link org.geotoolkit.coverage.grid.GridCoverage2D}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -130,8 +130,9 @@ final class CategoryTable extends Table {
         MathTransformFactory mtFactory = null;  // Will be fetched only if needed.
         MathTransform      exponential = null;  // Will be fetched only if needed.
         int bandOfPreviousCategory = 0;
-        synchronized (getLock()) {
-            final LocalCache.Stmt ce = getStatement(QueryType.LIST);
+        final LocalCache lc = getLock();
+        synchronized (lc) {
+            final LocalCache.Stmt ce = getStatement(lc, QueryType.LIST);
             final PreparedStatement statement = ce.statement;
             statement.setString(indexOf(query.byFormat), format);
             final int bandIndex     = indexOf(query.band    );
@@ -263,7 +264,7 @@ final class CategoryTable extends Table {
                 categories.add(category);
             }
             results.close();
-            release(ce);
+            release(lc, ce);
         }
         if (!categories.isEmpty()) {
             store(dimensions, bandOfPreviousCategory, categories);
@@ -294,11 +295,12 @@ final class CategoryTable extends Table {
     public void addCategories(final String format, final List<List<Category>> categories) throws SQLException {
         final CategoryQuery query = (CategoryQuery) this.query;
         final Locale locale = getLocale();
-        synchronized (getLock()) {
+        final LocalCache lc = getLock();
+        synchronized (lc) {
             boolean success = false;
-            transactionBegin();
+            transactionBegin(lc);
             try {
-                final LocalCache.Stmt ce = getStatement(QueryType.INSERT);
+                final LocalCache.Stmt ce = getStatement(lc, QueryType.INSERT);
                 final PreparedStatement statement = ce.statement;
                 statement.setString(indexOf(query.format), format);
                 final int bandIndex     = indexOf(query.band    );
@@ -346,10 +348,10 @@ final class CategoryTable extends Table {
                         }
                     }
                 }
-                release(ce);
+                release(lc, ce);
                 success = true;
             } finally {
-                transactionEnd(success);
+                transactionEnd(lc, success);
             }
         }
     }

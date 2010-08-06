@@ -33,7 +33,7 @@ import static org.geotoolkit.internal.sql.table.QueryType.*;
  * Tests {@code Query}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.09
+ * @version 3.15
  *
  * @since 3.09 (derived from Seagis)
  */
@@ -53,8 +53,9 @@ public final class QueryTest extends CatalogTestBase {
         final Column plugin     = query.addOptionalColumn ("plugin",   null, uses);
         final Column packMode   = query.addOptionalColumn ("packMode", null, uses);
 
-        synchronized (database.getLocalCache()) {
-            final String SQL        = query.select(SELECT);
+        final LocalCache lc = getDatabase().getLocalCache();
+        synchronized (lc) {
+            final String SQL = query.select(lc, SELECT);
             /*
              * Tests the dynamic creation of SQL statements. We try two use cases: one SELECT for
              * creating a new entry, and an other for checking only if at least one entry exists.
@@ -64,7 +65,7 @@ public final class QueryTest extends CatalogTestBase {
             assertEquals(3, packMode.indexOf(SELECT));
             assertEquals(Arrays.asList(name, plugin, packMode), query.getColumns(SELECT));
             assertEquals("SELECT \"name\", \"plugin\", \"packMode\" FROM \"coverages\".\"Formats\"", SQL);
-            assertEquals("SELECT \"name\" FROM \"coverages\".\"Formats\"", query.select(EXISTS));
+            assertEquals("SELECT \"name\" FROM \"coverages\".\"Formats\"", query.select(lc, EXISTS));
             trySelectStatement(SQL);
             /*
              * Tests the iterator over the columns that we declared at the beginning of this method.
@@ -91,7 +92,7 @@ public final class QueryTest extends CatalogTestBase {
              * that this column does not exist and replace it by the default value.
              */
             final Column dummy = query.addOptionalColumn("dummy", 10, uses);
-            final String SQL2 = query.select(SELECT);
+            final String SQL2 = query.select(lc, SELECT);
             assertEquals("SELECT \"name\", \"plugin\", \"packMode\", 10 AS \"dummy\" FROM \"coverages\".\"Formats\"", SQL2);
             assertEquals(4, dummy.indexOf(SELECT));
             trySelectStatement(SQL);
@@ -118,8 +119,9 @@ public final class QueryTest extends CatalogTestBase {
         final Column height     = query.addForeignerColumn("height", "GridGeometries", uses);
         final Column format     = query.addForeignerColumn("format", "Series",         uses);
 
-        synchronized (database.getLocalCache()) {
-            final String SQL = query.select(SELECT);
+        final LocalCache lc = getDatabase().getLocalCache();
+        synchronized (lc) {
+            final String SQL = query.select(lc, SELECT);
             assertEquals(1, layer    .indexOf(SELECT));
             assertEquals(2, pathname .indexOf(SELECT));
             assertEquals(3, filename .indexOf(SELECT));
@@ -168,20 +170,21 @@ public final class QueryTest extends CatalogTestBase {
         assertEquals(Arrays.asList(format, band, colors), query.getColumns(SELECT));
         assertEquals(Arrays.asList(format),               query.getColumns(EXISTS));
 
-        synchronized (database.getLocalCache()) {
-            String actual = query.select(LIST);
+        final LocalCache lc = getDatabase().getLocalCache();
+        synchronized (lc) {
+            String actual = query.select(lc, LIST);
             String expectedAll = "SELECT \"format\", \"band\", \"colors\" FROM \"coverages\".\"Categories\"";
             assertEquals(expectedAll, actual);
             trySelectStatement(actual);
 
-            actual = query.select(LIST);
+            actual = query.select(lc, LIST);
             assertEquals(expectedAll, actual);
 
-            actual = query.select(SELECT);
+            actual = query.select(lc, SELECT);
             String expected = expectedAll + " WHERE (\"format\" = ?) AND (\"band\" IS NULL OR \"band\" >= ?)";
             assertEquals(expected, actual);
 
-            actual = query.select(EXISTS);
+            actual = query.select(lc, EXISTS);
             expected = "SELECT \"format\" FROM \"coverages\".\"Categories\" WHERE (\"format\" = ?)";
             assertEquals(expected, actual);
         }

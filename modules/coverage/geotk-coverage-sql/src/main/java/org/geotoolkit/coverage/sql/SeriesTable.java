@@ -46,7 +46,7 @@ import org.geotoolkit.internal.sql.table.DuplicatedRecordException;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.10
+ * @version 3.15
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -134,8 +134,10 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
      * for the {@linkplain #getLayer currently selected layer}.
      */
     @Override
-    protected void configure(final QueryType type, final PreparedStatement statement) throws SQLException {
-        super.configure(type, statement);
+    protected void configure(final LocalCache lc, final QueryType type, final PreparedStatement statement)
+            throws SQLException
+    {
+        super.configure(lc, type, statement);
         final SeriesQuery query = (SeriesQuery) super.query;
         final int index = query.byLayer.indexOf(type);
         if (index != 0) {
@@ -150,13 +152,16 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
     /**
      * Creates a series from the current row in the specified result set.
      *
+     * @param  lc The {@link #getLock()} value.
      * @param  results The result set to read.
      * @param  identifier The identifier of the series to create.
      * @return The entry for current row in the specified result set.
      * @throws SQLException if an error occurred while reading the database.
      */
     @Override
-    protected SeriesEntry createEntry(final ResultSet results, final Comparable<?> identifier) throws SQLException {
+    protected SeriesEntry createEntry(final LocalCache lc, final ResultSet results, final Comparable<?> identifier)
+            throws SQLException
+    {
         final SeriesQuery query     = (SeriesQuery) super.query;
         final String  formatID      = results.getString(indexOf(query.format));
         final String  pathname      = results.getString(indexOf(query.pathname));
@@ -201,8 +206,9 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
         ensureNonNull("format",    format);
         Integer id = null;
         final SeriesQuery query = (SeriesQuery) super.query;
-        synchronized (getLock()) {
-            final LocalCache.Stmt ce = getStatement(QueryType.LIST);
+        final LocalCache lc = getLock();
+        synchronized (lc) {
+            final LocalCache.Stmt ce = getStatement(lc, QueryType.LIST);
             final PreparedStatement statement = ce.statement;
             final int idIndex = indexOf(query.identifier);
             final int pnIndex = indexOf(query.pathname);
@@ -231,7 +237,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
                 id = nextID;
             }
             results.close();
-            release(ce);
+            release(lc, ce);
         }
         return id;
     }
@@ -249,9 +255,10 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
      * @throws SQLException if an error occurred while reading from or writing to the database.
      */
     int findOrCreate(final String path, final String extension, final String format) throws SQLException {
-        synchronized (getLock()) {
+        final LocalCache lc = getLock();
+        synchronized (lc) {
             boolean success = false;
-            transactionBegin();
+            transactionBegin(lc);
             try {
                 Integer id = find(path, extension, format);
                 if (id == null) {
@@ -259,7 +266,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
                      * No match found. Adds a new record in the database.
                      */
                     final SeriesQuery query = (SeriesQuery) super.query;
-                    final LocalCache.Stmt ce = getStatement(QueryType.INSERT);
+                    final LocalCache.Stmt ce = getStatement(lc, QueryType.INSERT);
                     final PreparedStatement statement = ce.statement;
                     statement.setString(indexOf(query.layer),     getLayer());
                     statement.setString(indexOf(query.pathname),  trimRoot(path));
@@ -274,11 +281,11 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
                         id = keys.getInt(query.identifier.name);
                     }
                     keys.close();
-                    release(ce);
+                    release(lc, ce);
                 }
                 return id;
             } finally {
-                transactionEnd(success);
+                transactionEnd(lc, success);
             }
         }
     }

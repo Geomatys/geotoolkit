@@ -48,7 +48,7 @@ import org.geotoolkit.internal.sql.table.IllegalRecordException;
  * entries using one of the formats listed to {@link #setImageFormats(String[]).
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.13
+ * @version 3.15
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -127,13 +127,16 @@ final class FormatTable extends SingletonTable<FormatEntry> {
     /**
      * Creates a format from the current row in the specified result set.
      *
+     * @param  lc The {@link #getLock()} value.
      * @param  results The result set to read.
      * @param  identifier The identifier of the format to create.
      * @return The entry for current row in the specified result set.
      * @throws SQLException if an error occurred while reading the database.
      */
     @Override
-    protected FormatEntry createEntry(final ResultSet results, final Comparable<?> identifier) throws SQLException {
+    protected FormatEntry createEntry(final LocalCache lc, final ResultSet results, final Comparable<?> identifier)
+            throws SQLException
+    {
         final FormatQuery query = (FormatQuery) super.query;
         final int encodingIndex = indexOf(query.packMode);
         final String format   = results.getString(indexOf(query.plugin));
@@ -171,8 +174,10 @@ final class FormatTable extends SingletonTable<FormatEntry> {
      * for formats using the same image plugin.
      */
     @Override
-    protected void configure(final QueryType type, final PreparedStatement statement) throws SQLException {
-        super.configure(type, statement);
+    protected void configure(final LocalCache lc, final QueryType type, final PreparedStatement statement)
+            throws SQLException
+    {
+        super.configure(lc, type, statement);
         switch (type) {
             case LIST: {
                 if (imageFormats == null) {
@@ -324,9 +329,10 @@ check:  for (final GridSampleDimension band : bands) {
          * insertion, we will check for existing entries inside the write lock.
          */
         final FormatQuery query = (FormatQuery) super.query;
-        synchronized (getLock()) {
+        final LocalCache lc = getLock();
+        synchronized (lc) {
             boolean success = false;
-            transactionBegin();
+            transactionBegin(lc);
             try {
                 /*
                  * Checks for existing entries.
@@ -336,20 +342,20 @@ check:  for (final GridSampleDimension band : bands) {
                     if (candidate != null && type.equals(candidate.viewType)) {
                         return candidate.getIdentifier();
                     }
-                    name = searchFreeIdentifier(imageFormat);
+                    name = searchFreeIdentifier(lc, imageFormat);
                 } else if (exists(name)) {
                     return name;
                 }
                 /*
                  * No existing entry fit. Adds the new entry.
                  */
-                final LocalCache.Stmt ce = getStatement(QueryType.INSERT);
+                final LocalCache.Stmt ce = getStatement(lc, QueryType.INSERT);
                 final PreparedStatement statement = ce.statement;
                 statement.setString(indexOf(query.name),     name);
                 statement.setString(indexOf(query.plugin),   imageFormat);
                 statement.setString(indexOf(query.packMode), type.name().toLowerCase(Locale.ENGLISH));
                 final boolean inserted = updateSingleton(statement);
-                release(ce);
+                release(lc, ce);
                 if (inserted) {
                     if (!bands.isEmpty()) {
                         getSampleDimensionTable().addSampleDimensions(name, bands);
@@ -357,9 +363,23 @@ check:  for (final GridSampleDimension band : bands) {
                     success = true;
                 }
             } finally {
-                transactionEnd(success);
+                transactionEnd(lc, success);
             }
         }
         return name;
+    }
+
+    /**
+     * Searches for a format name not already in use. If the given string is not in use, then
+     * it is returned as-is. Otherwise this method appends a unused decimal number to the
+     * specified name.
+     *
+     * @since 3.15
+     */
+    public String searchFreeIdentifier(final String base) throws SQLException {
+        final LocalCache lc = getLock();
+        synchronized (lc) {
+            return searchFreeIdentifier(lc, base);
+        }
     }
 }

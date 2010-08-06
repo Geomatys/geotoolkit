@@ -31,7 +31,7 @@ import org.geotoolkit.internal.sql.table.SingletonTable;
  * Connection to a table of {@linkplain Layer layers}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.11
+ * @version 3.15
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -82,7 +82,9 @@ final class LayerTable extends SingletonTable<LayerEntry> {
      * @throws SQLException if an error occurred while reading the database.
      */
     @Override
-    protected LayerEntry createEntry(final ResultSet results, final Comparable<?> identifier) throws SQLException {
+    protected LayerEntry createEntry(final LocalCache lc, final ResultSet results, final Comparable<?> identifier)
+            throws SQLException
+    {
         final LayerQuery query = (LayerQuery) super.query;
         double period = results.getDouble(indexOf(query.period));
         if (results.wasNull()) {
@@ -106,17 +108,18 @@ final class LayerTable extends SingletonTable<LayerEntry> {
             return false;
         }
         final LayerQuery query = (LayerQuery) super.query;
-        synchronized (getLock()) {
+        final LocalCache lc = getLock();
+        synchronized (lc) {
             boolean success = false;
-            transactionBegin();
+            transactionBegin(lc);
             try {
-                final LocalCache.Stmt ce = getStatement(QueryType.INSERT);
+                final LocalCache.Stmt ce = getStatement(lc, QueryType.INSERT);
                 final PreparedStatement statement = ce.statement;
                 statement.setString(indexOf(query.name), name);
                 success = updateSingleton(statement);
-                release(ce);
+                release(lc, ce);
             } finally {
-                transactionEnd(success);
+                transactionEnd(lc, success);
             }
         }
         return true;
@@ -129,8 +132,10 @@ final class LayerTable extends SingletonTable<LayerEntry> {
      *
      * @since 3.11
      */
-    @Override
     public String searchFreeIdentifier(final String base) throws SQLException {
-        return super.searchFreeIdentifier(base);
+        final LocalCache lc = getLock();
+        synchronized (lc) {
+            return searchFreeIdentifier(lc, base);
+        }
     }
 }

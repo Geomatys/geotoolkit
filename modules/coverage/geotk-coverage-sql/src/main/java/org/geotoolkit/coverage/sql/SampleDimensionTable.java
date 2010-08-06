@@ -50,7 +50,7 @@ import org.geotoolkit.internal.sql.table.IllegalUpdateException;
  * components needed for creation of {@link GridCoverage2D}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.13
+ * @version 3.15
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -133,8 +133,9 @@ final class SampleDimensionTable extends Table {
         String[]  names = new String [8];
         Unit<?>[] units = new Unit<?>[8];
         int numSampleDimensions = 0;
-        synchronized (getLock()) {
-            final LocalCache.Stmt ce = getStatement(QueryType.LIST);
+        final LocalCache lc = getLock();
+        synchronized (lc) {
+            final LocalCache.Stmt ce = getStatement(lc, QueryType.LIST);
             final PreparedStatement statement = ce.statement;
             statement.setString(indexOf(query.byFormat), format);
             final int bandIndex = indexOf(query.band);
@@ -178,7 +179,7 @@ final class SampleDimensionTable extends Table {
                 }
             }
             results.close();
-            release(ce);
+            release(lc, ce);
         }
         /*
          * At this point, we have successfully read every SampleDimension rows.
@@ -214,11 +215,12 @@ final class SampleDimensionTable extends Table {
      */
     public void addSampleDimensions(final String format, final List<GridSampleDimension> bands) throws SQLException {
         final SampleDimensionQuery query = (SampleDimensionQuery) super.query;
-        synchronized (getLock()) {
+        final LocalCache lc = getLock();
+        synchronized (lc) {
             boolean success = false;
-            transactionBegin();
+            transactionBegin(lc);
             try {
-                final LocalCache.Stmt ce = getStatement(QueryType.INSERT);
+                final LocalCache.Stmt ce = getStatement(lc, QueryType.INSERT);
                 final PreparedStatement statement = ce.statement;
                 statement.setString(indexOf(query.format), format);
                 final int bandIndex = indexOf(query.band);
@@ -242,13 +244,13 @@ final class SampleDimensionTable extends Table {
                     }
                     categories.add(band.getCategories());
                 }
-                release(ce);
+                release(lc, ce);
                 if (!categories.isEmpty()) {
                     getCategoryTable().addCategories(format, categories);
                 }
                 success = true;
             } finally {
-                transactionEnd(success);
+                transactionEnd(lc, success);
             }
         }
     }

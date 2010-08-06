@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.internal.sql.table;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLDataException;
 import java.sql.PreparedStatement;
@@ -53,7 +52,7 @@ import org.geotoolkit.resources.Errors;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.11
+ * @version 3.15
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -153,34 +152,8 @@ public abstract class Table implements Localized {
      *
      * @return The lock to use in a {@code synchronized} statement.
      */
-    protected final Object getLock() {
+    protected final LocalCache getLock() {
         return getDatabase().getLocalCache();
-    }
-
-    /**
-     * Returns the connection used by this table in this thread. The caller should
-     * <strong>not</strong> close the returned connection, since it may be shared by
-     * other tables. The connection will be closed automatically by {@link Database}.
-     * <p>
-     * This method must be invoked in a synchronized block as below. Note that the lock
-     * will not prevent concurrent usage of this table. This is just a lock for preventing
-     * the JDBC resources to be reclaimed while they are still in use.
-     *
-     * {@preformat java
-     *     synchronized(getLock()) {
-     *         // Perform all JDBC work here.
-     *     }
-     * }
-     *
-     * @return The connection.
-     * @throws SQLException If an exception occurred while fetching the connection.
-     *
-     * @since 3.11
-     */
-    protected final Connection getConnection() throws SQLException {
-        final LocalCache lc = getDatabase().getLocalCache();
-        assert Thread.holdsLock(lc);
-        return lc.connection();
     }
 
     /**
@@ -217,13 +190,12 @@ public abstract class Table implements Localized {
      * @return The prepared statement.
      * @throws SQLException if a SQL error occurred while configuring the statement.
      */
-    private final LocalCache.Stmt getStatement(final String query) throws SQLException {
-        final LocalCache cache = getDatabase().getLocalCache();
+    private LocalCache.Stmt getStatement(final LocalCache cache, final String query) throws SQLException {
         assert Thread.holdsLock(cache);
         final LocalCache.Stmt ce = cache.prepareStatement(this, query);
         if (modificationCount != ce.stamp) {
             final QueryType type = this.type;
-            configure(type, ce.statement);
+            configure(cache, type, ce.statement);
             ce.stamp = modificationCount;
             final Level level = (type != null) ? type.getLoggingLevel() : Level.FINE;
             final Logger logger = getLogger();
@@ -252,25 +224,29 @@ public abstract class Table implements Localized {
      * the JDBC resources to be reclaimed while they are still in use.
      *
      * {@preformat java
-     *     synchronized(getLock()) {
+     *     LocalCache lc = getLock();
+     *     synchronized(lc) {
      *         // Perform all JDBC work here.
      *     }
      * }
      *
+     * @param  lc The value returned by {@link #getLock()}.
      * @param  type The query type.
      * @return The prepared statement.
      * @throws SQLException if a SQL error occurred while configuring the statement.
      */
-    protected final LocalCache.Stmt getStatement(final QueryType type) throws SQLException {
+    protected final LocalCache.Stmt getStatement(final LocalCache lc, final QueryType type)
+            throws SQLException
+    {
         final String sql;
         switch (type) {
-            default:         sql = query.select(type); break;
-            case INSERT:     sql = query.insert(type); break;
-            case DELETE:     sql = query.delete(type); break;
-            case DELETE_ALL: sql = query.delete(type); break;
+            default:         sql = query.select(lc, type); break;
+            case INSERT:     sql = query.insert(lc, type); break;
+            case DELETE:     sql = query.delete(lc, type); break;
+            case DELETE_ALL: sql = query.delete(lc, type); break;
         }
         this.type = type;
-        return getStatement(sql);
+        return getStatement(lc, sql);
     }
 
     /**
@@ -278,23 +254,24 @@ public abstract class Table implements Localized {
      * SQL statement to be created. This apply only to queries performing aggregation, like
      * {@link QueryType#COUNT}.
      *
+     * @param  lc The value returned by {@link #getLock()}.
      * @param  type The query type.
      * @param  column The column on which to perform aggregation.
      * @return The prepared statement.
      * @throws SQLException if a SQL error occurred while configuring the statement.
      */
-    protected final LocalCache.Stmt getStatement(final QueryType type, final Column column)
+    protected final LocalCache.Stmt getStatement(final LocalCache lc, final QueryType type, final Column column)
             throws SQLException
     {
         final String sql;
         switch (type) {
-            case COUNT: sql = query.count(type, column); break;
+            case COUNT: sql = query.count(lc, type, column); break;
             default: throw new IllegalArgumentException(errors().getString(
                     Errors.Keys.ILLEGAL_ARGUMENT_$2, "type", type));
         }
         this.type = type;
         fireStateChanged(); // Because the column may be different on every call.
-        return getStatement(sql);
+        return getStatement(lc, sql);
     }
 
     /**
@@ -302,13 +279,14 @@ public abstract class Table implements Localized {
      * {@link #getStatement(QueryType)} method call when the statement is
      * not needed anymore.
      *
+     * @param lc The value returned by {@link #getLock()}.
      * @param statement The statement to release.
      * @throws SQLException If an error occurred while releasing the statement.
      */
-    protected final void release(final LocalCache.Stmt statement) throws SQLException {
+    protected final void release(final LocalCache lc, final LocalCache.Stmt statement) throws SQLException {
         final Database database = query.database;
         if (database != null) {
-            database.release(statement);
+            database.release(lc, statement);
         }
     }
 
@@ -318,34 +296,37 @@ public abstract class Table implements Localized {
      * {@code try} ... {@code finally} block as below:
      *
      * {@preformat java
-     *     synchronized(getLock()) {
+     *     final LocalCache lc = getLock();
+     *     synchronized(lc) {
      *         boolean success = false;
-     *         transactionBegin();
+     *         transactionBegin(lc);
      *         try {
      *            // Do some operation here...
      *             success = true;  // Must be the very last line in the try block.
      *         } finally {
-     *             transactionEnd(success);
+     *             transactionEnd(lc, success);
      *         }
      *     }
      * }
      *
+     * @param  lc The {@link #getLock()} value.
      * @throws SQLException if the operation failed.
      */
-    protected final void transactionBegin() throws SQLException {
-        getDatabase().transactionBegin();
+    protected final void transactionBegin(final LocalCache lc) throws SQLException {
+        getDatabase().transactionBegin(lc);
     }
 
     /**
      * Invoked after the {@code INSERT}, {@code UPDATE} or {@code DELETE}
      * SQL statements finished.
      *
-     * @param  success {@code true} if the operation succeed and should be commited,
+     * @param  lc The {@link #getLock()} value.
+     * @param  success {@code true} if the operation succeed and should be committed,
      *         or {@code false} if we should rollback.
      * @throws SQLException if the commit or the rollback failed.
      */
-    protected final void transactionEnd(final boolean success) throws SQLException {
-        getDatabase().transactionEnd(success);
+    protected final void transactionEnd(final LocalCache lc, final boolean success) throws SQLException {
+        getDatabase().transactionEnd(lc, success);
     }
 
     /**
@@ -354,11 +335,12 @@ public abstract class Table implements Localized {
      * Subclasses should override this method if they need to set SQL parameters according the
      * table state. The default implementation does nothing.
      *
+     * @param  lc The {@link #getLock()} value.
      * @param  type The query type.
      * @param  statement The statement to configure (never {@code null}).
      * @throws SQLException if a SQL error occurred while configuring the statement.
      */
-    protected void configure(QueryType type, PreparedStatement statement) throws SQLException {
+    protected void configure(LocalCache lc, QueryType type, PreparedStatement statement) throws SQLException {
     }
 
     /**
@@ -440,11 +422,12 @@ public abstract class Table implements Localized {
      *
      * This calendar should be used for storing dates as well.
      *
+     * @param  lc The value returned by {@link #getLock()}.
      * @return The calendar for date calculation in this table.
      */
-    protected final Calendar getCalendar() {
+    protected final Calendar getCalendar(final LocalCache lc) {
         final Database database = getDatabase();
-        final Calendar calendar = database.getCalendar();
+        final Calendar calendar = database.getCalendar(lc);
         assert calendar.getTimeZone().equals(database.getTimeZone());
         return calendar;
     }
