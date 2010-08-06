@@ -707,6 +707,18 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         Boolean resample = (hints == null) ? null : (Boolean) hints.get(GO2Hints.KEY_GENERALIZE);
         if(!Boolean.FALSE.equals(resample)){
             //we only disable resampling if it is explictly specified
+            final double[] res = renderingContext.getResolution(layerCRS);
+
+            //adjust with the generalization factor
+            final Number n = (Number) hints.get(GO2Hints.KEY_GENERALIZE_FACTOR);
+            final double factor;
+            if(n != null){
+                factor = n.doubleValue();
+            }else{
+                factor = GO2Hints.GENERALIZE_FACTOR_DEFAULT.doubleValue();
+            }
+            res[0] *= factor;
+            res[1] *= factor;
             qb.setResolution(renderingContext.getResolution(layerCRS));
         }
 

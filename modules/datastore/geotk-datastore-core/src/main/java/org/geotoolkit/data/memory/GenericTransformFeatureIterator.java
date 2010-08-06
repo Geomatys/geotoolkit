@@ -235,8 +235,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
                 return new GenericTransformFeatureReader(reader,transformer);
             }else{
                 //reuse same feature
-                return new GenericTransformFeatureReader(reader,transformer);
-                //return new GenericReuseTransformFeatureReader(reader, transformer);
+                return new GenericReuseTransformFeatureReader(reader, transformer);
             }
             
         } else {
