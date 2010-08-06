@@ -20,13 +20,18 @@ package org.geotoolkit.data.memory;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.AbstractFeature;
+import org.geotoolkit.feature.DefaultFeature;
 import org.geotoolkit.feature.LenientFeatureFactory;
+import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
 import org.geotoolkit.util.converter.Classes;
 
@@ -34,6 +39,7 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.referencing.operation.TransformException;
@@ -59,39 +65,9 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
      * @param iterator FeatureReader to limit
      * @param transformer the transformer to use on each geometry
      */
-    private GenericTransformFeatureIterator(final R iterator, GeometryTransformer transformer) {
+    protected GenericTransformFeatureIterator(final R iterator, GeometryTransformer transformer) {
         this.iterator = iterator;
         this.transformer = transformer;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public F next() throws DataStoreRuntimeException {
-        final Feature next = iterator.next();
-
-        final Collection<Property> properties = new ArrayList<Property>();
-        for(Property prop : next.getProperties()){
-            if(prop instanceof GeometryAttribute){
-                Object value = prop.getValue();
-                if(value != null){
-                    //create a new property with the transformed geometry
-                    prop = FF.createGeometryAttribute(value,
-                            (GeometryDescriptor)prop.getDescriptor(), null, null);
-
-                    try {
-                        //transform the geometry
-                        prop.setValue(transformer.transform((Geometry) value));
-                    } catch (TransformException e) {
-                        throw new DataStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
-                    }
-
-                }
-            }
-            properties.add(prop);
-        }
-        return (F) FF.createFeature(properties, next.getType(), next.getIdentifier().getID());
     }
 
     /**
@@ -122,18 +98,116 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
     }
 
     /**
-     * Wrap a FeatureReader with a reprojection.
+     * Wrap a FeatureReader with a transform operation.
      *
      * @param <T> extends FeatureType
      * @param <F> extends Feature
      * @param <R> extends FeatureReader<T,F>
      */
-    private static final class GenericTransformFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
+    protected static final class GenericTransformFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
             extends GenericTransformFeatureIterator<F,R> implements FeatureReader<T,F>{
-
 
         private GenericTransformFeatureReader(R reader, GeometryTransformer transformer) {
             super(reader, transformer);            
+        }
+
+        /**
+         * {@inheritDoc }
+         */
+        @Override
+        public F next() throws DataStoreRuntimeException {
+            final Feature next = iterator.next();
+
+            final Collection<Property> properties = new ArrayList<Property>();
+            for(Property prop : next.getProperties()){
+                if(prop instanceof GeometryAttribute){
+                    Object value = prop.getValue();
+                    if(value != null){
+                        //create a new property with the transformed geometry
+                        prop = FF.createGeometryAttribute(value,
+                                (GeometryDescriptor)prop.getDescriptor(), null, null);
+
+                        try {
+                            //transform the geometry
+                            prop.setValue(transformer.transform((Geometry) value));
+                        } catch (TransformException e) {
+                            throw new DataStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
+                        }
+
+                    }
+                }
+                properties.add(prop);
+            }
+            return (F) FF.createFeature(properties, next.getType(), next.getIdentifier().getID());
+        }
+
+        /**
+         * {@inheritDoc }
+         */
+        @Override
+        public T getFeatureType() {
+            return iterator.getFeatureType();
+        }
+
+        /**
+         * {@inheritDoc }
+         */
+        @Override
+        public void remove() {
+            iterator.remove();
+        }
+    }
+
+    /**
+     * Wrap a FeatureReader with a transform operation.
+     *
+     * @param <T> extends FeatureType
+     * @param <F> extends Feature
+     * @param <R> extends FeatureReader<T,F>
+     */
+    protected static final class GenericReuseTransformFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
+            extends GenericTransformFeatureIterator<F,R> implements FeatureReader<T,F>{
+
+        private final List<Property> properties = new ArrayList<Property>();
+        private final AbstractFeature feature;
+
+        private GenericReuseTransformFeatureReader(R reader, GeometryTransformer transformer) {
+            super(reader, transformer);
+
+            final FeatureType ft = reader.getFeatureType();
+            if(ft instanceof SimpleFeatureType){
+                feature = new DefaultSimpleFeature((SimpleFeatureType)ft, null, properties, false);
+            }else{
+                feature = DefaultFeature.create(properties, ft, null);
+            }
+
+        }
+
+        /**
+         * {@inheritDoc }
+         */
+        @Override
+        public F next() throws DataStoreRuntimeException {
+            final Feature next = iterator.next();
+            feature.setId(next.getIdentifier());
+
+            properties.clear();
+            for(Property prop : next.getProperties()){
+                if(prop instanceof GeometryAttribute){
+                    Object value = prop.getValue();
+                    if(value != null){
+                        try {
+                            //transform the geometry
+                            prop.setValue(transformer.transform((Geometry) value));
+                        } catch (TransformException e) {
+                            throw new DataStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
+                        }
+
+                    }
+                }
+                properties.add(prop);
+            }
+            return (F)feature;
         }
 
         @Override
@@ -151,10 +225,20 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
      * Wrap a FeatureReader with a reprojection.
      */
     public static <T extends FeatureType, F extends Feature> FeatureReader<T, F> wrap(
-            FeatureReader<T, F> reader, GeometryTransformer transformer) {
+            FeatureReader<T, F> reader, GeometryTransformer transformer, Hints hints) {
         final GeometryDescriptor desc = reader.getFeatureType().getGeometryDescriptor();
         if (desc != null) {
-            return new GenericTransformFeatureReader(reader, transformer);
+
+            final Boolean detached = (hints == null) ? null : (Boolean) hints.get(HintsPending.FEATURE_DETACHED);
+            if(detached == null || detached){
+                //default behavior, make separate features
+                return new GenericTransformFeatureReader(reader,transformer);
+            }else{
+                //reuse same feature
+                return new GenericTransformFeatureReader(reader,transformer);
+                //return new GenericReuseTransformFeatureReader(reader, transformer);
+            }
+            
         } else {
             return reader;
         }

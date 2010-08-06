@@ -387,7 +387,7 @@ public class GenericIteratorTest extends TestCase{
         Query query = qb.buildQuery();
         FeatureReader reader = collection.getSession().getDataStore().getFeatureReader(query);
 
-        FeatureReader retyped = GenericReprojectFeatureIterator.wrap(reader, CRS.decode("EPSG:4326"));
+        FeatureReader retyped = GenericReprojectFeatureIterator.wrap(reader, CRS.decode("EPSG:4326"), new Hints());
         assertEquals(reprojectedType,retyped.getFeatureType());
 
         Feature f;
@@ -407,14 +407,14 @@ public class GenericIteratorTest extends TestCase{
 
         //check has next do not iterate
         reader = collection.getSession().getDataStore().getFeatureReader(query);
-        retyped = GenericReprojectFeatureIterator.wrap(reader, CRS.decode("EPSG:4326"));
+        retyped = GenericReprojectFeatureIterator.wrap(reader, CRS.decode("EPSG:4326"), new Hints());
         testIterationOnNext(retyped, 3);
 
         //check sub iterator is properly closed
         reader = collection.getSession().getDataStore().getFeatureReader(query);
         CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(reader);
         assertFalse(checkIte.isClosed());
-        retyped = GenericReprojectFeatureIterator.wrap(checkIte, CRS.decode("EPSG:4326"));
+        retyped = GenericReprojectFeatureIterator.wrap(checkIte, CRS.decode("EPSG:4326"), new Hints());
         while(retyped.hasNext()) retyped.next();
         retyped.close();
         assertTrue(checkIte.isClosed());
@@ -452,7 +452,7 @@ public class GenericIteratorTest extends TestCase{
         
         //create the decimate reader -------------------------------------------
         GeometryTransformer decim = new GeometryScaleTransformer(10, 10);
-        FeatureReader retyped = GenericTransformFeatureIterator.wrap(reader,decim);
+        FeatureReader retyped = GenericTransformFeatureIterator.wrap(reader,decim, new Hints());
         
         assertTrue(retyped.hasNext());
 
@@ -466,7 +466,6 @@ public class GenericIteratorTest extends TestCase{
         assertEquals(geom.getGeometryN(1).getCoordinate(), decimated.getGeometryN(1).getCoordinate());
         assertEquals(geom.getGeometryN(2).getCoordinate(), decimated.getGeometryN(2).getCoordinate());
         assertEquals(geom.getGeometryN(4).getCoordinate(), decimated.getGeometryN(3).getCoordinate());
-
 
     }
 

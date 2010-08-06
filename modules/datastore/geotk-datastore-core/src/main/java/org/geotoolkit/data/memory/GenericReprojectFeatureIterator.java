@@ -21,6 +21,7 @@ package org.geotoolkit.data.memory;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.logging.Level;
 
 import org.geotoolkit.data.FeatureIterator;
@@ -28,12 +29,17 @@ import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.AbstractFeature;
+import org.geotoolkit.feature.DefaultFeature;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.SchemaException;
+import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
+import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.logging.Logging;
@@ -42,6 +48,7 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.util.FactoryException;
@@ -56,13 +63,11 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class GenericReprojectFeatureIterator<F extends Feature, R extends FeatureIterator<F>>
-        implements FeatureIterator<F> {
+public abstract class GenericReprojectFeatureIterator<F extends Feature, R extends FeatureReader<?extends FeatureType,F>>
+                        extends GenericTransformFeatureIterator<F,R> implements FeatureReader<FeatureType,F>{
 
-    protected static final FeatureFactory FF = FactoryFinder
-            .getFeatureFactory(new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
-
-    protected final R iterator;
+    protected final FeatureType schema;
+    protected final CoordinateReferenceSystem targetCRS;
 
     /**
      * Creates a new instance of GenericReprojectFeatureIterator
@@ -70,32 +75,43 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
      * @param iterator FeatureReader to limit
      * @param maxFeatures maximum number of feature
      */
-    private GenericReprojectFeatureIterator(final R iterator) {
-        this.iterator = iterator;
+    private GenericReprojectFeatureIterator(final R iterator, CoordinateReferenceSystem targetCRS)
+                            throws FactoryException, SchemaException {
+        super(iterator,findTransformer(iterator, targetCRS));
+
+        final FeatureType type = iterator.getFeatureType();
+        this.targetCRS = targetCRS;
+        this.schema = FeatureTypeUtilities.transform(type, targetCRS);
     }
 
-    /**
-     * {@inheritDoc }
-     */
+
     @Override
-    public F next() throws DataStoreRuntimeException {
-        return iterator.next();
+    public FeatureType getFeatureType() {
+        return schema;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public void close() throws DataStoreRuntimeException {
-        iterator.close();
+    public void remove() {
+        iterator.remove();
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean hasNext() throws DataStoreRuntimeException {
-        return iterator.hasNext();
+    private static GeometryTransformer findTransformer(FeatureReader reader,
+            CoordinateReferenceSystem targetCRS) throws FactoryException{
+        if (targetCRS == null) {
+            throw new NullPointerException("CRS can not be null.");
+        }
+
+        final FeatureType type = reader.getFeatureType();
+        final CoordinateReferenceSystem original = type.getGeometryDescriptor().getCoordinateReferenceSystem();
+
+        if(original != null){
+            //the crs is defined on the feature type
+            final CoordinateSequenceMathTransformer trs =
+                    new CoordinateSequenceMathTransformer(CRS.findMathTransform(original, targetCRS, true));
+            return new GeometryCSTransformer(trs);
+        }else{
+            return null;
+        }
     }
 
     @Override
@@ -116,36 +132,11 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
      * @param <R> extends FeatureReader<T,F>
      */
     private static final class GenericReprojectFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
-            extends GenericReprojectFeatureIterator<F,R> implements FeatureReader<T,F>{
-
-        private final FeatureType schema;
-        private final CoordinateReferenceSystem targetCRS;
-        private final GeometryCSTransformer transformer;
+            extends GenericReprojectFeatureIterator<F,R>{
 
         private GenericReprojectFeatureReader(R reader, CoordinateReferenceSystem targetCRS) throws FactoryException, SchemaException{
-            super(reader);
-
-            if (targetCRS == null) {
-                throw new NullPointerException("CRS can not be null.");
-            }
-
-            final FeatureType type = reader.getFeatureType();
-            this.targetCRS = targetCRS;
-            final CoordinateReferenceSystem original = type.getGeometryDescriptor().getCoordinateReferenceSystem();
-
-            this.schema = FeatureTypeUtilities.transform(type, targetCRS);
-
-            if(original != null){
-                //the crs is defined on the feature type
-                final CoordinateSequenceMathTransformer trs =
-                        new CoordinateSequenceMathTransformer(CRS.findMathTransform(original, targetCRS, true));
-                transformer = new GeometryCSTransformer(trs);
-            }else{
-                transformer = null;
-            }
-            
+            super(reader,targetCRS);
         }
-
 
         @Override
         public F next() throws DataStoreRuntimeException {
@@ -209,22 +200,104 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
             return (F) FF.createFeature(properties, schema, next.getIdentifier().getID());
         }
 
-        @Override
-        public T getFeatureType() {
-            return (T) schema;
+    }
+
+    /**
+     * Wrap a FeatureReader with a reprojection and reuse the feature each time.
+     *
+     * @param <T> extends FeatureType
+     * @param <F> extends Feature
+     * @param <R> extends FeatureReader<T,F>
+     */
+    private static final class GenericReuseReprojectFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
+            extends GenericReprojectFeatureIterator<F,R>{
+
+        private final List<Property> properties = new ArrayList<Property>();
+        private final AbstractFeature feature;
+
+        private GenericReuseReprojectFeatureReader(R reader, CoordinateReferenceSystem targetCRS)
+                                            throws FactoryException, SchemaException{
+            super(reader, targetCRS);
+
+            final FeatureType ft = reader.getFeatureType();
+            if(ft instanceof SimpleFeatureType){
+                feature = new DefaultSimpleFeature((SimpleFeatureType)schema, null, properties, false);
+            }else{
+                feature = DefaultFeature.create(properties, schema, null);
+            }
+
         }
 
         @Override
-        public void remove() {
-            iterator.remove();
+        public F next() throws DataStoreRuntimeException {
+            final Feature next = iterator.next();
+            feature.setId(next.getIdentifier());
+
+            properties.clear();
+            for(Property prop : next.getProperties()){
+                if(prop instanceof GeometryAttribute){
+                    Object value = prop.getValue();
+                    if(value != null){
+                        //create a new property with the projected type
+                        prop = FF.createGeometryAttribute(value, (GeometryDescriptor)
+                                schema.getDescriptor(prop.getDescriptor().getName()), null, null);
+
+                        if(transformer != null){
+                            //the transform applies to all feature
+                            try {
+                                prop.setValue(transformer.transform((Geometry) value));
+                            } catch (TransformException e) {
+                                throw new DataStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
+                            }
+                        }else{
+                            //each feature has a different CRS.
+                            final CoordinateReferenceSystem original;
+                            if(value instanceof Geometry){
+                                final int srid = ((Geometry)value).getSRID();
+                                try {
+                                    original = CRS.decode(SRIDGenerator.toSRS(srid, SRIDGenerator.Version.V1));
+                                } catch (NoSuchAuthorityCodeException ex) {
+                                    throw new DataStoreRuntimeException("An exception occurred while reprojecting data on the fly", ex);
+                                } catch (FactoryException ex) {
+                                    throw new DataStoreRuntimeException("An exception occurred while reprojecting data on the fly", ex);
+                                }
+                            }else if(value instanceof org.opengis.geometry.Geometry){
+                                original = ((org.opengis.geometry.Geometry)value).getCoordinateReferenceSystem();
+                            }else{
+                                original = null;
+                            }
+
+                            if(original != null){
+                                try {
+                                    final CoordinateSequenceMathTransformer trs =
+                                            new CoordinateSequenceMathTransformer(CRS.findMathTransform(original, targetCRS, true));
+                                    final GeometryCSTransformer transformer = new GeometryCSTransformer(trs);
+                                    Geometry geom = transformer.transform((Geometry) value);
+                                    geom.setSRID(SRIDGenerator.toSRID(targetCRS, SRIDGenerator.Version.V1));
+                                    prop.setValue(geom);
+                                } catch (Exception e) {
+                                    throw new DataStoreRuntimeException("An exception occurred while reprojecting data on the fly", e);
+                                }
+                            }else{
+                                Logging.getLogger(GenericReprojectFeatureIterator.class).log(
+                                        Level.WARNING, "A feature in type :"+getFeatureType().getName() +" has no crs.");
+                            }
+                        }
+
+                    }
+                }
+                properties.add(prop);
+            }
+            return (F)feature;
         }
+
     }
 
     /**
      * Wrap a FeatureReader with a reprojection.
      */
     public static <T extends FeatureType, F extends Feature> FeatureReader<T, F> wrap(
-            FeatureReader<T, F> reader, CoordinateReferenceSystem crs) throws FactoryException, SchemaException {
+            FeatureReader<T, F> reader, CoordinateReferenceSystem crs, Hints hints) throws FactoryException, SchemaException {
         final GeometryDescriptor desc = reader.getFeatureType().getGeometryDescriptor();
         if (desc != null) {
 
@@ -235,7 +308,15 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                 return reader;
             }
 
-            return new GenericReprojectFeatureReader(reader, crs);
+            final Boolean detached = (hints == null) ? null : (Boolean) hints.get(HintsPending.FEATURE_DETACHED);
+            if(detached == null || detached){
+                //default behavior, make separate features
+                return new GenericReprojectFeatureReader(reader, crs);
+            }else{
+                //reuse same feature
+                return new GenericReuseReprojectFeatureReader(reader, crs);
+            }
+
         } else {
             return reader;
         }

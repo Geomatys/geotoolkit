@@ -437,13 +437,14 @@ public abstract class AbstractDataStore implements DataStore{
 
         //wrap resampling ------------------------------------------------------
         if(resampling != null){
-            reader = GenericTransformFeatureIterator.wrap(reader, new GeometryScaleTransformer(resampling[0], resampling[1]));
+            reader = GenericTransformFeatureIterator.wrap(reader, 
+                    new GeometryScaleTransformer(resampling[0], resampling[1]),hints);
         }
 
         //wrap reprojection ----------------------------------------------------
         if(crs != null){
             try {
-                reader = GenericReprojectFeatureIterator.wrap(reader, crs);
+                reader = GenericReprojectFeatureIterator.wrap(reader, crs, hints);
             } catch (FactoryException ex) {
                 throw new DataStoreException(ex);
             } catch (SchemaException ex) {
