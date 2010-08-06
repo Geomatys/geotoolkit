@@ -421,10 +421,9 @@ public final class CRS {
      *
      * @category factory
      */
-    public static CoordinateReferenceSystem decode(String code)
+    public static CoordinateReferenceSystem decode(final String code)
             throws NoSuchAuthorityCodeException, FactoryException
     {
-        code = code.trim();
         return getAuthorityFactory(null).createCoordinateReferenceSystem(code);
     }
 

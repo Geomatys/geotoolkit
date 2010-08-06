@@ -26,6 +26,8 @@ import java.sql.SQLException;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.AuthorityFactory;
+import org.opengis.referencing.crs.ProjectedCRS;
+import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
@@ -59,7 +61,7 @@ import static org.geotoolkit.test.Commons.EPSG_VERSION;
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Andrea Aime (TOPP)
- * @version 3.09
+ * @version 3.15
  *
  * @since 2.4
  */
@@ -403,22 +405,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
     }
 
     /**
-     * A random CRS for fun.
-     *
-     * @throws FactoryException Should not happen.
-     */
-    @Test
-    public void test26910() throws FactoryException {
-        assumeTrue(isEpsgFactoryAvailable());
-        final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
-        final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:26910");
-        assertNotNull(crs);
-        assertEquals("EPSG:26910", CRS.getDeclaredIdentifier(crs));
-        assertSame(crs, factory.createObject("EPSG:26910"));
-    }
-
-    /**
-     * UDIG requires this to work.
+     * Tests "WGS 84" geographic CRS.
      *
      * @throws FactoryException Should not happen.
      */
@@ -427,12 +414,20 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         assumeTrue(isEpsgFactoryAvailable());
         final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
         final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:4326");
-        assertNotNull(crs);
+        assertTrue(crs instanceof GeographicCRS);
         assertEquals("EPSG:4326", CRS.getDeclaredIdentifier(crs));
         assertSame(crs, factory.createObject("EPSG:4326"));
+        /*
+         * Tests using lower-case code. This is also a test using the CRS.decode(...)
+         * convenience method instead than direct use of the factory. The result should
+         * be the same, thanks to the caching performed by ReferencingObjectFactory.
+         */
+        assertEquals("EPSG:4326", CRS.getDeclaredIdentifier(CRS.decode("epsg:4326")));
+        assertSame(crs, CRS.decode("epsg:4326", true));
     }
 
     /**
+     * Tests NAD83 geographic CRS.
      * UDIG requires this to work.
      *
      * @throws FactoryException Should not happen.
@@ -442,9 +437,16 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
         assumeTrue(isEpsgFactoryAvailable());
         final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
         final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:4269");
-        assertNotNull(crs);
+        assertTrue(crs instanceof GeographicCRS);
         assertEquals("EPSG:4269", CRS.getDeclaredIdentifier(crs));
         assertSame(crs, factory.createObject("EPSG:4269"));
+        /*
+         * Tests using lower-case code. This is also a test using the CRS.decode(...)
+         * convenience method instead than direct use of the factory. The result should
+         * be the same, thanks to the caching performed by ReferencingObjectFactory.
+         */
+        assertEquals("EPSG:4269", CRS.getDeclaredIdentifier(CRS.decode("epsg:4269")));
+        assertSame(crs, CRS.decode("epsg:4269", true));
         /*
          * The domain of validity is declared in the EPSG:4269 CRS, which declare an x axis
          * in the opposite direction than WGS84. We need to ensure that this particularity
@@ -457,68 +459,83 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
     }
 
     /**
-     * A random CRS for fun.
+     * Tests "NAD83 / UTM zone 10N".
      *
      * @throws FactoryException Should not happen.
      */
     @Test
-    public void test26910Lower() throws FactoryException {
+    public void test26910() throws FactoryException {
         assumeTrue(isEpsgFactoryAvailable());
-        CoordinateReferenceSystem crs = CRS.decode("epsg:26910");
-        assertNotNull(crs);
+        final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
+        final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:26910");
+        assertTrue(crs instanceof ProjectedCRS);
         assertEquals("EPSG:26910", CRS.getDeclaredIdentifier(crs));
+        assertSame(crs, factory.createObject("EPSG:26910"));
+        /*
+         * Tests using lower-case code. This is also a test using the CRS.decode(...)
+         * convenience method instead than direct use of the factory. The result should
+         * be the same, thanks to the caching performed by ReferencingObjectFactory.
+         */
+        assertEquals("EPSG:26910", CRS.getDeclaredIdentifier(CRS.decode("epsg:26910")));
+        assertSame(crs, CRS.decode("epsg:26910", true));
     }
 
     /**
-     * A random CRS for fun.
+     * Tests "NAD83 / Massachusetts Mainland".
      *
      * @throws FactoryException Should not happen.
      */
     @Test
-    public void test26986Lower() throws FactoryException {
+    public void test26986() throws FactoryException {
         assumeTrue(isEpsgFactoryAvailable());
         CoordinateReferenceSystem crs = CRS.decode("epsg:26986");
-        assertNotNull(crs);
+        assertTrue(crs instanceof ProjectedCRS);
         assertEquals("EPSG:26986", CRS.getDeclaredIdentifier(crs));
     }
 
     /**
+     * Tests "AD27 / California zone II".
      * WFS requires this to work.
      *
      * @throws FactoryException Should not happen.
      */
     @Test
-    public void test4326Lower() throws FactoryException {
-        assumeTrue(isEpsgFactoryAvailable());
-        CoordinateReferenceSystem crs = CRS.decode("epsg:4326");
-        assertNotNull(crs);
-        assertEquals("EPSG:4326", CRS.getDeclaredIdentifier(crs));
-    }
-
-    /**
-     * WFS requires this to work.
-     *
-     * @throws FactoryException Should not happen.
-     */
-    @Test
-    public void test26742Lower() throws FactoryException {
+    public void test26742() throws FactoryException {
         assumeTrue(isEpsgFactoryAvailable());
         CoordinateReferenceSystem crs = CRS.decode("epsg:26742");
-        assertNotNull(crs);
+        assertTrue(crs instanceof ProjectedCRS);
         assertEquals("EPSG:26742", CRS.getDeclaredIdentifier(crs));
     }
 
     /**
-     * WFS requires this to work.
+     * Tests "Popular Visualisation CRS / Mercator".
      *
      * @throws FactoryException Should not happen.
+     *
+     * @since 3.15
      */
     @Test
-    public void test4269Lower() throws FactoryException {
+    public void test3785() throws FactoryException {
         assumeTrue(isEpsgFactoryAvailable());
-        CoordinateReferenceSystem crs = CRS.decode("epsg:4269");
-        assertNotNull(crs);
-        assertEquals("EPSG:4269", CRS.getDeclaredIdentifier(crs));
+        CoordinateReferenceSystem crs = CRS.decode("epsg:3785");
+        assertTrue(crs instanceof ProjectedCRS);
+        assertEquals("EPSG:3785", CRS.getDeclaredIdentifier(crs));
+    }
+
+    /**
+     * Tests "WGS 84 / Pseudo-Mercator".
+     * This is the "Google projection".
+     *
+     * @throws FactoryException Should not happen.
+     *
+     * @since 3.15
+     */
+    @Test
+    public void test3857() throws FactoryException {
+        assumeTrue(isEpsgFactoryAvailable());
+        CoordinateReferenceSystem crs = CRS.decode("epsg:3857");
+        assertTrue(crs instanceof ProjectedCRS);
+        assertEquals("EPSG:3857", CRS.getDeclaredIdentifier(crs));
     }
 
     /**

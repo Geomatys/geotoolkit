@@ -137,8 +137,10 @@ public class Mercator1SP extends MapProjection {
             new NamedIdentifier(Citations.OGC,     "Mercator_1SP"),
             new NamedIdentifier(Citations.EPSG,    "Mercator (1SP)"),
             new NamedIdentifier(Citations.EPSG,    "Mercator (Spherical)"),
+            new NamedIdentifier(Citations.EPSG,    "Mercator (1SP) (Spherical)"),
             new IdentifierCode (Citations.EPSG,     9804), // The ellipsoidal case
             new IdentifierCode (Citations.EPSG,     1026), // The spherical case
+            new IdentifierCode (Citations.EPSG,     9841), // The spherical (1SP) case
             new NamedIdentifier(Citations.GEOTIFF, "CT_Mercator"),
             new IdentifierCode (Citations.GEOTIFF,  7),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
