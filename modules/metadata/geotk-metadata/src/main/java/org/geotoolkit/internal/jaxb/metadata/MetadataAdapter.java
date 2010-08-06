@@ -105,7 +105,7 @@ public abstract class MetadataAdapter<ValueType extends MetadataAdapter<ValueTyp
      * marshalling time.
      *
      * @param value The bound type value, here the interface.
-     * @return The adapter for this interface.
+     * @return The adapter for the given value.
      */
     @Override
     public final ValueType marshal(final BoundType value) {
@@ -119,8 +119,8 @@ public abstract class MetadataAdapter<ValueType extends MetadataAdapter<ValueTyp
      * Converts an adapter read from an XML stream to the GeoAPI interface which will
      * contains this value. JAXB calls automatically this method at unmarshalling time.
      *
-     * @param value The adapter for this metadata value.
-     * @return A GeoAPI interface which represents the metadata value.
+     * @param value The adapter for a metadata value.
+     * @return An instance of the GeoAPI interface which represents the metadata value.
      *
      * @todo We should replace the (BoundType) cast by a call to Class.cast(Object).
      */

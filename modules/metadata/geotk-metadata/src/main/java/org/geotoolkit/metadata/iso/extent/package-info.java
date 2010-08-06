@@ -36,7 +36,8 @@
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @author Guilhem Legal (Geomatys)
+ * @version 3.15
  *
  * @since 2.1
  * @module
@@ -51,6 +52,7 @@
     @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
     @XmlJavaTypeAdapter(GeographicBoundingBoxAdapter.class),
     @XmlJavaTypeAdapter(GeographicExtentAdapter.class),
+    @XmlJavaTypeAdapter(GeometryAdapter.class),
     @XmlJavaTypeAdapter(IdentifierAdapter.class),
     @XmlJavaTypeAdapter(TemporalExtentAdapter.class),
     @XmlJavaTypeAdapter(TemporalPrimitiveAdapter.class),
@@ -75,6 +77,7 @@ import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.internal.jaxb.metadata.*;
 import org.geotoolkit.internal.jaxb.primitive.DoubleAdapter;
 import org.geotoolkit.internal.jaxb.primitive.BooleanAdapter;
+import org.geotoolkit.internal.jaxb.geometry.GeometryAdapter;
 import org.geotoolkit.internal.jaxb.referencing.TemporalPrimitiveAdapter;
 import org.geotoolkit.internal.jaxb.referencing.VerticalCRSAdapter;
 import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;

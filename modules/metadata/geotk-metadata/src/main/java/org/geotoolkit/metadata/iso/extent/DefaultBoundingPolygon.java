@@ -22,6 +22,7 @@ package org.geotoolkit.metadata.iso.extent;
 
 import java.util.Collection;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.geometry.Geometry;
@@ -38,7 +39,8 @@ import org.geotoolkit.lang.ThreadSafe;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @author Guilhem Legal (Geomatys)
+ * @version 3.15
  *
  * @since 2.1
  * @module
@@ -87,7 +89,7 @@ public class DefaultBoundingPolygon extends AbstractGeographicExtent implements 
      * Returns the sets of points defining the bounding polygon.
      */
     @Override
-/// @XmlElement(name = "polygon", required = true)
+    @XmlElement(name = "polygon")
     public synchronized Collection<Geometry> getPolygons() {
         return polygons = nonNullCollection(polygons, Geometry.class);
     }
