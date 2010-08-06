@@ -50,7 +50,7 @@ public class WfsXMLBindingTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool = new MarshallerPool("org.geotoolkit.wfs.xml.v110");
+        pool = new MarshallerPool("org.geotoolkit.wfs.xml.v110:org.geotoolkit.internal.jaxb.geometry");
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();
     }

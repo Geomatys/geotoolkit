@@ -43,7 +43,7 @@ public class SweXMLBindingTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool = new MarshallerPool("org.geotoolkit.swe.xml.v101");
+        pool = new MarshallerPool("org.geotoolkit.swe.xml.v101:org.geotoolkit.internal.jaxb.geometry");
         marshaller = pool.acquireMarshaller();
     }
 

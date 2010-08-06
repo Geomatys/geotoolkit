@@ -48,7 +48,7 @@ public class SkosXmlBindingTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool = new MarshallerPool("org.geotoolkit.skos.xml");
+        pool = new MarshallerPool("org.geotoolkit.skos.xml:org.geotoolkit.internal.jaxb.geometry");
         marshaller = pool.acquireMarshaller();
         unmarshaller = pool.acquireUnmarshaller();
     }

@@ -44,6 +44,8 @@ import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
 import org.geotoolkit.gml.xml.v311.ObjectFactory;
+import org.geotoolkit.gml.xml.v311.PointType;
+import org.geotoolkit.gml.xml.v311.PolygonType;
 import org.geotoolkit.ogc.xml.v110.AbstractIdType;
 import org.geotoolkit.ogc.xml.v110.AndType;
 import org.geotoolkit.ogc.xml.v110.BBOXType;
@@ -629,7 +631,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
 
             final JAXBElement<PropertyNameType> pnt = (JAXBElement<PropertyNameType>) extract(exp1);
             final JAXBElement<EnvelopeEntry> jaxEnv;
-            final JAXBElement<AbstractGeometryType> jaxGeom;
+            final JAXBElement<? extends AbstractGeometryType> jaxGeom;
 
             final Object geom = ((Literal)exp2).getValue();
 
@@ -644,11 +646,29 @@ public class GTtoSE110Transformer implements StyleVisitor{
                     crs = null;
                 }
                 final AbstractGeometryType gt = GMLUtilities.getGMLFromISO(JTSUtils.toISO(jts, crs));
-                jaxGeom = gml_factory.createAbstractGeometry(gt);
+                // TODO complete gml type
+                if (gt instanceof PointType) {
+                    jaxGeom = gml_factory.createPoint((PointType) gt);
+                } else if (gt instanceof PolygonType) {
+                    jaxGeom = gml_factory.createPolygon((PolygonType) gt);
+                } else if (gt != null) {
+                    throw new IllegalArgumentException("unexpected Geometry type:" + gt.getClass().getName());
+                } else {
+                    jaxGeom = null;
+                }
                 jaxEnv = null;
             }else if(geom instanceof org.opengis.geometry.Geometry){
                 final AbstractGeometryType gt = GMLUtilities.getGMLFromISO((org.opengis.geometry.Geometry) geom);
-                jaxGeom = gml_factory.createAbstractGeometry(gt);
+                // TODO complete gml type
+                if (gt instanceof PointType) {
+                    jaxGeom = gml_factory.createPoint((PointType) gt);
+                } else if (gt instanceof PolygonType) {
+                    jaxGeom = gml_factory.createPolygon((PolygonType) gt);
+                } else if (gt != null) {
+                    throw new IllegalArgumentException("unexpected Geometry type:" + gt.getClass().getName());
+                } else {
+                    jaxGeom = null;
+                }
                 jaxEnv = null;
             }else if(geom instanceof org.opengis.geometry.Envelope){
                 final org.opengis.geometry.Envelope genv = (org.opengis.geometry.Envelope)geom;

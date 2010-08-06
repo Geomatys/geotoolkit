@@ -105,7 +105,7 @@ public final class XMLUtilities {
 
         temp = null;
         try{
-            temp = new MarshallerPool(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class);
+            temp = new MarshallerPool(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class, org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class);
         }catch(JAXBException ex){
             throw new RuntimeException("Could not load jaxbcontext for sld 110.",ex);
         }

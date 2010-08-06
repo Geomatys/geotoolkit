@@ -24,7 +24,6 @@ import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.datatype.Duration;
 import javax.xml.namespace.QName;
 
-
 /**
  * This object contains factory methods for each 
  * Java content interface and Java element interface 
@@ -41,9 +40,8 @@ import javax.xml.namespace.QName;
  * @module pending
  */
 @XmlRegistry
-public class ObjectFactory {
+public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectFactory {
 
-    private static final QName _AbstractGML_QNAME = new QName("http://www.opengis.net/gml", "AbstractGML");
     private static final QName _CoordinateReferenceSystem_QNAME = new QName("http://www.opengis.net/gml", "AbstractCoordinateReferenceSystem");
     private static final QName _DatumID_QNAME = new QName("http://www.opengis.net/gml", "datumID");
     private static final QName _PositionalAccuracy_QNAME = new QName("http://www.opengis.net/gml", "AbstractpositionalAccuracy");
@@ -184,7 +182,6 @@ public class ObjectFactory {
     private static final QName _SolidMember_QNAME = new QName("http://www.opengis.net/gml", "solidMember");
     private static final QName _Geodesic_QNAME = new QName("http://www.opengis.net/gml", "Geodesic");
     private static final QName _OrientableSurface_QNAME = new QName("http://www.opengis.net/gml", "OrientableSurface");
-    private static final QName AbstractObject_QNAME = new QName("http://www.opengis.net/gml", "AbstractObject");
     private static final QName _Member_QNAME = new QName("http://www.opengis.net/gml", "member");
     private static final QName _CurveMember_QNAME = new QName("http://www.opengis.net/gml", "curveMember");
     private static final QName _DecimalMinutes_QNAME = new QName("http://www.opengis.net/gml", "decimalMinutes");
@@ -279,7 +276,6 @@ public class ObjectFactory {
     private static final QName _Dictionary_QNAME = new QName("http://www.opengis.net/gml", "Dictionary");
     private static final QName _BaseCurve_QNAME = new QName("http://www.opengis.net/gml", "baseCurve");
     private static final QName _TimeInstant_QNAME = new QName("http://www.opengis.net/gml", "TimeInstant");
-    private static final QName _AbstractGeometry_QNAME = new QName("http://www.opengis.net/gml", "AbstractGeometry");
 
     /**
      * Create a new ObjectFactory that can be used to create new instances of schema derived classes for package: net.opengis.gml
@@ -2355,15 +2351,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractObject")
-    public JAXBElement<Object> createObject(Object value) {
-        return new JAXBElement<Object>(AbstractObject_QNAME, Object.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AssociationType }{@code >}}
      * 
      */
@@ -3210,15 +3197,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link AbstractGeometryType }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractGeometry", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
-    public JAXBElement<AbstractGeometryType> createAbstractGeometry(AbstractGeometryType value) {
-        return new JAXBElement<AbstractGeometryType>(_AbstractGeometry_QNAME, AbstractGeometryType.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link AbstractCoordinateOperationType }{@code >}}
      *
      */
@@ -3270,15 +3248,6 @@ public class ObjectFactory {
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractDatum", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Definition")
     public JAXBElement<AbstractDatumType> createDatum(AbstractDatumType value) {
         return new JAXBElement<AbstractDatumType>(_Datum_QNAME, AbstractDatumType.class, null, value);
-    }
-
-    /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link AbstractGMLType }{@code >}}
-     *
-     */
-    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractGML", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractObject")
-    public JAXBElement<AbstractGMLEntry> createAbstractGML(AbstractGMLEntry value) {
-        return new JAXBElement<AbstractGMLEntry>(_AbstractGML_QNAME, AbstractGMLEntry.class, null, value);
     }
 
     /**

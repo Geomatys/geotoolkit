@@ -62,6 +62,7 @@ public class FilterXMLBindingTest {
     public void setUp() throws JAXBException {
         pool = new MarshallerPool(
                 "org.geotoolkit.ogc.xml.v110:" +
+                "org.geotoolkit.internal.jaxb.geometry:" +
                 "org.geotoolkit.gml.xml.v311");
         marshaller = pool.acquireMarshaller();
         unmarshaller = pool.acquireUnmarshaller();

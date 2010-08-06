@@ -46,7 +46,8 @@ public class PropertyTypeTest {
     @Before
     public void setUp() throws JAXBException {
         pool = new MarshallerPool(org.geotoolkit.wfs.xml.v110.ObjectFactory.class,
-                                  org.geotoolkit.gml.xml.v311.ObjectFactory.class);
+                                  org.geotoolkit.gml.xml.v311.ObjectFactory.class,
+                                  org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class);
         marshaller = pool.acquireMarshaller();
         unmarshaller = pool.acquireUnmarshaller();
     }
