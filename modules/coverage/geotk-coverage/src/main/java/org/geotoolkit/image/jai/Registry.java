@@ -66,7 +66,7 @@ public final class Registry {
      * Unconditionnaly registers all JAI operations provided in the {@link org.geotoolkit.image.jai}
      * package. This method usually don't need to be invoked, since JAI should parse automatically
      * the {@code META-INF/registryFile.jai} file at startup time. However, this default mechanism
-     * may fail when the geotoolkit JAR file is unreachable from the JAI class loader, in which case
+     * may fail when the Geotk JAR file is unreachable from the JAI class loader, in which case
      * the {@link org.geotoolkit.coverage.processing} package will invoke this method as a fallback.
      * <p>
      * Note to module maintainer: if this method is updated, remember to update the
@@ -114,8 +114,8 @@ public final class Registry {
 
     /**
      * Allows or disallows native acceleration for the specified operation on the given JAI instance.
-     * By default, JAI uses hardware accelerated methods when available. For example, it make use of
-     * MMX instructions on Intel processors. Unfortunatly, some native method crash the Java Virtual
+     * By default, JAI uses hardware accelerated methods when available. For example, it makes use of
+     * MMX instructions on Intel processors. Unfortunately, some native methods crash the Java Virtual
      * Machine under some circumstances. For example on JAI 1.1.2, the {@code "Affine"} operation on
      * an image with float data type, bilinear interpolation and an {@link javax.media.jai.ImageLayout}
      * rendering hint cause an exception in medialib native code. Disabling the native acceleration
@@ -198,9 +198,9 @@ public final class Registry {
 
     /**
      * Allows or disallows native acceleration for the specified image format. By default, the
-     * image I/O extension for JAI provides native acceleration for PNG and JPEG. Unfortunatly,
-     * those native codec has bug in their 1.0 version. Invoking this method will force the use
-     * of standard codec provided in J2SE 1.4.
+     * image I/O extension for JAI provides native acceleration for PNG and JPEG. Unfortunately,
+     * those native codecs have bug in their 1.0 version. Invoking this method will force the use
+     * of standard codecs provided in J2SE 1.4.
      *
      * {@note The current implementation assumes that JAI codec class name start with
      *        <code>"com.sun.media"</code> package name. It works for JAI Image I/O 1.1

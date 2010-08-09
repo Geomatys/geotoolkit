@@ -203,7 +203,7 @@ public final class VectorTest {
         assertSame("Should be able to restitute the original vector.", v2, v3.subList(40, 60));
         /*
          * Tests concatenation of views at fixed indices. Should be
-         * implemented as the concatenation of the indice arrays when possible.
+         * implemented as the concatenation of the indices arrays when possible.
          */
         final Vector expected = v3.view(10, 25, 30, 0, 35, 39);
         v2 = v1.view( 0, 35, 39);

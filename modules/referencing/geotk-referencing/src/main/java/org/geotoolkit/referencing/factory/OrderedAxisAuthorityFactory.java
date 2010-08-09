@@ -269,7 +269,7 @@ public class OrderedAxisAuthorityFactory extends TransformedAuthorityFactory
 
     /**
      * Computes the rank for every direction in the specified. The rank is stored in an array
-     * at the indice corresponding to the direction {@linkplain AxisDirection#ordinal ordinal}
+     * at the index corresponding to the direction {@linkplain AxisDirection#ordinal ordinal}
      * value. This method is used by constructors for computing the {@link #directionRanks} field.
      *
      * @throws IllegalArgumentException If at least two axis directions are colinear.

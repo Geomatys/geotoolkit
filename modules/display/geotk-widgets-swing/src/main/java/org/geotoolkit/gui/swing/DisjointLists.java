@@ -203,7 +203,7 @@ public class DisjointLists extends JComponent implements Dialog {
 
         /**
          * Moves elements at the specified indices from the specified model to this model.
-         * Note: the indice array will be overwritten.
+         * Note: the indices array will be overwritten.
          *
          * @param source  The source model.
          * @param indices Indices of elements in the source model to move.

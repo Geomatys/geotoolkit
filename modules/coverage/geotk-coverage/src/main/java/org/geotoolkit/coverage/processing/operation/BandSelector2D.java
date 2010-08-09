@@ -246,9 +246,9 @@ final class BandSelector2D extends GridCoverage2D {
      * Maps the specified source band number to the target band index after the
      * selection/reordering process imposed by targetSampleDimensions is applied.
      *
-     * @param  sourceBand  The indice of a source band.
+     * @param  sourceBand  The index of a source band.
      * @param  bandIndices The indices of source bands to be retained for target, or {@code null}.
-     * @return The target band indice, or {@code -1} if not found.
+     * @return The target band indices, or {@code -1} if not found.
      */
     private static int mapSourceToTarget(final int sourceBand, final int[] bandIndices) {
         if (bandIndices == null) {

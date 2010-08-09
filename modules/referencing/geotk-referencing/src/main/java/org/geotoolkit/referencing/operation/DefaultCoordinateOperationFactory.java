@@ -1376,7 +1376,7 @@ search: for (int j=0; j<targets.size(); j++) {
                     } catch (OperationNotFoundException exception) {
                         // No operation path for this pair. Remember the exception and search
                         // for an other pair.  We give precedence to exceptions occuring with
-                        // pairs for which 'source' and 'target' are at the same indice since
+                        // pairs for which 'source' and 'target' are at the same index since
                         // this is often the pairs were a conversion was expected to be applied.
                         if (cause == null || i == j) {
                             cause = exception;
@@ -1429,7 +1429,7 @@ search: for (int j=0; j<targets.size(); j++) {
             operation = createFromAffineTransform(AXIS_CHANGES, sourceCRS, stepSourceCRS, select);
         }
         /*
-         * Move 'subOpCount' to the indice of the last non-identity operation.
+         * Move 'subOpCount' to the index of the last non-identity operation.
          */
         while (subOpCount != 0 && subOps[--subOpCount].getMathTransform().isIdentity());
         /*

@@ -81,12 +81,12 @@ public final class MatrixFactory {
     /**
      * Creates a matrix of size {@code numRow}&nbsp;&times;&nbsp;{@code numCol}
      * initialized to the given elements. The elements array size must be equals
-     * to {@code numRow*numCol}. Column indice vary fastest, as expected by the
+     * to {@code numRow*numCol}. Column indices vary fastest, as expected by the
      * {@link GeneralMatrix#GeneralMatrix(int,int,double[])} constructor.
      *
      * @param  numRow   Number of rows.
      * @param  numCol   Number of columns.
-     * @param  elements Elements of the matrix. Column indice vary fastest.
+     * @param  elements Elements of the matrix. Column indices vary fastest.
      * @return A matrix initialized to the given elements.
      *
      * @since 3.00

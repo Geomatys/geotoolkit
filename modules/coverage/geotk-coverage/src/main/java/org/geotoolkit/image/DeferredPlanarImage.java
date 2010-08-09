@@ -227,7 +227,7 @@ public final class DeferredPlanarImage extends PlanarImage
     }
 
     /**
-     * Returns the indice in {@link #requests} and {@link #pendings} array for the given tile.
+     * Returns the index in {@link #requests} and {@link #pendings} array for the given tile.
      * The {@code x} index varies fastest.
      */
     private int getTileIndice(final int tileX, final int tileY) {
@@ -253,11 +253,11 @@ public final class DeferredPlanarImage extends PlanarImage
         if (requests == null) {
             requests = new TileRequest[getNumXTiles() * getNumYTiles()];
         }
-        final int tileIndice = getTileIndice(tileX, tileY);
-        TileRequest request = requests[tileIndice];
+        final int tileIndex = getTileIndice(tileX, tileY);
+        TileRequest request = requests[tileIndex];
         if (request == null) {
             request = image.queueTiles(new Point[]{new Point(tileX, tileY)});
-            requests[tileIndice] = request;
+            requests[tileIndex] = request;
         }
         switch (request.getTileStatus(tileX, tileY)) {
             default: {
@@ -277,21 +277,21 @@ public final class DeferredPlanarImage extends PlanarImage
          * 'repaint()' method later.
          */
         if (pendings != null) {
-            if (pendings[tileIndice] != null) {
-                return pendings[tileIndice];
+            if (pendings[tileIndex] != null) {
+                return pendings[tileIndex];
             }
         }
         if (delay != 0) {
             if (waitings == null) {
                 waitings = new boolean[requests.length];
             }
-            waitings[tileIndice] = true;
+            waitings[tileIndex] = true;
             try {
                 wait(delay);
             } catch (InterruptedException exception) {
                 // Somebody doesn't want to lets us sleep. Go back to work.
             }
-            waitings[tileIndice] = false;
+            waitings[tileIndex] = false;
             switch (request.getTileStatus(tileX, tileY)) {
                 default: return image.getTile(tileX, tileY);
                 case TileRequest.TILE_STATUS_PENDING:    // Fall through
@@ -316,7 +316,7 @@ public final class DeferredPlanarImage extends PlanarImage
         final Point      origin = new Point(tileXToX(tileX), tileYToY(tileY));
         final DataBuffer buffer = getDefaultDataBuffer(sampleModel, colorModel);
         final Raster     raster = Raster.createRaster(sampleModel, buffer, origin);
-        pendings[tileIndice] = raster;
+        pendings[tileIndex] = raster;
         fireTileUpdate(tileX, tileY, true);
         return raster;
     }

@@ -170,7 +170,7 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
      * Verify that the specified index is included in the expected range of values.
      *
      * @param  name  The parameter name. To be used for formatting error message.
-     * @param  index The indice to check.
+     * @param  index The indices to check.
      * @param  upper The upper range value, exclusive.
      * @throws IndexOutOfBoundsException if {@code index} is outside the expected range.
      */

@@ -120,7 +120,7 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
     private final int numCol;
 
     /**
-     * Elements of the matrix. Column indice vary fastest.
+     * Elements of the matrix. Column indices vary fastest.
      */
     private final double[] elt;
 

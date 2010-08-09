@@ -80,7 +80,7 @@ public class Matrix3 extends Matrix3d implements XMatrix {
      * The length of the given array must be 9 and the values in
      * the same order than the above constructor.
      *
-     * @param elements Elements of the matrix. Column indice vary fastest.
+     * @param elements Elements of the matrix. Column indices vary fastest.
      *
      * @since 3.00
      */
