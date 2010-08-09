@@ -23,6 +23,7 @@ import ucar.nc2.constants.CF;
 import ucar.nc2.constants.AxisType;
 import ucar.nc2.dataset.CoordinateAxis;
 import ucar.nc2.dataset.CoordinateAxis1D;
+import ucar.nc2.dataset.CoordinateAxis1DTime;
 
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.cs.AxisDirection;
@@ -32,6 +33,7 @@ import org.opengis.referencing.cs.RangeMeaning;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.util.SimpleInternationalString;
+import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 
 
 /**
@@ -42,14 +44,16 @@ import org.geotoolkit.util.SimpleInternationalString;
  * referencing objects are expected to be immutable.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @since 3.08
  * @module
  */
-public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSystemAxis {
+public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSystemAxis,
+        DiscreteCoordinateSystemAxis
+{
     /**
-     * The NetCDF coordinate axis wrapped by this {@code NetcdfCRS} instance.
+     * The NetCDF coordinate axis wrapped by this {@code NetcdfAxis} instance.
      */
     private final CoordinateAxis1D axis;
 
@@ -160,6 +164,30 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
     @Override
     public double getMaximumValue() {
         return axis.getMaxValue();
+    }
+
+    /**
+     * Returns the ordinate value at the given index. If the wrapped axis is an instance of
+     * {@link CoordinateAxis1DTime}, this method delegates to the NetCDF
+     * {@link CoordinateAxis1DTime#getTimeDate(int) getTimeDate(int)} method.
+     * Otherwise, this method delegates to the NetCDF
+     * {@link CoordinateAxis1D#getCoordValue(int) getCoordValue(int)} method.
+     */
+    @Override
+    public Comparable<?> getOrdinateAt(final int index) throws IndexOutOfBoundsException {
+        if (axis instanceof CoordinateAxis1DTime) {
+            return ((CoordinateAxis1DTime) axis).getTimeDate(index);
+        }
+        return axis.getCoordValue(index);
+    }
+
+    /**
+     * Returns the number of ordinates in the NetCDF axis. This method delegates to the
+     * {@link CoordinateAxis1D#getShape(int)} method.
+     */
+    @Override
+    public int length() {
+        return axis.getShape(0);
     }
 
     /**

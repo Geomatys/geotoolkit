@@ -86,7 +86,7 @@ import org.geotoolkit.util.logging.Logging;
  * in order to get an ordering consistent with the ordering used by other plugins.}
  * 
  * The image is created from the (<var>x</var>,<var>y</var>) dimensions in the above example.
- * Additional dimensions (if any) are ignored; only the slice at indice 0 is read by default,
+ * Additional dimensions (if any) are ignored; only the slice at index 0 is read by default,
  * which is <var>z</var><sub>0</sub> and <var>t</var><sub>0</sub> in the example above. Users
  * can change this behavior by specifying different slice indices, or load many slices as
  * different bands, using {@link SpatialImageReadParam}.
@@ -105,7 +105,7 @@ import org.geotoolkit.util.logging.Logging;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Antoine Hnawia (IRD)
- * @version 3.11
+ * @version 3.15
  *
  * @since 3.08 (derived from 2.4)
  * @module
@@ -281,7 +281,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
      *
      * @param  imageIndex Index of the image for which to get the band names.
      * @return The variable names of the bands for the given image, or {@code null} if the bands
-     *         are unamed.
+     *         are unnamed.
      * @throws IOException if the NetCDF file can not be read.
      *
      * @since 3.11
@@ -1016,7 +1016,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
     }
 
     /**
-     * Wraps a generic exception into a {@link IIOException}.
+     * Wraps a generic exception into an {@link IIOException}.
      */
     private IIOException netcdfFailure(final Exception e) throws IOException {
         return new IIOException(errors().getString(Errors.Keys.CANT_READ_$1, dataset.getLocation()), e);
@@ -1095,7 +1095,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
      *
      * @author Martin Desruisseaux (Geomatys)
      * @author Antoine Hnawia (IRD)
-     * @version 3.08
+     * @version 3.15
      *
      * @since 3.08 (derived from 2.4)
      * @module
@@ -1114,7 +1114,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
         /**
          * Default list of file's extensions.
          */
-        private static final String[] SUFFIXES = new String[] {"nc", "cdf", "grib", "grb", "grb1", "grb2"};
+        private static final String[] SUFFIXES = new String[] {"nc", "cdf", "grib", "grb", "grb1", "grb2", "ncml"};
 
         /**
          * Constructs a default {@code NetcdfImageReader.Spi}. The fields are initialized as
@@ -1144,7 +1144,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
         }
 
         /**
-         * Checks if the specified input seems to be a readeable NetCDF file. If the given
+         * Checks if the specified input seems to be a readable NetCDF file. If the given
          * input is a stream like {@link javax.imageio.stream.ImageInputStream}, then this
          * method conservatively returns {@code false} because testing this stream would
          * require copying it to a temporary file.
@@ -1158,8 +1158,14 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
             if (source instanceof CharSequence || source instanceof File ||
                 source instanceof URL || source instanceof URI)
             {
+                final String path = source.toString();
+                if (path.endsWith(".ncml")) {
+                    // The 'canOpen' method below doesn't check for NcML file. For now,
+                    // Assumes that any file having the ".ncml" extension is a NcML file.
+                    return true;
+                }
                 try {
-                    return NetcdfFile.canOpen(source.toString());
+                    return NetcdfFile.canOpen(path);
                 } catch (NoClassDefFoundError e) {
                     // May happen if an optional JAR file (e.g. the VisAD library) is not present.
                     Logging.unexpectedException(LOGGER, Spi.class, "canDecodeInput", e);

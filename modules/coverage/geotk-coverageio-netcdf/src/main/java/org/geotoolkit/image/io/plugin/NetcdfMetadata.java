@@ -75,7 +75,7 @@ import ucar.nc2.dataset.NetcdfDataset;
  * would not know what to do with the extra coordinate systems anyway.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @since 3.08 (derived from 2.4)
  * @module
@@ -282,6 +282,9 @@ final class NetcdfMetadata extends SpatialMetadata {
                 final EnhanceScaleMissing ev = (EnhanceScaleMissing) variable;
                 if (!m.hasCollisions(ev)) {
                     accessor.setValueRange(ev.getValidMin(), ev.getValidMax());
+                    if (Double.isNaN(m.scale) && Double.isNaN(m.offset)) {
+                        m.setTransferFunction(ev);
+                    }
                 }
             }
             accessor.setValidSampleValue(m.minimum, m.maximum);

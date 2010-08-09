@@ -215,23 +215,23 @@ final class GridGeometryEntry extends DefaultEntry {
      * the temporal dimension (if any) must be initialized by the caller. The temporal dimension
      * is assumed the last one.
      *
-     * @param dimension   The number of dimensions for the source and target CRS.
-     * @param zIndice     The 1-based indice of the <var>z</var> value, or 0 if none.
+     * @param dimension  The number of dimensions for the source and target CRS.
+     * @param zIndex     The 1-based index of the <var>z</var> value, or 0 if none.
      */
-    final XMatrix getGridToCRS(final int dimension, int zIndice) {
+    final XMatrix getGridToCRS(final int dimension, int zIndex) {
         final XMatrix matrix = MatrixFactory.create(dimension + 1);
         SpatialRefSysEntry.copy(gridToCRS, matrix);
         if (verticalOrdinates != null) {
             final int imax = verticalOrdinates.length - 1;
-            if (--zIndice > imax) {
-                zIndice = imax;
+            if (--zIndex > imax) {
+                zIndex = imax;
             }
-            if (zIndice >= 0) {
+            if (zIndex >= 0) {
                 final int zDimension = srsEntry.zDimension();
                 if (zDimension >= 0) {
-                    final double z = verticalOrdinates[zIndice];
-                    final double before = (zIndice != 0)    ? z - verticalOrdinates[zIndice - 1] : 0;
-                    final double after  = (zIndice != imax) ? verticalOrdinates[zIndice + 1] - z : 0;
+                    final double z = verticalOrdinates[zIndex];
+                    final double before = (zIndex != 0)    ? z - verticalOrdinates[zIndex - 1] : 0;
+                    final double after  = (zIndex != imax) ? verticalOrdinates[zIndex + 1] - z : 0;
                     double interval = (before != 0 && abs(before) <= abs(after)) ? before : after;
                     matrix.setElement(zDimension, zDimension, interval);
                     matrix.setElement(zDimension, dimension, z - 0.5*interval);

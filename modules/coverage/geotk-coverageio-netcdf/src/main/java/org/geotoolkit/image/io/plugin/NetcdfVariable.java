@@ -49,7 +49,7 @@ import org.geotoolkit.util.XArrays;
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @since 3.08 (derived from 2.4)
  * @module
@@ -66,6 +66,13 @@ final class NetcdfVariable {
             ADD_OFFSET    = "add_offset",
             MISSING_VALUE = "missing_value",
             FILL_VALUE    = "_FillValue";
+
+    /**
+     * Small factor for rounding errors.
+     *
+     * @since 3.15
+     */
+    private static final double EPS = 1E-10;
 
     /**
      * The data type to accept in images. Used for automatic detection of which variables
@@ -94,7 +101,7 @@ final class NetcdfVariable {
     /**
      * The scale and and offset values, or {@link Double#NaN NaN} if none.
      */
-    public final double scale, offset;
+    public double scale, offset;
 
     /**
      * The minimal and maximal valid values in packed (not geophysics) units, or
@@ -136,8 +143,7 @@ final class NetcdfVariable {
             imageType = DataBuffer.TYPE_DOUBLE;
             units     = null;
         }
-        offset     =  variable.convertScaleOffsetMissing(0.0);
-        scale      =  variable.convertScaleOffsetMissing(1.0) - offset;
+        setTransferFunction(variable);
         minimum    = (variable.getValidMin() - offset) / scale;
         maximum    = (variable.getValidMax() - offset) / scale;
         fillValues = null; // No way to get this information.
@@ -266,6 +272,21 @@ scan:   for (int i=0; i<missingCount; i++) {
             }
         }
         fillValues = (count != 0) ? XArrays.resize(missings, count) : null;
+    }
+
+    /**
+     * Sets the scale and offset from the given variable, using UCAR API.
+     *
+     * @since 3.15
+     */
+    final void setTransferFunction(final EnhanceScaleMissing variable) {
+        offset =  variable.convertScaleOffsetMissing(0.0);
+        scale  =  variable.convertScaleOffsetMissing(1.0) - offset;
+        // Workaround for rounding errors.
+        double c = scale * 36000;
+        if (Math.abs(c - (c = Math.rint(c))) <= EPS) {
+            scale = c / 36000;
+        }
     }
 
     /**

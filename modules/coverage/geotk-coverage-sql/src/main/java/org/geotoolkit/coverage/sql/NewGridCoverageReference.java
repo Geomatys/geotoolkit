@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Date;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -62,6 +63,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
+import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -82,7 +84,7 @@ import org.geotoolkit.math.XMath;
  * the insertion in the database occurs.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @see CoverageDatabaseListener
  *
@@ -396,9 +398,24 @@ public final class NewGridCoverageReference {
                 if (temporalCRS != null) {
                     final CoordinateSystemAxis axis = temporalCRS.getCoordinateSystem().getAxis(0);
                     final DefaultTemporalCRS c = DefaultTemporalCRS.wrap(temporalCRS);
-                    dateRanges = new DateRange[] {
-                        new DateRange(c.toDate(axis.getMinimumValue()), c.toDate(axis.getMaximumValue()))
-                    };
+                    if (axis instanceof DiscreteCoordinateSystemAxis) {
+                        final DiscreteCoordinateSystemAxis da = (DiscreteCoordinateSystemAxis) axis;
+                        dateRanges = new DateRange[da.length()];
+                        for (int i=0; i<dateRanges.length; i++) {
+                            final Comparable<?> value = da.getOrdinateAt(i);
+                            final Date time;
+                            if (value instanceof Date) {
+                                time = (Date) value;
+                            } else {
+                                time = c.toDate(((Number) value).doubleValue());
+                            }
+                            dateRanges[i] = new DateRange(time, time);
+                        }
+                    } else {
+                        dateRanges = new DateRange[] {
+                            new DateRange(c.toDate(axis.getMinimumValue()), c.toDate(axis.getMaximumValue()))
+                        };
+                    }
                 }
             }
         }

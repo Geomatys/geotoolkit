@@ -413,7 +413,7 @@ public class CoverageTableModel extends AbstractTableModel {
     public int[] indexOf(final String... names) {
         /*
          * Get the indices (in the names array) of each name. A name
-         * can have more than once indice if it appears many time.
+         * can have more than one index if it appears many time.
          */
         final Map<String,int[]> map = new HashMap<String,int[]>(XCollections.hashMapCapacity(names.length));
         for (int i=0; i<names.length; i++) {
@@ -442,7 +442,7 @@ public class CoverageTableModel extends AbstractTableModel {
                     rows[index[j]] = i;
                 }
                 // If the same name has been requested more than once, then the next occurences
-                // of this name will leave the indice of the previous occurence unchanged, and
+                // of this name will leave the index of the previous occurence unchanged, and
                 // update the indices of the other occurences.
                 if (index.length > 1) {
                     map.put(name, XArrays.remove(index, 0, 1));
