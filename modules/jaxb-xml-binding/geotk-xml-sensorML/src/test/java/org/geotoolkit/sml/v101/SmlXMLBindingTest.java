@@ -43,6 +43,7 @@ import javax.xml.bind.Unmarshaller;
 
 //Junit dependencies
 import org.geotoolkit.gml.xml.v311.CodeType;
+import org.geotoolkit.sml.xml.SensorMLMarshallerPool;
 import org.geotoolkit.sml.xml.v101.Classification;
 import org.geotoolkit.sml.xml.v101.ClassifierList;
 import org.geotoolkit.sml.xml.v101.ComponentPropertyType;
@@ -74,7 +75,6 @@ import org.geotoolkit.sml.xml.v101.SystemType;
 import org.geotoolkit.sml.xml.v101.Term;
 import org.geotoolkit.swe.xml.v101.Category;
 import org.geotoolkit.swe.xml.v101.QuantityRange;
-import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -85,7 +85,6 @@ import static org.junit.Assert.*;
  * @module pending
  */
 public class SmlXMLBindingTest {
-    private MarshallerPool  marshallerPool;
 
     private ObjectFactory sml101Factory = new ObjectFactory();
     private org.geotoolkit.swe.xml.v101.ObjectFactory swe101Factory = new org.geotoolkit.swe.xml.v101.ObjectFactory();
@@ -100,7 +99,6 @@ public class SmlXMLBindingTest {
 
     @Before
     public void setUp() throws Exception {
-        marshallerPool = new MarshallerPool("org.geotoolkit.sml.xml.v101:org.geotoolkit.internal.jaxb.geometry");
     }
 
     @After
@@ -115,7 +113,7 @@ public class SmlXMLBindingTest {
     @Test
     public void SystemUnmarshallMarshalingTest() throws Exception {
 
-        Unmarshaller unmarshaller = marshallerPool.acquireUnmarshaller();
+        Unmarshaller unmarshaller = SensorMLMarshallerPool.getInstance().acquireUnmarshaller();
 
         InputStream is = SmlXMLBindingTest.class.getResourceAsStream("/org/geotoolkit/sml/system101.xml");
         Object unmarshalled = unmarshaller.unmarshal(is);
@@ -389,7 +387,7 @@ public class SmlXMLBindingTest {
         assertEquals(expectedResult.getMember(), result.getMember());
         assertEquals(expectedResult, result);
 
-        marshallerPool.release(unmarshaller);
+        SensorMLMarshallerPool.getInstance().release(unmarshaller);
     }
 
     /**
@@ -564,7 +562,7 @@ public class SmlXMLBindingTest {
         member.setProcess(sml101Factory.createSystem(system));
         SensorML sensor = new SensorML("1.0.1", Arrays.asList(member));
 
-        Marshaller m = marshallerPool.acquireMarshaller();
+        Marshaller m = SensorMLMarshallerPool.getInstance().acquireMarshaller();
 
         StringWriter sw = new StringWriter();
         m.marshal(sensor, sw);
@@ -586,5 +584,7 @@ public class SmlXMLBindingTest {
         result    = result.substring(result.indexOf("<sml:member"));
 
         assertEquals(expResult, result);
+
+        SensorMLMarshallerPool.getInstance().release(m);
     }
 }
