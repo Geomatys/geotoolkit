@@ -23,18 +23,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.csw.xml.ElementSetType;
 import org.geotoolkit.csw.xml.v202.ElementSetNameType;
 import org.geotoolkit.csw.xml.v202.GetRecordByIdType;
-import org.geotoolkit.ebrim.xml.EBRIMClassesContext;
 import org.geotoolkit.util.StringUtilities;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.xml.MarshallerPool;
 
 
 /**
@@ -44,22 +38,7 @@ import org.geotoolkit.xml.MarshallerPool;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public abstract class AbstractGetRecordById extends AbstractRequest implements GetRecordByIdRequest {
-    /**
-     * Default logger for all GetRecordById requests.
-     */
-    protected static final Logger LOGGER = Logging.getLogger(AbstractGetRecordById.class);
-
-    private static final MarshallerPool POOL;
-    static {
-        MarshallerPool temp = null;
-        try {
-            temp = new MarshallerPool(EBRIMClassesContext.getAllClasses());
-        } catch (JAXBException ex) {
-            LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
-        }
-        POOL = temp;
-    }
+public abstract class AbstractGetRecordById extends AbstractCSWRequest implements GetRecordByIdRequest {
 
     /**
      * The version to use for this webservice request.

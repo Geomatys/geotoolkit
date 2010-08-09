@@ -44,6 +44,18 @@ public class OutputDef {
         this.mime = mime;
     }
 
+    public OutputDef(String mime, Object output, Float compression) {
+        if(output == null){
+            throw new NullPointerException("Output must not be null");
+        }
+        if(mime == null){
+            throw new NullPointerException("Mime type must not be null");
+        }
+        this.output = output;
+        this.mime = mime;
+        this.compression = compression;
+    }
+
     public Object getOutput() {
         return output;
     }
@@ -66,7 +78,7 @@ public class OutputDef {
         if(mime == null){
             throw new NullPointerException("Mime type must not be null");
         }
-        
+
         this.mime = mime;
     }
 

@@ -33,6 +33,7 @@ import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.sld.MutableStyledLayerDescriptor;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.sld.xml.GTtoSLD100Transformer;
+import org.geotoolkit.sld.xml.JAXBSLDUtilities;
 import org.geotoolkit.sld.xml.SLD100toGTTransformer;
 import org.geotoolkit.xml.MarshallerPool;
 
@@ -79,11 +80,9 @@ public class SLD100Test extends TestCase{
     
     
     static {
-        try {
-            POOL = new MarshallerPool(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
-            
-        } catch (JAXBException ex) {ex.printStackTrace();}
         
+        POOL = JAXBSLDUtilities.getMarshallerPoolSLD100();
+            
         
         TRANSFORMER_GT = new SLD100toGTTransformer(FILTER_FACTORY, STYLE_FACTORY, SLD_FACTORY);
         assertNotNull(TRANSFORMER_GT);

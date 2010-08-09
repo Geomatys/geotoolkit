@@ -41,6 +41,7 @@ import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.TileManagerFactory;
 import org.geotoolkit.image.io.mosaic.TileWritingPolicy;
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.coverage.grid.GridGeometry;
@@ -141,22 +142,47 @@ public class GridCoverageReaders {
 
         final TileManager[] managers = TileManagerFactory.DEFAULT.create(tiles);
 
+        TileManager manager = null;
         if(managers.length == 0){
             throw new CoverageStoreException("No files could be handle as tiles.");
         }else if(managers.length > 1){
             LOGGER.log(Level.WARNING, "Coverage tiles are not aligned, "
-                    + "verify that images don't overlaps and overviews preserve ratio.");
+                    + "verify that images do not overlap and overviews preserve ratio. "
+                    + "Found "+managers.length+" tile managers.");
+
+            manager = managers[0];
+            double resolution = XAffineTransform.getScale(manager.getGridGeometry().getGridToCRS());
+
+            for(int i=1; i<managers.length; i++){
+                final TileManager tm = managers[i];
+                final double tmRes = XAffineTransform.getScale(tm.getGridGeometry().getGridToCRS());
+                if(tmRes < resolution){
+                    //we found a tile manager with a better resolution. lets use it
+                    manager = tm;
+                    resolution = tmRes;
+                }else if(tmRes == resolution){
+                    //two tile manager with same resolution, that mean two base tiles have
+                    //been separated, we better choose the one that contain the more tiles.
+                    LOGGER.log(Level.WARNING, "Two base tiles have been placed in different tile managers.");
+                    if(tm.getTiles().size()> manager.getTiles().size()){
+                        //this manager has more tile, use it
+                        manager = tm;
+                        resolution = tmRes;
+                    }
+                }
+            }
+        }else{
+            manager = managers[0];
         }
 
-        final TileManager manager = managers[0];
-
+        final TileManager fm = manager;
         final ImageCoverageReader reader = new ImageCoverageReader() {
             @Override
             public GridGeometry2D getGridGeometry(int index) throws CoverageStoreException {
                 //override the CRS
                 final GridGeometry gridGeom;
                 try {
-                    gridGeom = manager.getGridGeometry();
+                    gridGeom = fm.getGridGeometry();
                 } catch (IOException ex) {
                     throw new CoverageStoreException(ex);
                 }

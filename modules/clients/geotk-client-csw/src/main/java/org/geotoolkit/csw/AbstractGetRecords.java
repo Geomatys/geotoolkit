@@ -22,18 +22,12 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
-import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.csw.xml.ElementSetType;
 import org.geotoolkit.csw.xml.ResultType;
 import org.geotoolkit.csw.xml.v202.DistributedSearchType;
 import org.geotoolkit.csw.xml.v202.GetRecordsType;
-import org.geotoolkit.ebrim.xml.EBRIMClassesContext;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.xml.MarshallerPool;
 
 
 /**
@@ -43,23 +37,8 @@ import org.geotoolkit.xml.MarshallerPool;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public abstract class AbstractGetRecords extends AbstractRequest implements GetRecordsRequest {
-    /**
-     * Default logger for all GetRecords requests.
-     */
-    protected static final Logger LOGGER = Logging.getLogger(AbstractGetRecords.class);
-
-    private static final MarshallerPool POOL;
-    static {
-        MarshallerPool temp = null;
-        try {
-            temp = new MarshallerPool(EBRIMClassesContext.getAllClasses());
-        } catch (JAXBException ex) {
-            LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
-        }
-        POOL = temp;
-    }
-
+public abstract class AbstractGetRecords extends AbstractCSWRequest implements GetRecordsRequest {
+    
     /**
      * The version to use for this webservice request.
      */

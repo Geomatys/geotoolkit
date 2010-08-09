@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.namespace.QName;
 import org.geotoolkit.csw.xml.DescribeRecord;
 
 
@@ -82,6 +83,16 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
         }
         return this.typeName;
     }
+
+    public void setTypeName(List<QName> typeNames) {
+        if (typeName == null) {
+            typeName = new ArrayList<TypeNameType>();
+        }
+        for (QName qname : typeNames) {
+            typeName.add(new TypeNameType(qname.getLocalPart(), qname.getNamespaceURI()));
+        }
+    }
+
 
     /**
      * Gets the value of the outputFormat property.

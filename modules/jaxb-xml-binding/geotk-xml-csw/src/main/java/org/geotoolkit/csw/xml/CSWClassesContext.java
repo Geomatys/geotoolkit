@@ -19,10 +19,12 @@ package org.geotoolkit.csw.xml;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.xml.bind.JAXBException;
 
 import org.geotoolkit.ows.xml.v100.ExceptionReport;
 
 import org.geotoolkit.metadata.iso.DefaultMetadata;
+import org.geotoolkit.xml.MarshallerPool;
 
 
 /**
@@ -31,7 +33,16 @@ import org.geotoolkit.metadata.iso.DefaultMetadata;
  */
 public class CSWClassesContext {
 
+    private static MarshallerPool instance = null;
+
     protected CSWClassesContext() {}
+
+    public static MarshallerPool getMarshallerPool() throws JAXBException {
+        if (instance == null) {
+            instance = new MarshallerPool(getAllClasses());
+        }
+        return instance;
+    }
     
     /**
      * List of classes for the french profile of metadata.

@@ -17,6 +17,7 @@
 package org.geotoolkit.csw.xml;
 
 import java.util.List;
+import javax.xml.namespace.QName;
 
 /**
  *
@@ -25,9 +26,17 @@ import java.util.List;
  */
 public interface DescribeRecord extends RequestBase {
 
-    public String getSchemaLanguage();
+    String getSchemaLanguage();
 
-    public List<? extends Object> getTypeName();
+    void setSchemaLanguage(String schemaLanguage);
+
+    String getOutputFormat();
+
+    void setOutputFormat(String outputFormat);
+
+    List<? extends Object> getTypeName();
+
+    void setTypeName(List<QName> typeNames);
 
 
 }

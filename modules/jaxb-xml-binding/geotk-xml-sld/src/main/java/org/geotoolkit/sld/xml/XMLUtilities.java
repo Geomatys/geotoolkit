@@ -78,9 +78,6 @@ import org.xml.sax.InputSource;
  */
 public final class XMLUtilities {
 
-    private static final MarshallerPool POOL_100;
-    private static final MarshallerPool POOL_110;
-
     private final FilterFactory2 filterFactory;
     private final MutableStyleFactory styleFactory;
     private final MutableSLDFactory sldFactory;
@@ -94,23 +91,7 @@ public final class XMLUtilities {
     private GTtoSLD100Transformer transformerXMLv100 = null;
     private GTtoSLD110Transformer transformerXMLv110 = null;
     
-    static{
-        MarshallerPool temp = null;
-        try{
-            temp = new MarshallerPool(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
-        }catch(JAXBException ex){
-            throw new RuntimeException("Could not load jaxbcontext for sld 100.",ex);
-        }
-        POOL_100 = temp;
-
-        temp = null;
-        try{
-            temp = new MarshallerPool(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class, org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class);
-        }catch(JAXBException ex){
-            throw new RuntimeException("Could not load jaxbcontext for sld 110.",ex);
-        }
-        POOL_110 = temp;
-    }
+    
 
     public XMLUtilities() {
         final Hints hints = new Hints();
@@ -128,11 +109,11 @@ public final class XMLUtilities {
     }
 
     public static MarshallerPool getJaxbContext100() {
-        return POOL_100;
+        return JAXBSLDUtilities.getMarshallerPoolSLD100();
     }
 
     public static MarshallerPool getJaxbContext110() {
-        return POOL_110;
+        return JAXBSLDUtilities.getMarshallerPoolSLD110();
     }
 
     public SLD100toGTTransformer getTransformer100(){
@@ -219,11 +200,11 @@ public final class XMLUtilities {
         if (transformerGTv100 == null) {
             transformerGTv100 = new SLD100toGTTransformer(filterFactory, styleFactory, sldFactory);
         }
-        final Unmarshaller unMarshaller = POOL_100.acquireUnmarshaller();
+        final Unmarshaller unMarshaller = getJaxbContext100().acquireUnmarshaller();
         try {
             return unmarshall(source, unMarshaller);
         } finally {
-            POOL_100.release(unMarshaller);
+            getJaxbContext100().release(unMarshaller);
         }
     }
     
@@ -231,11 +212,11 @@ public final class XMLUtilities {
         if (transformerGTv110 == null) {
             transformerGTv110 = new SLD110toGTTransformer(filterFactory, styleFactory, sldFactory);
         }
-        final Unmarshaller unMarshaller = POOL_110.acquireUnmarshaller();
+        final Unmarshaller unMarshaller = getJaxbContext110().acquireUnmarshaller();
         try {
             return unmarshall(source, unMarshaller);
         } finally {
-            POOL_110.release(unMarshaller);
+            getJaxbContext110().release(unMarshaller);
         }
     }
     
@@ -263,11 +244,11 @@ public final class XMLUtilities {
     }
     
     private void marshallV100(final Object target, final Object jaxElement) throws JAXBException {
-        final Marshaller marshaller = POOL_100.acquireMarshaller();
+        final Marshaller marshaller = getJaxbContext100().acquireMarshaller();
         try {
             marshall(target, jaxElement, marshaller);
         } finally {
-            POOL_100.release(marshaller);
+            getJaxbContext100().release(marshaller);
         }
 
     }
@@ -281,21 +262,21 @@ public final class XMLUtilities {
      * @throws javax.xml.bind.JAXBException
      */
     private void marshallV100(final Object target, final Object jaxElement, boolean isformatted) throws JAXBException {
-        final Marshaller marshaller = POOL_100.acquireMarshaller();
+        final Marshaller marshaller = getJaxbContext100().acquireMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, isformatted);
         try {
             marshall(target, jaxElement, marshaller);
         } finally {
-            POOL_100.release(marshaller);
+            getJaxbContext100().release(marshaller);
         }
     }
     
     private void marshallV110(final Object target, final Object jaxElement) throws JAXBException {
-        final Marshaller marshaller = POOL_110.acquireMarshaller();
+        final Marshaller marshaller = getJaxbContext110().acquireMarshaller();
         try {
             marshall(target, jaxElement, marshaller);
         } finally {
-            POOL_110.release(marshaller);
+            getJaxbContext110().release(marshaller);
         }
     }
     

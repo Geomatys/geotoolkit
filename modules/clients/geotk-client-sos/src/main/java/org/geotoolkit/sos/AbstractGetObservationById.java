@@ -22,16 +22,11 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
-import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.sos.xml.v100.GetObservationById;
 import org.geotoolkit.sos.xml.v100.ResponseModeType;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.xml.MarshallerPool;
 
 
 /**
@@ -41,30 +36,7 @@ import org.geotoolkit.xml.MarshallerPool;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public abstract class AbstractGetObservationById extends AbstractRequest implements GetObservationByIdRequest {
-    /**
-     * Logger specific for this implementation of {@link Request}.
-     */
-    private static final Logger LOGGER = Logging.getLogger(AbstractGetObservationById.class);
-
-    private static final MarshallerPool POOL;
-    static {
-        MarshallerPool temp = null;
-        try {
-            temp = new MarshallerPool("org.geotoolkit.sos.xml.v100:" +
-                                      "org.geotoolkit.gml.xml.v311:" +
-                                      "org.geotoolkit.swe.xml.v100:" +
-                                      "org.geotoolkit.swe.xml.v101:" +
-                                      "org.geotoolkit.observation.xml.v100:" +
-                                      "org.geotoolkit.sampling.xml.v100:" +
-                                      "org.geotoolkit.sml.xml.v100:" +
-                                      "org.geotoolkit.sml.xml.v101:" +
-                                      "org.geotoolkit.internal.jaxb.geometry");
-        } catch (JAXBException ex) {
-            LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
-        }
-        POOL = temp;
-    }
+public abstract class AbstractGetObservationById extends AbstractSOSRequest implements GetObservationByIdRequest {
 
     /**
      * The version to use for this webservice request.
