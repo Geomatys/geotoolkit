@@ -39,6 +39,7 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.sld.xml.GTtoSE100Transformer;
+import org.geotoolkit.sld.xml.JAXBSLDUtilities;
 import org.geotoolkit.sld.xml.SE100toGTTransformer;
 import org.geotoolkit.xml.MarshallerPool;
 
@@ -108,9 +109,9 @@ public class SEforSLD100Test extends TestCase{
     
     
     static{
-        try {
-            POOL = new MarshallerPool(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
-        } catch (JAXBException ex) {ex.printStackTrace();}
+        
+        POOL = JAXBSLDUtilities.getMarshallerPoolSLD100();
+        
         
         TRANSFORMER_GT = new SE100toGTTransformer(FILTER_FACTORY, STYLE_FACTORY);
         assertNotNull(TRANSFORMER_GT);

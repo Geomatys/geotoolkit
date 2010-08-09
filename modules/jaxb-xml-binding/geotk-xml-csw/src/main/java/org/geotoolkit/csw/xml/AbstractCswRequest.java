@@ -28,12 +28,12 @@ public interface AbstractCswRequest {
      * Gets the value of the outputFormat property.
      *
      */
-    public String getOutputFormat();
+    String getOutputFormat();
 
     /**
      * Sets the value of the outputFormat property.
      *
      */
-    public void setOutputFormat(String value);
+    void setOutputFormat(String value);
 
 }

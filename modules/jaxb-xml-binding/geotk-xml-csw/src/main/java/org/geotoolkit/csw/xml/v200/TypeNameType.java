@@ -61,6 +61,15 @@ public class TypeNameType {
     @XmlSchemaType(name = "anyURI")
     private String targetNamespace;
 
+    public TypeNameType() {
+
+    }
+
+    public TypeNameType(String localName, String namespace) {
+        this.value = localName;
+        this.targetNamespace = namespace;
+    }
+
     /**
      * Gets the value of the value property.
      * 

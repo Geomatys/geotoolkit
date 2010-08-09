@@ -22,20 +22,14 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.Duration;
-import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.csw.xml.v202.HarvestType;
-import org.geotoolkit.ebrim.xml.EBRIMClassesContext;
 import org.geotoolkit.temporal.object.DefaultPeriodDuration;
 import org.geotoolkit.temporal.object.TemporalUtilities;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.xml.MarshallerPool;
 
 
 /**
@@ -45,23 +39,8 @@ import org.geotoolkit.xml.MarshallerPool;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public class AbstractHarvest extends AbstractRequest implements HarvestRequest {
-    /**
-     * Default logger for all GetRecords requests.
-     */
-    protected static final Logger LOGGER = Logging.getLogger(AbstractHarvest.class);
-
-    private static final MarshallerPool POOL;
-    static {
-        MarshallerPool temp = null;
-        try {
-            temp = new MarshallerPool(EBRIMClassesContext.getAllClasses());
-        } catch (JAXBException ex) {
-            LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
-        }
-        POOL = temp;
-    }
-
+public class AbstractHarvest extends AbstractCSWRequest implements HarvestRequest {
+    
     /**
      * The version to use for this webservice request.
      */

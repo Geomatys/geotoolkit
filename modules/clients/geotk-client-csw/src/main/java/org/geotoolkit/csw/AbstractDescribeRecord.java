@@ -23,17 +23,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
-import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.csw.xml.v202.DescribeRecordType;
-import org.geotoolkit.ebrim.xml.EBRIMClassesContext;
-import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.xml.MarshallerPool;
-
 
 /**
  * Abstract implementation of {@link DescribeRecordRequest}, which defines the
@@ -42,22 +35,7 @@ import org.geotoolkit.xml.MarshallerPool;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public abstract class AbstractDescribeRecord extends AbstractRequest implements DescribeRecordRequest {
-    /**
-     * Default logger for all DescribeRecord requests.
-     */
-    protected static final Logger LOGGER = Logging.getLogger(AbstractDescribeRecord.class);
-
-    private static final MarshallerPool POOL;
-    static {
-        MarshallerPool temp = null;
-        try {
-            temp = new MarshallerPool(EBRIMClassesContext.getAllClasses());
-        } catch (JAXBException ex) {
-            LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
-        }
-        POOL = temp;
-    }
+public abstract class AbstractDescribeRecord extends AbstractCSWRequest implements DescribeRecordRequest {
 
     /**
      * The version to use for this webservice request.

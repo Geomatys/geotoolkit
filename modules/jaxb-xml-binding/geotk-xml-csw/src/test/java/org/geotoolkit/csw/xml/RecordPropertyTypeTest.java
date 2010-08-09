@@ -25,7 +25,6 @@ import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.csw.xml.v202.RecordPropertyType;
 import org.geotoolkit.csw.xml.v202.TransactionType;
 import org.geotoolkit.csw.xml.v202.UpdateType;
-import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
@@ -44,7 +43,7 @@ public class RecordPropertyTypeTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool = new MarshallerPool(org.geotoolkit.csw.xml.v202.ObjectFactory.class, DefaultMetadata.class, org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class);
+        pool = CSWClassesContext.getMarshallerPool();
         marshaller = pool.acquireMarshaller();
         unmarshaller = pool.acquireUnmarshaller();
     }

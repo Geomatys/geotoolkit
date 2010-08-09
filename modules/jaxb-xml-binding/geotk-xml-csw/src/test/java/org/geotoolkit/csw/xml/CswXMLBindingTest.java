@@ -61,7 +61,6 @@ import org.geotoolkit.ows.xml.v100.OperationsMetadata;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
 
 // GeotoolKit dependencies
-import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
@@ -78,15 +77,9 @@ import static org.junit.Assert.*;
  */
 public class CswXMLBindingTest {
     
-    private static Logger LOGGER = Logging.getLogger(CswXMLBindingTest.class);
+    private static final Logger LOGGER = Logging.getLogger(CswXMLBindingTest.class);
 
-    private MarshallerPool pool202;
-    private Unmarshaller recordUnmarshaller202;
-    private Marshaller   recordMarshaller202;
-
-    private MarshallerPool pool200;
-    private Unmarshaller recordUnmarshaller200;
-    private Marshaller   recordMarshaller200;
+    private MarshallerPool pool;
    
      /**
      * A JAXB factory to csw object version 2.0.2
@@ -105,32 +98,13 @@ public class CswXMLBindingTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool202 = new MarshallerPool(org.geotoolkit.csw.xml.v202.ObjectFactory.class, DefaultMetadata.class, org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class);
-        recordUnmarshaller202    = pool202.acquireUnmarshaller();
-        recordMarshaller202      = pool202.acquireMarshaller();
+        pool = CSWClassesContext.getMarshallerPool();
         
-        pool200 = new MarshallerPool(org.geotoolkit.csw.xml.v200.ObjectFactory.class,
-                                     org.geotoolkit.dublincore.xml.v1.terms.ObjectFactory.class,
-                                     org.geotoolkit.dublincore.xml.v2.terms.ObjectFactory.class,
-                                     org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class);
-        recordUnmarshaller200    = pool200.acquireUnmarshaller();
-        recordMarshaller200      = pool200.acquireMarshaller();
     }
 
     @After
     public void tearDown() {
-        if (recordUnmarshaller202 != null) {
-            pool202.release(recordUnmarshaller202);
-        }
-        if (recordMarshaller202 != null) {
-            pool202.release(recordMarshaller202);
-        }
-        if (recordUnmarshaller200 != null) {
-            pool200.release(recordUnmarshaller200);
-        }
-        if (recordMarshaller200 != null) {
-            pool200.release(recordMarshaller200);
-        }
+        
     }
     
     /**
@@ -140,7 +114,9 @@ public class CswXMLBindingTest {
      */
     @Test
     public void recordMarshalingTest() throws JAXBException {
-        
+
+        Marshaller marshaller = pool.acquireMarshaller();
+
         /*
          * Test marshalling csw Record v2.0.2
          */
@@ -164,7 +140,7 @@ public class CswXMLBindingTest {
         RecordType record = new RecordType(id, title, type, subject, null, modified, null, Abstract, bbox, null, null, null, spatial, references);
         
         StringWriter sw = new StringWriter();
-        recordMarshaller202.marshal(record, sw);
+        marshaller.marshal(record, sw);
         
         String result = sw.toString();
         String expResult = 
@@ -193,7 +169,8 @@ public class CswXMLBindingTest {
         result = result.substring(result.indexOf('\n') + 1);
         
         assertEquals(expResult, result);
-        
+
+        pool.release(marshaller);
     }
     
     /**
@@ -203,6 +180,8 @@ public class CswXMLBindingTest {
      */
     @Test
     public void recordUnmarshalingTest() throws JAXBException {
+
+        Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         
         /*
          * Test Unmarshalling csw Record v2.0.2
@@ -232,7 +211,7 @@ public class CswXMLBindingTest {
         
         StringReader sr = new StringReader(xml);
         
-        JAXBElement jb = (JAXBElement) recordUnmarshaller202.unmarshal(sr);
+        JAXBElement jb = (JAXBElement) unmarshaller.unmarshal(sr);
         RecordType result = (RecordType) jb.getValue();
         
         SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
@@ -257,7 +236,7 @@ public class CswXMLBindingTest {
         
         RecordType expResult = new RecordType(id, title, type, subject, format, modified, date, Abstract, bbox, creator, distributor, null, spatial, references);
         
-        LOGGER.finer("DATE " +expResult.getDate() + " - " + result.getDate());
+        LOGGER.finer("DATE " + expResult.getDate() + " - " + result.getDate());
         assertEquals(expResult.getDate(), result.getDate());
 
         LOGGER.finer("ABSTRACT " +expResult.getAbstract() + " - " + result.getAbstract());
@@ -310,7 +289,7 @@ public class CswXMLBindingTest {
         
         sr = new StringReader(xml);
         
-        jb = (JAXBElement) recordUnmarshaller200.unmarshal(sr);
+        jb = (JAXBElement) unmarshaller.unmarshal(sr);
         org.geotoolkit.csw.xml.v200.RecordType result2 = (org.geotoolkit.csw.xml.v200.RecordType) jb.getValue();
         
         LOGGER.finer("result:" + result2.toString());
@@ -348,10 +327,12 @@ public class CswXMLBindingTest {
         
         sr = new StringReader(xml);
         
-        jb = (JAXBElement) recordUnmarshaller200.unmarshal(sr);
+        jb = (JAXBElement) unmarshaller.unmarshal(sr);
         result2 = (org.geotoolkit.csw.xml.v200.RecordType) jb.getValue();
         
         LOGGER.finer("result:" + result2.toString());
+        pool.release(unmarshaller);
+        
     }
 
     /**
@@ -362,6 +343,8 @@ public class CswXMLBindingTest {
     @Test
     public void summmaryRecordMarshalingTest() throws JAXBException {
 
+        Marshaller marshaller = pool.acquireMarshaller();
+        
         /*
          * Test marshalling csw summmary Record v2.0.2
          */
@@ -388,7 +371,7 @@ public class CswXMLBindingTest {
         SummaryRecordType record = new SummaryRecordType(id, title, type,  bbox, subject, formats, modified, Abstract);
 
         StringWriter sw = new StringWriter();
-        recordMarshaller202.marshal(record, sw);
+        marshaller.marshal(record, sw);
 
         String result = sw.toString();
         String expResult =
@@ -454,7 +437,7 @@ public class CswXMLBindingTest {
         record = new SummaryRecordType(ids, titles, type,  bbox, subject, formats, modifieds, Abstract);
 
         sw = new StringWriter();
-        recordMarshaller202.marshal(record, sw);
+        marshaller.marshal(record, sw);
 
         result = sw.toString();
         expResult =
@@ -492,6 +475,7 @@ public class CswXMLBindingTest {
 
         assertEquals(expResult, result);
 
+        pool.release(marshaller);
     }
 
     /**
@@ -502,6 +486,9 @@ public class CswXMLBindingTest {
     @Test
     public void summmaryRecordUnmarshalingTest() throws JAXBException {
 
+        Unmarshaller unmarshaller = pool.acquireUnmarshaller();
+        
+        
         /*
          * Test marshalling csw summmary Record v2.0.2
          */
@@ -525,7 +512,7 @@ public class CswXMLBindingTest {
         "</csw:SummaryRecord>" + '\n';
 
         StringReader sr = new StringReader(xml);
-        JAXBElement<SummaryRecordType> jb = (JAXBElement) recordUnmarshaller202.unmarshal(sr);
+        JAXBElement<SummaryRecordType> jb = (JAXBElement) unmarshaller.unmarshal(sr);
         SummaryRecordType result = jb.getValue();
 
         SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
@@ -583,7 +570,7 @@ public class CswXMLBindingTest {
         "</csw:SummaryRecord>" + '\n';
 
         sr = new StringReader(xml);
-        jb = (JAXBElement) recordUnmarshaller202.unmarshal(sr);
+        jb = (JAXBElement) unmarshaller.unmarshal(sr);
         result = jb.getValue();
 
 
@@ -618,7 +605,7 @@ public class CswXMLBindingTest {
         expResult = new SummaryRecordType(ids, titles, type,  bbox, subject, formats, modifieds, Abstract);
 
         assertEquals(expResult, result);
-
+        pool.release(unmarshaller);
     }
 
     /**
@@ -629,6 +616,8 @@ public class CswXMLBindingTest {
     @Test
     public void briefRecordMarshalingTest() throws JAXBException {
 
+        Marshaller marshaller = pool.acquireMarshaller();
+        
         /*
          * Test marshalling BRIEF csw Record v2.0.2
          */
@@ -643,7 +632,7 @@ public class CswXMLBindingTest {
         BriefRecordType record = new BriefRecordType(id, title, type, bbox);
 
         StringWriter sw = new StringWriter();
-        recordMarshaller202.marshal(record, sw);
+        marshaller.marshal(record, sw);
 
         String result = sw.toString();
         String expResult =
@@ -688,7 +677,7 @@ public class CswXMLBindingTest {
         record = new BriefRecordType(identifiers, titles, type, bbox);
 
         sw = new StringWriter();
-        recordMarshaller202.marshal(record, sw);
+        marshaller.marshal(record, sw);
 
         result = sw.toString();
         expResult =
@@ -718,6 +707,7 @@ public class CswXMLBindingTest {
 
         assertEquals(expResult, result);
 
+        pool.release(marshaller);
     }
 
     /**
@@ -728,6 +718,9 @@ public class CswXMLBindingTest {
     @Test
     public void briefRecordUnmarshalingTest() throws JAXBException {
 
+        Unmarshaller unmarshaller = pool.acquireUnmarshaller();
+        
+        
         /*
          * Test marshalling BRIEF csw Record v2.0.2
          */
@@ -745,7 +738,7 @@ public class CswXMLBindingTest {
         "</csw:BriefRecord>" + '\n';
 
         StringReader sr = new StringReader(xml);
-        JAXBElement<BriefRecordType> jb = (JAXBElement) recordUnmarshaller202.unmarshal(sr);
+        JAXBElement<BriefRecordType> jb = (JAXBElement) unmarshaller.unmarshal(sr);
         BriefRecordType result = jb.getValue();
 
         SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
@@ -781,7 +774,7 @@ public class CswXMLBindingTest {
         "</csw:BriefRecord>" + '\n';
 
         sr = new StringReader(xml);
-        jb = (JAXBElement<BriefRecordType>) recordUnmarshaller202.unmarshal(sr);
+        jb = (JAXBElement<BriefRecordType>) unmarshaller.unmarshal(sr);
         result = jb.getValue();
 
         List<SimpleLiteral> identifiers = new ArrayList<SimpleLiteral>();
@@ -801,7 +794,8 @@ public class CswXMLBindingTest {
         expResult = new BriefRecordType(identifiers, titles, type, bbox);
 
         assertEquals(expResult, result);
-
+        pool.release(unmarshaller);
+        
     }
     
     /**
@@ -811,6 +805,8 @@ public class CswXMLBindingTest {
      */
     @Test
     public void getRecordByIdResponseMarshalingTest() throws JAXBException {
+        
+        Marshaller marshaller = pool.acquireMarshaller();
         
          /*
          * Test marshalling csw getRecordByIdResponse v2.0.2
@@ -843,7 +839,7 @@ public class CswXMLBindingTest {
         GetRecordByIdResponse response = new GetRecordByIdResponseType(records, null);
         
         StringWriter sw = new StringWriter();
-        recordMarshaller202.marshal(response, sw);
+        marshaller.marshal(response, sw);
         
         String result = sw.toString();
         
@@ -897,11 +893,11 @@ public class CswXMLBindingTest {
         result = result.substring(result.indexOf('\n') + 1);
         result = result.substring(result.indexOf('\n') + 1);
         
-        LOGGER.finer("RESULT:" + '\n' + result);
-        LOGGER.finer("EXPRESULT:" + '\n' + expResult);
+        LOGGER.finer("RESULT:\n" + result);
+        LOGGER.finer("EXPRESULT:\n" + expResult);
         assertEquals(expResult, result);
         
- 
+        pool.release(marshaller);
     }
 
     /**
@@ -912,6 +908,9 @@ public class CswXMLBindingTest {
     @Test
     public void getRecordByIdResponseUnMarshalingTest() throws JAXBException {
 
+        Unmarshaller unmarshaller = pool.acquireUnmarshaller();
+        
+        
          /*
          * Test marshalling csw getRecordByIdResponse v2.0.2
          */
@@ -987,7 +986,7 @@ public class CswXMLBindingTest {
         "</csw:GetRecordByIdResponse>" + '\n';
 
         
-        GetRecordByIdResponse result = ((JAXBElement<GetRecordByIdResponse>) recordUnmarshaller202.unmarshal(new StringReader(xml))).getValue();
+        GetRecordByIdResponse result = ((JAXBElement<GetRecordByIdResponse>) unmarshaller.unmarshal(new StringReader(xml))).getValue();
 
         assertTrue(result.getAbstractRecord() instanceof List);
         List<? extends AbstractRecordType> resultList = (List<? extends AbstractRecordType>) result.getAbstractRecord();
@@ -999,7 +998,7 @@ public class CswXMLBindingTest {
         assertEquals(expResult.getAbstractRecord(), result.getAbstractRecord());
         assertEquals(expResult, result);
 
-
+        pool.release(unmarshaller);
     }
     
     /**
@@ -1009,6 +1008,7 @@ public class CswXMLBindingTest {
      */
     @Test
     public void getRecordsMarshalingTest() throws JAXBException {
+        Marshaller marshaller = pool.acquireMarshaller();
         
          /*
          * Test marshalling csw getRecordByIdResponse v2.0.2
@@ -1031,7 +1031,7 @@ public class CswXMLBindingTest {
          
         
         StringWriter sw = new StringWriter();
-        recordMarshaller202.marshal(getRecordsRequest, sw);
+        marshaller.marshal(getRecordsRequest, sw);
         
         String result = sw.toString();
         
@@ -1053,7 +1053,7 @@ public class CswXMLBindingTest {
         "        </csw:Constraint>"                                                     + '\n' +
         "    </csw:Query>"                                                              + '\n' +
         "</csw:GetRecords>" + '\n';
-        LOGGER.finer("RESULT:" + '\n' + result);
+        LOGGER.finer("RESULT:\n" + result);
         
         //we remove the 2 first line because the xlmns are not always in the same order.
         expResult = expResult.substring(expResult.indexOf('\n') + 1);
@@ -1062,8 +1062,8 @@ public class CswXMLBindingTest {
         result = result.substring(result.indexOf('\n') + 1);
         result = result.substring(result.indexOf('\n') + 1);
         
-        LOGGER.finer("RESULT:" + '\n' + result);
-        LOGGER.finer("EXPRESULT:" + '\n' + expResult);
+        LOGGER.finer("RESULT:\n" + result);
+        LOGGER.finer("EXPRESULT:\n" + expResult);
         assertEquals(expResult, result);
 
          /*
@@ -1080,7 +1080,7 @@ public class CswXMLBindingTest {
 
 
         sw = new StringWriter();
-        recordMarshaller200.marshal(getRecordsRequest200, sw);
+        marshaller.marshal(getRecordsRequest200, sw);
 
         result = sw.toString();
 
@@ -1102,7 +1102,7 @@ public class CswXMLBindingTest {
         "        </cat:Constraint>"                                                     + '\n' +
         "    </cat:Query>"                                                              + '\n' +
         "</cat:GetRecords>" + '\n';
-        LOGGER.finer("RESULT:" + '\n' + result);
+        LOGGER.finer("RESULT:\n" + result);
 
         //we remove the 2 first line because the xlmns are not always in the same order.
         expResult = expResult.substring(expResult.indexOf('\n') + 1);
@@ -1111,9 +1111,10 @@ public class CswXMLBindingTest {
         result = result.substring(result.indexOf('\n') + 1);
         result = result.substring(result.indexOf('\n') + 1);
 
-        LOGGER.finer("RESULT:" + '\n' + result);
-        LOGGER.finer("EXPRESULT:" + '\n' + expResult);
+        LOGGER.finer("RESULT:\n" + result);
+        LOGGER.finer("EXPRESULT:\n" + expResult);
         assertEquals(expResult, result);
+        pool.release(marshaller);
     }
     
     /**
@@ -1123,6 +1124,8 @@ public class CswXMLBindingTest {
      */
     @Test
     public void getRecordsUnMarshalingTest() throws JAXBException {
+        
+        Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         
          /*
          * Test unmarshalling csw getRecordByIdResponse v2.0.2
@@ -1148,7 +1151,7 @@ public class CswXMLBindingTest {
         
         StringReader sr = new StringReader(xml);
         
-        Object result = recordUnmarshaller202.unmarshal(sr);
+        Object result = unmarshaller.unmarshal(sr);
         
         /*
          * we build the first filter : < dublinCore:Title IS LIKE '*' >
@@ -1167,8 +1170,8 @@ public class CswXMLBindingTest {
          
         
         
-        LOGGER.finer("RESULT:" + '\n' + result);
-        LOGGER.finer("EXPRESULT:" + '\n' + expResult);
+        LOGGER.finer("RESULT:\n" + result);
+        LOGGER.finer("EXPRESULT:\n" + expResult);
         GetRecordsType gres = (GetRecordsType)result;
         QueryType expQT = (QueryType) expResult.getAbstractQuery();
         QueryType resQT = (QueryType) gres.getAbstractQuery();
@@ -1205,7 +1208,7 @@ public class CswXMLBindingTest {
 
         sr = new StringReader(xml);
 
-        result = recordUnmarshaller200.unmarshal(sr);
+        result = unmarshaller.unmarshal(sr);
 
         assertTrue(result instanceof JAXBElement);
 
@@ -1213,6 +1216,7 @@ public class CswXMLBindingTest {
 
         assertEquals(expResult200.getAbstractQuery(), result200.getAbstractQuery());
         assertEquals(expResult200, result200);
+        pool.release(unmarshaller);
     }
 
 
@@ -1224,6 +1228,8 @@ public class CswXMLBindingTest {
     @Test
     public void updateMarshalingTest() throws JAXBException {
 
+        Marshaller marshaller = pool.acquireMarshaller();
+        
         // <TODO
         SimpleLiteral id         = new SimpleLiteral("{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}");
         SimpleLiteral title      = new SimpleLiteral("(JASON-1)");
@@ -1248,7 +1254,7 @@ public class CswXMLBindingTest {
 
         TransactionType request = new TransactionType("CSW", "2.0.2", update);
 
-        //recordMarshaller202.marshal(request, System.out);
+        //marshaller.marshal(request, System.out);
 
         // TODO/>
 
@@ -1266,7 +1272,7 @@ public class CswXMLBindingTest {
         "    <csw:Update>"                                                                           + '\n' +
         "        <csw:RecordProperty>"                                                               + '\n' +
         "            <csw:Name>/csw:Record/dc:contributor</csw:Name>"                                + '\n' +
-        "            <csw:Value xsi:type=\"xsd:string\" >Jane</csw:Value>"                           + '\n' +
+        "            <csw:Value xsi:type=\"xsd:string\">Jane</csw:Value>"                           + '\n' +
         "        </csw:RecordProperty>"                                                              + '\n' +
         "        <csw:Constraint version=\"1.1.0\">"                                                 + '\n' +
         "            <csw:CqlText>identifier='{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}'</csw:CqlText>" + '\n' +
@@ -1275,7 +1281,7 @@ public class CswXMLBindingTest {
         "</csw:Transaction>"+ '\n';
          
         StringWriter sw = new StringWriter();
-        recordMarshaller202.marshal(request, sw);
+        marshaller.marshal(request, sw);
         
         String result = sw.toString();
 
@@ -1298,7 +1304,7 @@ public class CswXMLBindingTest {
         "    <csw:Update>"                                                                           + '\n' +
         "        <csw:RecordProperty>"                                                               + '\n' +
         "            <csw:Name>/gmd:MD_Metadata/identificationInfo/extent/geographicElement</csw:Name>" + '\n' +
-        "            <csw:Value xsi:type=\"gmd:EX_GeographicBoundingBox\" >"                         + '\n' +
+        "            <csw:Value xsi:type=\"gmd:EX_GeographicBoundingBox\">"                         + '\n' +
         "                <gmd:extentTypeCode>"                                                       + '\n' +
         "                    <gco:Boolean>true</gco:Boolean>"                                        + '\n' +
         "                </gmd:extentTypeCode>"                                                      + '\n' +
@@ -1323,14 +1329,15 @@ public class CswXMLBindingTest {
         "</csw:Transaction>"+ '\n';
 
         sw = new StringWriter();
-        recordMarshaller202.marshal(request, sw);
+        marshaller.marshal(request, sw);
 
         result = sw.toString();
 
         result = removeXmlns(result);
 
         assertEquals(expResult, result);
-
+        
+        pool.release(marshaller);
     }
 
     /**
@@ -1341,6 +1348,8 @@ public class CswXMLBindingTest {
     @Test
     public void updateUnmarshalingTest() throws JAXBException {
 
+        Unmarshaller unmarshaller = pool.acquireUnmarshaller();
+        
         /**
          * Test 1 : Simple recordProperty (String)
          */
@@ -1360,7 +1369,7 @@ public class CswXMLBindingTest {
         "    </csw:Update>"                                                                          + '\n' +
         "</csw:Transaction>"+ '\n';
 
-        TransactionType result = (TransactionType) recordUnmarshaller202.unmarshal(new StringReader(xml));
+        TransactionType result = (TransactionType) unmarshaller.unmarshal(new StringReader(xml));
 
         RecordPropertyType recordProperty = new RecordPropertyType("/csw:Record/dc:contributor", "Jane");
         QueryConstraintType query         = new QueryConstraintType("identifier='{8C71082D-5B3B-5F9D-FC40-F7807C8AB645}'", "1.1.0");
@@ -1400,7 +1409,7 @@ public class CswXMLBindingTest {
         "    </csw:Update>"                                                                          + '\n' +
         "</csw:Transaction>"+ '\n';
 
-        result = (TransactionType) recordUnmarshaller202.unmarshal(new StringReader(xml));
+        result = (TransactionType) unmarshaller.unmarshal(new StringReader(xml));
         
         DefaultGeographicBoundingBox geographicElement = new DefaultGeographicBoundingBox(1.1, 1.1, 1.1, 1.1);
         recordProperty = new RecordPropertyType("/gmd:MD_Metadata/identificationInfo/extent/geographicElement", geographicElement);
@@ -1409,7 +1418,7 @@ public class CswXMLBindingTest {
         expResult      = new TransactionType("CSW", "2.0.2", update);
 
         assertEquals(expResult, result);
-
+        pool.release(unmarshaller);
     }
 
     /**
@@ -1419,6 +1428,9 @@ public class CswXMLBindingTest {
      */
     @Test
     public void InspireUnmarshalingTest() throws Exception {
+
+        Unmarshaller unmarshaller = pool.acquireUnmarshaller();
+
 
         String xml =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
@@ -1439,7 +1451,7 @@ public class CswXMLBindingTest {
         "   </ows:OperationsMetadata>"                                                                                                       + '\n' +
         "</csw:Capabilities>"+ '\n';
 
-        Capabilities result = (Capabilities) recordUnmarshaller202.unmarshal(new StringReader(xml));
+        Capabilities result = (Capabilities) unmarshaller.unmarshal(new StringReader(xml));
 
         OperationsMetadata om = new OperationsMetadata();
 
@@ -1455,6 +1467,7 @@ public class CswXMLBindingTest {
         Capabilities expResult = new Capabilities(null, null, om, "2.0.2", null, null);
 
         assertEquals(expResult, result);
+        pool.release(unmarshaller);
     }
 
     /**
@@ -1464,6 +1477,9 @@ public class CswXMLBindingTest {
      */
     @Test
     public void InspireMarshalingTest() throws Exception {
+
+        Marshaller marshaller = pool.acquireMarshaller();
+
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                                        + '\n' +
@@ -1498,13 +1514,15 @@ public class CswXMLBindingTest {
         Capabilities capa = new Capabilities(null, null, om, "2.0.2", null, null);
 
         StringWriter sw = new StringWriter();
-        recordMarshaller202.marshal(capa, sw);
+        marshaller.marshal(capa, sw);
 
         String result = sw.toString();
 
         result = removeXmlns(result);
 
         assertEquals(expResult, result);
+
+        pool.release(marshaller);
     }
 
     public String removeXmlns(String xml) {

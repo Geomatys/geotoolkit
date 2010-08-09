@@ -17,11 +17,13 @@
 package org.geotoolkit.ebrim.xml;
 
 import java.util.List;
+import javax.xml.bind.JAXBException;
 import org.geotoolkit.csw.xml.CSWClassesContext;
 
 import org.geotoolkit.ebrim.xml.v300.IdentifiableType;
 import org.geotoolkit.ebrim.xml.v300.RegistryObjectType;
 import org.geotoolkit.wrs.xml.v100.ExtrinsicObjectType;
+import org.geotoolkit.xml.MarshallerPool;
 
 
 /**
@@ -33,7 +35,16 @@ import org.geotoolkit.wrs.xml.v100.ExtrinsicObjectType;
  */
 public final class EBRIMClassesContext extends CSWClassesContext {
 
+    private static MarshallerPool instance = null;
+    
     private EBRIMClassesContext() {}
+
+    public static MarshallerPool getMarshallerPool() throws JAXBException {
+        if (instance == null) {
+            instance = new MarshallerPool(getAllClasses());
+        }
+        return instance;
+    }
 
     public static Class[] getAllClasses() {
         final List<Class> classes = getAllClassesList();

@@ -43,6 +43,7 @@ import org.geotoolkit.ogc.xml.v100.PropertyNameType;
 import org.geotoolkit.ogc.xml.v100.UnaryLogicOpType;
 import org.geotoolkit.sld.xml.v100.ParameterValueType;
 import org.geotoolkit.sld.xml.GTtoSE100Transformer;
+import org.geotoolkit.sld.xml.JAXBSLDUtilities;
 import org.geotoolkit.sld.xml.SEJAXBStatics;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.Test;
@@ -158,9 +159,9 @@ public class OGCforSLD100Test extends TestCase{
     
     
     static {
-        try {
-            POOL = new MarshallerPool(org.geotoolkit.sld.xml.v100.StyledLayerDescriptor.class);
-        } catch (JAXBException ex) {ex.printStackTrace();}
+        
+        POOL = JAXBSLDUtilities.getMarshallerPoolSLD100();
+        
         
         TRANSFORMER_GT = new OGC100toGTTransformer(FILTER_FACTORY);
         assertNotNull(TRANSFORMER_GT);

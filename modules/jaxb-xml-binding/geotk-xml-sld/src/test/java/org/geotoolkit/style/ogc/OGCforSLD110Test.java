@@ -45,6 +45,7 @@ import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableSLDFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.sld.xml.GTtoSE110Transformer;
+import org.geotoolkit.sld.xml.JAXBSLDUtilities;
 import org.geotoolkit.sld.xml.SEJAXBStatics;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.Test;
@@ -168,9 +169,9 @@ public class OGCforSLD110Test extends TestCase{
     
     
     static {
-        try {
-            POOL = new MarshallerPool(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor.class, org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class);
-        } catch (JAXBException ex) {ex.printStackTrace();}
+        
+        POOL = JAXBSLDUtilities.getMarshallerPoolSLD110();
+        
         
         TRANSFORMER_GT = new OGC110toGTTransformer(FILTER_FACTORY);
         assertNotNull(TRANSFORMER_GT);
