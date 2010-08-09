@@ -128,7 +128,7 @@ public abstract class GridCoverageReader extends GridCoverageStore {
      * elements in the returned list are the names of each coverage.
      * <p>
      * The returned list may be backed by this {@code GridCoverageReader}: it should be used
-     * only as long as this reader and its input source are valids, iterating over the list
+     * only as long as this reader and its input source are valids. Iterating over the list
      * may be costly and the operation performed on the list may throw a
      * {@link BackingStoreException}.
      *
@@ -165,8 +165,9 @@ public abstract class GridCoverageReader extends GridCoverageStore {
      * If sample dimensions are not known, then this method returns {@code null}.
      *
      * @param  index The index of the coverage to be queried.
-     * @return The list of sample dimensions for the {@link GridCoverage} at the specified index.
-     *         This list length is equals to the number of bands in the {@link GridCoverage}.
+     * @return The list of sample dimensions for the {@link GridCoverage} at the specified index,
+     *         or {@code null} if none. This list length is equals to the number of bands in the
+     *         {@link GridCoverage}.
      * @throws IllegalStateException if the input source has not been set.
      * @throws IndexOutOfBoundsException if the supplied index is out of bounds.
      * @throws CoverageStoreException if an error occurs reading the information from the input source.

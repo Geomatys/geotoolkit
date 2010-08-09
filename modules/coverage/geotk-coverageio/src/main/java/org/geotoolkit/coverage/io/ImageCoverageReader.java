@@ -110,7 +110,7 @@ import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @since 3.09 (derived from 2.2)
  * @module
@@ -192,7 +192,11 @@ public class ImageCoverageReader extends GridCoverageReader {
     private transient GridGeometry2D gridGeometry;
 
     /**
-     * The value returned by {@link #getSampleDimensions(int)}, computed when first needed.
+     * The value returned by {@link #getSampleDimensions(int)}, computed when first needed. By
+     * convention, an empty list means that we already checked for bands and didn't found any
+     * having a {@code SampleDimension} description, in which case {@link #getSampleDimensions(int)}
+     * shall returns {@code null}. We use this convention because a coverage having zero bands
+     * should not be valid.
      */
     private transient List<GridSampleDimension> sampleDimensions;
 
@@ -468,7 +472,8 @@ public class ImageCoverageReader extends GridCoverageReader {
             try {
                 if (imageReader instanceof NamedImageStore) {
                     coverageNames = ((NamedImageStore) imageReader).getImageNames();
-                } else {
+                }
+                if (coverageNames == null) {
                     coverageNames = new NameList(getInputName(), imageReader.getNumImages(true));
                 }
             } catch (IOException e) {
@@ -612,14 +617,22 @@ public class ImageCoverageReader extends GridCoverageReader {
                 throw new CoverageStoreException(formatErrorMessage(e), e);
             }
             if (bands == null || bands.isEmpty()) {
-                return null;
-            }
-            try {
+                // See the convention documented below.
+                sampleDimensions = Collections.emptyList();
+            } else try {
                 // MetadataHelper default implementation returns an unmodifiable list.
                 sampleDimensions = getMetadataHelper().getGridSampleDimensions(bands);
             } catch (ImageMetadataException e) {
                 throw new CoverageStoreException(e);
             }
+        }
+        /*
+         * By convention, an empty list means that we already checked for sample dimensions
+         * and didn't found any. This is not the same than a coverage having no bands, which
+         * should not be valid.
+         */
+        if (sampleDimensions.isEmpty()) {
+            return null;
         }
         return sampleDimensions;
     }
