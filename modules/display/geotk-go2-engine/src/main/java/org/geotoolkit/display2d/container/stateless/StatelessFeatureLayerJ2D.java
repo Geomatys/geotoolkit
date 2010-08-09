@@ -710,7 +710,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             final double[] res = renderingContext.getResolution(layerCRS);
 
             //adjust with the generalization factor
-            final Number n = (Number) hints.get(GO2Hints.KEY_GENERALIZE_FACTOR);
+            final Number n =  (hints==null) ? null : (Number)hints.get(GO2Hints.KEY_GENERALIZE_FACTOR);
             final double factor;
             if(n != null){
                 factor = n.doubleValue();

@@ -91,7 +91,6 @@ public class FileSystemNodeTest {
         assertEquals(3602,tree.getNumShapes());
 
         final AbstractNode root = tree.getRoot();
-        System.out.println(root);
 
         for(int i=0;i<4;i++){
             root.getSubNode(i);
@@ -100,7 +99,7 @@ public class FileSystemNodeTest {
         CloseableCollection col = tree.search(new Envelope(-8,3,37,40));
         Iterator ite = col.iterator();
         while(ite.hasNext()){
-            System.out.println(ite.next());
+            ite.next();
         }
 
     }

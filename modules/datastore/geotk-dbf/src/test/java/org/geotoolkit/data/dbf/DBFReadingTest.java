@@ -34,9 +34,12 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
+
+import static org.junit.Assert.*;
 
 /**
  *
@@ -56,7 +59,8 @@ public class DBFReadingTest extends AbstractReadingTests{
         store = new DbaseFileDataStore(file, ns, "dbfstore");
 
         for(Name n : store.getNames()){
-            System.out.println(store.getFeatureType(n));
+            FeatureType ft = store.getFeatureType(n);
+            assertNotNull(ft);
         }
 
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
