@@ -69,7 +69,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Sam Hiatt
- * @version 3.14
+ * @version 3.15
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -374,8 +374,6 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
             reader = new GridCoverageLoader(format);
         }
         reader.setInput(this);
-        reader.imageIndex = identifier.getImageIndex();
-        reader.expectedSize = identifier.geometry.getImageSize();
         return reader;
     }
 
@@ -447,8 +445,6 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
         final GridCoverageIdentifier identifier = getIdentifier();
         final GridCoverageStorePool pool = identifier.series.format.getCoverageLoaders();
         final GridCoverageLoader reader = (GridCoverageLoader) pool.acquireReader();
-        reader.expectedSize = identifier.geometry.getImageSize();
-        reader.imageIndex = identifier.getImageIndex();
         /*
          * Adds the reader to the list of readers currently in use.
          * This list will be used by 'abort()' if needed.
@@ -467,7 +463,6 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
              * reader may not be anymore the head of the chained list, since new readers
              * could have been added concurrently to that list.
              */
-            reader.expectedSize = null;
             synchronized (this) {
                 GridCoverageLoader p = currentReader;
                 if (p == reader) {

@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Date;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,6 +44,7 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
+import org.geotoolkit.util.Range;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.NumberRange;
@@ -397,21 +397,24 @@ public final class NewGridCoverageReference {
                 final TemporalCRS temporalCRS = CRS.getTemporalCRS(crs);
                 if (temporalCRS != null) {
                     final CoordinateSystemAxis axis = temporalCRS.getCoordinateSystem().getAxis(0);
-                    final DefaultTemporalCRS c = DefaultTemporalCRS.wrap(temporalCRS);
                     if (axis instanceof DiscreteCoordinateSystemAxis) {
                         final DiscreteCoordinateSystemAxis da = (DiscreteCoordinateSystemAxis) axis;
+                        DefaultTemporalCRS c = null; // To be created when first needed.
                         dateRanges = new DateRange[da.length()];
                         for (int i=0; i<dateRanges.length; i++) {
-                            final Comparable<?> value = da.getOrdinateAt(i);
-                            final Date time;
-                            if (value instanceof Date) {
-                                time = (Date) value;
-                            } else {
-                                time = c.toDate(((Number) value).doubleValue());
+                            Range<?> r = da.getOrdinateRangeAt(i);
+                            if (!(r instanceof DateRange)) {
+                                if (c == null) {
+                                    c = DefaultTemporalCRS.wrap(temporalCRS);
+                                }
+                                r = new DateRange(
+                                        c.toDate(((Number) r.getMinValue()).doubleValue()), r.isMinIncluded(),
+                                        c.toDate(((Number) r.getMaxValue()).doubleValue()), r.isMaxIncluded());
                             }
-                            dateRanges[i] = new DateRange(time, time);
+                            dateRanges[i] = (DateRange) r;
                         }
                     } else {
+                        final DefaultTemporalCRS c = DefaultTemporalCRS.wrap(temporalCRS);
                         dateRanges = new DateRange[] {
                             new DateRange(c.toDate(axis.getMinimumValue()), c.toDate(axis.getMaximumValue()))
                         };

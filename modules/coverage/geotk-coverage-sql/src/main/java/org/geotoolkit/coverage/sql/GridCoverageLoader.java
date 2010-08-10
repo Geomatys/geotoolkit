@@ -78,7 +78,7 @@ import org.geotoolkit.referencing.operation.transform.LinearTransform;
  * finished, in order to close the underlying input stream.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @since 3.10
  * @module
@@ -95,20 +95,18 @@ final class GridCoverageLoader extends ImageCoverageReader {
     private GridCoverageEntry entry;
 
     /**
-     * The index of the image to be read.
-     * It must be defined by the caller before to read an image.
-     */
-    int imageIndex;
-
-    /**
-     * The expected image size. It must be defined by the caller before to read an image.
-     */
-    Dimension expectedSize;
-
-    /**
      * For internal usage by {@link GridCoverageEntry} only.
      */
     transient GridCoverageLoader nextInUse;
+
+    /**
+     * {@code true} if the check for image index shall be temporarily disabled. This happen after
+     * the {@link #read(int, GridCoverageReadParam) method replaced the user-supplied image index
+     * (always 0, which is checked by {@link #ensureValidIndex(int}) by the actual image index as
+     * specified in the database. This field is resets to {@code false} as soon as the reading
+     * process is finished.
+     */
+    private transient boolean disableIndexCheck;
 
     /**
      * Creates a new reader. This constructor sets {@link #ignoreMetadata} to
@@ -124,7 +122,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
      * Returns that the given image index is zero.
      */
     private void ensureValidIndex(final int index) {
-        if (index != 0) {
+        if (index != 0 && !disableIndexCheck) {
             throw new IllegalArgumentException(Errors.getResources(getLocale())
                     .getString(Errors.Keys.ILLEGAL_ARGUMENT_$2, "imageIndex", index));
         }
@@ -144,9 +142,14 @@ final class GridCoverageLoader extends ImageCoverageReader {
 
     /**
      * Sets the input, which must be a {@link GridCoverageEntry} using the image format
-     * given at construction time. In addition, if the image reader is an instance of
-     * {@link NamedImageStore}, then this method sets the name of NetCDF (or similar format)
-     * variable to read as the names declared in the {@code SampleDimensions} table.
+     * given at construction time.
+     * <p>
+     * If the image reader is an instance of {@link NamedImageStore}, then this method sets
+     * the name of NetCDF (or similar format) variable to read as the names declared in the
+     * {@code SampleDimensions} table.
+     *
+     * @param The entry to use as the input.
+     * @param imageIndex the image index to use
      */
     @Override
     public void setInput(Object input) throws CoverageStoreException {
@@ -168,26 +171,28 @@ final class GridCoverageLoader extends ImageCoverageReader {
         super.setInput(input);
         entry = e; // Set the field only on success.
         /*
-         * For the NetCDF format, set the names of the variables to read.
-         * The names declared in the SampleDimensions table.
+         * For the NetCDF format, find the names of the variables to read. They are the names
+         * declared in the SampleDimensions table. Each variable will be assigned to one band.
+         * There is typically only one variable to read.
+         *
+         * In principle, the variable name for the whole image is ignored since we specified
+         * variable names for bands. But specifying a variable name for the image prevent
+         * NetCDF image reader to compute its own list.
          */
         if (input != null && imageReader instanceof NamedImageStore) {
-            String[] names = null;
-            String imageName = null;
-            final NamedImageStore store = (NamedImageStore) imageReader;
             final List<GridSampleDimension> bands = format.sampleDimensions;
             if (bands != null) {
-                names = new String[bands.size()];
-                for (int i=0; i<names.length; i++) {
-                    names[i] = bands.get(i).getDescription().toString();
+                final String[] bandNames = new String[bands.size()];
+                for (int i=0; i<bandNames.length; i++) {
+                    bandNames[i] = bands.get(i).getDescription().toString();
                 }
-                imageName = names[0];
-            }
-            try {
-                store.setImageNames(imageName);
-                store.setBandNames(0, names);
-            } catch (IOException ex) {
-                throw new CoverageStoreException(ex);
+                final NamedImageStore named = (NamedImageStore) imageReader;
+                try {
+                    named.setImageNames(entry.getIdentifier().filename);
+                    named.setBandNames(NamedImageStore.ALL_IMAGES, bandNames);
+                } catch (IOException ex) {
+                    throw new CoverageStoreException(ex);
+                }
             }
         }
     }
@@ -377,15 +382,9 @@ final class GridCoverageLoader extends ImageCoverageReader {
     /**
      * Returns read parameters with the z-slice initialized, if needed. In addition, if the image
      * reader is an instance of {@link NamedImageStore} (typically the NetCDF reader), sets the
-     * image index API to the temporal dimension. The later is consistent with:
-     * <p>
-     * <ul>
-     *   <li>The database schema, where the image index is specified together with the
-     *       date range in the {@code GridCoverages} table.</li>
-     *   <li>The work done by {@link #setInput(Object)} for the {@link NamedImageStore}
-     *       case, which sets the image reader has if it had only one image (before we
-     *       map the image index API to the temporal dimension).</li>
-     * </ul>
+     * image index API to the temporal dimension. This is consistent with the database schema,
+     * where the image index is specified together with the date range in the {@code GridCoverages}
+     * table.
      */
     @Override
     protected ImageReadParam createImageReadParam(final int index) throws IOException {
@@ -446,22 +445,29 @@ final class GridCoverageLoader extends ImageCoverageReader {
             throws CoverageStoreException
     {
         ensureValidIndex(index);
-        index = imageIndex;
-        final int expectedWidth  = expectedSize.width;
-        final int expectedHeight = expectedSize.height;
-        final int imageWidth, imageHeight;
+        final GridCoverageIdentifier identifier = ensureInputSet().getIdentifier();
+        index = identifier.getImageIndex();
         final ImageReader imageReader = this.imageReader; // Protect from changes.
-        try {
-            imageWidth  = imageReader.getWidth (index);
-            imageHeight = imageReader.getHeight(index);
+        if (!(imageReader instanceof NamedImageStore)) try {
+            final Dimension expectedSize = identifier.geometry.getImageSize();
+            final int expectedWidth  = expectedSize.width;
+            final int expectedHeight = expectedSize.height;
+            final int imageWidth     = imageReader.getWidth (index);
+            final int imageHeight    = imageReader.getHeight(index);
+            if (expectedWidth != imageWidth || expectedHeight != imageHeight) {
+                throw new CoverageStoreException(Errors.getResources(getLocale()).getString(Errors.Keys.IMAGE_SIZE_MISMATCH_$5,
+                        IOUtilities.name(getInputName()), imageWidth, imageHeight, expectedWidth, expectedHeight));
+            }
         } catch (IOException e) {
             throw new CoverageStoreException(formatErrorMessage(e), e);
         }
-        if (expectedWidth != imageWidth || expectedHeight != imageHeight) {
-            throw new CoverageStoreException(Errors.getResources(getLocale()).getString(Errors.Keys.IMAGE_SIZE_MISMATCH_$5,
-                    IOUtilities.name(getInputName()), imageWidth, imageHeight, expectedWidth, expectedHeight));
+        GridCoverage2D coverage;
+        disableIndexCheck = true;
+        try {
+            coverage = super.read(index, param);
+        } finally {
+            disableIndexCheck = false;
         }
-        GridCoverage2D coverage = super.read(index, param);
         /*
          * The GridCoverageReference.read(...) contract requires that we return
          * always the geophysics view, when available.

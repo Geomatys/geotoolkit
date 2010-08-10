@@ -38,6 +38,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
+import org.geotoolkit.util.Range;
 import org.geotoolkit.image.io.plugin.NetcdfTestBase;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 
@@ -119,11 +120,12 @@ public final class NetcdfCRSTest extends NetcdfTestBase {
             assertEquals("Unexpected axis direction.", directions[i], axis.getDirection());
             assertEquals("Unexpected axis unit.", units[i], axis.getUnit());
             /*
-             * Check the grid geometry properties.
+             * Check the ordinate values.
              */
             final int n = length[i];
             assertEquals("Unexpected number of indices.", n, axis.length());
-            if (hasTimeAxis && i == 3) {
+            final boolean isTimeAxis = (hasTimeAxis && i == 3);
+            if (isTimeAxis) {
                 assertFalse("Inconsistent dates.",
                         ((Date) axis.getOrdinateAt(0)).after((Date) axis.getOrdinateAt(n-1)));
             } else {
@@ -132,6 +134,17 @@ public final class NetcdfCRSTest extends NetcdfTestBase {
                 assertEquals("Error transforming the last indice for dimension " + i + '.',
                         axis.getMaximumValue(), ((Number) axis.getOrdinateAt(n-1)).doubleValue(), EPS);
             }
+            /*
+             * Check the range of ordinate values.
+             */
+            final Range<?> r1 = axis.getOrdinateRangeAt(0);
+            final Range<?> r2 = axis.getOrdinateRangeAt(n-1);
+            if (n > 1) {
+                assertFalse(r1.intersects(r2));
+            }
+            final Class<?> elementClass = isTimeAxis ? Date.class : Double.class;
+            assertEquals(elementClass, r1.getElementClass());
+            assertEquals(elementClass, r2.getElementClass());
         }
         /*
          * Check the CRS types.

@@ -288,9 +288,15 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
      */
     @Override
     public List<String> getBandNames(final int imageIndex) throws IOException {
-        checkImageIndex(imageIndex);
+        if (imageIndex != ALL_IMAGES) {
+            checkImageIndex(imageIndex);
+        }
         if (bandNames != null) {
-            return bandNames.get(imageIndex);
+            List<String> names = bandNames.get(imageIndex);
+            if (names == null) {
+                names = bandNames.get(ALL_IMAGES);
+            }
+            return names;
         }
         return null;
     }
@@ -310,7 +316,9 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
      */
     @Override
     public void setBandNames(final int imageIndex, String... names) throws IOException {
-        checkImageIndex(imageIndex);
+        if (imageIndex != ALL_IMAGES) {
+            checkImageIndex(imageIndex);
+        }
         if (names == null) {
             if (bandNames != null) {
                 bandNames.remove(imageIndex);
@@ -349,11 +357,9 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
      */
     @Override
     public int getNumBands(final int imageIndex) throws IOException {
+        final List<String> bandNames = getBandNames(imageIndex);
         if (bandNames != null) {
-            final List<String> names = bandNames.get(imageIndex);
-            if (names != null) {
-                return names.size();
-            }
+            return bandNames.size();
         }
         if (zDimension > 0) {
             prepareVariable(imageIndex);
@@ -572,17 +578,14 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
          * user assigned many variable to the same image index (where each variable is
          * handled as a band), we need to build the variables list from the band names.
          */
-        Variable[] variables = null;
+        final Variable[] variables;
+        final List<String> bandNames = getBandNames(imageIndex);
         if (bandNames != null) {
-            final List<String> names = bandNames.get(imageIndex);
-            if (names != null) {
-                variables = new Variable[names.size()];
-                for (int i=0; i<variables.length; i++) {
-                    variables[i] = findVariable(names.get(i));
-                }
+            variables = new Variable[bandNames.size()];
+            for (int i=0; i<variables.length; i++) {
+                variables[i] = findVariable(bandNames.get(i));
             }
-        }
-        if (variables == null) {
+        } else {
             prepareVariable(imageIndex);
             variables = new Variable[] {variable};
         }
@@ -759,7 +762,7 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
      * Ensures that data are loaded in the NetCDF {@linkplain #variable}. If data are already
      * loaded, then this method does nothing.
      * <p>
-     * This method is invoked automatically before any operation requirying the NetCDF
+     * This method is invoked automatically before any operation requiring the NetCDF
      * variable, including (but not limited to):
      * <ul>
      *   <li>{@link #getWidth(int)}</li>
@@ -780,7 +783,30 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
         if (variable == null || variableIndex != imageIndex) {
             checkImageIndex(imageIndex);
             ensureFileOpen();
-            final String name = selectedNames.get(imageIndex);
+            /*
+             * Get the name of the variable to search for. This is usually the name at the
+             * given index in the 'selectedName' list. However a special case is performed
+             * if the user invoked the setBandNames(...) method (i.e. specified explicitly
+             * which variable to assign to each band). In such case we will load the first
+             * variable (using the first variable is an arbitrary choice, but work well if
+             * the bands are going to be read in sequential order).
+             */
+            String name = null;
+            final List<String> bandNames = getBandNames(imageIndex);
+            if (bandNames != null) {
+                for (final String n : bandNames) {
+                    if (n != null) {
+                        name = n;
+                        break; // Stop at the first non-null name.
+                    }
+                }
+            }
+            if (name == null) {
+                name = selectedNames.get(imageIndex);
+            }
+            /*
+             * Now get the NetCDF variable and initialize this instance fields.
+             */
             final Variable candidate = findVariable(name);
             final int rank = candidate.getRank();
             if (rank < 2) {
@@ -871,13 +897,11 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
          */
         int numSrcBands = hasBandDimension ? variable.getDimension(bandDimension).getLength() : 1;
         String[] srcBandNames = null; // Will be used later if non-null.
+        final List<String> bandNames = getBandNames(imageIndex);
         if (bandNames != null) {
-            final List<String> names = bandNames.get(imageIndex);
-            if (names != null) {
-                numSrcBands  = names.size();
-                srcBandNames = names.toArray(new String[numSrcBands]);
-                hasBandDimension = false;
-            }
+            numSrcBands  = bandNames.size();
+            srcBandNames = bandNames.toArray(new String[numSrcBands]);
+            hasBandDimension = false;
         }
         final int numDstBands = (dstBands != null) ? dstBands.length : numSrcBands;
         checkReadParamBandSettings(param, numSrcBands, numDstBands);
@@ -1063,6 +1087,9 @@ public class NetcdfImageReader extends FileImageReader implements NamedImageStor
         variable       = null;
         variableNames  = null;
         selectedNames  = null;
+        if (bandNames != null) {
+            bandNames.clear();
+        }
         try {
             if (dataset != null) {
                 dataset.close();

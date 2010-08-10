@@ -42,7 +42,7 @@ import static org.geotoolkit.image.io.DimensionSlice.API;
  * of public {@link SpatialImageReadParam} and {@link SpatialImageWriteParam} API.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.15
  *
  * @since 3.08
  * @module
@@ -157,7 +157,7 @@ final class DimensionSlices extends AbstractSet<DimensionSlice> {
             identifiersMap = new LinkedHashMap<Object,DimensionSlice>();
         }
         final DimensionSlice old = identifiersMap.put(identifier, dimension);
-        if (old != null && !equals(old)) {
+        if (old != null && !old.equals(dimension)) {
             identifiersMap.put(identifier, old); // Restore the previous value.
             throw new IllegalArgumentException(Errors.getResources(getLocale())
                     .getString(Errors.Keys.VALUE_ALREADY_DEFINED_$1, identifier));
