@@ -531,6 +531,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         final QueryBuilder qb = new QueryBuilder();
         qb.setTypeName(new DefaultName("remaining"));
         qb.setHints(query.getHints());
+        qb.setResolution(query.getResolution());
         return handleRemaining(reader, qb.buildQuery());
     }
 
