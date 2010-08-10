@@ -123,8 +123,10 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Fill;
 import org.opengis.style.Mark;
+import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.Style;
 import org.opengis.style.Rule;
+import org.opengis.style.SelectedChannelType;
 import org.opengis.style.SemanticType;
 import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
@@ -1168,6 +1170,46 @@ public final class GO2Utilities {
         }
 
         return validRules.toArray(new CachedRule[validRules.size()]);
+    }
+
+    /**
+     * Return true if this raster symbolizer define the original data style.
+     * That means no rendering operations need to be applied on the coverage
+     * before painting.
+     */
+    public static boolean isDefaultRasterSymbolizer(final Symbolizer symbolizer){
+        if(!(symbolizer instanceof RasterSymbolizer)){
+            return false;
+        }
+        final RasterSymbolizer rs = (RasterSymbolizer)symbolizer;
+
+        if(rs.getShadedRelief() != null &&
+           rs.getShadedRelief().getReliefFactor().evaluate(null, Float.class) != 0){
+            return false;
+        }
+        if(rs.getOpacity() != null && rs.getOpacity().evaluate(null, Float.class) != 1f){
+            return false;
+        }
+        if(rs.getImageOutline() != null){
+            return false;
+        }
+        if(rs.getContrastEnhancement() != null &&
+           rs.getContrastEnhancement().getGammaValue().evaluate(null, Float.class) != 1f){
+           return false;
+        }
+        if(rs.getColorMap() != null && rs.getColorMap().getFunction() != null){
+            return false;
+        }
+        final SelectedChannelType[] bands = (rs.getChannelSelection()==null) ? null
+                                            : rs.getChannelSelection().getRGBChannels();
+        if(bands != null){
+            if(bands.length != 3){
+                return false;
+            }
+            //todo should check each band
+        }
+
+        return true;
     }
 
     ////////////////////////////////////////////////////////////////////////////
