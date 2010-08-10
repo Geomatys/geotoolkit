@@ -101,16 +101,16 @@ public class FilterXMLBindingTest {
         result = result.replace(" xmlns:ogc=\"http://www.opengis.net/ogc\"", "");
 
         String expResult =
-        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
-        "<ogc:Filter>" + '\n' +
-        "    <ogc:Overlaps>"                                                                                                                           + '\n' +
-        "        <ogc:PropertyName>boundingBox</ogc:PropertyName>"                                                                          + '\n' +
-        "        <gml:Envelope srsName=\"EPSG:4326\" gml:id=\"env-id\">"                                                                                                 + '\n' +
-        "            <gml:lowerCorner>10.0 11.0</gml:lowerCorner>"                                                                                     + '\n' +
-        "            <gml:upperCorner>10.0 11.0</gml:upperCorner>"                                                                                     + '\n' +
-        "        </gml:Envelope>"                                                                                                                      + '\n' +
-        "    </ogc:Overlaps>"                                                                                                                          + '\n' +
-        "</ogc:Filter>" + '\n';
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"     + '\n' +
+        "<ogc:Filter>"                                                      + '\n' +
+        "    <ogc:Overlaps>"                                                + '\n' +
+        "        <ogc:PropertyName>boundingBox</ogc:PropertyName>"          + '\n' +
+        "        <gml:Envelope srsName=\"EPSG:4326\" gml:id=\"env-id\">"    + '\n' +
+        "            <gml:lowerCorner>10.0 11.0</gml:lowerCorner>"          + '\n' +
+        "            <gml:upperCorner>10.0 11.0</gml:upperCorner>"          + '\n' +
+        "        </gml:Envelope>"                                           + '\n' +
+        "    </ogc:Overlaps>"                                               + '\n' +
+        "</ogc:Filter>"                                                     + '\n';
 
         LOGGER.log(Level.FINER, "result: {0}", result);
         LOGGER.log(Level.FINER, "expected: {0}", expResult);

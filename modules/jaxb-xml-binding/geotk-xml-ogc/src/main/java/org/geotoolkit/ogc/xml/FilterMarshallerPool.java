@@ -17,6 +17,8 @@
 
 package org.geotoolkit.ogc.xml;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import org.geotoolkit.xml.MarshallerPool;
 
@@ -27,15 +29,19 @@ import org.geotoolkit.xml.MarshallerPool;
 public class FilterMarshallerPool {
 
     private static MarshallerPool instance;
+    static {
+        try {
+            instance = new MarshallerPool("org.geotoolkit.ogc.xml.v110:"           +
+                                         "org.geotoolkit.internal.jaxb.geometry:" +
+                                         "org.geotoolkit.gml.xml.v311");
+        } catch (JAXBException ex) {
+            Logger.getLogger(FilterMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
     private FilterMarshallerPool() {}
 
-    public static MarshallerPool getInstance() throws JAXBException {
-        if (instance == null) {
-            instance = new MarshallerPool("org.geotoolkit.ogc.xml.v110:" +
-                                         "org.geotoolkit.internal.jaxb.geometry:" +
-                                         "org.geotoolkit.gml.xml.v311");
-        }
+    public static MarshallerPool getInstance() {
         return instance;
     }
 }
