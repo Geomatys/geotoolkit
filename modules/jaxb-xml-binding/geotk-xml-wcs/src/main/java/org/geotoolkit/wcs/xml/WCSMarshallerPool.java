@@ -32,15 +32,16 @@ public class WCSMarshallerPool {
     static {
         try {
             instance = new MarshallerPool("org.geotoolkit.wcs.xml.v100:"
-                                      + "org.geotoolkit.wcs.xml.v111:"
-                                      + "org.geotoolkit.internal.jaxb.geometry");
+                                        + "org.geotoolkit.wcs.xml.v111:"
+                                        + "org.geotoolkit.internal.jaxb.geometry:"
+                                        + "org.geotoolkit.ogc.xml.exception");
         } catch (JAXBException ex) {
             Logger.getLogger(WCSMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
     private WCSMarshallerPool() {}
 
-    public static MarshallerPool getInstance() throws JAXBException {
+    public static MarshallerPool getInstance() {
         return instance;
     }
 }

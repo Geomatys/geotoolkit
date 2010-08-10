@@ -39,7 +39,7 @@ public class SensorMLMarshallerPool {
     }
     private SensorMLMarshallerPool() {}
 
-    public static MarshallerPool getInstance() throws JAXBException {
+    public static MarshallerPool getInstance() {
         return instance;
     }
 }

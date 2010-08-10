@@ -38,7 +38,7 @@ public class WFSMarshallerPool {
     }
     private WFSMarshallerPool() {}
 
-    public static MarshallerPool getInstance() throws JAXBException {
+    public static MarshallerPool getInstance() {
         return instance;
     }
 }

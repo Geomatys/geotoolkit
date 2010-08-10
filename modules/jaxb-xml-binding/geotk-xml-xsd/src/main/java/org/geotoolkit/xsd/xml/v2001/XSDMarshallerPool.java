@@ -14,11 +14,8 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
+package org.geotoolkit.xsd.xml.v2001;
 
-
-package org.geotoolkit.wmts.xml;
-
-import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
@@ -28,22 +25,17 @@ import org.geotoolkit.xml.MarshallerPool;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class WMTSMarshallerPool {
+public class XSDMarshallerPool {
 
     private static MarshallerPool instance;
     static {
         try {
-            instance = new MarshallerPool(
-                    Collections.singletonMap(MarshallerPool.ROOT_NAMESPACE_KEY, "http://www.opengis.net/wmts/1.0"),
-                 "org.geotoolkit.wmts.xml.v100:" +
-                 "org.geotoolkit.gml.xml.v311:" +
-                 "org.geotoolkit.internal.jaxb.geometry:" +
-                 "org.geotoolkit.ows.xml.v110");
+            instance = new MarshallerPool("org.geotoolkit.xsd.xml.v2001");
         } catch (JAXBException ex) {
-            Logger.getLogger(WMTSMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(XSDMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    private WMTSMarshallerPool() {}
+    private XSDMarshallerPool() {}
 
     public static MarshallerPool getInstance() {
         return instance;

@@ -79,6 +79,7 @@ public class WcsXMLBindingTest {
         result = result.replace(" xmlns:ows=\"http://www.opengis.net/ows/1.1\"", "");
         result = result.replace(" xmlns:ns5=\"http://www.opengis.net/wcs/1.1.1\"", "");
         result = result.replace(" xmlns:wcs=\"http://www.opengis.net/wcs\"", "");
+        result = result.replace(" xmlns:ogc=\"http://www.opengis.net/ogc\"", "");
 
 
         String expResult = "<ns5:GetCoverage version=\"1.1.1\" service=\"WCS\">" + '\n'
@@ -117,6 +118,7 @@ public class WcsXMLBindingTest {
         result = result.replace(" xmlns:ows=\"http://www.opengis.net/ows/1.1\"", "");
         result = result.replace(" xmlns:ns5=\"http://www.opengis.net/wcs/1.1.1\"", "");
         result = result.replace(" xmlns:wcs=\"http://www.opengis.net/wcs\"", "");
+        result = result.replace(" xmlns:ogc=\"http://www.opengis.net/ogc\"", "");
 
 
         String expResult = "<wcs:GetCoverage version=\"1.0.0\" service=\"WCS\">" + '\n' +
