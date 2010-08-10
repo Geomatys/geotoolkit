@@ -19,6 +19,7 @@ package org.geotoolkit.ogc.xml;
 // J2SE dependencies
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 // JAXB dependencies
@@ -31,16 +32,13 @@ import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
 import org.geotoolkit.ogc.xml.v110.FilterType;
-import org.geotoolkit.ogc.xml.v110.LiteralType;
 import org.geotoolkit.ogc.xml.v110.OverlapsType;
-import org.geotoolkit.ogc.xml.v110.PropertyIsEqualToType;
 import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 
 //Junit dependencies
 import org.junit.*;
-import org.opengis.filter.PropertyIsEqualTo;
 import static org.junit.Assert.*;
 
 
@@ -52,7 +50,7 @@ import static org.junit.Assert.*;
  */
 public class FilterXMLBindingTest {
 
-    private Logger       logger = Logging.getLogger("org.geotoolkit.filter");
+    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter");
 
     private MarshallerPool pool;
     private Unmarshaller unmarshaller;
@@ -60,10 +58,7 @@ public class FilterXMLBindingTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool = new MarshallerPool(
-                "org.geotoolkit.ogc.xml.v110:" +
-                "org.geotoolkit.internal.jaxb.geometry:" +
-                "org.geotoolkit.gml.xml.v311");
+        pool = FilterMarshallerPool.getInstance();
         marshaller = pool.acquireMarshaller();
         unmarshaller = pool.acquireUnmarshaller();
     }
@@ -117,8 +112,8 @@ public class FilterXMLBindingTest {
         "    </ogc:Overlaps>"                                                                                                                          + '\n' +
         "</ogc:Filter>" + '\n';
 
-        logger.finer("result" + result);
-        logger.finer("expected" + expResult);
+        LOGGER.log(Level.FINER, "result: {0}", result);
+        LOGGER.log(Level.FINER, "expected: {0}", expResult);
         assertEquals(expResult, result);
 
 

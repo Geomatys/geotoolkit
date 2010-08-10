@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sml.v100;
 
+import org.geotoolkit.sml.xml.SensorMLMarshallerPool;
 import org.geotoolkit.sml.xml.v100.Connection;
 import org.geotoolkit.sml.xml.v100.Capabilities;
 import org.geotoolkit.sml.xml.v100.Identification;
@@ -67,7 +68,6 @@ import org.geotoolkit.sml.xml.v100.Components;
 import org.geotoolkit.sml.xml.v100.OnlineResource;
 import org.geotoolkit.sml.xml.v100.Parameters;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.ArrayList;
@@ -117,7 +117,6 @@ import org.geotoolkit.swe.xml.v100.VectorPropertyType;
 import org.geotoolkit.swe.xml.v100.VectorType;
 
 //Junit dependencies
-import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -128,7 +127,6 @@ import static org.junit.Assert.*;
  */
 public class SmlXMLBindingTest {
 
-    private MarshallerPool marshallerPool;
     private ObjectFactory sml100Factory = new ObjectFactory();
     private org.geotoolkit.swe.xml.v100.ObjectFactory swe100Factory = new org.geotoolkit.swe.xml.v100.ObjectFactory();
 
@@ -143,7 +141,6 @@ public class SmlXMLBindingTest {
 
     @Before
     public void setUp() throws Exception {
-        marshallerPool = new MarshallerPool("org.geotoolkit.sml.xml.v100:org.geotoolkit.internal.jaxb.geometry");
     }
 
     @After
@@ -170,7 +167,7 @@ public class SmlXMLBindingTest {
     @Test
     public void ComponentUnmarshallMarshalingTest() throws Exception {
 
-        Unmarshaller unmarshaller = marshallerPool.acquireUnmarshaller();
+        Unmarshaller unmarshaller = SensorMLMarshallerPool.getInstance().acquireUnmarshaller();
 
         InputStream is = SmlXMLBindingTest.class.getResourceAsStream("/org/geotoolkit/sml/component.xml");
         Object unmarshalled = unmarshaller.unmarshal(is);
@@ -315,7 +312,7 @@ public class SmlXMLBindingTest {
         assertEquals(expectedResult.getMember(), result.getMember());
         assertEquals(expectedResult, result);
 
-        marshallerPool.release(unmarshaller);
+        SensorMLMarshallerPool.getInstance().release(unmarshaller);
     }
 
     /**
@@ -326,7 +323,7 @@ public class SmlXMLBindingTest {
     @Test
     public void SystemUnmarshallMarshalingTest() throws Exception {
 
-        Unmarshaller unmarshaller = marshallerPool.acquireUnmarshaller();
+        Unmarshaller unmarshaller = SensorMLMarshallerPool.getInstance().acquireUnmarshaller();
 
         InputStream is = SmlXMLBindingTest.class.getResourceAsStream("/org/geotoolkit/sml/system.xml");
         Object unmarshalled = unmarshaller.unmarshal(is);
@@ -653,7 +650,7 @@ public class SmlXMLBindingTest {
         assertEquals(expectedResult.getMember(), result.getMember());
         assertEquals(expectedResult, result);
 
-        marshallerPool.release(unmarshaller);
+        SensorMLMarshallerPool.getInstance().release(unmarshaller);
     }
 
     /**
@@ -682,7 +679,7 @@ public class SmlXMLBindingTest {
         OutputList outputList = new OutputList(Arrays.asList(io2));
         Outputs outputs = new Outputs(outputList);
         
-        Marshaller marshaller = marshallerPool.acquireMarshaller();
+        Marshaller marshaller = SensorMLMarshallerPool.getInstance().acquireMarshaller();
 
         StringWriter sw = new StringWriter();
         marshaller.marshal(outputs, sw);
@@ -702,7 +699,7 @@ public class SmlXMLBindingTest {
 
         result = sw.toString();
         //System.out.println("result:" + result);
-
+        SensorMLMarshallerPool.getInstance().release(marshaller);
 
     }
 }
