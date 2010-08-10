@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.display2d.service;
 
+import java.awt.image.renderable.ParameterBlock;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.awt.Color;
@@ -52,6 +53,7 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
+import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display.canvas.GraphicVisitor;
@@ -454,7 +456,23 @@ public class DefaultPortrayalService implements PortrayalService{
         readParam.setResolution(resolution);
         
         try{            
-            final GridCoverage coverage = reader.read(0, readParam);
+            GridCoverage2D coverage = (GridCoverage2D)reader.read(0, readParam);
+            final RenderedImage image = coverage.getRenderedImage();
+
+            // HACK TO FIX COLOR ERROR ON JPEG /////////////////////////////////
+            if(mime.contains("jpeg") || mime.contains("jpg")){
+                if(image.getColorModel().hasAlpha()){
+                    final int nbBands = image.getSampleModel().getNumBands();
+                    System.out.println("hasalpha");
+                    if(nbBands > 3){
+                        //we can remove the fourth band assuming it is the alpha
+                        System.out.println("remove alpha band");
+                        coverage = (GridCoverage2D) Operations.DEFAULT.selectSampleDimension(coverage, new int[]{0,1,2});
+                    }
+                }
+            }
+            ////////////////////////////////////////////////////////////////////
+
             writeCoverage(coverage, env, resolution, outputDef, canvasDef.getBackground());
         }catch(CoverageStoreException ex){
             throw new PortrayalException(ex);
