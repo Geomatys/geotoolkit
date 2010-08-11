@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.geotoolkit.csw.xml.CSWResponse;
 import org.geotoolkit.util.Utilities;
 
 
@@ -64,7 +65,7 @@ import org.geotoolkit.util.Utilities;
     "requestId"
 })
 @XmlRootElement( name ="Acknowledgement" )
-public class AcknowledgementType {
+public class AcknowledgementType implements CSWResponse {
 
     @XmlElement(name = "EchoedRequest", required = true)
     private EchoedRequestType echoedRequest;
