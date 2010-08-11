@@ -379,6 +379,9 @@ public final class NewGridCoverageReference {
         if (metadata != null) {
             final CoordinateReferenceSystem crs = metadata.getInstanceForType(CoordinateReferenceSystem.class);
             if (crs != null) {
+                /*
+                 * Horizontal CRS.
+                 */
                 final CRSAuthorityFactory crsFactory = database.getCRSAuthorityFactory();
                 final CoordinateReferenceSystem horizontalCRS = CRS.getHorizontalCRS(crs);
                 if (horizontalCRS != null) {
@@ -387,13 +390,34 @@ public final class NewGridCoverageReference {
                         horizontalSRID = id;
                     }
                 }
+                /*
+                 * Vertical CRS. Extract also the vertical ordinates, if any.
+                 */
                 final VerticalCRS verticalCRS = CRS.getVerticalCRS(crs);
                 if (verticalCRS != null) {
                     final Integer id = getIdentifier(verticalCRS, crsFactory);
                     if (id != null) {
                         verticalSRID = id;
                     }
+                    final CoordinateSystemAxis axis = verticalCRS.getCoordinateSystem().getAxis(0);
+                    if (axis instanceof DiscreteCoordinateSystemAxis) {
+                        final DiscreteCoordinateSystemAxis da = (DiscreteCoordinateSystemAxis) axis;
+                        final int length = da.length();
+                        for (int i=0; i<length; i++) {
+                            final Comparable<?> value = da.getOrdinateAt(i);
+                            if (value instanceof Number) {
+                                if (verticalValues == null) {
+                                    verticalValues = new double[length];
+                                    Arrays.fill(verticalValues, Double.NaN);
+                                }
+                                verticalValues[i] = ((Number) value).doubleValue();
+                            }
+                        }
+                    }
                 }
+                /*
+                 * Temporal CRS. Extract also the time ordinate range, if any.
+                 */
                 final TemporalCRS temporalCRS = CRS.getTemporalCRS(crs);
                 if (temporalCRS != null) {
                     final CoordinateSystemAxis axis = temporalCRS.getCoordinateSystem().getAxis(0);
