@@ -27,7 +27,7 @@ import org.geotoolkit.wms.xml.v130.WMSCapabilities;
  * @module pending
  */
 @XmlSeeAlso({WMT_MS_Capabilities.class, WMSCapabilities.class})
-public abstract class AbstractWMSCapabilities {
+public abstract class AbstractWMSCapabilities implements WMSResponse {
 
      /**
      * return the Service part of the capabilities document.

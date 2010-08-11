@@ -21,6 +21,6 @@ package org.geotoolkit.wcs.xml;
  * @author Cédric Briançon
  * @module pending
  */
-public interface GetCapabilitiesResponse {
+public interface GetCapabilitiesResponse extends WCSResponse {
 
 }
