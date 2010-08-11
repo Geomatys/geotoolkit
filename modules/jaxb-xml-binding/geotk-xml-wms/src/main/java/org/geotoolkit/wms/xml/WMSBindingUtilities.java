@@ -44,41 +44,12 @@ import org.xml.sax.InputSource;
  */
  public class WMSBindingUtilities {
 
-    private static final MarshallerPool jaxbContext111;
-    private static final MarshallerPool jaxbContext130;
-
-    static{
-        MarshallerPool temp = null;
-        try{
-            temp = new MarshallerPool(org.geotoolkit.wms.xml.v111.WMT_MS_Capabilities.class, org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class);
-        }catch(JAXBException ex){
-            ex.printStackTrace();
-        }
-        jaxbContext111 = temp;
-
-        temp = null;
-        try{
-            temp = new MarshallerPool(org.geotoolkit.wms.xml.v130.WMSCapabilities.class, org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class);
-        }catch(JAXBException ex){
-            ex.printStackTrace();
-        }
-        jaxbContext130 = temp;
-    }
-
      public static AbstractWMSCapabilities unmarshall(Object source, WMSVersion version) throws JAXBException{
          
          Unmarshaller unMarshaller   = null;
-         MarshallerPool selectedPool = null;
+         MarshallerPool selectedPool = WMSMarshallerPool.getInstance();
          try {
-            switch(version) {
-                case v111 : unMarshaller = jaxbContext111.acquireUnmarshaller(); 
-                            selectedPool = jaxbContext111;
-                            break;
-                case v130 : unMarshaller = jaxbContext130.acquireUnmarshaller(); 
-                            selectedPool = jaxbContext130;
-                            break;
-                default: throw new IllegalArgumentException("unknonwed version");
-            }
+            unMarshaller = selectedPool.acquireUnmarshaller();
             return (AbstractWMSCapabilities) unmarshall(source, unMarshaller);
          } finally {
              if (selectedPool != null && unMarshaller != null) {
