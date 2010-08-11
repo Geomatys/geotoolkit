@@ -158,8 +158,8 @@ public class GridCoverageReaders {
                 manager = (TileManager)obj;
 
                 File prjFile = (File)IOUtilities.changeExtension(file, "prj");
-                if(!prjFile.exists()){
-                    crs = PrjFiles.read(file);
+                if(prjFile.exists()){
+                    crs = PrjFiles.read(prjFile);
                 }else{
                     throw new CoverageStoreException("No projection file associated with the tile manager.");
                 }
