@@ -122,7 +122,7 @@ import static java.lang.Math.max;
  * serializable, but its class must be known to {@link IIORegistry} at deserialization time.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.15
  *
  * @see TileManagerFactory
  * @see org.geotoolkit.gui.swing.image.MosaicTableModel
@@ -197,9 +197,9 @@ public class Tile implements Comparable<Tile>, Serializable {
     /**
      * The size of the image to be read, or 0 if not yet computed. Values are stored
      * as <strong>unsigned</strong> shorts:  they must be casted to {@code int} with
-     * {@code s & MASK}. We assume that the {@code [0 .. 65535]} range is suffisient
+     * {@code s & MASK}. We assume that the {@code [0 .. 65535]} range is sufficient
      * on the basis that tiles need to be reasonably small for being useful. Furthermore
-     * tiles are usually square and an image of size 32767&times;32767 reachs the limit
+     * tiles are usually square and an image of size 32767&times;32767 reaches the limit
      * of Java Image I/O library anyway, since image area must hold in an {@code int}.
      */
     private short width, height;
@@ -216,14 +216,29 @@ public class Tile implements Comparable<Tile>, Serializable {
     private AffineTransform gridToCRS;
 
     /**
+     * Creates a new tile which is a copy of the given one except for input. The subsampling,
+     * <cite>grid to CRS</cite> transform, image index and image reader SPI are copied unchanged.
+     * <p>
+     * This method is useful when the filename or the directory of a file changed.
+     *
+     * @param tile  The tile to copy.
+     * @param input The new input to be given to the image reader.
+     *
+     * @since 3.15
+     */
+    public Tile(final Tile tile, final Object input) {
+        this(tile, input, null);
+    }
+
+    /**
      * Creates a new tile which is a copy of the given one except for input and region.
      * The subsampling (and consequently the <cite>grid to CRS</cite> transform), image
      * index and image reader SPI are copied unchanged.
      * <p>
-     * This method is not public because copying the field values may not be suffisient
-     * if the given class is not of the same class than {@code this}. For example if it
-     * is a {@link LargeTile}, then the width and height may be too small. This is okay
-     * for {@link OverviewLevel} which use this constructor only with {@link Tile} instances.
+     * Note that copying the field values may not be sufficient if the given class is not of the
+     * same class than {@code this}. For example if it is a {@link LargeTile}, then the width and
+     * height may be too small. This is okay for {@link OverviewLevel} which use this constructor
+     * only with {@link Tile} instances.
      *
      * @param tile
      *          The tile to copy.

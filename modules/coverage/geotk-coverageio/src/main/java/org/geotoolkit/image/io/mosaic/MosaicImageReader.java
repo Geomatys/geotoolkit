@@ -45,7 +45,6 @@ import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.FrequencySortedSet;
-import org.geotoolkit.internal.image.io.MetadataUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
@@ -60,7 +59,7 @@ import org.geotoolkit.resources.Vocabulary;
  * is to read efficiently only subsets of big tiled images.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.15
  *
  * @since 2.5
  * @module
@@ -966,62 +965,28 @@ public class MosaicImageReader extends ImageReader implements Disposable {
 
     /**
      * Returns the metadata associated with the input source as a whole, or {@code null}.
-     * The default implementation tries to {@linkplain IIOMetadata#mergeTree merge} the
-     * metadata from every tiles.
+     * The default implementation returns {@code null} in all cases.
+     *
+     * {@note A previous implementation was iterating over every tiles and attempted to merge
+     * the metadata using the <code>IIOMetadata.mergeTree(String, Node)</code> method. However
+     * this was extremely slow on large mosaics, and the result was usually not the expected
+     * one since the merge operation is hard to implement correctly.}
      *
      * @throws IOException if an error occurs during reading.
      */
     @Override
     public IIOMetadata getStreamMetadata() throws IOException {
-        IIOMetadata metadata = null;
-        if (input instanceof TileManager[]) {
-            final Set<ReaderInputPair> done = new HashSet<ReaderInputPair>();
-            for (final TileManager manager : (TileManager[]) input) {
-                for (final Tile tile : manager.getTiles()) {
-                    final ImageReader reader = tile.getImageReader(this, true, ignoreMetadata);
-                    final Object input = reader.getInput();
-                    if (done.add(new ReaderInputPair(reader, input))) {
-                        final IIOMetadata candidate = reader.getStreamMetadata();
-                        metadata = MetadataUtilities.merge(candidate, metadata);
-                    }
-                }
-            }
-        }
-        return metadata;
+        return null;
     }
 
     /**
-     * Returns the stream metadata for the given format and nodes, or {@code null}.
-     * The default implementation tries to {@linkplain IIOMetadata#mergeTree merge}
-     * the metadata from every tiles.
+     * Returns the metadata associated with the given image, or {@code null}.
+     * The default implementation returns {@code null} in all cases.
      *
-     * @throws IOException if an error occurs during reading.
-     */
-    @Override
-    public IIOMetadata getStreamMetadata(final String formatName, final Set<String> nodeNames)
-            throws IOException
-    {
-        IIOMetadata metadata = null;
-        if (input instanceof TileManager[]) {
-            final Set<ReaderInputPair> done = new HashSet<ReaderInputPair>();
-            for (final TileManager manager : (TileManager[]) input) {
-                for (final Tile tile : manager.getTiles()) {
-                    final ImageReader reader = tile.getImageReader(this, true, ignoreMetadata);
-                    final Object input = reader.getInput();
-                    if (done.add(new ReaderInputPair(reader, input))) {
-                        final IIOMetadata candidate = reader.getStreamMetadata(formatName, nodeNames);
-                        metadata = MetadataUtilities.merge(candidate, metadata);
-                    }
-                }
-            }
-        }
-        return metadata;
-    }
-
-    /**
-     * Returns the metadata associated with the given image, or {@code null}. The
-     * default implementation tries to {@linkplain IIOMetadata#mergeTree merge}
-     * the metadata from every tiles.
+     * {@note A previous implementation was iterating over every tiles and attempted to merge
+     * the metadata using the <code>IIOMetadata.mergeTree(String, Node)</code> method. However
+     * this was extremely slow on large mosaics, and the result was usually not the expected
+     * one since the merge operation is hard to implement correctly.}
      *
      * @param  imageIndex the index of the image whose metadata is to be retrieved.
      * @return The metadata, or {@code null}.
@@ -1031,33 +996,7 @@ public class MosaicImageReader extends ImageReader implements Disposable {
      */
     @Override
     public IIOMetadata getImageMetadata(final int imageIndex) throws IOException {
-        IIOMetadata metadata = null;
-        for (final Tile tile : getTileManager(imageIndex).getTiles()) {
-            final ImageReader reader = tile.getImageReader(this, true, ignoreMetadata);
-            final IIOMetadata candidate = reader.getImageMetadata(tile.getImageIndex());
-            metadata = MetadataUtilities.merge(candidate, metadata);
-        }
-        return metadata;
-    }
-
-    /**
-     * Returns the image metadata for the given format and nodes, or {@code null}.
-     * The default implementation tries to {@linkplain IIOMetadata#mergeTree merge}
-     * the metadata from every tiles.
-     *
-     * @throws IOException if an error occurs during reading.
-     */
-    @Override
-    public IIOMetadata getImageMetadata(final int imageIndex,
-            final String formatName, final Set<String> nodeNames) throws IOException
-    {
-        IIOMetadata metadata = null;
-        for (final Tile tile : getTileManager(imageIndex).getTiles()) {
-            final ImageReader reader = tile.getImageReader(this, true, ignoreMetadata);
-            final IIOMetadata candidate = reader.getImageMetadata(tile.getImageIndex(), formatName, nodeNames);
-            metadata = MetadataUtilities.merge(candidate, metadata);
-        }
-        return metadata;
+        return null;
     }
 
     /**

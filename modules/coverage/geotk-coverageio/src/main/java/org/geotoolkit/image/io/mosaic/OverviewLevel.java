@@ -45,7 +45,7 @@ import org.geotoolkit.resources.Errors;
  * {@link #equals}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.15
  *
  * @since 2.5
  * @module
@@ -241,15 +241,17 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
     }
 
     /**
-     * Once every tiles have been {@linkplain #add added} to this grid level, search for a pattern.
+     * Once every tiles have been {@linkplain #add added} to this grid level, links this overview
+     * to a finer overview level. This method also looks for a pattern in the tile name (in this
+     * overview level only) in order to reduce the memory consumption.
      *
      * @param ordinal The overview level of this {@code OverviewLevel}. 0 is finest subsampling.
      * @param finer A level with finer (smaller) subsampling value than this level, or {@code null}.
      * @throws MalformedURLException if an error occurred while creating the URL for the tile.
+     * @throws IOException If an error occurred while reading a tile size.
      */
-    final void createLinkedList(final int ordinal, final OverviewLevel finer)
-            throws MalformedURLException
-    {
+    final void createLinkedList(final int ordinal, final OverviewLevel finer) throws IOException {
+        assert (this.ordinal == 0) && (this.finer == null);
         this.ordinal = ordinal;
         this.finer   = finer;
         assert getFinerLevel() == finer; // For running the assertions inside getFinerLevel().
@@ -357,15 +359,25 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
      * @param  tile The tile to inspect for a pattern in the input object.
      * @return The pattern, or {@code null} if none.
      */
-    private String inputPattern(final Tile tile) {
+    private String inputPattern(final Tile tile) throws IOException {
         /*
          * Accepts only instance of Tile (not a subclass), otherwise we will not know how to create
          * the instance on the fly. Once we have verified that the class is Tile, we are allowed to
          * check the tile size using the 'isSizeEquals' shortcut. We accept only tiles that fill
          * completely the cell size, otherwise we can not recreate the tile from a pattern.
          */
-        if (!Tile.class.equals(tile.getClass()) || !tile.isSizeEquals(dx, dy)) {
+        if (!Tile.class.equals(tile.getClass())) {
             return null;
+        }
+        if (!tile.isSizeEquals(dx, dy)) {
+            /*
+             * If the tile size is not the expected one, check again using a more costly
+             * computation which work for tiles in the last column and last row.
+             */
+            final Point index = getIndex2D(tile);
+            if (!tile.getRegion().equals(getCellBounds(index.x, index.y))) {
+                return null;
+            }
         }
         final Object input = tile.getInput();
         final Class<?> type = input.getClass();
@@ -629,7 +641,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
      * @throws IndexOutOfBoundsException if the given index is out of bounds.
      * @throws MalformedURLException if an error occurred while creating the URL for the tile.
      */
-    final Tile getTile(int x, int y) throws IndexOutOfBoundsException, MalformedURLException {
+    final Tile getTile(final int x, final int y) throws IndexOutOfBoundsException, MalformedURLException {
         final int index = getIndex(x, y);
         /*
          * Checks for fully-created instance. Those instances are expected to exist if
@@ -696,12 +708,19 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
          * Now creates the definitive tile. The tiles in the last
          * row or last column may be smaller than other tiles.
          */
-        final Rectangle bounds = new Rectangle(
+        return new Tile(tile, input, getCellBounds(x, y));
+    }
+
+    /**
+     * Computes the bounds that the tile at the given index would have.
+     * This method does not check if a special tile is defined for that index.
+     */
+    private Rectangle getCellBounds(int x, int y) {
+        return new Rectangle(
                 mosaic.x + (x *= dx),
                 mosaic.y + (y *= dy),
                 Math.min(dx, mosaic.width  - x),
                 Math.min(dy, mosaic.height - y));
-        return new Tile(tile, input, bounds);
     }
 
     /**
@@ -870,7 +889,7 @@ nextTile:   for (int x=xmin; x<xmax; x++) {
      * @param  tile The tile to check for inclusion.
      * @reutrn {@code true} if this manager contains the given tile.
      */
-    static final boolean contains(OverviewLevel level, final Tile tile) {
+    static boolean contains(OverviewLevel level, final Tile tile) {
         final Dimension subsampling = tile.getSubsampling();
         while (level != null) {
             if (level.xSubsampling == subsampling.width && level.ySubsampling == subsampling.height) {
