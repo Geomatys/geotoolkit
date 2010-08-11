@@ -14,7 +14,8 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.sml.xml;
+
+package org.geotoolkit.sos.xml;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,19 +26,22 @@ import org.geotoolkit.xml.MarshallerPool;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class SensorMLMarshallerPool {
+public class SOSMarshallerPool {
 
     private static MarshallerPool instance;
     static {
         try {
-            instance = new MarshallerPool("org.geotoolkit.sml.xml.v101:" +
-                                        "org.geotoolkit.sml.xml.v100:"  +
+            instance = new MarshallerPool("org.geotoolkit.sos.xml.v100:" +
+                                        "org.geotoolkit.gml.xml.v311:" +
+                                        "org.geotoolkit.swe.xml.v101:" +
+                                        "org.geotoolkit.observation.xml.v100:" +
+                                        "org.geotoolkit.sampling.xml.v100:" +
                                         "org.geotoolkit.internal.jaxb.geometry");
         } catch (JAXBException ex) {
-            Logger.getLogger(SensorMLMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(SOSMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    private SensorMLMarshallerPool() {}
+    private SOSMarshallerPool() {}
 
     public static MarshallerPool getInstance() {
         return instance;

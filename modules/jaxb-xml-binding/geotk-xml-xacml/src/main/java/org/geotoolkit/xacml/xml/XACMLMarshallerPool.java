@@ -14,7 +14,8 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.sml.xml;
+
+package org.geotoolkit.xacml.xml;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,19 +26,17 @@ import org.geotoolkit.xml.MarshallerPool;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class SensorMLMarshallerPool {
+public class XACMLMarshallerPool {
 
     private static MarshallerPool instance;
     static {
         try {
-            instance = new MarshallerPool("org.geotoolkit.sml.xml.v101:" +
-                                        "org.geotoolkit.sml.xml.v100:"  +
-                                        "org.geotoolkit.internal.jaxb.geometry");
+            instance = new MarshallerPool("org.geotoolkit.xacml.xml.policy:org.geotoolkit.xacml.xml.context");
         } catch (JAXBException ex) {
-            Logger.getLogger(SensorMLMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(XACMLMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    private SensorMLMarshallerPool() {}
+    private XACMLMarshallerPool() {}
 
     public static MarshallerPool getInstance() {
         return instance;

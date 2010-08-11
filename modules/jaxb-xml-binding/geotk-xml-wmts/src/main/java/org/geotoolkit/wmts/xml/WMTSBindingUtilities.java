@@ -30,7 +30,6 @@ import javax.xml.transform.Source;
 
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wmts.xml.v100.Capabilities;
-import org.geotoolkit.xml.MarshallerPool;
 
 import org.opengis.metadata.citation.OnlineResource;
 
@@ -44,33 +43,19 @@ import org.xml.sax.InputSource;
  */
  public class WMTSBindingUtilities {
 
-    private static final MarshallerPool jaxbContext100;
-
-    static{
-        MarshallerPool temp = null;
-        try{
-            temp = new MarshallerPool(org.geotoolkit.wmts.xml.v100.Capabilities.class);
-        }catch(JAXBException ex){
-            ex.printStackTrace();
-        }
-        jaxbContext100 = temp;
-    }
-
      public static Capabilities unmarshall(Object source, WMTSVersion version) throws JAXBException{
          
          Unmarshaller unMarshaller   = null;
-         MarshallerPool selectedPool = null;
          try {
             switch(version) {
-                case v100 : unMarshaller = jaxbContext100.acquireUnmarshaller();
-                            selectedPool = jaxbContext100;
+                case v100 : unMarshaller = WMTSMarshallerPool.getInstance().acquireUnmarshaller();
                             break;
                 default: throw new IllegalArgumentException("unknonwed version");
             }
             return (Capabilities) unmarshall(source, unMarshaller);
          } finally {
-             if (selectedPool != null && unMarshaller != null) {
-                selectedPool.release(unMarshaller);
+             if (unMarshaller != null) {
+                WMTSMarshallerPool.getInstance().release(unMarshaller);
              }
          }
      }

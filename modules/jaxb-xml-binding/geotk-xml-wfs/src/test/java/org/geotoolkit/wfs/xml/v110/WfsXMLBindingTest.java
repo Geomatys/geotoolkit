@@ -34,6 +34,7 @@ import org.geotoolkit.ogc.xml.v110.PropertyIsLikeType;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
 
 //Junit dependencies
+import org.geotoolkit.wfs.xml.WFSMarshallerPool;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -50,7 +51,7 @@ public class WfsXMLBindingTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool = new MarshallerPool("org.geotoolkit.wfs.xml.v110:org.geotoolkit.internal.jaxb.geometry");
+        pool         = WFSMarshallerPool.getInstance();
         unmarshaller = pool.acquireUnmarshaller();
         marshaller   = pool.acquireMarshaller();
     }

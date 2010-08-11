@@ -28,6 +28,7 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.namespace.QName;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.gml.xml.v311.PointType;
+import org.geotoolkit.wfs.xml.WFSMarshallerPool;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -45,10 +46,8 @@ public class PropertyTypeTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool = new MarshallerPool(org.geotoolkit.wfs.xml.v110.ObjectFactory.class,
-                                  org.geotoolkit.gml.xml.v311.ObjectFactory.class,
-                                  org.geotoolkit.internal.jaxb.geometry.ObjectFactory.class);
-        marshaller = pool.acquireMarshaller();
+        pool         = WFSMarshallerPool.getInstance();
+        marshaller   = pool.acquireMarshaller();
         unmarshaller = pool.acquireUnmarshaller();
     }
 

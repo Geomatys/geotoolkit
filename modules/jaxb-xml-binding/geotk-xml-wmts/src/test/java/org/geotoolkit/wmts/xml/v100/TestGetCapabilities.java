@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+import org.geotoolkit.wmts.xml.WMTSMarshallerPool;
 
 import org.geotoolkit.xml.MarshallerPool;
 
@@ -43,10 +44,7 @@ public class TestGetCapabilities {
     private final MarshallerPool pool;
 
     public TestGetCapabilities() throws JAXBException {
-        pool = new MarshallerPool("org.geotoolkit.wmts.xml.v100:" +
-                                  "org.geotoolkit.ows.xml.v110:" +
-                                  "org.geotoolkit.gml.xml.v311:" +
-                                  "org.geotoolkit.internal.jaxb.geometry");
+        pool = WMTSMarshallerPool.getInstance();
     }
 
     @Test
