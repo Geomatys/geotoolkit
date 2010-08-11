@@ -19,20 +19,38 @@ package org.geotoolkit.test.stress;
 
 import java.util.concurrent.Callable;
 
+import org.opengis.coverage.grid.GridEnvelope;
+
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.util.Strings;
 
 
 /**
  * Base class for stressors.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @since 3.14
  */
 public abstract class Stressor extends RequestGenerator implements Callable<Statistics> {
+    /**
+     * The length (in characters) of the thread field.
+     */
+    private static final int THREAD_NAME_FIELD_LENGTH = 12;
+
+    /**
+     * The length (in characters) of the time field (in milliseconds).
+     */
+    private static final int TIME_FIELD_LENGTH = 5;
+
+    /**
+     * The length (in characters) of a single integer number for the grid size.
+     */
+    private static final int GRID_SIZE_FIELD_LENGTH = 5;
+
     /**
      * The maximal pause to wait between two queries, in milliseconds.
      */
@@ -40,18 +58,17 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
 
     /**
      * The time (in milliseconds) when to stop the test.
+     * This is set by {@link StressorGroup} when a stress is started.
      */
-    private final long stopTime;
+    protected long stopTime;
 
     /**
      * Creates a new stressor.
      *
      * @param domain Contains the maximal extent of the random envelopes to be generated.
-     * @param stopTime The time (in milliseconds) when to stop the test.
      */
-    protected Stressor(final GeneralGridGeometry domain, final long stopTime) {
+    protected Stressor(final GeneralGridGeometry domain) {
         super(domain);
-        this.stopTime = stopTime;
     }
 
     /**
@@ -66,12 +83,46 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
     @Override
     public Statistics call() throws CoverageStoreException {
         final Statistics statistics = new Statistics();
+        final StringBuilder buffer = new StringBuilder("Thread ")
+                .append(Thread.currentThread().getName());
+        buffer.append(Strings.spaces(THREAD_NAME_FIELD_LENGTH - buffer.length())).append(": ");
+        final int bufferBase = buffer.length();
         while (System.currentTimeMillis() < stopTime) {
             final GeneralGridGeometry geometry = getRandomGrid();
             long time = System.nanoTime();
             executeQuery(geometry);
             time = System.nanoTime() - time;
             statistics.add(time / 1E+9);
+            /*
+             * Format how long it took to execute the request.
+             */
+            final double time_ms = time / 1E+6; // To milliseconds.
+            buffer.setLength(bufferBase);
+            insertSpaces(bufferBase, buffer.append(Math.round(time_ms)), TIME_FIELD_LENGTH);
+            buffer.append(" ms  ");
+            /*
+             * Format how long it took to executed the request by megabyte.
+             * Note: this is really "by megapixel", but we assume that few
+             * peoples would understand a "Mp" unit...
+             */
+            long area = 1;
+            final GridEnvelope envelope = geometry.getGridRange();
+            final int dimension = envelope.getDimension();
+            for (int i=0; i<dimension; i++) {
+                area *= envelope.getSpan(i);
+            }
+            insertSpaces(buffer.length(), buffer.append(Math.round(time_ms / (area / 1024*1024.0))), TIME_FIELD_LENGTH);
+            buffer.append(" ms/Mb. Size=(");
+            /*
+             * Format the grid envelope and the geographic bounding box.
+             */
+            for (int i=0; i<dimension; i++) {
+                if (i != 0) {
+                    buffer.append('\u00D7'); // Multiplication symbol
+                }
+                insertSpaces(buffer.length(), buffer.append(envelope.getSpan(i)), GRID_SIZE_FIELD_LENGTH);
+            }
+            StressorGroup.out.println(buffer.append("), ").append(geometry.getEnvelope()));
             try {
                 Thread.sleep(random.nextInt(MAXIMAL_PAUSE) + 1);
             } catch (InterruptedException e) {
@@ -79,6 +130,14 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
             }
         }
         return statistics;
+    }
+
+    /**
+     * Inserts spaces at the given position in the given buffer, in order to align the values
+     * in a field of the given length.
+     */
+    private static void insertSpaces(final int pos, final StringBuilder buffer, final int length) {
+        buffer.insert(pos, Strings.spaces(length - (buffer.length() - pos)));
     }
 
     /**

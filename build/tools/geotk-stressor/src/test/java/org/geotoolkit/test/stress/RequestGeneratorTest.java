@@ -53,18 +53,22 @@ public final class RequestGeneratorTest {
         final GridGeometry2D    geometry  = new GridGeometry2D(range, CELL_CORNER, gridToCRS, CARTESIAN_2D, null);
         final GeneralEnvelope   envelope  = new GeneralEnvelope(geometry.getEnvelope());
         final RequestGenerator  generator = new RequestGenerator(geometry);
-        assertEquals(   1, generator.minimalGridSize[0]);
-        assertEquals(   1, generator.minimalGridSize[1]);
-        assertEquals(5000, generator.maximalGridSize[0]);
-        assertEquals(7000, generator.maximalGridSize[1]);
-        assertEquals(19.53125, generator.getMaximumScale(), 0.00001);
+        final int[] minimalGridSize = generator.getMinimalGridSize();
+        final int[] maximalGridSize = generator.getMaximalGridSize();
+        assertEquals( 200, minimalGridSize[0]);
+        assertEquals( 200, minimalGridSize[1]);
+        assertEquals(1200, maximalGridSize[0]);
+        assertEquals(1200, maximalGridSize[1]);
+        assertEquals(4.6875, generator.getMaximumScale(), 0.00001);
 
         generator.random.setSeed(74652428);
         for (int i=range.getDimension(); --i>=0;) {
-            generator.minimalGridSize[i] = 400;
-            generator.maximalGridSize[i] = 800;
+            minimalGridSize[i] = 400;
+            maximalGridSize[i] = 800;
         }
-        generator.setMaximumScale(range.width / (double) generator.minimalGridSize[0]);
+        generator.setMinimalGridSize(minimalGridSize);
+        generator.setMaximalGridSize(maximalGridSize);
+        generator.setMaximumScale(range.width / (double) minimalGridSize[0]);
         final int numResolutionBins = (int) Math.round(generator.getMaximumScale() * 2);
         final double minResolution = XMath.magnitude(RequestGenerator.getResolution(geometry));
 
@@ -77,8 +81,8 @@ public final class RequestGeneratorTest {
             assertTrue("Geodetic envelope out of bounds.", envelope.contains(se, true));
             for (int i=sr.getDimension(); --i>=0;) {
                 final int span = sr.getSpan(i);
-                assertTrue("Min", span >= generator.minimalGridSize[i]);
-                assertTrue("Max", span <= generator.maximalGridSize[i]);
+                assertTrue("Min", span >= minimalGridSize[i]);
+                assertTrue("Max", span <= maximalGridSize[i]);
                 final double resolution = XMath.magnitude(RequestGenerator.getResolution(sg));
                 distribution[((int) ((resolution - minResolution) * numResolutionBins))]++;
             }
