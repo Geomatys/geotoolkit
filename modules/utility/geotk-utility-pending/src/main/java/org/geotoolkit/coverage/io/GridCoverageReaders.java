@@ -19,7 +19,9 @@ package org.geotoolkit.coverage.io;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,6 +42,8 @@ import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.TileManagerFactory;
 import org.geotoolkit.image.io.mosaic.TileWritingPolicy;
+import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.util.logging.Logging;
@@ -129,51 +133,79 @@ public class GridCoverageReaders {
     /**
      * Open an already existing mosaic.
      *
-     * @param folder : File folder where all tiles are stored
+     * @param file : File folder where all tiles are stored or a serialized TileManager
      * @return GridCoverageReader
      * @throws IOException
      * @throws CoverageStoreException
      */
-    public static GridCoverageReader openMosaic(File folder) throws IOException, CoverageStoreException{
-
-        //our folder is a collection of tiles for the same layer
-        final Collection<Tile> tiles = new ArrayList<Tile>();
-        final CoordinateReferenceSystem crs = visit(folder, tiles);
-
-        final TileManager[] managers = TileManagerFactory.DEFAULT.create(tiles);
+    public static GridCoverageReader openMosaic(File file) throws IOException, CoverageStoreException{
 
         TileManager manager = null;
-        if(managers.length == 0){
-            throw new CoverageStoreException("No files could be handle as tiles.");
-        }else if(managers.length > 1){
-            LOGGER.log(Level.WARNING, "Coverage tiles are not aligned, "
-                    + "verify that images do not overlap and overviews preserve ratio. "
-                    + "Found "+managers.length+" tile managers.");
+        final CoordinateReferenceSystem crs;
+        if(file.exists() && !file.isDirectory()){
+            //file is likely to be a serialized tile manager
+            final ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
+            Object obj;
+            try {
+                obj = in.readObject();
+            } catch (ClassNotFoundException ex) {
+                throw new CoverageStoreException(ex);
+            }finally{
+                in.close();
+            }
+            
+            if(obj instanceof TileManager){
+                manager = (TileManager)obj;
 
-            manager = managers[0];
-            double resolution = XAffineTransform.getScale(manager.getGridGeometry().getGridToCRS());
-
-            for(int i=1; i<managers.length; i++){
-                final TileManager tm = managers[i];
-                final double tmRes = XAffineTransform.getScale(tm.getGridGeometry().getGridToCRS());
-                if(tmRes < resolution){
-                    //we found a tile manager with a better resolution. lets use it
-                    manager = tm;
-                    resolution = tmRes;
-                }else if(tmRes == resolution){
-                    //two tile manager with same resolution, that mean two base tiles have
-                    //been separated, we better choose the one that contain the more tiles.
-                    LOGGER.log(Level.WARNING, "Two base tiles have been placed in different tile managers.");
-                    if(tm.getTiles().size()> manager.getTiles().size()){
-                        //this manager has more tile, use it
-                        manager = tm;
-                        resolution = tmRes;
-                    }
+                File prjFile = (File)IOUtilities.changeExtension(file, "prj");
+                if(!prjFile.exists()){
+                    crs = PrjFiles.read(file);
+                }else{
+                    throw new CoverageStoreException("No projection file associated with the tile manager.");
                 }
+            }else{
+                throw new CoverageStoreException("File is not a serialized TileManager.");
             }
         }else{
-            manager = managers[0];
+            //our folder is a collection of tiles for the same layer
+            final Collection<Tile> tiles = new ArrayList<Tile>();
+            crs = visit(file, tiles);
+
+            final TileManager[] managers = TileManagerFactory.DEFAULT.create(tiles);
+
+            if(managers.length == 0){
+                throw new CoverageStoreException("No files could be handle as tiles.");
+            }else if(managers.length > 1){
+                LOGGER.log(Level.WARNING, "Coverage tiles are not aligned, "
+                        + "verify that images do not overlap and overviews preserve ratio. "
+                        + "Found "+managers.length+" tile managers.");
+
+                manager = managers[0];
+                double resolution = XAffineTransform.getScale(manager.getGridGeometry().getGridToCRS());
+
+                for(int i=1; i<managers.length; i++){
+                    final TileManager tm = managers[i];
+                    final double tmRes = XAffineTransform.getScale(tm.getGridGeometry().getGridToCRS());
+                    if(tmRes < resolution){
+                        //we found a tile manager with a better resolution. lets use it
+                        manager = tm;
+                        resolution = tmRes;
+                    }else if(tmRes == resolution){
+                        //two tile manager with same resolution, that mean two base tiles have
+                        //been separated, we better choose the one that contain the more tiles.
+                        LOGGER.log(Level.WARNING, "Two base tiles have been placed in different tile managers.");
+                        if(tm.getTiles().size()> manager.getTiles().size()){
+                            //this manager has more tile, use it
+                            manager = tm;
+                            resolution = tmRes;
+                        }
+                    }
+                }
+            }else{
+                manager = managers[0];
+            }
         }
+
 
         final TileManager fm = manager;
         final ImageCoverageReader reader = new ImageCoverageReader() {
