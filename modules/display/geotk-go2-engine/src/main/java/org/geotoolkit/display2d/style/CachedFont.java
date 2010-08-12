@@ -119,7 +119,10 @@ public class CachedFont extends Cache<Font>{
         
         
         if(GO2Utilities.isStatic(expSize)){
-            fontSize = GO2Utilities.evaluate(expSize, null, Integer.class, 10);
+            final Float f = GO2Utilities.evaluate(expSize, null, Float.class, 10f);
+            if (f != null) {
+                fontSize = f.intValue();
+            }
         }else{
             GO2Utilities.getRequieredAttributsName(expSize,requieredAttributs);
             isStatic = false;
