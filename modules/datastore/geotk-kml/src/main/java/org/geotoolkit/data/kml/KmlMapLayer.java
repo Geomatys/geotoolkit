@@ -720,14 +720,15 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                 KmlModelConstants.ATT_OVERLAY_ICON.getName()).getValue()).getHref()));
         LatLonBox latLonBox = (LatLonBox) groundOverlay.getProperty(
                 KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX.getName()).getValue();
-        double n = latLonBox.getNorth();
-        double e = latLonBox.getEast();
-        double s = latLonBox.getSouth();
-        double w = latLonBox.getWest();
+        
+        double north = latLonBox.getNorth();
+        double east = latLonBox.getEast();
+        double south = latLonBox.getSouth();
+        double west = latLonBox.getWest();
 
         GeneralEnvelope envelope = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
-        envelope.setRange(0, w, e);
-        envelope.setRange(1, s, n);
+        envelope.setRange(0, west, east);
+        envelope.setRange(1, south, north);
         GridCoverage2D coverage = new GridCoverageFactory().create("cov", image, envelope);
         GridCoverage2D resampled = (GridCoverage2D) Operations.DEFAULT.resample(coverage, context2d.getObjectiveCRS2D());
 
@@ -741,7 +742,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
 
         // Apply styles
         Style sty = this.retrieveStyle(groundOverlay);
-        portrayBalloonStyle((e + w) / 2, (n + s) / 2, sty, false);
+        portrayBalloonStyle((east + west) / 2, (north + south) / 2, sty, false);
     }
 
     /**
@@ -881,6 +882,10 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                 graphic.setStroke(new BasicStroke((float) 0.05));
                 if (style.getPolyStyle().getFill()) {
                     graphic.fill(shape);
+                }
+                if(polyStyle.getOutline() && style.getLineStyle() != null){
+                    LineStyle lineStyle = style.getLineStyle();
+                    graphic.setColor(lineStyle.getColor());
                 }
             }
         }
