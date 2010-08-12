@@ -514,18 +514,6 @@ public class DefaultPortrayalService implements PortrayalService{
         GridCoverageWriter writer = WRITER_CACHE.getAndSet(null);
         if(writer == null){
             writer = new ImageCoverageWriter();
-        }else{
-            try {
-                writer.reset();
-            } catch (CoverageStoreException ex) {
-                //the writer has problems, we better not put in back in the cache.
-                try {
-                    writer.dispose();
-                } catch (CoverageStoreException ex1) {
-                    Logger.getLogger(DefaultPortrayalService.class.getName()).log(Level.WARNING, null, ex1);
-                }
-                throw new PortrayalException(ex);
-            }
         }
         
         try{
@@ -548,13 +536,23 @@ public class DefaultPortrayalService implements PortrayalService{
         }catch(CoverageStoreException ex){
             throw new PortrayalException(ex);
         }finally{
-
-            if(!WRITER_CACHE.compareAndSet(null, writer)){
+            try {
+                writer.reset();
+                if(!WRITER_CACHE.compareAndSet(null, writer)){
+                    try {
+                        writer.dispose();
+                    } catch (CoverageStoreException ex) {
+                        throw new PortrayalException(ex);
+                    }
+                }
+            } catch (CoverageStoreException ex) {
+                //the writer has problems, we better not put in back in the cache.
                 try {
                     writer.dispose();
-                } catch (CoverageStoreException ex) {
-                    throw new PortrayalException(ex);
+                } catch (CoverageStoreException ex1) {
+                    Logger.getLogger(DefaultPortrayalService.class.getName()).log(Level.WARNING, null, ex1);
                 }
+                throw new PortrayalException(ex);
             }
         }
     }
