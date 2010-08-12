@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.wcs.xml;
+package org.geotoolkit.ows.xml;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,20 +26,17 @@ import org.geotoolkit.xml.MarshallerPool;
  *
  * @author Guilhem Legal (Geomatys)
  */
-public class WCSMarshallerPool {
+public class ExceptionReportMarshallerPool {
 
     private static MarshallerPool instance;
     static {
         try {
-            instance = new MarshallerPool("org.geotoolkit.wcs.xml.v100:"
-                                       + "org.geotoolkit.wcs.xml.v111:"
-                                       + "org.geotoolkit.internal.jaxb.geometry:"
-                                       + "org.geotoolkit.ogc.xml.exception");
+            instance = new MarshallerPool(org.geotoolkit.ows.xml.v100.ExceptionReport.class, org.geotoolkit.ows.xml.v110.ExceptionReport.class);
         } catch (JAXBException ex) {
-            Logger.getLogger(WCSMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ExceptionReportMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    private WCSMarshallerPool() {}
+    private ExceptionReportMarshallerPool() {}
 
     public static MarshallerPool getInstance() {
         return instance;

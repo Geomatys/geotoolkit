@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.csw.xml.ExceptionResponse;
 import org.geotoolkit.util.Utilities;
 
 
@@ -58,7 +59,7 @@ import org.geotoolkit.util.Utilities;
     "exception"
 })
 @XmlRootElement(name = "ExceptionReport")
-public class ExceptionReport {
+public class ExceptionReport implements ExceptionResponse {
 
     @XmlElement(name = "Exception", required = true)
     private List<ExceptionType> exception;
