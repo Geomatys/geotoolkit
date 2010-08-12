@@ -265,8 +265,9 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         }
 
         //find the properties we will read and return --------------------------
-        final List<PropertyDescriptor> readProperties;
-        final List<PropertyDescriptor> returnedProperties;
+        List<PropertyDescriptor> readProperties;
+        List<PropertyDescriptor> returnedProperties;
+
         if(queryPropertyNames == null){
             //return all properties
             readProperties = new ArrayList<PropertyDescriptor>(originalSchema.getDescriptors());
@@ -301,6 +302,12 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
                     }
                     readProperties.add(property);
                 }
+                //check if we read the same properties in different order
+                if(readProperties.size()== returnedProperties.size() && readProperties.containsAll(returnedProperties)){
+                    //we avoid a useless retype iterator
+                    readProperties = returnedProperties;
+                }
+
             }
         }
 
