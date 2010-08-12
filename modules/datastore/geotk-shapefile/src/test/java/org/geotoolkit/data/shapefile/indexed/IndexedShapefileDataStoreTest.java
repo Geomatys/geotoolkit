@@ -607,8 +607,8 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
         final SimpleFeatureType type = fc.iterator().next().getFeatureType();
         s.createSchema(type.getName(),type);
 
-        FeatureWriter<SimpleFeatureType, SimpleFeature> fw = s.getFeatureWriter(type.getName(),Filter.INCLUDE);
-        Iterator<SimpleFeature> it = fc.iterator();
+        final FeatureWriter<SimpleFeatureType, SimpleFeature> fw = s.getFeatureWriter(type.getName(),Filter.INCLUDE);
+        final Iterator<SimpleFeature> it = fc.iterator();
 
         while (it.hasNext()) {
             SimpleFeature feature = it.next();
@@ -624,12 +624,12 @@ public class IndexedShapefileDataStoreTest extends AbstractTestCaseSupport {
 
     private void runWriteReadTest(Geometry geom, boolean d3) throws Exception {
         // make features
-        FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Junk");
         ftb.add("a", geom.getClass(), DefaultGeographicCRS.WGS84);
-        SimpleFeatureType type = ftb.buildSimpleFeatureType();
+        final SimpleFeatureType type = ftb.buildSimpleFeatureType();
 
-        Collection<SimpleFeature> features = new ArrayList<SimpleFeature>();
+        final Collection<SimpleFeature> features = new ArrayList<SimpleFeature>();
 
         for (int i = 0, ii = 20; i < ii; i++) {
             SimpleFeature feature = SimpleFeatureBuilder.build(type,

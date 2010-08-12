@@ -25,7 +25,7 @@ import org.geotoolkit.data.dbf.DbaseFileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.util.Converters;
 
-import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.PropertyDescriptor;
 
 /**
  * An AttributeReader implementation for Shapefile. Pretty straightforward.
@@ -37,14 +37,15 @@ import org.opengis.feature.type.AttributeDescriptor;
 public class ShapefileAttributeReader extends AbstractPropertyReader {
 
     protected final boolean[] narrowing;
+    protected final int[] attributIndex;
     protected ShapefileReader shp;
     protected DbaseFileReader dbf;
     protected DbaseFileReader.Row row;
     protected ShapefileReader.Record record;
 
-    public ShapefileAttributeReader(List<AttributeDescriptor> atts,
+    public ShapefileAttributeReader(List<? extends PropertyDescriptor> atts,
             ShapefileReader shp, DbaseFileReader dbf) {
-        this(atts.toArray(new AttributeDescriptor[atts.size()]), shp, dbf);
+        this(atts.toArray(new PropertyDescriptor[atts.size()]), shp, dbf);
     }
 
     /**
@@ -55,7 +56,7 @@ public class ShapefileAttributeReader extends AbstractPropertyReader {
      * @param dbf - the dbf file reader. May be null, in this case no
      *              attributes will be read from the dbf file
      */
-    public ShapefileAttributeReader(AttributeDescriptor[] atts,
+    public ShapefileAttributeReader(PropertyDescriptor[] atts,
             ShapefileReader shp, DbaseFileReader dbf) {
         super(atts);
         this.shp = shp;
@@ -64,11 +65,30 @@ public class ShapefileAttributeReader extends AbstractPropertyReader {
         //the attribut descriptor might define types that are mare restrictive
         //then what the readers can do.
         narrowing = new boolean[atts.length];
+        attributIndex = new int[atts.length];
         if(dbf != null){
             final DbaseFileHeader header = dbf.getHeader();
-            for(int i=1;i<atts.length;i++){
-                narrowing[i] = (atts[i].getType().getBinding() != header.getFieldClass(i-1));
+            attLoop:
+            for(int i=0;i<atts.length;i++){
+                final String attName = atts[i].getName().getLocalPart();
+                //attribut field
+                for(int k=0;k<header.getNumFields();k++){
+                    final String fieldName = header.getFieldName(k);
+                    if(fieldName.equals(attName)){
+                        narrowing[i] = (atts[i].getType().getBinding() != header.getFieldClass(k));
+                        attributIndex[i] = k;
+                        continue attLoop;
+                    }
+                }
+                //geom field
+                attributIndex[i] = -1;
             }
+        }else{
+            if(atts.length != 1){
+                throw new IllegalStateException("Reader has been asked to read "+atts.length+" attributs, but no dbf reader given.");
+            }
+            //geom field
+            attributIndex[0] = -1;
         }
     }
 
@@ -145,19 +165,18 @@ public class ShapefileAttributeReader extends AbstractPropertyReader {
     @Override
     public Object read(int param) throws IOException,IndexOutOfBoundsException {
 
-        if(param == 0){
+        final int index = attributIndex[param];
+        if(index == -1){
             return record.shape();
-        }else{
-            if (row != null) {
-                if(narrowing[param-1]){
-                    //must procede to a retype
-                    return Converters.convert(row.read(param - 1), metaData[param].getType().getBinding());
-                }else{
-                    return row.read(param - 1);
-                }
+        }else if(row != null) {
+            if(narrowing[param]){
+                //must procede to a retype
+                return Converters.convert(row.read(index), metaData[param].getType().getBinding());
+            }else{
+                return row.read(index);
             }
-            return null;
         }
+        return null;
     }
 
     /**
@@ -165,14 +184,8 @@ public class ShapefileAttributeReader extends AbstractPropertyReader {
      */
     @Override
     public void read(Object[] buffer) throws IOException {
-        buffer[0] = record.shape();
-        for(int i=0,n=getPropertyCount()-1; i<n; i++){
-            if(narrowing[i+1]){
-                //must procede to a retype
-                buffer[i+1] = Converters.convert(row.read(i), metaData[i+1].getType().getBinding());
-            }else{
-                buffer[i+1] = row.read(i);
-            }
+        for(int i=0,n=getPropertyCount();i<n;i++){
+            buffer[i] = read(i);
         }
     }
 }

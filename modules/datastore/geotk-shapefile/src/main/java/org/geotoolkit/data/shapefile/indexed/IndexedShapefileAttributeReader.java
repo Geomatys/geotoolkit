@@ -25,7 +25,8 @@ import org.geotoolkit.data.dbf.IndexedDbaseFileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.Data;
-import org.opengis.feature.type.AttributeDescriptor;
+
+import org.opengis.feature.type.PropertyDescriptor;
 
 /**
  * An AttributeReader implementation for shape. Pretty straightforward. <BR/>The
@@ -44,10 +45,10 @@ public class IndexedShapefileAttributeReader extends ShapefileAttributeReader
 
     private CloseableCollection<Data> closeableCollection;
 
-    public IndexedShapefileAttributeReader( List<AttributeDescriptor> attributes,
+    public IndexedShapefileAttributeReader( List<? extends PropertyDescriptor> attributes,
             ShapefileReader shp, IndexedDbaseFileReader dbf,
             CloseableCollection<Data> col, Iterator<Data> goodRecs) {
-        this(attributes.toArray(new AttributeDescriptor[attributes.size()]), shp, dbf, col, goodRecs);
+        this(attributes.toArray(new PropertyDescriptor[attributes.size()]), shp, dbf, col, goodRecs);
     }
 
     /**
@@ -59,7 +60,7 @@ public class IndexedShapefileAttributeReader extends ShapefileAttributeReader
      *              attributes will be read from the dbf file
      * @param goodRecs Collection of good indexes that match the query.
      */
-    public IndexedShapefileAttributeReader(AttributeDescriptor[] atts,
+    public IndexedShapefileAttributeReader(PropertyDescriptor[] atts,
             ShapefileReader shp, IndexedDbaseFileReader dbf,
             CloseableCollection<Data> col, Iterator<Data> goodRecs) {
         super(atts, shp, dbf);

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
+import java.util.logging.Logger;
 import static org.geotoolkit.data.shapefile.ShpFileType.DBF;
 import static org.geotoolkit.data.shapefile.ShpFileType.FIX;
 import static org.geotoolkit.data.shapefile.ShpFileType.QIX;
@@ -36,12 +37,15 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -90,7 +94,10 @@ import org.geotoolkit.resources.NIOUtilities;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
@@ -112,12 +119,12 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
     private static final PreparedGeometryFactory PREPARED_FACTORY = new PreparedGeometryFactory();
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
 
-    private static final class IdentifierComparator implements Comparator<Identifier>{
+    private static final Comparator<Identifier> IDENTIFIER_COMPARATOR = new Comparator<Identifier>(){
         @Override
         public int compare(Identifier o1, Identifier o2){
             return o1.toString().compareTo(o2.toString());
         }
-    }
+    };
 
     IndexType treeType;
     final boolean useIndex;
@@ -245,102 +252,111 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             throws DataStoreException {
         final SimpleFeatureType originalSchema = getFeatureType();
         final Name              queryTypeName = query.getTypeName();
+        final Name[]            queryPropertyNames = query.getPropertyNames();
         final SortBy[]          querySortBy = query.getSortBy();
         final Hints             queryHints = query.getHints();
-        Filter            queryFilter = query.getFilter();
+        Filter                  queryFilter = query.getFilter();
 
         if (queryFilter == Filter.EXCLUDE){
             return GenericEmptyFeatureIterator.createReader(originalSchema);
         }
-
         if (querySortBy != null && querySortBy.length > 0) {
             throw new DataStoreException("The ShapeFileDatastore does not support sortby query");
         }
 
-        final Name defaultGeomName = originalSchema.getGeometryDescriptor().getName();
-
-        final FilterAttributeExtractor fae = new FilterAttributeExtractor();
-        queryFilter.accept(fae, null);
-
-        //find all attributs needed
-        final Set<Name> attributes = new HashSet<Name>(fae.getAttributeNameSet());
-        final Name[] queryPropertyNames = query.getPropertyNames();
-        if(queryPropertyNames != null && queryPropertyNames.length > 0){
-            attributes.addAll(Arrays.asList(queryPropertyNames));
-        }
-        final Name[] propertyNames = (Name[]) attributes.toArray(new Name[attributes.size()]);
-        
-
-        try {
-            final SimpleFeatureType newSchema;
-            final boolean readDbf;
-            final boolean readGeometry;
-
-            if(queryPropertyNames != null){
-                if (propertyNames.length==1 && DefaultName.match(propertyNames[0],defaultGeomName)){
-                    readDbf = false;
-                    readGeometry = true;
-                    newSchema = (SimpleFeatureType) FeatureTypeUtilities.createSubType(originalSchema, propertyNames);
-                } else if (propertyNames.length == 0) {
-                    readDbf = false;
-                    readGeometry = false;
-                    newSchema = (SimpleFeatureType) FeatureTypeUtilities.createSubType(originalSchema, propertyNames);
-                } else {
-                    readDbf = true;
-                    readGeometry = true;
-                    newSchema = (SimpleFeatureType) FeatureTypeUtilities.createSubType(originalSchema, propertyNames, 
-                            originalSchema.getCoordinateReferenceSystem());
+        //find the properties we will read and return --------------------------
+        final List<PropertyDescriptor> readProperties;
+        final List<PropertyDescriptor> returnedProperties;
+        if(queryPropertyNames == null){
+            //return all properties
+            readProperties = new ArrayList<PropertyDescriptor>(originalSchema.getDescriptors());
+            returnedProperties = readProperties;
+        }else{
+            //return only a subset of properties
+            returnedProperties = new ArrayList<PropertyDescriptor>(queryPropertyNames.length);
+            for(Name n : queryPropertyNames){
+                final AttributeDescriptor property = originalSchema.getDescriptor(n);
+                if(property == null){
+                    throw new DataStoreException("Query requieres property : "+ n +
+                        " which is not present in feature type :\n"+ originalSchema);
                 }
-            }else{
-                readDbf = true;
-                readGeometry = true;
-                newSchema = originalSchema;
+                returnedProperties.add(property);
             }
 
-            final FeatureReader<SimpleFeatureType,SimpleFeature> reader;
+            final FilterAttributeExtractor fae = new FilterAttributeExtractor();
+            queryFilter.accept(fae, null);
+            final Set<Name> filterPropertyNames = fae.getAttributeNameSet();
+            if(filterPropertyNames.isEmpty()){
+                //filter do not requiere attributs
+                readProperties = returnedProperties;
+            }else{
+                final Set<Name> attributes = new LinkedHashSet<Name>(filterPropertyNames);
+                attributes.addAll(Arrays.asList(queryPropertyNames));
+                readProperties = new ArrayList<PropertyDescriptor>(attributes.size());
+                for(Name n : attributes){
+                    final AttributeDescriptor property = originalSchema.getDescriptor(n);
+                    if(property == null){
+                        throw new DataStoreException("Query filter requieres property : "+ n +
+                            " which is not present in feature type :\n"+ originalSchema);
+                    }
+                    readProperties.add(property);
+                }
+            }
+        }
+
+        //create a reader ------------------------------------------------------
+        final SimpleFeatureType readSchema;
+        final FeatureReader reader;
+        try {
+            final Name[] readPropertyNames = new Name[readProperties.size()];
+            for(int i=0;i<readPropertyNames.length;i++){
+                readPropertyNames[i] = readProperties.get(i).getName();
+            }
+            readSchema = (SimpleFeatureType)FeatureTypeUtilities.createSubType(originalSchema,readPropertyNames);
             
             if(queryFilter instanceof BBOX){
-                //in case we have a BBOX filter onyle, which is very commun, we can speed
+                //in case we have a BBOX filter only, which is very commun, we can speed
                 //the process by relying on the quadtree estimations
                 final Envelope bbox = (Envelope) queryFilter.accept(
                         ExtractBoundsFilterVisitor.BOUNDS_VISITOR, new JTSEnvelope2D());
                 queryFilter = Filter.INCLUDE;
-                reader = createFeatureReader(queryTypeName.getLocalPart(),
-                        getBBoxAttributesReader(readDbf,readGeometry, bbox),
-                        newSchema, queryHints);
+                reader = createFeatureReader(
+                        getBBoxAttributesReader(readProperties, bbox),
+                        readSchema, queryHints);
 
             }else{
-                reader = createFeatureReader(queryTypeName.getLocalPart(),
-                        getAttributesReader(readDbf,readGeometry, queryFilter),
-                        newSchema, queryHints);
+                reader = createFeatureReader(
+                    getAttributesReader(readProperties, queryFilter),
+                    readSchema, queryHints);
             }
-
-            //handle remaining parameters
-            final QueryBuilder qb = new QueryBuilder(queryTypeName);
-            qb.setProperties(queryPropertyNames);
-            qb.setFilter(queryFilter);
-            qb.setHints(queryHints);
-            qb.setCRS(query.getCoordinateSystemReproject());
-            qb.setResolution(query.getResolution());
-            return handleRemaining(reader, qb.buildQuery());
-
-        } catch (IOException se) {
-            throw new DataStoreException("Error creating reader", se);
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
         }
+
+        //handle remaining query parameters ------------------------------------
+        final QueryBuilder qb = new QueryBuilder(queryTypeName);
+        if(readProperties != returnedProperties){
+            qb.setProperties(queryPropertyNames);
+        }
+        qb.setFilter(queryFilter);
+        qb.setHints(queryHints);
+        qb.setCRS(query.getCoordinateSystemReproject());
+        qb.setResolution(query.getResolution());
+        return handleRemaining(reader, qb.buildQuery());
     }
 
-    protected FeatureReader<SimpleFeatureType, SimpleFeature> createFeatureReader(String typeName,
-            IndexedShapefileAttributeReader r, SimpleFeatureType readerSchema, Hints hints)
+    protected FeatureReader<SimpleFeatureType, SimpleFeature> createFeatureReader(
+            IndexedShapefileAttributeReader r, SimpleFeatureType featureType, Hints hints)
             throws SchemaException, IOException,DataStoreException {
 
-        FeatureIDReader fidReader;
+        final FeatureIDReader fidReader;
         if (!indexUseable(FIX)) {
             fidReader = new ShapeFIDReader(getName().getLocalPart(), r);
         } else {
             fidReader = new IndexedFidReader(shpFiles, r);
         }
 
-        return DefaultSimpleFeatureReader.create(r, fidReader, readerSchema, hints);
+        return DefaultSimpleFeatureReader.create(r, fidReader, featureType, hints);
     }
 
     /**
@@ -369,8 +385,65 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         return PREPARED_FACTORY.create(geom);
     }
 
+    private IndexedShapefileAttributeReader getAttributesReader(
+            List<? extends PropertyDescriptor> properties, Filter filter) throws DataStoreException{
+        
+
+        CloseableCollection<Data> goodRecs = null;
+        if (filter instanceof Id && shpFiles.isLocal() && shpFiles.exists(FIX)) {
+            final Id fidFilter = (Id) filter;
+
+            final TreeSet idsSet = new TreeSet(IDENTIFIER_COMPARATOR);
+            idsSet.addAll(fidFilter.getIdentifiers());
+            try {
+                goodRecs = queryFidIndex(idsSet);
+            } catch (IOException ex) {
+                throw new DataStoreException(ex);
+            }
+        } else {
+            // will be bbox.isNull() to start
+            Envelope bbox = new JTSEnvelope2D();
+            
+            if (filter != null) {
+                // Add additional bounds from the filter
+                // will be null for Filter.EXCLUDES
+                bbox = (Envelope) filter.accept(
+                        ExtractBoundsFilterVisitor.BOUNDS_VISITOR, bbox);
+                if (bbox == null) {
+                    bbox = new JTSEnvelope2D();
+                    // we hit Filter.EXCLUDES consider returning an empty
+                    // reader?
+                    // (however should simplify the filter to detect ff.not(
+                    // fitler.EXCLUDE )
+                }
+            }
+
+            if (!bbox.isNull() && this.useIndex) {
+                try {
+                    goodRecs = this.queryQuadTree(bbox);
+                } catch (TreeException e) {
+                    throw new DataStoreException("Error querying index: " + e.getMessage());
+                } catch (IOException e) {
+                    throw new DataStoreException("Error querying index: " + e.getMessage());
+                }
+            }
+        }
+
+        final IndexedDbaseFileReader dbfR;
+        //check if we need to open the dbf reader, no need when only geometry
+        if(properties.size() == 1 && properties.get(0) instanceof GeometryDescriptor){
+            dbfR = null;
+        }else{
+            dbfR = openDbfReader();
+        }
+
+        return new IndexedShapefileAttributeReader(properties, openShapeReader(), dbfR,
+                goodRecs, ((goodRecs!=null)?goodRecs.iterator():null));
+    }
+
+
     protected IndexedShapefileAttributeReader getBBoxAttributesReader(
-            boolean readDbf, boolean readGeometry, final Envelope bbox)
+            List<PropertyDescriptor> properties, final Envelope bbox)
             throws DataStoreException {
 
         final PreparedGeometry boundingGeometry = toGeometry(bbox);
@@ -386,27 +459,16 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             throw new DataStoreException("Error querying index: " + e.getMessage());
         }
         final LazySearchCollection col = (LazySearchCollection) goodCollec;
-
-        final SimpleFeatureType schema = getFeatureType();
-        final List<AttributeDescriptor> atts;
-
-        IndexedDbaseFileReader dbfR = null;
-
-        if (!readDbf) {
-            getLogger().fine("The DBF file won't be opened since no attributes "
-                    + "will be read from it");
-            if(readGeometry){
-                atts = Collections.singletonList((AttributeDescriptor)schema.getGeometryDescriptor());
-            }else{
-                atts = Collections.EMPTY_LIST;
-            }
-        } else {
-            atts = (schema == null) ? readAttributes(namespace)
-                : schema.getAttributeDescriptors();
-            dbfR = (IndexedDbaseFileReader) openDbfReader();
+        
+        //check if we need to open the dbf reader, no need when only geometry
+        final IndexedDbaseFileReader dbfR;
+        if(properties.size() == 1 && properties.get(0) instanceof GeometryDescriptor){
+            dbfR = null;
+        }else{
+            dbfR = openDbfReader();
         }
 
-        return new IndexedShapefileAttributeReader(atts, openShapeReader(), dbfR, goodCollec, col.bboxIterator()){
+        return new IndexedShapefileAttributeReader(properties, openShapeReader(), dbfR, goodCollec, col.bboxIterator()){
 
             private boolean hasNext = false;
             private final Object[] buffer = new Object[metaData.length];
@@ -448,81 +510,6 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             }
 
         };
-    }
-
-    /**
-     * Returns the attribute reader, allowing for a pure shape reader, or a
-     * combined dbf/shp reader.
-     * 
-     * @param readDbf - if true, the dbf fill will be opened and read
-     * @param readGeometry DOCUMENT ME!
-     * @param filter - a Filter to use
-     * @throws IOException
-     */
-    protected IndexedShapefileAttributeReader getAttributesReader(
-            boolean readDbf, boolean readGeometry, Filter filter)
-            throws DataStoreException {
-        Envelope bbox = new JTSEnvelope2D(); // will be bbox.isNull() to
-        // start
-
-        CloseableCollection<Data> goodRecs = null;
-        if (filter instanceof Id && shpFiles.isLocal() && shpFiles.exists(FIX)) {
-            Id fidFilter = (Id) filter;
-
-            TreeSet idsSet = new TreeSet(new IdentifierComparator());
-            idsSet.addAll(fidFilter.getIdentifiers());
-            try {
-                goodRecs = queryFidIndex(idsSet);
-            } catch (IOException ex) {
-                throw new DataStoreException(ex);
-            }
-        } else {
-            if (filter != null) {
-                // Add additional bounds from the filter
-                // will be null for Filter.EXCLUDES
-                bbox = (Envelope) filter.accept(
-                        ExtractBoundsFilterVisitor.BOUNDS_VISITOR, bbox);
-                if (bbox == null) {
-                    bbox = new JTSEnvelope2D();
-                    // we hit Filter.EXCLUDES consider returning an empty
-                    // reader?
-                    // (however should simplify the filter to detect ff.not(
-                    // fitler.EXCLUDE )
-                }
-            }
-
-            if (!bbox.isNull() && this.useIndex) {
-                try {
-                    goodRecs = this.queryQuadTree(bbox);
-                } catch (TreeException e) {
-                    throw new DataStoreException("Error querying index: " + e.getMessage());
-                } catch (IOException e) {
-                    throw new DataStoreException("Error querying index: " + e.getMessage());
-                }
-            }
-        }
-
-        final SimpleFeatureType schema = getFeatureType();
-        final List<AttributeDescriptor> atts;
-
-        IndexedDbaseFileReader dbfR = null;
-
-        if (!readDbf) {
-            getLogger().fine("The DBF file won't be opened since no attributes "
-                    + "will be read from it");            
-            if(readGeometry){
-                atts = Collections.singletonList((AttributeDescriptor)schema.getGeometryDescriptor());
-            }else{
-                atts = Collections.EMPTY_LIST;
-            }
-        } else {
-            atts = (schema == null) ? readAttributes(namespace)
-                : schema.getAttributeDescriptors();
-            dbfR = (IndexedDbaseFileReader) openDbfReader();
-        }
-
-        return new IndexedShapefileAttributeReader(atts, openShapeReader(), dbfR, 
-                goodRecs, ((goodRecs!=null)?goodRecs.iterator():null));
     }
 
     /**
@@ -703,7 +690,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * @throws DataStoreException If an error occurs during creation.
      */
     @Override
-    protected DbaseFileReader openDbfReader() throws DataStoreException {
+    protected IndexedDbaseFileReader openDbfReader() throws DataStoreException {
         if (shpFiles.get(DBF) == null) {
             return null;
         }
@@ -759,26 +746,18 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
     @Override
     public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(Name typeName, Filter filter)
             throws DataStoreException {
-        typeCheck(typeName);
 
-        FeatureReader<SimpleFeatureType, SimpleFeature> featureReader;
-        IndexedShapefileAttributeReader attReader = getAttributesReader(true,true, null);
-        try {
-            SimpleFeatureType schema = (SimpleFeatureType) getFeatureType(typeName);
-            if (schema == null) {
-                throw new IOException(
-                        "To create a shapefile, you must first call createSchema()");
-            }
-            featureReader = createFeatureReader(typeName.getLocalPart(), attReader, schema, null);
+        //will raise an error if it does not exist
+        final SimpleFeatureType schema = (SimpleFeatureType) getFeatureType(typeName);
 
-        } catch (Exception e) {
-            featureReader = GenericEmptyFeatureIterator.createReader(getFeatureType());
-        }
-        try {
+        //we read all properties
+        final IndexedShapefileAttributeReader attReader = getAttributesReader(schema.getAttributeDescriptors(),Filter.INCLUDE);
+
+        try{
+            final FeatureReader<SimpleFeatureType, SimpleFeature> reader = createFeatureReader(attReader, schema, null);
             FeatureWriter<SimpleFeatureType, SimpleFeature> writer = new IndexedShapefileFeatureWriter(
-                    typeName.getLocalPart(), shpFiles, attReader, featureReader, this, dbfCharset);
-            writer = handleRemaining(writer, filter);
-            return writer;
+                    typeName.getLocalPart(), shpFiles, attReader, reader, this, dbfCharset);
+            return handleRemaining(writer, filter);
         } catch (IOException ex) {
             throw new DataStoreException(ex);
         }
@@ -788,16 +767,14 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
     @Override
     public org.opengis.geometry.Envelope getEnvelope(Query query) throws DataStoreException {
 
-        
         final Filter filter = query.getFilter();
         if (filter == Filter.INCLUDE || QueryUtilities.queryAll(query) ) {
             //use the generic envelope calculation
             return super.getEnvelope(query);
         }
 
-        final Comparator<Identifier> identifierComparator = new IdentifierComparator();
         final Set<Identifier> fids = (Set<Identifier>) filter.accept(
-                IdCollectorFilterVisitor.IDENTIFIER_COLLECTOR, new TreeSet<Identifier>(identifierComparator));
+                IdCollectorFilterVisitor.IDENTIFIER_COLLECTOR, new TreeSet<Identifier>(IDENTIFIER_COMPARATOR));
 
         final Set records = new HashSet();
         if (!fids.isEmpty()) {
