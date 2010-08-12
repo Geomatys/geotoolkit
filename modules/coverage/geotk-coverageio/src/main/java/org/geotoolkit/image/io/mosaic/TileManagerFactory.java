@@ -22,7 +22,8 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.io.IOException;
-import java.awt.Rectangle; // For javadoc
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 
 import org.geotoolkit.factory.Hints;
@@ -31,13 +32,14 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.coverage.grid.ImageGeometry;
+import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 
 /**
  * Creates {@link TileManager} instances from a collection of tiles.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.15
  *
  * @since 2.5
  * @module
@@ -168,8 +170,44 @@ public class TileManagerFactory extends Factory {
             }
             tiles = remainings;
         }
+        /*
+         * The collection now contains tiles that has not been processed by RegionCalculator,
+         * because their 'gridToCRS' transform is flagged as already computed. Create a mosaic
+         * for them, and use the affine transform having the finest resolution as the "global"
+         * one.
+         */
         if (!tiles.isEmpty()) {
-            managers[0] = createGeneric(tiles.toArray(new Tile[tiles.size()]));
+            final TileManager manager = createGeneric(tiles.toArray(new Tile[tiles.size()]));
+            final Rectangle imageBounds = new Rectangle(-1, -1);
+            AffineTransform gridToCRS   = null;
+            Dimension       subsampling = null;
+            double scale = Double.POSITIVE_INFINITY;
+            for (final Tile tile : tiles) {
+                imageBounds.add(tile.getAbsoluteRegion());
+                final AffineTransform candidate = tile.getGridToCRS();
+                if (candidate != null && !candidate.equals(gridToCRS)) {
+                    final double cs = XAffineTransform.getScale(candidate);
+                    if (cs < scale) {
+                        // Found a new tile at a finer resolution.
+                        scale       = cs;
+                        gridToCRS   = candidate;
+                        subsampling = tile.getSubsampling();
+                    } else if (cs == scale) {
+                        // Inconsistent transform at the finest level.
+                        // Abandon the attempt to create a grid geometry.
+                        gridToCRS = null;
+                        break;
+                    }
+                }
+            }
+            if (gridToCRS != null) {
+                if (subsampling.width != 1 || subsampling.height != 1) {
+                    gridToCRS = new AffineTransform(gridToCRS);
+                    gridToCRS.scale(subsampling.width, subsampling.height);
+                }
+                manager.setGridGeometry(new ImageGeometry(imageBounds, gridToCRS));
+            }
+            managers[0] = manager;
         }
         return managers;
     }

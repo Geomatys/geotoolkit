@@ -338,11 +338,13 @@ public class AffineTransform2D extends XAffineTransform
      */
     @Override
     public boolean equals(final Object object) {
-        if (!super.equals(object)) {
-            return false;
-        }
-        if (object instanceof AffineTransform2D) {
-            return object.getClass().equals(getClass());
+        if (object != this) {
+            if (!super.equals(object)) {
+                return false;
+            }
+            if (object instanceof AffineTransform2D) {
+                return object.getClass().equals(getClass());
+            }
         }
         return true;
     }
