@@ -73,6 +73,17 @@ public abstract class GridCoverageWriter extends GridCoverageStore {
      * (e.g. {@link javax.imageio.stream.ImageOutputStream}) may be accepted
      * as well depending on the implementation.
      *
+     * {@section How streams are closed}
+     * <ul>
+     *   <li>If the given output is an {@linkplain java.io.OutputStream output stream},
+     *      {@linkplain javax.imageio.stream.ImageOutputStream image output stream} or
+     *      a {@linkplain java.io.Writer writer}, then it is caller responsibility to
+     *      close the given stream after usage.</li>
+     *  <li>If an output stream has been generated automatically by this {@code GridCoverageWriter}
+     *      from the given output object, then this coverage writer will close the stream when the
+     *      {@link #reset()} or {@link #dispose()} method is invoked, or when a new output is set.</li>
+     * </ul>
+     *
      * @param  output The output (typically {@link java.io.File} or {@link String}) to be written.
      * @throws IllegalArgumentException if output is not a valid instance for this writer.
      * @throws CoverageStoreException if the operation failed.

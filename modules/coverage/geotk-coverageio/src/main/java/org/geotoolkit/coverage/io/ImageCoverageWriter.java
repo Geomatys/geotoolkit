@@ -70,9 +70,12 @@ import org.geotoolkit.resources.Errors;
  * An {@linkplain ImageOutputStream Image Output Stream} may be created automatically from various
  * output types like {@linkplain java.io.File} or {@linkplain java.net.URL}. That output stream is
  * <strong>not</strong> closed after a write operation, because many consecutive write operations
- * may be performed for the same output. To ensure that the output stream is closed, user shall
- * invoke the {@link #setOutput(Object)} method with a {@code null} input, or invoke the
- * {@link #reset()} or {@link #dispose()} methods.
+ * may be performed for the same output. To ensure that the automatically generated output stream
+ * is closed, user shall invoke the {@link #setOutput(Object)} method with a {@code null} input,
+ * or invoke the {@link #reset()} or {@link #dispose()} methods.
+ * <p>
+ * Note that output streams explicitly given by the users are never closed. It is caller
+ * responsibility to close them.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.15
@@ -238,8 +241,10 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                 }
             }
             /*
-             * If the writer has changed, close the output of the old writer,
-             * unless the new writer is using the same output.
+             * If the writer has changed, close the output of the old writer, unless the new
+             * writer is using the same output. Note that if the output stream was explicitly
+             * given by the user, then the new writer should have the same output (consequently
+             * it will not be closed).
              */
             if (newWriter != oldWriter) {
                 if (oldWriter != null) {
@@ -555,16 +560,22 @@ public class ImageCoverageWriter extends GridCoverageWriter {
     }
 
     /**
-     * Closes the output used by the {@link ImageWriter}. The {@link ImageWriter}
-     * is not disposed, so it can be reused for the next image to write.
+     * Closes the output used by the {@link ImageWriter}, provided that the stream was not
+     * given explicitly by the user. The {@link ImageWriter} is not disposed, so it can be
+     * reused for the next image to write.
      *
      * @throws IOException if an error occurs while closing the output.
      */
     private void close() throws IOException {
+        final Object oldOutput = output;
         output = null; // Clear now in case the code below fails.
         final ImageWriter imageWriter = this.imageWriter; // Protect from changes.
         if (imageWriter != null) {
-            XImageIO.close(imageWriter);
+            if (imageWriter.getOutput() != oldOutput) {
+                XImageIO.close(imageWriter);
+            } else {
+                imageWriter.setOutput(null);
+            }
         }
     }
 

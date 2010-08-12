@@ -49,7 +49,7 @@ import static org.junit.Assume.*;
  * is the easiest one to debug.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @since 3.14
  */
@@ -181,6 +181,7 @@ public class ImageCoverageWriterTest {
         }
         writer.assertIdentityTransform();
         writer.dispose();
+        buffer.close(); // As a matter of principle.
         assertMatrixEqualsFile("matrix.txt", buffer.toString(), -9999);
     }
 
@@ -206,6 +207,7 @@ public class ImageCoverageWriterTest {
         }
         writer.assertIdentityTransform();
         writer.dispose();
+        buffer.close(); // As a matter of principle.
         assertMatrixEquals(
             "12.783  12.499   -9999   -9999   -9999   -9999   -9999   -9999   -9999\n" +
             "14.020   -9999   -9999   -9999   -9999   -9999   -9999   -9999   -9999\n" +
@@ -247,6 +249,7 @@ public class ImageCoverageWriterTest {
         }
         writer.assertIdentityTransform();
         writer.dispose();
+        buffer.close(); // As a matter of principle.
         assertMatrixEquals(
             "12.783   -9999   -9999   -9999   -9999\n" +
             "15.994   -9999   -9999   -9999   -9999\n" +
@@ -280,6 +283,7 @@ public class ImageCoverageWriterTest {
         }
         writer.assertScaleTransform(1.0 / 2, 1.0 / 3);
         writer.dispose();
+        buffer.close(); // As a matter of principle.
         /*
          * The expected matrix below is the 4×6 region in the lower right corner of the
          * expected matrix declared in writeRegion() where each column is repeated once
@@ -341,6 +345,7 @@ public class ImageCoverageWriterTest {
         }
         writer.assertTranslateTransform(-2, -3);
         writer.dispose();
+        buffer.close(); // As a matter of principle.
         /*
          * The expected matrix below is the upper-left corner of the full matrix, augmented
          * by three rows and two columns of pad values.
@@ -399,5 +404,6 @@ public class ImageCoverageWriterTest {
         }
         assertTrue("Expected a smaller file", out.size() < length);
         writer.dispose();
+        out.close(); // As a matter of principle.
     }
 }

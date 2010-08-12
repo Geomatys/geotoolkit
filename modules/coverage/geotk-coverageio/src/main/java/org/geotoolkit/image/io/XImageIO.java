@@ -544,7 +544,8 @@ public final class XImageIO {
     }
 
     /**
-     * Closes the input stream of the given reader.
+     * Closes the input stream of the given reader, and
+     * {@linkplain ImageReader#setInput(Object) sets the input} to {@code null}.
      *
      * @param  reader The reader for which to close the input stream.
      * @throws IOException If an error occurred while closing the stream.
@@ -719,7 +720,8 @@ public final class XImageIO {
     }
 
     /**
-     * Closes the output stream of the given writer.
+     * Closes the output stream of the given writer, and
+     * {@linkplain ImageWriter#setOutput(Object) sets the output} to {@code null}.
      *
      * @param  writer The writer for which to close the output stream.
      * @throws IOException If an error occurred while closing the stream.

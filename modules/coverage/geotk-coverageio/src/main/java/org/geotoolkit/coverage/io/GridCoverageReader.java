@@ -85,13 +85,24 @@ public abstract class GridCoverageReader extends GridCoverageStore {
      * (e.g. {@link javax.imageio.stream.ImageInputStream}) may be accepted
      * as well depending on the implementation.
      *
+     * {@section How streams are closed}
+     * <ul>
+     *   <li>If the given input is an {@linkplain java.io.InputStream input stream},
+     *      {@linkplain javax.imageio.stream.ImageInputStream image input stream} or
+     *      a {@linkplain java.io.Reader reader}, then it is caller responsibility to
+     *      close the given stream after usage.</li>
+     *  <li>If an input stream has been generated automatically by this {@code GridCoverageReader}
+     *      from the given input object, then this coverage reader will close the stream when the
+     *      {@link #reset()} or {@link #dispose()} method is invoked, or when a new input is set.</li>
+     * </ul>
+     *
      * @param  input The input (typically {@link java.io.File} or {@link String}) to be read.
      * @throws IllegalArgumentException if input is not a valid instance for this reader.
      * @throws CoverageStoreException if the operation failed.
      *
      * @see ImageReader#setInput(Object)
      */
-    public void setInput(Object input) throws CoverageStoreException {
+    public void setInput(final Object input) throws CoverageStoreException {
         this.input = input;
         abortRequested = false;
     }

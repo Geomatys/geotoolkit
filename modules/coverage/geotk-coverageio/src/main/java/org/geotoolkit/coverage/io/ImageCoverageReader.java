@@ -92,9 +92,12 @@ import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
  * An {@linkplain ImageInputStream Image Input Stream} may be created automatically from various
  * input types like {@linkplain java.io.File} or {@linkplain java.net.URL}. That input stream is
  * <strong>not</strong> closed after a read operation, because many consecutive read operations
- * may be performed for the same input. To ensure that the input stream is closed, user shall
- * invoke the {@link #setInput(Object)} method with a {@code null} input, or invoke the
- * {@link #reset()} or {@link #dispose()} methods.
+ * may be performed for the same input. To ensure that the automatically generated input stream
+ * is closed, user shall invoke the {@link #setInput(Object)} method with a {@code null} input,
+ * or invoke the {@link #reset()} or {@link #dispose()} methods.
+ * <p>
+ * Note that input streams explicitly given by the users are never closed. It is caller
+ * responsibility to close them.
  *
  * {@section Default metadata value}
  * If no {@linkplain CoordinateReferenceSystem Coordinate Reference System} or no
@@ -963,19 +966,25 @@ public class ImageCoverageReader extends GridCoverageReader {
     }
 
     /**
-     * Closes the input used by the {@link ImageReader}. The {@link ImageReader}
-     * is not disposed, so it can be reused for the next image to read.
+     * Closes the input used by the {@link ImageReader}, provided that the stream was not
+     * given explicitly by the user. The {@link ImageReader} is not disposed, so it can be
+     * reused for the next image to read.
      *
      * @throws IOException if an error occurs while closing the input.
      */
     private void close() throws IOException {
+        final Object oldInput = input;
         coverageNames    = null;
         gridGeometry     = null;
         sampleDimensions = null;
         input            = null; // Clear now in case the code below fails.
         final ImageReader imageReader = this.imageReader; // Protect from changes.
         if (imageReader != null) {
-            XImageIO.close(imageReader);
+            if (imageReader.getInput() != oldInput) {
+                XImageIO.close(imageReader);
+            } else {
+                imageReader.setInput(null);
+            }
         }
     }
 
