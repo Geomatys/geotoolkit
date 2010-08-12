@@ -23,7 +23,7 @@ import java.util.List;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public interface DescribeRecordResponse {
+public interface DescribeRecordResponse extends CSWResponse {
 
     public List<? extends SchemaComponent> getSchemaComponent();
 }

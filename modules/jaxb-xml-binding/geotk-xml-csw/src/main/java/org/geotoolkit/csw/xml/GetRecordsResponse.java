@@ -21,7 +21,7 @@ package org.geotoolkit.csw.xml;
  * @author Mehdi Sidhoum
  * @module pending
  */
-public interface GetRecordsResponse {
+public interface GetRecordsResponse extends CSWResponse {
     
     /**
      * Gets the value of the requestId property.

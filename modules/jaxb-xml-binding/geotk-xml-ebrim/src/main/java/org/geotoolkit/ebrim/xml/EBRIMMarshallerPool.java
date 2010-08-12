@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,17 +14,31 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.csw.xml;
 
-import java.util.List;
+package org.geotoolkit.ebrim.xml;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.xml.bind.JAXBException;
+import org.geotoolkit.xml.MarshallerPool;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @module pending
  */
-public interface GetDomainResponse extends CSWResponse {
+public class EBRIMMarshallerPool {
 
-    public List<? extends DomainValues> getDomainValues();
+    private static MarshallerPool instance;
+    static {
+        try {
+            instance = new MarshallerPool(EBRIMClassesContext.getAllClasses());
+        } catch (JAXBException ex) {
+            Logger.getLogger(EBRIMMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    private EBRIMMarshallerPool() {}
 
+    public static MarshallerPool getInstance() {
+        return instance;
+    }
 }

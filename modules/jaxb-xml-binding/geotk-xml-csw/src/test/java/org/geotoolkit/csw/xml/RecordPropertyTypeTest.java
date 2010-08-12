@@ -43,7 +43,7 @@ public class RecordPropertyTypeTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool = CSWClassesContext.getMarshallerPool();
+        pool = CSWMarshallerPool.getInstance();
         marshaller = pool.acquireMarshaller();
         unmarshaller = pool.acquireUnmarshaller();
     }

@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wms.xml.WMSResponse;
 
 
 /**
@@ -52,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
     "layerDescription"
 })
 @XmlRootElement(name="WMS_DescribeLayerResponse")
-public class DescribeLayerResponseType {
+public class DescribeLayerResponseType implements WMSResponse {
 
     @XmlElement(name = "Version", required = true)
     private String version;

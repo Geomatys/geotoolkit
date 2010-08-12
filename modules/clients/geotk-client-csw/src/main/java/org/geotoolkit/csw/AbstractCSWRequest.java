@@ -17,11 +17,9 @@
 
 package org.geotoolkit.csw;
 
-import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.xml.bind.JAXBException;
 import org.geotoolkit.client.AbstractRequest;
-import org.geotoolkit.ebrim.xml.EBRIMClassesContext;
+import org.geotoolkit.ebrim.xml.EBRIMMarshallerPool;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 
@@ -41,13 +39,7 @@ public abstract class AbstractCSWRequest extends AbstractRequest{
     protected static final MarshallerPool POOL;
     
     static {
-        MarshallerPool temp = null;
-        try {
-            temp = EBRIMClassesContext.getMarshallerPool();
-        } catch (JAXBException ex) {
-            LOGGER.log(Level.SEVERE, ex.getLocalizedMessage(), ex);
-        }
-        POOL = temp;
+        POOL = EBRIMMarshallerPool.getInstance();
     }
 
     public AbstractCSWRequest(final String serverURL) {

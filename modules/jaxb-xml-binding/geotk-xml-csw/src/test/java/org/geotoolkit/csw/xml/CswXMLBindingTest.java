@@ -98,7 +98,7 @@ public class CswXMLBindingTest {
 
     @Before
     public void setUp() throws JAXBException {
-        pool = CSWClassesContext.getMarshallerPool();
+        pool = CSWMarshallerPool.getInstance();
         
     }
 

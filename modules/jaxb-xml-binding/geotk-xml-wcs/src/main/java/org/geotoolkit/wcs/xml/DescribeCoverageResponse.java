@@ -23,6 +23,6 @@ package org.geotoolkit.wcs.xml;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public interface DescribeCoverageResponse {
+public interface DescribeCoverageResponse extends WCSResponse {
 
 }

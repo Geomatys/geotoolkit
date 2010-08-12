@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,13 +14,13 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.csw.xml;
+
+package org.geotoolkit.wcs.xml;
 
 /**
  *
- * @author Guilhem legal (Geomatys)
- * @module pending
+ * @author Guilhem Legal (Geomatys)
  */
-public interface AbstractCapabilities extends CSWResponse {
+public interface WCSResponse {
 
 }
