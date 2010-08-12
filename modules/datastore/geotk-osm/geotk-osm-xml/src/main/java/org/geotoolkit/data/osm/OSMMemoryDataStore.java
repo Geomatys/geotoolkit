@@ -118,6 +118,7 @@ public class OSMMemoryDataStore extends AbstractDataStore{
     private final MemoryDataStore store;
 
     public OSMMemoryDataStore(Object input) throws IOException, XMLStreamException, DataStoreException{
+        super(null);
         store = new MemoryDataStore();
         store.createSchema(TYPE_NODE.getName(), TYPE_NODE);
         store.createSchema(TYPE_WAY.getName(), TYPE_WAY);

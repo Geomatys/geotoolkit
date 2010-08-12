@@ -147,6 +147,7 @@ public class MemoryDataStore extends AbstractDataStore{
     private Set<Name> nameCache = null;
 
     public MemoryDataStore(){
+        super(null);
         singleTypeLock = false;
     }
 
@@ -158,6 +159,7 @@ public class MemoryDataStore extends AbstractDataStore{
      * this type to be deleted.
      */
     public MemoryDataStore(FeatureType type, boolean singleTypeLock){
+        super(null);
         this.singleTypeLock = singleTypeLock;
         Name name = type.getName();
         if(type instanceof SimpleFeatureType){

@@ -73,6 +73,7 @@ public class GPXDataStore extends AbstractDataStore{
     private final File file;
 
     public GPXDataStore(File f){
+        super(null);
         this.file = f;
     }
 

@@ -106,7 +106,6 @@ public class ShapefileDataStore extends AbstractDataStore{
 
     private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
     protected final ShpFiles shpFiles;
-    protected final String namespace;
     protected final boolean useMemoryMappedBuffer;
     protected final Charset dbfCharset;
     private Name name;
@@ -174,18 +173,13 @@ public class ShapefileDataStore extends AbstractDataStore{
      */
     public ShapefileDataStore(URL url, String namespace, boolean useMemoryMapped,
             Charset dbfCharset) throws MalformedURLException, DataStoreException {
+        super(namespace);
         shpFiles = new ShpFiles(url);
 
         if (!shpFiles.isLocal() || !shpFiles.exists(SHP)) {
             this.useMemoryMappedBuffer = false;
         } else {
             this.useMemoryMappedBuffer = useMemoryMapped;
-        }
-
-        if(namespace != null){
-            this.namespace = namespace.toString();
-        }else{
-            this.namespace = "http://geotoolkit.org";
         }
 
         this.dbfCharset = dbfCharset;
@@ -206,15 +200,11 @@ public class ShapefileDataStore extends AbstractDataStore{
         return schema;
     }
 
-    private void checkTypeExist() throws DataStoreException{
-        if(name != null && schema != null) return;
-
-        if(namespace != null){
-            this.schema = buildSchema(namespace);
-        }else{
-            this.schema = buildSchema("http://geotoolkit.org");
+    private void checkTypeExist() throws DataStoreException {
+        if (name != null && schema != null) {
+            return;
         }
-
+        this.schema = buildSchema(getDefaultNamespace());
         this.name = schema.getName();
     }
 
@@ -587,9 +577,9 @@ public class ShapefileDataStore extends AbstractDataStore{
 
         //configure the name
         final String local = shpFiles.getTypeName();
-        if (namespace == null) {
-            namespace = BasicFeatureTypes.DEFAULT_NAMESPACE;
-        }
+//        if (namespace == null) {
+//            namespace = BasicFeatureTypes.DEFAULT_NAMESPACE;
+//        }
 
         builder.setName(namespace,local);
         builder.setAbstract(false);
@@ -718,7 +708,8 @@ public class ShapefileDataStore extends AbstractDataStore{
             return new ShapefileAttributeReader(desc, openShapeReader(), null);
         }
 
-        List<AttributeDescriptor> atts = (schema == null) ? readAttributes(namespace) : schema.getAttributeDescriptors();
+        final List<AttributeDescriptor> atts = (schema == null) ? readAttributes(getDefaultNamespace()) :
+                                                                  schema.getAttributeDescriptors();
         return new ShapefileAttributeReader(atts, openShapeReader(), openDbfReader());
     }
 

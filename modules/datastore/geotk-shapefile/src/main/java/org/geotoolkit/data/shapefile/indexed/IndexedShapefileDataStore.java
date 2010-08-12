@@ -361,7 +361,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             }
         }
         SimpleFeatureType schema = getFeatureType();
-        List<AttributeDescriptor> atts = (schema == null) ? readAttributes(namespace)
+        List<AttributeDescriptor> atts = (schema == null) ? readAttributes(getDefaultNamespace())
                 : schema.getAttributeDescriptors();
 
         IndexedDbaseFileReader dbfR = null;

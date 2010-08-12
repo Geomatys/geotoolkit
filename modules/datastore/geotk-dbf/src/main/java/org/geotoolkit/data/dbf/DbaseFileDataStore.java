@@ -66,15 +66,14 @@ public class DbaseFileDataStore extends AbstractDataStore{
     private final ReadWriteLock TempLock = new ReentrantReadWriteLock();
 
     private final File file;
-    private String namespace;
     private String name;
 
     private SimpleFeatureType featureType;
 
     public DbaseFileDataStore(File f, String namespace, String name){
+        super(namespace);
         this.file = f;
         this.name = name;
-        this.namespace = namespace;
     }
 
     private synchronized void checkExist() throws DataStoreException{
@@ -103,11 +102,12 @@ public class DbaseFileDataStore extends AbstractDataStore{
             final int nbFields = header.getNumFields();
 
             final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-            ftb.setName(namespace, name);
+            final String defaultNs = getDefaultNamespace();
+            ftb.setName(defaultNs, name);
             for(int i=0; i<nbFields; i++){
                 final String name = header.getFieldName(i);
                 final Class type = header.getFieldClass(i);
-                ftb.add(new DefaultName(namespace, name), type);
+                ftb.add(new DefaultName(defaultNs, name), type);
             }
             return ftb.buildSimpleFeatureType();
         }catch(IOException ex){

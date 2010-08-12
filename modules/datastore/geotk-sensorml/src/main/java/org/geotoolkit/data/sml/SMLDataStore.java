@@ -144,6 +144,7 @@ public class SMLDataStore extends AbstractDataStore {
     private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
     
     public SMLDataStore(ManageableDataSource source) {
+        super(null);
         this.source = source;
         initTypes();
     }

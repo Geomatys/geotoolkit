@@ -60,11 +60,6 @@ public abstract class AbstractJDBCDataStore extends AbstractDataStore implements
      */
     protected GeometryFactory geometryFactory;
 
-    /**
-     * namespace uri of the datastore itself, or default namespace
-     */
-    protected final String namespaceURI;
-
     protected DataSource source;
     protected SQLDialect dialect;
     protected String databaseSchema;
@@ -81,7 +76,7 @@ public abstract class AbstractJDBCDataStore extends AbstractDataStore implements
     }
 
     public AbstractJDBCDataStore(String namespace) {
-        this.namespaceURI = namespace;
+        super(namespace);
     }
 
     /**
@@ -153,7 +148,7 @@ public abstract class AbstractJDBCDataStore extends AbstractDataStore implements
      */
     @Override
     public String getNamespaceURI() {
-        return namespaceURI;
+        return getDefaultNamespace();
     }
 
     /**

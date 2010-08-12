@@ -102,7 +102,7 @@ public class OMDataStore extends AbstractDataStore {
 
 
     public OMDataStore(ManageableDataSource source) {
-        super();
+        super(null);
         this.source = source;
         initTypes();
     }

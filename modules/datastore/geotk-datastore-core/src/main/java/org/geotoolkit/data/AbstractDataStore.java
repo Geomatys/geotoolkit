@@ -74,11 +74,27 @@ public abstract class AbstractDataStore implements DataStore{
     public static final String GML_NAME = "name";
     public static final String GML_DESCRIPTION = "description";
 
+    protected static final String NO_NAMESPACE = "no namespace";
+
     private final Logger Logger = Logging.getLogger(getClass().getPackage().getName());
 
     //@todo not thread safe, I dont think it's important
     private final Set<StorageListener> listeners = new HashSet<StorageListener>();
+    private final String defaultNamespace;
 
+    protected AbstractDataStore(final String namespace) {
+        if (namespace == null) {
+            defaultNamespace = "http://geotoolkit.org";
+        } else if (namespace.equals(NO_NAMESPACE)) {
+            defaultNamespace = null;
+        } else {
+            defaultNamespace = namespace;
+        }
+    }
+
+    protected String getDefaultNamespace() {
+        return defaultNamespace;
+    }
 
     protected Logger getLogger(){
         return Logger;
