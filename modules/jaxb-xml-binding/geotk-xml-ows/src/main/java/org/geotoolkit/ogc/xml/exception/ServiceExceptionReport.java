@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.ExceptionResponse;
 import org.geotoolkit.util.Version;
 
 
@@ -51,7 +52,7 @@ import org.geotoolkit.util.Version;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {"serviceExceptions"})
 @XmlRootElement(name = "ServiceExceptionReport")
-public final class ServiceExceptionReport {
+public final class ServiceExceptionReport implements ExceptionResponse {
     /**
      * A list of details that explain the reason for the failure.
      */

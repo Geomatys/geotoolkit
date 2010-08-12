@@ -15,7 +15,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.csw.xml;
+package org.geotoolkit.ows.xml;
 
 /**
  *

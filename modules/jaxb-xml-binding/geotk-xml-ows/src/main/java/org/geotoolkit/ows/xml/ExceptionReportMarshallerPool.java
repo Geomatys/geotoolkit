@@ -31,7 +31,9 @@ public class ExceptionReportMarshallerPool {
     private static MarshallerPool instance;
     static {
         try {
-            instance = new MarshallerPool(org.geotoolkit.ows.xml.v100.ExceptionReport.class, org.geotoolkit.ows.xml.v110.ExceptionReport.class);
+            instance = new MarshallerPool(org.geotoolkit.ows.xml.v100.ExceptionReport.class,
+                                        org.geotoolkit.ows.xml.v110.ExceptionReport.class,
+                                        org.geotoolkit.ogc.xml.exception.ObjectFactory.class);
         } catch (JAXBException ex) {
             Logger.getLogger(ExceptionReportMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }

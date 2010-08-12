@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.csw.xml.ExceptionResponse;
+import org.geotoolkit.ows.xml.ExceptionResponse;
 import org.geotoolkit.util.Utilities;
 
 
