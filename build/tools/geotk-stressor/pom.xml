@@ -65,4 +65,27 @@
   </dependencies>
 
 
+  <!-- =========================================================== -->
+  <!--     JAR packaging                                           -->
+  <!-- =========================================================== -->
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <configuration>
+          <archive>
+            <index>false</index>
+            <manifest>
+              <addClasspath>true</addClasspath>
+              <packageName>org.geotoolkit.test.stress</packageName>
+              <mainClass>org.geotoolkit.test.stress.Main</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+
 </project>

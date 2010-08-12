@@ -83,7 +83,7 @@ public class RequestGenerator {
      * @param domain Contains the maximal extent of the random envelopes to be generated.
      */
     public RequestGenerator(final GeneralGridGeometry domain) {
-        this(domain, 200, 1200);
+        this(domain, 100, 2000);
     }
 
     /**
@@ -127,7 +127,10 @@ public class RequestGenerator {
     }
 
     /**
-     * Sets the minimal grid size along each dimension.
+     * Sets the minimal grid size along each dimension. If a minimal size is greater than
+     * a maximal size, the minimal size is set to the maximal size (the maximal size is
+     * <strong>not</strong> modified by this method. This is done that way because the
+     * maximal size is typically computed from the {@linkplain #domain}).
      *
      * @param size The minimal grid size along each dimension.
      *
@@ -144,6 +147,11 @@ public class RequestGenerator {
             }
         }
         System.arraycopy(size, 0, minimalGridSize, 0, size.length);
+        for (int i=0; i<minimalGridSize.length; i++) {
+            if (minimalGridSize[i] > maximalGridSize[i]) {
+                minimalGridSize[i] = maximalGridSize[i];
+            }
+        }
     }
 
     /**
@@ -159,6 +167,7 @@ public class RequestGenerator {
 
     /**
      * Sets the maximal grid size along each dimension.
+     * The maximal size can not be less than the minimal size.
      *
      * @param size The maximal grid size along each dimension.
      *

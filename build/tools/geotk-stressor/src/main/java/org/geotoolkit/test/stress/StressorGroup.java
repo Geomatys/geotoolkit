@@ -25,7 +25,11 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import org.geotoolkit.io.TableWriter;
+import org.geotoolkit.io.ExpandedTabWriter;
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.util.NullArgumentException;
 
@@ -38,13 +42,25 @@ import org.geotoolkit.util.NullArgumentException;
  *
  * @since 3.14
  */
-public class StressorGroup {
+public class StressorGroup implements Runnable, ThreadFactory {
     /**
      * The output stream where to print reports.
      *
      * @since 3.15
      */
-    protected static final PrintWriter out = new PrintWriter(System.out, true);
+    protected final PrintWriter out;
+
+    /**
+     * The group of all threads to be created by this stressor.
+     *
+     * @since 3.15
+     */
+    protected final ThreadGroup threadGroup;
+
+    /**
+     * The number of thread created up to date.
+     */
+    private final AtomicInteger threadCount;
 
     /**
      * The stressors.
@@ -67,9 +83,22 @@ public class StressorGroup {
      * @param duration The test duration, in milliseconds.
      */
     public StressorGroup(final long duration) {
-        this.stressors = new ArrayList<Stressor>();
-        this.executor  = Executors.newSingleThreadExecutor();
-        this.duration  = duration;
+        this(duration, new PrintWriter(System.out, true));
+    }
+
+    /**
+     * Creates a new {@code StressorGroup} instance.
+     *
+     * @param duration The test duration, in milliseconds.
+     * @param out The output stream where to print reports.
+     */
+    public StressorGroup(final long duration, final PrintWriter out) {
+        this.threadGroup = new ThreadGroup("Stressors");
+        this.threadCount = new AtomicInteger();
+        this.stressors   = new ArrayList<Stressor>();
+        this.executor    = Executors.newCachedThreadPool(this);
+        this.duration    = duration;
+        this.out         = out;
     }
 
     /**
@@ -82,38 +111,88 @@ public class StressorGroup {
         if (stressor == null) {
             throw new NullArgumentException();
         }
+        stressor.out = out;
         stressors.add(stressor);
     }
 
     /**
      * Starts a thread for each stressor.
-     *
-     * @throws InterruptedException If the test has been interrupted.
      */
-    public void run() throws InterruptedException {
+    @Override
+    public void run() {
         final long startTime = System.currentTimeMillis();
         for (final Stressor stressor : stressors) {
             stressor.stopTime = startTime + duration;
         }
-        final List<Future<Statistics>> tasks = executor.invokeAll(stressors);
-        if (!executor.awaitTermination(duration + 60000, TimeUnit.MILLISECONDS)) {
-            out.println("Timeout elapsed.");
+        final List<Future<Statistics>> tasks;
+        try {
+            tasks = executor.invokeAll(stressors);
+            executor.shutdown();
+            if (!executor.awaitTermination(duration + 60000, TimeUnit.MILLISECONDS)) {
+                out.println("Timeout elapsed.");
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace(out);
             return;
         }
-        final Statistics global = new Statistics();
-        for (final Future<Statistics> task : tasks) {
-            final Statistics statistics;
+        final Statistics  statsRaw   = new Statistics();
+        final Statistics  statsByMpx = new Statistics();
+        final TableWriter table      = new TableWriter(out);
+        final PrintWriter printer    = new PrintWriter(new ExpandedTabWriter(table, 2));
+        table.setMultiLinesCells(true);
+        table.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
+        table.write("Thread");       table.nextColumn();
+        table.write("Time (ms)");    table.nextColumn();
+        table.write("Time (ms/Mb)"); table.nextColumn();
+        table.nextLine();
+        table.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
+        final int numTasks = stressors.size();
+        for (int i=0; i<numTasks; i++) {
+            final Stressor stressor = stressors.get(i);
+            printer.print(stressor.threadName);
+            table.nextColumn();
+            final Future<Statistics> task = tasks.get(i);
+            Statistics statistics = null;
             try {
                 statistics = task.get();
+            } catch (InterruptedException e) {
+                e.printStackTrace(printer);
             } catch (ExecutionException e) {
-                e.printStackTrace(out);
-                continue;
+                e.getCause().printStackTrace(printer);
             }
-            out.println(statistics);
-            global.add(statistics);
+            if (statistics != null) {
+                statsRaw.add(statistics);
+                statsByMpx.add(stressor.statsByMpx);
+                printer.print(statistics);
+                table.nextColumn();
+                printer.print(stressor.statsByMpx);
+            }
+            table.nextLine();
+            table.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
         }
-        out.println();
-        out.println("Global statistics:");
-        out.println(global);
+        printer.print("Global");
+        table.nextColumn();
+        printer.print(statsRaw);
+        table.nextColumn();
+        printer.print(statsByMpx);
+        table.nextLine();
+        table.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
+        printer.flush();
+    }
+
+    /**
+     * Creates a new thread for the given task. This method is invoked automatically
+     * by the {@linkplain ExecutorService executor} when needed.
+     *
+     * @param  task The task to be run.
+     * @return A new thread for the given task.
+     */
+    @Override
+    public Thread newThread(final Runnable task) {
+        String name = String.valueOf(threadCount.incrementAndGet());
+        if (name.length() < 2) {
+            name = '0' + name;
+        }
+        return new Thread(threadGroup, task, name);
     }
 }

@@ -87,6 +87,19 @@ public class CoverageReadWriteStressor extends Stressor {
         if (input instanceof GridCoverageReader) {
             return (GridCoverageReader) input;
         }
+        final GridCoverageReader reader = new ImageCoverageReader();
+        input = createReaderInput(input);
+        reader.setInput(input);
+        return reader;
+    }
+
+    /**
+     * Creates the input of a coverage reader.
+     *
+     * @param  input The input to give to the image reader.
+     * @return A potentially modified input to give to the image reader.
+     */
+    static Object createReaderInput(Object input) throws CoverageStoreException {
         if (input instanceof File) {
             final File file = (File) input;
             if (file.getName().endsWith(".serialized")) try {
@@ -99,9 +112,7 @@ public class CoverageReadWriteStressor extends Stressor {
                 throw new CoverageStoreException(e);
             }
         }
-        final GridCoverageReader reader = new ImageCoverageReader();
-        reader.setInput(input);
-        return reader;
+        return input;
     }
 
     /**
@@ -110,7 +121,7 @@ public class CoverageReadWriteStressor extends Stressor {
     @Override
     protected void executeQuery(final GeneralGridGeometry request) throws CoverageStoreException {
         final GridCoverageReadParam param = new GridCoverageReadParam();
-        param.setEnvelope(param.getEnvelope());
+        param.setEnvelope(request.getEnvelope());
         param.setResolution(getResolution(request));
         reader.read(imageIndex, param);
     }

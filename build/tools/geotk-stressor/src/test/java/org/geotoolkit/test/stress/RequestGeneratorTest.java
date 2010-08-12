@@ -55,11 +55,11 @@ public final class RequestGeneratorTest {
         final RequestGenerator  generator = new RequestGenerator(geometry);
         final int[] minimalGridSize = generator.getMinimalGridSize();
         final int[] maximalGridSize = generator.getMaximalGridSize();
-        assertEquals( 200, minimalGridSize[0]);
-        assertEquals( 200, minimalGridSize[1]);
-        assertEquals(1200, maximalGridSize[0]);
-        assertEquals(1200, maximalGridSize[1]);
-        assertEquals(4.6875, generator.getMaximumScale(), 0.00001);
+        assertEquals( 100, minimalGridSize[0]);
+        assertEquals( 100, minimalGridSize[1]);
+        assertEquals(2000, maximalGridSize[0]);
+        assertEquals(2000, maximalGridSize[1]);
+        assertEquals(7.8125, generator.getMaximumScale(), 0.00001);
 
         generator.random.setSeed(74652428);
         for (int i=range.getDimension(); --i>=0;) {

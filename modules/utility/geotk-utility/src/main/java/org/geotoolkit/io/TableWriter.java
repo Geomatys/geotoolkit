@@ -226,16 +226,18 @@ public class TableWriter extends FilterWriter {
     private boolean skipCR;
 
     /**
-     * Creates a new table writer with a default column separator.
-     * <p>
-     * <b>Note:</b> this writer may produces bad output on Windows console, unless the underlying
-     * stream use the correct codepage (e.g. {@code OutputStreamWriter(System.out, "Cp437")}).
-     * To display the appropriate codepage for a Windows NT console, type {@code chcp} on the
-     * command line.
+     * Creates a new table writer with a default column separator. The default is a double
+     * vertical line for the left and right table borders, and a single horizontal line
+     * between the columns.
+     *
+     * {@note This writer may produce bad output on Windows console, unless the underlying stream
+     * use the correct codepage (e.g. <code>OutputStreamWriter(System.out, "Cp437")</code>). To
+     * display the appropriate codepage for a Windows console, type <code>chcp</code> on the
+     * command line.}
      *
      * @param out Writer object to provide the underlying stream, or {@code null} if there is no
      *        underlying stream. If {@code out} is null, then the {@link #toString} method is the
-     *        only way to get the table's content.
+     *        only way to get the table content.
      */
     public TableWriter(final Writer out) {
         super(out!=null ? out : new StringWriter());
@@ -250,7 +252,7 @@ public class TableWriter extends FilterWriter {
      *
      * @param out Writer object to provide the underlying stream, or {@code null} if there is no
      *        underlying stream. If {@code out} is null, then the {@link #toString} method is the
-     *        only way to get the table's content.
+     *        only way to get the table content.
      * @param spaces Amount of white spaces to use as column separator.
      */
     public TableWriter(final Writer out, final int spaces) {
@@ -262,7 +264,7 @@ public class TableWriter extends FilterWriter {
      *
      * @param out Writer object to provide the underlying stream, or {@code null} if there is no
      *        underlying stream. If {@code out} is null, then the {@link #toString} method is the
-     *        only way to get the table's content.
+     *        only way to get the table content.
      * @param separator String to write between columns. Drawing box characters are treated
      *        specially. For example {@code " \\u2502 "} can be used for a single-line box.
      *
