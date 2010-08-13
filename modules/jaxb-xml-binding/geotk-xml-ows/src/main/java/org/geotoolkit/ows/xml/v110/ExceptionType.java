@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -101,7 +102,34 @@ public class ExceptionType {
     public String getLocator() {
         return locator;
     }
-    
+
+    /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ExceptionType) {
+            final ExceptionType that = (ExceptionType) object;
+
+            return Utilities.equals(this.exceptionCode, that.exceptionCode)    &&
+                   Utilities.equals(this.exceptionText, that.exceptionText)  &&
+                   Utilities.equals(this.locator,       that.locator);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + (this.exceptionText != null ? this.exceptionText.hashCode() : 0);
+        hash = 37 * hash + (this.exceptionCode != null ? this.exceptionCode.hashCode() : 0);
+        hash = 37 * hash + (this.locator != null ? this.locator.hashCode() : 0);
+        return hash;
+    }
+
      /**
      * Return a String representation of the exception.
      * 
