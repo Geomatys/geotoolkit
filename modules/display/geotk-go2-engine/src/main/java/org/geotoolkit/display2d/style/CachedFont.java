@@ -138,7 +138,7 @@ public class CachedFont extends Cache<Font>{
                 } else if (FONT_STYLE_OBLIQUE_STRING.equalsIgnoreCase(strStyle)) {
                     fontStyle = java.awt.Font.BOLD | java.awt.Font.ITALIC;
                 } else {
-                    fontStyle = java.awt.Font.BOLD;
+                    fontStyle = java.awt.Font.PLAIN;
                 }
             } else {
                 if (FONT_STYLE_ITALIC_STRING.equalsIgnoreCase(strStyle)) {
@@ -146,7 +146,7 @@ public class CachedFont extends Cache<Font>{
                 } else if (FONT_STYLE_OBLIQUE_STRING.equalsIgnoreCase(strStyle)) {
                     fontStyle = java.awt.Font.ITALIC;
                 } else {
-                    fontStyle = java.awt.Font.BOLD;
+                    fontStyle = java.awt.Font.PLAIN;
                 }
             }
             

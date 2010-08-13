@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.sos.xml.SOSResponse;
 import org.geotoolkit.util.Utilities;
 
 
@@ -60,7 +61,7 @@ import org.geotoolkit.util.Utilities;
     "result"
 })
 @XmlRootElement(name = "GetResultResponse")
-public class GetResultResponse {
+public class GetResultResponse implements SOSResponse {
 
     @XmlElement(required = true)
     private GetResultResponse.Result result;

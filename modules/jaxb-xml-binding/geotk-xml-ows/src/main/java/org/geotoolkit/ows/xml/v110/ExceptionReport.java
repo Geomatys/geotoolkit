@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.ExceptionResponse;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -110,7 +111,32 @@ public class ExceptionReport implements ExceptionResponse {
         }
         return null;
     }
-    
+
+    /**
+     * Verify that this entry is identical to the specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof ExceptionReport) {
+            final ExceptionReport that = (ExceptionReport) object;
+
+            return Utilities.equals(this.exception, that.exception)    &&
+                   Utilities.equals(this.version,   that.version);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89 * hash + (this.exception != null ? this.exception.hashCode() : 0);
+        hash = 89 * hash + (this.version != null ? this.version.hashCode() : 0);
+        return hash;
+    }
+
     /**
      * Return a String representation of the exception report.
      * 
