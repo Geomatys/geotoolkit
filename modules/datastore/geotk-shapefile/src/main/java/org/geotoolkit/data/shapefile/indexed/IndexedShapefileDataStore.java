@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
-import java.util.logging.Logger;
 import static org.geotoolkit.data.shapefile.ShpFileType.DBF;
 import static org.geotoolkit.data.shapefile.ShpFileType.FIX;
 import static org.geotoolkit.data.shapefile.ShpFileType.QIX;
@@ -37,11 +36,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -61,7 +58,6 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.shapefile.ShapefileDataStore;
 import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
 import org.geotoolkit.data.shapefile.ShpFileType;
-import org.geotoolkit.data.dbf.DbaseFileReader;
 import org.geotoolkit.data.dbf.IndexedDbaseFileReader;
 import org.geotoolkit.data.shapefile.shp.IndexFile;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
@@ -70,7 +66,6 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.shapefile.ShpDBF;
 import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.index.quadtree.LazySearchCollection;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
@@ -89,12 +84,12 @@ import org.geotoolkit.util.NullProgressListener;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.index.quadtree.LazyTyleSearchIterator;
+import org.geotoolkit.index.quadtree.SearchIterator;
 import org.geotoolkit.resources.NIOUtilities;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
@@ -453,8 +448,6 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             List<PropertyDescriptor> properties, final Envelope bbox)
             throws DataStoreException {
 
-        final PreparedGeometry boundingGeometry = toGeometry(bbox);
-
         CloseableCollection<Data> goodCollec = null;
         try {
             final QuadTree quadTree = openQuadTree();
@@ -475,48 +468,8 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             dbfR = openDbfReader();
         }
 
-        return new IndexedShapefileAttributeReader(properties, openShapeReader(), dbfR, goodCollec, col.bboxIterator()){
-
-            private boolean hasNext = false;
-            private final Object[] buffer = new Object[metaData.length];
-
-            @Override
-            public boolean hasNext() throws IOException {
-                findNext();
-                return hasNext;
-            }
-
-            @Override
-            public void next() throws IOException {
-                hasNext = false;
-            }
-
-            @Override
-            public void read(Object[] buffer) throws IOException {
-                System.arraycopy(this.buffer, 0, buffer, 0, this.buffer.length);
-            }
-
-            private void findNext() throws IOException{
-                while(!hasNext && super.hasNext()){
-                    super.next();
-                    if(((LazyTyleSearchIterator.Buffered)goodRecs).isSafe()){
-                        super.read(buffer);
-                        hasNext = true;
-                        continue;
-                    }
-
-                    if(!(bbox.getMinX() > record.maxX ||
-                         bbox.getMaxX() < record.minX ||
-                         bbox.getMinY() > record.maxY ||
-                         bbox.getMaxY() < record.minY)){
-                        super.read(buffer);
-                        final Geometry candidate = (Geometry)buffer[0];
-                        hasNext = boundingGeometry.intersects(candidate);
-                    }
-                }
-            }
-
-        };
+        return new BBOXIndexedShapefileAttributeReader(properties,
+                openShapeReader(), dbfR, goodCollec, col.bboxIterator(),bbox);
     }
 
     /**
@@ -856,5 +809,68 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             }
         }
     }
-    
+
+
+    private static class BBOXIndexedShapefileAttributeReader extends IndexedShapefileAttributeReader{
+
+        private final Object[] buffer = new Object[metaData.length];
+        private final PreparedGeometry boundingGeometry;
+        private final Envelope bbox;
+        private boolean hasNext = false;
+        private int geomAttIndex = 0;
+
+        public BBOXIndexedShapefileAttributeReader(List<? extends PropertyDescriptor> properties,
+                ShapefileReader shpReader, IndexedDbaseFileReader dbfR, CloseableCollection<Data> goodRec,
+                SearchIterator<Data> ite, Envelope bbox){
+            super(properties,shpReader,dbfR,goodRec,ite);
+            this.bbox = bbox;
+            this.boundingGeometry = toGeometry(bbox);
+
+            for(int i=0,n=properties.size();i<n;i++){
+                if(properties.get(i) instanceof GeometryDescriptor){
+                    geomAttIndex = i;
+                    break;
+                }
+            }
+        }
+
+        @Override
+        public boolean hasNext() throws IOException {
+            findNext();
+            return hasNext;
+        }
+
+        @Override
+        public void next() throws IOException {
+            hasNext = false;
+        }
+
+        @Override
+        public void read(Object[] buffer) throws IOException {
+            System.arraycopy(this.buffer, 0, buffer, 0, this.buffer.length);
+        }
+
+        private void findNext() throws IOException{
+            while(!hasNext && super.hasNext()){
+                super.next();
+                if(((LazyTyleSearchIterator.Buffered)goodRecs).isSafe()){
+                    super.read(buffer);
+                    hasNext = true;
+                    continue;
+                }
+
+                if(!(bbox.getMinX() > record.maxX ||
+                     bbox.getMaxX() < record.minX ||
+                     bbox.getMinY() > record.maxY ||
+                     bbox.getMaxY() < record.minY)){
+                    super.read(buffer);
+                    final Geometry candidate = (Geometry)buffer[geomAttIndex];
+                    hasNext = boundingGeometry.intersects(candidate);
+                }
+            }
+        }
+
+    }
+
+
 }
