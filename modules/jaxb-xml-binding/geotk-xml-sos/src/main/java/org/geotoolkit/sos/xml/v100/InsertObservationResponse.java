@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.sos.xml.SOSResponse;
 import org.geotoolkit.util.Utilities;
 
 
@@ -50,7 +51,7 @@ import org.geotoolkit.util.Utilities;
     "assignedObservationId"
 })
 @XmlRootElement(name = "InsertObservationResponse")
-public class InsertObservationResponse {
+public class InsertObservationResponse implements SOSResponse {
 
     @XmlElement(name = "AssignedObservationId", required = true)
     @XmlSchemaType(name = "anyURI")

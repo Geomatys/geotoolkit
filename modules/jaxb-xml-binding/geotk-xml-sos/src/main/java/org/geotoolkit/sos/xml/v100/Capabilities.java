@@ -25,6 +25,7 @@ import org.geotoolkit.ows.xml.v110.CapabilitiesBaseType;
 import org.geotoolkit.ows.xml.v110.OperationsMetadata;
 import org.geotoolkit.ows.xml.v110.ServiceIdentification;
 import org.geotoolkit.ows.xml.v110.ServiceProvider;
+import org.geotoolkit.sos.xml.SOSResponse;
 import org.geotoolkit.util.Utilities;
 
 
@@ -55,7 +56,7 @@ import org.geotoolkit.util.Utilities;
     "contents"
 })
 @XmlRootElement(name="Capabilities")
-public class Capabilities extends CapabilitiesBaseType {
+public class Capabilities extends CapabilitiesBaseType implements SOSResponse {
 
     @XmlElement(name = "Filter_Capabilities")
     private FilterCapabilities filterCapabilities;
