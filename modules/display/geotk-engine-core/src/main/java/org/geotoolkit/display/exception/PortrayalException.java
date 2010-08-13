@@ -31,13 +31,23 @@ public final class PortrayalException extends Exception{
     
     public PortrayalException(String message){
         super(ERROR +" : "+ message);
+        if(message == null || message.isEmpty()){
+            throw new IllegalArgumentException("Portrayal exception message is null or empty.");
+        }
     }
 
     public PortrayalException(Throwable throwable){
         super(ERROR+" : " + throwable.getMessage(), throwable);
+        final String message = throwable.getMessage();
+        if(message == null || message.isEmpty()){
+            throw new IllegalArgumentException("Portrayal exception message is null or empty.");
+        }
     }
     
     public PortrayalException(String message, Throwable throwable){
         super(ERROR +" : "+ ((message != null) ? message : "no message"), throwable);
+        if(message == null || message.isEmpty()){
+            throw new IllegalArgumentException("Portrayal exception message is null or empty.");
+        }
     }
 }
