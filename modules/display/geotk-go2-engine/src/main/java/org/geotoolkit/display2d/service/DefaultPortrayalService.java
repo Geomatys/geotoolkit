@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.display2d.service;
 
-import java.awt.image.renderable.ParameterBlock;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.awt.Color;
@@ -521,6 +520,7 @@ public class DefaultPortrayalService implements PortrayalService{
             writeParam.setEnvelope(env);
             writeParam.setResolution(resolution);
             writeParam.setFormatName(javaType);
+            writeParam.setCompressionQuality(outputDef.getCompression());
 
             if(backgroundColor != null){
                 final int r = backgroundColor.getRed();
