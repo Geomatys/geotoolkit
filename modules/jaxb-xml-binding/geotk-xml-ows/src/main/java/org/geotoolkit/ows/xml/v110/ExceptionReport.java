@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.ExceptionResponse;
 
 
 /**
@@ -59,7 +60,7 @@ import javax.xml.bind.annotation.XmlType;
     "exception"
 })
 @XmlRootElement(name = "ExceptionReport")
-public class ExceptionReport {
+public class ExceptionReport implements ExceptionResponse {
 
     @XmlElement(name = "Exception", required = true)
     private List<ExceptionType> exception = new ArrayList<ExceptionType>();

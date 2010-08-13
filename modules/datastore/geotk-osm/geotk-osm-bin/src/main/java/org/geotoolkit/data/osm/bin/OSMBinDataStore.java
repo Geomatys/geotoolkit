@@ -49,7 +49,7 @@ public class OSMBinDataStore extends AbstractDataStore{
     private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
 
     public OSMBinDataStore(URL filePath){
-
+        super(null);
     }
 
     /**

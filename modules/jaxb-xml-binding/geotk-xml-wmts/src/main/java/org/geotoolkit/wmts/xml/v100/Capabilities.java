@@ -28,6 +28,7 @@ import org.geotoolkit.ows.xml.v110.OnlineResourceType;
 import org.geotoolkit.ows.xml.v110.OperationsMetadata;
 import org.geotoolkit.ows.xml.v110.ServiceIdentification;
 import org.geotoolkit.ows.xml.v110.ServiceProvider;
+import org.geotoolkit.wmts.xml.WMTSResponse;
 
 
 /**
@@ -61,7 +62,7 @@ import org.geotoolkit.ows.xml.v110.ServiceProvider;
     "serviceMetadataURL"
 })
 @XmlRootElement(name = "Capabilities")
-public class Capabilities extends CapabilitiesBaseType {
+public class Capabilities extends CapabilitiesBaseType implements WMTSResponse {
 
     @XmlElement(name = "Contents")
     private ContentsType contents;

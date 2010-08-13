@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v110.FilterCapabilities;
 import org.geotoolkit.ows.xml.v100.CapabilitiesBaseType;
+import org.geotoolkit.wfs.xml.WFSResponse;
 
 
 /**
@@ -68,7 +69,7 @@ import org.geotoolkit.ows.xml.v100.CapabilitiesBaseType;
     "filterCapabilities"
 })
 @XmlRootElement(name = "WFS_Capabilities")
-public class WFSCapabilitiesType extends CapabilitiesBaseType {
+public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResponse {
 
     @XmlElement(name = "FeatureTypeList")
     private FeatureTypeListType featureTypeList;

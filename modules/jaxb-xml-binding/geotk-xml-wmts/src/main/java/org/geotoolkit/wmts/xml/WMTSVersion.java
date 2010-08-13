@@ -18,7 +18,7 @@ package org.geotoolkit.wmts.xml;
 
 /**
  *
- * @author Johann Sorel (Geomatys)
+ * @author Guilhem Legal (Geomatys)
  */
 public enum WMTSVersion {
     v100("1.0.0");

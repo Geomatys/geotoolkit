@@ -93,9 +93,10 @@ public class CSVDataStore extends AbstractDataStore{
     private SimpleFeatureType featureType;
 
     public CSVDataStore(File f, String namespace, String name, char separator){
+        super(namespace);
         this.file = f;
         this.name = name;
-        this.namespace = namespace;
+        this.namespace = getDefaultNamespace();
         this.separator = separator;
     }
 

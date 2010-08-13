@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wfs.xml.WFSResponse;
 
 
 /**
@@ -55,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
     "featuresNotLocked"
 })
 @XmlRootElement(name = "LockFeatureResponse")
-public class LockFeatureResponseType {
+public class LockFeatureResponseType implements WFSResponse {
 
     @XmlElement(name = "LockId", required = true)
     private String lockId;

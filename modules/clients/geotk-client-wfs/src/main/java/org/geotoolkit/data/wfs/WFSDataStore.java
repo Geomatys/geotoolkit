@@ -101,7 +101,7 @@ public class WFSDataStore extends AbstractDataStore{
 
 
     public WFSDataStore(URI serverURI) throws MalformedURLException{
-
+        super(null);
         this.server = new WebFeatureServer(serverURI.toURL(), "1.1.0");
         final WFSCapabilitiesType capabilities = server.getCapabilities();
 
