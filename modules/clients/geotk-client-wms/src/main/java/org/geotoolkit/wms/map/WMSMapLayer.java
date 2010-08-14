@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.wms.map;
 
-import java.awt.AlphaComposite;
 import java.awt.Image;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
@@ -25,22 +24,26 @@ import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
-import javax.media.jai.Interpolation;
-import org.geotoolkit.coverage.CoverageFactoryFinder;
+
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
+import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.coverage.processing.CoverageProcessingException;
 import org.geotoolkit.coverage.processing.Operations;
-
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.geometry.Envelope2D;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.AbstractMapLayer;
 import org.geotoolkit.map.DynamicMapLayer;
 import org.geotoolkit.referencing.CRS;
@@ -53,6 +56,7 @@ import org.geotoolkit.wms.WebMapServer;
 import org.geotoolkit.wms.xml.AbstractLayer;
 
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -326,25 +330,38 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         }
 
         final RenderingContext2D context2D = (RenderingContext2D) context;
-        final Graphics2D g2 = context2D.getGraphics();
 
+        CoordinateReferenceSystem queryCrs = context.getObjectiveCRS2D();
+        Envelope env = context2D.getCanvasObjectiveBounds2D();
         //check if we must make the  coverage reprojection ourself--------------
-        CoordinateReferenceSystem replace = null;
         if (useLocalReprojection) {
             try {
                 if (!supportCRS(context2D.getCanvasObjectiveBounds().getCoordinateReferenceSystem())) {
-                    replace = DefaultGeographicCRS.WGS84;
+                    queryCrs = findOriginalCRS();
+                    if(queryCrs == null){
+                        //last chance use : CRS:84
+                        queryCrs = DefaultGeographicCRS.WGS84;
+                    }
+                    env = CRS.transform(env, queryCrs);
                 }
             } catch (FactoryException ex) {
+                context.getMonitor().exceptionOccured(ex, Level.WARNING);
+            } catch (TransformException ex) {
                 context.getMonitor().exceptionOccured(ex, Level.WARNING);
             }
         }
 
-        final URL url = query(context, replace);
+        final Dimension dim = context2D.getCanvasDisplayBounds().getSize();
+        final URL url;
+        try {
+            url = query(env, dim);
+        } catch (MalformedURLException ex) {
+            throw new PortrayalException(ex);
+        }
+
+        LOGGER.log(Level.INFO, "[WMSMapLayer] : GETMAP request : {0}", url);
+
         final BufferedImage image;
-
-        LOGGER.info("[WMSMapLayer] : GETMAP request : " + url.toString());
-
         try {
             image = ImageIO.read(url);
         } catch (IOException io) {
@@ -355,55 +372,64 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             throw new PortrayalException("WMS server didn't return an image.");
         }
 
-        if (replace != null) {
-            context2D.switchToObjectiveCRS();
+        final GridCoverageFactory gc = new GridCoverageFactory();
+        final GridCoverage2D coverage = gc.create("wms", image, env);
+        portray(context2D, coverage);
+        
+    }
 
-            Envelope env = context2D.getCanvasObjectiveBounds();
-            try {
-                env = CRS.transform(context2D.getCanvasObjectiveBounds(), replace);
-            } catch (TransformException ex) {
-                LOGGER.log(Level.WARNING, null, ex);
+    private static void portray(RenderingContext2D renderingContext, GridCoverage2D dataCoverage) throws PortrayalException{
+        final CanvasMonitor monitor = renderingContext.getMonitor();
+        final Graphics2D g2d = renderingContext.getGraphics();
+
+        final CoordinateReferenceSystem coverageCRS = dataCoverage.getCoordinateReferenceSystem();
+        try{
+            final CoordinateReferenceSystem candidate2D = CRSUtilities.getCRS2D(coverageCRS);
+            if(!CRS.equalsIgnoreMetadata(candidate2D,renderingContext.getObjectiveCRS2D()) ){
+
+                dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage.view(ViewType.NATIVE), renderingContext.getObjectiveCRS2D());
+
+                if(dataCoverage != null){
+                    dataCoverage = dataCoverage.view(ViewType.RENDERED);
+                }
             }
-
-            final GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
-            GridCoverage2D dataCoverage = factory.create("Test", image, env);
-
-            dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(
-                    dataCoverage, context2D.getCanvasObjectiveBounds(),
-                    Interpolation.getInstance(Interpolation.INTERP_BILINEAR));
-
-            final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D();
-            if (trs2D instanceof AffineTransform) {
-                g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
-                g2.drawRenderedImage(image, (AffineTransform) trs2D);
-            } else if (trs2D instanceof LinearTransform) {
-                final LinearTransform lt = (LinearTransform) trs2D;
-                //final int col = lt.getMatrix().getNumCol();
-                //final int row = lt.getMatrix().getNumRow();
-                //TODO using only the first parameters of the linear transform
-                throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass());
-            } else {
-                throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass());
-            }
-
-        } else {
-            //switch to displayCRS
-            context2D.switchToDisplayCRS();
-
-            //draw image centered on top
-            //we center it because rotation parameter may have caused the image
-            // to be larger than the canvas size, this is a normal behavior since
-            // wms layer can not handle rotations.
-            final Dimension dim = context2D.getCanvasDisplayBounds().getSize();
-            if (image != null && dim != null) {
-                double rotation = context2D.getCanvas().getController().getRotation();
-                g2.translate(dim.width / 2, dim.height / 2);
-                g2.rotate(rotation);
-                g2.drawImage(image, -image.getWidth() / 2, -image.getHeight() / 2, null);
-                g2.rotate(-rotation);
-                g2.translate(-dim.width / 2, -dim.height / 2);
-            }
+        } catch (CoverageProcessingException ex) {
+            monitor.exceptionOccured(ex, Level.WARNING);
+            return;
+        } catch(Exception ex){
+            //several kind of errors can happen here, we catch anything to avoid blocking the map component.
+            monitor.exceptionOccured(
+                new IllegalStateException("Coverage is not in the requested CRS, found : " +
+                "\n"+ coverageCRS +
+                " was expecting : \n" +
+                renderingContext.getObjectiveCRS() +
+                "\nOriginal Cause:"+ ex.getMessage(), ex), Level.WARNING);
+            return;
         }
+
+        if(dataCoverage == null){
+            LOGGER.log(Level.WARNING, "Reprojected coverage is null.");
+            return;
+        }
+
+        //we must switch to objectiveCRS for grid coverage
+        renderingContext.switchToObjectiveCRS();
+
+        final RenderedImage img = dataCoverage.getRenderedImage();
+        final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
+        if(trs2D instanceof AffineTransform){
+            g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
+            g2d.drawRenderedImage(img, (AffineTransform)trs2D);
+        }else if (trs2D instanceof LinearTransform) {
+            final LinearTransform lt = (LinearTransform) trs2D;
+            final int col = lt.getMatrix().getNumCol();
+            final int row = lt.getMatrix().getNumRow();
+            //TODO using only the first parameters of the linear transform
+            throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass());
+        }else{
+            throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass() );
+        }
+
     }
 
     /**
@@ -547,4 +573,31 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
 
         return false;
     }
+
+    /**
+     * Find the best original crs of the data in the capabilities.
+     */
+    private CoordinateReferenceSystem findOriginalCRS() throws FactoryException {
+        final AbstractLayer layer = server.getCapabilities().getLayerFromName(layers[0]);
+
+        if(layer != null){
+            for (String str : layer.getCRS()) {
+                //search and return the first crs that we succesfuly parsed.
+                try{
+                    CoordinateReferenceSystem crs = CRS.decode(str);
+                    if(crs != null){
+                        return crs;
+                    }
+                }catch(FactoryException ex){
+                    LOGGER.log(Level.FINE, "Could not parse crs code : {0}", str);
+                }
+            }
+        }else{
+            LOGGER.log(Level.WARNING, "Layer : " + layers[0] + " could not be found in the getCapabilities. "
+                    + "This can be caused by an incorrect layer name (check case-sensitivity) or a non-compliant wms serveur.");
+        }
+
+        return null;
+    }
+
 }
