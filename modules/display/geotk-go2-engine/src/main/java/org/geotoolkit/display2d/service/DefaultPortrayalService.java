@@ -59,6 +59,7 @@ import org.geotoolkit.display.canvas.GraphicVisitor;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.display2d.container.ContextContainer2D;
@@ -378,7 +379,12 @@ public class DefaultPortrayalService implements PortrayalService{
             }
         }
 
-        if(portrayAsCoverage(canvasDef, sceneDef, viewDef, outputDef)){
+        //directly return false if hints doesnt contain the coverage writer hint enabled
+        final Hints hints = sceneDef.getHints();
+        final Object val = (hints!=null)?hints.get(GO2Hints.KEY_COVERAGE_WRITER):null;
+        final boolean useCoverageWriter = GO2Hints.COVERAGE_WRITER_ON.equals(val);
+
+        if(useCoverageWriter && portrayAsCoverage(canvasDef, sceneDef, viewDef, outputDef)){
             //we succeeded in writing it with coverage writer directly.
             return;
         }
@@ -390,20 +396,22 @@ public class DefaultPortrayalService implements PortrayalService{
             throw new PortrayalException("No image created by the canvas.");
         }
 
-        final Envelope env = viewDef.getEnvelope();
-        final Dimension dim = canvasDef.getDimension();
-        final double[] resolution = new double[]{
-                env.getSpan(0) / (double)dim.width,
-                env.getSpan(1) / (double)dim.height};
+        if(useCoverageWriter){
+            final Envelope env = viewDef.getEnvelope();
+            final Dimension dim = canvasDef.getDimension();
+            final double[] resolution = new double[]{
+                    env.getSpan(0) / (double)dim.width,
+                    env.getSpan(1) / (double)dim.height};
 
-        final GridCoverage2D coverage = GCF.create("PortrayalTempCoverage", image, env);
-        writeCoverage(coverage, env, resolution, outputDef,null);
-
-//        try {
-//            writeImage(image, outputDef);
-//        } catch (IOException ex) {
-//            throw new PortrayalException(ex);
-//        }
+            final GridCoverage2D coverage = GCF.create("PortrayalTempCoverage", image, env);
+            writeCoverage(coverage, env, resolution, outputDef,null);
+        }else{
+            try {
+                writeImage(image, outputDef);
+            } catch (IOException ex) {
+                throw new PortrayalException(ex);
+            }
+        }
 
     }
 

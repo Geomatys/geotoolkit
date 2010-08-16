@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2005 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -26,18 +26,18 @@ package org.geotoolkit.display.exception;
  */
 public final class PortrayalException extends Exception{
 
-    private static final String ERROR = "Portrayal exception";
+    private static final String ERROR = "Portrayal exception : ";
     private static final long serialVersionUID = 3200411272785006830L;
     
     public PortrayalException(String message){
-        super(ERROR +" : "+ message);
+        super(ERROR + message);
         if(message == null || message.isEmpty()){
             throw new IllegalArgumentException("Portrayal exception message is null or empty.");
         }
     }
 
     public PortrayalException(Throwable throwable){
-        super(ERROR+" : " + throwable.getMessage(), throwable);
+        super(ERROR + throwable.getMessage(), throwable);
         final String message = throwable.getMessage();
         if(message == null || message.isEmpty()){
             throw new IllegalArgumentException("Portrayal exception message is null or empty.");
@@ -45,7 +45,7 @@ public final class PortrayalException extends Exception{
     }
     
     public PortrayalException(String message, Throwable throwable){
-        super(ERROR +" : "+ ((message != null) ? message : "no message"), throwable);
+        super(ERROR + ((message != null) ? message : "no message"), throwable);
         if(message == null || message.isEmpty()){
             throw new IllegalArgumentException("Portrayal exception message is null or empty.");
         }
