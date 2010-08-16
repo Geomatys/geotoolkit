@@ -35,6 +35,7 @@ import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
@@ -59,13 +60,13 @@ import javax.media.jai.JAI;
 import javax.media.jai.OperationDescriptor;
 import javax.media.jai.OperationRegistry;
 import javax.media.jai.registry.RIFRegistry;
+
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.processing.Operations;
-
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.collection.Cache;
@@ -93,12 +94,13 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
+import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.renderer.style.WellKnownMarkFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import org.opengis.coverage.grid.GridCoverage;
 
+import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
@@ -145,6 +147,14 @@ public final class GO2Utilities {
 
     private static final Map<Class<? extends CachedSymbolizer>,SymbolizerRendererService> RENDERERS =
             new HashMap<Class<? extends CachedSymbolizer>, SymbolizerRendererService>();
+
+    /**
+     * Used in SLD/SE to calculate scale for degree CRSs.
+     */
+    private static final double SE_DEGREE_TO_METERS = 6378137.0 * 2.0 * Math.PI / 360;
+    private static final double DEFAULT_DPI = 90; // ~ 0.28 * 0.28mm
+    private static final double PIXEL_SIZE = 0.0254;
+    private static final double SE_EPSILON = 1e-6;
 
     public static final MutableStyleFactory STYLE_FACTORY;
     public static final FilterFactory2 FILTER_FACTORY;
@@ -835,6 +845,28 @@ public final class GO2Utilities {
     // information about styles ////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
+    public static double computeSEScale(RenderingContext2D context) {
+        final Envelope envelope = context.getCanvasObjectiveBounds2D();
+        final CoordinateReferenceSystem objCRS = envelope.getCoordinateReferenceSystem();
+        final AffineTransform objToDisp = context.getObjectiveToDisplay();
+        final int width = context.getCanvasDisplayBounds().width;
+
+        if (XAffineTransform.getRotation(objToDisp) != 0.0) {
+            final double scale = XAffineTransform.getScale(objToDisp);
+            if(objCRS instanceof GeographicCRS) {
+                return (SE_DEGREE_TO_METERS*DEFAULT_DPI) / (scale*PIXEL_SIZE);
+            } else {
+                return DEFAULT_DPI / (scale *PIXEL_SIZE);
+            }
+        }else{
+            if(objCRS instanceof GeographicCRS) {
+                return (envelope.getSpan(0) * SE_DEGREE_TO_METERS) / (width / DEFAULT_DPI*PIXEL_SIZE);
+            } else {
+                return envelope.getSpan(0) / (width / DEFAULT_DPI*PIXEL_SIZE);
+            }
+        }
+    }
+
     public static float[] validDashes(float[] dashes) {
         if (dashes == null || dashes.length == 0) {
             return null;
@@ -978,35 +1010,6 @@ public final class GO2Utilities {
         return atts;
     }
 
-    public static List<Rule> getValidRules(final Style style, final double scale, final Name typeName){
-        final List<Rule> validRules = new ArrayList<Rule>();
-
-        final List<? extends FeatureTypeStyle> ftss = style.featureTypeStyles();
-        for(final FeatureTypeStyle fts : ftss){
-
-            final Id ids = fts.getFeatureInstanceIDs();
-            final Set<Name> names = fts.featureTypeNames();
-            final Collection<SemanticType> semantics = fts.semanticTypeIdentifiers();
-
-            //TODO filter correctly possibilities
-            //test if the featutetype is valid
-            //we move to next feature  type if not valid
-            if (false) continue;
-            //if (typeName != null && !(typeName.equalsIgnoreCase(fts.getFeatureTypeName())) ) continue;
-
-
-            final List<? extends Rule> rules = fts.rules();
-            for(final Rule rule : rules){
-                //test if the scale is valid for this rule
-                if(rule.getMinScaleDenominator() <= scale && rule.getMaxScaleDenominator() > scale){
-                    validRules.add(rule);
-                }
-            }
-        }
-
-        return validRules;
-    }
-
     public static List<Rule> getValidRules(final Style style, final double scale, FeatureType type) {
         final List<Rule> validRules = new ArrayList<Rule>();
 
@@ -1066,7 +1069,7 @@ public final class GO2Utilities {
             final List<? extends Rule> rules = fts.rules();
             for(final Rule rule : rules){
                 //test if the scale is valid for this rule
-                if(rule.getMinScaleDenominator() <= scale && rule.getMaxScaleDenominator() > scale){
+                if(rule.getMinScaleDenominator()-SE_EPSILON <= scale && rule.getMaxScaleDenominator()+SE_EPSILON > scale){
                     validRules.add(rule);
                 }
             }
@@ -1134,7 +1137,7 @@ public final class GO2Utilities {
             final List<? extends Rule> rules = fts.rules();
             for(final Rule rule : rules){
                 //test if the scale is valid for this rule
-                if(rule.getMinScaleDenominator() <= scale && rule.getMaxScaleDenominator() > scale){
+                if(rule.getMinScaleDenominator()-SE_EPSILON <= scale && rule.getMaxScaleDenominator()+SE_EPSILON > scale){
                     validRules.add(getCached(rule));
                 }
             }
@@ -1163,7 +1166,7 @@ public final class GO2Utilities {
             final List<? extends Rule> rules = fts.rules();
             for(final Rule rule : rules){
                 //test if the scale is valid for this rule
-                if(rule.getMinScaleDenominator() <= scale && rule.getMaxScaleDenominator() > scale){
+                if(rule.getMinScaleDenominator()-SE_EPSILON <= scale && rule.getMaxScaleDenominator()+SE_EPSILON > scale){
                     validRules.add(getCached(rule));
                 }
             }

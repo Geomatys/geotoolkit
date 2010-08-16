@@ -137,16 +137,16 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             //merge the style and filter with the selection
             final List<Rule> selectionRules;
             final List<Rule> normalRules = GO2Utilities.getValidRules(
-                   style, renderingContext.getGeographicScale(), sft);
+                   style, renderingContext.getSEScale(), sft);
 
             final List<CachedRule> mixedRules = new ArrayList<CachedRule>();
             final MutableStyle selectionStyle = layer.getSelectionStyle();
             if(selectionStyle == null){
                 selectionRules = GO2Utilities.getValidRules(
-                        ContextContainer2D.DEFAULT_SELECTION_STYLE, renderingContext.getGeographicScale(), sft);
+                        ContextContainer2D.DEFAULT_SELECTION_STYLE, renderingContext.getSEScale(), sft);
             }else{
                 selectionRules = GO2Utilities.getValidRules(
-                        selectionStyle, renderingContext.getScale(), sft);
+                        selectionStyle, renderingContext.getSEScale(), sft);
             }
 
             //update the rules filters
@@ -181,7 +181,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
         }else{
             rules = GO2Utilities.getValidCachedRules(
-                style, renderingContext.getGeographicScale(), sft);
+                style, renderingContext.getSEScale(), sft);
         }
 
         //we perform a first check on the style to see if there is at least
@@ -493,7 +493,8 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         if (!layer.isVisible()) return graphics;
 
         final Name featureTypeName = layer.getCollection().getFeatureType().getName();
-        final CachedRule[] rules = GO2Utilities.getValidCachedRules(layer.getStyle(), c2d.getGeographicScale(), featureTypeName);
+        final CachedRule[] rules = GO2Utilities.getValidCachedRules(layer.getStyle(), 
+                c2d.getSEScale(), featureTypeName);
 
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just return null.

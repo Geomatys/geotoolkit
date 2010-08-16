@@ -58,6 +58,8 @@ import org.opengis.util.InternationalString;
  */
 public class DefaultController2D implements CanvasController2D{
 
+    private static final double DEFAULT_DPI = 90d;
+
     private static final Logger LOGGER = Logging.getLogger(DefaultController2D.class);
 
     /**
@@ -715,7 +717,7 @@ public class DefaultController2D implements CanvasController2D{
             distance = Math.abs(gc.getOrthodromicDistance());
         }
 
-        final double displayToDevice = 1f / 72f * 0.0254f;
+        final double displayToDevice = 1f / DEFAULT_DPI * 0.0254f;
         return distance / displayToDevice;
     }
 

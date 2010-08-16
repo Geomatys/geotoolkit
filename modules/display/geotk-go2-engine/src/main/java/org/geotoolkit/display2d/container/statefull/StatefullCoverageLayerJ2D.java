@@ -124,7 +124,8 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
         if (!layer.isVisible()) return;        
              
         final Name coverageName = layer.getCoverageName();
-        final CachedRule[] rules = GO2Utilities.getValidCachedRules(layer.getStyle(), renderingContext.getGeographicScale(), coverageName);
+        final CachedRule[] rules = GO2Utilities.getValidCachedRules(layer.getStyle(), 
+                renderingContext.getSEScale(), coverageName);
 
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just continue.
@@ -180,7 +181,8 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
         final RenderingContext2D renderingContext = (RenderingContext2D) context;
 
         final Name coverageName = layer.getCoverageName();
-        final CachedRule[] rules = GO2Utilities.getValidCachedRules(layer.getStyle(), renderingContext.getGeographicScale(), coverageName);
+        final CachedRule[] rules = GO2Utilities.getValidCachedRules(layer.getStyle(), 
+                renderingContext.getSEScale(), coverageName);
 
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just continue.
