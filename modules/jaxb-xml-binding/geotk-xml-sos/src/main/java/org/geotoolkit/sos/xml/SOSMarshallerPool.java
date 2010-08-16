@@ -34,6 +34,8 @@ public class SOSMarshallerPool {
             instance = new MarshallerPool("org.geotoolkit.sos.xml.v100:" +
                                         "org.geotoolkit.gml.xml.v311:" +
                                         "org.geotoolkit.swe.xml.v101:" +
+                                        "org.geotoolkit.sml.xml.v100:" +
+                                        "org.geotoolkit.sml.xml.v101:" +
                                         "org.geotoolkit.observation.xml.v100:" +
                                         "org.geotoolkit.sampling.xml.v100:" +
                                         "org.geotoolkit.internal.jaxb.geometry");

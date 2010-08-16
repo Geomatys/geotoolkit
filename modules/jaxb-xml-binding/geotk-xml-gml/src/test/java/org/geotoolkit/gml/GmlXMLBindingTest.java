@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.gml;
 
+import javax.xml.datatype.Duration;
 import java.io.StringWriter;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
@@ -24,6 +25,7 @@ import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
 
 //Junit dependencies
 import org.geotoolkit.gml.xml.v311.ObjectFactory;
+import org.geotoolkit.gml.xml.v311.TimePeriodType;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -58,7 +60,7 @@ public class GmlXMLBindingTest {
      * @throws JAXBException
      */
     @Test
-    public void marshallingTest() throws JAXBException {
+    public void marshallingTest() throws Exception {
 
         DirectPositionType lower = new DirectPositionType(-30.711, 134.196);
         DirectPositionType upper = new DirectPositionType(-30.702, 134.205);
@@ -80,6 +82,12 @@ public class GmlXMLBindingTest {
                            "    <gml:upperCorner>-30.702 134.205</gml:upperCorner>" + '\n' +
                            "</gml:Envelope>" + '\n' ;
         assertEquals(expResult, result);
+
+        Duration d1 = javax.xml.datatype.DatatypeFactory.newInstance().newDuration("P2D");
+
+        TimePeriodType tp = new TimePeriodType(d1);
+
+        marshaller.marshal(FACTORY.createTimePeriod(tp), sw);
 
     }
 }
