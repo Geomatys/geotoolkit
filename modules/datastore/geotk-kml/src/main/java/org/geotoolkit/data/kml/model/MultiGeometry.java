@@ -56,4 +56,21 @@ public interface MultiGeometry extends AbstractGeometry {
      */
     void setGeometries(List<AbstractGeometry> geometries);
 
+    /**
+     * <p>This method is based on JTS geometries method getCentroid() and
+     * get an center point for multigeometry based on coordinates of the whole
+     * geometries conained in MultiGeometry.</p>
+     *
+     * @return
+     */
+    com.vividsolutions.jts.geom.Point getCentroid();
+
+    /**
+     * <p>This method returns coordinates of the whole geometries contained in
+     * MultyGeometry.</p>
+     *
+     * @return
+     */
+    com.vividsolutions.jts.geom.Coordinate[] getCoordinates();
+
 }

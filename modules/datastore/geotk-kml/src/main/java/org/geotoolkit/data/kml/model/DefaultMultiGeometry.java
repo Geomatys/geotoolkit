@@ -16,7 +16,18 @@
  */
 package org.geotoolkit.data.kml.model;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import org.geotoolkit.data.kml.DefaultKmlFactory;
+import org.geotoolkit.data.kml.KmlFactory;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static java.util.Collections.*;
 
@@ -26,6 +37,7 @@ import static java.util.Collections.*;
  */
 public class DefaultMultiGeometry extends DefaultAbstractGeometry implements MultiGeometry {
 
+    private static final GeometryFactory GF = new GeometryFactory();
     protected List<AbstractGeometry> geometries;
 
     /**
@@ -80,5 +92,54 @@ public class DefaultMultiGeometry extends DefaultAbstractGeometry implements Mul
     @Override
     public void setGeometries(List<AbstractGeometry> geometries) {
         this.geometries = geometries;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public Point getCentroid() {
+        List<Coordinate> coordinates = new ArrayList<Coordinate>();
+        for(AbstractGeometry geometry : this.geometries) {
+            if(geometry instanceof Geometry){
+                Geometry g = (Geometry) geometry;
+                coordinates.addAll(Arrays.asList(g.getCoordinates()));
+            } else if(geometry instanceof MultiGeometry){
+                MultiGeometry g = (MultiGeometry) geometry;
+                coordinates.addAll(Arrays.asList(g.getCoordinates()));
+            }
+            else{
+                return null;
+            }
+        }
+        Point[] pointsArray = new Point[coordinates.size()];
+        for(int i = 0; i<pointsArray.length; i++){
+            pointsArray[i] = new Point(new CoordinateArraySequence(new Coordinate[]{coordinates.get(i)}), GF);
+        }
+        MultiPoint multiPoint = new MultiPoint(pointsArray, GF);
+        return multiPoint.getCentroid();
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public Coordinate[] getCoordinates() {
+        List<Coordinate> coordinates = new ArrayList<Coordinate>();
+        for(AbstractGeometry geometry : this.geometries){
+            if(geometry instanceof Geometry){
+                Geometry g = (Geometry) geometry;
+                coordinates.addAll(Arrays.asList(g.getCoordinates()));
+            } else if(geometry instanceof MultiGeometry){
+                MultiGeometry g = (MultiGeometry) geometry;
+                coordinates.addAll(Arrays.asList(g.getCoordinates()));
+            } else if(geometry instanceof Model) {
+                Location l = ((Model) geometry).getLocation();
+                coordinates.add(new Coordinate(l.getLongitude(), l.getLatitude(), l.getAltitude()));
+            }
+        }
+        return (Coordinate[]) (coordinates.toArray());
     }
 }

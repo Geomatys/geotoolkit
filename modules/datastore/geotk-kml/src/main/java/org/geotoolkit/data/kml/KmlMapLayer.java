@@ -70,11 +70,17 @@ import org.geotoolkit.data.kml.model.Style;
 import org.geotoolkit.data.kml.model.StyleMap;
 import org.geotoolkit.data.kml.model.StyleState;
 import org.geotoolkit.data.kml.model.Vec2;
+import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.data.kml.xsd.Cdata;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
+import org.geotoolkit.display2d.style.labeling.DefaultLabelLayer;
+import org.geotoolkit.display2d.style.labeling.DefaultLabelRenderer;
+import org.geotoolkit.display2d.style.labeling.DefaultPointLabelDescriptor;
+import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
+import org.geotoolkit.display2d.style.labeling.LabelLayer;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.JTS;
@@ -150,20 +156,20 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      * @param feature
      * @return
      */
-    private JTSEnvelope2D getFeatureEnvelope(Feature feature, JTSEnvelope2D envelope){
+    private JTSEnvelope2D getFeatureEnvelope(Feature feature, JTSEnvelope2D envelope) {
         FeatureType featureType = feature.getType();
 
-        if(featureType.equals(KmlModelConstants.TYPE_PLACEMARK)){
-            if(feature.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName())!= null){
+        if (featureType.equals(KmlModelConstants.TYPE_PLACEMARK)) {
+            if (feature.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()) != null) {
                 envelope = this.getAbstractGeometryEnvelope(
                         (AbstractGeometry) feature.getProperty(
                         KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue(), envelope);
             }
-        } else if(FeatureTypeUtilities.isDecendedFrom(featureType, KmlModelConstants.TYPE_CONTAINER)){
+        } else if (FeatureTypeUtilities.isDecendedFrom(featureType, KmlModelConstants.TYPE_CONTAINER)) {
             Collection<Property> properties = null;
-            if(featureType.equals(KmlModelConstants.TYPE_DOCUMENT)){
+            if (featureType.equals(KmlModelConstants.TYPE_DOCUMENT)) {
                 properties = feature.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName());
-            } else if(featureType.equals(KmlModelConstants.TYPE_FOLDER)){
+            } else if (featureType.equals(KmlModelConstants.TYPE_FOLDER)) {
                 properties = feature.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName());
             }
             if (properties != null) {
@@ -172,9 +178,9 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                     envelope = this.getFeatureEnvelope((Feature) ((Property) i.next()).getValue(), envelope);
                 }
             }
-        } else if(FeatureTypeUtilities.isDecendedFrom(featureType, KmlModelConstants.TYPE_OVERLAY)){
-            if(featureType.equals(KmlModelConstants.TYPE_GROUND_OVERLAY)){
-                if(feature.getProperty(KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX.getName()) != null){
+        } else if (FeatureTypeUtilities.isDecendedFrom(featureType, KmlModelConstants.TYPE_OVERLAY)) {
+            if (featureType.equals(KmlModelConstants.TYPE_GROUND_OVERLAY)) {
+                if (feature.getProperty(KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX.getName()) != null) {
                     LatLonBox latLonBox = (LatLonBox) feature.getProperty(KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX.getName()).getValue();
                     envelope.expandToInclude(
                             new JTSEnvelope2D(
@@ -193,13 +199,13 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      * @param geometry
      * @return
      */
-    private JTSEnvelope2D getAbstractGeometryEnvelope(AbstractGeometry geometry, JTSEnvelope2D envelope){
-        if(geometry instanceof Geometry){
+    private JTSEnvelope2D getAbstractGeometryEnvelope(AbstractGeometry geometry, JTSEnvelope2D envelope) {
+        if (geometry instanceof Geometry) {
             envelope.expandToInclude(new JTSEnvelope2D(((Geometry) geometry).getEnvelopeInternal(),
                     DefaultGeographicCRS.WGS84));
-        } else if (geometry instanceof MultiGeometry){
-            for(AbstractGeometry geom : ((MultiGeometry) geometry).getGeometries()){
-                        envelope = this.getAbstractGeometryEnvelope(geom, envelope);
+        } else if (geometry instanceof MultiGeometry) {
+            for (AbstractGeometry geom : ((MultiGeometry) geometry).getGeometries()) {
+                envelope = this.getAbstractGeometryEnvelope(geom, envelope);
             }
         }
         return envelope;
@@ -303,11 +309,11 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         graphic.setFont(FONT);
 
         AbstractGeometry geometry = (AbstractGeometry) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
-        if( s!= null && s.getIconStyle() != null){
+        if (s != null && s.getIconStyle() != null) {
             IconStyle iconStyle = s.getIconStyle();
             BasicLink bl = iconStyle.getIcon();
-            if(bl!= null){
-                if( bl.getHref() != null){
+            if (bl != null) {
+                if (bl.getHref() != null) {
                     File img = new File(bl.getHref());
                     BufferedImage buff = ImageIO.read(img);
                     graphic.drawImage(buff, 0, 4, LEGEND_WIDTH_INT, LEGEND_HEIGHT_INT, null);
@@ -536,6 +542,10 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         } catch (IOException ex) {
             Logger.getLogger(KmlMapLayer.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+//        LabelLayer labelLayer = new DefaultLabelLayer(true, true);
+//        context2d.getLabelRenderer(true).append(labelLayer);
+
     }
 
     /**
@@ -597,16 +607,18 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             AbstractGeometry geometry = (AbstractGeometry) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
             if (geometry != null) {
                 this.portrayAbstractGeometry(geometry, s);
-                if(geometry instanceof Geometry){
+                if (geometry instanceof Geometry) {
                     centroid = ((Geometry) geometry).getCentroid();
+                } else if (geometry instanceof MultiGeometry){
+                    centroid = ((MultiGeometry) geometry).getCentroid();
                 }
             }
         }
 
         double x = Double.NaN;
         double y = Double.NaN;
-        
-        if(centroid != null){
+
+        if (centroid != null) {
             x = centroid.getX();
             y = centroid.getY();
         } else {
@@ -617,12 +629,12 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                 y = (latLonAltBox.getNorth() + latLonAltBox.getSouth()) / 2;
             }
         }
-        
-        if(x != Double.NaN && y != Double.NaN){
-                portrayBalloonStyle(x, y, s, false);
-                portrayLabelStyle(x, y, s,
-                        (String) placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-                portrayFlag(x, y);
+
+        if (x != Double.NaN && y != Double.NaN) {
+            portrayBalloonStyle(x, y, s, false, placemark);
+            portrayLabelStyle(x, y, s,
+                    (String) placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+            portrayFlag(x, y);
         }
 
     }
@@ -720,7 +732,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                 KmlModelConstants.ATT_OVERLAY_ICON.getName()).getValue()).getHref()));
         LatLonBox latLonBox = (LatLonBox) groundOverlay.getProperty(
                 KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX.getName()).getValue();
-        
+
         double north = latLonBox.getNorth();
         double east = latLonBox.getEast();
         double south = latLonBox.getSouth();
@@ -742,7 +754,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
 
         // Apply styles
         Style sty = this.retrieveStyle(groundOverlay);
-        portrayBalloonStyle((east + west) / 2, (north + south) / 2, sty, false);
+        portrayBalloonStyle((east + west) / 2, (north + south) / 2, sty, false, groundOverlay);
     }
 
     /**
@@ -764,16 +776,16 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
 
         int width = (int) size.getX();
         int height = (int) size.getY();
-        double coeffX = image.getWidth()/size.getX();
-        double coeffY = image.getHeight()/size.getY();
-        int x = (int) screenXY.getX()-(int) (overlayXY.getX()/coeffX);
-        int y = context2d.getCanvasDisplayBounds().height - (int) screenXY.getY() - height-(int) (overlayXY.getY()/coeffY);
-        
+        double coeffX = image.getWidth() / size.getX();
+        double coeffY = image.getHeight() / size.getY();
+        int x = (int) screenXY.getX() - (int) (overlayXY.getX() / coeffX);
+        int y = context2d.getCanvasDisplayBounds().height - (int) screenXY.getY() - height - (int) (overlayXY.getY() / coeffY);
+
         graphic.drawImage(image, x, y, width, height, null);
 
         // Apply styles
         Style s = this.retrieveStyle(screenOverlay);
-        portrayBalloonStyle(x + width, y, s, true);
+        portrayBalloonStyle(x + width, y, s, true, screenOverlay);
     }
 
     /**
@@ -883,14 +895,13 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                 if (style.getPolyStyle().getFill()) {
                     graphic.fill(shape);
                 }
-                if(polyStyle.getOutline() && style.getLineStyle() != null){
+                if (polyStyle.getOutline() && style.getLineStyle() != null) {
                     LineStyle lineStyle = style.getLineStyle();
                     graphic.setColor(lineStyle.getColor());
+                    graphic.draw(shape);
                 }
             }
         }
-
-        graphic.draw(shape);
     }
 
     /**
@@ -980,7 +991,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      * @param style
      * @param fixedToScreen
      */
-    private void portrayBalloonStyle(double x, double y, Style style, boolean fixedToScreen) {
+    private void portrayBalloonStyle(double x, double y, Style style, boolean fixedToScreen, Feature informationResource) {
 
         // MathTransform
         MathTransform transform = null;
@@ -1036,10 +1047,11 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                 // acurate dimensions / position
                 int left, right, top, bottom, VExc, HExc, coeff;
                 if (cdata) {
-                    if ("<html>".equals(balloonStyle.getText().toString().substring(0, 5))) {
-                        jep = new JLabel(balloonStyle.getText().toString());
+                    String content = this.retrieveBalloonInformations(balloonStyle.getText().toString(), informationResource);
+                    if ("<html>".equals(content.substring(0, 5))) {
+                        jep = new JLabel(content);
                     } else {
-                        jep = new JLabel("<html>" + balloonStyle.getText().toString() + "</html>");
+                        jep = new JLabel("<html>" + content + "</html>");
                     }
                     jep.setOpaque(false);
                     Dimension preferredDim = jep.getPreferredSize();
@@ -1112,6 +1124,21 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         }
     }
 
+    public String retrieveBalloonInformations(String toInspect, Feature informationResource){
+        Property property = informationResource.getProperty(KmlModelConstants.ATT_NAME.getName());
+        if(property != null && property.getValue() != null){
+            toInspect = toInspect.replaceAll("\\$\\["+KmlConstants.TAG_NAME+"\\]",
+                    property.getValue().toString());
+        }
+
+        property = informationResource.getProperty(KmlModelConstants.ATT_DESCRIPTION.getName());
+        if(property != null  && property.getValue() != null){
+            toInspect = toInspect.replaceAll("\\$\\["+KmlConstants.TAG_DESCRIPTION+"\\]",
+                    property.getValue().toString());
+        }
+        return toInspect;
+    }
+
     /**
      *
      * @param x
@@ -1120,6 +1147,9 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      * @param content
      */
     private void portrayLabelStyle(double x, double y, Style style, String content) {
+
+        if (content == null) return;
+
         // MathTransform
         MathTransform transform;
         Graphics2D graphic = context2d.getGraphics();
@@ -1176,7 +1206,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
             return;
         }
-        graphic.drawImage(image, (int) tab[0], (int) tab[1]-LEGEND_HEIGHT_INT, LEGEND_WIDTH_INT, LEGEND_HEIGHT_INT, null);
+        graphic.drawImage(image, (int) tab[0], (int) tab[1] - LEGEND_HEIGHT_INT, LEGEND_WIDTH_INT, LEGEND_HEIGHT_INT, null);
     }
 
     /*
@@ -1252,7 +1282,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      */
     private Style retrieveStyle(StyleMap styleMap, StyleState styleState) {
         Style s = null;
-        if(styleMap != null){
+        if (styleMap != null) {
             for (Pair pair : styleMap.getPairs()) {
                 if (styleState.equals(pair.getKey())) {
                     AbstractStyleSelector styleSelector = pair.getAbstractStyleSelector();
