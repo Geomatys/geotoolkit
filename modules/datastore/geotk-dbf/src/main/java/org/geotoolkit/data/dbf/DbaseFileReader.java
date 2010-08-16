@@ -117,7 +117,7 @@ public class DbaseFileReader {
 
     protected boolean randomAccessEnabled;
 
-    protected int currentOffset = 0;
+    protected long currentOffset = 0;
 
     private Charset stringCharset;
 
