@@ -16,8 +16,10 @@
  */
 package org.geotoolkit.data.kml;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -25,9 +27,12 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.Paint;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -50,6 +55,9 @@ import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
 import org.geotoolkit.data.kml.model.BalloonStyle;
 import org.geotoolkit.data.kml.model.BasicLink;
+import org.geotoolkit.data.kml.model.DefaultLineString;
+import org.geotoolkit.data.kml.model.DefaultLinearRing;
+import org.geotoolkit.data.kml.model.DefaultPoint;
 import org.geotoolkit.data.kml.model.Icon;
 import org.geotoolkit.data.kml.model.IconStyle;
 import org.geotoolkit.data.kml.model.Kml;
@@ -75,9 +83,12 @@ import org.geotoolkit.data.kml.xsd.Cdata;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.DefaultProjectedGeometry;
+import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.display2d.style.labeling.DefaultLabelLayer;
 import org.geotoolkit.display2d.style.labeling.DefaultLabelRenderer;
+import org.geotoolkit.display2d.style.labeling.DefaultLinearLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.DefaultPointLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.LabelLayer;
@@ -95,6 +106,10 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
@@ -539,13 +554,12 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         context2d = (RenderingContext2D) context;
         try {
             this.portrayKml(this.kml);
+            context2d.getLabelRenderer(true).portrayLabels();
+        } catch (TransformException ex) {
+            Logger.getLogger(KmlMapLayer.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
             Logger.getLogger(KmlMapLayer.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-//        LabelLayer labelLayer = new DefaultLabelLayer(true, true);
-//        context2d.getLabelRenderer(true).append(labelLayer);
-
     }
 
     /**
@@ -633,7 +647,8 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         if (x != Double.NaN && y != Double.NaN) {
             portrayBalloonStyle(x, y, s, false, placemark);
             portrayLabelStyle(x, y, s,
-                    (String) placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
+                    (String) placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue(),
+                    centroid);
             portrayFlag(x, y);
         }
 
@@ -1146,8 +1161,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      * @param style
      * @param content
      */
-    private void portrayLabelStyle(double x, double y, Style style, String content) {
-
+    private void portrayLabelStyle(double x, double y, Style style, String content, Geometry geom) {
         if (content == null) return;
 
         // MathTransform
@@ -1164,17 +1178,30 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         if (style != null) {
             LabelStyle labelStyle = style.getLabelStyle();
             if (labelStyle != null) {
-                graphic.setFont(new Font(FONT.getName(),
-                        FONT.getStyle(), FONT.getSize() * (int) labelStyle.getScale()));
+//                graphic.setFont(new Font(FONT.getName(),
+//                        FONT.getStyle(), FONT.getSize() * (int) labelStyle.getScale()));
                 graphic.setColor(labelStyle.getColor());
-                double[] tab = new double[]{x, y};
-                try {
-                    transform.transform(tab, 0, tab, 0, 1);
-                } catch (TransformException ex) {
-                    context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
-                    return;
-                }
-                graphic.drawString(content, (int) tab[0], (int) tab[1]);
+//                double[] tab = new double[]{x, y};
+//                try {
+//                    transform.transform(tab, 0, tab, 0, 1);
+//                } catch (TransformException ex) {
+//                    context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
+//                    return;
+//                }
+
+                DefaultProjectedGeometry projectedGeometry = new DefaultProjectedGeometry(geom);
+                projectedGeometry.setObjToDisplay(transform);
+                LabelLayer labelLayer = new DefaultLabelLayer(false, true);
+//                Paint textPaint;
+//                textPaint.
+                labelLayer.labels().add(
+                        new DefaultPointLabelDescriptor(content,
+                        new Font(FONT.getName(),
+                        FONT.getStyle(), FONT.getSize() * (int) labelStyle.getScale()),
+                        graphic.getPaint(), 0, null, 0, 0, (float) x, (float) y, 0, context2d.getObjectiveCRS(),
+                        projectedGeometry));
+                context2d.getLabelRenderer(true).append(labelLayer);
+                //graphic.drawString(content, (int) tab[0], (int) tab[1]);
             }
         }
     }

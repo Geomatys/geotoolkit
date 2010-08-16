@@ -17,7 +17,6 @@
 package org.geotoolkit.data.kml.model;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.MultiPoint;
@@ -26,8 +25,6 @@ import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import org.geotoolkit.data.kml.DefaultKmlFactory;
-import org.geotoolkit.data.kml.KmlFactory;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import static java.util.Collections.*;
 
