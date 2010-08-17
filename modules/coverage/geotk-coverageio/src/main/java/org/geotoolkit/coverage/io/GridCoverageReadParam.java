@@ -30,7 +30,7 @@ import java.util.Arrays;
  *
  * @author Johann Sorel (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @see javax.imageio.ImageReadParam
  *
@@ -55,6 +55,22 @@ public class GridCoverageReadParam extends GridCoverageStoreParam {
      * to provide information about the way to decode the stream.
      */
     public GridCoverageReadParam() {
+    }
+
+    /**
+     * Creates a new {@code GridCoverageReadParam} instance initialized to the same
+     * values than the given parameters.
+     *
+     * @param param The parameters to copy, or {@code null} if none.
+     *
+     * @since 3.15
+     */
+    public GridCoverageReadParam(final GridCoverageStoreParam param) {
+        super(param);
+        if (param instanceof GridCoverageReadParam) {
+            final GridCoverageReadParam rp = (GridCoverageReadParam) param;
+            destinationBands = rp.destinationBands;
+        }
     }
 
     /**

@@ -254,7 +254,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      * @see ImageReader#setLocale(Locale)
      */
     private static void setLocale(final ImageReader reader, final Locale locale) {
-        if (reader != null && locale != null) {
+        if (reader != null) {
             reader.setLocale(select(locale, reader.getAvailableLocales()));
         }
     }

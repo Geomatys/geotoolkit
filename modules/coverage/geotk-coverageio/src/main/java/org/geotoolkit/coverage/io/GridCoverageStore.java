@@ -200,7 +200,7 @@ public abstract class GridCoverageStore implements Localized {
      * {@code null} removes any previous setting, and indicates that the reader or writer should
      * localize as it sees fit.
      *
-     * @param locale The new locale to use.
+     * @param locale The new locale to use, or {@code null} for a default one.
      *
      * @see javax.imageio.ImageReader#setLocale(Locale)
      * @see javax.imageio.ImageWriter#setLocale(Locale)
@@ -221,18 +221,20 @@ public abstract class GridCoverageStore implements Localized {
      * @since 3.14
      */
     static Locale select(final Locale locale, final Locale[] list) {
-        for (int i=list.length; --i>=0;) {
-            final Locale candidate = list[i];
-            if (locale.equals(candidate)) {
-                return candidate;
-            }
-        }
-        final String language = getISO3Language(locale);
-        if (language != null) {
+        if (locale != null && list != null) {
             for (int i=list.length; --i>=0;) {
                 final Locale candidate = list[i];
-                if (language.equals(getISO3Language(candidate))) {
+                if (locale.equals(candidate)) {
                     return candidate;
+                }
+            }
+            final String language = getISO3Language(locale);
+            if (language != null) {
+                for (int i=list.length; --i>=0;) {
+                    final Locale candidate = list[i];
+                    if (language.equals(getISO3Language(candidate))) {
+                        return candidate;
+                    }
                 }
             }
         }

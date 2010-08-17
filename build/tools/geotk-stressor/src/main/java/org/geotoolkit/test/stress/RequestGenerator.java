@@ -65,16 +65,16 @@ public class RequestGenerator {
     /**
      * The maximal scale factor, relative to the domain <cite>grid to CRS</cite>. Shall always
      * be greater or equals than 1. The default value is computed in such a way that the image
-     * at the largest resolution is 256 pixels width or height.
+     * at the largest resolution is 100 pixels width or height.
      *
      * @since 3.15
      */
-    private double maximumScale = Double.POSITIVE_INFINITY;
+    private double maximumScale;
 
     /**
      * The value of <code>sqrt({@linkplain #maximumScale} - 1)</code>.
      */
-    private double sqrtScale1 = Double.POSITIVE_INFINITY;
+    private double sqrtScale1;
 
     /**
      * The domain <cite>grid to CRS</cite> transform, represented as a matrix.
@@ -119,11 +119,8 @@ public class RequestGenerator {
             final int max = Math.min(maxSize, gridRange.getSpan(i));
             maximalGridSize[i] = max;
             minimalGridSize[i] = Math.min(minSize, max);
-            final double scale = max / 256.0;
-            if (scale < maximumScale) {
-                setMaximumScale(scale);
-            }
         }
+        updateScale();
     }
 
     /**
@@ -142,6 +139,9 @@ public class RequestGenerator {
      * a maximal size, the minimal size is set to the maximal size (the maximal size is
      * <strong>not</strong> modified by this method. This is done that way because the
      * maximal size is typically computed from the {@linkplain #domain}).
+     * <p>
+     * Invoking this method causes the {@linkplain #getMaximumScale() maximum scale} to
+     * be recomputed.
      *
      * @param size The minimal grid size along each dimension.
      *
@@ -163,6 +163,7 @@ public class RequestGenerator {
                 minimalGridSize[i] = maximalGridSize[i];
             }
         }
+        updateScale();
     }
 
     /**
@@ -179,6 +180,9 @@ public class RequestGenerator {
     /**
      * Sets the maximal grid size along each dimension.
      * The maximal size can not be less than the minimal size.
+     * <p>
+     * Invoking this method causes the {@linkplain #getMaximumScale() maximum scale} to
+     * be recomputed.
      *
      * @param size The maximal grid size along each dimension.
      *
@@ -195,6 +199,24 @@ public class RequestGenerator {
             }
         }
         System.arraycopy(size, 0, maximalGridSize, 0, size.length);
+        updateScale();
+    }
+
+    /**
+     * Computes automatically a new scale value after the minimal or maximal grid size has
+     * been modified.
+     */
+    private void updateScale() {
+        double maxScale = Double.POSITIVE_INFINITY;
+        final GridEnvelope gridRange = domain.getGridRange();
+        final int dimension = gridRange.getDimension();
+        for (int i=0; i<dimension; i++) {
+            final double scale = gridRange.getSpan(i) / minimalGridSize[i];
+            if (scale < maxScale) {
+                maxScale = scale;
+            }
+        }
+        setMaximumScale(maxScale);
     }
 
     /**
@@ -211,7 +233,8 @@ public class RequestGenerator {
     /**
      * Sets the maximal scale factor, relative to the domain <cite>grid to CRS</cite>. The scale
      * shall always be greater or equals than 1. The default value is computed in such a way that
-     * the image at the largest resolution is 256 pixels width or height.
+     * the image at the largest resolution has the {@linkplain #getMinimalGridSize() minimal grid
+     * size}.
      *
      * @param scale
      *

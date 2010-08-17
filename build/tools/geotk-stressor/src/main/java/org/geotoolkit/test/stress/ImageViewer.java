@@ -18,6 +18,7 @@
 package org.geotoolkit.test.stress;
 
 import java.util.List;
+import java.awt.Window;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.EventQueue;
@@ -74,12 +75,12 @@ final class ImageViewer extends JPanel {
             final Graphics2D graphics = (Graphics2D) gr;
             final double width  = image.getWidth();
             final double height = image.getHeight();
-            double scale  = Math.min(cx / width, cy / height);
+            double scale = Math.min(cx / width, cy / height);
             // Round the scale to integer number for faster rendering.
             if (scale < 1) {
                 scale = 1 / Math.rint(1 / scale);
             } else {
-                scale = Math.rint(scale);
+                scale = 1;
             }
             final AffineTransform tr = AffineTransform.getTranslateInstance(
                     Math.rint(0.5 * (cx - (width  * scale))),
@@ -96,7 +97,7 @@ final class ImageViewer extends JPanel {
      * Shows all the given stressors.
      * Closing the window will stop the stressor.
      */
-    public static void show(final List<Stressor> stressors) {
+    public static Window show(final List<Stressor> stressors) {
         final JFrame frame = new JFrame("Stressor");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
@@ -112,5 +113,6 @@ final class ImageViewer extends JPanel {
             }
         }
         frame.setVisible(true);
+        return frame;
     }
 }

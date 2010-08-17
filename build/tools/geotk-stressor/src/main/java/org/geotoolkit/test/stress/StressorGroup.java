@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.test.stress;
 
+import java.awt.Window;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.ArrayList;
@@ -127,8 +128,11 @@ public class StressorGroup implements Runnable, ThreadFactory {
      */
     @Override
     public void run() {
+        final Window frame;
         if (view) {
-            ImageViewer.show(stressors);
+            frame = ImageViewer.show(stressors);
+        } else {
+            frame = null;
         }
         final long startTime = System.currentTimeMillis();
         for (final Stressor stressor : stressors) {
@@ -188,6 +192,9 @@ public class StressorGroup implements Runnable, ThreadFactory {
         table.nextLine();
         table.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
         printer.flush();
+        if (frame != null) {
+            frame.dispose();
+        }
     }
 
     /**

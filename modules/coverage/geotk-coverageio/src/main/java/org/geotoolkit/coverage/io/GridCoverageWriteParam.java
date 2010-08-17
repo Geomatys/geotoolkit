@@ -76,6 +76,35 @@ public class GridCoverageWriteParam extends GridCoverageStoreParam {
     }
 
     /**
+     * Creates a new {@code GridCoverageWriteParam} instance initialized to the same
+     * values than the given parameters.
+     *
+     * @param param The parameters to copy, or {@code null} if none.
+     *
+     * @since 3.15
+     */
+    public GridCoverageWriteParam(final GridCoverageStoreParam param) {
+        super(param);
+        if (param instanceof GridCoverageWriteParam) {
+            final GridCoverageWriteParam wp = (GridCoverageWriteParam) param;
+            formatName         = wp.formatName;
+            compressionQuality = wp.compressionQuality;
+            backgroundValues   = wp.backgroundValues;
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void clear() {
+        formatName         = null;
+        compressionQuality = null;
+        backgroundValues   = null;
+        super.clear();
+    }
+
+    /**
      * Returns the image format to use for fetching an {@link ImageWriter}, or {@code null}
      * if unspecified. If {@code null}, then the format while be inferred automatically from
      * the {@linkplain GridCoverageWriter#getOutput() output} suffix.

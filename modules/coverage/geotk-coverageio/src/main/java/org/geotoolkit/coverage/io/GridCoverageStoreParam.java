@@ -46,7 +46,7 @@ import org.geotoolkit.util.converter.Classes;
  *
  * @author Johann Sorel (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @see javax.imageio.IIOParam
  *
@@ -86,6 +86,23 @@ public abstract class GridCoverageStoreParam implements Serializable {
      * to provide information about the way to decode or encode the stream.
      */
     protected GridCoverageStoreParam() {
+    }
+
+    /**
+     * Creates a new {@code GridCoverageStoreParam} instance initialized to the same
+     * values than the given parameters.
+     *
+     * @param param The parameters to copy, or {@code null} if none.
+     *
+     * @since 3.15
+     */
+    protected GridCoverageStoreParam(final GridCoverageStoreParam param) {
+        if (param != null) {
+            crs         = param.crs;
+            envelope    = param.envelope;
+            resolution  = param.resolution;
+            sourceBands = param.sourceBands;
+        }
     }
 
     /**

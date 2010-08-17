@@ -19,9 +19,12 @@ package org.geotoolkit.test.stress;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.awt.image.RenderedImage;
+import javax.imageio.ImageIO;
+import java.util.Locale;
 
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -29,7 +32,10 @@ import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageWriteParam;
+import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
+import org.geotoolkit.coverage.io.ImageCoverageWriter;
 
 
 /**
@@ -47,9 +53,25 @@ public class CoverageReadWriteStressor extends Stressor {
     protected final GridCoverageReader reader;
 
     /**
+     * A grid coverage writer for testing write operations, or {@code null} if this
+     * {@code CoverageReadWriteStressor} instance is testing only read operations.
+     */
+    private GridCoverageWriter writer;
+
+    /**
      * The index of the image to read (usually 0).
      */
     protected final int imageIndex;
+
+    /**
+     * If specified, write the request result in an image of the given format and read it back.
+     */
+    protected String outputFormat;
+
+    /**
+     * A buffer where to write to the image, or {@code null} if none.
+     */
+    private MemoryOutputStream out;
 
     /**
      * Creates a new stressor for the given input. This constructor creates automatically
@@ -119,15 +141,56 @@ public class CoverageReadWriteStressor extends Stressor {
     }
 
     /**
+     * Sets the locale of the reader and writer.
+     *
+     * @param locale The locale.
+     */
+    public void setLocale(final Locale locale) {
+        reader.setLocale(locale);
+        if (writer != null) {
+            writer.setLocale(locale);
+        }
+    }
+
+    /**
      * Reads the given random request.
      */
     @Override
     protected RenderedImage executeQuery(final GeneralGridGeometry request) throws CoverageStoreException {
-        final GridCoverageReadParam param = new GridCoverageReadParam();
-        param.setEnvelope(request.getEnvelope());
-        param.setResolution(getResolution(request));
-        final GridCoverage2D coverage = (GridCoverage2D) reader.read(imageIndex, param);
-        return coverage.view(ViewType.RENDERED).getRenderedImage();
+        /*
+         * Tests read operation.
+         */
+        final GridCoverageReadParam readParam = new GridCoverageReadParam();
+        readParam.setEnvelope(request.getEnvelope());
+        readParam.setResolution(getResolution(request));
+        final GridCoverage2D coverage = (GridCoverage2D) reader.read(imageIndex, readParam);
+        if (outputFormat == null) {
+            return coverage.view(ViewType.RENDERED).getRenderedImage();
+        }
+        /*
+         * Tests write operation.
+         */
+        final GridCoverageWriteParam writeParam = new GridCoverageWriteParam(readParam);
+        writeParam.setFormatName(outputFormat);
+        if (out == null) {
+            out = new MemoryOutputStream();
+        }
+        out.reset();
+        if (writer == null) {
+            writer = new ImageCoverageWriter();
+        }
+        writer.setOutput(out);
+        writer.write(coverage, writeParam);
+        writer.setOutput(null);
+        final InputStream in = out.getInputStream();
+        final RenderedImage image;
+        try {
+            image = ImageIO.read(in);
+            in.close();
+        } catch (IOException e) {
+            throw new CoverageStoreException(e);
+        }
+        return image;
     }
 
     /**
@@ -136,6 +199,17 @@ public class CoverageReadWriteStressor extends Stressor {
     @Override
     protected void dispose() throws CoverageStoreException {
         reader.dispose();
+        if (writer != null) {
+            writer.dispose();
+        }
         super.dispose();
+    }
+
+    public static void main(final String[] args) throws Exception {
+        Main.main(new String[] {
+            "coverages",
+            "/Users/desruisseaux/Documents/Données/Mosaïques/BlueMarble/output/TileManager.serialized",
+            "--duration=20", "--minSize=400", "--maxSize=800", "--numThreads=4", "--outputFormat=png", "--view"
+        });
     }
 }

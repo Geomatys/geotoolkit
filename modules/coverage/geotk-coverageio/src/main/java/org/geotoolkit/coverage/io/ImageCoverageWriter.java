@@ -117,7 +117,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
      * @see ImageReader#setLocale(Locale)
      */
     private static void setLocale(final ImageWriter writer, final Locale locale) {
-        if (writer != null && locale != null) {
+        if (writer != null) {
             writer.setLocale(select(locale, writer.getAvailableLocales()));
         }
     }

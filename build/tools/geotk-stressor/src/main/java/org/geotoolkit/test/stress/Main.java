@@ -37,15 +37,26 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 public final class Main extends CommandLine {
     /**
      * The minimal size (in pixels) or random queries.
+     * The default value is 100 pixels.
      */
     @Option
     private Integer minSize;
 
     /**
      * The maximal size (in pixels) or random queries.
+     * The default value is 2000 pixels.
      */
     @Option
     private Integer maxSize;
+
+    /**
+     * The maximal scale of random queries, relative to the source data. For example a value of 10
+     * means that the request will ask for a resolution at most 10 time larger than the resolution
+     * of source data. The default is computed in such a way that the requested images at the
+     * largest resolution are not smaller than the minimal grid size.
+     */
+    @Option
+    private Double maxScale;
 
     /**
      * The number of threads to create for running the tests.
@@ -61,6 +72,12 @@ public final class Main extends CommandLine {
     private Integer duration;
 
     /**
+     * If specified, write the request result in an image of the given format and read it back.
+     */
+    @Option
+    private String outputFormat;
+
+    /**
      * {@code true} if the results shall be shown in windows.
      */
     @Option
@@ -73,8 +90,6 @@ public final class Main extends CommandLine {
      */
     private Main(final String[] arguments) {
         super("java -jar geotk-stress.jar", arguments);
-        minSize    = 100;
-        maxSize    = 2000;
         numThreads = Runtime.getRuntime().availableProcessors() + 1;
         duration   = 10;
     }
@@ -91,12 +106,21 @@ public final class Main extends CommandLine {
         final StressorGroup stressors = new StressorGroup(duration * 1000, out, view);
         for (int i=numThreads; --i>=0;) {
             final CoverageReadWriteStressor stressor = new CoverageReadWriteStressor(input);
-            int[] size = stressor.getMinimalGridSize();
-            Arrays.fill(size, minSize);
-            stressor.setMinimalGridSize(size);
-            size = stressor.getMaximalGridSize();
-            Arrays.fill(size, maxSize);
-            stressor.setMaximalGridSize(size);
+            if (minSize != null) {
+                final int[] size = stressor.getMinimalGridSize();
+                Arrays.fill(size, minSize);
+                stressor.setMinimalGridSize(size);
+            }
+            if (maxSize != null) {
+                final int[] size = stressor.getMaximalGridSize();
+                Arrays.fill(size, maxSize);
+                stressor.setMaximalGridSize(size);
+            }
+            if (maxScale != null) {
+                stressor.setMaximumScale(maxScale);
+            }
+            stressor.outputFormat = outputFormat;
+            stressor.setLocale(locale);
             stressors.add(stressor);
         }
         stressors.run();

@@ -20,7 +20,6 @@ package org.geotoolkit.test.stress;
 import org.opengis.geometry.Envelope;
 import org.opengis.coverage.grid.GridEnvelope;
 
-import org.geotoolkit.math.XMath;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
@@ -59,7 +58,7 @@ public final class RequestGeneratorTest {
         assertEquals( 100, minimalGridSize[1]);
         assertEquals(2000, maximalGridSize[0]);
         assertEquals(2000, maximalGridSize[1]);
-        assertEquals(7.8125, generator.getMaximumScale(), 0.00001);
+        assertEquals(50, generator.getMaximumScale(), 0.00001);
 
         generator.random.setSeed(74652428);
         for (int i=range.getDimension(); --i>=0;) {
@@ -68,11 +67,9 @@ public final class RequestGeneratorTest {
         }
         generator.setMinimalGridSize(minimalGridSize);
         generator.setMaximalGridSize(maximalGridSize);
-        generator.setMaximumScale(range.width / (double) minimalGridSize[0]);
-        final int numResolutionBins = (int) Math.round(generator.getMaximumScale() * 2);
-        final double minResolution = XMath.magnitude(RequestGenerator.getResolution(geometry));
+        final int[] distribution = new int[6];
+        final double distributionScale = distribution.length / generator.getMaximumScale();
 
-        final int[] distribution = new int[7];
         for (int t=0; t<5000; t++) {
             final GeneralGridGeometry sg = generator.getRandomGrid();
             final GridEnvelope        sr = sg.getGridRange();
@@ -83,8 +80,9 @@ public final class RequestGeneratorTest {
                 final int span = sr.getSpan(i);
                 assertTrue("Min", span >= minimalGridSize[i]);
                 assertTrue("Max", span <= maximalGridSize[i]);
-                final double resolution = XMath.magnitude(RequestGenerator.getResolution(sg));
-                distribution[((int) ((resolution - minResolution) * numResolutionBins))]++;
+                for (final double scale : generator.getScale(sg)) {
+                    distribution[((int) ((scale - 1) * distributionScale))]++;
+                }
             }
         }
         for (int i=1; i<distribution.length; i++) {
