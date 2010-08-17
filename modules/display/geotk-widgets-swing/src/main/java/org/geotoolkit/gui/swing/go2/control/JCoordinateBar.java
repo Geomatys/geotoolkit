@@ -237,11 +237,29 @@ public class JCoordinateBar extends JToolBar {
         guiLinear.addActionListener(interListener);
         guiBicubic.addActionListener(interListener);
 
+        final JCheckBoxMenuItem guiMultiThread = new JCheckBoxMenuItem(MessageBundle.getString("multithread")){
+            @Override
+            public boolean isSelected() {
+                if(map == null) return false;
+                return GO2Hints.MULTI_THREAD_ON.equals(map.getCanvas().getRenderingHint(GO2Hints.KEY_MULTI_THREAD));
+            }
+        };
+        guiMultiThread.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                if(map != null){
+                    final Object val = map.getCanvas().getRenderingHint(GO2Hints.KEY_MULTI_THREAD);
+                    map.getCanvas().setRenderingHint(GO2Hints.KEY_MULTI_THREAD, (GO2Hints.MULTI_THREAD_ON.equals(val))?
+                        GO2Hints.MULTI_THREAD_OFF : GO2Hints.MULTI_THREAD_ON);
+                }
+            }
+        });
 
 
         final JPopupMenu guiHintMenu = new JPopupMenu();
         guiHintMenu.add(guiAxis);
         guiHintMenu.add(guiStatefull);
+        guiHintMenu.add(guiMultiThread);
         guiHintMenu.add(guiStyleOrder);
         guiHintMenu.add(guiAntiAliasing);
         guiHintMenu.add(new JSeparator());
