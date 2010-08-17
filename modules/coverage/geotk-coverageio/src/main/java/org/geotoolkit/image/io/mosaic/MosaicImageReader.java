@@ -25,6 +25,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.io.File;
+import java.io.Closeable;
 import java.io.IOException;
 import java.util.*; // Lot of imports used in this class.
 import java.util.logging.Level;
@@ -48,7 +49,7 @@ import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.resources.Loggings;
 
 
 /**
@@ -64,7 +65,7 @@ import org.geotoolkit.resources.Vocabulary;
  * @since 2.5
  * @module
  */
-public class MosaicImageReader extends ImageReader implements Disposable {
+public class MosaicImageReader extends ImageReader implements Closeable, Disposable {
     /**
      * {@code true} for disabling operations that may corrupt data values,
      * or {@code false} if only the visual effect matter.
@@ -1153,29 +1154,35 @@ public class MosaicImageReader extends ImageReader implements Disposable {
         }
         /*
          * If logging are enabled, we will format the tiles that we read in a table and logs
-         * the table as one log record before the actual reading. If there is nothing to log,
+         * the table as one log record after the actual reading. If there is nothing to log,
          * then the table will be left to null. If non-null, the table will be completed in
-         * the 'do' loop below.
+         * the loop below.
          */
         final Logger logger = Logging.getLogger(MosaicImageReader.class);
-        TableWriter table = null;
+        final TableWriter table;
+        final long startTime;
+        int status; // 0=success, 1=cancelled, 2=failure. Used for logging purpose only.
         if (logger.isLoggable(level)) {
             table = new TableWriter(null, TableWriter.SINGLE_VERTICAL_LINE);
             table.writeHorizontalSeparator();
             table.write("Reader\tTile\tIndex\tSize\tSource\tDestination\tSubsampling");
             table.writeHorizontalSeparator();
+            startTime = System.nanoTime();
+            status = 2; // To be set to 0 on success.
+        } else {
+            table = null;
+            startTime = 0;
+            status = 0;
         }
         /*
-         * Now read every tiles... If logging is disabled, then this loop will be executed exactly
-         * once. If logging is enabled, then this loop will be executed twice where the first pass
-         * is used only in order to format the table to be logged. In every cases, the last pass is
-         * the one where the actual reading occur. We do this two pass approach in order to get the
-         * table logged before loading rather than after. This is more useful in case of exception.
+         * Now read every tiles... The log record will be logged in the "finally" block in
+         * every case, in order to help debugging in case of failure.
          */
-        do {
+        try {
             for (final Tile tile : tiles) {
                 if (abortRequested()) {
                     processReadAborted();
+                    status = 1;
                     break;
                 }
                 final Rectangle tileRegion = tile.getAbsoluteRegion();
@@ -1207,9 +1214,6 @@ public class MosaicImageReader extends ImageReader implements Disposable {
                             regionToRead.height = tileRegion.height;
                         }
                     }
-                }
-                if (regionToRead.isEmpty()) {
-                    continue;
                 }
                 /*
                  * Now that the offset is a multiple of subsampling, computes the destination offset.
@@ -1255,12 +1259,15 @@ public class MosaicImageReader extends ImageReader implements Disposable {
                 regionToRead.height += yOffset;
                 regionToRead.width  /= subsampling.width;
                 regionToRead.height /= subsampling.height;
+                if (regionToRead.isEmpty()) {
+                    continue;
+                }
                 subsampling.width  = xSubsampling / subsampling.width;
                 subsampling.height = ySubsampling / subsampling.height;
                 final int tileIndex = tile.getImageIndex();
                 if (table != null) {
                     /*
-                     * We are only logging - we are not going to read in this first pass.
+                     * Add one row in the table if we are logging.
                      */
                     table.write(Formats.getFormatName(tile.getImageReaderSpi()));
                     table.nextColumn();
@@ -1272,31 +1279,33 @@ public class MosaicImageReader extends ImageReader implements Disposable {
                     format(table, destinationOffset.x, destinationOffset.y);
                     format(table, subsampling.width,   subsampling.height);
                     table.nextLine();
-                    continue;
                 }
                 final ImageReader reader = getTileReader(tile);
                 final ImageReadParam tileParam = mosaicParam.getCachedTileParameters(reader);
-                tileParam.setDestinationType(null);
-                tileParam.setDestination(image); // Must be after setDestinationType and may be null.
-                tileParam.setDestinationOffset(destinationOffset);
-                if (tileParam.canSetSourceRenderSize()) {
-                    tileParam.setSourceRenderSize(null); // TODO.
-                }
-                tileParam.setSourceRegion(regionToRead);
-                tileParam.setSourceSubsampling(subsampling.width, subsampling.height, 0, 0);
-                if (controller != null) {
-                    controller.configure(tile, tileParam);
-                }
                 final BufferedImage output;
-                synchronized (this) {  // Same lock than ImageReader.abort()
-                    reading = reader;
-                }
                 try {
+                    tileParam.setDestinationType(null);
+                    tileParam.setDestination(image); // Must be after setDestinationType and may be null.
+                    tileParam.setDestinationOffset(destinationOffset);
+                    if (tileParam.canSetSourceRenderSize()) {
+                        tileParam.setSourceRenderSize(null); // TODO.
+                    }
+                    tileParam.setSourceRegion(regionToRead);
+                    tileParam.setSourceSubsampling(subsampling.width, subsampling.height, 0, 0);
+                    if (controller != null) {
+                        controller.configure(tile, tileParam);
+                    }
+                    synchronized (this) {  // Same lock than ImageReader.abort()
+                        reading = reader;
+                    }
                     output = reader.read(tileIndex, tileParam);
                 } finally {
                     synchronized (this) {  // Same lock than ImageReader.abort()
                         reading = null;
                     }
+                    // Cleanup because the parameters are cached.
+                    tileParam.setDestination(null);
+                    tileParam.setSourceRegion(null);
                 }
                 if (image == null) {
                     image = output;
@@ -1319,25 +1328,24 @@ public class MosaicImageReader extends ImageReader implements Disposable {
                     graphics.dispose();
                 }
             }
+            status = 0; // Success.
+        } finally {
             /*
-             * Finished a pass. If it was the reading pass, then we are done. If it was the logging
-             * pass, then send the log and redo the look a second time for the actual reading.
+             * Reading is finished, aborted or an exception has been thrown.
+             * Logs what we have been able to do up to date.
              */
-            if (table == null) {
-                break;
+            if (table != null) {
+                final long stopTime = System.nanoTime();
+                table.writeHorizontalSeparator();
+                final String message = Loggings.getResources(locale).getString(Loggings.Keys.LOADING_REGION_$6,
+                        new Number[] {
+                            sourceRegion.x, sourceRegion.x + sourceRegion.width  - 1,
+                            sourceRegion.y, sourceRegion.y + sourceRegion.height - 1,
+                            (stopTime - startTime) / 1E9f, status})
+                        + System.getProperty("line.separator", "\n") + table;
+                log(logger, "read", new LogRecord(level, message));
             }
-            table.writeHorizontalSeparator();
-            final StringBuilder message = new StringBuilder();
-            message.append('[').append(sourceRegion.x).append(',').append(sourceRegion.y).
-                    append(" - ").append(sourceRegion.x + sourceRegion.width).append(',').
-                    append(sourceRegion.y + sourceRegion.height).append(']');
-            final String area = message.toString();
-            message.setLength(0);
-            message.append(Vocabulary.format(Vocabulary.Keys.LOADING_$1, area)).
-                    append(System.getProperty("line.separator", "\n")).append(table);
-            log(logger, "read", new LogRecord(level, message.toString()));
-            table = null;
-        } while (true);
+        }
         processImageComplete();
         return image;
     }
@@ -1414,11 +1422,12 @@ public class MosaicImageReader extends ImageReader implements Disposable {
     }
 
     /**
-     * Closes any image input streams thay may be held by tiles.
+     * Closes any image input streams that may be held by tiles.
      * The streams will be opened again when they will be first needed.
      *
      * @throws IOException if error occurred while closing a stream.
      */
+    @Override
     public void close() throws IOException {
         for (final Map.Entry<ImageReader,Object> entry : readerInputs.entrySet()) {
             final ImageReader reader = entry.getKey();

@@ -70,7 +70,7 @@ public final class WeakValueHashMapTest {
     /**
      * Tests the {@link WeakValueHashMap} using weak references.
      * In this test, we have to keep in mind than some elements
-     * in {@code weakMap} may disaspear at any time.
+     * in {@code weakMap} may disappear at any time.
      *
      * @throws InterruptedException If the test has been interrupted.
      */
@@ -92,20 +92,20 @@ public final class WeakValueHashMapTest {
                     final Integer strongPrevious = strongMap.put(key, value);
                     if (weakPrevious == null) {
                         // If the element was not in the WeakValueHashMap (i.e. if the garbage
-                        // collector has cleared it), then it must not been in HashMap neither
+                        // collector has cleared it), then it can not been in HashMap neither
                         // (otherwise GC should not have cleared it).
                         assertNull("put:", strongPrevious);
                     } else {
                         assertNotSame(value, weakPrevious);
                     }
                     if (strongPrevious != null) {
-                        // Note: If 'strongPrevious==null', 'weakPrevious' may not
-                        //       be null if GC has not collected its entry yet.
+                        // Note: If 'strongPrevious==null', 'weakPrevious' can not
+                        //       be null since GC has not collected its entry yet.
                         assertSame("put:", strongPrevious, weakPrevious);
                     }
                 } else {
                     /*
-                     * Tests remove
+                     * Tests remove.
                      */
                     final Integer   weakPrevious = weakMap.get(key);
                     final Integer strongPrevious = strongMap.remove(key);
@@ -120,7 +120,7 @@ public final class WeakValueHashMapTest {
                 Thread.sleep(50);
                 System.gc();
             }
-            assertTrue("equals:", strongMap.equals(weakMap));
+            assertEquals("equals:", strongMap, weakMap);
         }
     }
 }

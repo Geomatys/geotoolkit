@@ -218,6 +218,12 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int LOADING_DATUM_ALIASES_$1 = 32;
 
         /**
+         * Loading region x=[{0} … {1}], y=[{2} … {3}] in {4} seconds:
+         * {5,choice,0#success|1#canceled|2#FAILURE}.
+         */
+        public static final int LOADING_REGION_$6 = 60;
+
+        /**
          * Text were discarted for some locales.
          */
         public static final int LOCALES_DISCARTED = 33;

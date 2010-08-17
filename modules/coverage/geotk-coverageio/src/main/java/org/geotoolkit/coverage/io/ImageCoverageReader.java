@@ -895,6 +895,8 @@ public class ImageCoverageReader extends GridCoverageReader {
                 ((SpatialImageReadParam) imageParam).setPaletteFactory(SampleDimensionPalette.FACTORY);
             }
             image = imageReader.read(index, imageParam);
+        } catch (IllegalArgumentException e) { // TODO: Multi-catch with JDK7.
+            throw new CoverageStoreException(formatErrorMessage(e), e);
         } catch (IOException e) {
             throw new CoverageStoreException(formatErrorMessage(e), e);
         } finally {
