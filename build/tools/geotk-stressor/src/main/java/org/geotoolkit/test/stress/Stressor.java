@@ -18,6 +18,7 @@
 package org.geotoolkit.test.stress;
 
 import java.io.PrintWriter;
+import java.awt.image.RenderedImage;
 import java.util.concurrent.Callable;
 
 import org.opengis.coverage.grid.GridEnvelope;
@@ -82,6 +83,11 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
     PrintWriter out;
 
     /**
+     * The image viewer, or {@code null} if none.
+     */
+    ImageViewer viewer;
+
+    /**
      * Creates a new stressor.
      *
      * @param domain Contains the maximal extent of the random envelopes to be generated.
@@ -116,8 +122,14 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
              */
             final GeneralGridGeometry geometry = getRandomGrid();
             long time = System.nanoTime();
-            executeQuery(geometry);
+            final RenderedImage image = executeQuery(geometry);
             time = System.nanoTime() - time;
+            /*
+             * Show the result, if we are allowed to.
+             */
+            if (viewer != null) {
+                viewer.setImage(image);
+            }
             /*
              * Compute statistics about the ellapsed time.
              */
@@ -150,7 +162,8 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
                 }
                 insertSpaces(buffer.length(), buffer.append(envelope.getSpan(i)), GRID_SIZE_FIELD_LENGTH);
             }
-            out.println(buffer.append("), ").append(geometry.getEnvelope()));
+            buffer.append("), scale=").append((float) mean(getScale(geometry)));
+            out.println(buffer.append(", ").append(geometry.getEnvelope()));
             out.flush();
             try {
                 Thread.sleep(random.nextInt(MAXIMAL_PAUSE) + 1);
@@ -158,6 +171,7 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
                 // Go back to work...
             }
         }
+        dispose();
         return statistics;
     }
 
@@ -173,7 +187,20 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
      * Runs a query for the given grid geometry.
      *
      * @param  request The grid geometry to request.
+     * @return An image which represent the result of the request, or {@code null} if none.
      * @throws CoverageStoreException If an error occurred during the test.
      */
-    protected abstract void executeQuery(GeneralGridGeometry request) throws CoverageStoreException;
+    protected abstract RenderedImage executeQuery(GeneralGridGeometry request) throws CoverageStoreException;
+
+    /**
+     * Invoked when the test is done. The default implementation does nothing.
+     * Subclasses shall override this method if they have any resources that
+     * need to be disposed.
+     *
+     * @throws CoverageStoreException If an error occurred while disposing the resources.
+     *
+     * @since 3.15
+     */
+    protected void dispose() throws CoverageStoreException {
+    }
 }

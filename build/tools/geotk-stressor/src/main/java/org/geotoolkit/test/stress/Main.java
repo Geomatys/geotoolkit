@@ -61,6 +61,12 @@ public final class Main extends CommandLine {
     private Integer duration;
 
     /**
+     * {@code true} if the results shall be shown in windows.
+     */
+    @Option
+    private boolean view;
+
+    /**
      * Creates a new instance of {@code Main}.
      *
      * @param arguments The command-line arguments.
@@ -82,7 +88,7 @@ public final class Main extends CommandLine {
     @Action(minimalArgumentCount=1, maximalArgumentCount=1)
     public void coverages() throws CoverageStoreException {
         final Object input = CoverageReadWriteStressor.createReaderInput(new File(arguments[0]));
-        final StressorGroup stressors = new StressorGroup(duration * 1000, out);
+        final StressorGroup stressors = new StressorGroup(duration * 1000, out, view);
         for (int i=numThreads; --i>=0;) {
             final CoverageReadWriteStressor stressor = new CoverageReadWriteStressor(input);
             int[] size = stressor.getMinimalGridSize();

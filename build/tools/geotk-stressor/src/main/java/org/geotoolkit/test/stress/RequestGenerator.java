@@ -72,9 +72,19 @@ public class RequestGenerator {
     private double maximumScale = Double.POSITIVE_INFINITY;
 
     /**
+     * The value of <code>sqrt({@linkplain #maximumScale} - 1)</code>.
+     */
+    private double sqrtScale1 = Double.POSITIVE_INFINITY;
+
+    /**
      * The domain <cite>grid to CRS</cite> transform, represented as a matrix.
      */
     private final XMatrix gridToCRS;
+
+    /**
+     * The resolution of the domain.
+     */
+    private final double[] domainResolution;
 
     /**
      * Creates a new request generator for the given domain. The domain shall use an
@@ -100,6 +110,7 @@ public class RequestGenerator {
         this.random    = new Random();
         this.domain    = domain;
         this.gridToCRS = (XMatrix) ((LinearTransform) domain.getGridToCRS(PixelInCell.CELL_CORNER)).getMatrix();
+        this.domainResolution = getResolution(domain);
         final GridEnvelope gridRange = domain.getGridRange();
         final int dimension = gridRange.getDimension();
         minimalGridSize = new int[dimension];
@@ -108,9 +119,9 @@ public class RequestGenerator {
             final int max = Math.min(maxSize, gridRange.getSpan(i));
             maximalGridSize[i] = max;
             minimalGridSize[i] = Math.min(minSize, max);
-            final double s = max / 256.0;
-            if (s < maximumScale) {
-                maximumScale = s;
+            final double scale = max / 256.0;
+            if (scale < maximumScale) {
+                setMaximumScale(scale);
             }
         }
     }
@@ -211,6 +222,7 @@ public class RequestGenerator {
             throw new IllegalArgumentException("Illegal maximum scale: " + scale);
         }
         maximumScale = scale;
+        sqrtScale1 = Math.sqrt(scale - 1);
     }
 
     /**
@@ -222,20 +234,20 @@ public class RequestGenerator {
      * @return A new random grid geometry inside the domain.
      */
     public GeneralGridGeometry getRandomGrid() {
+        double scale = sqrtScale1 * random.nextDouble();
+        scale = (scale * scale) + 1;
+        assert (scale >= 1 && scale <= maximumScale) : scale;
+
         final GridEnvelope gridRange = domain.getGridRange();
         final int dimension = gridRange.getDimension();
         final int[] lower = new int[dimension];
         final int[] upper = new int[dimension];
-        final double samp = Math.sqrt(maximumScale - 1);
         final XMatrix mx  = gridToCRS.clone();
         for (int i=0; i<dimension; i++) {
             /*
              * Select a scale between 1 and maximumScale,
              * with highest probability for low values.
              */
-            double scale = samp * random.nextDouble();
-            scale = (scale * scale) + 1;
-            assert (scale >= 1 && scale <= maximumScale) : scale;
             mx.setElement(i, i, scale * mx.getElement(i, i));
             /*
              * Compute the bounds.
@@ -258,6 +270,22 @@ public class RequestGenerator {
     }
 
     /**
+     * Returns the scale of the given grid geometry, relative to the domain.
+     *
+     * @param  request The grid geometry from which to extract the scale.
+     * @return The scale (unitless).
+     *
+     * @since 3.15
+     */
+    public double[] getScale(final GeneralGridGeometry request) {
+        final double[] scale = getResolution(request);
+        for (int i=0; i<scale.length; i++) {
+            scale[i] /= domainResolution[i];
+        }
+        return scale;
+    }
+
+    /**
      * Returns the resolution of the given grid geometry, in units of the envelope.
      *
      * @param  request The grid geometry from which to extract the resolution.
@@ -274,5 +302,22 @@ public class RequestGenerator {
             res[j] = XMath.magnitude(row);
         }
         return res;
+    }
+
+    /**
+     * Returns the mean value of the given vector.
+     * This method is used mostly for information purpose.
+     *
+     * @param  vector The vector for which to compute the main value.
+     * @return The mean value.
+     *
+     * @since 3.15
+     */
+    public static double mean(final double[] vector) {
+        double sum = 0;
+        for (final double r : vector) {
+            sum += r;
+        }
+        return sum / vector.length;
     }
 }

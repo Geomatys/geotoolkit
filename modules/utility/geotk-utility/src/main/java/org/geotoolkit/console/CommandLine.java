@@ -20,6 +20,8 @@ package org.geotoolkit.console;
 import java.io.*;
 import java.util.*;
 import java.util.logging.Level;
+import java.util.logging.Handler;
+import java.util.logging.ConsoleHandler;
 import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.lang.reflect.Field;
@@ -82,7 +84,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.12
+ * @version 3.15
  *
  * @since 2.5
  * @module
@@ -241,7 +243,7 @@ public abstract class CommandLine implements Runnable {
      * Subclasses can override this method if they need to convert values in a particular
      * way.
      *
-     * @param  <T>   The destinatipn type.
+     * @param  <T>   The destination type.
      * @param  value The string value to convert.
      * @param  type  The destination type.
      * @return The converted value.
@@ -272,8 +274,9 @@ public abstract class CommandLine implements Runnable {
          * they are null, since the subclass constructor may have customized its input/output
          * by providing explicit instances of Reader/Writer.
          */
+        final boolean explicitEncoding = (encoding != null);
         final Console console = System.console();
-        if (console != null && encoding == null) {
+        if (!explicitEncoding && console != null) {
             if (in  == null) in  = console.reader();
             if (out == null) out = console.writer();
             if (err == null) err = console.writer();
@@ -290,6 +293,9 @@ public abstract class CommandLine implements Runnable {
             if (out == null) out = writer(System.out);
             if (err == null) err = writer(System.err);
         }
+        /*
+         * Set unassigned fields to default values.
+         */
         if (colors == null) {
             colors = (console != null) && X364.isSupported();
         }
@@ -319,6 +325,16 @@ public abstract class CommandLine implements Runnable {
         }
         arguments = XArrays.resize(arguments, count);
         Logging.GEOTOOLKIT.forceMonolineConsoleOutput(debug ? Level.FINER : null);
+        if (explicitEncoding) {
+            for (final Handler handler : Logging.getLogger(Logging.GEOTOOLKIT.name).getHandlers()) {
+                if (handler.getClass().equals(ConsoleHandler.class)) try {
+                    ((ConsoleHandler) handler).setEncoding(encoding.name());
+                } catch (UnsupportedEncodingException e) {
+                    // Should not happen.
+                    Logging.unexpectedException(CommandLine.class, "initialize", e);
+                }
+            }
+        }
         /*
          * At this point we are done. If we got an error in the process, print an error
          * message and invoke exit. We finished the object construction before to invoke

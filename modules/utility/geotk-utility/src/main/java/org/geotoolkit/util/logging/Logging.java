@@ -53,7 +53,7 @@ import org.geotoolkit.util.converter.Classes;
  * }
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.01
+ * @version 3.15
  *
  * @since 2.4
  * @module
@@ -91,8 +91,10 @@ public final class Logging {
 
     /**
      * The name of the base package.
+     *
+     * @since 3.15
      */
-    final String name;
+    public final String name;
 
     /**
      * The children {@link Logging} objects.

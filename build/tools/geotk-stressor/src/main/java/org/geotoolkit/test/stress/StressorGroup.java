@@ -78,27 +78,34 @@ public class StressorGroup implements Runnable, ThreadFactory {
     private final long duration;
 
     /**
+     * Whatever the request results shall be shown in windows.
+     */
+    private final boolean view;
+
+    /**
      * Creates a new {@code StressorGroup} instance.
      *
      * @param duration The test duration, in milliseconds.
      */
     public StressorGroup(final long duration) {
-        this(duration, new PrintWriter(System.out, true));
+        this(duration, new PrintWriter(System.out, true), false);
     }
 
     /**
      * Creates a new {@code StressorGroup} instance.
      *
      * @param duration The test duration, in milliseconds.
-     * @param out The output stream where to print reports.
+     * @param out      The output stream where to print reports.
+     * @param view     Whatever the request results shall be shown in windows.
      */
-    public StressorGroup(final long duration, final PrintWriter out) {
+    public StressorGroup(final long duration, final PrintWriter out, final boolean view) {
         this.threadGroup = new ThreadGroup("Stressors");
         this.threadCount = new AtomicInteger();
         this.stressors   = new ArrayList<Stressor>();
         this.executor    = Executors.newCachedThreadPool(this);
         this.duration    = duration;
         this.out         = out;
+        this.view        = view;
     }
 
     /**
@@ -120,6 +127,9 @@ public class StressorGroup implements Runnable, ThreadFactory {
      */
     @Override
     public void run() {
+        if (view) {
+            ImageViewer.show(stressors);
+        }
         final long startTime = System.currentTimeMillis();
         for (final Stressor stressor : stressors) {
             stressor.stopTime = startTime + duration;

@@ -21,7 +21,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
+import java.awt.image.RenderedImage;
 
+import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -119,10 +122,20 @@ public class CoverageReadWriteStressor extends Stressor {
      * Reads the given random request.
      */
     @Override
-    protected void executeQuery(final GeneralGridGeometry request) throws CoverageStoreException {
+    protected RenderedImage executeQuery(final GeneralGridGeometry request) throws CoverageStoreException {
         final GridCoverageReadParam param = new GridCoverageReadParam();
         param.setEnvelope(request.getEnvelope());
         param.setResolution(getResolution(request));
-        reader.read(imageIndex, param);
+        final GridCoverage2D coverage = (GridCoverage2D) reader.read(imageIndex, param);
+        return coverage.view(ViewType.RENDERED).getRenderedImage();
+    }
+
+    /**
+     * Disposes the reader after the test is done.
+     */
+    @Override
+    protected void dispose() throws CoverageStoreException {
+        reader.dispose();
+        super.dispose();
     }
 }
