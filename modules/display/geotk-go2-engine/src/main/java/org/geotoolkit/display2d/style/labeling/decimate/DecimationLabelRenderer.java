@@ -17,9 +17,12 @@
 package org.geotoolkit.display2d.style.labeling.decimate;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.labeling.candidate.Candidate;
@@ -94,6 +97,7 @@ public class DecimationLabelRenderer extends DefaultLabelRenderer{
         //generate all the candidates
         //priority is in the order of the layers provided.
         int priority = layers.size();
+
         for(final LabelLayer layer : layers){
             if(layer instanceof DecimateLabelLayer){
                 candidates.addAll( ((DecimateLabelLayer)layer).candidates );
@@ -160,39 +164,40 @@ public class DecimationLabelRenderer extends DefaultLabelRenderer{
 
     private class DecimateLabelLayer implements LabelLayer{
 
-        private List<Candidate> candidates = new ArrayList<Candidate>();
-        private int inc = 0;
+        private final Rectangle bounds = context.getCanvasDisplayBounds();
+        private SortedSet<Candidate> candidates = new TreeSet<Candidate>(LabelingUtilities.XY_COMPARATOR){
+
+            @Override
+            public boolean add(Candidate candidate) {
+                if(!LabelingUtilities.intersects(candidate,candidates)){
+                    return super.add(candidate);
+                }
+                return false;
+            }
+
+        };
 
         private final List<LabelDescriptor> labels = new ArrayList<LabelDescriptor>(){
 
             @Override
             public boolean add(LabelDescriptor label) {
-                Candidate c = null;
 
                 if(label instanceof PointLabelDescriptor){
-                    c = pointRenderer.generateCandidat((PointLabelDescriptor) label);
+                    final PointCandidate pc = (PointCandidate)pointRenderer.generateCandidat((PointLabelDescriptor) label);
+                    pc.setPriority(1);
+                    if(bounds.contains(pc.getBounds())){
+                        candidates.add(pc);
+                    }
                 }else if(label instanceof LinearLabelDescriptor){
-                    c = LinearRenderer.generateCandidat((LinearLabelDescriptor) label);
-                }else{
-                    c = null;
-                }
-
-                if(c != null){
-                    c.setPriority(1);
-                    candidates.add(c);
-                }
-
-
-                //decimate when we have enough, to reduce memory usage
-                inc++;
-                if(inc == 100){
-                    inc = 0;
-                    candidates = optimize(candidates);
+                    final LinearCandidate lc = (LinearCandidate)LinearRenderer.generateCandidat((LinearLabelDescriptor) label);
+                    lc.setPriority(1);
+                    candidates.add(lc);
                 }
                 return true;
             }
 
         };
+
         private final boolean obstacle;
         private final boolean labelled;
 

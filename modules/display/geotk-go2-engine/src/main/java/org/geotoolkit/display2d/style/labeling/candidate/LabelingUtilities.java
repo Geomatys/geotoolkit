@@ -23,6 +23,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -36,6 +37,27 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
  * @module pending
  */
 public class LabelingUtilities {
+
+    public static final Comparator<Candidate> XY_COMPARATOR = new Comparator<Candidate>() {
+            @Override
+            public int compare(Candidate c1, Candidate c2) {
+                final int diff = c2.getPriority() - c1.getPriority();
+
+                if(diff == 0){
+                    if(c1 instanceof LinearCandidate){
+                        return 1;
+                    }else if(c2 instanceof LinearCandidate){
+                        return -1;
+                    }else{
+                        final PointCandidate pc1 = (PointCandidate) c1;
+                        final PointCandidate pc2 = (PointCandidate) c2;
+                        return (int) ((pc2.x + pc2.y) - (pc1.x + pc1.y) +0.5);
+                    }
+                }else{
+                    return diff;
+                }
+            }
+        };
 
     private LabelingUtilities(){}
 
@@ -58,29 +80,7 @@ public class LabelingUtilities {
     }
 
     public static List<Candidate> sortByXY(List<Candidate> candidates){
-
-        Collections.sort(candidates, new Comparator<Candidate>() {
-            @Override
-            public int compare(Candidate c1, Candidate c2) {
-                int diff = c2.getPriority() - c1.getPriority();
-
-                if(diff == 0){
-                    if(c1 instanceof LinearCandidate){
-                        return -1;
-                    }else if(c2 instanceof LinearCandidate){
-                        return 1;
-                    }else{
-                        PointCandidate pc1 = (PointCandidate) c1;
-                        PointCandidate pc2 = (PointCandidate) c2;
-
-                        return (int) ((pc2.x + pc2.y) - (pc1.x + pc1.y) +0.5);
-                    }
-                }else{
-                    return diff;
-                }
-            }
-        });
-
+        Collections.sort(candidates, XY_COMPARATOR);
         return candidates;
     }
 
@@ -110,7 +110,7 @@ public class LabelingUtilities {
         return candidates;
     }
 
-    public static boolean intersects(Candidate candidate, List<Candidate> candidates){
+    public static boolean intersects(Candidate candidate, Collection<? extends Candidate> candidates){
         for(Candidate c : candidates){
             if(intersects(candidate, c)){
                 return true;

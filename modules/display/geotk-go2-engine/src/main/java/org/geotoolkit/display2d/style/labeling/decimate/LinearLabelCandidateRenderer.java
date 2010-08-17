@@ -17,16 +17,18 @@
 
 package org.geotoolkit.display2d.style.labeling.decimate;
 
-import org.geotoolkit.display2d.style.labeling.candidate.Candidate;
-import org.geotoolkit.display2d.style.labeling.candidate.LinearCandidate;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.j2d.TextStroke;
 import org.geotoolkit.display2d.style.labeling.LinearLabelDescriptor;
+import org.geotoolkit.display2d.style.labeling.candidate.Candidate;
+import org.geotoolkit.display2d.style.labeling.candidate.LinearCandidate;
+
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -65,7 +67,7 @@ public class LinearLabelCandidateRenderer implements LabelCandidateRenderer<Line
         context.switchToDisplayCRS();
 
         final TextStroke stroke = new TextStroke(label.getText(), label.getTextFont(), label.isRepeated(),
-                label.getOffSet(), label.getInitialGap(), label.getGap());
+                label.getOffSet(), label.getInitialGap(), label.getGap(),context.getCanvasDisplayBounds());
         final Shape shape = stroke.createStrokedShape(linearCandidate.getShape());
 
         //paint halo
