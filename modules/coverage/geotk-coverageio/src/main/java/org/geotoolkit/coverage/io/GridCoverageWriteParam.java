@@ -133,6 +133,7 @@ public class GridCoverageWriteParam extends GridCoverageStoreParam {
                         Errors.Keys.VALUE_OUT_OF_BOUNDS_$3, value, 0, 1));
             }
         }
+        compressionQuality = quality;
     }
 
     /**

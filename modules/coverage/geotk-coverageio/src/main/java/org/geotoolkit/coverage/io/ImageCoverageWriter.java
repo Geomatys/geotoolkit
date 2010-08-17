@@ -425,8 +425,8 @@ public class ImageCoverageWriter extends GridCoverageWriter {
             final Rectangle sourceRegion  = imageParam.getSourceRegion();
             final Rectangle requestRegion = destGridGeometry.getGridRange2D();
             if (!isIdentity(destToExtractedGrid) ||
-                    greater(requestRegion.width,  imageParam.getSourceXSubsampling(), sourceRegion.width) ||
-                    greater(requestRegion.height, imageParam.getSourceYSubsampling(), sourceRegion.height))
+                    isGreater(requestRegion.width,  imageParam.getSourceXSubsampling(), sourceRegion.width) ||
+                    isGreater(requestRegion.height, imageParam.getSourceYSubsampling(), sourceRegion.height))
             {
                 /*
                  * We need to resample the image if:
@@ -504,15 +504,15 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                         backgroundValues, hints);
                 imageParam.setSourceRegion(null);
                 imageParam.setSourceSubsampling(1, 1, 0, 0);
-                /*
-                 * Set other parameters inferred from the GridCoverageWriteParam.
-                 */
-                if (imageParam.canWriteCompressed()) {
-                    final Float compression = param.getCompressionQuality();
-                    if (compression != null) {
-                        imageParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
-                        imageParam.setCompressionQuality(compression);
-                    }
+            }
+            /*
+             * Set other parameters inferred from the GridCoverageWriteParam.
+             */
+            if (imageParam.canWriteCompressed()) {
+                final Float compression = param.getCompressionQuality();
+                if (compression != null) {
+                    imageParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+                    imageParam.setCompressionQuality(compression);
                 }
             }
         }
@@ -530,8 +530,12 @@ public class ImageCoverageWriter extends GridCoverageWriter {
     /**
      * Returns {@code true} if the given request dimension scaled by the given subsampling
      * is greater than the given source dimension.
+     *
+     * @param request     The span of the requested destination region.
+     * @param subsampling The subsampling to be applied when reading the source.
+     * @param source      The span of the source region.
      */
-    private static boolean greater(final int request, final int subsampling, final int source) {
+    private static boolean isGreater(final int request, final int subsampling, final int source) {
         return request * subsampling - (subsampling - 1) > source;
     }
 
