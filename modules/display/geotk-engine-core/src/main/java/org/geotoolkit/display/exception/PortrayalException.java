@@ -26,26 +26,22 @@ package org.geotoolkit.display.exception;
  */
 public final class PortrayalException extends Exception{
 
-    private static final String ERROR = "Portrayal exception";
+    private static final String ERROR = "Portrayal exception : ";
     private static final long serialVersionUID = 3200411272785006830L;
     
     public PortrayalException(String message){
-        super(ERROR +" : "+ message);
+        super(ERROR+ message);
         if(message == null || message.isEmpty()){
             throw new IllegalArgumentException("Portrayal exception message is null or empty.");
         }
     }
 
     public PortrayalException(Throwable throwable){
-        super(ERROR+" : " + throwable.getMessage(), throwable);
-        final String message = throwable.getMessage();
-        if(message == null || message.isEmpty()){
-            throw new IllegalArgumentException("Portrayal exception message is null or empty.");
-        }
+        super(ERROR + ((throwable.getMessage()==null)? "No message" : throwable.getMessage()), throwable);
     }
     
     public PortrayalException(String message, Throwable throwable){
-        super(ERROR +" : "+ ((message != null) ? message : "no message"), throwable);
+        super(ERROR + ((message != null) ? message : "no message"), throwable);
         if(message == null || message.isEmpty()){
             throw new IllegalArgumentException("Portrayal exception message is null or empty.");
         }
