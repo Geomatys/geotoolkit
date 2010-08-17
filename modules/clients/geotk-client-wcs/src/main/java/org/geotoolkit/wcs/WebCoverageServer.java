@@ -16,17 +16,21 @@
  */
 package org.geotoolkit.wcs;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.client.Server;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wcs.v100.DescribeCoverage100;
 import org.geotoolkit.wcs.v100.GetCapabilities100;
 import org.geotoolkit.wcs.v100.GetCoverage100;
+import org.geotoolkit.wcs.xml.WCSMarshallerPool;
 import org.geotoolkit.wcs.xml.WCSVersion;
+import org.geotoolkit.wcs.xml.v100.WCSCapabilitiesType;
 
 
 /**
@@ -42,6 +46,7 @@ public class WebCoverageServer implements Server {
     private final WCSVersion version;
 
     private final URL serverURL;
+    private WCSCapabilitiesType capabilities;
 
     public WebCoverageServer(URL serverURL, String version) {
         if (version.equals("1.0.0")) {
@@ -50,6 +55,53 @@ public class WebCoverageServer implements Server {
             throw new IllegalArgumentException("unkonwed version : " + version);
         }
         this.serverURL = serverURL;
+    }
+
+    /**
+     * Returns the {@linkplain WCSCapabilitiesType capabilities} response for this
+     * server.
+     */
+    public WCSCapabilitiesType getCapabilities() {
+
+        if (capabilities != null) {
+            return capabilities;
+        }
+        //Thread to prevent infinite request on a server
+        final Thread thread = new Thread() {
+            @Override
+            public void run() {
+                Unmarshaller unmarshaller = null;
+                try {
+                    unmarshaller = WCSMarshallerPool.getInstance().acquireUnmarshaller();
+                    final GetCapabilitiesRequest request = createGetCapabilities();
+                    capabilities = (WCSCapabilitiesType) unmarshaller.unmarshal(request.getURL());
+                } catch (Exception ex) {
+                    capabilities = null;
+                    try {
+                        LOGGER.log(Level.WARNING, "Wrong URL, the server doesn't answer : " +
+                                createGetCapabilities().getURL().toString(), ex);
+                    } catch (MalformedURLException ex1) {
+                        LOGGER.log(Level.WARNING, "Malformed URL, the server doesn't answer. ", ex1);
+                    }
+                }finally{
+                    if(unmarshaller != null){
+                        WCSMarshallerPool.getInstance().release(unmarshaller);
+                    }
+                }
+            }
+        };
+        thread.start();
+        final long start = System.currentTimeMillis();
+        try {
+            thread.join(10000);
+        } catch (InterruptedException ex) {
+            LOGGER.log(Level.WARNING, "The thread to obtain GetCapabilities doesn't answer.", ex);
+        }
+        if ((System.currentTimeMillis() - start) > 10000) {
+            LOGGER.log(Level.WARNING, "TimeOut error, the server takes too much time to answer. ");
+        }
+
+        return capabilities;
     }
 
     /**

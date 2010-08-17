@@ -36,12 +36,15 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.NumberFormat;
 import java.util.List;
+import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JProgressBar;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
@@ -148,7 +151,8 @@ public class JCoordinateBar extends JToolBar {
             @Override
             public boolean isSelected() {
                 if(map == null) return false;
-                return GO2Hints.SYMBOL_RENDERING_PRIME.equals(map.getCanvas().getRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER));
+                return GO2Hints.SYMBOL_RENDERING_PRIME.equals(
+                        map.getCanvas().getRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER));
             }
         };
         guiStyleOrder.addActionListener(new ActionListener() {
@@ -156,7 +160,8 @@ public class JCoordinateBar extends JToolBar {
             public void actionPerformed(ActionEvent evt) {
                 if(map != null){
                     final Object val = map.getCanvas().getRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER);
-                    map.getCanvas().setRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER, (GO2Hints.SYMBOL_RENDERING_PRIME.equals(val))?
+                    map.getCanvas().setRenderingHint(
+                        GO2Hints.KEY_SYMBOL_RENDERING_ORDER, (GO2Hints.SYMBOL_RENDERING_PRIME.equals(val))?
                         GO2Hints.SYMBOL_RENDERING_SECOND : GO2Hints.SYMBOL_RENDERING_PRIME);
                 }
             }
@@ -166,7 +171,8 @@ public class JCoordinateBar extends JToolBar {
             @Override
             public boolean isSelected() {
                 if(map == null) return false;
-                return RenderingHints.VALUE_ANTIALIAS_ON.equals(map.getCanvas().getRenderingHint(RenderingHints.KEY_ANTIALIASING));
+                return RenderingHints.VALUE_ANTIALIAS_ON.equals(
+                        map.getCanvas().getRenderingHint(RenderingHints.KEY_ANTIALIASING));
             }
         };
         guiAntiAliasing.addActionListener(new ActionListener() {
@@ -174,18 +180,93 @@ public class JCoordinateBar extends JToolBar {
             public void actionPerformed(ActionEvent evt) {
                 if(map != null){
                     final Object val = map.getCanvas().getRenderingHint(RenderingHints.KEY_ANTIALIASING);
-                    map.getCanvas().setRenderingHint(RenderingHints.KEY_ANTIALIASING, (RenderingHints.VALUE_ANTIALIAS_ON.equals(val))?
+                    map.getCanvas().setRenderingHint(
+                        RenderingHints.KEY_ANTIALIASING, (RenderingHints.VALUE_ANTIALIAS_ON.equals(val))?
                         RenderingHints.VALUE_ANTIALIAS_OFF : RenderingHints.VALUE_ANTIALIAS_ON);
                 }
             }
         });
 
+        final ButtonGroup group = new ButtonGroup();
+        final JRadioButtonMenuItem guiNone = new JRadioButtonMenuItem(MessageBundle.getString("interpolation_none")){
+            @Override
+            public boolean isSelected() {
+                if(map == null) return false;
+                return RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR.equals(
+                        map.getCanvas().getRenderingHint(RenderingHints.KEY_INTERPOLATION));
+            }
+        };
+        final JRadioButtonMenuItem guiLinear = new JRadioButtonMenuItem(MessageBundle.getString("interpolation_linear")){
+            @Override
+            public boolean isSelected() {
+                if(map == null) return false;
+                return RenderingHints.VALUE_INTERPOLATION_BILINEAR.equals(
+                        map.getCanvas().getRenderingHint(RenderingHints.KEY_INTERPOLATION));
+            }
+        };
+        final JRadioButtonMenuItem guiBicubic = new JRadioButtonMenuItem(MessageBundle.getString("interpolation_bicubic")){
+            @Override
+            public boolean isSelected() {
+                if(map == null) return false;
+                return RenderingHints.VALUE_INTERPOLATION_BICUBIC.equals(
+                        map.getCanvas().getRenderingHint(RenderingHints.KEY_INTERPOLATION));
+            }
+        };
+        group.add(guiNone);
+        group.add(guiLinear);
+        group.add(guiBicubic);
+        final ActionListener interListener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if(map != null){
+                    final Object source = e.getSource();
+                    if(source == guiNone){
+                        map.getCanvas().setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                                RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
+                    }else if(source == guiLinear){
+                        map.getCanvas().setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                                RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+                    }else if(source == guiBicubic){
+                        map.getCanvas().setRenderingHint(RenderingHints.KEY_INTERPOLATION,
+                                RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                    }
+                }
+            }
+        };
+        guiNone.addActionListener(interListener);
+        guiLinear.addActionListener(interListener);
+        guiBicubic.addActionListener(interListener);
+
+        final JCheckBoxMenuItem guiMultiThread = new JCheckBoxMenuItem(MessageBundle.getString("multithread")){
+            @Override
+            public boolean isSelected() {
+                if(map == null) return false;
+                return GO2Hints.MULTI_THREAD_ON.equals(map.getCanvas().getRenderingHint(GO2Hints.KEY_MULTI_THREAD));
+            }
+        };
+        guiMultiThread.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+                if(map != null){
+                    final Object val = map.getCanvas().getRenderingHint(GO2Hints.KEY_MULTI_THREAD);
+                    map.getCanvas().setRenderingHint(GO2Hints.KEY_MULTI_THREAD, (GO2Hints.MULTI_THREAD_ON.equals(val))?
+                        GO2Hints.MULTI_THREAD_OFF : GO2Hints.MULTI_THREAD_ON);
+                }
+            }
+        });
+
+
         final JPopupMenu guiHintMenu = new JPopupMenu();
         guiHintMenu.add(guiAxis);
         guiHintMenu.add(guiStatefull);
+        guiHintMenu.add(guiMultiThread);
         guiHintMenu.add(guiStyleOrder);
-        guiHintMenu.add(new JSeparator());
         guiHintMenu.add(guiAntiAliasing);
+        guiHintMenu.add(new JSeparator());
+        guiHintMenu.add(new JMenuItem(MessageBundle.getString("interpolation")));
+        guiHintMenu.add(guiNone);
+        guiHintMenu.add(guiLinear);
+        guiHintMenu.add(guiBicubic);
 
         guiHint.setComponentPopupMenu(guiHintMenu);
         guiHint.addMouseListener(new MouseListener() {

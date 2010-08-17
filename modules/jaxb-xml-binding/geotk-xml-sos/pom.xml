@@ -77,6 +77,11 @@
       <artifactId>geotk-xml-om</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-xml-sensorML</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 
 </project>

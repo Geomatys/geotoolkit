@@ -116,6 +116,13 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType {
     }
 
     /**
+     * Build a new Time periodwith a duration.
+     */
+    public TimePeriodType(Duration duration){
+        this.duration = duration;
+    }
+
+    /**
      * Gets the value of the beginPosition property.
      * 
      * @return

@@ -45,7 +45,7 @@ import static org.junit.Assert.*;
 /**
  * A Test suite verifying that the Record are correctly marshalled/unmarshalled
  *
- * @author Guilhem Legal
+ * @author Guilhem Legal (Geomatys)
  * @module pending
  */
 public class FilterXMLBindingTest {

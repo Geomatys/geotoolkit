@@ -17,10 +17,36 @@
 
 package org.geotoolkit.sos.xml;
 
+import org.geotoolkit.gml.xml.v311.AbstractFeatureEntry;
+import org.geotoolkit.observation.xml.v100.ObservationCollectionEntry;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
  */
-public interface SOSResponse {
+public class SOSResponseWrapper implements SOSResponse {
 
+    private Object response;
+
+    public SOSResponseWrapper(ObservationCollectionEntry collection) {
+        this.response = collection;
+    }
+
+    public SOSResponseWrapper(AbstractFeatureEntry feature) {
+        this.response = feature;
+    }
+
+    /**
+     * @return the collection
+     */
+    public Object getCollection() {
+        return response;
+    }
+
+    /**
+     * @param collection the collection to set
+     */
+    public void setCollection(Object response) {
+        this.response = response;
+    }
 }
