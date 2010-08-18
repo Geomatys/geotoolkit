@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.csw.xml;
 
+import org.geotoolkit.util.Version;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
@@ -25,6 +27,6 @@ public interface RequestBase extends AbstractCswRequest {
 
     public String getService();
 
-    public String getVersion();
+    public Version getVersion();
 
 }

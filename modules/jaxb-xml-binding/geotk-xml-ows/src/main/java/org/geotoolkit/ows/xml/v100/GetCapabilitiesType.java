@@ -147,7 +147,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
      * inherited method from AbstractGetCapabilties
      */
     public Version getVersion() {
-        if (acceptVersions!= null && acceptVersions.getVersion().size()!= 0) {
+        if (acceptVersions!= null && !acceptVersions.getVersion().isEmpty()) {
             return new Version(acceptVersions.getVersion().get(0));
         } return null;
     }

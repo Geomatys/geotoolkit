@@ -23,6 +23,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Version;
+import org.geotoolkit.util.Versioned;
 
 
 /**
@@ -57,7 +59,7 @@ import javax.xml.bind.annotation.XmlType;
     "infoFormat"
 })
 @XmlRootElement(name = "GetFeatureInfo")
-public class GetFeatureInfo {
+public class GetFeatureInfo implements Versioned {
 
     @XmlElement(name = "GetTile", required = true)
     private GetTile getTile;
@@ -206,12 +208,11 @@ public class GetFeatureInfo {
      *     {@link String }
      *     
      */
-    public String getVersion() {
-        if (version == null) {
-            return "1.0.0";
-        } else {
-            return version;
+    public Version getVersion() {
+        if (version != null) {
+            return new Version(version);
         }
+        return null;
     }
 
     /**

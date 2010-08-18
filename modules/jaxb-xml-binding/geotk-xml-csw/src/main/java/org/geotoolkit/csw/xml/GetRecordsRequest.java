@@ -76,11 +76,6 @@ public interface GetRecordsRequest extends RequestBase {
     public void setMaxRecords(Integer value);
     
     /**
-     * Get the service version number.
-     */
-    public String getVersion();
-    
-    /**
      * Set the service version number.
      */
     public void setVersion(String version);

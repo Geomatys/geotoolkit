@@ -16,13 +16,15 @@
  */
 package org.geotoolkit.csw.xml;
 
+import org.geotoolkit.util.Versioned;
+
 /**
  * An interface containing the common methods to the different version of the operation GetRecords.
  *
  *  * @author Guilhem Legal
  * @module pending
  */
-public interface AbstractCswRequest {
+public interface AbstractCswRequest extends Versioned {
 
     /**
      * Gets the value of the outputFormat property.

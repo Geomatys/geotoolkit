@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Version;
+import org.geotoolkit.util.Versioned;
 
 
 /**
@@ -67,7 +69,7 @@ import javax.xml.bind.annotation.XmlType;
     "tileCol"
 })
 @XmlRootElement(name = "GetTile")
-public class GetTile {
+public class GetTile implements Versioned {
 
     @XmlElement(name = "Layer", required = true)
     private String layer;
@@ -167,20 +169,6 @@ public class GetTile {
     /**
      * Dimension name and value Gets the value of the dimensionNameValue property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the dimensionNameValue property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getDimensionNameValue().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link DimensionNameValue }
      * 
@@ -325,12 +313,11 @@ public class GetTile {
      *     {@link String }
      *     
      */
-    public String getVersion() {
-        if (version == null) {
-            return "1.0.0";
-        } else {
-            return version;
+    public Version getVersion() {
+        if (version != null) {
+            return new Version(version);
         }
+        return null;
     }
 
     /**
