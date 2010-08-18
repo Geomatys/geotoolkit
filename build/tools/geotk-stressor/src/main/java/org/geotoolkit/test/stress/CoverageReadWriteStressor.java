@@ -19,13 +19,18 @@ package org.geotoolkit.test.stress;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.awt.image.RenderedImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
+import javax.imageio.spi.ImageReaderSpi;
+import javax.imageio.spi.ImageWriterSpi;
+import javax.imageio.stream.ImageInputStream;
 import java.util.Locale;
 
+import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -55,8 +60,10 @@ public class CoverageReadWriteStressor extends Stressor {
     /**
      * A grid coverage writer for testing write operations, or {@code null} if this
      * {@code CoverageReadWriteStressor} instance is testing only read operations.
+     * <p>
+     * Will be created when first needed.
      */
-    private GridCoverageWriter writer;
+    private transient GridCoverageWriter writer;
 
     /**
      * The index of the image to read (usually 0).
@@ -64,14 +71,25 @@ public class CoverageReadWriteStressor extends Stressor {
     protected final int imageIndex;
 
     /**
-     * If specified, write the request result in an image of the given format and read it back.
+     * If specified, write the request result in an image of the given format and read it back. It
+     * must be a format name recognized by Image I/O. The {@code "(native)"} or {@code "(standard)"}
+     * part, if any, shall be been processed outside this class.
+     *
+     * @see #processFormatName(String)
      */
     protected String outputFormat;
 
     /**
      * A buffer where to write to the image, or {@code null} if none.
+     * Will be created when first needed.
      */
-    private MemoryOutputStream out;
+    private transient MemoryOutputStream out;
+
+    /**
+     * An image reader, used only for checking the image created by {@link #writer}.
+     * Will be created when first needed.
+     */
+    private transient ImageReader imageReader;
 
     /**
      * Creates a new stressor for the given input. This constructor creates automatically
@@ -141,6 +159,36 @@ public class CoverageReadWriteStressor extends Stressor {
     }
 
     /**
+     * If the given format name contains a variant (a {@code "(standard)"} or {@code "(native)"}
+     * suffix), configures the {@code IIORegistry} accordingly and returns the format name without
+     * the variant suffix.
+     *
+     * @param  formatName The format name, with an optional variant suffix.
+     * @return The format name without variant suffix.
+     * @throws IllegalArgumentException If the variant suffix is not recognized.
+     *
+     * @see #outputFormat
+     */
+    protected static String processFormatName(String formatName) throws IllegalArgumentException {
+        final int s = formatName.indexOf('(');
+        if (s >= 0) {
+            final String variant = formatName.substring(s).toLowerCase();
+            formatName = formatName.substring(0, s);
+            final boolean useNative;
+            if (variant.equals("(native)")) {
+                useNative = true;
+            } else if (variant.equals("(standard)")) {
+                useNative = false;
+            } else {
+                throw new IllegalArgumentException("Unrecognized format variant: " + variant);
+            }
+            Registry.setNativeCodecAllowed(formatName, ImageReaderSpi.class, useNative);
+            Registry.setNativeCodecAllowed(formatName, ImageWriterSpi.class, useNative);
+        }
+        return formatName;
+    }
+
+    /**
      * Sets the locale of the reader and writer.
      *
      * @param locale The locale.
@@ -153,7 +201,8 @@ public class CoverageReadWriteStressor extends Stressor {
     }
 
     /**
-     * Reads the given random request.
+     * Reads the given random request. If {@link #outputFormat} is non-null, the image will be
+     * written in a memory buffer, then read again (unless the output is not shown in a viewer).
      */
     @Override
     protected RenderedImage executeQuery(final GeneralGridGeometry request) throws CoverageStoreException {
@@ -164,52 +213,61 @@ public class CoverageReadWriteStressor extends Stressor {
         readParam.setEnvelope(request.getEnvelope());
         readParam.setResolution(getResolution(request));
         final GridCoverage2D coverage = (GridCoverage2D) reader.read(imageIndex, readParam);
-        if (outputFormat == null) {
-            return coverage.view(ViewType.RENDERED).getRenderedImage();
+        if (outputFormat != null) {
+            /*
+             * Tests write operation.
+             */
+            final GridCoverageWriteParam writeParam = new GridCoverageWriteParam(readParam);
+            writeParam.setFormatName(outputFormat);
+            if (out == null) {
+                out = new MemoryOutputStream();
+            }
+            out.reset();
+            if (writer == null) {
+                writer = new ImageCoverageWriter();
+            }
+            writer.setOutput(out);
+            writer.write(coverage, writeParam);
+            writer.setOutput(null);
+            /*
+             * Reads the image that we just wrote, for checking purpose.
+             * We will skip this step if there is no visual check.
+             */
+            if (viewer != null) {
+                final RenderedImage image;
+                try {
+                    final ImageInputStream in = ImageIO.createImageInputStream(out.getInputStream());
+                    if (imageReader == null) {
+                        imageReader = XImageIO.getReaderByFormatName(outputFormat, null, Boolean.TRUE, Boolean.TRUE);
+                    }
+                    imageReader.setInput(in);
+                    image = imageReader.read(0);
+                    imageReader.reset();
+                    in.close();
+                } catch (IOException e) {
+                    throw new CoverageStoreException(e);
+                }
+                return image;
+            }
         }
-        /*
-         * Tests write operation.
-         */
-        final GridCoverageWriteParam writeParam = new GridCoverageWriteParam(readParam);
-        writeParam.setFormatName(outputFormat);
-        if (out == null) {
-            out = new MemoryOutputStream();
-        }
-        out.reset();
-        if (writer == null) {
-            writer = new ImageCoverageWriter();
-        }
-        writer.setOutput(out);
-        writer.write(coverage, writeParam);
-        writer.setOutput(null);
-        final InputStream in = out.getInputStream();
-        final RenderedImage image;
-        try {
-            image = ImageIO.read(in);
-            in.close();
-        } catch (IOException e) {
-            throw new CoverageStoreException(e);
-        }
-        return image;
+        return coverage.view(ViewType.RENDERED).getRenderedImage();
     }
 
     /**
-     * Disposes the reader after the test is done.
+     * Disposes the reader, the writer and the buffer after the test is done.
      */
     @Override
     protected void dispose() throws CoverageStoreException {
         reader.dispose();
         if (writer != null) {
             writer.dispose();
+            writer = null;
         }
+        if (imageReader != null) {
+            imageReader.dispose();
+            imageReader = null;
+        }
+        out = null;
         super.dispose();
-    }
-
-    public static void main(final String[] args) throws Exception {
-        Main.main(new String[] {
-            "coverages",
-            "/Users/desruisseaux/Documents/Données/Mosaïques/BlueMarble/output/TileManager.serialized",
-            "--duration=20", "--minSize=400", "--maxSize=800", "--numThreads=4", "--outputFormat=png", "--view"
-        });
     }
 }

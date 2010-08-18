@@ -21,6 +21,7 @@ import java.awt.Window;
 import java.io.PrintWriter;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.Executors;
@@ -38,12 +39,14 @@ import org.geotoolkit.util.NullArgumentException;
 /**
  * A group of {@link Stressor}s. Each stressor will be run in its own thread.
  *
+ * @param <S> The type of stressor to be managed by this group.
+ *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.15
  *
  * @since 3.14
  */
-public class StressorGroup implements Runnable, ThreadFactory {
+public class StressorGroup<S extends Stressor> implements Runnable, ThreadFactory {
     /**
      * The output stream where to print reports.
      *
@@ -66,7 +69,7 @@ public class StressorGroup implements Runnable, ThreadFactory {
     /**
      * The stressors.
      */
-    private final List<Stressor> stressors;
+    private final List<S> stressors;
 
     /**
      * The executor to use for running the test threads.
@@ -79,9 +82,11 @@ public class StressorGroup implements Runnable, ThreadFactory {
     private final long duration;
 
     /**
-     * Whatever the request results shall be shown in windows.
+     * The frame where to show the request result, or {@code null} if none.
+     *
+     * @see #createFrame()
      */
-    private final boolean view;
+    private Window frame;
 
     /**
      * Creates a new {@code StressorGroup} instance.
@@ -89,7 +94,7 @@ public class StressorGroup implements Runnable, ThreadFactory {
      * @param duration The test duration, in milliseconds.
      */
     public StressorGroup(final long duration) {
-        this(duration, new PrintWriter(System.out, true), false);
+        this(duration, new PrintWriter(System.out, true));
     }
 
     /**
@@ -97,16 +102,25 @@ public class StressorGroup implements Runnable, ThreadFactory {
      *
      * @param duration The test duration, in milliseconds.
      * @param out      The output stream where to print reports.
-     * @param view     Whatever the request results shall be shown in windows.
      */
-    public StressorGroup(final long duration, final PrintWriter out, final boolean view) {
+    public StressorGroup(final long duration, final PrintWriter out) {
         this.threadGroup = new ThreadGroup("Stressors");
         this.threadCount = new AtomicInteger();
-        this.stressors   = new ArrayList<Stressor>();
+        this.stressors   = new ArrayList<S>();
         this.executor    = Executors.newCachedThreadPool(this);
         this.duration    = duration;
         this.out         = out;
-        this.view        = view;
+    }
+
+    /**
+     * Returns the stressors which have been {@linkplain #added added} to this group.
+     *
+     * @return The stressors added to this group.
+     *
+     * @since 3.15
+     */
+    public List<S> getStressors() {
+        return Collections.unmodifiableList(stressors);
     }
 
     /**
@@ -115,7 +129,10 @@ public class StressorGroup implements Runnable, ThreadFactory {
      *
      * @param stressor The stressor to add.
      */
-    public void add(final Stressor stressor) {
+    public void add(final S stressor) {
+        if (frame != null) {
+            throw new IllegalStateException("Can not add any more stressor.");
+        }
         if (stressor == null) {
             throw new NullArgumentException();
         }
@@ -124,16 +141,21 @@ public class StressorGroup implements Runnable, ThreadFactory {
     }
 
     /**
+     * Creates a frame where to show the result of requests. This method can be invoked at
+     * most once, after all stressors have been {@linkplain #add added} to this group.
+     */
+    public void createFrame() {
+        if (frame != null) {
+            throw new IllegalStateException("Frame already created");
+        }
+        frame = ImageViewer.show(stressors);
+    }
+
+    /**
      * Starts a thread for each stressor.
      */
     @Override
     public void run() {
-        final Window frame;
-        if (view) {
-            frame = ImageViewer.show(stressors);
-        } else {
-            frame = null;
-        }
         final long startTime = System.currentTimeMillis();
         for (final Stressor stressor : stressors) {
             stressor.stopTime = startTime + duration;

@@ -20,10 +20,12 @@ package org.geotoolkit.test.stress;
 import java.io.File;
 import java.util.Arrays;
 
+import org.geotoolkit.lang.Setup;
 import org.geotoolkit.console.Action;
 import org.geotoolkit.console.Option;
 import org.geotoolkit.console.CommandLine;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.image.jai.Registry;
 
 
 /**
@@ -73,6 +75,8 @@ public final class Main extends CommandLine {
 
     /**
      * If specified, write the request result in an image of the given format and read it back.
+     * The format name can optionally be concatenated with {@code "(native)"} or {@code "(standard)"}
+     * suffix for forcing explicitely the native (from JAI-Image I/O library) or standard codec.
      */
     @Option
     private String outputFormat;
@@ -103,7 +107,12 @@ public final class Main extends CommandLine {
     @Action(minimalArgumentCount=1, maximalArgumentCount=1)
     public void coverages() throws CoverageStoreException {
         final Object input = CoverageReadWriteStressor.createReaderInput(new File(arguments[0]));
-        final StressorGroup stressors = new StressorGroup(duration * 1000, out, view);
+        final StressorGroup<CoverageReadWriteStressor> stressors =
+                new StressorGroup<CoverageReadWriteStressor>(duration * 1000, out);
+        /*
+         * Creates a new stressor for each thread, and configures it to the minimal and
+         * maximal size, maximal scale and locale given as parameters on the command line.
+         */
         for (int i=numThreads; --i>=0;) {
             final CoverageReadWriteStressor stressor = new CoverageReadWriteStressor(input);
             if (minSize != null) {
@@ -119,9 +128,28 @@ public final class Main extends CommandLine {
             if (maxScale != null) {
                 stressor.setMaximumScale(maxScale);
             }
-            stressor.outputFormat = outputFormat;
             stressor.setLocale(locale);
             stressors.add(stressor);
+        }
+        /*
+         * Creates the frame only after all stressors has been created,
+         * since the frame layout needs to know the number of stressors.
+         */
+        if (view) {
+            stressors.createFrame();
+        }
+        /*
+         * Set the codec preferences only after the frame has been created, since creating
+         * a java.awt.Frame have the side-effect of regitering a standard TIFF image reader.
+         */
+        Registry.setDefaultCodecPreferences();
+        /*
+         * Process the (native) or (standard) suffix if any (which may change the codec
+         * preference settings performed above), and set the format name of each stressor.
+         */
+        final String format = CoverageReadWriteStressor.processFormatName(outputFormat);
+        for (final CoverageReadWriteStressor stressor : stressors.getStressors()) {
+            stressor.outputFormat = format;
         }
         stressors.run();
     }
@@ -133,6 +161,7 @@ public final class Main extends CommandLine {
      * @param arguments Command line arguments.
      */
     public static void main(final String[] arguments) {
+        Setup.initialize(null);
         final Main console = new Main(arguments);
         console.run();
     }

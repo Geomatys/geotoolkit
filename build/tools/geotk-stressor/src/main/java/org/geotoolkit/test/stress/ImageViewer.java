@@ -97,7 +97,7 @@ final class ImageViewer extends JPanel {
      * Shows all the given stressors.
      * Closing the window will stop the stressor.
      */
-    public static Window show(final List<Stressor> stressors) {
+    public static Window show(final List<? extends Stressor> stressors) {
         final JFrame frame = new JFrame("Stressor");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
