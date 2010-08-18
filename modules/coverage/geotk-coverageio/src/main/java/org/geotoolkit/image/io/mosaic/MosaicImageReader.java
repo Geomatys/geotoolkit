@@ -20,10 +20,9 @@ package org.geotoolkit.image.io.mosaic;
 import java.awt.Point;
 import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
+import java.awt.image.Raster;
 import java.io.File;
 import java.io.Closeable;
 import java.io.IOException;
@@ -31,7 +30,6 @@ import java.util.*; // Lot of imports used in this class.
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
-import javax.imageio.IIOException;
 import javax.imageio.IIOParamController;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
@@ -66,12 +64,6 @@ import org.geotoolkit.resources.Loggings;
  * @module
  */
 public class MosaicImageReader extends ImageReader implements Closeable, Disposable {
-    /**
-     * {@code true} for disabling operations that may corrupt data values,
-     * or {@code false} if only the visual effect matter.
-     */
-    private static final boolean PRESERVE_DATA = true;
-
     /**
      * Type arguments made of a single {@code int} value. Used with reflections in order to check
      * if a method has been overridden (knowing that it is not the case allows some optimizations).
@@ -1039,8 +1031,8 @@ public class MosaicImageReader extends ImageReader implements Closeable, Disposa
         final int srcWidth  = getWidth (imageIndex);
         final int srcHeight = getHeight(imageIndex);
         final Rectangle sourceRegion = getSourceRegion(param, srcWidth, srcHeight);
-        final Collection<Tile> tiles = getTileManager(imageIndex)
-                .getTiles(sourceRegion, subsampling, subsamplingChangeAllowed);
+        final TileManager manager = getTileManager(imageIndex);
+        final Collection<Tile> tiles = manager.getTiles(sourceRegion, subsampling, subsamplingChangeAllowed);
         if (nullForEmptyImage && tiles.isEmpty()) {
             processImageComplete();
             return null;
@@ -1285,8 +1277,11 @@ public class MosaicImageReader extends ImageReader implements Closeable, Disposa
                 final BufferedImage output;
                 try {
                     tileParam.setDestinationType(null);
-                    tileParam.setDestination(image); // Must be after setDestinationType and may be null.
-                    tileParam.setDestinationOffset(destinationOffset);
+                    if (manager.canWriteInPlace(reader.getOriginatingProvider())) {
+                        // Must be after setDestinationType and may be null.
+                        tileParam.setDestination(image);
+                        tileParam.setDestinationOffset(destinationOffset);
+                    }
                     if (tileParam.canSetSourceRenderSize()) {
                         tileParam.setSourceRenderSize(null); // TODO.
                     }
@@ -1306,26 +1301,19 @@ public class MosaicImageReader extends ImageReader implements Closeable, Disposa
                     // Cleanup because the parameters are cached.
                     tileParam.setDestination(null);
                     tileParam.setSourceRegion(null);
+                    tileParam.setDestinationOffset(new Point());
                 }
                 if (image == null) {
                     image = output;
                 } else if (output != image) {
                     /*
-                     * The read operation ignored our destination image.  By default we treat that
-                     * as an error since the SampleModel may be incompatible and changing it would
-                     * break the geophysics meaning of pixel values. However if we are interested
-                     * only in the visual aspect, we can copy the data (slow, consumes memory) and
-                     * let Java2D performs the required color conversions. Note that it should not
-                     * occur anyway if we choose correctly the raw image type in the code above.
+                     * The read operation ignored our destination image. Copy the data (slow,
+                     * consume memory). Note that the sample and color models should be the
+                     * same if we choose correctly the raw image type in the above code.
                      */
-                    if (PRESERVE_DATA) {
-                        throw new IIOException("Incompatible data format."); // TODO: localize
-                    }
-                    final AffineTransform at = AffineTransform.getTranslateInstance(
-                            destinationOffset.x, destinationOffset.y);
-                    final Graphics2D graphics = image.createGraphics();
-                    graphics.drawRenderedImage(output, at);
-                    graphics.dispose();
+                    Raster data = output.getRaster();
+                    data = Raster.createRaster(data.getSampleModel(), data.getDataBuffer(), destinationOffset);
+                    image.setData(data);
                 }
             }
             status = 0; // Success.

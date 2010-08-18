@@ -482,6 +482,21 @@ public abstract class TileManager implements Serializable {
     }
 
     /**
+     * Returns {@code true} if the image reader from the given provider can write
+     * the image directly in a destination image. It should be the case of every
+     * formats, but experience suggests that the JAI TIFF reader has bugs.
+     *
+     * @since 3.15
+     */
+    boolean canWriteInPlace(final ImageReaderSpi spi) {
+        if (spi == null) {
+            return true;
+        }
+        final String cn = spi.getClass().getName();
+        return !cn.equals("com.sun.media.imageioimpl.plugins.tiff.TIFFImageReaderSpi");
+    }
+
+    /**
      * Returns a string representation of this tile manager. The default implementation
      * formats the first tiles in a table. Subclasses may format the tiles in a tree
      * instead. Note that in both cases the result may be a quite long string.

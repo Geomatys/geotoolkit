@@ -28,6 +28,7 @@ import java.util.AbstractSet;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.IOException;
+import javax.imageio.spi.ImageReaderSpi;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.FrequencySortedSet;
@@ -278,6 +279,17 @@ final class GridTileManager extends TileManager {
             }
         }
         return false;
+    }
+
+    /**
+     * Returns {@code true} in evert cases, since the JAI TIFF image reader bug doesn't
+     * manifest when the tile are organized on a regular grid.
+     *
+     * @since 3.15
+     */
+    @Override
+    boolean canWriteInPlace(final ImageReaderSpi spi) {
+        return true;
     }
 
     /**
