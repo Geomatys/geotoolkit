@@ -360,7 +360,7 @@ public abstract class AbstractResourceType
      */
     public BigDecimal getOpacity() {
         if (opacity == null) {
-            return new BigDecimal("1");
+            return BigDecimal.ONE;
         } else {
             return opacity;
         }

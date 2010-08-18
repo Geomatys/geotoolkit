@@ -20,6 +20,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
+import com.vividsolutions.jts.geom.Polygon;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -103,7 +104,7 @@ public class StatefullProjectedCoverage implements ProjectedCoverage {
     @Override
     public ProjectedGeometry getEnvelopeGeometry() {
         if(border == null){
-            border = new StatefullProjectedGeometry(params, createGeometry(layer.getBounds()));
+            border = new StatefullProjectedGeometry(params, Polygon.class, createGeometry(layer.getBounds()));
         }
         return border;
     }
@@ -118,8 +119,7 @@ public class StatefullProjectedCoverage implements ProjectedCoverage {
             new Coordinate(env.getMinimum(0), env.getMinimum(1)),
         };
         final LinearRing ring = fact.createLinearRing(coordinates);
-        final Geometry geom = fact.createPolygon(ring, new LinearRing[0]);
-        return geom;
+        return fact.createPolygon(ring, new LinearRing[0]);
     }
 
     /**

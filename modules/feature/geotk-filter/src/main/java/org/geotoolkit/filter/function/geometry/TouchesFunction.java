@@ -48,6 +48,6 @@ public class TouchesFunction extends AbstractFunction {
                     "Filter Function problem for function touches argument #1 - expected type Geometry");
         }
 
-        return new Boolean(StaticGeometry.touches(arg0, arg1));
+        return StaticGeometry.touches(arg0, arg1);
     }
 }

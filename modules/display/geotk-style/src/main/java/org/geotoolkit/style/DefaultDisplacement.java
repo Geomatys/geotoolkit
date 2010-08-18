@@ -104,11 +104,11 @@ public class DefaultDisplacement implements Displacement{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[Displacement : X=");
-        builder.append(dispX.toString());
+        builder.append(dispX);
         builder.append(" Y=");
-        builder.append(dispY.toString());
+        builder.append(dispY);
         builder.append(']');
         return builder.toString();
     }

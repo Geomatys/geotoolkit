@@ -55,8 +55,20 @@ import org.opengis.util.FactoryException;
  */
 public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedTextSymbolizer>{
 
+
+    private LabelLayer labelLayer;
+
     public DefaultTextSymbolizerRenderer(CachedTextSymbolizer symbol, RenderingContext2D context){
         super(symbol,context);
+    }
+
+    public LabelLayer getLabelLayer() {
+        if(labelLayer == null){
+            final LabelRenderer renderer = renderingContext.getLabelRenderer(true);
+            labelLayer = renderer.createLabelLayer();
+            renderer.append(labelLayer);
+        }
+        return labelLayer;
     }
 
     /**
@@ -122,18 +134,14 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 
     }
 
-    private static void portray(ProjectedGeometry projectedGeometry, RenderingContext2D context, ProjectedFeature projectedFeature,
+    private void portray(ProjectedGeometry projectedGeometry, RenderingContext2D context, ProjectedFeature projectedFeature,
             CachedLabelPlacement placement, float haloWidth, Paint haloPaint, Paint fontPaint, Font j2dFont,
             String label) throws PortrayalException{
 
         final Feature feature = projectedFeature.getFeature();
-        final LabelRenderer renderer = context.getLabelRenderer(true);
 
-        final LabelLayer labelLayer = new DefaultLabelLayer(false, true);
-
+        final LabelLayer labelLayer = getLabelLayer();
         exploreAndPortray(projectedGeometry, feature, context, placement, haloWidth, haloPaint, fontPaint, j2dFont, label, labelLayer);
-
-        renderer.append(labelLayer);
     }
 
     private static void exploreAndPortray(ProjectedGeometry projectedGeometry, Feature feature, RenderingContext2D context,

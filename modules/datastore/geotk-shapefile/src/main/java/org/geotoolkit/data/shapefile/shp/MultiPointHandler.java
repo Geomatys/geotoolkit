@@ -32,7 +32,8 @@ import org.geotoolkit.storage.DataStoreException;
  * @module pending
  */
 public class MultiPointHandler implements ShapeHandler {
-    final ShapeType shapeType;
+    
+    private final ShapeType shapeType;
 
     /** Creates new MultiPointHandler */
     public MultiPointHandler() {
@@ -67,22 +68,23 @@ public class MultiPointHandler implements ShapeHandler {
      */
     @Override
     public int getLength(Object geometry) {
-        MultiPoint mp = (MultiPoint) geometry;
+        final MultiPoint mp = (MultiPoint) geometry;
 
-        int length;
+        final int numGeom = mp.getNumGeometries();
+        final int length;
 
         if (shapeType == ShapeType.MULTIPOINT) {
             // two doubles per coord (16 * numgeoms) + 40 for header
-            length = (mp.getNumGeometries() * 16) + 40;
+            length = (numGeom * 16) + 40;
         } else if (shapeType == ShapeType.MULTIPOINTM) {
             // add the additional MMin, MMax for 16, then 8 per measure
-            length = (mp.getNumGeometries() * 16) + 40 + 16
-                    + (8 * mp.getNumGeometries());
+            length = (numGeom * 16) + 40 + 16
+                    + (8 * numGeom);
         } else if (shapeType == ShapeType.MULTIPOINTZ) {
             // add the additional ZMin,ZMax, plus 8 per Z
-            length = (mp.getNumGeometries() * 16) + 40 + 16
-                    + (8 * mp.getNumGeometries()) + 16
-                    + (8 * mp.getNumGeometries());
+            length = (numGeom * 16) + 40 + 16
+                    + (8 * numGeom) + 16
+                    + (8 * numGeom);
         } else {
             throw new IllegalStateException("Expected ShapeType of Arc, got "
                     + shapeType);
@@ -105,16 +107,17 @@ public class MultiPointHandler implements ShapeHandler {
         // read bounding box (not needed)
         buffer.position(buffer.position() + 4 * 8);
 
-        int numpoints = buffer.getInt();
-        Coordinate[] coords = new Coordinate[numpoints];
+        final int numpoints = buffer.getInt();
+        final Coordinate[] coords = new Coordinate[numpoints];
 
         for (int t = 0; t < numpoints; t++) {
-            double x = buffer.getDouble();
-            double y = buffer.getDouble();
+            final double x = buffer.getDouble();
+            final double y = buffer.getDouble();
             coords[t] = new Coordinate(x, y);
         }
 
         if (shapeType == ShapeType.MULTIPOINTZ) {
+            //skip zmin zmax
             buffer.position(buffer.position() + 2 * 8);
 
             for (int t = 0; t < numpoints; t++) {

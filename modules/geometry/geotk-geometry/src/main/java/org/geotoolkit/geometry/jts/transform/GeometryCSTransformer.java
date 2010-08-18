@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  * 
  *    (C) 2004-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.geometry.jts;
+package org.geotoolkit.geometry.jts.transform;
 
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Geometry;
@@ -29,36 +30,27 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 
 /**
- * Service object that takes a geometry an applies a MathTransform on top
- * of it.
+ * Service object that takes a geometry use the cs tranformer on it.
+ *
  * @author Andrea Aime
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GeometryCoordinateSequenceTransformer {
+public class GeometryCSTransformer implements GeometryTransformer{
 
-    private MathTransform transform;
-    private CoordinateSequenceTransformer csTransformer;
+    private final CoordinateSequenceTransformer csTransformer;
     private CoordinateReferenceSystem crs;
     
-    public GeometryCoordinateSequenceTransformer() {
-        csTransformer = new DefaultCoordinateSequenceTransformer();
-    }
-
-    public GeometryCoordinateSequenceTransformer(CoordinateSequenceTransformer transformer) {
+    public GeometryCSTransformer(CoordinateSequenceTransformer transformer) {
         csTransformer = transformer;
     }
 
-    /**
-     * Sets the math transform to be used for transformation
-     * @param transform
-     */
-    public void setMathTransform(MathTransform transform) {
-        this.transform = transform;
+    public CoordinateSequenceTransformer getCSTransformer() {
+        return csTransformer;
     }
 
     /**
@@ -78,6 +70,7 @@ public class GeometryCoordinateSequenceTransformer {
      * @param g
      * @throws TransformException
      */
+    @Override
     public Geometry transform(Geometry g) throws TransformException {
         final GeometryFactory factory = g.getFactory();
         final Geometry transformed;
@@ -180,7 +173,7 @@ public class GeometryCoordinateSequenceTransformer {
      */
     public CoordinateSequence projectCoordinateSequence(CoordinateSequence cs)
         throws TransformException {
-        return csTransformer.transform(cs, transform);
+        return csTransformer.transform(cs,1);
     }
 
     /**
@@ -199,5 +192,10 @@ public class GeometryCoordinateSequenceTransformer {
         final Polygon transformed = gf.createPolygon(exterior, interiors);
         transformed.setUserData( polygon.getUserData() );
         return transformed;
+    }
+
+    @Override
+    public CoordinateSequence transform(CoordinateSequence sequence, int minpoints) throws TransformException {
+        return csTransformer.transform(sequence,minpoints);
     }
 }

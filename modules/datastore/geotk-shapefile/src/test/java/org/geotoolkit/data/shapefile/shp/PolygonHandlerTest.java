@@ -26,6 +26,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.PrecisionModel;
+import java.util.List;
 
 /**
  * 
@@ -83,7 +84,7 @@ public class PolygonHandlerTest extends AbstractTestCaseSupport {
         }
 
         PolygonHandler ph = new PolygonHandler();
-        ArrayList assigned = ph.assignHolesToShells(shells, holes);
+        List assigned = ph.assignHolesToShells(shells, holes);
         assertEquals(((ArrayList) assigned.get(0)).size(), holes.size());
 
     }

@@ -56,8 +56,8 @@ import org.opengis.filter.expression.Literal;
  */
 public class RecolorFunction extends AbstractExpression implements Function {
 
-    private final int MASK_ALPHA = 0xFF000000;
-    private final int MASK_NO_ALPHA = 0x00FFFFFF;
+    private static final int MASK_ALPHA = 0xFF000000;
+    private static final int MASK_NO_ALPHA = 0x00FFFFFF;
 
     private final List<ColorItem> items;
     private final Literal fallback;

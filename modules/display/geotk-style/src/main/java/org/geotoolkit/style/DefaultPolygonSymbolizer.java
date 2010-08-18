@@ -155,23 +155,23 @@ public class DefaultPolygonSymbolizer extends AbstractSymbolizer implements Poly
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[Polygon Symbolizer : Fill=");
-        builder.append(fill.toString());
+        builder.append(fill);
         if(stroke != null){
             builder.append(" Stroke=");
-            builder.append(stroke.toString());
+            builder.append(stroke);
         }
         builder.append(" Offset=");
-        builder.append(offset.toString());
+        builder.append(offset);
         builder.append(" Disp=");
-        builder.append(disp.toString());
+        builder.append(disp);
         builder.append(" Unit=");
-        builder.append(uom.toString());
+        builder.append(uom);
         
         if(geom != null){
             builder.append(" Geometry=");
-            builder.append(geom.toString());
+            builder.append(geom);
         }
         builder.append(']');
         return builder.toString();

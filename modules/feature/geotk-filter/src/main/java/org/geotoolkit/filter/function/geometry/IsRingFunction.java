@@ -39,6 +39,6 @@ public class IsRingFunction extends AbstractFunction {
                     "Filter Function problem for function isRing argument #0 - expected type Geometry");
         }
 
-        return new Boolean(StaticGeometry.isRing(arg0));
+        return StaticGeometry.isRing(arg0);
     }
 }

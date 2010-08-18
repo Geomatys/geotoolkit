@@ -87,7 +87,7 @@ public class LineLazySearchCollectionTest extends AbstractTestCaseSupport {
         JTSEnvelope2D env = new JTSEnvelope2D(588993, 589604,
                 4927443, 4927443, crs);
         LazySearchCollection collection = new LazySearchCollection(tree, env);
-        assertEquals(14, collection.size());
+        assertEquals(33, collection.size());
 
     }
 

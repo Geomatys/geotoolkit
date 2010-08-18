@@ -46,13 +46,8 @@ public class WKBUtils {
         final byte[] crs = SRIDGenerator.toBytes(srid, Version.V1);
         final byte[] compact = new byte[wkb.length+crs.length];
 
-        int i=0;
-        for(;i<crs.length;i++){
-            compact[i] = crs[i];
-        }
-        for(int j=0; j<wkb.length; i++,j++){
-            compact[i] = wkb[j];
-        }
+        System.arraycopy(crs, 0, compact, 0, crs.length);
+        System.arraycopy(wkb, 0, compact, crs.length, wkb.length);
 
         return compact;
     }

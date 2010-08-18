@@ -108,11 +108,11 @@ public class DefaultContrastEnhancement implements ContrastEnhancement{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[ContrastEnhancement : Gamma=");
-        builder.append(gamma.toString());
+        builder.append(gamma);
         builder.append(" Method=");
-        builder.append(type.toString());
+        builder.append(type);
         builder.append(']');
         return builder.toString();
     }

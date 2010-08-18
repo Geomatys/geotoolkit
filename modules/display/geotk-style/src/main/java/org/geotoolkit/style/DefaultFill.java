@@ -124,11 +124,11 @@ public class DefaultFill implements Fill{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[Fill : Type=");
         builder.append( (fill == null) ? "Color:"+color.toString() : "GraphicFill" );
         builder.append(" Opacity=");
-        builder.append(opacity.toString());
+        builder.append(opacity);
         builder.append(']');
         return builder.toString();
     }

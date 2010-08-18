@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,226 +17,74 @@
  */
 package org.geotoolkit.index.quadtree;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
- * DOCUMENT ME!
- * 
- * @author Tommaso Nolli
+ * Represent a tyle in the fack quad tree.
+ *
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class Node {
-    private Envelope bounds;
-    protected int numShapesId;
-    protected int[] shapesId;
-    protected List subNodes;
-    protected Node parent;
-    private boolean visited = false;
-    private boolean childrenVisited = false;
-    protected int id;
+public class Node extends AbstractNode{
 
-    public Node(Envelope bounds, int id, Node parent) {
-        this.parent = parent;
-        this.id = id;
-        this.bounds = new Envelope(bounds);
-        this.subNodes = new ArrayList(4);
-        this.shapesId = new int[4];
-        Arrays.fill(this.shapesId, -1);
-    }
+    protected AbstractNode n0;
+    protected AbstractNode n1;
+    protected AbstractNode n2;
+    protected AbstractNode n3;
 
     /**
-     * DOCUMENT ME!
-     * 
-     * @return Returns the bounds.
+     * @param envelope the node bounds [MinX,MinY,MaxX,MaxY]
      */
-    public Envelope getBounds() {
-        return this.bounds;
+    public Node(double minx, double miny, double maxx, double maxy) {
+        super(minx,miny,maxx,maxy);
     }
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @param bounds
-     *                The bounds to set.
-     */
-    public void setBounds(Envelope bounds) {
-        this.bounds = bounds;
+    public Node(Envelope env) {
+        super(env);
     }
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @return Returns the numSubNodes.
-     */
-    public int getNumSubNodes() {
-        return this.subNodes.size();
-    }
-
-    /**
-     * DOCUMENT ME!
-     * 
-     * @return Returns the number of records stored.
-     */
-    public int getNumShapeIds() {
-        return this.numShapesId;
-    }
-
-    /**
-     * DOCUMENT ME!
-     * 
-     * @param node
-     * 
-     * @throws NullPointerException
-     *                 DOCUMENT ME!
-     */
-    public void addSubNode(Node node) {
-        if (node == null) {
-            throw new NullPointerException("Cannot add null to subnodes");
-        }
-
-        this.subNodes.add(node);
-    }
-
-    /**
-     * Removes a subnode
-     * 
-     * @param node
-     *                The subnode to remove
-     * 
-     * @return true if the subnode has been removed
-     */
-    public boolean removeSubNode(Node node) {
-        return this.subNodes.remove(node);
-    }
-
-    /**
-     * 
-     * 
-     */
-    public void clearSubNodes() {
-        this.subNodes.clear();
-    }
-
-    /**
-     * Gets the Node at the requested position
-     * 
-     * @param pos
-     *                The position
-     * 
-     * @return A Node
-     * 
-     * @throws StoreException
-     *                 DOCUMENT ME!
-     */
-    public Node getSubNode(int pos) throws StoreException {
-        return (Node) this.subNodes.get(pos);
-    }
-
-    /**
-     * Add a shape id
-     * 
-     * @param id
-     */
-    public void addShapeId(int id) {
-        if (this.shapesId.length == this.numShapesId) {
-            // Increase the array
-            int[] newIds = new int[this.numShapesId * 2];
-            Arrays.fill(newIds, -1);
-            System.arraycopy(this.shapesId, 0, newIds, 0, this.numShapesId);
-            this.shapesId = newIds;
-        }
-
-        this.shapesId[this.numShapesId] = id;
-        this.numShapesId++;
-    }
-
-    /**
-     * Gets a shape id
-     * 
-     * @param pos
-     *                The position
-     * 
-     * @return The shape id (or recno) at the requested position
-     * 
-     * @throws ArrayIndexOutOfBoundsException
-     *                 DOCUMENT ME!
-     */
-    public int getShapeId(int pos) {
-        if (pos >= this.numShapesId) {
-            throw new ArrayIndexOutOfBoundsException("Requsted " + pos
-                    + " but size = " + this.numShapesId);
-        }
-
-        return this.shapesId[pos];
-    }
-
-    /**
-     * Sets the shape ids
-     * 
-     * @param ids
-     */
-    public void setShapesId(int[] ids) {
-        if (ids == null) {
-            this.numShapesId = 0;
-        } else {
-            this.shapesId = ids;
-            this.numShapesId = 0;
-
-            for (int i = 0; i < ids.length; i++) {
-                if (ids[i] == -1) {
-                    break;
-                }
-
-                this.numShapesId++;
+    @Override
+    public void setSubNodes(AbstractNode ... nodes) {
+        n0 = null;
+        n1 = null;
+        n2 = null;
+        n3 = null;
+        for(int i=0;i<nodes.length;i++){
+            final AbstractNode n = nodes[i];
+            switch(i){
+                case 0: this.n0=n; break;
+                case 1: this.n1=n; break;
+                case 2: this.n2=n; break;
+                case 3: this.n3=n; break;
+                default: throw new IllegalArgumentException("Exprected maximum 4 nodes.");
             }
         }
     }
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @return Returns the shapesId.
-     */
-    public int[] getShapesId() {
-        return this.shapesId;
+    @Override
+    public int getNumSubNodes() {
+        if(n0 == null){
+            return 0;
+        }else if(n1 == null){
+            return 1;
+        }else if(n2 == null){
+            return 2;
+        }else if(n3 == null){
+            return 3;
+        }else{
+            return 4;
+        }
     }
 
-    public Node getParent() {
-        return parent;
+    @Override
+    public AbstractNode getSubNode(int pos) throws StoreException {
+        switch(pos){
+            case 0: return n0;
+            case 1: return n1;
+            case 2: return n2;
+            case 3: return n3;
+        }
+        throw new IllegalArgumentException("Index over 3 not allowed");
     }
 
-    public void setParent(Node parent) {
-        this.parent = parent;
-    }
-
-    public boolean isVisited() {
-        return visited;
-    }
-
-    public void setVisited(boolean visited) {
-        this.visited = visited;
-    }
-
-    public Node getSibling() throws StoreException {
-        if (parent == null || id == parent.getNumSubNodes() - 1)
-            return null;
-        return parent.getSubNode(id + 1);
-    }
-
-    public boolean isChildrenVisited() {
-        return childrenVisited;
-    }
-
-    public void setChildrenVisited(boolean childrenVisited) {
-        this.childrenVisited = childrenVisited;
-    }
-
-    public Node copy() throws IOException {
-        return new Node(bounds, id, parent);
-    }
 }

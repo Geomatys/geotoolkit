@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+
 import org.opengis.filter.And;
 import org.opengis.filter.ExcludeFilter;
 import org.opengis.filter.Filter;
@@ -62,6 +63,7 @@ import org.opengis.filter.spatial.Intersects;
 import org.opengis.filter.spatial.Overlaps;
 import org.opengis.filter.spatial.Touches;
 import org.opengis.filter.spatial.Within;
+import org.opengis.geometry.BoundingBox;
 
 
 /**
@@ -221,13 +223,23 @@ public class DuplicatingFilterVisitor implements FilterVisitor, ExpressionVisito
 
     @Override
     public Object visit(final BBOX filter, final Object extraData) {
-        final String propertyName = filter.getPropertyName();
-        final double minx = filter.getMinX();
-        final double miny = filter.getMinY();
-        final double maxx = filter.getMaxX();
-        final double maxy = filter.getMaxY();
-        final String srs = filter.getSRS();
-        return getFactory(extraData).bbox(propertyName, minx, miny, maxx, maxy, srs);
+
+        final Expression exp1 = visit(filter.getExpression1(),extraData);
+        final Expression exp2 = filter.getExpression2();
+        if(!(exp2 instanceof Literal)){
+            //this value is supposed to hold a BoundingBox
+            throw new IllegalArgumentException("Illegal BBOX filter, "
+                    + "second expression should have been a literal with a boundingBox value: \n" + filter);
+        }else{
+            final Literal l = (Literal) exp2;
+            final Object obj = l.getValue();
+            if(obj instanceof BoundingBox){
+                return getFactory(extraData).bbox(exp1, (BoundingBox) obj);
+            }else{
+                throw new IllegalArgumentException("Illegal BBOX filter, "
+                    + "second expression should have been a literal with a boundingBox value but value was a : \n" + obj.getClass());
+            }
+        }
     }
 
     @Override

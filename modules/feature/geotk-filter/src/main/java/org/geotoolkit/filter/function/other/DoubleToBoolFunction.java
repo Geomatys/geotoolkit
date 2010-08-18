@@ -39,6 +39,6 @@ public class DoubleToBoolFunction extends AbstractFunction {
                     "Filter Function problem for function double2bool argument #0 - expected type double");
         }
 
-        return new Boolean(StaticGeometry.double2bool(arg0));
+        return StaticGeometry.double2bool(arg0);
     }
 }

@@ -31,7 +31,7 @@ import org.geotoolkit.storage.DataStoreException;
  */
 public class PointHandler implements ShapeHandler {
 
-    final ShapeType shapeType;
+    private final ShapeType shapeType;
 
     public PointHandler(ShapeType type) throws DataStoreException {
         if ((type != ShapeType.POINT) && (type != ShapeType.POINTM)
@@ -59,7 +59,7 @@ public class PointHandler implements ShapeHandler {
 
     @Override
     public int getLength(Object geometry) {
-        int length;
+        final int length;
         if (shapeType == ShapeType.POINT) {
             length = 20;
         } else if (shapeType == ShapeType.POINTM) {
@@ -79,9 +79,9 @@ public class PointHandler implements ShapeHandler {
             return createNull();
         }
 
-        double x = buffer.getDouble();
-        double y = buffer.getDouble();
-        double z = Double.NaN;
+        final double x = buffer.getDouble();
+        final double y = buffer.getDouble();
+        final double z;
 
         if (shapeType == ShapeType.POINTM) {
             buffer.getDouble();
@@ -89,6 +89,8 @@ public class PointHandler implements ShapeHandler {
 
         if (shapeType == ShapeType.POINTZ) {
             z = buffer.getDouble();
+        }else{
+            z = Double.NaN;
         }
 
         return GEOMETRY_FACTORY.createPoint(new Coordinate(x, y, z));

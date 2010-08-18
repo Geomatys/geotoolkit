@@ -18,6 +18,7 @@
 package org.geotoolkit.display2d.style.j2d;
 
 import java.awt.Font;
+import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.Stroke;
 import java.awt.font.FontRenderContext;
@@ -47,15 +48,17 @@ public class TextStroke implements Stroke {
     private final float offset;
     private final float initialGap;
     private final float gap;
+    private final Rectangle clip;
 
     public TextStroke(String text, Font font, boolean repeat, float offset,
-            float initialgap, float gap) {
+            float initialgap, float gap, Rectangle clip) {
         this.text = text;
         this.font = font;
         this.repeat = repeat;
         this.offset = offset;
         this.initialGap = initialgap;
         this.gap = gap;
+        this.clip = clip;
     }
 
     @Override
@@ -76,7 +79,7 @@ public class TextStroke implements Stroke {
         if( (initialGap+totalLabelLenght) > remainingPathLength){
             return result;
         }
-        
+
         final PathIterator it = new FlatteningPathIterator(shape.getPathIterator(null), 1);
         
         float moveX = 0, moveY = 0;
@@ -166,23 +169,25 @@ public class TextStroke implements Stroke {
                                 break;
                             case STATE_LABEL :
                                 //DRAW THE LABEL--------------------------------
-                                final float r = 1.0f / distance;
                                 final float angle = (float) Math.atan2(dy, dx);
 
                                 labelLoop :
                                 while(segmentToConsume >= next){
-                                    //while have space paint the caractere
-                                    final Shape charGlyph = glyphVector.getGlyphOutline(currentChar);
-                                    final Point2D p = glyphVector.getGlyphPosition(currentChar);
-                                    final float px = (float) p.getX();
-                                    final float py = (float) p.getY();
+                                    //check if we are in the clip area
                                     final float x = lastX + ((distance-segmentToConsume)/distance) * dx ;
                                     final float y = lastY + ((distance-segmentToConsume)/distance) * dy ;
-                                    t.setToTranslation(x+0, y);
-                                    t.rotate(angle);
-                                    t.translate(-px, -py);
-                                    t.translate(0, -offset);
-                                    result.append(t.createTransformedShape(charGlyph), false);
+                                    if(clip.contains(x, y)){
+                                        //we are in the clip area
+                                        final Shape charGlyph = glyphVector.getGlyphOutline(currentChar);
+                                        final Point2D p = glyphVector.getGlyphPosition(currentChar);
+                                        final float px = (float) p.getX();
+                                        final float py = (float) p.getY();
+                                        t.setToTranslation(x+0, y);
+                                        t.rotate(angle);
+                                        t.translate(-px, -py);
+                                        t.translate(0, -offset);
+                                        result.append(t.createTransformedShape(charGlyph), false);
+                                    }                                    
 
                                     segmentToConsume -= next;
                                     currentChar++;

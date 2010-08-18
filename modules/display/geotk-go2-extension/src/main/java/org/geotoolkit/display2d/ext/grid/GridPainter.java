@@ -37,4 +37,9 @@ public class GridPainter implements BackgroundPainter{
         J2DGridUtilities.paint(context, template);
     }
 
+    @Override
+    public boolean isOpaque() {
+        return false;
+    }
+
 }

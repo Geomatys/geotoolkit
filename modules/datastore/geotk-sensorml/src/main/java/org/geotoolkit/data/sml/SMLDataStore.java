@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.logging.Level;
 
 import org.geotoolkit.data.AbstractDataStore;
 import org.geotoolkit.data.DataStoreRuntimeException;
@@ -573,7 +574,7 @@ public class SMLDataStore extends AbstractDataStore {
             if (rset.next()) {
                 final String location = rset.getString(1);
                 try {
-                    final int pos = location.indexOf(" ");
+                    final int pos = location.indexOf(' ');
                     final double x = Double.parseDouble(location.substring(0, pos));
                     final double y = Double.parseDouble(location.substring(pos+1));
                     final Coordinate coord = new Coordinate(x, y);
@@ -581,7 +582,7 @@ public class SMLDataStore extends AbstractDataStore {
                     pt.setSRID(crsID);
                     props.add(FF.createAttribute(pt,(AttributeDescriptor)type.getDescriptor(ATT_LOCATION), null));
                 } catch (NumberFormatException ex) {
-                    getLogger().warning("unable to extract the point coordinate from the text value:" + location);
+                    getLogger().log(Level.WARNING, "unable to extract the point coordinate from the text value:{0}", location);
                 }
             }
             rset.close();
@@ -665,7 +666,7 @@ public class SMLDataStore extends AbstractDataStore {
                 }
                 rset.close();
                 result3.close();
-                if (components.size() == 0) {
+                if (components.isEmpty()) {
                     components = null;
                 }
                 props.add(FF.createAttribute(components, (AttributeDescriptor) type.getDescriptor(ATT_COMPONENTS), null));

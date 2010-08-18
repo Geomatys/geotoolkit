@@ -60,6 +60,6 @@ public class RelatePatternFunction extends AbstractFunction {
                     "Filter Function problem for function relatePattern argument #2 - expected type String");
         }
 
-        return new Boolean(StaticGeometry.relatePattern(arg0, arg1, arg2));
+        return StaticGeometry.relatePattern(arg0, arg1, arg2);
     }
 }

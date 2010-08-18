@@ -41,7 +41,7 @@ import org.geotoolkit.storage.DataStoreException;
  */
 public class PolygonHandler implements ShapeHandler {
 
-    final ShapeType shapeType;
+    private final ShapeType shapeType;
 
     public PolygonHandler() {
         shapeType = ShapeType.POLYGON;
@@ -88,7 +88,7 @@ public class PolygonHandler implements ShapeHandler {
 
     @Override
     public int getLength(Object geometry) {
-        MultiPolygon multi;
+        final MultiPolygon multi;
 
         if (geometry instanceof MultiPolygon) {
             multi = (MultiPolygon) geometry;
@@ -98,15 +98,13 @@ public class PolygonHandler implements ShapeHandler {
         }
 
         int nrings = 0;
-
         for (int t = 0; t < multi.getNumGeometries(); t++) {
-            Polygon p;
-            p = (Polygon) multi.getGeometryN(t);
+            final Polygon p = (Polygon) multi.getGeometryN(t);
             nrings = nrings + 1 + p.getNumInteriorRing();
         }
 
-        int npoints = multi.getNumPoints();
-        int length;
+        final int npoints = multi.getNumPoints();
+        final int length;
 
         if (shapeType == ShapeType.POLYGONZ) {
             length = 44 + (4 * nrings) + (16 * npoints) + (8 * npoints) + 16
@@ -127,26 +125,27 @@ public class PolygonHandler implements ShapeHandler {
         if (type == ShapeType.NULL) {
             return createNull();
         }
-        // bounds
+        // skip the bounds
         buffer.position(buffer.position() + 4 * 8);
 
-        int[] partOffsets;
-
-        int numParts = buffer.getInt();
-        int numPoints = buffer.getInt();
-
-        partOffsets = new int[numParts];
+        final int numParts = buffer.getInt();
+        final int numPoints = buffer.getInt();
+        final int[] partOffsets = new int[numParts];
 
         for (int i = 0; i < numParts; i++) {
             partOffsets[i] = buffer.getInt();
         }
 
-        ArrayList shells = new ArrayList();
-        ArrayList holes = new ArrayList();
-        Coordinate[] coords = readCoordinates(buffer, numPoints);
+        final List<LinearRing> shells = new ArrayList<LinearRing>();
+        final List<LinearRing> holes = new ArrayList<LinearRing>();
+
+        final Coordinate[] coords = new Coordinate[numPoints];
+        for (int t = 0; t < numPoints; t++) {
+            coords[t] = new Coordinate(buffer.getDouble(), buffer.getDouble());
+        }
 
         if (shapeType == ShapeType.POLYGONZ) {
-            // z
+            // skip zmin and zmax
             buffer.position(buffer.position() + 2 * 8);
 
             for (int t = 0; t < numPoints; t++) {
@@ -202,40 +201,21 @@ public class PolygonHandler implements ShapeHandler {
         // quick optimization: if there's only one shell no need to check
         // for holes inclusion
         if (shells.size() == 1) {
-            return createMulti((LinearRing) shells.get(0), holes);
+            return createMulti(shells.get(0), holes);
         }
         // if for some reason, there is only one hole, we just reverse it and
         // carry on.
-        else if (holes.size() == 1 && shells.size() == 0) {
+        else if (holes.size() == 1 && shells.isEmpty()) {
             org.geotoolkit.util.logging.Logging.getLogger(
                     "org.geotoolkit.data.shapefile").warning(
                     "only one hole in this polygon record");
-            return createMulti(JTSUtilities.reverseRing((LinearRing) holes
-                    .get(0)));
+            return createMulti(JTSUtilities.reverseRing(holes.get(0)));
         } else {
 
             // build an association between shells and holes
-            final ArrayList holesForShells = assignHolesToShells(shells, holes);
-
-            Geometry g = buildGeometries(shells, holes, holesForShells);
-
-            return g;
+            final List<List<LinearRing>> holesForShells = assignHolesToShells(shells, holes);
+            return buildGeometries(shells, holes, holesForShells);
         }
-    }
-
-    /**
-     * @param buffer
-     * @param numPoints
-     */
-    private Coordinate[] readCoordinates(final ByteBuffer buffer,
-            final int numPoints) {
-        Coordinate[] coords = new Coordinate[numPoints];
-
-        for (int t = 0; t < numPoints; t++) {
-            coords[t] = new Coordinate(buffer.getDouble(), buffer.getDouble());
-        }
-
-        return coords;
     }
 
     /**
@@ -243,38 +223,39 @@ public class PolygonHandler implements ShapeHandler {
      * @param holes
      * @param holesForShells
      */
-    private Geometry buildGeometries(final List shells, final List holes,
-            final List holesForShells) {
-        Polygon[] polygons;
+    private Geometry buildGeometries(final List<LinearRing> shells, final List<LinearRing> holes,
+            final List<List<LinearRing>> holesForShells) {
+        final Polygon[] polygons;
 
         // if we have shells, lets use them
-        if (shells.size() > 0) {
-            polygons = new Polygon[shells.size()];
-            // oh, this is a bad record with only holes
+        final int shellSize = shells.size();
+        final int holeSize = holes.size();
+        if (shellSize > 0) {
+            polygons = new Polygon[shellSize];
         } else {
-            polygons = new Polygon[holes.size()];
+            // oh, this is a bad record with only holes
+            polygons = new Polygon[holeSize];
         }
 
         // this will do nothing for the "only holes case"
-        for (int i = 0; i < shells.size(); i++) {
-            polygons[i] = GEOMETRY_FACTORY.createPolygon((LinearRing) shells
-                    .get(i), (LinearRing[]) ((ArrayList) holesForShells.get(i))
-                    .toArray(new LinearRing[0]));
+        for (int i=0; i<shellSize; i++) {
+            final List<LinearRing> lst = holesForShells.get(i);
+            polygons[i] = GEOMETRY_FACTORY.createPolygon(
+                    shells.get(i),
+                    lst.toArray(new LinearRing[lst.size()]));
         }
 
         // this will take care of the "only holes case"
         // we just reverse each hole
-        if (shells.size() == 0) {
-            for (int i = 0, ii = holes.size(); i < ii; i++) {
-                LinearRing hole = (LinearRing) holes.get(i);
+        if (shellSize == 0) {
+            for (int i=0; i<holeSize; i++) {
+                final LinearRing hole = holes.get(i);
                 polygons[i] = GEOMETRY_FACTORY.createPolygon(JTSUtilities
                         .reverseRing(hole), new LinearRing[0]);
             }
         }
 
-        Geometry g = GEOMETRY_FACTORY.createMultiPolygon(polygons);
-
-        return g;
+        return GEOMETRY_FACTORY.createMultiPolygon(polygons);
     }
 
     /**
@@ -283,23 +264,25 @@ public class PolygonHandler implements ShapeHandler {
      * @param shells
      * @param holes
      */
-    ArrayList assignHolesToShells(final ArrayList shells, final ArrayList holes) {
-        ArrayList holesForShells = new ArrayList(shells.size());
-        for (int i = 0; i < shells.size(); i++) {
-            holesForShells.add(new ArrayList());
+    List<List<LinearRing>> assignHolesToShells(final List<LinearRing> shells, final List<LinearRing> holes) {
+
+        final int shellSize = shells.size();
+        final int holeSize = holes.size();
+
+        final List<List<LinearRing>> holesForShells = new ArrayList(shellSize);
+        for (int i=0; i<shellSize ; i++) {
+            holesForShells.add(new ArrayList<LinearRing>());
         }
 
         // find homes
-        for (int i = 0; i < holes.size(); i++) {
-            LinearRing testRing = (LinearRing) holes.get(i);
+        for (final LinearRing testRing : holes) {
+            final Envelope testEnv = testRing.getEnvelopeInternal();
+            final Coordinate testPt = testRing.getCoordinateN(0);
+
             LinearRing minShell = null;
             Envelope minEnv = null;
-            Envelope testEnv = testRing.getEnvelopeInternal();
-            Coordinate testPt = testRing.getCoordinateN(0);
-            LinearRing tryRing;
 
-            for (int j = 0; j < shells.size(); j++) {
-                tryRing = (LinearRing) shells.get(j);
+            for (final LinearRing tryRing : shells) {
 
                 Envelope tryEnv = tryRing.getEnvelopeInternal();
                 if (minShell != null) {
@@ -307,7 +290,7 @@ public class PolygonHandler implements ShapeHandler {
                 }
 
                 boolean isContained = false;
-                Coordinate[] coordList = tryRing.getCoordinates();
+                final Coordinate[] coordList = tryRing.getCoordinates();
 
                 if (tryEnv.contains(testEnv)
                         && (CGAlgorithms.isPointInRing(testPt, coordList) || (pointInList(
@@ -344,19 +327,19 @@ public class PolygonHandler implements ShapeHandler {
         return createMulti(single, java.util.Collections.EMPTY_LIST);
     }
 
-    private MultiPolygon createMulti(LinearRing single, List holes) {
+    private MultiPolygon createMulti(LinearRing single, List<LinearRing> holes) {
         return GEOMETRY_FACTORY
                 .createMultiPolygon(new Polygon[] { GEOMETRY_FACTORY
-                        .createPolygon(single, (LinearRing[]) holes
-                                .toArray(new LinearRing[holes.size()])) });
+                        .createPolygon(single, holes.toArray(new LinearRing[holes.size()])) });
     }
 
     private MultiPolygon createNull() {
         return GEOMETRY_FACTORY.createMultiPolygon(null);
     }
 
+    @Override
     public void write(ByteBuffer buffer, Object geometry) {
-        MultiPolygon multi;
+        final MultiPolygon multi;
         
         if (geometry instanceof MultiPolygon) {
           multi = (MultiPolygon) geometry;
@@ -364,7 +347,7 @@ public class PolygonHandler implements ShapeHandler {
           multi = GEOMETRY_FACTORY.createMultiPolygon(new Polygon[] { (Polygon) geometry });
         }
         
-        Envelope box = multi.getEnvelopeInternal();
+        final Envelope box = multi.getEnvelopeInternal();
         buffer.putDouble(box.getMinX());
         buffer.putDouble(box.getMinY());
         buffer.putDouble(box.getMaxX());
@@ -373,22 +356,19 @@ public class PolygonHandler implements ShapeHandler {
         //need to find the total number of rings and points
         final int nrings;
         final CoordinateSequence []coordinates;
-        {
-            List allCoords = new ArrayList();
-            for (int t = 0; t < multi.getNumGeometries(); t++) {
-              Polygon p;
-              p = (Polygon) multi.getGeometryN(t);
-              allCoords.add(p.getExteriorRing().getCoordinateSequence());
-              for(int ringN = 0; ringN < p.getNumInteriorRing(); ringN++){
-                  allCoords.add(p.getInteriorRingN(ringN).getCoordinateSequence());
-              }
-            }
-            coordinates = (CoordinateSequence[])allCoords.toArray(new CoordinateSequence[allCoords.size()]);
-            nrings = coordinates.length;
+
+        final List<CoordinateSequence> allCoords = new ArrayList<CoordinateSequence>();
+        for (int t=0,n=multi.getNumGeometries(); t<n; t++) {
+            final Polygon p = (Polygon) multi.getGeometryN(t);
+          allCoords.add(p.getExteriorRing().getCoordinateSequence());
+          for(int ringN = 0; ringN < p.getNumInteriorRing(); ringN++){
+              allCoords.add(p.getInteriorRingN(ringN).getCoordinateSequence());
+          }
         }
+        coordinates = (CoordinateSequence[])allCoords.toArray(new CoordinateSequence[allCoords.size()]);
+        nrings = coordinates.length;
         
-        final int npoints = multi.getNumPoints();
-        
+        final int npoints = multi.getNumPoints();        
         buffer.putInt(nrings);
         buffer.putInt(npoints);
         
@@ -402,7 +382,7 @@ public class PolygonHandler implements ShapeHandler {
         
         //write out points here!.. and gather up min and max z values
         for (int ringN = 0; ringN < nrings; ringN++) {
-            CoordinateSequence coords = coordinates[ringN];
+            final CoordinateSequence coords = coordinates[ringN];
             
             JTSUtilities.zMinMax(coords, zExtreame);
             
@@ -424,12 +404,11 @@ public class PolygonHandler implements ShapeHandler {
           }
           
           for (int ringN = 0; ringN < nrings; ringN++) {
-              CoordinateSequence coords = coordinates[ringN];
+              final CoordinateSequence coords = coordinates[ringN];
           
               final int seqSize = coords.size();
-              double z;
               for (int coordN = 0; coordN < seqSize; coordN++) {
-                  z = coords.getOrdinate(coordN, 2);
+                  final double z = coords.getOrdinate(coordN, 2);
                   if (Double.isNaN(z)) {
                       buffer.putDouble(0.0);
                   } else {

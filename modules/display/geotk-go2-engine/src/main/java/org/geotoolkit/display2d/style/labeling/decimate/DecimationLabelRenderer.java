@@ -17,9 +17,12 @@
 package org.geotoolkit.display2d.style.labeling.decimate;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.labeling.candidate.Candidate;
@@ -47,6 +50,11 @@ public class DecimationLabelRenderer extends DefaultLabelRenderer{
     private LinearLabelCandidateRenderer LinearRenderer;
     
     public DecimationLabelRenderer() {
+    }
+
+    @Override
+    public LabelLayer createLabelLayer() {
+        return new DecimateLabelLayer(false, true);
     }
 
     /**
@@ -89,7 +97,12 @@ public class DecimationLabelRenderer extends DefaultLabelRenderer{
         //generate all the candidates
         //priority is in the order of the layers provided.
         int priority = layers.size();
+
         for(final LabelLayer layer : layers){
+            if(layer instanceof DecimateLabelLayer){
+                candidates.addAll( ((DecimateLabelLayer)layer).candidates );
+            }
+
             for(LabelDescriptor label : layer.labels()){
                 Candidate c = null;
 
@@ -148,5 +161,66 @@ public class DecimationLabelRenderer extends DefaultLabelRenderer{
         return cleaned;
     }
 
+
+    private class DecimateLabelLayer implements LabelLayer{
+
+        private final Rectangle bounds = context.getCanvasDisplayBounds();
+        private SortedSet<Candidate> candidates = new TreeSet<Candidate>(LabelingUtilities.XY_COMPARATOR){
+
+            @Override
+            public boolean add(Candidate candidate) {
+                if(!LabelingUtilities.intersects(candidate,candidates)){
+                    return super.add(candidate);
+                }
+                return false;
+            }
+
+        };
+
+        private final List<LabelDescriptor> labels = new ArrayList<LabelDescriptor>(){
+
+            @Override
+            public boolean add(LabelDescriptor label) {
+
+                if(label instanceof PointLabelDescriptor){
+                    final PointCandidate pc = (PointCandidate)pointRenderer.generateCandidat((PointLabelDescriptor) label);
+                    pc.setPriority(1);
+                    if(bounds.contains(pc.getBounds())){
+                        candidates.add(pc);
+                    }
+                }else if(label instanceof LinearLabelDescriptor){
+                    final LinearCandidate lc = (LinearCandidate)LinearRenderer.generateCandidat((LinearLabelDescriptor) label);
+                    lc.setPriority(1);
+                    candidates.add(lc);
+                }
+                return true;
+            }
+
+        };
+
+        private final boolean obstacle;
+        private final boolean labelled;
+
+        public DecimateLabelLayer(boolean isObstacle, boolean isLabelled) {
+            this.labelled = isLabelled;
+            this.obstacle = isObstacle;
+        }
+
+        @Override
+        public boolean isObstacle() {
+            return obstacle;
+        }
+
+        @Override
+        public boolean isLabelled() {
+            return labelled;
+        }
+
+        @Override
+        public List<LabelDescriptor> labels() {
+            return labels;
+        }
+
+    }
 
 }

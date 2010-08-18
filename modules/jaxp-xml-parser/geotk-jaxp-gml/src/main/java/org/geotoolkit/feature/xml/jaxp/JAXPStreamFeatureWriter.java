@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
@@ -110,11 +111,14 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
          marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
          marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
          if (schemaLocations != null && schemaLocations.size() > 0) {
-             schemaLocation = "";
-             for (String s : schemaLocations.keySet()) {
-                 schemaLocation = schemaLocation + s + " " + schemaLocations.get(s) + " ";
+             final StringBuilder sb = new StringBuilder();
+             for (Entry<String,String> entry : schemaLocations.entrySet()) {
+                 sb.append(entry.getKey()).append(' ').append(entry.getValue()).append(' ');
              }
-             schemaLocation = schemaLocation.substring(0, schemaLocation.length() - 1);
+             if(sb.length()>0){
+                sb.setLength(sb.length()-1); //remove last ' '
+             }
+             schemaLocation = sb.toString();
          }
     }
 
@@ -201,17 +205,18 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
                     }
 
                 } else if (valueA instanceof Map && !(typeA instanceof GeometryType)) {
-                    final Map map = (Map)valueA;
-                    for (Object key : map.keySet()) {
+                    final Map<?,?> map = (Map)valueA;
+                    for (Entry<?,?> entry : map.entrySet()) {
                         if (namespaceProperty != null) {
                             writer.writeStartElement(namespaceProperty, nameProperty);
                         } else {
                             writer.writeStartElement(nameProperty);
                         }
+                        final Object key = entry.getKey();
                         if (key != null) {
                             writer.writeAttribute("name", (String)key);
                         }
-                        writer.writeCharacters(Utils.getStringValue(map.get(key)));
+                        writer.writeCharacters(Utils.getStringValue(entry.getValue()));
                         writer.writeEndElement();
                     }
 

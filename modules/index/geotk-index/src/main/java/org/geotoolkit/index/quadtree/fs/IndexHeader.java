@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
-import java.util.logging.Logger;
+import org.geotoolkit.index.quadtree.QuadTree;
 
 import org.geotoolkit.index.quadtree.StoreException;
 
@@ -31,6 +31,7 @@ import org.geotoolkit.index.quadtree.StoreException;
  * @module pending
  */
 public class IndexHeader {
+
     public static final byte LSB_ORDER = -1;
     public static final byte MSB_ORDER = -2;
     public static final byte NATIVE_ORDER = 0;
@@ -39,9 +40,8 @@ public class IndexHeader {
     private static final String SIGNATURE = "SQT";
     private static final byte VERSION = 1;
     private static final byte[] RESERVED = { 0, 0, 0 };
-    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging
-            .getLogger("org.geotoolkit.index.quadtree");
-    private byte byteOrder;
+
+    private final byte byteOrder;
 
     public IndexHeader(byte byteOrder) {
         this.byteOrder = byteOrder;
@@ -57,7 +57,7 @@ public class IndexHeader {
      */
     public IndexHeader(ReadableByteChannel channel) throws IOException,
             StoreException {
-        ByteBuffer buf = ByteBuffer.allocate(8);
+        final ByteBuffer buf = ByteBuffer.allocate(8);
 
         channel.read(buf);
         buf.flip();
@@ -65,11 +65,11 @@ public class IndexHeader {
         byte[] tmp = new byte[3];
         buf.get(tmp);
 
-        String s = new String(tmp, "US-ASCII");
+        final String s = new String(tmp, "US-ASCII");
 
         if (!s.equals(SIGNATURE)) {
             // Old file format
-            LOGGER.warning("Old qix file format; this file format "
+            QuadTree.LOGGER.warning("Old qix file format; this file format "
                     + "is deprecated; It is strongly recommended "
                     + "to regenerate it in new format.");
 
@@ -78,8 +78,7 @@ public class IndexHeader {
 
             boolean lsb;
 
-            if ((tmp[4] == 0) && (tmp[5] == 0) && (tmp[6] == 0)
-                    && (tmp[7] == 0)) {
+            if ((tmp[4] == 0) && (tmp[5] == 0) && (tmp[6] == 0) && (tmp[7] == 0)) {
                 lsb = !((tmp[0] == 0) && (tmp[1] == 0));
             } else {
                 lsb = !((tmp[4] == 0) && (tmp[5] == 0));
@@ -92,9 +91,9 @@ public class IndexHeader {
     }
 
     public void writeTo(ByteBuffer buf) {
-        Charset charSet = Charset.forName("US-ASCII");
+        final Charset charSet = Charset.forName("US-ASCII");
 
-        ByteBuffer tmp = charSet.encode(SIGNATURE);
+        final ByteBuffer tmp = charSet.encode(SIGNATURE);
         tmp.position(0);
         buf.put(tmp);
         buf.put(this.byteOrder);
@@ -104,7 +103,7 @@ public class IndexHeader {
 
     /**
      * DOCUMENT ME!
-     * 
+     *
      * @return Returns the byteOrder.
      */
     public byte getByteOrder() {

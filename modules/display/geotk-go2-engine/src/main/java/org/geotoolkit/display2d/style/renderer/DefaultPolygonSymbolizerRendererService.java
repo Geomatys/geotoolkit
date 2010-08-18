@@ -28,6 +28,7 @@ import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.map.MapLayer;
 
 import org.opengis.style.PolygonSymbolizer;
+import org.opengis.style.Stroke;
 
 /**
  * @author Johann Sorel (Geomatys)
@@ -89,7 +90,10 @@ public class DefaultPolygonSymbolizerRendererService extends AbstractSymbolizerR
         shape.setTransform(affine);
 
         GO2Utilities.renderFill(shape, symbol.getSource().getFill(), g);
-        GO2Utilities.renderStroke(shape, symbol.getSource().getStroke(), symbol.getSource().getUnitOfMeasure(), g);
+        final Stroke stroke = symbol.getSource().getStroke();
+        if(stroke != null){
+            GO2Utilities.renderStroke(shape,stroke, symbol.getSource().getUnitOfMeasure(), g);
+        }
     }
 
 }

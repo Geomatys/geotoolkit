@@ -35,6 +35,12 @@ public interface LabelRenderer {
     void setRenderingContext(RenderingContext2D context);
 
     /**
+     * Create a label layer, that can remove labels "on the fly" if needed.
+     * @return
+     */
+    LabelLayer createLabelLayer();
+
+    /**
      * Get the renderingContext associated to this label renderer.
      */
     RenderingContext2D getRenderingContext();

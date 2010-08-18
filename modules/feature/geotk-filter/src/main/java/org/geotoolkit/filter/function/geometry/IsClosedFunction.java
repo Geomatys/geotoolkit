@@ -39,6 +39,6 @@ public class IsClosedFunction extends AbstractFunction {
                     "Filter Function problem for function isClosed argument #0 - expected type Geometry");
         }
 
-        return new Boolean(StaticGeometry.isClosed(arg0));
+        return StaticGeometry.isClosed(arg0);
     }
 }

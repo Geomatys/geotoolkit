@@ -19,6 +19,7 @@ package org.geotoolkit.data.iterator;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.Point;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -41,6 +42,7 @@ import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
 import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
 import org.geotoolkit.data.memory.GenericSortByFeatureIterator;
 import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
+import org.geotoolkit.data.memory.GenericTransformFeatureIterator;
 import org.geotoolkit.data.memory.GenericWrapFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -51,6 +53,8 @@ import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.LenientFeatureFactory;
+import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
+import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
@@ -383,7 +387,7 @@ public class GenericIteratorTest extends TestCase{
         Query query = qb.buildQuery();
         FeatureReader reader = collection.getSession().getDataStore().getFeatureReader(query);
 
-        FeatureReader retyped = GenericReprojectFeatureIterator.wrap(reader, CRS.decode("EPSG:4326"));
+        FeatureReader retyped = GenericReprojectFeatureIterator.wrap(reader, CRS.decode("EPSG:4326"), new Hints());
         assertEquals(reprojectedType,retyped.getFeatureType());
 
         Feature f;
@@ -403,17 +407,66 @@ public class GenericIteratorTest extends TestCase{
 
         //check has next do not iterate
         reader = collection.getSession().getDataStore().getFeatureReader(query);
-        retyped = GenericReprojectFeatureIterator.wrap(reader, CRS.decode("EPSG:4326"));
+        retyped = GenericReprojectFeatureIterator.wrap(reader, CRS.decode("EPSG:4326"), new Hints());
         testIterationOnNext(retyped, 3);
 
         //check sub iterator is properly closed
         reader = collection.getSession().getDataStore().getFeatureReader(query);
         CheckCloseFeatureIterator checkIte = new CheckCloseFeatureIterator(reader);
         assertFalse(checkIte.isClosed());
-        retyped = GenericReprojectFeatureIterator.wrap(checkIte, CRS.decode("EPSG:4326"));
+        retyped = GenericReprojectFeatureIterator.wrap(checkIte, CRS.decode("EPSG:4326"), new Hints());
         while(retyped.hasNext()) retyped.next();
         retyped.close();
         assertTrue(checkIte.isClosed());
+    }
+
+    @Test
+    public void testTransformFeatureIterator() throws DataStoreException{
+        final FeatureTypeBuilder builder = new FeatureTypeBuilder();
+        final DefaultName name = new DefaultName("http://test.com", "TestSchema");
+        builder.reset();
+        builder.setName(name);
+        builder.add("att_geom", LineString.class, DefaultGeographicCRS.WGS84);
+        final SimpleFeatureType type = builder.buildSimpleFeatureType();
+
+        final LineString geom = GF.createLineString(
+                new Coordinate[]{
+                    new Coordinate(0, 0),
+                    new Coordinate(15, 12), //dx 15 , dy 12
+                    new Coordinate(8, 28), //dx 7 , dy 16
+                    new Coordinate(9, 31), //dx 1 , dy 3
+                    new Coordinate(-5, 11), //dx 14 , dy 20
+                    new Coordinate(-1, 9) //dx 4 , dy 2
+                });
+
+        final FeatureCollection collection = DataUtilities.collection("id", type);
+        SimpleFeature sf = SimpleFeatureBuilder.template(type, "");
+        sf.setAttribute("att_geom", geom);
+        collection.add(sf);
+
+        //get the reader -------------------------------------------------------
+        QueryBuilder qb = new QueryBuilder();
+        qb.setTypeName(originalType.getName());
+        Query query = qb.buildQuery();
+        FeatureReader reader = collection.getSession().getDataStore().getFeatureReader(query);
+        
+        //create the decimate reader -------------------------------------------
+        GeometryTransformer decim = new GeometryScaleTransformer(10, 10);
+        FeatureReader retyped = GenericTransformFeatureIterator.wrap(reader,decim, new Hints());
+        
+        assertTrue(retyped.hasNext());
+
+        final LineString decimated = (LineString) retyped.next().getDefaultGeometryProperty().getValue();
+
+        assertFalse(retyped.hasNext());
+        retyped.close();
+
+        assertEquals(4, decimated.getNumPoints());
+        assertEquals(geom.getGeometryN(0).getCoordinate(), decimated.getGeometryN(0).getCoordinate());
+        assertEquals(geom.getGeometryN(1).getCoordinate(), decimated.getGeometryN(1).getCoordinate());
+        assertEquals(geom.getGeometryN(2).getCoordinate(), decimated.getGeometryN(2).getCoordinate());
+        assertEquals(geom.getGeometryN(4).getCoordinate(), decimated.getGeometryN(3).getCoordinate());
+
     }
 
     @Test

@@ -26,6 +26,7 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -113,7 +114,8 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
         final Process process = descriptor.createProcess();
         final ParameterValueGroup input = descriptor.getInputDescriptor().createValue();
         input.parameter(CoverageToVectorDescriptor.COVERAGE.getName().getCode()).setValue(coverage);
-        input.parameter(CoverageToVectorDescriptor.RANGES.getName().getCode()).setValue(styles.keySet().toArray(new NumberRange[0]));
+        final Set<NumberRange> nrs = styles.keySet();
+        input.parameter(CoverageToVectorDescriptor.RANGES.getName().getCode()).setValue(nrs.toArray(new NumberRange[nrs.size()]));
         input.parameter(CoverageToVectorDescriptor.BAND.getName().getCode()).setValue(band);
         process.setInput(input);
         process.run();

@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.display2d.container.statefull;
 
-import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -40,13 +39,14 @@ import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
@@ -69,6 +69,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
     //List of attributs currently in the cached features
     //the cache must be cleared when the content of the style attributs needed changes
     private Name[] cachedAttributs = null;
+    private double[] oldRes = null;
     
     public StatefullFeatureLayerJ2D(ReferencedCanvas2D canvas, FeatureMapLayer layer){
         super(canvas, layer);
@@ -91,19 +92,18 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
             sourceCRS = objectiveCRS;
         }
 
+        final double[] newRes = context.getResolution(dataCRS);
+        if(oldRes == null || newRes[0]!= oldRes[0] || newRes[1] != oldRes[1]){
+            //resolution change, so has features
+            cache.clear();
+        }
+
         if(objectiveCRS != lastObjectiveCRS){
             //change the aff value to force it's refresh
             params.objectiveToDisplay.setTransform(2, 0, 0, 2, 0, 0);
             lastObjectiveCRS = objectiveCRS;
             objectiveCleared = true;
             
-            try {
-                params.dataToObjective = context.getMathTransform(sourceCRS, objectiveCRS);
-                params.dataToObjectiveTransformer.setMathTransform(params.dataToObjective);
-            } catch (FactoryException ex) {
-                getLogger().log(Level.WARNING, null, ex);
-            }
-
             for(StatefullProjectedFeature gra : cache.values()){
                 gra.clearObjectiveCache();
             }
@@ -111,16 +111,12 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         }
 
         //clear display cache if needed ----------------------------------------
-        final AffineTransform objtoDisp = context.getObjectiveToDisplay();
+        final AffineTransform2D objtoDisp = context.getObjectiveToDisplay();
 
         if(!objtoDisp.equals(params.objectiveToDisplay)){
             params.objectiveToDisplay.setTransform(objtoDisp);
-            params.updateGeneralizationFactor(context, sourceCRS);
-            try {
-                params.dataToDisplayTransformer.setMathTransform(context.getMathTransform(sourceCRS, context.getDisplayCRS()));
-            } catch (FactoryException ex) {
-                getLogger().log(Level.WARNING, "Fail to calculate math transform",ex);
-            }
+            ((CoordinateSequenceMathTransformer)params.objToDisplayTransformer.getCSTransformer())
+                    .setTransform(objtoDisp);
 
             if(!objectiveCleared){
                 //no need to clear the display cache if the objective clear has already been called

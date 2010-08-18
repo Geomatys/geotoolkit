@@ -85,6 +85,17 @@ public final class JTSPointIterator extends JTSGeometryIterator<Point> {
      * {@inheritDoc }
      */
     @Override
+    public int currentSegment(float[] coords) {
+        coords[0] = (float)geometry.getX();
+        coords[1] = (float)geometry.getY();
+        transform.transform(coords, 0, coords, 0, 1);
+        return SEG_MOVETO;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void reset() {
         done = false;
     }

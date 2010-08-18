@@ -105,6 +105,29 @@ public final  class JTSPolygonIterator extends JTSGeometryIterator<Polygon> {
             return SEG_LINETO;
         }
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int currentSegment(float[] coords) {
+        // first make sure we're not at the last element, this prevents us from exceptions
+        // in the case where coords.size() == 0
+        if (currentCoord == this.coords.size()) {
+            return SEG_CLOSE;
+        } else if (currentCoord == 0) {
+            coords[0] = (float)this.coords.getX(0);
+            coords[1] = (float)this.coords.getY(0);
+            transform.transform(coords, 0, coords, 0, 1);
+            return SEG_MOVETO;
+        } else {
+            coords[0] = (float)this.coords.getX(currentCoord);
+            coords[1] = (float)this.coords.getY(currentCoord);
+            transform.transform(coords, 0, coords, 0, 1);
+            return SEG_LINETO;
+        }
+    }
+
     
     /**
      * {@inheritDoc }

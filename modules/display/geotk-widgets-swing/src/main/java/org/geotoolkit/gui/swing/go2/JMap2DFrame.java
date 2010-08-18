@@ -118,10 +118,8 @@ public class JMap2DFrame extends javax.swing.JFrame {
                         
         guiMap = new JMap2D(true);
         guiMap.getContainer().setContext(context);
-        guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_MULTI_THREAD, GO2Hints.MULTI_THREAD_OFF);
-        guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_GENERALIZE, GO2Hints.GENERALIZE_OFF);
-        guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER, GO2Hints.SYMBOL_RENDERING_PRIME);
         guiMap.getCanvas().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_GENERALIZE, GO2Hints.GENERALIZE_ON);
         guiMap.getCanvas().getController().setAutoRepaint(true);
 
         for(TreePopupItem item : guiContextTree.controls()){
@@ -410,11 +408,11 @@ private void jButton3ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jButton
     }
 
     public static void show(final MapContext context){
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception ex) {
-            Logger.getLogger(JMap2DFrame.class.getName()).log(Level.WARNING, null, ex);
-        }
+//        try {
+//            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//        } catch (Exception ex) {
+//            Logger.getLogger(JMap2DFrame.class.getName()).log(Level.WARNING, null, ex);
+//        }
 
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
