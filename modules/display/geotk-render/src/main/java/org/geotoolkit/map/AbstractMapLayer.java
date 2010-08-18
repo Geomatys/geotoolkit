@@ -49,7 +49,7 @@ public abstract class AbstractMapLayer implements MapLayer {
     
     private final List<GraphicBuilder> builders = new CheckedArrayList<GraphicBuilder>(GraphicBuilder.class);
     
-    private final EventListenerList listeners = new EventListenerList();
+    //private final EventListenerList listeners = new EventListenerList();
 
     private final StyleListener styleListener = new StyleListener() {
 
@@ -179,18 +179,19 @@ public abstract class AbstractMapLayer implements MapLayer {
                 return;
             }
 
-            synchronized(listeners){
-                if(listeners.getListenerCount() > 0){
-
-                    if(oldStyle != null){
-                        oldStyle.removeListener(styleListener);
-                    }
-                    this.style = style;
-                    this.style.addListener(styleListener);
-                }else{
-                    this.style = style;
-                }
-            }
+            this.style = style;
+//            synchronized(listeners){
+//                if(listeners.getListenerCount() > 0){
+//
+//                    if(oldStyle != null){
+//                        oldStyle.removeListener(styleListener);
+//                    }
+//                    this.style = style;
+//                    this.style.addListener(styleListener);
+//                }else{
+//                    this.style = style;
+//                }
+//            }
 
         }
         firePropertyChange(STYLE_PROPERTY, oldStyle, this.style);
@@ -372,44 +373,44 @@ public abstract class AbstractMapLayer implements MapLayer {
     protected void firePropertyChange(String propertyName, Object oldValue, Object newValue){
         //TODO make fire property change thread safe, preserve fire order
         
-        final PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);
-        final LayerListener[] lists = listeners.getListeners(LayerListener.class);
-        
-        for(LayerListener listener : lists){
-            listener.propertyChange(event);
-        }
+//        final PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);
+//        final LayerListener[] lists = listeners.getListeners(LayerListener.class);
+//
+//        for(LayerListener listener : lists){
+//            listener.propertyChange(event);
+//        }
     }
     
     protected void fireStyleChange(EventObject event){
         //TODO make fire property change thread safe, preserve fire order
         
-        final LayerListener[] lists = listeners.getListeners(LayerListener.class);
-        
-        for(LayerListener listener : lists){
-            listener.styleChange(this, event);
-        }
+//        final LayerListener[] lists = listeners.getListeners(LayerListener.class);
+//
+//        for(LayerListener listener : lists){
+//            listener.styleChange(this, event);
+//        }
     }
     
     @Override
     public void addLayerListener(LayerListener listener){
 
-        synchronized(listeners){
-            if(listeners.getListenerCount() == 0){
-                style.addListener(styleListener);
-            }
-            listeners.add(LayerListener.class, listener);
-        }
+//        synchronized(listeners){
+//            if(listeners.getListenerCount() == 0){
+//                style.addListener(styleListener);
+//            }
+//            listeners.add(LayerListener.class, listener);
+//        }
     }
 
     @Override
     public void removeLayerListener(LayerListener listener){
 
-        synchronized(listeners){
-            listeners.remove(LayerListener.class, listener);
-            if(listeners.getListenerCount() == 0){
-                style.removeListener(styleListener);
-            }
-        }
+//        synchronized(listeners){
+//            listeners.remove(LayerListener.class, listener);
+//            if(listeners.getListenerCount() == 0){
+//                style.removeListener(styleListener);
+//            }
+//        }
     }
     
     @Override

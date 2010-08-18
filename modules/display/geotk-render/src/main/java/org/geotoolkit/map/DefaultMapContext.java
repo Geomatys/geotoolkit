@@ -179,7 +179,7 @@ final class DefaultMapContext implements MapContext {
 
     private final Map<String,Object> parameters = new HashMap<String,Object>();
 
-    private final EventListenerList listeners = new EventListenerList();
+//    private final EventListenerList listeners = new EventListenerList();
 
     private String name = null;
 
@@ -358,36 +358,36 @@ final class DefaultMapContext implements MapContext {
     protected void firePropertyChange(String propertyName, Object oldValue, Object newValue){
         //TODO make fire property change thread safe, preserve fire order
 
-        final PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);
-        final ContextListener[] lists = listeners.getListeners(ContextListener.class);
-
-        for(ContextListener listener : lists){
-            listener.propertyChange(event);
-        }
+//        final PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);
+//        final ContextListener[] lists = listeners.getListeners(ContextListener.class);
+//
+//        for(ContextListener listener : lists){
+//            listener.propertyChange(event);
+//        }
 
     }
 
     protected void fireLayerChange(int type, MapLayer layer, NumberRange<Integer> range, EventObject orig) {
         //TODO make fire property change thread safe, preserve fire order
 
-        final CollectionChangeEvent<MapLayer> event = new CollectionChangeEvent<MapLayer>(this, layer, type, range, orig);
-        final ContextListener[] lists = listeners.getListeners(ContextListener.class);
-
-        for (ContextListener listener : lists) {
-            listener.layerChange(event);
-        }
+//        final CollectionChangeEvent<MapLayer> event = new CollectionChangeEvent<MapLayer>(this, layer, type, range, orig);
+//        final ContextListener[] lists = listeners.getListeners(ContextListener.class);
+//
+//        for (ContextListener listener : lists) {
+//            listener.layerChange(event);
+//        }
 
     }
 
     protected void fireLayerChange(int type, Collection<? extends MapLayer> layer, NumberRange<Integer> range){
         //TODO make fire property change thread safe, preserve fire order
 
-        final CollectionChangeEvent<MapLayer> event = new CollectionChangeEvent<MapLayer>(this,layer,type,range, null);
-        final ContextListener[] lists = listeners.getListeners(ContextListener.class);
-
-        for(ContextListener listener : lists){
-            listener.layerChange(event);
-        }
+//        final CollectionChangeEvent<MapLayer> event = new CollectionChangeEvent<MapLayer>(this,layer,type,range, null);
+//        final ContextListener[] lists = listeners.getListeners(ContextListener.class);
+//
+//        for(ContextListener listener : lists){
+//            listener.layerChange(event);
+//        }
 
     }
 
@@ -396,7 +396,7 @@ final class DefaultMapContext implements MapContext {
      */
     @Override
     public void addContextListener(ContextListener listener){
-        listeners.add(ContextListener.class, listener);
+//        listeners.add(ContextListener.class, listener);
     }
 
     /**
@@ -404,7 +404,7 @@ final class DefaultMapContext implements MapContext {
      */
     @Override
     public void removeContextListener(ContextListener listener){
-        listeners.remove(ContextListener.class, listener);
+//        listeners.remove(ContextListener.class, listener);
     }
 
     /**

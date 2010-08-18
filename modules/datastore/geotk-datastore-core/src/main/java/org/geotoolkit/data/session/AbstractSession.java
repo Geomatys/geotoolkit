@@ -52,7 +52,7 @@ public abstract class AbstractSession implements Session, StorageListener{
         
         //register a wek listener, to memory leak since we don't know when to remove the listener.
         //@todo should we have a dispose method on the session ? I dont think so
-        this.store.addStorageListener(new WeakStorageListener(store, this));
+        //this.store.addStorageListener(new WeakStorageListener(store, this));
     }
 
     /**

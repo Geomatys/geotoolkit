@@ -65,7 +65,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
         for (Session s : sessions) {
             //register a weak listener, to memory leak since we don't know when to remove the listener.
             //@todo should we have a dispose method on the session ? I dont think so
-            s.addStorageListener(new WeakStorageListener(s, this));
+            //s.addStorageListener(new WeakStorageListener(s, this));
         }
 
     }
