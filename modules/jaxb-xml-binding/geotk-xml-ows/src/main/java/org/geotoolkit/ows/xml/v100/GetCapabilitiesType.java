@@ -206,11 +206,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
      */
     @Override
     public String getService() {
-        if (service == null) {
-            return "CSW";
-        } else {
-            return service;
-        }
+        return service;
     }
 
     public void setService(String service) {
