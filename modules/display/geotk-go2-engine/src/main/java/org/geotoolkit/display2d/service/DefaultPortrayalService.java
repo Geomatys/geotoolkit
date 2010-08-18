@@ -713,7 +713,7 @@ public class DefaultPortrayalService implements PortrayalService{
         }
 
         final Boolean progress = outputDef.getProgressive();
-        if(progress != null){
+        if(progress != null && param.canWriteProgressive()){
             if(progress){
                 param.setProgressiveMode(ImageWriteParam.MODE_DEFAULT);
             }else{
