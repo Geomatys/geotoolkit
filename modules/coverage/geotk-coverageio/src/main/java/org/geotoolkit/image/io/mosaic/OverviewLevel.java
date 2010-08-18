@@ -44,6 +44,12 @@ import org.geotoolkit.resources.Errors;
  * <b>Note:</b> This class as a {@link #compareTo} method which is inconsistent with
  * {@link #equals}.
  *
+ * {@section Thread-safety}
+ * The methods in this class as grouped in two categories: constructor methods and query methods.
+ * Constructor methods should be invoked in only one thread, and {@link #createLinkedList} shall
+ * be the last method invoked. Query methods are safe for invocation in any thread provided that
+ * {@code OverviewLevel} is not modified anymore after construction.
+ *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.15
  *
@@ -138,6 +144,16 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
      */
     private IntegerList patternUsed;
 
+    //
+    // Synchronization policy
+    // ----------------------
+    // All above fields shall be set by constructor methods and are not allowed to change once
+    // the construction is completed. Access to those fields are generally not synchronized.
+    //
+    // All fields below this point are used by query methods, mostly for caching purpose.
+    // Access to those fields must be synchronized.
+    //
+
     /**
      * A sample tile which can be used as a pattern. This is just one amont many possible tiles.
      */
@@ -212,6 +228,10 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
      * Adds a tile to the list of tiles in this level, provided that they are aligned on the same
      * grid.
      *
+     * {@section Thread safety}
+     * This method is <strong>not</strong> synchronized because it is invoked only by
+     * {@link GridTileManager} constructor soon after {@code OverviewLevel} creation.
+     *
      * @param  tile The tile to add.
      * @param  subsampling The tile subsampling, provided as an explicit argument only
      *         in order to avoid creating a temporary {@link Dimension} object again.
@@ -245,12 +265,18 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
      * to a finer overview level. This method also looks for a pattern in the tile name (in this
      * overview level only) in order to reduce the memory consumption.
      *
+     * {@section Synchronization}
+     * This method is synchronized as a matter of principle, because it uses the transient
+     * {@link #formatter} field. This is also the last method invoked during the construction
+     * by {@link GridTileManager}. Consequently the synchronization provides a useful memory
+     * barrier.
+     *
      * @param ordinal The overview level of this {@code OverviewLevel}. 0 is finest subsampling.
      * @param finer A level with finer (smaller) subsampling value than this level, or {@code null}.
      * @throws MalformedURLException if an error occurred while creating the URL for the tile.
      * @throws IOException If an error occurred while reading a tile size.
      */
-    final void createLinkedList(final int ordinal, final OverviewLevel finer) throws IOException {
+    final synchronized void createLinkedList(final int ordinal, final OverviewLevel finer) throws IOException {
         assert (this.ordinal == 0) && (this.finer == null);
         this.ordinal = ordinal;
         this.finer   = finer;
@@ -407,6 +433,10 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
     /**
      * Removes the tile at the given index. Current implementation can remove only tiles
      * created from a pattern.
+     *
+     * {@section Thread safety}
+     * This method is <strong>not</strong> synchronized, because it is invoked
+     * only by {@link MosaicBuilder} soon after {@code OverviewLevel} creation.
      */
     final void removeTile(final int x, final int y) {
         final int i = getIndex(x, y);
@@ -439,7 +469,8 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
     /////////////////////////////////////////////////////////////////////////////////
     ////                                                                         ////
     ////    End of construction methods. The remainding is for querying only.    ////
-    ////    None of the methods below should modify the OverviewLevel state.     ////
+    ////    None of the methods below should modify the OverviewLevel state,     ////
+    ////    except for transient fields.                                         ////
     ////                                                                         ////
     /////////////////////////////////////////////////////////////////////////////////
 
@@ -602,10 +633,10 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
 
     /**
      * Returns a sample tile. The tile may be {@linkplain Tile#getLocation located} anywhere,
-     * and the {@linkplain Tile#getInput tile input} may not be usuable (it may be only a
+     * and the {@linkplain Tile#getInput tile input} may not be usable (it may be only a
      * pattern for creating input on the fly).
      */
-    public Tile getSampleTile() {
+    public synchronized Tile getSampleTile() {
         if (sample == null) {
             if (patterns != null) {
                 /*
@@ -676,15 +707,18 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
         }
         final Tile tile = patterns[p];
         final String pattern = tile.getInput().toString();
-        if (formatter == null) {
-            formatter = new FilenameFormatter();
-            lastPattern = -1;
+        final String filename;
+        synchronized (this) {
+            if (formatter == null) {
+                formatter = new FilenameFormatter();
+                lastPattern = -1;
+            }
+            if (p != lastPattern) {
+                formatter.applyPattern(pattern.substring(pattern.indexOf(':') + 1));
+                lastPattern = p;
+            }
+            filename = formatter.generateFilename(ordinal, x, y);
         }
-        if (p != lastPattern) {
-            formatter.applyPattern(pattern.substring(pattern.indexOf(':') + 1));
-            lastPattern = p;
-        }
-        final String filename = formatter.generateFilename(ordinal, x, y);
         /*
          * We now have the filename to be given to the tile. Creates the appropriate object
          * (File, URL, URI or String) from it.
