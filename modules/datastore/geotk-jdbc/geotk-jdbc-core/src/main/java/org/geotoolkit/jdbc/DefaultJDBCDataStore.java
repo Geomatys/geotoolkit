@@ -531,6 +531,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         final QueryBuilder qb = new QueryBuilder();
         qb.setTypeName(new DefaultName("remaining"));
         qb.setHints(query.getHints());
+        qb.setResolution(query.getResolution());
         return handleRemaining(reader, qb.buildQuery());
     }
 
@@ -783,7 +784,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         final CoordinateReferenceSystem reproject = query.getCoordinateSystemReproject();
         if(reproject != null && !CRS.equalsIgnoreMetadata(reproject,type.getCoordinateReferenceSystem())){
             try {
-                reader = GenericReprojectFeatureIterator.wrap(reader, reproject);
+                reader = GenericReprojectFeatureIterator.wrap(reader, reproject,query.getHints());
             } catch (FactoryException ex) {
                 throw new DataStoreException(ex);
             } catch (SchemaException ex) {

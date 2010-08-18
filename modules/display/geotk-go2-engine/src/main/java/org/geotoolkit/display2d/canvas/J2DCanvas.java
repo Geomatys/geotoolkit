@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.geotoolkit.display.canvas.CanvasController2D;
+import org.geotoolkit.display.canvas.DefaultController2D;
 import org.geotoolkit.display.canvas.GraphicVisitor;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.RenderingContext;
@@ -60,6 +62,9 @@ import org.opengis.referencing.operation.TransformException;
  */
 public abstract class J2DCanvas extends ReferencedCanvas2D{
 
+    protected final CanvasController2D controller = new DefaultController2D(this);
+    protected final DefaultRenderingContext2D context2D = new DefaultRenderingContext2D(this);
+
     protected BackgroundPainter painter = null;
     
     protected J2DCanvas(CoordinateReferenceSystem crs,Hints hints){
@@ -72,6 +77,22 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
 
     public BackgroundPainter getBackgroundPainter() {
         return painter;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public CanvasController2D getController() {
+        return controller;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    protected RenderingContext getRenderingContext() {
+        return context2D;
     }
 
     /**

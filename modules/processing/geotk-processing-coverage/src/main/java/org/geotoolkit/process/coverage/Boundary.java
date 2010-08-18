@@ -335,9 +335,9 @@ public class Boundary {
         for(LinkedList<Coordinate> coords : floatings){
             sb.append("  \t{");
             for(Coordinate c : coords){
-                sb.append("["+Double.valueOf(c.x).intValue()+";"+Double.valueOf(c.y).intValue()+"]");
+                sb.append('[').append((int)c.x).append(';').append((int)c.y).append(']');
             }
-            sb.append("}");
+            sb.append('}');
         }
 
         return sb.toString();

@@ -136,13 +136,10 @@ public class DefaultGraphicStroke extends DefaultGraphic implements GraphicStrok
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("GraphicStroke : ");
-        builder.append(super.toString());
-        builder.append(" InitialGap=");
-        builder.append(initial.toString());
-        builder.append(" Gap=");
-        builder.append(gap.toString());
+        final StringBuilder builder = new StringBuilder();
+        builder.append("GraphicStroke : ").append(super.toString());
+        builder.append(" InitialGap=").append(initial);
+        builder.append(" Gap=").append(gap);
         return builder.toString();
     }
 }

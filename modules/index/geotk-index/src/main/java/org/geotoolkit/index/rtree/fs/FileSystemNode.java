@@ -30,6 +30,7 @@ import org.geotoolkit.index.rtree.Entry;
 import org.geotoolkit.index.rtree.Node;
 
 import com.vividsolutions.jts.geom.Envelope;
+import org.geotoolkit.index.DefaultData;
 
 /**
  * @author Tommaso Nolli
@@ -140,7 +141,7 @@ public class FileSystemNode extends Node {
      */
     private Data loadData(ByteBuffer buf, DataDefinition def)
             throws TreeException {
-        Data data = new Data(def);
+        Data data = new DefaultData(def);
 
         Field field = null;
         for (int i = 0; i < def.getFieldsCount(); i++) {

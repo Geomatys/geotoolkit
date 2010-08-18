@@ -164,19 +164,13 @@ public class DefaultLinePlacement implements LinePlacement{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("[LinePlacement : Offset=");
-        builder.append(offset.toString());
-        builder.append(" InitialGap=");
-        builder.append(initial.toString());
-        builder.append(" Gap=");
-        builder.append(gap.toString());
-        builder.append(" Repeated=");
-        builder.append(repeated);
-        builder.append("Aligned=");
-        builder.append(aligned);
-        builder.append(" Generalize=");
-        builder.append(generalize);
+        final StringBuilder builder = new StringBuilder();
+        builder.append("[LinePlacement : Offset=").append(offset);
+        builder.append(" InitialGap=").append(initial);
+        builder.append(" Gap=").append(gap);
+        builder.append(" Repeated=").append(repeated);
+        builder.append(" Aligned=").append(aligned);
+        builder.append(" Generalize=").append(generalize);
         builder.append(']');
         return builder.toString();
     }

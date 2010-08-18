@@ -122,13 +122,13 @@ public class DefaultPointPlacement implements PointPlacement{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[PointPlacement : Disp=");
-        builder.append(disp.toString());
+        builder.append(disp);
         builder.append(" Anchor=");
-        builder.append(anchor.toString());
+        builder.append(anchor);
         builder.append(" Rotation=");
-        builder.append(rotation.toString());
+        builder.append(rotation);
         builder.append(']');
         return builder.toString();
     }

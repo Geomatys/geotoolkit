@@ -35,6 +35,7 @@ import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
@@ -59,13 +60,13 @@ import javax.media.jai.JAI;
 import javax.media.jai.OperationDescriptor;
 import javax.media.jai.OperationRegistry;
 import javax.media.jai.registry.RIFRegistry;
+
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.processing.Operations;
-
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.collection.Cache;
@@ -93,18 +94,20 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
+import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.renderer.style.WellKnownMarkFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
-import org.opengis.coverage.grid.GridCoverage;
 
+import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
@@ -122,8 +125,10 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Fill;
 import org.opengis.style.Mark;
+import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.Style;
 import org.opengis.style.Rule;
+import org.opengis.style.SelectedChannelType;
 import org.opengis.style.SemanticType;
 import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
@@ -142,6 +147,14 @@ public final class GO2Utilities {
 
     private static final Map<Class<? extends CachedSymbolizer>,SymbolizerRendererService> RENDERERS =
             new HashMap<Class<? extends CachedSymbolizer>, SymbolizerRendererService>();
+
+    /**
+     * Used in SLD/SE to calculate scale for degree CRSs.
+     */
+    private static final double SE_DEGREE_TO_METERS = 6378137.0 * 2.0 * Math.PI / 360;
+    private static final double DEFAULT_DPI = 90; // ~ 0.28 * 0.28mm
+    private static final double PIXEL_SIZE = 0.0254;
+    private static final double SE_EPSILON = 1e-6;
 
     public static final MutableStyleFactory STYLE_FACTORY;
     public static final FilterFactory2 FILTER_FACTORY;
@@ -832,6 +845,28 @@ public final class GO2Utilities {
     // information about styles ////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
+    public static double computeSEScale(RenderingContext2D context) {
+        final Envelope envelope = context.getCanvasObjectiveBounds2D();
+        final CoordinateReferenceSystem objCRS = envelope.getCoordinateReferenceSystem();
+        final AffineTransform objToDisp = context.getObjectiveToDisplay();
+        final int width = context.getCanvasDisplayBounds().width;
+
+        if (XAffineTransform.getRotation(objToDisp) != 0.0) {
+            final double scale = XAffineTransform.getScale(objToDisp);
+            if(objCRS instanceof GeographicCRS) {
+                return (SE_DEGREE_TO_METERS*DEFAULT_DPI) / (scale*PIXEL_SIZE);
+            } else {
+                return DEFAULT_DPI / (scale *PIXEL_SIZE);
+            }
+        }else{
+            if(objCRS instanceof GeographicCRS) {
+                return (envelope.getSpan(0) * SE_DEGREE_TO_METERS) / (width / DEFAULT_DPI*PIXEL_SIZE);
+            } else {
+                return envelope.getSpan(0) / (width / DEFAULT_DPI*PIXEL_SIZE);
+            }
+        }
+    }
+
     public static float[] validDashes(float[] dashes) {
         if (dashes == null || dashes.length == 0) {
             return null;
@@ -863,6 +898,23 @@ public final class GO2Utilities {
                     "This object is not a geometry, maybe you ask the wrong" +
                     " attribut or the feature doesnt match it's feature type définition.\n"+
                     feature);
+        }
+    }
+
+    public static Class getGeometryClass(final FeatureType featuretype, final String geomName){
+        final PropertyDescriptor prop;
+        if (geomName != null && !geomName.trim().isEmpty()) {
+            prop = featuretype.getDescriptor(geomName);
+        }else if(featuretype != null){
+            prop = featuretype.getGeometryDescriptor();
+        }else{
+            prop = null;
+        }
+
+        if(prop != null){
+            return prop.getType().getBinding();
+        }else{
+            return Geometry.class;
         }
     }
 
@@ -958,35 +1010,6 @@ public final class GO2Utilities {
         return atts;
     }
 
-    public static List<Rule> getValidRules(final Style style, final double scale, final Name typeName){
-        final List<Rule> validRules = new ArrayList<Rule>();
-
-        final List<? extends FeatureTypeStyle> ftss = style.featureTypeStyles();
-        for(final FeatureTypeStyle fts : ftss){
-
-            final Id ids = fts.getFeatureInstanceIDs();
-            final Set<Name> names = fts.featureTypeNames();
-            final Collection<SemanticType> semantics = fts.semanticTypeIdentifiers();
-
-            //TODO filter correctly possibilities
-            //test if the featutetype is valid
-            //we move to next feature  type if not valid
-            if (false) continue;
-            //if (typeName != null && !(typeName.equalsIgnoreCase(fts.getFeatureTypeName())) ) continue;
-
-
-            final List<? extends Rule> rules = fts.rules();
-            for(final Rule rule : rules){
-                //test if the scale is valid for this rule
-                if(rule.getMinScaleDenominator() <= scale && rule.getMaxScaleDenominator() > scale){
-                    validRules.add(rule);
-                }
-            }
-        }
-
-        return validRules;
-    }
-
     public static List<Rule> getValidRules(final Style style, final double scale, FeatureType type) {
         final List<Rule> validRules = new ArrayList<Rule>();
 
@@ -1046,7 +1069,7 @@ public final class GO2Utilities {
             final List<? extends Rule> rules = fts.rules();
             for(final Rule rule : rules){
                 //test if the scale is valid for this rule
-                if(rule.getMinScaleDenominator() <= scale && rule.getMaxScaleDenominator() > scale){
+                if(rule.getMinScaleDenominator()-SE_EPSILON <= scale && rule.getMaxScaleDenominator()+SE_EPSILON > scale){
                     validRules.add(rule);
                 }
             }
@@ -1114,7 +1137,7 @@ public final class GO2Utilities {
             final List<? extends Rule> rules = fts.rules();
             for(final Rule rule : rules){
                 //test if the scale is valid for this rule
-                if(rule.getMinScaleDenominator() <= scale && rule.getMaxScaleDenominator() > scale){
+                if(rule.getMinScaleDenominator()-SE_EPSILON <= scale && rule.getMaxScaleDenominator()+SE_EPSILON > scale){
                     validRules.add(getCached(rule));
                 }
             }
@@ -1143,13 +1166,53 @@ public final class GO2Utilities {
             final List<? extends Rule> rules = fts.rules();
             for(final Rule rule : rules){
                 //test if the scale is valid for this rule
-                if(rule.getMinScaleDenominator() <= scale && rule.getMaxScaleDenominator() > scale){
+                if(rule.getMinScaleDenominator()-SE_EPSILON <= scale && rule.getMaxScaleDenominator()+SE_EPSILON > scale){
                     validRules.add(getCached(rule));
                 }
             }
         }
 
         return validRules.toArray(new CachedRule[validRules.size()]);
+    }
+
+    /**
+     * Return true if this raster symbolizer define the original data style.
+     * That means no rendering operations need to be applied on the coverage
+     * before painting.
+     */
+    public static boolean isDefaultRasterSymbolizer(final Symbolizer symbolizer){
+        if(!(symbolizer instanceof RasterSymbolizer)){
+            return false;
+        }
+        final RasterSymbolizer rs = (RasterSymbolizer)symbolizer;
+
+        if(rs.getShadedRelief() != null &&
+           rs.getShadedRelief().getReliefFactor().evaluate(null, Float.class) != 0){
+            return false;
+        }
+        if(rs.getOpacity() != null && rs.getOpacity().evaluate(null, Float.class) != 1f){
+            return false;
+        }
+        if(rs.getImageOutline() != null){
+            return false;
+        }
+        if(rs.getContrastEnhancement() != null &&
+           rs.getContrastEnhancement().getGammaValue().evaluate(null, Float.class) != 1f){
+           return false;
+        }
+        if(rs.getColorMap() != null && rs.getColorMap().getFunction() != null){
+            return false;
+        }
+        final SelectedChannelType[] bands = (rs.getChannelSelection()==null) ? null
+                                            : rs.getChannelSelection().getRGBChannels();
+        if(bands != null){
+            if(bands.length != 3){
+                return false;
+            }
+            //todo should check each band
+        }
+
+        return true;
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -1184,6 +1247,31 @@ public final class GO2Utilities {
 
     public static void clearCache(){
         CACHE.clear();
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // OTHER UTILS /////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Merge colors, the first color is placed at the back.
+     * The first color is expected to be opaque.
+     *
+     * @return Opaque color resulting from the merge
+     * @throws IllegalArgumentException if first color is not opaque
+     */
+    public static Color mergeColors(Color c1, Color c2) throws IllegalArgumentException{
+
+        if(c1.getAlpha() != 255){
+            throw new IllegalArgumentException("First color must be opaque");
+        }
+
+        final float alpha = (float)c2.getAlpha()/255f;
+        final int r = Math.min(c1.getRed(), c2.getRed())        + (int) (Math.abs(c1.getRed()-c2.getRed())*alpha);
+        final int g = Math.min(c1.getGreen(), c2.getGreen())    + (int) (Math.abs(c1.getGreen()-c2.getGreen())*alpha);
+        final int b = Math.min(c1.getBlue(), c2.getBlue())      + (int) (Math.abs(c1.getBlue()-c2.getBlue())*alpha);
+
+        return new Color(r, g, b);
     }
 
 }

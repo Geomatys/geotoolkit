@@ -229,7 +229,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
         if(e != null && !(e instanceof PropertyName)){
             throw new IllegalArgumentException("Expression expected to be a PropertyName, instead found a " + e.getClass());
         }
-        return new DefaultBBox((PropertyName)e, new DefaultLiteral<Envelope>(bounds));
+        return new DefaultBBox((PropertyName)e, new DefaultLiteral<BoundingBox>(bounds));
     }
 
     /**

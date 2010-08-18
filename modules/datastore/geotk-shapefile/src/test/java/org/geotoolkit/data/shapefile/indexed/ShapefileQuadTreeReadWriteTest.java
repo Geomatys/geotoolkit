@@ -46,6 +46,9 @@ import org.opengis.filter.identity.FeatureId;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import java.util.ArrayList;
+import java.util.Collection;
+import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.session.Session;
 import org.opengis.feature.type.Name;
 
@@ -165,7 +168,13 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
 
         FeatureCollection<SimpleFeature> two = s.createSession(true).getFeatureCollection(QueryBuilder.all(typeName));
 
-        compare(one.iterator(), two.iterator());
+        //copy values, order is not tested here.
+        Collection<SimpleFeature> cone = new ArrayList<SimpleFeature>();
+        Collection<SimpleFeature> ctwo = new ArrayList<SimpleFeature>();
+        DataUtilities.fill(one, cone);
+        DataUtilities.fill(two, ctwo);
+        one.containsAll(two);
+        two.containsAll(one);
     }
 
     static void compare( FeatureIterator<SimpleFeature> fs1, FeatureIterator<SimpleFeature> fs2 ) throws Exception {

@@ -106,12 +106,12 @@ class DefaultCoverageConstraint implements CoverageConstraint{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[coverageConstraint : Name=");
-        builder.append(coverageName.toString());
+        builder.append(coverageName);
         if(extent != null){
             builder.append(" Extent=");
-            builder.append(extent.toString());
+            builder.append(extent);
         }
         builder.append(']');
         return builder.toString();

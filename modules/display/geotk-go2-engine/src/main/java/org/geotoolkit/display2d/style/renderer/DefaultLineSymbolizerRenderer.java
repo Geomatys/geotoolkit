@@ -112,11 +112,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
             }
         }
 
-        final float margin = symbol.getMargin(feature, coeff) /2f;
-        final Rectangle2D bounds = j2dShape.getBounds2D();
-        final int x = (int) (bounds.getMinX() - margin);
-        final int y = (int) (bounds.getMinY() - margin);
-
+        //handle offset
         final float offset = symbol.getOffset(feature, coeff);
         if(offset != 0){
             g2d.translate(offset, 0);
@@ -126,7 +122,17 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
         if(cachedStroke instanceof CachedStrokeSimple){
             final CachedStrokeSimple cs = (CachedStrokeSimple)cachedStroke;
             g2d.setComposite(cs.getJ2DComposite(feature));
-            g2d.setPaint(cs.getJ2DPaint(feature, x, y, coeff, hints));
+
+            if(cs.isMosaicPaint()){
+                //we need to find the top left bounds of the geometry
+                final float margin = symbol.getMargin(feature, coeff) /2f;
+                final Rectangle2D bounds = j2dShape.getBounds2D();
+                final int x = (int) (bounds.getMinX() - margin);
+                final int y = (int) (bounds.getMinY() - margin);
+                g2d.setPaint(cs.getJ2DPaint(feature, x, y, coeff, hints));
+            }else{
+                g2d.setPaint(cs.getJ2DPaint(feature, 0, 0, coeff, hints));
+            }
             g2d.setStroke(cs.getJ2DStroke(feature,coeff));
             g2d.draw(j2dShape);
         }else if(cachedStroke instanceof CachedStrokeGraphic){

@@ -66,11 +66,9 @@ public class PolygonLazySearchCollectionTest extends AbstractTestCaseSupport {
     }
 
     public void testGetOneFeatures() throws Exception {
-        JTSEnvelope2D env = new JTSEnvelope2D(-70, -68.2, 44.5, 45.7,
-                crs);
+        JTSEnvelope2D env = new JTSEnvelope2D(-70, -68.2, 44.5, 45.7,crs);
         LazySearchCollection collection = new LazySearchCollection(tree, env);
-        assertEquals(10, collection.size());
-
+        assertEquals(22, collection.size());
     }
 
     public void testGetNoFeatures() throws Exception {

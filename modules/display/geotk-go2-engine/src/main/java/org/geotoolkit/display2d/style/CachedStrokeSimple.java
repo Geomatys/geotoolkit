@@ -294,6 +294,11 @@ public class CachedStrokeSimple extends CachedStroke{
         return cachedComposite;
     }
 
+    public boolean isMosaicPaint(){
+        evaluate();
+        return cachedGraphic != null;
+    }
+
     /**
      * Get the java2D Paint for the given feature.
      * 

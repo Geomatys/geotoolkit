@@ -34,16 +34,6 @@ import org.opengis.filter.PropertyIsLessThanOrEqualTo;
 import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.PropertyIsNotEqualTo;
 import org.opengis.filter.PropertyIsNull;
-import org.opengis.filter.expression.Add;
-import org.opengis.filter.expression.Divide;
-import org.opengis.filter.expression.Expression;
-import org.opengis.filter.expression.ExpressionVisitor;
-import org.opengis.filter.expression.Function;
-import org.opengis.filter.expression.Literal;
-import org.opengis.filter.expression.Multiply;
-import org.opengis.filter.expression.NilExpression;
-import org.opengis.filter.expression.PropertyName;
-import org.opengis.filter.expression.Subtract;
 import org.opengis.filter.spatial.BBOX;
 import org.opengis.filter.spatial.Beyond;
 import org.opengis.filter.spatial.Contains;
@@ -62,7 +52,7 @@ import org.opengis.filter.spatial.Within;
  * <p>
  * This class implements the full FilterVisitor interface and will visit every Filter member of a
  * Filter object. This class performs no actions and is not intended to be used directly, instead
- * extend it and overide the methods for the Filter type you are interested in. Remember to call the
+ * extend it and override the methods for the Filter type you are interested in. Remember to call the
  * super method if you want to ensure that the entire filter tree is still visited.
  *
  * <pre><code>
@@ -79,7 +69,7 @@ import org.opengis.filter.spatial.Within;
  * @author Jody
  * @module pending
  */
-public abstract class DefaultFilterVisitor implements FilterVisitor, ExpressionVisitor {
+public abstract class DefaultFilterVisitor extends DefaultExpressionVisitor implements FilterVisitor {
 
     public DefaultFilterVisitor() {
     }
@@ -283,56 +273,4 @@ public abstract class DefaultFilterVisitor implements FilterVisitor, ExpressionV
         return data;
     }
 
-    @Override
-    public Object visit(final NilExpression expression, final Object data) {
-        return data;
-    }
-
-    @Override
-    public Object visit(final Add expression, Object data) {
-        data = expression.getExpression1().accept(this, data);
-        data = expression.getExpression2().accept(this, data);
-        return data;
-    }
-
-    @Override
-    public Object visit(final Divide expression, Object data) {
-        data = expression.getExpression1().accept(this, data);
-        data = expression.getExpression2().accept(this, data);
-        return data;
-    }
-
-    @Override
-    public Object visit(final Function expression, Object data) {
-        if (expression.getParameters() != null) {
-            for (Expression parameter : expression.getParameters()) {
-                data = parameter.accept(this, data);
-            }
-        }
-        return data;
-    }
-
-    @Override
-    public Object visit(final Literal expression, final Object data) {
-        return data;
-    }
-
-    @Override
-    public Object visit(final Multiply expression, Object data) {
-        data = expression.getExpression1().accept(this, data);
-        data = expression.getExpression2().accept(this, data);
-        return data;
-    }
-
-    @Override
-    public Object visit(final PropertyName expression, final Object data) {
-        return data;
-    }
-
-    @Override
-    public Object visit(final Subtract expression, Object data) {
-        data = expression.getExpression1().accept(this, data);
-        data = expression.getExpression2().accept(this, data);
-        return data;
-    }
 }

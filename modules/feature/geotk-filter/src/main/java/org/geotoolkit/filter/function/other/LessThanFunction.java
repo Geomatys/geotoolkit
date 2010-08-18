@@ -48,6 +48,6 @@ public class LessThanFunction extends AbstractFunction {
                     "Filter Function problem for function lessThan argument #1 - expected type Object");
         }
 
-        return new Boolean(StaticGeometry.lessThan(arg0, arg1));
+        return StaticGeometry.lessThan(arg0, arg1);
     }
 }

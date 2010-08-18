@@ -39,6 +39,6 @@ public class BoundaryDimensionFunction extends AbstractFunction {
                     "Filter Function problem for function boundaryDimension argument #0 - expected type Geometry");
         }
 
-        return new Integer(StaticGeometry.boundaryDimension(arg0));
+        return StaticGeometry.boundaryDimension(arg0);
     }
 }

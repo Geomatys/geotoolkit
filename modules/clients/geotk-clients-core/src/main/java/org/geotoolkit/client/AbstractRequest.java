@@ -152,7 +152,9 @@ public abstract class AbstractRequest implements Request {
             return false;
         }
         try {
-            return getURL().equals(((Request) candidate).getURL());
+            //using equals on URL can block because it will try to resolve
+            //the domain name.
+            return getURL().toString().equals(((Request) candidate).getURL().toString());
         } catch (MalformedURLException ex) {
             return false;
         }

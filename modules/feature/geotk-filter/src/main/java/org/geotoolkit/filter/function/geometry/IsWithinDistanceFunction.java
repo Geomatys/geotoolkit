@@ -57,6 +57,6 @@ public class IsWithinDistanceFunction extends AbstractFunction {
                     "Filter Function problem for function isWithinDistance argument #2 - expected type double");
         }
 
-        return new Boolean(StaticGeometry.isWithinDistance(arg0, arg1, arg2));
+        return StaticGeometry.isWithinDistance(arg0, arg1, arg2);
     }
 }

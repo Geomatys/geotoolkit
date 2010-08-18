@@ -16,15 +16,15 @@
  */
 package org.geotoolkit.data.shapefile.shp;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import java.nio.ByteBuffer;
-
-import org.geotoolkit.geometry.jts.coordinatesequence.CSBuilder;
-import org.geotoolkit.geometry.jts.coordinatesequence.CSBuilderFactory;
 
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
+import java.nio.DoubleBuffer;
 
 import org.geotoolkit.storage.DataStoreException;
 
@@ -39,7 +39,6 @@ import org.geotoolkit.storage.DataStoreException;
 public class MultiLineHandler implements ShapeHandler {
 
     private final ShapeType shapeType;
-    private final CSBuilder BUILDER = CSBuilderFactory.getDefaultBuilder();
 
 
     /** Create a MultiLineHandler for ShapeType.ARC */
@@ -97,39 +96,39 @@ public class MultiLineHandler implements ShapeHandler {
 
     @Override
     public Object read(ByteBuffer buffer, ShapeType type) {
+
         if (type == ShapeType.NULL) {
             return createNull();
         }
         final int dimensions = (shapeType == ShapeType.ARCZ) ? 3 : 2;
-        // read bounding box (not needed)
+        // skip bounding box (not needed)
         buffer.position(buffer.position() + 4 * 8);
 
         final int numParts = buffer.getInt();
         final int numPoints = buffer.getInt(); // total number of points
 
+        //store each line string buffer start position
         final int[] partOffsets = new int[numParts];
-
-        // points = new Coordinate[numPoints];
         for (int i = 0; i < numParts; i++) {
             partOffsets[i] = buffer.getInt();
         }
-        // read the first two coordinates and start building the coordinate
-        // sequences
-        final CoordinateSequence[] lines = new CoordinateSequence[numParts];
-        int finish = 0;
-        int start = 0;
-        int length = 0;
-        boolean clonePoint = false;
-        for (int part = 0; part < numParts; part++) {
-            start = partOffsets[part];
 
+        // read the first two coordinates and start building the coordinate sequences
+        final Coordinate[][] lines = new Coordinate[numParts][0];
+        //use a double buffer to increase bulk reading
+        final DoubleBuffer dbuffer = buffer.asDoubleBuffer();
+        
+        for (int part = 0; part < numParts; part++) {
+
+            final int finish;
             if (part == (numParts - 1)) {
                 finish = numPoints;
             } else {
                 finish = partOffsets[part + 1];
             }
 
-            length = finish - start;
+            final boolean clonePoint;
+            int length = finish - partOffsets[part];
             if (length == 1) {
                 length = 2;
                 clonePoint = true;
@@ -137,35 +136,35 @@ public class MultiLineHandler implements ShapeHandler {
                 clonePoint = false;
             }
 
-            BUILDER.start(length, dimensions);
-            for (int i = 0; i < length; i++) {
-                BUILDER.setOrdinate(buffer.getDouble(), 0, i);
-                BUILDER.setOrdinate(buffer.getDouble(), 1, i);
+            final Coordinate[] coords = new Coordinate[length];
+            lines[part] = coords;
+
+            for(int i=0,n=coords.length; i<n; i++){
+                coords[i] = new Coordinate(dbuffer.get(), dbuffer.get());
             }
 
             if (clonePoint) {
-                BUILDER.setOrdinate(BUILDER.getOrdinate(0, 0), 0, 1);
-                BUILDER.setOrdinate(BUILDER.getOrdinate(1, 0), 1, 1);
+                coords[1].x= coords[0].x;
+                coords[1].y= coords[0].y;
             }
-
-            lines[part] = BUILDER.end();
         }
 
         // if we have another coordinate, read and add to the coordinate
         // sequences
         if (dimensions == 3) {
             // z min, max
-            buffer.position(buffer.position() + 2 * 8);
+            dbuffer.position(dbuffer.position() + 2);
             for (int part = 0; part < numParts; part++) {
-                start = partOffsets[part];
 
+                final int finish;
                 if (part == (numParts - 1)) {
                     finish = numPoints;
                 } else {
                     finish = partOffsets[part + 1];
                 }
 
-                length = finish - start;
+                final boolean clonePoint;
+                int length = finish - partOffsets[part];
                 if (length == 1) {
                     length = 2;
                     clonePoint = true;
@@ -173,17 +172,16 @@ public class MultiLineHandler implements ShapeHandler {
                     clonePoint = false;
                 }
 
-                for (int i = 0; i < length; i++) {
-                    BUILDER.setOrdinate(lines[part], buffer.getDouble(), 2, i);
+                for(Coordinate coord : lines[part]){
+                    coord.z = dbuffer.get();
                 }
-
             }
         }
 
         // Prepare line strings and return the multilinestring
         final LineString[] lineStrings = new LineString[numParts];
         for (int part = 0; part < numParts; part++) {
-            lineStrings[part] = GEOMETRY_FACTORY.createLineString(lines[part]);
+            lineStrings[part] = GEOMETRY_FACTORY.createLineString(new CoordinateArraySequence(lines[part]));
         }
 
         return GEOMETRY_FACTORY.createMultiLineString(lineStrings);

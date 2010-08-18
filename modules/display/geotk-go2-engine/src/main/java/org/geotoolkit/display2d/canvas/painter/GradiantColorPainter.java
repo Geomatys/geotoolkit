@@ -50,4 +50,10 @@ public class GradiantColorPainter implements BackgroundPainter{
 
     }
 
+    @Override
+    public boolean isOpaque() {
+        return COLOR_1.getAlpha() == 255
+            && COLOR_2.getAlpha() == 255;
+    }
+
 }

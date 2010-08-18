@@ -58,6 +58,7 @@ import org.opengis.style.TextSymbolizer;
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @Static
  */
 public final class StyleConstants {
 
@@ -383,5 +384,7 @@ public final class StyleConstants {
                 DEFAULT_DESCRIPTION);
         
     }
-    
+
+    private StyleConstants(){}
+
 }

@@ -27,4 +27,10 @@ public interface BackgroundPainter {
 
     void paint(RenderingContext2D context);
 
+    /**
+     *
+     * @return true is this painter will generate an opaque background.
+     */
+    boolean isOpaque();
+
 }

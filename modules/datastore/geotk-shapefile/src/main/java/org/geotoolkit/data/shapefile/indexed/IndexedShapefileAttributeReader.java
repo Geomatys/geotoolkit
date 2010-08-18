@@ -25,7 +25,8 @@ import org.geotoolkit.data.dbf.IndexedDbaseFileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.Data;
-import org.opengis.feature.type.AttributeDescriptor;
+
+import org.opengis.feature.type.PropertyDescriptor;
 
 /**
  * An AttributeReader implementation for shape. Pretty straightforward. <BR/>The
@@ -44,10 +45,10 @@ public class IndexedShapefileAttributeReader extends ShapefileAttributeReader
 
     private CloseableCollection<Data> closeableCollection;
 
-    public IndexedShapefileAttributeReader(
-            List<AttributeDescriptor> attributes, ShapefileReader shp,
-            IndexedDbaseFileReader dbf, CloseableCollection<Data> goodRecs) {
-        this(attributes.toArray(new AttributeDescriptor[0]), shp, dbf, goodRecs);
+    public IndexedShapefileAttributeReader( List<? extends PropertyDescriptor> attributes,
+            ShapefileReader shp, IndexedDbaseFileReader dbf,
+            CloseableCollection<Data> col, Iterator<Data> goodRecs) {
+        this(attributes.toArray(new PropertyDescriptor[attributes.size()]), shp, dbf, col, goodRecs);
     }
 
     /**
@@ -59,13 +60,12 @@ public class IndexedShapefileAttributeReader extends ShapefileAttributeReader
      *              attributes will be read from the dbf file
      * @param goodRecs Collection of good indexes that match the query.
      */
-    public IndexedShapefileAttributeReader(AttributeDescriptor[] atts,
+    public IndexedShapefileAttributeReader(PropertyDescriptor[] atts,
             ShapefileReader shp, IndexedDbaseFileReader dbf,
-            CloseableCollection<Data> goodRecs) {
+            CloseableCollection<Data> col, Iterator<Data> goodRecs) {
         super(atts, shp, dbf);
-        if (goodRecs != null)
-            this.goodRecs = goodRecs.iterator();
-        this.closeableCollection = goodRecs;
+        this.goodRecs = goodRecs;
+        this.closeableCollection = col;
         this.recno = 0;
     }
 
@@ -84,6 +84,10 @@ public class IndexedShapefileAttributeReader extends ShapefileAttributeReader
 
     @Override
     public boolean hasNext() throws IOException {
+        return hasNextInternal();
+    }
+
+    private boolean hasNextInternal() throws IOException{
         if (this.goodRecs != null) {
             if (next != null)
                 return true;
@@ -101,7 +105,7 @@ public class IndexedShapefileAttributeReader extends ShapefileAttributeReader
 
     @Override
     public void next() throws IOException {
-        if (!hasNext())
+        if (!hasNextInternal())
             throw new IndexOutOfBoundsException("No more features in reader");
         if (this.goodRecs != null) {
             this.recno = ((Integer) next.getValue(0)).intValue();

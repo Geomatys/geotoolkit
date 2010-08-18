@@ -17,7 +17,8 @@
 
 package org.geotoolkit.data.memory;
 
-import java.util.List;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.geotoolkit.storage.DataStoreException;
@@ -32,34 +33,29 @@ import org.geotoolkit.data.FeatureIDReader;
  */
 class ArrayFIDRW implements FeatureIDReader{
 
-    private final int idIndex;
     private final String base;
-    private final List<Object[]> datas;
     private final AtomicLong inc;
-    private Object[] current = null;
-    private int iteIndex = 0;
+    private final Iterator<String> iteKeys;
 
-    ArrayFIDRW(int idIndex, List<Object[]> datas, String base, AtomicLong inc) {
-        this.idIndex = idIndex;
-        this.datas = datas;
+    ArrayFIDRW(Map<String,Object[]> features, String base, AtomicLong inc) {
         this.base = base;
         this.inc = inc;
+        this.iteKeys = features.keySet().iterator();
     }
 
     @Override
     public String next() throws DataStoreException {
         if(hasNext()){
-            current = datas.get(iteIndex);
-            iteIndex++;
-            return current[idIndex].toString();
+            return iteKeys.next();
         }else{
+            //create a new key
             return base + inc.getAndIncrement();
         }
     }
 
     @Override
     public boolean hasNext() throws DataStoreException {
-        return iteIndex < datas.size();
+        return iteKeys.hasNext();
     }
 
     @Override
@@ -67,7 +63,6 @@ class ArrayFIDRW implements FeatureIDReader{
     }
 
     public void remove(){
-        iteIndex--;
     }
 
 }

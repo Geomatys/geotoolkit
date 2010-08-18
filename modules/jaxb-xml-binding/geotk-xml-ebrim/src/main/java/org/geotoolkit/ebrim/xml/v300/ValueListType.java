@@ -86,11 +86,12 @@ public class ValueListType {
     
     @Override
     public String toString() {
-        String s = '[' + this.getClass().getSimpleName() + "] values:" + '\n';
+        final StringBuilder sb = new StringBuilder();
+        sb.append('[').append(this.getClass().getSimpleName()).append("] values:\n");
         for (String v : value) {
-            s = s + v + '\n';
+            sb.append(v).append('\n');
         }
-        return s;
+        return sb.toString();
     }
 
 }

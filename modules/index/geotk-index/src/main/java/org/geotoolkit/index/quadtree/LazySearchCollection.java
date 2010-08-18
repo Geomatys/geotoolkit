@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2005-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -25,46 +26,57 @@ import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.Data;
 
 import com.vividsolutions.jts.geom.Envelope;
+import java.util.Arrays;
 
 /**
  * A collection that will open and close the QuadTree and find the next id in
  * the index.
  * 
  * @author Jesse
- * 
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class LazySearchCollection extends AbstractCollection<Data> implements
         CloseableCollection<Data> {
 
-    private QuadTree tree;
+    private static final int MAX_INDICES = Short.MAX_VALUE;
 
-    private Envelope bounds;
+    private final QuadTree tree;
+    private final Envelope bounds;
 
     public LazySearchCollection(QuadTree tree, Envelope bounds) {
         this.tree = tree;
         this.bounds = bounds;
     }
 
+    /**
+     * More accurate iterator when plenty of nodes, also hase a isSafe methode
+     * to test if the value is safe to be used untested.
+     */
+    public SearchIterator<Data> bboxIterator() {
+        final SearchIterator<Data> iterator = new LazyTyleSearchIterator.Buffered(
+                tree.getRoot(), bounds,tree.getDataReader(),MAX_INDICES);
+        tree.registerIterator(iterator);
+        return iterator;
+    }
+
+
     /*
      * (non-Javadoc)
      * 
      * @see java.util.AbstractCollection#iterator()
      */
-    public Iterator<Data> iterator() {
-        LazySearchIterator object;
-        try {
-            object = new LazySearchIterator(tree.getRoot().copy(), tree
-                    .getDataReader(), bounds);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        tree.registerIterator(object);
-        return object;
+    @Override
+    public SearchIterator<Data> iterator() {
+        final SearchIterator<Data> iterator = new LazySearchIterator.Buffered(
+                tree.getRoot(), bounds, tree.getDataReader(),MAX_INDICES);
+        tree.registerIterator(iterator);
+        return iterator;
     }
 
+    @Override
     public int size() {
-        Iterator iter = iterator();
+        final Iterator iter = iterator();
         try {
             int count = 0;
             while (iter.hasNext()) {
@@ -76,44 +88,40 @@ public class LazySearchCollection extends AbstractCollection<Data> implements
             try {
                 tree.close(iter);
             } catch (StoreException e) {
-                org.geotoolkit.util.logging.Logging.getLogger(
-                        "org.geotoolkit.index.quadtree").severe(
-                        "Couldn't close iterator");
+                QuadTree.LOGGER.severe("Couldn't close iterator");
             }
         }
     }
 
+    @Override
     public boolean isEmpty() {
-        Iterator iter = iterator();
-        boolean isEmtpy = true;
+        final Iterator iter = iterator();
         try {
-            isEmtpy = !iter.hasNext();
+            return !iter.hasNext();
         } finally {
             try {
                 tree.close(iter);
             } catch (StoreException e) {
-                org.geotoolkit.util.logging.Logging.getLogger(
-                        "org.geotoolkit.index.quadtree").severe(
-                        "Couldn't close iterator");
+                QuadTree.LOGGER.severe("Couldn't close iterator");
             }
         }
-        return isEmtpy;
     }
 
+    @Override
     public void close() {
         try {
             tree.close();
         } catch (StoreException e) {
-            org.geotoolkit.util.logging.Logging.getLogger(
-                        "org.geotoolkit.index.quadtree").log(Level.WARNING, "Error closing QuadTree", e);
+            QuadTree.LOGGER.log(Level.WARNING, "Error closing QuadTree", e);
         }
     }
 
+    @Override
     public void closeIterator( Iterator<Data> iter ) throws IOException {
         try {
             tree.close(iter);
         } catch (StoreException e) {
-            throw (IOException) new IOException(e.getLocalizedMessage()).initCause(e);
+            throw new IOException(e);
         }
     }
 

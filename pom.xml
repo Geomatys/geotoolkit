@@ -27,7 +27,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotoolkit</artifactId>
   <packaging>pom</packaging>
-  <version>SNAPSHOT</version>
+  <version>PERF-SNAPSHOT</version>
   <name>Geotoolkit-pending</name>
   <url>http://pending.geotoolkit.org/</url>
 
@@ -742,24 +742,6 @@
     </pluginRepository>
   </pluginRepositories>
 
-
-
-  <!-- ==================================================== -->
-  <!--     Deployment to public servers                     -->
-  <!-- ==================================================== -->
-  <distributionManagement>
-    <site>
-      <id>geotoolkit</id>
-      <name>Geotoolkit-pending web site</name>
-      <url>dav:http://pending.geotoolkit.org/</url>
-    </site>
-    <repository>
-       <id>geotoolkit</id>
-       <name>Geotoolkit binaries</name>
-       <url>dav:http://maven.geotoolkit.org/</url>
-       <uniqueVersion>false</uniqueVersion>
-    </repository>
-  </distributionManagement>
 
 
 

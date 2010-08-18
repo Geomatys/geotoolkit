@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.geometry.jts;
+package org.geotoolkit.geometry.jts.transform;
 
 
 import com.vividsolutions.jts.geom.CoordinateSequence;
@@ -38,9 +38,8 @@ public interface CoordinateSequenceTransformer {
      * Returns a transformed coordinate sequence.
      *
      * @param  sequence The sequence to transform.
-     * @param  transform The transformation to apply.
      * @throws TransformException if at least one coordinate can't be transformed.
      */
-    public CoordinateSequence transform(CoordinateSequence sequence, MathTransform transform)
-        throws TransformException;
+    public CoordinateSequence transform(CoordinateSequence sequence, int minpoints) throws TransformException;
+    
 }

@@ -104,15 +104,15 @@ class DefaultCoverageExtent implements CoverageExtent{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
+        final StringBuilder builder = new StringBuilder();
         builder.append("[CoverageExtent : ");
         if(timePeriod != null){
             builder.append(" TimePeriod=");
-            builder.append(timePeriod.toString());
+            builder.append(timePeriod);
         }
         if(ranges != null){
             builder.append(" RangeAxis=");
-            builder.append(ranges.toArray().toString());
+            builder.append(ranges.toArray());
         }
         builder.append(']');
         return builder.toString();

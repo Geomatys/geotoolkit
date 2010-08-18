@@ -23,6 +23,7 @@ import java.awt.RenderingHints;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.Map.Entry;
 
 import org.apache.batik.transcoder.SVGAbstractTranscoder;
 import org.apache.batik.transcoder.TranscoderException;
@@ -30,7 +31,6 @@ import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.TranscodingHints;
 import org.apache.batik.transcoder.TranscodingHints.Key;
-import org.geotoolkit.factory.Hints;
 
 import org.w3c.dom.Document;
 import org.xml.sax.XMLReader;
@@ -98,15 +98,16 @@ public class SvgUtils {
         TranscoderOutput out                   = new TranscoderOutput();
 
         if(hints != null){
-            for(Object key : hints.keySet()){
+            for(Entry<Object,Object> entry : hints.entrySet()){
+                final Object key = entry.getKey();
                 if(key instanceof TranscodingHints.Key){
-                    svgTranscoder.addTranscodingHint((Key) key,hints.get(key));
+                    svgTranscoder.addTranscodingHint((Key) key,entry.getValue());
                 }
             }
         }
 
-        svgTranscoder.addTranscodingHint(SVGAbstractTranscoder.KEY_HEIGHT, new Float(dim.height));
-        svgTranscoder.addTranscodingHint(SVGAbstractTranscoder.KEY_WIDTH, new Float(dim.width));
+        svgTranscoder.addTranscodingHint(SVGAbstractTranscoder.KEY_HEIGHT, Float.valueOf(dim.height));
+        svgTranscoder.addTranscodingHint(SVGAbstractTranscoder.KEY_WIDTH, Float.valueOf(dim.width));
         svgTranscoder.transcode(in, out);
 
         return svgTranscoder.getImage();

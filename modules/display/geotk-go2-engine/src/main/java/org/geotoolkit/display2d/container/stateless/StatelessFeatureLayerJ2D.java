@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
-import java.awt.geom.AffineTransform;
+import java.awt.RenderingHints;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -65,7 +65,10 @@ import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.filter.FilterUtilities;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.style.StyleUtilities;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;
@@ -77,7 +80,6 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Rule;
@@ -135,21 +137,22 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             //merge the style and filter with the selection
             final List<Rule> selectionRules;
             final List<Rule> normalRules = GO2Utilities.getValidRules(
-                   style, renderingContext.getGeographicScale(), sft);
+                   style, renderingContext.getSEScale(), sft);
 
             final List<CachedRule> mixedRules = new ArrayList<CachedRule>();
             final MutableStyle selectionStyle = layer.getSelectionStyle();
             if(selectionStyle == null){
                 selectionRules = GO2Utilities.getValidRules(
-                        ContextContainer2D.DEFAULT_SELECTION_STYLE, renderingContext.getGeographicScale(), sft);
+                        ContextContainer2D.DEFAULT_SELECTION_STYLE, renderingContext.getSEScale(), sft);
             }else{
                 selectionRules = GO2Utilities.getValidRules(
-                        selectionStyle, renderingContext.getScale(), sft);
+                        selectionStyle, renderingContext.getSEScale(), sft);
             }
 
             //update the rules filters
             for(final Rule rule : selectionRules){
-                final MutableRule mixedRule = STYLE_FACTORY.rule(rule.symbolizers().toArray(new Symbolizer[0]));
+                final List<? extends Symbolizer> symbols = rule.symbolizers();
+                final MutableRule mixedRule = STYLE_FACTORY.rule(symbols.toArray(new Symbolizer[symbols.size()]));
                 Filter f = rule.getFilter();
                 if(f == null){
                     f = selectionFilter;
@@ -178,7 +181,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
         }else{
             rules = GO2Utilities.getValidCachedRules(
-                style, renderingContext.getGeographicScale(), sft);
+                style, renderingContext.getSEScale(), sft);
         }
 
         //we perform a first check on the style to see if there is at least
@@ -203,31 +206,19 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         final Query query = prepareQuery(context, layer, rules);
 
         if(monitor.stopRequested()) return;
+
+        //we do not check if the collection is empty or not since
+        //it can be a very expensive operation
         
+        //prepare the rendering parameters
+        final StatefullContextParams params = prepareContextParams(context, null);
+
         final FeatureCollection<Feature> features;
         try{
             features = ((FeatureCollection<Feature>)layer.getCollection()).subCollection(query);
         }catch(DataStoreException ex){
             context.getMonitor().exceptionOccured(ex, Level.WARNING);
             //can not continue this layer with this error
-            return;
-        }
-                
-        //we do not check if the collection is empty or not since
-        //it can be a very expensive operation
-
-        final CoordinateReferenceSystem dataCRS = features.getFeatureType().getCoordinateReferenceSystem();
-        if(dataCRS == null){
-            monitor.exceptionOccured(new IllegalStateException("Layer has no CRS, can not render it."), Level.WARNING);
-            return;
-        }
-
-        //prepare the rendering parameters
-        final StatefullContextParams params;
-        try {
-            params = prepareContextParams(context, dataCRS, null);
-        } catch (FactoryException ex) {
-            monitor.exceptionOccured(ex, Level.WARNING);
             return;
         }
 
@@ -425,14 +416,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         //we do not check if the collection is empty or not since
         //it can be a very expensive operation
 
-        final StatefullContextParams params;
-        try {
-            params = prepareContextParams(renderingContext, features.getFeatureType().getCoordinateReferenceSystem(), null);
-        } catch (FactoryException ex) {
-            ex.printStackTrace();
-            return graphics;
-        }
-
+        final StatefullContextParams params = prepareContextParams(renderingContext, null);
 
 
         // iterate and find the first graphic that hit the given point
@@ -440,7 +424,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         try{
             iterator = features.iterator();
         }catch(DataStoreRuntimeException ex){
-            ex.printStackTrace();
+            renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
             return graphics;
         }
 
@@ -509,7 +493,8 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         if (!layer.isVisible()) return graphics;
 
         final Name featureTypeName = layer.getCollection().getFeatureType().getName();
-        final CachedRule[] rules = GO2Utilities.getValidCachedRules(layer.getStyle(), c2d.getGeographicScale(), featureTypeName);
+        final CachedRule[] rules = GO2Utilities.getValidCachedRules(layer.getStyle(), 
+                c2d.getSEScale(), featureTypeName);
 
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just return null.
@@ -532,14 +517,15 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
      */
     protected static Query prepareQuery(RenderingContext2D renderingContext, FeatureMapLayer layer, CachedRule[] rules){
 
-        final FeatureCollection<? extends Feature> fs   = layer.getCollection();
-        final FeatureType schema                        = fs.getFeatureType();
-        final GeometryDescriptor geomDesc               = schema.getGeometryDescriptor();
-        BoundingBox bbox                                = renderingContext.getPaintingObjectiveBounds2D();
-        final CoordinateReferenceSystem bboxCRS         = bbox.getCoordinateReferenceSystem();
-        final CanvasMonitor monitor                     = renderingContext.getMonitor();
-        final CoordinateReferenceSystem layerCRS        = schema.getCoordinateReferenceSystem();
-        final String geomAttName                        = (geomDesc!=null)? geomDesc.getLocalName() : null;
+        final FeatureCollection<? extends Feature> fs            = layer.getCollection();
+        final FeatureType schema                                 = fs.getFeatureType();
+        final GeometryDescriptor geomDesc                        = schema.getGeometryDescriptor();
+        BoundingBox bbox                                         = renderingContext.getPaintingObjectiveBounds2D();
+        final CoordinateReferenceSystem bboxCRS                  = bbox.getCoordinateReferenceSystem();
+        final CanvasMonitor monitor                              = renderingContext.getMonitor();
+        final CoordinateReferenceSystem layerCRS                 = schema.getCoordinateReferenceSystem();
+        final String geomAttName                                 = (geomDesc!=null)? geomDesc.getLocalName() : null;
+        final RenderingHints hints                               = renderingContext.getRenderingHints();
 
         if( !CRS.equalsIgnoreMetadata(layerCRS,bboxCRS)){
             //BBox and layer bounds have different CRS. reproject bbox bounds
@@ -710,19 +696,43 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             }
         }
 
+        //optimize the filter---------------------------------------------------
+        filter = FilterUtilities.prepare(filter,Feature.class);
+
         final QueryBuilder qb = new QueryBuilder();
         qb.setTypeName(schema.getName());
         qb.setFilter(filter);
         qb.setProperties(atts);
-        final Query query = qb.buildQuery();
-        return query;
+
+        //add resampling -------------------------------------------------------
+        Boolean resample = (hints == null) ? null : (Boolean) hints.get(GO2Hints.KEY_GENERALIZE);
+        if(!Boolean.FALSE.equals(resample)){
+            //we only disable resampling if it is explictly specified
+            final double[] res = renderingContext.getResolution(layerCRS);
+
+            //adjust with the generalization factor
+            final Number n =  (hints==null) ? null : (Number)hints.get(GO2Hints.KEY_GENERALIZE_FACTOR);
+            final double factor;
+            if(n != null){
+                factor = n.doubleValue();
+            }else{
+                factor = GO2Hints.GENERALIZE_FACTOR_DEFAULT.doubleValue();
+            }
+            res[0] *= factor;
+            res[1] *= factor;
+            qb.setResolution(renderingContext.getResolution(layerCRS));
+        }
+
+        //add reprojection -----------------------------------------------------
+        qb.setCRS(renderingContext.getObjectiveCRS2D());
+        
+        return qb.buildQuery();
     }
 
     private StatefullContextParams prepareContextParams(RenderingContext2D renderingContext,
-            CoordinateReferenceSystem dataCRS, StatefullContextParams params) throws FactoryException{
+            StatefullContextParams params){
         final CoordinateReferenceSystem displayCRS   = renderingContext.getDisplayCRS();
-        final CoordinateReferenceSystem objectiveCRS = renderingContext.getObjectiveCRS2D();
-        final AffineTransform objtoDisp              = renderingContext.getObjectiveToDisplay();
+        final AffineTransform2D objtoDisp              = renderingContext.getObjectiveToDisplay();
 
         if(params == null){
             params = new StatefullContextParams(getCanvas(),layer);
@@ -730,10 +740,8 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
         params.displayCRS = displayCRS;
         params.objectiveToDisplay.setTransform(objtoDisp);
-        params.updateGeneralizationFactor(renderingContext, dataCRS);
-        params.dataToObjective = renderingContext.getMathTransform(dataCRS, objectiveCRS);
-        params.dataToObjectiveTransformer.setMathTransform(params.dataToObjective);
-        params.dataToDisplayTransformer.setMathTransform(renderingContext.getMathTransform(dataCRS,displayCRS));
+        ((CoordinateSequenceMathTransformer)params.objToDisplayTransformer.getCSTransformer())
+                .setTransform(objtoDisp);
         
         return params;
     }

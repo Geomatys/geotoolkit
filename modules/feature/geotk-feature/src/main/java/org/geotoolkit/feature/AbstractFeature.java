@@ -69,6 +69,10 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
         return (FeatureType) descriptor.getType();
     }
 
+    public void setId(FeatureId id) {
+        this.id = id;
+    }
+
     /**
      * Get the total bounds of this feature which is calculated by doing a union
      * of the bounds of each geometry this feature is associated with.

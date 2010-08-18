@@ -35,7 +35,6 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.collection.CloseableIterator;
 
@@ -98,6 +97,39 @@ public class DataUtilities {
         return col;
     }
 
+    /**
+     * Copy the features from the first collection to the second.
+     * This method takes care of correctly closing interators if source collection
+     * is a FeatureCollection.
+     * @param source : source collection.
+     * @param target : collection to copy features into.
+     */
+    public static Collection fill(Collection source, Collection target){
+        if(target instanceof FeatureCollection){
+            //we can safely use the addAll method.
+            target.addAll(source);
+        }else{
+            //we are not sure that the given collection will take care of closing
+            //the underlying iterator, we better do the iteration ourself.
+            final Iterator ite = source.iterator();
+            try{
+                while(ite.hasNext()){
+                    final Object f = ite.next();
+                    target.add(f);
+                }
+            }finally{
+                //todo must close safely both iterator
+                if(ite instanceof Closeable){
+                    try {
+                        ((Closeable) ite).close();
+                    } catch (IOException ex) {
+                        throw new DataStoreRuntimeException(ex);
+                    }
+                }
+            }
+        }
+        return target;
+    }
 
     /**
      * Write the features from the given collection and return the list of generated FeatureID

@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.geometry.jts.coordinatesequence;
 
-import org.geotoolkit.geometry.jts.CoordinateSequenceTransformer;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceTransformer;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
@@ -48,12 +48,25 @@ import com.vividsolutions.jts.geom.impl.PackedCoordinateSequence;
  */
 public class InPlaceCoordinateSequenceTransformer implements CoordinateSequenceTransformer {
 
+    private MathTransform transform = null;
+
+    public InPlaceCoordinateSequenceTransformer(MathTransform transform){
+
+    }
+
+    public void setTransform(MathTransform transform) {
+        this.transform = transform;
+    }
+
+    public MathTransform getTransform() {
+        return transform;
+    }
+
     /**
      * {@inheritDoc }
      */
     @Override
-    public CoordinateSequence transform( CoordinateSequence cs, MathTransform transform )
-            throws TransformException {
+    public CoordinateSequence transform( CoordinateSequence cs, int minpoints) throws TransformException {
         if( cs instanceof PackedCoordinateSequence ){
             return transformInternal( (PackedCoordinateSequence) cs, transform);
         }

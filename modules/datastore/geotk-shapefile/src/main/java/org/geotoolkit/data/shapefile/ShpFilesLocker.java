@@ -17,6 +17,7 @@
 package org.geotoolkit.data.shapefile;
 
 import java.net.URL;
+import java.util.logging.Level;
 
 /**
  * @todo use a lock system bases on FileLock.
@@ -37,16 +38,17 @@ class ShpFilesLocker {
         this.write = write;
 
         if(write){
-            ShapefileDataStoreFactory.LOGGER.fine("Write lock: " + url + " by " + reader);
+            ShapefileDataStoreFactory.LOGGER.log(Level.FINE, "Write lock: {0} by {1}", new Object[]{url, reader});
         }else{
-            ShapefileDataStoreFactory.LOGGER.fine("Read lock: " + url + " by " + reader);
+            ShapefileDataStoreFactory.LOGGER.log(Level.FINE, "Read lock: {0} by {1}", new Object[]{url, reader});
         }
         setTraceException();
     }
 
     private void setTraceException() {
         String name = Thread.currentThread().getName();
-        trace = new Trace("Locking " + url + " for " + ((write)? "write" : "read") + " by " + holder + " in thread " + name);
+        trace = new Trace("Locking ");
+        //trace = new Trace("Locking " + url + " for " + ((write)? "write" : "read") + " by " + holder + " in thread " + name);
     }
 
     /**
@@ -82,7 +84,7 @@ class ShpFilesLocker {
         final int prime = 31;
         int result = 1;
         result = prime * result + (holder.hashCode());
-        result = prime * result + ((url == null) ? 0 : url.hashCode());
+        result = prime * result + ((url == null) ? 0 : url.toString().hashCode());
         return result;
     }
 
@@ -95,7 +97,7 @@ class ShpFilesLocker {
             return false;
         }
         final ShpFilesLocker other = (ShpFilesLocker) obj;
-        if (this.url != other.url && (this.url == null || !this.url.equals(other.url))) {
+        if (this.url != other.url && (this.url == null || !this.url.toString().equals(other.url.toString()))) {
             return false;
         }
         if (this.holder != other.holder && (this.holder == null || !this.holder.equals(other.holder))) {

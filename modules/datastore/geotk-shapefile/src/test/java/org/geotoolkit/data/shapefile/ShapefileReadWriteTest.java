@@ -32,10 +32,12 @@ import org.opengis.feature.simple.SimpleFeatureType;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.io.Closeable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.session.Session;
 import org.opengis.feature.type.Name;
@@ -245,21 +247,29 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
                     + " != " + two.size());
         }
 
-        Iterator<SimpleFeature> iterator1 = one.iterator();
-        Iterator<SimpleFeature> iterator2 = two.iterator();
+        //copy values, order is not tested here.
+        one = DataUtilities.fill(one, new ArrayList<SimpleFeature>());
+        two = DataUtilities.fill(two, new ArrayList<SimpleFeature>());
 
-        while (iterator1.hasNext()) {
-            SimpleFeature f1 = iterator1.next();
-            SimpleFeature f2 = iterator2.next();
-            compare(f1, f2);
-        }
+        one.containsAll(two);
+        two.containsAll(one);
 
-        if(iterator1 instanceof Closeable){
-            ((Closeable)iterator1).close();
-        }
-        if(iterator2 instanceof Closeable){
-            ((Closeable)iterator2).close();
-        }
+
+//        Iterator<SimpleFeature> iterator1 = one.iterator();
+//        Iterator<SimpleFeature> iterator2 = two.iterator();
+//
+//        while (iterator1.hasNext()) {
+//            SimpleFeature f1 = iterator1.next();
+//            SimpleFeature f2 = iterator2.next();
+//            compare(f1, f2);
+//        }
+//
+//        if(iterator1 instanceof Closeable){
+//            ((Closeable)iterator1).close();
+//        }
+//        if(iterator2 instanceof Closeable){
+//            ((Closeable)iterator2).close();
+//        }
     }
 
     static void compare(SimpleFeature f1, SimpleFeature f2) throws Exception {

@@ -51,6 +51,6 @@ public class InFunction extends AbstractFunction {
             }
         }
 
-        return new Boolean(StaticGeometry.in(arg0, args));
+        return StaticGeometry.in(arg0, args);
     }
 }

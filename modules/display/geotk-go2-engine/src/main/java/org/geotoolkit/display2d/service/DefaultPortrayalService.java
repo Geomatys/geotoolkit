@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.display2d.service;
 
+import java.util.Map;
+import java.util.Map.Entry;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -31,6 +33,10 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
@@ -39,25 +45,41 @@ import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageFactory;
+import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.io.GridCoverageWriteParam;
+import org.geotoolkit.coverage.io.GridCoverageWriter;
+import org.geotoolkit.coverage.io.ImageCoverageWriter;
+import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display2d.canvas.J2DCanvasBuffered;
 import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display.canvas.GraphicVisitor;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.GO2Hints;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.container.DefaultContextContainer2D;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.style.MutableFeatureTypeStyle;
+import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.util.ImageIOUtilities;
 
+import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.style.Symbolizer;
 import org.opengis.style.portrayal.PortrayalService;
 
 import static org.geotoolkit.display2d.GO2Utilities.*;
@@ -68,7 +90,20 @@ import static org.geotoolkit.display2d.GO2Utilities.*;
  * @module pending
  */
 public class DefaultPortrayalService implements PortrayalService{
-        
+
+    private static final GridCoverageFactory GCF = new GridCoverageFactory();
+
+    /**
+     * Cache the last CoverageWriter.
+     */
+    private static final AtomicReference<GridCoverageWriter> WRITER_CACHE = new AtomicReference<GridCoverageWriter>();
+
+    /**
+     * Cache the link between mime-type -> java-type
+     * exemple : image/png -> png
+     */
+    private static final Map<String,String> MIME_CACHE = new ConcurrentHashMap<String, String>();
+
     private DefaultPortrayalService(){}
     
     
@@ -194,7 +229,10 @@ public class DefaultPortrayalService implements PortrayalService{
                 sceneDef.getHints());
         final ContextContainer2D renderer = new DefaultContextContainer2D(canvas, false);
         canvas.setContainer(renderer);
-        canvas.setBackgroundPainter(new SolidColorPainter(canvasDef.getBackground()));
+        final Color bgColor = canvasDef.getBackground();
+        if(bgColor != null){
+            canvas.setBackgroundPainter(new SolidColorPainter(bgColor));
+        }        
 
         final CanvasMonitor monitor = viewDef.getMonitor();
         if(monitor != null){
@@ -203,8 +241,8 @@ public class DefaultPortrayalService implements PortrayalService{
 
         final Hints hints = sceneDef.getHints();
         if(hints != null){
-            for(Object key : hints.keySet()){
-                canvas.setRenderingHint((Key)key, hints.get(key));
+            for(Entry<?,?> entry : hints.entrySet()){
+                canvas.setRenderingHint((Key)entry.getKey(), entry.getValue());
             }
         }
 
@@ -326,19 +364,207 @@ public class DefaultPortrayalService implements PortrayalService{
     public static void portray(CanvasDef canvasDef, SceneDef sceneDef, ViewDef viewDef,
             OutputDef outputDef) throws PortrayalException{
 
+        final String mime = outputDef.getMime();
+        if(mime.contains("jpeg") || mime.contains("jpg")){
+            //special case for jpeg format, the writer generate incorrect colors
+            //if he find out an alpha channel, so we ensure to have a opaque background
+            //which will result in at least an RGB palette
+            final Color bgColor = canvasDef.getBackground();
+            if(bgColor == null){
+                //we set the background white
+                canvasDef.setBackground(Color.WHITE);
+            }else{
+                //we merge colors
+                canvasDef.setBackground(mergeColors(Color.WHITE, bgColor));
+            }
+        }
+
+        //directly return false if hints doesnt contain the coverage writer hint enabled
+        final Hints hints = sceneDef.getHints();
+        final Object val = (hints!=null)?hints.get(GO2Hints.KEY_COVERAGE_WRITER):null;
+        final boolean useCoverageWriter = GO2Hints.COVERAGE_WRITER_ON.equals(val);
+
+        if(useCoverageWriter && portrayAsCoverage(canvasDef, sceneDef, viewDef, outputDef)){
+            //we succeeded in writing it with coverage writer directly.
+            return;
+        }
+
+        //use the rendering engine to generate an image
         final BufferedImage image = portray(canvasDef,sceneDef,viewDef);
 
         if(image == null){
             throw new PortrayalException("No image created by the canvas.");
         }
 
-        try {
-            writeImage(image, outputDef);
-        } catch (IOException ex) {
-            throw new PortrayalException(ex);
+        if(useCoverageWriter){
+            final Envelope env = viewDef.getEnvelope();
+            final Dimension dim = canvasDef.getDimension();
+            final double[] resolution = new double[]{
+                    env.getSpan(0) / (double)dim.width,
+                    env.getSpan(1) / (double)dim.height};
+
+            final GridCoverage2D coverage = GCF.create("PortrayalTempCoverage", image, env);
+            writeCoverage(coverage, env, resolution, outputDef,null);
+        }else{
+            try {
+                writeImage(image, outputDef);
+            } catch (IOException ex) {
+                throw new PortrayalException(ex);
+            }
         }
 
     }
+
+    /**
+     * Detect single raster layers with a default raster style and no special parameters
+     * if so we can directly use the grid coverage writer and avoid the rendering chain.
+     * It significantly reduce memory usage (minus the buffered image size and graphic objects)
+     * and time (minus ~35%).
+     *
+     * @return true if the optimization have been applied.
+     * @throws PortrayalException
+     */
+    private static boolean portrayAsCoverage(CanvasDef canvasDef, SceneDef sceneDef, ViewDef viewDef,
+            OutputDef outputDef) throws PortrayalException {
+
+        //works for one layer only
+        final List<MapLayer> layers = sceneDef.getContext().layers();
+        if(layers.size() != 1) return false;
+
+        //layer must be a coverage
+        final MapLayer layer = layers.get(0);
+        if(!(layer instanceof CoverageMapLayer)) return false;
+
+        //we must not have extensions
+        if(!sceneDef.extensions().isEmpty()) return false;
+
+        //style must be a default raster style = native original style
+        final List<MutableFeatureTypeStyle> ftss = layer.getStyle().featureTypeStyles();
+        if(ftss.size() != 1) return false;
+        final List<MutableRule> rules = ftss.get(0).rules();
+        if(rules.size() != 1) return false;
+        final List<Symbolizer> symbols = rules.get(0).symbolizers();
+        if(symbols.size() != 1) return false;
+        final Symbolizer s = symbols.get(0);
+        if(!GO2Utilities.isDefaultRasterSymbolizer(s)) return false;
+
+        //we can bypass the renderer
+        final CoverageMapLayer cml = (CoverageMapLayer) layer;
+        final GridCoverageReader reader = cml.getCoverageReader();
+        final String mime = outputDef.getMime();
+        final Envelope env = viewDef.getEnvelope();
+        final Dimension dim = canvasDef.getDimension();
+        final double[] resolution = new double[]{
+                env.getSpan(0) / (double)dim.width,
+                env.getSpan(1) / (double)dim.height};
+
+        final GridCoverageReadParam readParam = new GridCoverageReadParam();
+        readParam.setEnvelope(viewDef.getEnvelope());
+        readParam.setResolution(resolution);
+        
+        try{            
+            GridCoverage2D coverage = (GridCoverage2D)reader.read(0, readParam);
+            final RenderedImage image = coverage.getRenderedImage();
+
+            // HACK TO FIX COLOR ERROR ON JPEG /////////////////////////////////
+            if(mime.contains("jpeg") || mime.contains("jpg")){
+                if(image.getColorModel().hasAlpha()){
+                    final int nbBands = image.getSampleModel().getNumBands();
+                    System.out.println("hasalpha");
+                    if(nbBands > 3){
+                        //we can remove the fourth band assuming it is the alpha
+                        System.out.println("remove alpha band");
+                        coverage = (GridCoverage2D) Operations.DEFAULT.selectSampleDimension(coverage, new int[]{0,1,2});
+                    }
+                }
+            }
+            ////////////////////////////////////////////////////////////////////
+
+            writeCoverage(coverage, env, resolution, outputDef, canvasDef.getBackground());
+        }catch(CoverageStoreException ex){
+            throw new PortrayalException(ex);
+        }
+        return true;
+    }
+
+    /**
+     * Write a coverage using the canvas, view and output definition.
+     * 
+     * @param coverage : coverage to write
+     * @param canvasDef : canvas definition
+     * @param viewDef : view definition
+     * @param outputDef : outpout definition
+     * @throws PortrayalException if writing failed
+     */
+    private static void writeCoverage(GridCoverage coverage, Envelope env, double[] resolution,
+            OutputDef outputDef, Color backgroundColor) throws PortrayalException{
+        final String mimeType = outputDef.getMime();
+
+        String javaType = MIME_CACHE.get(mimeType);
+        if(javaType == null){
+            //search the mime type
+            final String[] candidates = XImageIO.getFormatNamesByMimeType(mimeType, false, true);
+            if(candidates.length > 0){
+                javaType = candidates[0];
+                //cache the resulting java type
+                MIME_CACHE.put(mimeType, javaType);
+            }
+        }
+
+        if(javaType == null){
+            //no related java type, incorrect mime type
+            throw new PortrayalException("No java type found for mime type : " + mimeType);
+        }
+        
+
+        //get a writer
+        GridCoverageWriter writer = WRITER_CACHE.getAndSet(null);
+        if(writer == null){
+            writer = new ImageCoverageWriter();
+        }
+        
+        try{
+            final GridCoverageWriteParam writeParam = new GridCoverageWriteParam();
+            writeParam.setEnvelope(env);
+            writeParam.setResolution(resolution);
+            writeParam.setFormatName(javaType);
+            writeParam.setCompressionQuality(outputDef.getCompression());
+
+            if(backgroundColor != null){
+                final int r = backgroundColor.getRed();
+                final int g = backgroundColor.getGreen();
+                final int b = backgroundColor.getBlue();
+                final int a = backgroundColor.getAlpha();
+                writeParam.setBackgroundValues(new double[]{r,g,b,a});
+            }
+
+            writer.setOutput(outputDef.getOutput());
+            writer.write(coverage, writeParam);
+
+        }catch(CoverageStoreException ex){
+            throw new PortrayalException(ex);
+        }finally{
+            try {
+                writer.reset();
+                if(!WRITER_CACHE.compareAndSet(null, writer)){
+                    try {
+                        writer.dispose();
+                    } catch (CoverageStoreException ex) {
+                        throw new PortrayalException(ex);
+                    }
+                }
+            } catch (CoverageStoreException ex) {
+                //the writer has problems, we better not put in back in the cache.
+                try {
+                    writer.dispose();
+                } catch (CoverageStoreException ex1) {
+                    Logger.getLogger(DefaultPortrayalService.class.getName()).log(Level.WARNING, null, ex1);
+                }
+                throw new PortrayalException(ex);
+            }
+        }
+    }
+
 
     ////////////////////////////////////////////////////////////////////////////
     // VISITING A CONTEXT //////////////////////////////////////////////////////

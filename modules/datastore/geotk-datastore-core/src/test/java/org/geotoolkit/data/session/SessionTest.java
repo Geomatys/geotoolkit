@@ -231,7 +231,7 @@ public class SessionTest extends TestCase{
         }
 
 
-        //check that he new feature is available in the session and in the datastore
+        //check that the new feature is available in the session and in the datastore
         session.commit();
 
         assertEquals(store.getCount(query),4);
@@ -305,14 +305,14 @@ public class SessionTest extends TestCase{
         qb.setFilter(FF.equals(FF.literal("hop4"), FF.property("string")));
         query = qb.buildQuery();
 
-        assertEquals(store.getCount(query),1);
-        assertEquals(session.getCount(query),0);
+        assertEquals(1,store.getCount(query));
+        assertEquals(0,session.getCount(query));
 
-        //check that he new feature is available in the session and in the datastore
+        //check that the new feature is removed in the session and in the datastore
         session.commit();
 
-        assertEquals(store.getCount(query),0);
-        assertEquals(session.getCount(query),0);
+        assertEquals(0,store.getCount(query));
+        assertEquals(0,session.getCount(query));
         assertFalse(session.hasPendingChanges());
 
         //sanity check, count everything
@@ -320,8 +320,8 @@ public class SessionTest extends TestCase{
         qb.setTypeName(name);
         query = qb.buildQuery();
 
-        assertEquals(store.getCount(query),3);
-        assertEquals(session.getCount(query),3);
+        assertEquals(3,store.getCount(query));
+        assertEquals(3,session.getCount(query));
         assertFalse(session.hasPendingChanges());
 
 

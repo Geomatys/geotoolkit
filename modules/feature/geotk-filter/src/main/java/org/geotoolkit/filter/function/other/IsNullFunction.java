@@ -39,6 +39,6 @@ public class IsNullFunction extends AbstractFunction {
                     "Filter Function problem for function isNull argument #0 - expected type Object");
         }
 
-        return new Boolean(StaticGeometry.isNull(arg0));
+        return StaticGeometry.isNull(arg0);
     }
 }

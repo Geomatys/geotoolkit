@@ -27,14 +27,20 @@ import org.geotoolkit.index.Data;
  * @author Tommaso Nolli
  * @module pending
  */
-public class DataComparator implements Comparator {
-    /**
-     * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-     */
-    public int compare(Object o1, Object o2) {
-        Integer i1 = (Integer) ((Data) o1).getValue(0);
-        Integer i2 = (Integer) ((Data) o2).getValue(0);
+public class DataComparator implements Comparator<Data> {
 
+    public static final DataComparator INSTANCE = new DataComparator();
+
+    private DataComparator(){}
+
+    /**
+     * @see java.util.Comparator#compare(org.geotoolkit.index.Data, org.geotoolkit.index.Data)
+     */
+    @Override
+    public int compare(Data o1, Data o2) {
+        final Integer i1 = (Integer)o1.getValue(0);
+        final Integer i2 = (Integer)o2.getValue(0);
         return i1.compareTo(i2);
     }
+
 }

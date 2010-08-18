@@ -220,15 +220,12 @@ public class DefaultTextSymbolizer implements TextSymbolizer{
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("[TextSymbolizer : Label=");
-        builder.append(label.toString());
-        builder.append(" Font=");
-        builder.append(font.toString());
-        builder.append(" Halo=");
-        builder.append(halo.toString());
-        builder.append(" Placement=");
-        builder.append(placement.toString());
+        final StringBuilder builder = new StringBuilder();
+        builder.append("[TextSymbolizer : ");
+        builder.append(" Label=").append(label);
+        builder.append(" Font=").append(font);
+        builder.append(" Halo=").append(halo);
+        builder.append(" Placement=").append(placement);
         builder.append(']');
         return builder.toString();
     }

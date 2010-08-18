@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -24,7 +24,7 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
@@ -176,7 +176,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     /**
      * List of coefficients from "Unit" to Objective CRS.
      */
-    private final Map<Unit<Length>,Float> coeffs = new HashMap<Unit<Length>, Float>();
+    private final Map<Unit<Length>,Float> coeffs = new IdentityHashMap<Unit<Length>, Float>();
     
     /**
      * Precalculated resolution, avoid graphics to recalculate it since
@@ -188,9 +188,18 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
      */
     private double geoScale = 1;
 
+    /**
+     * Precaculated geographic scale calculated using OGC Symbology Encoding
+     * Specification.
+     * This is not the scale Objective to Display.
+     * This is not an accurate geographic scale.
+     * This is a fake average scale unproper for correct rendering.
+     * It is used only to filter SE rules.
+     */
+    private double seScale = 1;
+
     private final Date[] temporalRange = new Date[2];
     private final Double[] elevationRange = new Double[2];
-
 
 
     private Shape              paintingDisplayShape   = null;
@@ -287,7 +296,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
             LOGGER.log(Level.WARNING, null, ex);
         }
 
-        //set temporal and elevation range------------------------------------------
+        //set temporal and elevation range--------------------------------------
         if(temporal != null){
             temporalRange[0] = temporal[0];
             temporalRange[1] = temporal[1];
@@ -303,6 +312,8 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
             elevationRange[1] = null;
         }
 
+        //calculate the symbology encoding scale -------------------------------
+        seScale = GO2Utilities.computeSEScale(this);
     }
 
     public void initGraphic(final Graphics2D graphics){
@@ -577,6 +588,14 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         return geoScale;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public double getSEScale() {
+        return seScale;
+    }
+
     // Informations about the currently painted area ---------------------------
     /**
      * {@inheritDoc }
@@ -703,6 +722,8 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         sb.append("\n");
         sb.append("Geographic Scale = ");
         sb.append(geoScale).append("\n");
+        sb.append("OGC SE Scale = ");
+        sb.append(seScale).append("\n");
         sb.append("Temporal range = ");
         sb.append(temporalRange[0]).append("  to  ").append(temporalRange[1]).append("\n");
         sb.append("Elevation range = ");

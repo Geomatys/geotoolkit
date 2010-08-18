@@ -18,6 +18,7 @@
 package org.geotoolkit.display2d;
 
 import java.awt.RenderingHints.Key;
+import java.awt.image.ColorModel;
 import org.geotoolkit.display.canvas.HintKey;
 
 /**
@@ -72,6 +73,21 @@ public class GO2Hints {
      */
     public static final Key KEY_LABEL_RENDERER_CLASS = new HintKey(6, Class.class);
 
+    /**
+     * Force the canvas to use the given color model.
+     * This only works with the J2DBufferedCanvas.
+     */
+    public static final Key KEY_COLOR_MODEL = new HintKey(7, ColorModel.class);
+
+    /**
+     * Ask the portrayal service to use the grid coverage writer when possible.
+     * This can significantly improve performances when there is only one coverage layer
+     * and no special parameters.
+     * This is used only when asked to write directly in an output.
+     *
+     * Default value is false.
+     */
+    public static final Key KEY_COVERAGE_WRITER = new HintKey(8, Class.class);
 
     public static final Boolean MULTI_THREAD_ON = Boolean.TRUE;
     public static final Boolean MULTI_THREAD_OFF = Boolean.FALSE;
@@ -79,6 +95,8 @@ public class GO2Hints {
     public static final Boolean GENERALIZE_OFF = Boolean.FALSE;
     public static final Boolean SYMBOL_RENDERING_PRIME = Boolean.TRUE;
     public static final Boolean SYMBOL_RENDERING_SECOND = Boolean.FALSE;
+    public static final Boolean COVERAGE_WRITER_ON = Boolean.TRUE;
+    public static final Boolean COVERAGE_WRITER_OFF = Boolean.FALSE;
 
     /**
      * A value of 1.3 looks like the best average generalisation.
@@ -86,5 +104,5 @@ public class GO2Hints {
      * Going under 1 doesnt bring much more details 
      * going above 2.5 makes small geometries disapear or look sharp.
      */
-    public static final Number GENERALIZE_FACTOR_DEFAULT = new Float(1.3f);
+    public static final Number GENERALIZE_FACTOR_DEFAULT = Float.valueOf(1.3f);
 }

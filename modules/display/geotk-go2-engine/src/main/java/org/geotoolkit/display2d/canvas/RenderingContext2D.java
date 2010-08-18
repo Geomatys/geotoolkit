@@ -140,6 +140,15 @@ public interface RenderingContext2D extends RenderingContext{
     double getGeographicScale();
 
     /**
+     * Geographic scale calculated using OGC Symbology Encoding specification.
+     * This is not the scale Objective to Display.
+     * This is not an accurate geographic scale.
+     * This is a fake average scale unproper for correct rendering.
+     * It is used only to filter SE rules.
+     */
+    double getSEScale();
+
+    /**
      * @return affine transform from objective CRS to display CRS.
      */
     AffineTransform2D getObjectiveToDisplay();
