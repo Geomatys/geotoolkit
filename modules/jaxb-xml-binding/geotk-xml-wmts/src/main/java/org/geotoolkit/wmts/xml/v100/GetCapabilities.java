@@ -50,9 +50,6 @@ import org.geotoolkit.ows.xml.v110.SectionsType;
 @XmlRootElement(name = "GetCapabilities")
 public class GetCapabilities extends GetCapabilitiesType {
 
-    @XmlAttribute(required = true)
-    private String service;
-
     /**
      * An empty constructor used by JAXB
      */
@@ -70,36 +67,7 @@ public class GetCapabilities extends GetCapabilitiesType {
      */
     public GetCapabilities(AcceptVersionsType acceptVersions, SectionsType sections,
             AcceptFormatsType acceptFormats, String updateSequence, String service) {
-        super(acceptVersions, sections, acceptFormats, updateSequence);
-        this.service = service;
-    }
-
-    /**
-     * Gets the value of the service property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getService() {
-        if (service == null) {
-            return "WMTS";
-        } else {
-            return service;
-        }
-    }
-
-    /**
-     * Sets the value of the service property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setService(String value) {
-        this.service = value;
+        super(acceptVersions, sections, acceptFormats, updateSequence, service);
     }
 
     public String toKvp() {

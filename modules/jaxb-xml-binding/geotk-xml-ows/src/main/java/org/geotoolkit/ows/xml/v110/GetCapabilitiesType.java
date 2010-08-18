@@ -68,32 +68,43 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
     @XmlAttribute
     private String updateSequence;
 
+    @XmlAttribute(required = true)
+    private String service;
+    
     /**
      * Empty constructor used by JAXB.
      */
     public GetCapabilitiesType(){ 
+    }
+
+    /**
+     */
+    public GetCapabilitiesType(String service){
+        this.service = service;
     }
     
     /**
      * Build a new GetCapabilities base request.
      */
     public GetCapabilitiesType(AcceptVersionsType acceptVersions, SectionsType sections,
-            AcceptFormatsType acceptFormats, String updateSequence){ 
+            AcceptFormatsType acceptFormats, String updateSequence, String service){
         this.acceptFormats  = acceptFormats;
         this.acceptVersions = acceptVersions;
         this.sections       = sections;
         this.updateSequence = updateSequence;
+        this.service        = service;
     }
 
 
     /**
      * Build a new GetCapabilities base request.
      */
-    public GetCapabilitiesType(String acceptVersions, String acceptFormats){
+    public GetCapabilitiesType(String acceptVersions, String acceptFormats, String service){
         this.acceptFormats  = new AcceptFormatsType(acceptFormats);
         this.acceptVersions = new AcceptVersionsType(acceptVersions);
         this.sections       = new SectionsType("All");
         this.updateSequence = null;
+        this.service        = service;
     }
     
     /**
@@ -149,6 +160,29 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
         return updateSequence;
     }
 
+    /**
+     * Gets the value of the service property.
+     *
+     * @return
+     *     possible object is
+     *     {@link String }
+     *
+     */
+    public String getService() {
+        return service;
+    }
+
+    /**
+     * Sets the value of the service property.
+     *
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *
+     */
+    public void setService(String value) {
+        this.service = value;
+    }
     
     
     /**

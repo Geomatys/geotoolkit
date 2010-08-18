@@ -52,13 +52,10 @@ import org.geotoolkit.wcs.xml.GetCapabilities;
 @XmlRootElement(name = "GetCapabilities")
 public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v110.GetCapabilitiesType implements GetCapabilities {
 
-    @XmlAttribute(required = true)
-    private String service;
-
     /**
      * An empty constructor used by JAXB
      */
-    GetCapabilitiesType(){
+    public GetCapabilitiesType(){
     }
     
     
@@ -67,22 +64,9 @@ public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v110.GetCapabili
      */
     public GetCapabilitiesType(AcceptVersionsType acceptVersions, SectionsType sections,
             AcceptFormatsType acceptFormats, String updateSequence){
-        super (acceptVersions, sections, acceptFormats, updateSequence);
-        this.service        = "WCS";
+        super (acceptVersions, sections, acceptFormats, updateSequence, "WCS");
     }
     
-    /**
-     * Gets the value of the service property.
-     */
-    @Override
-    public String getService() {
-        if (service == null) {
-            return "WCS";
-        } else {
-            return service;
-        }
-    }
-
     @Override
     public String toKvp() {
         return "request=GetCapabilities&service="+ getService() + "&version="+ getVersion();

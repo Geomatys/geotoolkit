@@ -73,35 +73,53 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
     @XmlAttribute
     private String updateSequence;
 
+    @XmlAttribute
+    private String service;
+
     /**
      * Empty constructor used by JAXB.
      */
     public GetCapabilitiesType(){ 
+    }
+
+    public GetCapabilitiesType(String service){
+        this.service = service;
     }
     
     /**
      * Build a new GetCapabilities base request.
      */
     public GetCapabilitiesType(AcceptVersionsType acceptVersions, SectionsType sections,
-            AcceptFormatsType acceptFormats, String updateSequence){ 
+            AcceptFormatsType acceptFormats, String updateSequence, String service){
         this.acceptFormats  = acceptFormats;
         this.acceptVersions = acceptVersions;
         this.sections       = sections;
         this.updateSequence = updateSequence;
+        this.service        = service;
     }
     
     /**
      * Gets the value of the acceptVersions property.
      */
+    @Override
     public AcceptVersionsType getAcceptVersions() {
         return acceptVersions;
+    }
+
+    public void setAcceptVersions(AcceptVersionsType acceptVersions) {
+        this.acceptVersions = acceptVersions;
     }
 
     /**
      * Gets the value of the sections property.
      */
+    @Override
     public SectionsType getSections() {
         return sections;
+    }
+
+    public void setSections(SectionsType sections) {
+        this.sections = sections;
     }
 
     /**
@@ -110,6 +128,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
      * @param sectionName The name of the searched section.
      * @return true if the request contains the specified section.
      */
+    @Override
     public boolean containsSection(String sectionName) {
         if (sections != null) {
             return sections.containsSection(sectionName);
@@ -120,13 +139,19 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
    /**
     * Gets the value of the acceptFormats property.
     */
+    @Override
     public AcceptFormatsType getAcceptFormats() {
         return acceptFormats;
+    }
+
+    public void setAcceptFormats(AcceptFormatsType acceptFormats) {
+        this.acceptFormats = acceptFormats;
     }
 
     /**
     * Return the first outputFormat of the is if there is one
     */
+    @Override
     public String getFirstAcceptFormat() {
         if (acceptFormats != null) {
             if (acceptFormats.getOutputFormat().size() > 0) {
@@ -137,19 +162,59 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
     }
 
     /**
+    * Return the first outputFormat of the is if there is one
+    */
+    public String getOutputFormat() {
+        if (acceptFormats != null) {
+            if (acceptFormats.getOutputFormat().size() > 0) {
+                return acceptFormats.getOutputFormat().get(0);
+            }
+        }
+        return null;
+    }
+
+    /**
+    * Return the first outputFormat of the is if there is one
+    */
+    public void setOutputFormat(String outputFormat) {
+        acceptFormats = new AcceptFormatsType(outputFormat);
+    }
+
+    /**
      * Gets the value of the updateSequence property.
      */
     public String getUpdateSequence() {
         return updateSequence;
     }
 
+    public void setUpdateSequence(String updateSequence) {
+        this.updateSequence = updateSequence;
+    }
+
     /**
      * inherited method from AbstractGetCapabilties
      */
+    @Override
     public Version getVersion() {
         if (acceptVersions!= null && !acceptVersions.getVersion().isEmpty()) {
             return new Version(acceptVersions.getVersion().get(0));
         } return null;
+    }
+
+    /**
+     * Gets the value of the service property.
+     */
+    @Override
+    public String getService() {
+        if (service == null) {
+            return "CSW";
+        } else {
+            return service;
+        }
+    }
+
+    public void setService(String service) {
+        this.service = service;
     }
     
     /**

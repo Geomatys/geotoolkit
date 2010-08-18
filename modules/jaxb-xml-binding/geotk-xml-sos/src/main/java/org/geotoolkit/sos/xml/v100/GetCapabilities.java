@@ -18,14 +18,12 @@ package org.geotoolkit.sos.xml.v100;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.AcceptFormatsType;
 import org.geotoolkit.ows.xml.v110.AcceptVersionsType;
 import org.geotoolkit.ows.xml.v110.GetCapabilitiesType;
 import org.geotoolkit.ows.xml.v110.SectionsType;
-import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -53,15 +51,11 @@ import org.geotoolkit.util.Utilities;
 @XmlRootElement(name = "GetCapabilities")
 public class GetCapabilities extends GetCapabilitiesType {
 
-    @XmlAttribute(required = true)
-    private String service;
-
     /**
      * minimal getCapabilities request.
      */
     public  GetCapabilities() {
-        super();
-        this.service = "SOS";
+        super("SOS");
     }
     
     /**
@@ -69,32 +63,16 @@ public class GetCapabilities extends GetCapabilitiesType {
      */
     public  GetCapabilities(AcceptVersionsType acceptVersions, SectionsType sections,
             AcceptFormatsType acceptFormats, String updateSequence, String service) {
-        super(acceptVersions, sections, acceptFormats, updateSequence);
-        this.service = service;
+        super(acceptVersions, sections, acceptFormats, updateSequence, service);
     }
 
      /**
      * Build a new getCapabilities (simplified version).
      */
     public  GetCapabilities(String acceptVersions, String acceptFormats) {
-        super(acceptVersions, acceptFormats);
-        this.service = "SOS";
+        super(acceptVersions, acceptFormats, "SOS");
     }
 
-
-    
-    /**
-     * Return the value of the service property (often "SOS").
-     * 
-     * @return 
-     */
-    public String getService() {
-        if (service == null) {
-            return "SOS";
-        } else {
-            return service;
-        }
-    }
 
     /**
      * Verify if this entry is identical to the specified object.
@@ -104,18 +82,15 @@ public class GetCapabilities extends GetCapabilitiesType {
         if (object == this) {
             return true;
         }
-        if (object instanceof GetCapabilities && super.equals(object)) {
-            final GetCapabilities that = (GetCapabilities) object;
-            return Utilities.equals(this.service, that.service);
+        if (object instanceof GetCapabilities) {
+            return super.equals(object);
         }
         return false;
     }
 
     @Override
     public int hashCode() {
-        int hash = 5;
-        hash = 17 * hash + (this.service != null ? this.service.hashCode() : 0);
-        return hash;
+        return super.hashCode();
     }
     
 

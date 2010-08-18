@@ -58,9 +58,6 @@ import org.geotoolkit.wfs.xml.RequestBase;
 @XmlRootElement(name = "GetCapabilities")
 public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v100.GetCapabilitiesType implements RequestBase {
 
-    @XmlAttribute
-    private String service;
-
     /**
      * An empty constructor used by JAXB
      */
@@ -73,8 +70,7 @@ public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v100.GetCapabili
      * @param service MUST be CSW.
      */
     public GetCapabilitiesType(String service) {
-        super();
-        this.service = service;
+        super(service);
     }
 
     /**
@@ -89,31 +85,6 @@ public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v100.GetCapabili
      */
     public GetCapabilitiesType(AcceptVersionsType acceptVersions, SectionsType sections,
             AcceptFormatsType acceptFormats, String updateSequence, String service) {
-        super(acceptVersions, sections, acceptFormats, updateSequence);
-        this.service = service;
-    }
-
-    /**
-     * Gets the value of the service property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getService() {
-        return service;
-    }
-
-    /**
-     * Sets the value of the service property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setService(String value) {
-        this.service = value;
+        super(acceptVersions, sections, acceptFormats, updateSequence, service);
     }
 }

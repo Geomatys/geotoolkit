@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.ows.xml;
 
-import org.geotoolkit.util.Versioned;
-
 
 /**
  *  Super abstract type for all the different versions of GetCapabilities request.
@@ -25,7 +23,7 @@ import org.geotoolkit.util.Versioned;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public interface AbstractGetCapabilities extends Versioned {
+public interface AbstractGetCapabilities extends RequestBase {
 
     AcceptVersions getAcceptVersions();
 

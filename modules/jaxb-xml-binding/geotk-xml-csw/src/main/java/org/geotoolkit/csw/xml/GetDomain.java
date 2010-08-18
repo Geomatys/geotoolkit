@@ -21,7 +21,7 @@ package org.geotoolkit.csw.xml;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public interface GetDomain extends RequestBase {
+public interface GetDomain extends AbstractCswRequest {
 
     public String getPropertyName();
 

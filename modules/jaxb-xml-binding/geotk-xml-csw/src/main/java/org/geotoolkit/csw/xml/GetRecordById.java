@@ -23,7 +23,7 @@ import java.util.List;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public interface GetRecordById extends RequestBase {
+public interface GetRecordById extends AbstractCswRequest {
 
     public List<String> getId();
 

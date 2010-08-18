@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.csw.xml;
 
+import org.geotoolkit.util.Version;
 import org.geotoolkit.util.Versioned;
 
 /**
@@ -37,5 +38,9 @@ public interface AbstractCswRequest extends Versioned {
      *
      */
     void setOutputFormat(String value);
+
+    String getService();
+
+    Version getVersion();
 
 }

@@ -24,7 +24,7 @@ import javax.xml.namespace.QName;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public interface DescribeRecord extends RequestBase {
+public interface DescribeRecord extends AbstractCswRequest {
 
     String getSchemaLanguage();
 

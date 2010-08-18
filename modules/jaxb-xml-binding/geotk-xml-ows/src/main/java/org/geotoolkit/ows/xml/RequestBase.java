@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.csw.xml;
+package org.geotoolkit.ows.xml;
 
 import org.geotoolkit.util.Version;
 
@@ -23,7 +23,7 @@ import org.geotoolkit.util.Version;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public interface RequestBase extends AbstractCswRequest {
+public interface RequestBase {
 
     public String getService();
 

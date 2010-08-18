@@ -18,7 +18,6 @@ package org.geotoolkit.csw.xml.v202;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.geotoolkit.csw.xml.GetCapabilities;
 import org.geotoolkit.ows.xml.v100.AcceptFormatsType;
@@ -53,9 +52,6 @@ import org.geotoolkit.ows.xml.v100.SectionsType;
 @XmlRootElement(name = "GetCapabilities")
 public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v100.GetCapabilitiesType implements GetCapabilities {
 
-    @XmlAttribute
-    private String service;
-    
     /**
      * An empty constructor used by JAXB
      */
@@ -68,8 +64,7 @@ public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v100.GetCapabili
      * @param service MUST be CSW.
      */
     public GetCapabilitiesType(String service) {
-        super();
-        this.service = service;
+        super(service);
     }
 
     /**
@@ -84,23 +79,6 @@ public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v100.GetCapabili
      */
     public GetCapabilitiesType(AcceptVersionsType acceptVersions, SectionsType sections,
             AcceptFormatsType acceptFormats, String updateSequence, String service) {
-        super(acceptVersions, sections, acceptFormats, updateSequence);
-        this.service = service;
-    }
-    
-
-    /**
-     * Gets the value of the service property.
-     */
-    public String getService() {
-        if (service == null) {
-            return "CSW";
-        } else {
-            return service;
-        }
-    }
-
-    public void setService(String service) {
-        this.service = service;
+        super(acceptVersions, sections, acceptFormats, updateSequence, service);
     }
 }

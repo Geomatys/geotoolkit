@@ -24,7 +24,7 @@ import javax.xml.datatype.Duration;
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public interface Harvest extends RequestBase {
+public interface Harvest extends AbstractCswRequest {
 
     public String getSource();
 

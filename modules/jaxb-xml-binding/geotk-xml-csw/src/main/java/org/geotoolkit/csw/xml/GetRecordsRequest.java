@@ -26,7 +26,7 @@ import org.geotoolkit.ogc.xml.v110.FilterType;
  * 
  * @module pending
  */
-public interface GetRecordsRequest extends RequestBase {
+public interface GetRecordsRequest extends AbstractCswRequest {
 
     
     /**
