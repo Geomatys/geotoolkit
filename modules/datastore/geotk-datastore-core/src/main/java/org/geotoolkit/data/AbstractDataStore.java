@@ -78,7 +78,6 @@ public abstract class AbstractDataStore implements DataStore{
 
     private final Logger Logger = Logging.getLogger(getClass().getPackage().getName());
 
-    //@todo not thread safe, I dont think it's important
     private final Set<StorageListener> listeners = new HashSet<StorageListener>();
     private final String defaultNamespace;
 
@@ -227,7 +226,9 @@ public abstract class AbstractDataStore implements DataStore{
      */
     @Override
     public void dispose() {
-        listeners.clear();
+        synchronized (listeners) {
+            listeners.clear();
+        }
     }
 
     ////////////////////////////////////////////////////////////////////////////
@@ -239,7 +240,9 @@ public abstract class AbstractDataStore implements DataStore{
      */
     @Override
     public void addStorageListener(StorageListener listener) {
-        listeners.add(listener);
+        synchronized (listeners) {
+            listeners.add(listener);
+        }
     }
 
     /**
@@ -247,7 +250,9 @@ public abstract class AbstractDataStore implements DataStore{
      */
     @Override
     public void removeStorageListener(StorageListener listener) {
-        listeners.remove(listener);
+        synchronized (listeners) {
+            listeners.remove(listener);
+        }
     }
 
     /**
@@ -313,7 +318,11 @@ public abstract class AbstractDataStore implements DataStore{
      * @param event , event to send to listeners.
      */
     protected void sendEvent(StorageManagementEvent event){
-        for(final StorageListener listener : listeners){
+        final StorageListener[] lst;
+        synchronized (listeners) {
+            lst = listeners.toArray(new StorageListener[listeners.size()]);
+        }
+        for(final StorageListener listener : lst){
             listener.structureChanged(event);
         }
     }
@@ -323,7 +332,11 @@ public abstract class AbstractDataStore implements DataStore{
      * @param event , event to send to listeners.
      */
     protected void sendEvent(StorageContentEvent event){
-        for(final StorageListener listener : listeners){
+        final StorageListener[] lst;
+        synchronized (listeners) {
+            lst = listeners.toArray(new StorageListener[listeners.size()]);
+        }
+        for(final StorageListener listener : lst){
             listener.contentChanged(event);
         }
     }

@@ -44,7 +44,6 @@ import org.opengis.geometry.Envelope;
 public abstract class AbstractFeatureCollection<F extends Feature> extends AbstractCollection<F>
         implements FeatureCollection<F>, StorageListener{
 
-    //@todo not thread safe, I dont think it's important
     private final Set<StorageListener> listeners = new HashSet<StorageListener>();
 
     protected String id;
@@ -165,7 +164,11 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
         //forward events only if the collection is typed and match the type name
         if(currentType != null && currentType.getName().equals(event.getFeatureTypeName())){
             event = StorageManagementEvent.resetSource(this, event);
-            for(final StorageListener listener : listeners){
+            final StorageListener[] lst;
+            synchronized (listeners) {
+                lst = listeners.toArray(new StorageListener[listeners.size()]);
+            }
+            for (final StorageListener listener : lst) {
                 listener.structureChanged(event);
             }
         }
@@ -189,7 +192,9 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      */
     @Override
     public void addStorageListener(StorageListener listener) {
-        listeners.add(listener);
+        synchronized (listeners) {
+            listeners.add(listener);
+        }
     }
 
     /**
@@ -197,7 +202,9 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      */
     @Override
     public void removeStorageListener(StorageListener listener) {
-        listeners.remove(listener);
+        synchronized (listeners) {
+            listeners.remove(listener);
+        }
     }
 
     /**
@@ -231,8 +238,12 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * Forward a features event to all listeners.
      * @param event , event to send to listeners.
      */
-    protected void sendEvent(StorageContentEvent event){
-        for(final StorageListener listener : listeners){
+    protected void sendEvent(StorageContentEvent event) {
+        final StorageListener[] lst;
+        synchronized (listeners) {
+            lst = listeners.toArray(new StorageListener[listeners.size()]);
+        }
+        for (final StorageListener listener : lst) {
             listener.contentChanged(event);
         }
     }
