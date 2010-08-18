@@ -546,7 +546,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      * This method normally requires that there is exactly one transform step remaining after we
      * processed map projections in the special way described in {@link #getParameterValues()},
      * because if they were more than one remaining steps, the returned parameters would not be
-     * suffisient for rebuilding the full concatenated transform. Returning parameters when there
+     * sufficient for rebuilding the full concatenated transform. Returning parameters when there
      * is more than one remaining step, even if all other transform steps are not parameterisable,
      * would be a contract violation.
      * <p>
@@ -701,7 +701,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
                         break;
                     }
                     case DESCENDING: {
-                        // Traversing in reverse order is suffisient.
+                        // Traversing in reverse order is sufficient.
                         final int shift = numPts - numBuf;
                         srcOff += shift*sourceDim; sourceDim = -sourceDim;
                         dstOff += shift*targetDim; targetDim = -targetDim;

@@ -26,7 +26,7 @@ Building Geotoolkit.org
 
 * Building the JAR files
 
-  Gets the source code from the above-cited download area (if monthly releases are suffisient)
+  Gets the source code from the above-cited download area (if monthly releases are sufficient)
   or from the Mercurial repository if the development version (snapshot) is wanted. In the later
   case, see the {{{../source-repository.html}Source Repository}} page for more information.
 

@@ -156,7 +156,7 @@ public class DynamicFactoryRegistry extends FactoryRegistry {
      *                  {@code null} if none.
      * @return A factory for the specified category and hints (never {@code null}).
      * @throws FactoryNotFoundException if no factory was found, and the specified hints don't
-     *         provide suffisient information for creating a new factory.
+     *         provide sufficient information for creating a new factory.
      * @throws FactoryRegistryException if the factory can't be created for some other reason.
      */
     @Override

@@ -915,7 +915,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      * unknown. This method is invoked by {@link ViewsManager#create} in order to determine
      * if a given coverage can share its views with an other coverage. The condition tested
      * by {@link ViewsManager} (namely: coverages have the same image, same grid geometry and
-     * same sample dimensions) are suffisient only if the coverages build the views in the same
+     * same sample dimensions) are sufficient only if the coverages build the views in the same
      * way. The last condition can be guarantee only if we know how {@link #specialize} is
      * implemented. It is safe for non-{@link Calculator2D} classes (because users can not
      * override {@link #specialize} and for final classes like {@link Interpolator2D}, but

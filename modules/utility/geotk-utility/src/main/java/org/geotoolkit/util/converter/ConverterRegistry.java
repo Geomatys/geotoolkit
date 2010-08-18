@@ -175,7 +175,7 @@ public class ConverterRegistry {
      * </ul>
      * <p>
      * No {@code S} &rarr; {@code C2} or {@code S} &rarr; {@code C1} converter will be registered,
-     * because an identity converter would be suffisient for those cases.
+     * because an identity converter would be sufficient for those cases.
      *
      * {@section Which sub-classes of the source class are registered}
      * Sub-classes of the source class will be registered on a case-by-case basis when the

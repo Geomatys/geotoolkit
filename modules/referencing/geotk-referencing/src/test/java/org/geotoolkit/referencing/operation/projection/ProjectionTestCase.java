@@ -177,7 +177,7 @@ public abstract class ProjectionTestCase extends TransformTestCase {
     }
 
     /**
-     * Tests longitude rolling. Testing on the sphere is suffisient, since the
+     * Tests longitude rolling. Testing on the sphere is sufficient, since the
      * assertions contained in the {@code Spherical} nested class will compare
      * with the ellipsoidal case.
      * <p>

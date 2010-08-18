@@ -5,7 +5,7 @@ EPSG database
   and reproduced in this module with identical content.
 
   This module is used only for creating a local copy of the database. It is <<not>> needed for
-  using the EPSG database once created - the core referencing module alone is suffisient.
+  using the EPSG database once created - the core referencing module alone is sufficient.
   However having this module inconditionnaly in the classpath - in case the local database
   needs to be created - doesn't hurt.
 

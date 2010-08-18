@@ -74,7 +74,7 @@ public final class WeakHashSetTest {
 
     /**
      * Tests the {@link WeakHashSet} using weak references. In this test, we have to keep
-     * in mind than some elements in {@code weakSet} may disaspear at any time!
+     * in mind than some elements in {@code weakSet} may disappear at any time!
      *
      * @throws InterruptedException If the test has been interrupted.
      */

@@ -203,7 +203,7 @@ public class LambertAzimuthalEqualAreaTest extends ProjectionTestCase {
     }
 
     /**
-     * Tests longitude rolling. Testing on the sphere is suffisient, since the
+     * Tests longitude rolling. Testing on the sphere is sufficient, since the
      * assertions contained in the {@code Spherical} class will compare with
      * the ellipsoidal case.
      *

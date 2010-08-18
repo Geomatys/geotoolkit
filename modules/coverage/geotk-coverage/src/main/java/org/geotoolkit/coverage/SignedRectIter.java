@@ -44,7 +44,7 @@ final class SignedRectIter extends TransfertRectIter {
 
     /**
      * Casts the sample value to short, then let the widening conversion happen back to
-     * {@code int}. This is suffisient for fixing the sign. We apply the same strategy
+     * {@code int}. This is sufficient for fixing the sign. We apply the same strategy
      * for floating point values too, on the assumption that the underlying data type
      * is always {@code TYPE_USHORT} when this class is used.
      */

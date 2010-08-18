@@ -136,7 +136,7 @@ Metadata
   are annotated for JAXB marshalling. If a metadata is implemented by an other package (for
   example <<<org.geotoolkit.metadata.sql>>>), then it shall be converted to an annotated class
   before to be marshalled. All Geotk annotated classes provide a copy constructor for this
-  purpose. A shallow copy is suffisient; JAXB adapters will convert the elements on-the-fly
+  purpose. A shallow copy is sufficient; JAXB adapters will convert the elements on-the-fly
   when needed.
 
   The annotated classes can be given to a JAXB <<<Marshaller>>>. For best results, it shall

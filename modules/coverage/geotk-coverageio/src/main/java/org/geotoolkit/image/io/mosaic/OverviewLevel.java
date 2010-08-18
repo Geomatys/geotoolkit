@@ -48,7 +48,7 @@ import org.geotoolkit.resources.Errors;
  * The methods in this class as grouped in two categories: constructor methods and query methods.
  * Constructor methods should be invoked in only one thread, and {@link #createLinkedList} shall
  * be the last method invoked. Query methods are safe for invocation in any thread provided that
- * {@code OverviewLevel} is not modified anymore after construction.
+ * {@code OverviewLevel} is not modified anymore after construction.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.15
@@ -230,7 +230,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
      *
      * {@section Thread safety}
      * This method is <strong>not</strong> synchronized because it is invoked only by
-     * {@link GridTileManager} constructor soon after {@code OverviewLevel} creation.
+     * {@link GridTileManager} constructor soon after {@code OverviewLevel} creation.
      *
      * @param  tile The tile to add.
      * @param  subsampling The tile subsampling, provided as an explicit argument only
@@ -267,7 +267,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
      *
      * {@section Synchronization}
      * This method is synchronized as a matter of principle, because it uses the transient
-     * {@link #formatter} field. This is also the last method invoked during the construction
+     * {@link #formatter} field. This is also the last method invoked during the construction
      * by {@link GridTileManager}. Consequently the synchronization provides a useful memory
      * barrier.
      *

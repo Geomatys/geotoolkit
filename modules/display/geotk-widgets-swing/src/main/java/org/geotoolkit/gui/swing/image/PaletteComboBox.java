@@ -286,7 +286,7 @@ public class PaletteComboBox extends JComponent {
     private final class CellEditor extends AbstractCellEditor implements TableCellEditor, Callable<ComboBoxModel> {
         /**
          * Returns {@code true} if the cell can be edited. We require a double click,
-         * otherwise the combo box drop down list appears and disaspears too often.
+         * otherwise the combo box drop down list appears and disappears too often.
          */
         @Override
         public boolean isCellEditable(final EventObject event) {

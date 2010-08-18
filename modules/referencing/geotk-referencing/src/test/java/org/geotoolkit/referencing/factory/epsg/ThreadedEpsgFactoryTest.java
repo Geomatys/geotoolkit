@@ -356,7 +356,7 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
                 "fail.  Testing with 'assertEquals' and a new backing store would be slow since\n" +
                 "it would trig a new scan of the database. If you are testing a database through\n" +
                 "the network, try to run the test when there is no network latency.");
-            // Note: the above check is not always suffisient for preventing test failure since
+            // Note: the above check is not always sufficient for preventing test failure since
             //       there is a window of vulnerability between that check and the execution of
             //       factory.getAuthorityCodes(...) method.
         } else {

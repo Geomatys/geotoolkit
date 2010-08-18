@@ -1282,7 +1282,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
             }
         } else {
             /*
-             * Checking the abbreviation is not suffisient. For example the polar angle and the
+             * Checking the abbreviation is not sufficient. For example the polar angle and the
              * spherical latitude have the same abbreviation (theta). Geotk extensions like
              * "Longitude" (in addition of ISO 19111 "Geodetic longitude") bring more potential
              * confusion. Furthermore, not all implementors will use the greek letters (even if

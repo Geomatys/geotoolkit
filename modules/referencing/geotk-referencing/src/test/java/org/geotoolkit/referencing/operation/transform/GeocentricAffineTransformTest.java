@@ -72,7 +72,7 @@ public final class GeocentricAffineTransformTest extends TransformTestCase {
         verifyTransform(new double[] {3771793.97, 140253.34, 5124304.35},
                         new double[] {3771878.84, 140349.83, 5124421.30});
 
-        // Do not stress this transform. Stressing testSevenParam() should be suffisient.
+        // Do not stress this transform. Stressing testSevenParam() should be sufficient.
     }
 
     /**

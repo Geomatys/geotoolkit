@@ -118,7 +118,7 @@ import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
  * it will not trig new data loading as long as consecutive calls to {@code evaluate(...)}
  * methods require the same coverage elements. Apart from this very simple caching mechanism,
  * caching is the responsibility of {@link Element} implementations. Note that this simple
- * caching mechanism is suffisient if {@code evaluate(...)} methods are invoked with increasing
+ * caching mechanism is sufficient if {@code evaluate(...)} methods are invoked with increasing
  * <var>z</var> values.
  *
  * @author Martin Desruisseaux (IRD)

@@ -979,7 +979,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * <p>
      * Beware that signed integers (case 1 in the above example) used with {@link IndexColorModel}
      * require explicit casts to the {@code short} type as in the example below. Using directly the
-     * {@link java.awt.image.Raster#getSample(int,int,int)} return value is not suffisient because
+     * {@link java.awt.image.Raster#getSample(int,int,int)} return value is not sufficient because
      * the returned value would be unsigned no matter what this {@code getRawDataType(int)} method
      * returned.
      *

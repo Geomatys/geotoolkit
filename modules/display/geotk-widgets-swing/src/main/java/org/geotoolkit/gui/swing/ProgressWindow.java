@@ -384,7 +384,7 @@ public class ProgressWindow implements ProgressListener, Disposable {
     }
 
     /**
-     * Notifies that the operation has finished. The window will disaspears, except
+     * Notifies that the operation has finished. The window will disappears, except
      * if it contains warning or exception stack traces.
      */
     @Override

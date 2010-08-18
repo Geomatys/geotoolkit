@@ -92,7 +92,7 @@ public class DefaultEntry implements Entry, Serializable {
     /**
      * Returns a hash code value for this entry. The current implementation computes the hash
      * code from the {@linkplain #identifier}. Because entry identifiers should be unique, this
-     * is usually suffisient.
+     * is usually sufficient.
      */
     @Override
     public final int hashCode() {
@@ -102,7 +102,7 @@ public class DefaultEntry implements Entry, Serializable {
     /**
      * Compares this entry with the specified object for equality. The default implementation
      * compares the {@linkplain #getClass class}, {@linkplain #identifier} and {@linkplain
-     * #description}. If should be suffisient when every entries have a unique name, for
+     * #description}. If should be sufficient when every entries have a unique name, for
      * example when the name is the primary key in a database table. Subclasses may compare
      * other attributes as a safety when affordable, but should avoid any comparison that may
      * force the loading of a large amount of data.

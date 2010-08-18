@@ -146,7 +146,7 @@ public final class DeferredPlanarImage extends PlanarImage
      * maximum of {@code DELAY} milliseconds in case the tile computation would be very
      * fast. Set the delay to 0 in order to disable this feature.
      *
-     * {@note Must be of type <code>long</code> even if <code>int</code> would be suffisient,
+     * {@note Must be of type <code>long</code> even if <code>int</code> would be sufficient,
      *        if order to force widening conversions.}
      */
     private static final long DELAY = 500;

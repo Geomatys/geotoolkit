@@ -86,7 +86,7 @@ public abstract class ColumnOrParameter {
      */
     private ColumnOrParameter(final Query query, final EnumSet<QueryType> types) {
         /*
-         * Computes the length of the 'index' array, which must be suffisient
+         * Computes the length of the 'index' array, which must be sufficient
          * for holding the last query type (in ordinal order).
          */
         int length = 0;

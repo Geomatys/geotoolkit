@@ -53,7 +53,7 @@ public final class XMath {
 
     /**
      * The sequence of prime numbers computed so far. Will be expanded as needed.
-     * We limit ourself to 16 bits numbers because they are suffisient for computing
+     * We limit ourself to 16 bits numbers because they are sufficient for computing
      * divisors of any 32 bits number.
      */
     private static short[] primes = new short[] {2, 3};

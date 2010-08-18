@@ -624,7 +624,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      * operation as part of the public API. The clone operation is required for the internal
      * working of the {@link #unmodifiable()} method, which expect from {@code clone()} a
      * <strong>shallow</strong> copy of this metadata entity. The default implementation of
-     * {@link Object#clone()} is suffisient for most use.
+     * {@link Object#clone()} is sufficient for most use.
      *
      * @return A <strong>shallow</strong> copy of this metadata.
      * @throws CloneNotSupportedException if the clone is not supported.

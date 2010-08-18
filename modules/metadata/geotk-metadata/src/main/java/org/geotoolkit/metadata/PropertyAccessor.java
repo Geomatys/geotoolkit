@@ -389,7 +389,7 @@ final class PropertyAccessor {
                          * contract for those methods.
                          *
                          * Note that testing candidate.getDeclaringClass().equals(Object.class)
-                         * is not suffisient because the method may be overridden in a subclass.
+                         * is not sufficient because the method may be overridden in a subclass.
                          */
                         final String name = candidate.getName();
                         if (!name.startsWith(SET) && !isExcluded(name)) {

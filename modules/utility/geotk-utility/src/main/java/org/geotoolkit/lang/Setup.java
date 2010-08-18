@@ -37,7 +37,7 @@ import org.geotoolkit.resources.Errors;
  * (except a few cases like <cite>World File Image Readers</cite>), since services are automatically
  * discovered when needed (using {@link ServiceLoader}) and disposed on JVM termination (using
  * {@linkplain Runtime#addShutdownHook shutdown hook}). However the above-cited mechanism is not
- * suffisient when an application is undeployed and re-deployed in a JEE environment without
+ * sufficient when an application is undeployed and re-deployed in a JEE environment without
  * restarting the JVM. For example the {@linkplain org.geotoolkit.image.io.plugin Geotk Image I/O
  * plugins} needs to be {@linkplain IIORegistry#deregisterServiceProvider(Object) deregistered}
  * during the <cite>undeploy</cite> phase before they get

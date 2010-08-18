@@ -175,7 +175,7 @@ public class RegisteredOperationBrowser extends JComponent {
                 if (candidate instanceof OperationDescriptor) {
                     int index = -1;
                     /*
-                     * Fetch the parameter index. Note: the Swing TreeNode is suffisient
+                     * Fetch the parameter index. Note: the Swing TreeNode is sufficient
                      * for this task (no need for the fixed Geotk's TreeNode).
                      */
                     if (component instanceof javax.swing.tree.TreeNode) {

@@ -2596,7 +2596,7 @@ target crs = $TwoPoint11
 tolerance forward = (1e-2, 1e-2)
 tolerance inverse = (1e-7, 1e-7)
 
-// The above tolerance is suffisient on Intel Pentium IV,
+// The above tolerance is sufficient on Intel Pentium IV,
 // but fails on AMD Athlon MP 2000+. Relax the tolerance
 // so the tests can pass on that processor too.
 tolerance forward = (1.3, 1)

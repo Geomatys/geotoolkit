@@ -287,7 +287,7 @@ public class AlbersEqualArea extends UnitaryProjection {
          *         rho = -rho;
          *     }
          *
-         * This condition has disaspeared in Geotk because (x,y) are premultiplied by n
+         * This condition has disappeared in Geotk because (x,y) are premultiplied by n
          * (by the affine transform) before to enter in this method, so if n was negative
          * those values have already their sign reverted. In the case of rho, it was divided
          * further by n, so it got its sign reverted too.

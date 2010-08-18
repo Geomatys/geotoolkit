@@ -170,7 +170,7 @@ final class DirectionAlongMeridian implements Comparable<DirectionAlongMeridian>
             /*
              * The calls to  'AxisDirection.values()' and 'findDirection(...)'  should be performed
              * inside the synchronized block, since we try to avoid the creation of many directions
-             * for the same name.   Strictly speaking, this synchronization is not suffisient since
+             * for the same name.   Strictly speaking, this synchronization is not sufficient since
              * it doesn't apply to the creation of axis directions from outside this class.  But it
              * okay if this code is the only place where we create axis directions with name of the
              * kind "South among 90°E". This assumption holds for Geotk implementation.

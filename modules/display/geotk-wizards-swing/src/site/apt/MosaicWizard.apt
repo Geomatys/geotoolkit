@@ -129,7 +129,7 @@ java -Xmx1G -jar geotk.jar
 
   The last step just waits for confirmation. Press the "<Finish>" button for launching the
   creation of the output image mosaic. This operation may take many hours if there is many
-  thousands of input tiles. When the operation is finished, the wizard will disaspear if
+  thousands of input tiles. When the operation is finished, the wizard will disappear if
   they were no error. In case of error, the wizard will stay open with an error message.
 
 

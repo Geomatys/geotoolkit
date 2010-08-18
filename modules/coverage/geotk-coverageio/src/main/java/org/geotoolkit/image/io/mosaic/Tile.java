@@ -1431,7 +1431,7 @@ public class Tile implements Comparable<Tile>, Serializable {
     /**
      * Returns a hash code value for this tile. The default implementation uses the
      * {@linkplain #getImageReader reader}, {@linkplain #getInput input} and {@linkplain
-     * #getImageIndex image index}, which should be suffisient for uniquely distinguish
+     * #getImageIndex image index}, which should be sufficient for uniquely distinguish
      * every tiles.
      */
     @Override

@@ -466,7 +466,7 @@ public class ProgressPrinter implements ProgressListener, Disposable {
 
     /**
      * Notifies this listener that the operation has finished. The progress indicator will
-     * shows 100% or disaspears. If warning messages were pending, they will be printed now.
+     * shows 100% or disappears. If warning messages were pending, they will be printed now.
      */
     @Override
     public synchronized void complete() {

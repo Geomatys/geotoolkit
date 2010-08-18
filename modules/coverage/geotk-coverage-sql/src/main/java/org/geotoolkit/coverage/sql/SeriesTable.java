@@ -230,7 +230,7 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
                     continue;
                 }
                 if (id != null && id.intValue() != nextID) {
-                    // Could happen if there is insuffisient conditions in the WHERE clause.
+                    // Could happen if there is insufficient conditions in the WHERE clause.
                     log("find", errors().getLogRecord(Level.WARNING, Errors.Keys.DUPLICATED_RECORD_$1, id));
                     continue;
                 }

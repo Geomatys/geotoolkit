@@ -22,7 +22,7 @@ java -jar geotk.jar
 
   * Ensure that the directory which contain the PostGIS <<<lwpostgis.sql>>> and
     <<<spatial_ref_sys.sql>>> files is accessible from the computer running the
-    wizard (a read-only access is suffisient), or copy those files in a local
+    wizard (a read-only access is sufficient), or copy those files in a local
     directory.
 
   * Create an initially empty PostgreSQL database, preferably with Unicode encoding.

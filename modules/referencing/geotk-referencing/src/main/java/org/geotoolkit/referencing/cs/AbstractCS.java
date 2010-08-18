@@ -487,7 +487,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
     /**
      * Computes the distance between two points. This method is not available for all coordinate
      * systems. For example, {@linkplain DefaultEllipsoidalCS ellipsoidal CS} doesn't have
-     * suffisient information.
+     * sufficient information.
      *
      * @param  coord1 Coordinates of the first point.
      * @param  coord2 Coordinates of the second point.

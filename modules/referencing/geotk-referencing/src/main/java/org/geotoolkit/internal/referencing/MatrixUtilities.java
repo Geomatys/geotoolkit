@@ -96,7 +96,7 @@ public final class MatrixUtilities {
      * returned unchanged. Otherwise, all elements are copied in a new {@code GeneralMatrix} object.
      * <p>
      * Before to use this method, check if a {@link XMatrix} (to be obtained with {@link #toXMatrix})
-     * would be suffisient. Use this method only if a {@code GeneralMatrix} is really necessary.
+     * would be sufficient. Use this method only if a {@code GeneralMatrix} is really necessary.
      *
      * @param  matrix The matrix to convert.
      * @return The given matrix, or a copy of it as a {@link GeneralMatrix} object.

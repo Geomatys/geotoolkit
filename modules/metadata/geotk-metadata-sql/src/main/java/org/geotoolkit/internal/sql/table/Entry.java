@@ -53,7 +53,7 @@ public interface Entry {
     /**
      * Returns a hash code value for this entry. The implementation shall compute the hash
      * code from the {@linkplain #getIdentifier() identifier} only. Because entry identifiers
-     * should be unique, this is usually suffisient.
+     * should be unique, this is usually sufficient.
      *
      * @return A hash code value computed from the identifier.
      */
@@ -63,7 +63,7 @@ public interface Entry {
     /**
      * Compares this entry with the specified object for equality. The implementation shall
      * compares at least the {@linkplain #getClass class} and {@linkplain #getIdentifier()
-     * identifier}. If should be suffisient when every entries have a unique name, for example
+     * identifier}. If should be sufficient when every entries have a unique name, for example
      * when the name is the primary key in a database table. Implementation may compare other
      * attributes as a safety when affordable, but should avoid any comparison that may force
      * the loading of a large amount of data.

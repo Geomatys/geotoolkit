@@ -326,7 +326,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
                         continue;
                     }
                     if (foundStrictlyEquals) {
-                        // Could happen if there is insuffisient conditions in the WHERE clause.
+                        // Could happen if there is insufficient conditions in the WHERE clause.
                         log("find", errors().getLogRecord(Level.WARNING, Errors.Keys.DUPLICATED_RECORD_$1, id));
                         continue;
                     }

@@ -492,7 +492,7 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
 
     /**
      * Returns {@code true} if the coverage represented by this entry has enough resolution
-     * compared to the requested one. If this method doesn't have suffisient information,
+     * compared to the requested one. If this method doesn't have sufficient information,
      * then it conservatively returns {@code true}.
      *
      * @param requested The requested resolution in units of the database horizontal CRS.

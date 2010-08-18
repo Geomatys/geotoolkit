@@ -67,7 +67,7 @@ public final class Wizards extends IndexedResourceBundle {
          * <html><b>Notes:</b><ul><li>Roles shall be created only once for a given server. If a
          * database has already been created on the "<code>{0}</code>" server with the same roles,
          * uncheck the "<cite>Create roles</cite>" option.</li><li>A single EPSG database (<a
-         * href="http://www.epsg.org">http://www.epsg.org</a>) is suffisient and can be shared by
+         * href="http://www.epsg.org">http://www.epsg.org</a>) is sufficient and can be shared by
          * different Coverages database. However having multiple copies is okay.</li></ul></html>
          */
         public static final int COVERAGE_DATABASE_NOTES_$1 = 3;

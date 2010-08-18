@@ -623,7 +623,7 @@ public class ImageWorker extends ImageInspector {
         /*
          * We have more than one band. Note that there is no need to remove the
          * alpha band before to apply the "bandCombine" operation - it is
-         * suffisient to let the coefficient for the alpha band to the 0 value.
+         * sufficient to let the coefficient for the alpha band to the 0 value.
          */
         final double[] coeff = new double[cm.getNumComponents() + 1];
         Arrays.fill(coeff, 0, numColorBands, 1.0 / numColorBands);

@@ -36,7 +36,7 @@ import org.geotoolkit.internal.sql.table.DefaultEntry;
  *   <li>More recent but not yet definitive data.</li>
  * </ul>
  * <p>
- * In most cases it is suffisient to work with {@linkplain LayerEntry layer entry}
+ * In most cases it is sufficient to work with {@linkplain LayerEntry layer entry}
  * as a whole without the need to go down to the {@code SeriesEntry}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)

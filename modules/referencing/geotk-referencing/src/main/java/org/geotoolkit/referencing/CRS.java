@@ -1271,7 +1271,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * <p>
      * Note that this method can not handle the case where the envelope contains the North or South
      * pole, or when it cross the &plusmn;180&deg; longitude, because {@linkplain MathTransform
-     * math transforms} does not carry suffisient informations. For a more robust envelope
+     * math transforms} does not carry sufficient informations. For a more robust envelope
      * transformation, use {@link #transform(CoordinateOperation, Envelope)} instead.
      *
      * @param  transform The transform to use.
@@ -1610,7 +1610,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * <p>
      * Note that this method can not handle the case where the rectangle contains the North or South
      * pole, or when it cross the &plusmn;180&deg; longitude, because {@linkplain MathTransform
-     * math transforms} do not carry suffisient informations. For a more robust rectangle
+     * math transforms} do not carry sufficient informations. For a more robust rectangle
      * transformation, use {@link #transform(CoordinateOperation, Rectangle2D, Rectangle2D)}
      * instead.
      *

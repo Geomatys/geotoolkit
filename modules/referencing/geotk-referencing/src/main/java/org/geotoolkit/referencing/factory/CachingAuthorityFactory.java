@@ -361,7 +361,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      * If this factory is a wrapper for the specified factory that do not add any additional
      * {@linkplain #getAuthorityCodes authority codes}, returns {@code true}. This method is
      * for {@link FallbackAuthorityFactory} internal use only and should not be public. A
-     * cheap test without {@link #getBackingStore} invocation is suffisient for our needs.
+     * cheap test without {@link #getBackingStore} invocation is sufficient for our needs.
      */
     @Override
     final boolean sameAuthorityCodes(final AuthorityFactory factory) {
