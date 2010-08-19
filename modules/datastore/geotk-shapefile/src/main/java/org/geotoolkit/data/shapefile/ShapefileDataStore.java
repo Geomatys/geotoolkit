@@ -60,7 +60,7 @@ import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.dbf.DbaseFileException;
 import org.geotoolkit.data.dbf.DbaseFileHeader;
 import org.geotoolkit.data.dbf.DbaseFileReader;
-import org.geotoolkit.data.shapefile.shp.IndexFile;
+import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.data.shapefile.shp.ShapeType;
 import org.geotoolkit.data.shapefile.shp.ShapefileHeader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
@@ -768,7 +768,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * @return An IndexFile
      * @throws IOException
      */
-    protected IndexFile openIndexFile() throws IOException {
+    protected ShxReader openIndexFile() throws IOException {
         if (shpFiles.get(SHX) == null) {
             return null;
         }
@@ -778,7 +778,7 @@ public class ShapefileDataStore extends AbstractDataStore{
         }
 
         try {
-            return new IndexFile(shpFiles, this.useMemoryMappedBuffer);
+            return new ShxReader(shpFiles, this.useMemoryMappedBuffer);
         } catch (IOException e) {
             // could happen if shx file does not exist remotely
             return null;

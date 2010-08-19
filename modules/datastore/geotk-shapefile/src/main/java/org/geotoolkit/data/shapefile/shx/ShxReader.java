@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.shapefile.shp;
+package org.geotoolkit.data.shapefile.shx;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -26,27 +27,29 @@ import java.nio.channels.ReadableByteChannel;
 
 import org.geotoolkit.data.shapefile.ShpFileType;
 import org.geotoolkit.data.shapefile.ShpFiles;
+import org.geotoolkit.data.shapefile.shp.ShapefileHeader;
 import org.geotoolkit.resources.NIOUtilities;
 
 import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
 
 /**
- * IndexFile parser for .shx files.<br>
- * For now, the creation of index files is done in the ShapefileWriter. But this
- * can be used to access the index.<br>
+ * ShxReader parser for .shx files.<br>
+ *
  * For details on the index file, see <br>
  * <a href="http://www.esri.com/library/whitepapers/pdfs/shapefile.pdf"><b>"ESRI(r)
  * Shapefile - A Technical Description"</b><br> * <i>'An ESRI White Paper .
  * May 1997'</i></a>
  * 
  * @author Ian Schneider
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class IndexFile {
+public final class ShxReader {
+
     private static final int RECS_IN_BUFFER = 2000;
 
+    private final FileChannel channel;
     private boolean useMemoryMappedBuffer;
-    private FileChannel channel;
     private int channelOffset;
     private ByteBuffer buf = null;
     private int lastIndex = -1;
@@ -63,7 +66,7 @@ public class IndexFile {
      * @param shpFiles The channel to read from.
      * @throws IOException If an error occurs.
      */
-    public IndexFile(ShpFiles shpFiles, boolean useMemoryMappedBuffer)
+    public ShxReader(ShpFiles shpFiles, boolean useMemoryMappedBuffer)
             throws IOException {
         this.useMemoryMappedBuffer = useMemoryMappedBuffer;
         final ReadableByteChannel byteChannel = shpFiles.getReadChannel(ShpFileType.SHX, this);
@@ -86,6 +89,7 @@ public class IndexFile {
                 }
 
             } else {
+                this.channel = null;
                 LOGGER.finest("Loading all shx...");
                 readRecords(byteChannel);
                 byteChannel.close();
@@ -94,8 +98,7 @@ public class IndexFile {
             if (byteChannel != null) {
                 byteChannel.close();
             }
-            throw (IOException)
-                    new IOException(e.getLocalizedMessage()).initCause(e);
+            throw new IOException(e);
         }
     }
 

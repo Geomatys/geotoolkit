@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,7 @@ import java.nio.channels.FileChannel;
  * 
  * @author jamesm
  * @author Ian Schneider
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class ShapefileHeader {
@@ -35,16 +36,24 @@ public class ShapefileHeader {
     public static final int MAGIC = 9994;
     public static final int VERSION = 1000;
 
-    private int fileCode = -1;
-    private int fileLength = -1;
-    private int version = -1;
-    private ShapeType shapeType = ShapeType.UNDEFINED;
-    private double minX;
-    private double maxX;
-    private double minY;
-    private double maxY;
+    private final int fileLength;
+    private final int version;
+    private final ShapeType shapeType;
+    private final double minX;
+    private final double maxX;
+    private final double minY;
+    private final double maxY;
 
-    private ShapefileHeader(){}
+    public ShapefileHeader(int fileLenght, int version, 
+            ShapeType shapeType, double minX, double maxX, double minY, double maxY){
+        this.fileLength = fileLenght;
+        this.version = version;
+        this.shapeType = shapeType;
+        this.minX = minX;
+        this.maxX = maxX;
+        this.minY = minY;
+        this.maxY = maxY;
+    }
 
     public ShapeType getShapeType() {
         return shapeType;
@@ -107,65 +116,76 @@ public class ShapefileHeader {
         }
     }
 
-    public static ShapefileHeader read(ByteBuffer file, boolean strict) throws IOException {
-        ShapefileHeader header = new ShapefileHeader();
-        file.order(ByteOrder.BIG_ENDIAN);
-        header.fileCode = file.getInt();
+    /**
+     * Read the header from the given ByteBuffer.
+     * SHP and SHX share the same header structure.
+     *
+     * @param buffer
+     * @param strict : will check version if true
+     * @return
+     * @throws IOException
+     */
+    public static ShapefileHeader read(ByteBuffer buffer, boolean strict) throws IOException {
 
-        checkMagic(header.fileCode,strict);
+        buffer.order(ByteOrder.BIG_ENDIAN);
+        final int fileCode = buffer.getInt();
+        checkMagic(fileCode,strict);
 
         // skip 5 ints...
-        file.position(file.position() + 20);
+        buffer.position(buffer.position() + 20);
 
-        header.fileLength = file.getInt();
+        final int fileLength = buffer.getInt();
 
-        file.order(ByteOrder.LITTLE_ENDIAN);
-        header.version = file.getInt();
-        checkVersion(header.version,strict);
-        header.shapeType = ShapeType.forID(file.getInt());
+        buffer.order(ByteOrder.LITTLE_ENDIAN);
+        final int version = buffer.getInt();
+        checkVersion(version,strict);
+        final ShapeType shapeType = ShapeType.forID(buffer.getInt());
 
-        header.minX = file.getDouble();
-        header.minY = file.getDouble();
-        header.maxX = file.getDouble();
-        header.maxY = file.getDouble();
+        final double minX = buffer.getDouble();
+        final double minY = buffer.getDouble();
+        final double maxX = buffer.getDouble();
+        final double maxY = buffer.getDouble();
 
         // skip remaining unused bytes
-        file.order(ByteOrder.BIG_ENDIAN);
+        buffer.order(ByteOrder.BIG_ENDIAN);
         // well they may not be unused forever...
-        file.position(file.position() + 32);
+        buffer.position(buffer.position() + 32);
 
-        return header;
+        return new ShapefileHeader(fileLength, version, shapeType, minX, maxX, minY, maxY);
     }
 
-    public static void write(ByteBuffer file, ShapeType type, int numGeoms,
+    /**
+     * Write header in the given ByteBuffer.
+     */
+    public static void write(ByteBuffer buffer, ShapeType type,
             int length, double minX, double minY, double maxX, double maxY)
             throws IOException {
-        file.order(ByteOrder.BIG_ENDIAN);
+        buffer.order(ByteOrder.BIG_ENDIAN);
 
-        file.putInt(MAGIC);
+        buffer.putInt(MAGIC);
 
         // Skip unused part of header
         for (int i=0; i<5; i++) {
-            file.putInt(0);
+            buffer.putInt(0);
         }
 
-        file.putInt(length);
+        buffer.putInt(length);
 
-        file.order(ByteOrder.LITTLE_ENDIAN);
+        buffer.order(ByteOrder.LITTLE_ENDIAN);
 
-        file.putInt(VERSION);
-        file.putInt(type.id);
+        buffer.putInt(VERSION);
+        buffer.putInt(type.id);
 
         // write the bounding box
-        file.putDouble(minX);
-        file.putDouble(minY);
-        file.putDouble(maxX);
-        file.putDouble(maxY);
+        buffer.putDouble(minX);
+        buffer.putDouble(minY);
+        buffer.putDouble(maxX);
+        buffer.putDouble(maxY);
 
         // skip remaining unused bytes
-        file.order(ByteOrder.BIG_ENDIAN);
+        buffer.order(ByteOrder.BIG_ENDIAN);
         for (int i=0; i<8; i++) {
-            file.putInt(0); // Skip unused part of header
+            buffer.putInt(0); // Skip unused part of header
         }
     }
 

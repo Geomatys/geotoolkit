@@ -24,7 +24,7 @@ import java.util.Collections;
 
 import org.geotoolkit.ShapeTestData;
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.data.shapefile.shp.IndexFile;
+import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -114,7 +114,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
                 false, false);
         final ShapefileReader reader2 = new ShapefileReader(new ShpFiles(url2),
                 false, false);
-        final IndexFile index = new IndexFile(new ShpFiles(url3), false);
+        final ShxReader index = new ShxReader(new ShpFiles(url3), false);
         try {
             for (int i = 0; i < index.getRecordCount(); i++) {
                 if (reader1.hasNext()) {

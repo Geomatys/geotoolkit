@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.shapefile.shp;
 
+import org.geotoolkit.data.shapefile.shx.ShxReader;
 import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -133,7 +134,7 @@ public class ShapefileReader{
     
     private int currentShape = 0;
     
-    private IndexFile shxReader;
+    private ShxReader shxReader;
     
     /**
      * Creates a new instance of ShapeFile.
@@ -154,7 +155,7 @@ public class ShapefileReader{
         this.useMemoryMappedBuffer = useMemoryMapped;
         randomAccessEnabled = channel instanceof FileChannel;
         try {
-            shxReader = new IndexFile(shapefileFiles, true);
+            shxReader = new ShxReader(shapefileFiles, true);
         } catch(Exception e) {
             LOGGER.log(Level.FINE, "Could not open the .shx file, continuing " +
             		"assuming the .shp file is not sparse", e);
@@ -413,7 +414,7 @@ public class ShapefileReader{
         writer.shpChannel.write(headerTransfer);
         headerTransfer.putInt(0, writer.offset).position(0);
         writer.offset += rl + 4;
-        writer.shxChannel.write(headerTransfer);
+        writer.shx.getChannel().write(headerTransfer);
 
         // reset to mark and limit at end of record, then write
         buffer.position(mark).limit(mark + len);

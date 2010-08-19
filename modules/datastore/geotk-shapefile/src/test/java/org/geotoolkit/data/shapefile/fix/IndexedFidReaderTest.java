@@ -14,8 +14,11 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.shapefile.indexed;
+package org.geotoolkit.data.shapefile.fix;
 
+import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
+import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
+import org.geotoolkit.data.shapefile.fix.FidIndexer;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -23,9 +26,12 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import org.geotoolkit.data.shapefile.ShpFiles;
-import org.geotoolkit.data.shapefile.shp.IndexFile;
+import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.data.shapefile.indexed.FIDTestCase;
+import org.geotoolkit.data.shapefile.indexed.IndexType;
+import org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStore;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
@@ -37,7 +43,7 @@ public class IndexedFidReaderTest extends FIDTestCase {
 
     private IndexedFidReader reader;
 
-    private IndexFile indexFile;
+    private ShxReader indexFile;
 
     protected void setUp() throws Exception {
         super.setUp();
@@ -45,7 +51,7 @@ public class IndexedFidReaderTest extends FIDTestCase {
         ShpFiles shpFiles = new ShpFiles(backshp.toURL());
         FidIndexer.generate(shpFiles);
 
-        indexFile = new IndexFile(shpFiles, false);
+        indexFile = new ShxReader(shpFiles, false);
         reader = new IndexedFidReader(shpFiles);
     }
 

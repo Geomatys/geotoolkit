@@ -55,7 +55,7 @@ public final class JTSUtilities {
      *            target[1] with the maximum. The array current values, if not
      *            NaN, will be taken into acount in the computation.
      */
-    public static final void zMinMax(final CoordinateSequence cs, double[] target) {
+    public static void zMinMax(final CoordinateSequence cs, double[] target) {
         if (cs.getDimension() < 3) {
             return;
         }
@@ -102,7 +102,7 @@ public final class JTSUtilities {
      * @param lr The ring to reverse.
      * @return A new ring with the reversed Coordinates.
      */
-    public static final LinearRing reverseRing(LinearRing lr) {
+    public static LinearRing reverseRing(LinearRing lr) {
         final int numPoints = lr.getNumPoints()-1;
         final Coordinate[] newCoords = new Coordinate[numPoints+1];
 
@@ -120,7 +120,7 @@ public final class JTSUtilities {
      * @param p The Polygon to make "nice".
      * @return The "nice" Polygon.
      */
-    public static final Polygon makeGoodShapePolygon(Polygon p) {
+    public static Polygon makeGoodShapePolygon(Polygon p) {
         final LinearRing outer;
         final LinearRing[] holes = new LinearRing[p.getNumInteriorRing()];
         Coordinate[] coords;
@@ -153,7 +153,7 @@ public final class JTSUtilities {
      * @param mp The MultiPolygon to "niceify".
      * @return The "nicified" MultiPolygon.
      */
-    public static final MultiPolygon makeGoodShapeMultiPolygon(MultiPolygon mp) {
+    public static MultiPolygon makeGoodShapeMultiPolygon(MultiPolygon mp) {
         final MultiPolygon result;
         Polygon[] ps = new Polygon[mp.getNumGeometries()];
 
@@ -176,7 +176,7 @@ public final class JTSUtilities {
      * @param cs The array of Coordinates to search.
      * @return The dimension.
      */
-    public static final int guessCoorinateDims(final Coordinate[] cs) {
+    public static int guessCoorinateDims(final Coordinate[] cs) {
 
         for(final Coordinate c : cs) {
             if (!(Double.isNaN(c.z))) {
@@ -241,7 +241,7 @@ public final class JTSUtilities {
      *                 If theres a problem, like a bogus Geometry.
      * @return The best ShapeType.
      */
-    public static final ShapeType getShapeType(Geometry geom,
+    public static ShapeType getShapeType(Geometry geom,
             int shapeFileDimentions) throws DataStoreException {
 
         ShapeType type = null;

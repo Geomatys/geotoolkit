@@ -16,13 +16,16 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
+import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
+import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
+import org.geotoolkit.data.shapefile.fix.FidIndexer;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-import org.geotoolkit.data.shapefile.shp.IndexFile;
+import org.geotoolkit.data.shapefile.shx.ShxReader;
 
 public class IndexedFidWriterTest extends FIDTestCase {
-    private IndexFile indexFile;
+    private ShxReader indexFile;
     private IndexedFidWriter writer;
 
     public IndexedFidWriterTest() throws IOException {
@@ -35,7 +38,7 @@ public class IndexedFidWriterTest extends FIDTestCase {
 
     private void initWriter() throws IOException, MalformedURLException {
         close();
-        indexFile = new IndexFile(shpFiles, false);
+        indexFile = new ShxReader(shpFiles, false);
         writer = new IndexedFidWriter(shpFiles);
     }
 

@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.shapefile.indexed;
+package org.geotoolkit.data.shapefile.fix;
 
 
 import java.io.IOException;
@@ -28,6 +28,7 @@ import java.util.NoSuchElementException;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureIDReader;
 import org.geotoolkit.data.shapefile.ShpFiles;
+import org.geotoolkit.data.shapefile.indexed.RecordNumberTracker;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.resources.NIOUtilities;
 

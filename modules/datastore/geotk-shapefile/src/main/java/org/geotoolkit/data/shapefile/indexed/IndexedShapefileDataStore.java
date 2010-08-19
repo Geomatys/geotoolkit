@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
+import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
+import org.geotoolkit.data.shapefile.fix.FidIndexer;
 import static org.geotoolkit.data.shapefile.ShpFileType.DBF;
 import static org.geotoolkit.data.shapefile.ShpFileType.FIX;
 import static org.geotoolkit.data.shapefile.ShpFileType.QIX;
@@ -59,7 +61,7 @@ import org.geotoolkit.data.shapefile.ShapefileDataStore;
 import org.geotoolkit.data.shapefile.ShapefileDataStoreFactory;
 import org.geotoolkit.data.shapefile.ShpFileType;
 import org.geotoolkit.data.dbf.IndexedDbaseFileReader;
-import org.geotoolkit.data.shapefile.shp.IndexFile;
+import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader.Record;
 import org.geotoolkit.data.query.QueryBuilder;
@@ -492,7 +494,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         final CloseableCollection<Data> records = new CloseableArrayList(idsSet.size());
 
         try {
-            final IndexFile shx = openIndexFile();
+            final ShxReader shx = openIndexFile();
             try {
 
                 for (Identifier identifier : idsSet) {

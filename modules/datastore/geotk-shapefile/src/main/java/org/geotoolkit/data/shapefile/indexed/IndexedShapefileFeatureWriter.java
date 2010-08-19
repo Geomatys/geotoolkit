@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
+import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
+import org.geotoolkit.data.shapefile.fix.FidIndexer;
 import static org.geotoolkit.data.shapefile.ShpFileType.*;
 
 import java.io.File;

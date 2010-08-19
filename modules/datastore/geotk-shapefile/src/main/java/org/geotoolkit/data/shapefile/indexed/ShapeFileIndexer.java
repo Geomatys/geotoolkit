@@ -23,7 +23,7 @@ import java.net.MalformedURLException;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.data.shapefile.StorageFile;
-import org.geotoolkit.data.shapefile.shp.IndexFile;
+import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileHeader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader.Record;
@@ -127,7 +127,7 @@ public class ShapeFileIndexer {
                     + "' must be 'NL' or 'NM'!");
         }
 
-        IndexFile shpIndex = new IndexFile(shpFiles, false);
+        ShxReader shpIndex = new ShxReader(shpFiles, false);
         QuadTree tree = null;
         int cnt = 0;
         int numRecs = shpIndex.getRecordCount();

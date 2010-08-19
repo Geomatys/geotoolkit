@@ -6,7 +6,7 @@
 package org.geotoolkit.data.shapefile.indexed;
 
 import java.io.IOException;
-import org.geotoolkit.data.shapefile.shp.IndexFile;
+import org.geotoolkit.data.shapefile.shx.ShxReader;
 import org.geotoolkit.index.Data;
 import org.geotoolkit.index.DataDefinition;
 import org.geotoolkit.index.TreeException;
@@ -20,9 +20,9 @@ public class IndexDataReader implements DataReader {
 
     public static final DataDefinition DATA_DEFINITION = new DataDefinition("US-ASCII", Integer.class, Long.class);
 
-    private final IndexFile indexfile;
+    private final ShxReader indexfile;
 
-    public IndexDataReader(IndexFile indexFile){
+    public IndexDataReader(ShxReader indexFile){
         this.indexfile = indexFile;
     }
 

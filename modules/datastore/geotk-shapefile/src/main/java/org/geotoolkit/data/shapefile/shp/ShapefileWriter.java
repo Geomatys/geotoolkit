@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -22,6 +23,7 @@ import java.nio.ByteOrder;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
+import org.geotoolkit.data.shapefile.shx.ShxWriter;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.resources.NIOUtilities;
 
@@ -43,7 +45,7 @@ import com.vividsolutions.jts.geom.GeometryCollection;
  *   writer.write(geoms,ShapeType.ARC);
  * </code>
  * This example assumes that each shape in the collection is a LineString.
- * 
+ *
  * @author jamesm
  * @author aaime
  * @author Ian Schneider
@@ -51,10 +53,10 @@ import com.vividsolutions.jts.geom.GeometryCollection;
  */
 public class ShapefileWriter {
 
+    final ShxWriter shx;
+
     FileChannel shpChannel;
-    FileChannel shxChannel;
     ByteBuffer shapeBuffer;
-    ByteBuffer indexBuffer;
     ShapeHandler handler;
     ShapeType type;
     int offset;
@@ -63,35 +65,20 @@ public class ShapefileWriter {
 
     /**
      * Creates a new instance of ShapeFileWriter
-     * 
+     *
      * @throws IOException
      */
     public ShapefileWriter(FileChannel shpChannel, FileChannel shxChannel)
             throws IOException {
         this.shpChannel = shpChannel;
-        this.shxChannel = shxChannel;
+        this.shx = new ShxWriter(shxChannel);
     }
-
-    // private void allocateBuffers(int geomCnt, int fileLength) throws
-    // IOException {
-    // if (shpChannel instanceof FileChannel) {
-    // FileChannel shpc = (FileChannel) shpChannel;
-    // FileChannel shxc = (FileChannel) shxChannel;
-    // shapeBuffer = shpc.map(FileChannel.MapMode.READ_WRITE,0, fileLength);
-    // indexBuffer = shxc.map(FileChannel.MapMode.READ_WRITE,0, 100 + 8 *
-    // geomCnt);
-    // indexBuffer.order(ByteOrder.BIG_ENDIAN);
-    // } else {
-    // throw new RuntimeException("Can only handle FileChannels - fix me!");
-    // }
-    // }
 
     /**
      * Allocate some buffers for writing.
      */
     private void allocateBuffers() {
         shapeBuffer = ByteBuffer.allocateDirect(16 * 1024);
-        indexBuffer = ByteBuffer.allocateDirect(100);
     }
 
     /**
@@ -110,13 +97,9 @@ public class ShapefileWriter {
      */
     private void drain() throws IOException {
         shapeBuffer.flip();
-        indexBuffer.flip();
         while (shapeBuffer.remaining() > 0)
             shpChannel.write(shapeBuffer);
-        while (indexBuffer.remaining() > 0)
-            shxChannel.write(indexBuffer);
         shapeBuffer.flip().limit(shapeBuffer.capacity());
-        indexBuffer.flip().limit(indexBuffer.capacity());
     }
 
     private void writeHeaders(GeometryCollection geometries, ShapeType type)
@@ -158,11 +141,12 @@ public class ShapefileWriter {
         }
         if (shapeBuffer == null)
             allocateBuffers();
-        
-        ShapefileHeader.write(shapeBuffer, type, numberOfGeometries, fileLength / 2,
+
+        ShapefileHeader.write(shapeBuffer, type, fileLength / 2,
                 bounds.getMinX(), bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY());
-        ShapefileHeader.write(indexBuffer, type, numberOfGeometries,
-                50 + 4 * numberOfGeometries, bounds.getMinX(),
+
+        shx.moveToHeaderStart();
+        shx.writeHeader(type, 50 + 4 * numberOfGeometries, bounds.getMinX(),
                 bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY());
 
         offset = 50;
@@ -170,7 +154,6 @@ public class ShapefileWriter {
         cnt = 0;
 
         shpChannel.position(0);
-        shxChannel.position(0);
         drain();
     }
 
@@ -183,7 +166,7 @@ public class ShapefileWriter {
         if (shapeBuffer == null)
             allocateBuffers();
         shpChannel.position(100);
-        shxChannel.position(100);
+        shx.moveToRecordStart();
     }
 
     /**
@@ -213,8 +196,7 @@ public class ShapefileWriter {
         lp = shapeBuffer.position();
 
         // write to the shx
-        indexBuffer.putInt(offset);
-        indexBuffer.putInt(length);
+        shx.writeRecord(offset, length);
         offset += length + 4;
 
         drain();
@@ -230,20 +212,13 @@ public class ShapefileWriter {
                 shpChannel.close();
             }
         } finally {
-            if (shxChannel != null && shxChannel.isOpen()) {
-                shxChannel.close();
-            }
+            shx.close();
         }
         shpChannel = null;
-        shxChannel = null;
         handler = null;
-        if (indexBuffer instanceof MappedByteBuffer) {
-            NIOUtilities.clean(indexBuffer);
-        }
         if (shapeBuffer instanceof MappedByteBuffer) {
             NIOUtilities.clean(shapeBuffer);
         }
-        indexBuffer = null;
         shapeBuffer = null;
     }
 

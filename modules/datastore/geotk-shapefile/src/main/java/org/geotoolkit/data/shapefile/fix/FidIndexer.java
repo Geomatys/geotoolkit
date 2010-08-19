@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.shapefile.indexed;
+package org.geotoolkit.data.shapefile.fix;
 
 
 import java.io.IOException;
@@ -22,7 +22,7 @@ import java.net.URL;
 
 import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.data.shapefile.StorageFile;
-import org.geotoolkit.data.shapefile.shp.IndexFile;
+import org.geotoolkit.data.shapefile.shx.ShxReader;
 
 import static org.geotoolkit.data.shapefile.ShpFileType.*;
 import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
@@ -48,12 +48,12 @@ public class FidIndexer {
     public static void generate(ShpFiles shpFiles) throws IOException {
         LOGGER.fine("Generating fids for " + shpFiles.get(SHP));
 
-        IndexFile indexFile = null;
+        ShxReader indexFile = null;
         StorageFile file = shpFiles.getStorageFile(FIX);
         IndexedFidWriter writer = null;
         
         try {
-            indexFile = new IndexFile(shpFiles, false);
+            indexFile = new ShxReader(shpFiles, false);
 
             // writer closes channel for you.
             writer = new IndexedFidWriter(shpFiles, file);

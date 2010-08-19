@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
+import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
+import org.geotoolkit.data.shapefile.fix.FidIndexer;
 import java.io.IOException;
 
 import org.geotoolkit.data.query.QueryBuilder;
