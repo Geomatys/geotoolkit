@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.RequestBase;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.Versioned;
@@ -49,7 +50,7 @@ import org.geotoolkit.util.Versioned;
     DescribeObservationType.class,
     GetFeatureOfInterest.class
 })
-public class RequestBaseType implements Versioned {
+public class RequestBaseType implements RequestBase {
 
     /**
      * Service type identifier. 
@@ -87,6 +88,7 @@ public class RequestBaseType implements Versioned {
     /**
      * Gets the value of the service property.
      */
+    @Override
     public String getService() {
         if (service == null) {
             return "SOS";
@@ -98,6 +100,7 @@ public class RequestBaseType implements Versioned {
     /**
      * Return the value of the version property.
      */
+    @Override
     public Version getVersion() {
         if (version != null) {
             return new Version(version);

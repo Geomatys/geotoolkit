@@ -16,17 +16,15 @@
  */
 package org.geotoolkit.ows.xml;
 
-import org.geotoolkit.util.Version;
+import org.geotoolkit.util.Versioned;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
  * @module pending
  */
-public interface RequestBase {
+public interface RequestBase extends Versioned {
 
     public String getService();
-
-    public Version getVersion();
 
 }

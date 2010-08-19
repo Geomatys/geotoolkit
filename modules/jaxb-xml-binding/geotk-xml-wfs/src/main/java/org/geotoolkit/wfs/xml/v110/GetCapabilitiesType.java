@@ -18,13 +18,11 @@ package org.geotoolkit.wfs.xml.v110;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v100.AcceptFormatsType;
 import org.geotoolkit.ows.xml.v100.AcceptVersionsType;
 import org.geotoolkit.ows.xml.v100.SectionsType;
-import org.geotoolkit.wfs.xml.RequestBase;
 
 
 /**
@@ -56,7 +54,7 @@ import org.geotoolkit.wfs.xml.RequestBase;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GetCapabilitiesType")
 @XmlRootElement(name = "GetCapabilities")
-public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v100.GetCapabilitiesType implements RequestBase {
+public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v100.GetCapabilitiesType {
 
     /**
      * An empty constructor used by JAXB
@@ -67,7 +65,7 @@ public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v100.GetCapabili
     /**
      * Build a minimal new getCapabilities request with the specified service.
      *
-     * @param service MUST be CSW.
+     * @param service MUST be WFS.
      */
     public GetCapabilitiesType(String service) {
         super(service);
@@ -81,7 +79,7 @@ public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v100.GetCapabili
      *                 one or more of "ServiceIdentification", "ServiceProvider", "OperationsMetadata", "Filter_Capabilities", "All".
      * @param acceptFormats The different fomat (MIME type) accepted by the client.
      * @param updateSequence not used yet.
-     * @param service MUST be CSW.
+     * @param service MUST be WFS.
      */
     public GetCapabilitiesType(AcceptVersionsType acceptVersions, SectionsType sections,
             AcceptFormatsType acceptFormats, String updateSequence, String service) {

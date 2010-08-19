@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.temporal.Duration;
+import org.opengis.temporal.TemporalGeometricPrimitive;
 
 
 /**
@@ -54,11 +56,11 @@ import javax.xml.bind.annotation.XmlType;
     TimePeriodType.class,
     TimeInstantType.class
 })
-public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePrimitiveType {
+public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePrimitiveType implements TemporalGeometricPrimitive {
 
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
-    protected String frame;
+    private String frame;
 
     /**
      * Gets the value of the frame property.
@@ -82,6 +84,14 @@ public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePri
      */
     public void setFrame(String value) {
         this.frame = value;
+    }
+
+    public Duration distance(TemporalGeometricPrimitive tgp) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Duration length() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }
