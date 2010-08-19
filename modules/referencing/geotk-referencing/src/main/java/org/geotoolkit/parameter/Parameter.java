@@ -40,6 +40,7 @@ import org.opengis.parameter.InvalidParameterValueException;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.internal.io.IOUtilities;
 
 
 /**
@@ -472,7 +473,7 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
                 return ((URL) value).toURI();
             }
             if (value instanceof String) {
-                return new URI((String) value);
+                return new URI(IOUtilities.encodeURI((String) value));
             }
         } catch (URISyntaxException exception) {
             cause = exception;

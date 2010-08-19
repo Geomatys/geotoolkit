@@ -23,6 +23,8 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URISyntaxException;
 import java.net.MalformedURLException;
+import java.nio.charset.Charset;
+import java.util.Locale;
 import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -38,7 +40,7 @@ import org.geotoolkit.io.ContentFormatException;
  * Utility methods related to I/O operations.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.15
  *
  * @since 3.00
  * @module
@@ -69,6 +71,59 @@ public final class IOUtilities {
             root = root.getParentFile();
         }
         return null;
+    }
+
+    /**
+     * Encodes the characters that are not legal for the {@link URI(String)} constructor.
+     * Note that in addition of unreserved characters ("{@code _-!.~'()*}") the reserved
+     * characters ("{@code ?/[]@}") and the punctuation characters ("{@code ,;:$&+=}")
+     * are left unchanged, so they will be processed with their special meaning by the
+     * URI constructor.
+     * <p>
+     * The current implementations replaces only the space characters, control characters
+     * and the {@code %} character. Future versions may replace more characters as needed
+     * from experience.
+     *
+     * @param  path The path to encode.
+     * @return The encoded path.
+     *
+     * @since 3.15
+     */
+    public static String encodeURI(final String path) {
+        Charset encoding = null;
+        StringBuilder buffer = null;
+        final int length = path.length();
+        for (int i=0; i<length; i++) {
+            final char c = path.charAt(i);
+            if (!Character.isSpaceChar(c) && !Character.isISOControl(c) && c != '%') {
+                /*
+                 * The character is valid, or is punction character, or is a reserved character.
+                 * All those characters should be handled properly by the URI(String) constructor.
+                 */
+                if (buffer != null) {
+                    buffer.append(c);
+                }
+                continue;
+            }
+            /*
+             * The character is invalid, so we need to escape it. Note that the encoding
+             * is fixed to UTF-8 as of java.net.URI specification (see its class javadoc).
+             */
+            if (buffer == null) {
+                buffer = new StringBuilder(path);
+                buffer.setLength(i);
+                encoding = Charset.forName("UTF-8");
+            }
+            for (final byte b : String.valueOf(c).getBytes(encoding)) {
+                buffer.append('%');
+                final String hex = Integer.toHexString(b & 0xFF).toUpperCase(Locale.US);
+                if (hex.length() < 2) {
+                    buffer.append('0');
+                }
+                buffer.append(hex);
+            }
+        }
+        return (buffer != null) ? buffer.toString() : path;
     }
 
     /**
@@ -105,6 +160,7 @@ public final class IOUtilities {
         if (encoding != null) {
             path = URLDecoder.decode(path, encoding);
         }
+        path = encodeURI(path);
         URI uri;
         try {
             uri = new URI(path);
@@ -113,8 +169,8 @@ public final class IOUtilities {
              * Occurs only if the URL is not compliant with RFC 2396. Otherwise every URL
              * should succeed, so a failure can actually be considered as a malformed URL.
              */
-            MalformedURLException e = new MalformedURLException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "URL", path));
+            final MalformedURLException e = new MalformedURLException(concatenate(
+                    Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "URL", path), cause));
             e.initCause(cause);
             throw e;
         }
@@ -131,7 +187,8 @@ public final class IOUtilities {
              * in a File (e.g. a Query part), so it could be considered as if the URI with
              * the fragment part can not represent an existing file.
              */
-            IOException e = new FileNotFoundException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "URL", path));
+            final MalformedURLException e = new MalformedURLException(concatenate(
+                    Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "URL", path), cause));
             e.initCause(cause);
             throw e;
         }
@@ -196,7 +253,8 @@ public final class IOUtilities {
                  * that can not be represented as a File. We consider that as an error
                  * because the scheme pretended that we had a file URI.
                  */
-                IOException e = new FileNotFoundException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "URI", path));
+                final IOException e = new MalformedURLException(concatenate(
+                        Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "URI", path), cause));
                 e.initCause(cause);
                 throw e;
             }
@@ -418,8 +476,8 @@ public final class IOUtilities {
             try {
                 value = Double.parseDouble(token);
             } catch (NumberFormatException e) {
-                throw new ContentFormatException(Errors.format(
-                        Errors.Keys.UNPARSABLE_NUMBER_$1, token), e);
+                throw new ContentFormatException(concatenate(
+                        Errors.format(Errors.Keys.UNPARSABLE_NUMBER_$1, token), e), e);
             }
             grid[offset + i] = value;
         }
@@ -456,8 +514,8 @@ public final class IOUtilities {
             try {
                 value = Float.parseFloat(token);
             } catch (NumberFormatException e) {
-                throw new ContentFormatException(Errors.format(
-                        Errors.Keys.UNPARSABLE_NUMBER_$1, token), e);
+                throw new ContentFormatException(concatenate(
+                        Errors.format(Errors.Keys.UNPARSABLE_NUMBER_$1, token), e), e);
             }
             grid[offset + i] = value;
         }
@@ -500,5 +558,18 @@ public final class IOUtilities {
             def.closeEntry();
         }
         def.close();
+    }
+
+    /**
+     * Concatenates the given message with the message of the given exception, if any.
+     * This is used when an exception is catch and rethrow, in order to provide more
+     * useful message.
+     */
+    private static String concatenate(String message, final Exception exception) {
+        final String cause = exception.getLocalizedMessage();
+        if (cause != null) {
+            message = message + ' ' + cause;
+        }
+        return message;
     }
 }

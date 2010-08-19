@@ -34,6 +34,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.IntegerList;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
 
 
@@ -729,7 +730,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
         } else if (pattern.startsWith("URL")) {
             input = new URL(filename);
         } else if (pattern.startsWith("URI")) try {
-            input = new URI(filename);
+            input = new URI(IOUtilities.encodeURI(filename));
         } catch (URISyntaxException cause) { // Rethrown as an IOException subclass.
             MalformedURLException e = new MalformedURLException(cause.getLocalizedMessage());
             e.initCause(cause);

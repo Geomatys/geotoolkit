@@ -59,6 +59,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.factory.Factories;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -323,7 +324,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
             final InternationalString description;
             description = new ImagingParameterDescription(op, "Description", null);
             if (authority != null) try {
-                final URI uri = new URI(bundle.getString("DocURL"));
+                final URI uri = new URI(IOUtilities.encodeURI(bundle.getString("DocURL")));
                 final DefaultOnlineResource resource = new DefaultOnlineResource(uri);
                 resource.setFunction(OnLineFunction.INFORMATION);
                 resource.setDescription(description);

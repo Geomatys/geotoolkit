@@ -27,6 +27,7 @@ import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Locales;
 import org.geotoolkit.internal.CodeLists;
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.util.SimpleInternationalString;
 
 
@@ -731,7 +732,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
                 return null;
             }
             try {
-                return new java.net.URI(source);
+                return new java.net.URI(IOUtilities.encodeURI(source));
             } catch (URISyntaxException e) {
                 throw new NonconvertibleObjectException(e);
             }

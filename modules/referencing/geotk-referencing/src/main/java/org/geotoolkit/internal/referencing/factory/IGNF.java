@@ -18,7 +18,6 @@
 package org.geotoolkit.internal.referencing.factory;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
@@ -71,15 +70,9 @@ public final class IGNF extends DirectAuthorityFactory implements CRSAuthorityFa
      */
     private static final Citation AUTHORITY;
     static {
-        final URI uri;
-        try {
-            uri = new URI("http://www.ign.fr");
-        } catch (URISyntaxException e) {
-            throw new AssertionError(e);
-        }
         final DefaultResponsibleParty r = new DefaultResponsibleParty(Role.RESOURCE_PROVIDER);
         r.setOrganisationName(new SimpleInternationalString("Institut Géographic National"));
-        r.setContactInfo(new DefaultContact(new DefaultOnlineResource(uri)));
+        r.setContactInfo(new DefaultContact(new DefaultOnlineResource(URI.create("http://www.ign.fr"))));
         final DefaultCitation c = new DefaultCitation(r);
         c.getIdentifiers().add(new DefaultIdentifier("IGNF"));
         c.getPresentationForms().add(PresentationForm.TABLE_DIGITAL);

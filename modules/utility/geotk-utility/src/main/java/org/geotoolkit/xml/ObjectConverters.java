@@ -25,6 +25,7 @@ import java.util.UUID;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.measure.Units;
+import org.geotoolkit.internal.io.IOUtilities;
 
 
 /**
@@ -163,12 +164,13 @@ public class ObjectConverters {
     }
 
     /**
-     * Converts the given string to a URI. The default implementation is as below, omitting
-     * the check for null value and the call to {@link #exceptionOccured exceptionOccured}
-     * in case of error:
+     * Converts the given string to a URI. The default implementation first escapes the characters
+     * that the {@link URI(String)} constructor would not accept (for example replacing space by
+     * {@code %20}), then perform the following work (omitting the check for null value and the
+     * call to {@link #exceptionOccured exceptionOccured} in case of error):
      *
      * {@preformat java
-     *     return new URI(value);
+     *     return new URI(escapedValue);
      * }
      *
      * @param  value The string to convert to a URI, or {@code null}.
@@ -180,7 +182,7 @@ public class ObjectConverters {
      */
     public URI toURI(String value) throws URISyntaxException {
         if (value != null && (value = value.trim()).length() != 0) try {
-            return new URI(value);
+            return new URI(IOUtilities.encodeURI(value));
         } catch (URISyntaxException e) {
             if (!exceptionOccured(value, String.class, URI.class, e)) {
                 throw e;

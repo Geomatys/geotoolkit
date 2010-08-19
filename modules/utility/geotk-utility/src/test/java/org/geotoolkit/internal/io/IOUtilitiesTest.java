@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
  * Tests the {@link IOUtilities} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.15
  *
  * @since 3.00
  */
@@ -45,7 +45,9 @@ public final class IOUtilitiesTest {
     }
 
     /**
-     * Tests the {@link IOUtilities#toFile} method.
+     * Tests the {@link IOUtilities#toFile} method. Do not test a Windows-specific path
+     * (e.g. {@code "file:///C:/some/path/Picture.png"}), since the result is different
+     * on Windows or Unix platforms.
      *
      * @throws IOException Should not happen.
      */
@@ -53,10 +55,8 @@ public final class IOUtilitiesTest {
     public void testToFile() throws IOException {
         assertEquals("Unix absolute path.", new File("/Users/name/Picture.png"),
                 IOUtilities.toFile(new URL("file:/Users/name/Picture.png"), null));
-        /*
-         * Do not test a Windows-specific path (e.g. "file:///C:/some/path/Picture.png").
-         * The result is different on Windows or Unix platforms.
-         */
+        assertEquals("Path with space.", new File("/Users/name/Picture with spaces.png"),
+                IOUtilities.toFile(new URL("file:/Users/name/Picture with spaces.png"), null));
     }
 
     /**
