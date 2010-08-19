@@ -21,12 +21,10 @@ import static org.geotoolkit.data.shapefile.ShpFileType.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
 import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.data.shapefile.StorageFile;
-import org.geotoolkit.resources.NIOUtilities;
 
 /**
  * The Writer writes out the fid and record number of features to the fid index file.
@@ -184,14 +182,9 @@ public class IndexedFidWriter {
     }
 
     private void closeWriterChannels() throws IOException {
-        if (channel.isOpen())
+        if (channel.isOpen()){
             channel.close();
-        if (writeBuffer != null) {
-            if (writeBuffer instanceof MappedByteBuffer) {
-                NIOUtilities.clean(writeBuffer);
-            }
         }
-
     }
 
     private void finishLastWrite() throws IOException {

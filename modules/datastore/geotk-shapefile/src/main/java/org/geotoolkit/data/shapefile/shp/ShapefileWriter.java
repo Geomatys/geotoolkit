@@ -20,12 +20,10 @@ package org.geotoolkit.data.shapefile.shp;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
 import org.geotoolkit.data.shapefile.shx.ShxWriter;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.resources.NIOUtilities;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -86,8 +84,6 @@ public class ShapefileWriter {
      */
     private void checkShapeBuffer(int size) {
         if (shapeBuffer.capacity() < size) {
-            if (shapeBuffer != null)
-                NIOUtilities.clean(shapeBuffer);
             shapeBuffer = ByteBuffer.allocateDirect(size);
         }
     }
@@ -216,9 +212,6 @@ public class ShapefileWriter {
         }
         shpChannel = null;
         handler = null;
-        if (shapeBuffer instanceof MappedByteBuffer) {
-            NIOUtilities.clean(shapeBuffer);
-        }
         shapeBuffer = null;
     }
 

@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,8 +17,8 @@
  */
 package org.geotoolkit.data.shapefile;
 
-import static org.geotoolkit.data.shapefile.ShpFileType.*;
-
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -33,21 +34,22 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
-import java.nio.channels.FileLock;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.channels.WritableByteChannel;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 
-import org.geotoolkit.data.DataUtilities;
-import org.geotoolkit.resources.NIOUtilities;
+import org.geotoolkit.internal.io.IOUtilities;
+
+import static org.geotoolkit.data.shapefile.ShpFileType.*;
+import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
 
 /**
  * The collection of all the files that are the shapefile and its metadata and
@@ -67,6 +69,7 @@ import org.geotoolkit.resources.NIOUtilities;
  * </p>
  * 
  * @author jesse
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class ShpFiles {
@@ -74,7 +77,7 @@ public class ShpFiles {
      * The urls for each type of file that is associated with the shapefile. The
      * key is the type of file
      */
-    private final Map<ShpFileType, URL> urls = new HashMap<ShpFileType, URL>();
+    private final Map<ShpFileType, URL> urls = new EnumMap<ShpFileType, URL>(ShpFileType.class);
 
     /**
      * A read/write lock, so that we can have concurrent readers 
@@ -221,7 +224,7 @@ public class ShpFiles {
      * @return the URLs (in string form) of all the files for the shapefile datastore.
      */
     public Map<ShpFileType, String> getFileNames() {
-        final Map<ShpFileType, String> result = new HashMap<ShpFileType, String>();
+        final Map<ShpFileType, String> result = new EnumMap<ShpFileType, String>(ShpFileType.class);
 
         for (final Entry<ShpFileType, URL> entry : urls.entrySet()) {
             result.put(entry.getKey(), entry.getValue().toExternalForm());
@@ -286,7 +289,7 @@ public class ShpFiles {
             throw new IllegalStateException("This method only applies if the files are local");
         }
         URL url = acquireRead(type, requestor);
-        return NIOUtilities.urlToFile(url);
+        return toFile(url);
     }
     
     /**
@@ -362,9 +365,9 @@ public class ShpFiles {
      *                the class that requested the file
      */
     public void unlockRead(File file, Object requestor) {
-        Collection<URL> allURLS = urls.values();
+        final Collection<URL> allURLS = urls.values();
         for (URL url : allURLS) {
-            if (NIOUtilities.urlToFile(url).equals(file)) {
+            if (toFile(url).equals(file)) {
                 unlockRead(url, requestor);
             }
         }
@@ -424,8 +427,8 @@ public class ShpFiles {
         if(!isLocal() ){
             throw new IllegalStateException("This method only applies if the files are local");
         }
-        URL url = acquireWrite(type, requestor);
-        return NIOUtilities.urlToFile(url);
+        final URL url = acquireWrite(type, requestor);
+        return toFile(url);
     }
     /**
      * Acquire a URL for read and write purposes. 
@@ -515,7 +518,7 @@ public class ShpFiles {
     public void unlockWrite(File file, Object requestor) {
         Collection<URL> allURLS = urls.values();
         for (URL url : allURLS) {
-            if (NIOUtilities.urlToFile(url).equals(file)) {
+            if (toFile(url).equals(file)) {
                 unlockWrite(url, requestor);
             }
         }
@@ -616,7 +619,7 @@ public class ShpFiles {
         if (isLocal()) {
             Collection<URL> values = urls.values();
             for (URL url : values) {
-                File f = NIOUtilities.urlToFile(url);
+                File f = toFile(url);
                 if (!f.delete()) {
                     retVal = false;
                 }
@@ -700,7 +703,7 @@ public class ShpFiles {
             
             OutputStream out;
             if( isLocal() ){
-                File file = NIOUtilities.urlToFile(url);
+                File file = toFile(url);
                 out = new FileOutputStream(file);
             }else{
                 URLConnection connection = url.openConnection();
@@ -763,7 +766,7 @@ public class ShpFiles {
         try {
             if (isLocal()) {
 
-                File file = NIOUtilities.urlToFile(url);
+                File file = toFile(url);
 
                 if (!file.exists()) {
                     throw new FileNotFoundException(file.toString());
@@ -828,7 +831,7 @@ public class ShpFiles {
             WritableByteChannel channel;
             if (isLocal()) {
 
-                File file = NIOUtilities.urlToFile(url);
+                File file = toFile(url);
 
                 RandomAccessFile raf = new RandomAccessFile(file, "rw");
                 channel = new UnlockFileChannel(raf.getChannel(), this, url,
@@ -919,7 +922,7 @@ public class ShpFiles {
             return false;
         }
 
-        return NIOUtilities.urlToFile(url).exists();
+        return toFile(url).exists();
     }
 
 
@@ -949,7 +952,7 @@ public class ShpFiles {
      * exemple : Shp, SHP, Shp, ShP etc...
      */
     private static URL findExistingFile(URL value) {
-        final File file = NIOUtilities.urlToFile(value);
+        final File file = toFile(value);
         final File directory = file.getParentFile();
         if( directory==null || !directory.exists() ) {
             // doesn't exist
@@ -970,6 +973,42 @@ public class ShpFiles {
             }
         }
         return null;
+    }
+
+    public static File toFile(URL url){
+        try {
+            return IOUtilities.toFile(url, ENCODING);
+        } catch (IOException ex) {
+            //should not happen, in case try the old way
+            //throw new RuntimeException(ex);
+
+            String string = url.toExternalForm();
+            try {
+                string = URLDecoder.decode(string, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                // Shouldn't happen
+            }
+
+            final String path3;
+            final String simplePrefix = "file:/";
+            final String standardPrefix = simplePrefix + "/";
+
+            if (string.startsWith(standardPrefix)) {
+                path3 = string.substring(standardPrefix.length());
+            } else if (string.startsWith(simplePrefix)) {
+                path3 = string.substring(simplePrefix.length() - 1);
+            } else {
+                final String auth = url.getAuthority();
+                final String path2 = url.getPath().replace("%20", " ");
+                if (auth != null && !auth.equals("")) {
+                    path3 = "//" + auth + path2;
+                } else {
+                    path3 = path2;
+                }
+            }
+
+            return new File(path3);
+        }
     }
 
 }

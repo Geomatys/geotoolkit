@@ -20,7 +20,6 @@ package org.geotoolkit.data.shapefile.fix;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.NoSuchElementException;
@@ -30,7 +29,7 @@ import org.geotoolkit.data.FeatureIDReader;
 import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.data.shapefile.indexed.RecordNumberTracker;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
-import org.geotoolkit.resources.NIOUtilities;
+import org.geotoolkit.internal.io.IOUtilities;
 
 import static org.geotoolkit.data.shapefile.ShpFileType.FIX;
 import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
@@ -84,7 +83,7 @@ public class IndexedFidReader implements FeatureIDReader {
     }
 
     private void getHeader(ShpFiles shpFiles) throws IOException {
-        ByteBuffer buffer = ByteBuffer.allocate(IndexedFidWriter.HEADER_SIZE);
+        final ByteBuffer buffer = ByteBuffer.allocate(IndexedFidWriter.HEADER_SIZE);
         ShapefileReader.fill(buffer, readChannel);
 
         if (buffer.position() == 0) {
@@ -108,7 +107,7 @@ public class IndexedFidReader implements FeatureIDReader {
         if (removes > getCount() / 2) {
             URL url = shpFiles.acquireRead(FIX, this);
             try {
-                NIOUtilities.urlToFile(url).deleteOnExit();
+                IOUtilities.toFile(url, ENCODING).deleteOnExit();
             } finally {
                 shpFiles.unlockRead(url, this);
             }
@@ -261,11 +260,6 @@ public class IndexedFidReader implements FeatureIDReader {
     @Override
     public void close() throws DataStoreRuntimeException {
         try {
-            if (buffer != null) {
-                if (buffer instanceof MappedByteBuffer) {
-                    NIOUtilities.clean(buffer);
-                }
-            }
             if (reader != null){
                 try {
                     reader.close();

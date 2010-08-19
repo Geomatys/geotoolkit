@@ -60,6 +60,7 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory implements FileDataStoreFactory {
 
+    public static final String ENCODING = "UTF-8";
     public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.shapefile");
     
     /**

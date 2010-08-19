@@ -16,13 +16,6 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
-import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
-import org.geotoolkit.data.shapefile.fix.FidIndexer;
-import static org.geotoolkit.data.shapefile.ShpFileType.DBF;
-import static org.geotoolkit.data.shapefile.ShpFileType.FIX;
-import static org.geotoolkit.data.shapefile.ShpFileType.QIX;
-import static org.geotoolkit.data.shapefile.ShpFileType.SHP;
-import static org.geotoolkit.data.shapefile.ShpFileType.SHX;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -87,7 +80,8 @@ import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.index.quadtree.LazyTyleSearchIterator;
 import org.geotoolkit.index.quadtree.SearchIterator;
-import org.geotoolkit.resources.NIOUtilities;
+import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
+import org.geotoolkit.data.shapefile.fix.FidIndexer;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -100,6 +94,10 @@ import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.spatial.BBOX;
+
+import static org.geotoolkit.data.shapefile.ShpFileType.*;
+import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
+import static org.geotoolkit.data.shapefile.ShpFiles.*;
 
 
 /**
@@ -584,8 +582,8 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
                 return false;
             }
 
-            final File indexFile = NIOUtilities.urlToFile(indexURL);
-            final File shpFile = NIOUtilities.urlToFile(shpURL);
+            final File indexFile = toFile(indexURL);
+            final File shpFile = toFile(shpURL);
             final long indexLastModified = indexFile.lastModified();
             final long shpLastModified = shpFile.lastModified();
             final boolean shpChangedMoreRecently = indexLastModified < shpLastModified;
@@ -678,9 +676,9 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             return null;
         }
         final URL treeURL = shpFiles.acquireRead(QIX, this);
-        final File treeFile = NIOUtilities.urlToFile(treeURL);
 
         try {
+            final File treeFile = toFile(treeURL);
             if (!treeFile.exists() || (treeFile.length() == 0)) {
                 treeType = IndexType.NONE;
                 return null;

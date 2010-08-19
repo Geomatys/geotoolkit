@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
-import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
-import org.geotoolkit.data.shapefile.fix.FidIndexer;
 import static org.geotoolkit.data.shapefile.ShpFileType.*;
 
 import java.io.File;
@@ -34,10 +32,13 @@ import org.geotoolkit.data.shapefile.ShapefileFeatureWriter;
 import org.geotoolkit.data.shapefile.ShpFileType;
 import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.data.shapefile.StorageFile;
-import org.geotoolkit.resources.NIOUtilities;
+import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
+import org.geotoolkit.data.shapefile.fix.FidIndexer;
+import org.geotoolkit.internal.io.IOUtilities;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
 
 /**
  * A FeatureWriter for ShapefileDataStore. Uses a write and annotate technique
@@ -121,6 +122,7 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
     /**
      * Release resources and flush the header information.
      */
+    @Override
     public void close() throws DataStoreRuntimeException {
         super.close();
 
@@ -159,11 +161,14 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
     private void deleteFile(ShpFileType shpFileType) {
         URL url = shpFiles.acquireWrite(shpFileType, this);
         try {
-            File toDelete = NIOUtilities.urlToFile(url);
+            File toDelete = IOUtilities.toFile(url, ENCODING);
 
             if (toDelete.exists()) {
                 toDelete.delete();
             }
+        } catch(IOException ex){
+            //should not happen
+            throw new RuntimeException(ex);
         } finally {
             shpFiles.unlockWrite(url, this);
         }

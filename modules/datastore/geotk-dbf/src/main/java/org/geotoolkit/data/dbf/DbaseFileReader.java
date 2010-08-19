@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -25,7 +26,6 @@ import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.CharBuffer;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
@@ -33,7 +33,6 @@ import java.nio.charset.CharsetDecoder;
 import java.util.Calendar;
 import java.util.logging.Logger;
 
-import org.geotoolkit.resources.NIOUtilities;
 import org.geotoolkit.util.XInteger;
 import org.geotoolkit.util.logging.Logging;
 
@@ -241,10 +240,6 @@ public class DbaseFileReader {
         if (channel.isOpen()) {
             channel.close();
         }
-        if (buffer instanceof MappedByteBuffer) {
-            NIOUtilities.clean(buffer);
-        }
-
         buffer = null;
         channel = null;
         charBuffer = null;

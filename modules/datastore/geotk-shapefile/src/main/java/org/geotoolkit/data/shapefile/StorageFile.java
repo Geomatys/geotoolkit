@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -29,7 +30,10 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
-import org.geotoolkit.resources.NIOUtilities;
+import org.geotoolkit.internal.io.IOUtilities;
+
+import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
+import static org.geotoolkit.data.shapefile.ShpFiles.*;
 
 /**
  * Encapsulates the idea of a file for writing data to and then later updating the original.
@@ -100,16 +104,16 @@ public final class StorageFile implements Comparable<StorageFile> {
 
             URL url = storageFile.getSrcURLForWrite();
             try {
-                File dest = NIOUtilities.urlToFile(url);
+                File dest = toFile(url);
 
                 if (storage.equals(dest))
                     return;
 
                 if (dest.exists()) {
                     if (!dest.delete()){
-                        ShapefileDataStoreFactory.LOGGER.severe("Unable to delete the file: "+dest+" when attempting to replace with temporary copy.");
+                        LOGGER.severe("Unable to delete the file: "+dest+" when attempting to replace with temporary copy.");
                         if( storageFile.shpFiles.numberOfLocks()>0 ){
-                            ShapefileDataStoreFactory.LOGGER.severe("The problem is almost certainly caused by the fact that there are still locks being held on the shapefiles.  Probably a reader or writer was left unclosed");
+                            LOGGER.severe("The problem is almost certainly caused by the fact that there are still locks being held on the shapefiles.  Probably a reader or writer was left unclosed");
                             storageFile.shpFiles.logCurrentLockers(Level.SEVERE);
                         }
 //                        throw new IOException("Unable to delete original file: " + url);
@@ -117,7 +121,7 @@ public final class StorageFile implements Comparable<StorageFile> {
                 }
 
                 if (storage.exists() && !storage.renameTo(dest)) {
-                    ShapefileDataStoreFactory.LOGGER.finer("Unable to rename temporary file to the file: "+dest+" when attempting to replace with temporary copy");
+                    LOGGER.finer("Unable to rename temporary file to the file: "+dest+" when attempting to replace with temporary copy");
                     
                     copyFile(storage, url, dest);
                     if (!storage.delete()) {

@@ -21,14 +21,12 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 
 import org.geotoolkit.data.shapefile.ShpFileType;
 import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.data.shapefile.shp.ShapefileHeader;
-import org.geotoolkit.resources.NIOUtilities;
 
 import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
 
@@ -125,8 +123,6 @@ public final class ShxReader {
         }
         buffer.flip();
         header = ShapefileHeader.read(buffer, true);
-
-        NIOUtilities.clean(buffer);
     }
 
     private void readRecords(ReadableByteChannel channel) throws IOException {
@@ -142,7 +138,6 @@ public final class ShxReader {
         content = new int[records];
         final IntBuffer ints = buffer.asIntBuffer();
         ints.get(content);
-        NIOUtilities.clean(buffer);
     }
 
     private void readRecord(int index) throws IOException {
@@ -173,12 +168,6 @@ public final class ShxReader {
         closed = true;
         if (channel != null && channel.isOpen()) {
             channel.close();
-
-            if (buf instanceof MappedByteBuffer) {
-                NIOUtilities.clean(buf);
-            } else {
-                buf.clear();
-            }
         }
         this.buf = null;
         this.content = null;

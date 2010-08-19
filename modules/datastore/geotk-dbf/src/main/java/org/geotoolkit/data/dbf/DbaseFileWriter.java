@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -22,7 +23,6 @@ package org.geotoolkit.data.dbf;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
 import java.text.FieldPosition;
@@ -31,7 +31,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import org.geotoolkit.resources.NIOUtilities;
 
 /**
  * A DbaseFileReader is used to read a dbase III format file. The general use of
@@ -215,9 +214,6 @@ public class DbaseFileWriter {
         // write();
         if (channel.isOpen()) {
             channel.close();
-        }
-        if (buffer instanceof MappedByteBuffer) {
-            NIOUtilities.clean(buffer);
         }
         buffer = null;
         channel = null;

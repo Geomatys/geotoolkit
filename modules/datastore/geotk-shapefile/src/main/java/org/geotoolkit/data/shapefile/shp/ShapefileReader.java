@@ -16,12 +16,10 @@
  */
 package org.geotoolkit.data.shapefile.shp;
 
-import org.geotoolkit.data.shapefile.shx.ShxReader;
 import java.io.EOFException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.logging.Level;
@@ -29,7 +27,7 @@ import java.util.logging.Level;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.shapefile.ShpFileType;
 import org.geotoolkit.data.shapefile.ShpFiles;
-import org.geotoolkit.resources.NIOUtilities;
+import org.geotoolkit.data.shapefile.shx.ShxReader;
 
 import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
 
@@ -198,9 +196,7 @@ public class ShapefileReader{
             throw new EOFException("Premature end of header");
         }
         buffer.flip();
-        final ShapefileHeader header = ShapefileHeader.read(buffer, strict);
-        NIOUtilities.clean(buffer);
-        return header;
+        return ShapefileHeader.read(buffer, strict);
     }
 
     // ensure the capacity of the buffer is of size by doubling the original
@@ -300,9 +296,6 @@ public class ShapefileReader{
     public void close() throws IOException {
         if (channel.isOpen()) {
             channel.close();
-        }
-        if (buffer instanceof MappedByteBuffer) {
-            NIOUtilities.clean(buffer);
         }
         if(shxReader != null){
             shxReader.close();
@@ -459,7 +452,6 @@ public class ShapefileReader{
                 // ensure enough capacity for one more record header
                 buffer = ensureCapacity(buffer, recordLength + 8, useMemoryMappedBuffer);
                 buffer.put(old);
-                NIOUtilities.clean(old);
                 fill(buffer, channel);
                 buffer.position(0);
             } else

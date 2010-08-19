@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -32,7 +33,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.resources.NIOUtilities;
 import org.geotoolkit.util.logging.Logging;
 
 /**
@@ -522,7 +522,6 @@ public class DbaseFileHeader {
 
         // if the header is bigger than our 1K, reallocate
         if (headerLength > in.capacity()) {
-            NIOUtilities.clean(in);
             in = ByteBuffer.allocateDirect(headerLength - 10);
         }
         in.limit(headerLength - 10);
@@ -591,8 +590,6 @@ public class DbaseFileHeader {
         // Last byte is a marker for the end of the field definitions.
         // in.skipBytes(1);
         in.position(in.position() + 1);
-
-        NIOUtilities.clean(in);
 
         fields = new DbaseField[lfields.size()];
         fields = (DbaseField[]) lfields.toArray(fields);
@@ -699,7 +696,6 @@ public class DbaseFileHeader {
             // do nothing
         }
 
-        NIOUtilities.clean(buffer);
     }
 
     /**
