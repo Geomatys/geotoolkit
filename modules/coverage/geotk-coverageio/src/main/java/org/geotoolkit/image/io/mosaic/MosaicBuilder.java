@@ -39,6 +39,7 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.math.Fraction;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.logging.LogProducer;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
@@ -79,7 +80,7 @@ import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
  * @module
  */
 @ThreadSafe
-public class MosaicBuilder {
+public class MosaicBuilder implements LogProducer {
     /**
      * The default tile size in pixels.
      */
@@ -180,6 +181,7 @@ public class MosaicBuilder {
      *
      * @return The current logging level.
      */
+    @Override
     public synchronized Level getLogLevel() {
         return logLevel;
     }
@@ -190,6 +192,7 @@ public class MosaicBuilder {
      *
      * @param level The new logging level.
      */
+    @Override
     public synchronized void setLogLevel(Level level) {
         if (level == null) {
             level = Level.FINE;

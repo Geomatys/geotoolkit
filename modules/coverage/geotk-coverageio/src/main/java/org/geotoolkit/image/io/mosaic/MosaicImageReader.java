@@ -44,6 +44,7 @@ import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.logging.LogProducer;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.internal.io.IOUtilities;
@@ -69,7 +70,7 @@ import org.geotoolkit.resources.Loggings;
  * @since 2.5
  * @module
  */
-public class MosaicImageReader extends ImageReader implements Closeable, Disposable {
+public class MosaicImageReader extends ImageReader implements LogProducer, Closeable, Disposable {
     /**
      * Type arguments made of a single {@code int} value. Used with reflections in order to check
      * if a method has been overridden (knowing that it is not the case allows some optimizations).
@@ -140,6 +141,7 @@ public class MosaicImageReader extends ImageReader implements Closeable, Disposa
      *
      * @return The current logging level.
      */
+    @Override
     public Level getLogLevel() {
         return level;
     }
@@ -150,6 +152,7 @@ public class MosaicImageReader extends ImageReader implements Closeable, Disposa
      *
      * @param level The new logging level, or {@code null} for the default.
      */
+    @Override
     public void setLogLevel(Level level) {
         if (level == null) {
             level = Level.FINE;

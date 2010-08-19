@@ -54,6 +54,7 @@ import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.logging.LogProducer;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
@@ -104,7 +105,7 @@ import org.geotoolkit.util.converter.Classes;
  * @since 2.5
  * @module
  */
-public class MosaicImageWriter extends ImageWriter implements Disposable {
+public class MosaicImageWriter extends ImageWriter implements LogProducer, Disposable {
     /**
      * The value for filling empty images. The value is fixed to 0 in current implementation
      * because this is the value of newly created image, and we do not fill them at this time.
@@ -143,6 +144,7 @@ public class MosaicImageWriter extends ImageWriter implements Disposable {
      *
      * @return The current logging level.
      */
+    @Override
     public Level getLogLevel() {
         return level;
     }
@@ -153,6 +155,7 @@ public class MosaicImageWriter extends ImageWriter implements Disposable {
      *
      * @param level The new logging level, or {@code null} for the default.
      */
+    @Override
     public void setLogLevel(Level level) {
         if (level == null) {
             level = Level.FINE;
