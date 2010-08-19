@@ -122,13 +122,13 @@ public class FileUtilities {
      * 
      * @param file The File or directory to delete.
      */
-    public static void deleteDirectory(File dir) {
+    public static boolean deleteDirectory(File dir) {
         if (dir.isDirectory()) {
             for (File f : dir.listFiles()) {
                 deleteDirectory(f);
             }
         }
-        dir.delete();
+        return dir.delete();
     }
 
     /**
