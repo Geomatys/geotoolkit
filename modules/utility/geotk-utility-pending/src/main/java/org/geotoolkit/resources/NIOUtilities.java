@@ -38,6 +38,7 @@ import org.geotoolkit.util.logging.Logging;
  * @version $Id$
  * @author Andrea Aimes
  */
+@Deprecated
 public final class NIOUtilities {
     /**
      * {@code true} if a warning has already been logged.
@@ -67,6 +68,7 @@ public final class NIOUtilities {
      * @param url a URL object that uses protocol "file"
      * @return a File that corresponds to the URL's location
      */
+    @Deprecated
     public static File urlToFile(final URL url) {
         String string = url.toExternalForm();
 
@@ -108,6 +110,7 @@ public final class NIOUtilities {
      *
      * @see java.nio.MappedByteBuffer
      */
+    @Deprecated
     public static boolean clean(final ByteBuffer buffer) {
         if (buffer == null || ! buffer.isDirect() ) {
             return false;
@@ -137,6 +140,7 @@ public final class NIOUtilities {
     /**
      * Checks if a warning message should be logged.
      */
+    @Deprecated
     private static synchronized boolean isLoggable() {
         try {
             return !warned && (
@@ -152,46 +156,13 @@ public final class NIOUtilities {
     /**
      * Logs a warning message.
      */
+    @Deprecated
     private static synchronized void log(final Exception e, final ByteBuffer buffer) {
         warned = true;
         String message = "Error attempting to close a mapped byte buffer : " + buffer.getClass().getName()
                        + "\n JVM : " + System.getProperty("java.version")
                        + ' '         + System.getProperty("java.vendor");
         Logging.getLogger("org.geotoolkit.io").log(Level.WARNING, message, e);
-    }
-
-    /**
-     * Delete a directory and all its contents, both files and directories.
-     * <p>
-     * Note, if this is passed a file rather than a directory, the method will
-     * not delete anything and return {@code false}.
-     * </p>
-     *
-     * @param directory A {@code File} object, expected to reference a
-     *                    directory.
-     * @return {@code true} if, and only if, the directory was successfully
-     *           deleted, and {@code false} otherwise.
-     */
-    public static boolean deleteDirectory(final File directory) throws IOException{
-        if (directory == null)
-            return false;
-        if (!directory.exists())
-            return false;
-
-        if (directory.isDirectory()) {
-            for (File f : directory.listFiles()) {
-                if (f.isDirectory()) {
-                    deleteDirectory(f);
-                } else {
-                    final boolean deleted = f.delete();
-                    if (!deleted) {
-                        throw new IOException("unable to delete the file:" + f.getName());
-                    }
-                }
-            }
-        }
-        return directory.delete();
-
     }
 
 }

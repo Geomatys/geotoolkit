@@ -46,7 +46,7 @@ import org.apache.lucene.store.SimpleFSDirectory;
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.IndexingException;
 import org.geotoolkit.lucene.filter.LuceneOGCFilter;
-import org.geotoolkit.resources.NIOUtilities;
+import org.geotoolkit.util.FileUtilities;
 
 /**
  * An abstract lucene Indexer used to create and writer lucene index.
@@ -141,11 +141,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         for (File indexDirectory : configDirectory.listFiles(new IndexDirectoryFilter(serviceID))) {
             String dirName = indexDirectory.getName();
             if (!dirName.equals(currentDirName)) {
-                try {
-                    NIOUtilities.deleteDirectory(indexDirectory);
-                } catch (IOException ex) {
-                    LOGGER.log(Level.WARNING, "Unable to delete the directory:" + dirName, ex);
-                }
+                FileUtilities.deleteDirectory(indexDirectory);
             }
         }
         
@@ -445,6 +441,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
          * @param name The name of the file.
          * @return True if the specified file in the current directory match the conditions.
          */
+        @Override
         public boolean accept(File dir, String name) {
             File f = new File(dir, name);
             return (name.startsWith(prefix + "index-") && f.isDirectory());
