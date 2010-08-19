@@ -29,6 +29,8 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 
+import org.opengis.metadata.spatial.PixelOrientation;
+
 import org.geotoolkit.gui.swing.ZoomPane;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.image.io.mosaic.Tile;
@@ -41,7 +43,7 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
  * Paints the silhouette of a set of tiles.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.15
  *
  * @since 3.00
  * @module
@@ -193,7 +195,7 @@ final class MosaicPanel extends ZoomPane {
                     continue; // We will just ignore that tile manager.
                 }
                 if (geometry != null) {
-                    final Rectangle2D region = geometry.getEnvelope();
+                    final Rectangle2D region = geometry.getEnvelope(PixelOrientation.UPPER_LEFT);
                     if (area == null) {
                         area = region;
                     } else {

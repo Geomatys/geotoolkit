@@ -18,6 +18,7 @@
 package org.geotoolkit.internal.image.io;
 
 import java.awt.Rectangle;
+import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 import javax.imageio.metadata.IIOMetadata;
 
@@ -46,12 +47,17 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.15
  *
  * @since 3.06
  * @module
  */
 public final class GridDomainAccessor extends MetadataAccessor {
+    /**
+     * Threshold for floating point comparisons.
+     */
+    private static final double EPS = 1E-10;
+
     /**
      * The accessor for offset vectors. Will be created only when first needed.
      */
@@ -142,6 +148,16 @@ public final class GridDomainAccessor extends MetadataAccessor {
         setLimits(new int[] {bounds.x, bounds.y}, new int[] {bounds.x + bounds.width-1, bounds.y + bounds.height-1});
         final double[] centerPoint = new double[] {bounds.getCenterX(), bounds.getCenterY()};
         gridToCRS.transform(centerPoint, 0, centerPoint, 0, 1);
+        /*
+         * Get an estimation of the envelope size (the diagonal length actually),
+         * in order to estimate a threshold value for trapping zeros.
+         */
+        Point2D span = new Point2D.Double(bounds.getWidth(), bounds.getHeight());
+        span = gridToCRS.deltaTransform(span, span);
+        final double tolerance = Math.hypot(span.getX(), span.getY()) * EPS;
+        for (int i=0; i<centerPoint.length; i++) {
+            centerPoint[i] = adjustForRoundingError(centerPoint[i], tolerance);
+        }
         setSpatialRepresentation(centerPoint, cellGeometry, pointInPixel);
     }
 
@@ -179,7 +195,8 @@ public final class GridDomainAccessor extends MetadataAccessor {
         checkDimension("bounds", bounds.length, crsDim);
         final double[] centerPoint = new double[crsDim];
         for (int i=0; i<crsDim; i++) {
-            centerPoint[i] = 0.5 * (origin[i] + bounds[i]);
+            final double tolerance = EPS * (bounds[i] - origin[i]);
+            centerPoint[i] = adjustForRoundingError(0.5 * (origin[i] + bounds[i]), tolerance);
         }
         setSpatialRepresentation(centerPoint, cellGeometry, pointInPixel);
     }
@@ -252,7 +269,7 @@ public final class GridDomainAccessor extends MetadataAccessor {
             if (!pixelCenter) {
                 span++;
             }
-            vector[j] = MetadataHelper.INSTANCE.adjustForRoundingError((bounds[i] - origin[i]) / span);
+            vector[j] = adjustForRoundingError((bounds[i] - origin[i]) / span, 0);
             addOffsetVector(vector);
             vector[j] = 0;
         }
@@ -284,5 +301,16 @@ public final class GridDomainAccessor extends MetadataAccessor {
         setRectifiedGridDomain(origin, bounds, null, high, null, true);
         setSpatialRepresentation(origin, bounds, cellGeometry,
                 pixelCenter ? PixelOrientation.CENTER : PixelOrientation.UPPER_LEFT);
+    }
+
+    /**
+     * Work around for rounding error, to be invoked only for values resulting from a computation.
+     */
+    private static double adjustForRoundingError(double value, final double tolerance) {
+        value = MetadataHelper.INSTANCE.adjustForRoundingError(value);
+        if (Math.abs(value) <= tolerance) {
+            value = 0;
+        }
+        return value;
     }
 }

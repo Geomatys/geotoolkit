@@ -35,6 +35,8 @@ import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.FileImageInputStream;
 
+import org.opengis.metadata.spatial.PixelOrientation;
+
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.XArrays;
@@ -98,7 +100,7 @@ import static java.lang.Math.max;
  *
  *     <blockquote><font size=2>
  *     <b>NOTE 1:</b> The semantic assumes that overviews are produced by subsampling, not by
- *     interpolation or pixel averaging. The later are not prohibed, but doing so introduce
+ *     interpolation or pixel averaging. The later are not prohibited, but doing so introduce
  *     some subsampling-dependent variations in images produced by {@link MosaicImageReader},
  *     which would not be what we would expect from a strictly compliant {@link ImageReader}.
  *     <br><br>
@@ -110,7 +112,7 @@ import static java.lang.Math.max;
  * </ul>
  * <p>
  * The tiles are not required to be arranged on a regular grid, but performances may be
- * better if they are. {@link TileManagerFactory} is responsible for analysing the layout
+ * better if they are. {@link TileManagerFactory} is responsible for analyzing the layout
  * of a collection of tiles and instantiate {@link TileManager} subclasses optimized for
  * the layout geometry.
  * <p>
@@ -390,7 +392,8 @@ public class Tile implements Comparable<Tile>, Serializable {
      *          location of this region is typically (0,0). The definitive location will be
      *          computed when this tile will be given to a {@link TileManagerFactory}.
      * @param gridToCRS
-     *          The "<cite>grid to real world</cite>" transform.
+     *          The "<cite>grid to real world</cite>" transform mapping pixel
+     *          {@linkplain PixelOrientation#UPPER_LEFT upper left} corner.
      */
     public Tile(ImageReaderSpi provider, final Object input, final int imageIndex,
                 final Rectangle region, final AffineTransform gridToCRS)
@@ -901,7 +904,9 @@ public class Tile implements Comparable<Tile>, Serializable {
      * identical since it may have been {@linkplain AffineTransform#translate translated}
      * in order to get a uniform grid geometry for every tiles in a {@link TileManager}.
      *
-     * @return The "grid to real world" transform, or {@code null} if undefined.
+     * @return The "<cite>grid to real world</cite>" transform mapping pixel
+     *         {@linkplain PixelOrientation#UPPER_LEFT upper left} corner,
+     *         or {@code null} if undefined.
      * @throws IllegalStateException If this tile has been {@linkplain #Tile(ImageReaderSpi,
      *         Object, int, Rectangle, AffineTransform) created without location} and not yet
      *         processed by {@link TileManagerFactory}.
@@ -918,6 +923,8 @@ public class Tile implements Comparable<Tile>, Serializable {
      * performed by {@link #translate}, if any. Should be an immutable instance because it will
      * not be cloned.
      *
+     * @param at The "<cite>grid to real world</cite>" transform mapping pixel
+     *        {@linkplain PixelOrientation#UPPER_LEFT upper left} corner.
      * @throws IllegalStateException if an other transform was already assigned to this tile.
      */
     final synchronized void setGridToCRS(final AffineTransform at) throws IllegalStateException {

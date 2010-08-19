@@ -36,6 +36,8 @@ import java.util.Collections;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 
+import org.opengis.metadata.spatial.PixelOrientation;
+
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.util.collection.FrequencySortedSet;
@@ -63,7 +65,8 @@ public abstract class TileManager implements Serializable {
     private static final long serialVersionUID = -7645850962821189968L;
 
     /**
-     * The grid geometry, including the "<cite>grid to real world</cite>" transform.
+     * The grid geometry, including the "<cite>grid to real world</cite>" transform
+     * mapping pixel {@linkplain PixelOrientation#UPPER_LEFT upper left} corner.
      * This is provided by {@link TileManagerFactory} when this information is available.
      */
     private ImageGeometry geometry;
@@ -91,7 +94,8 @@ public abstract class TileManager implements Serializable {
      * This method can be invoked at most once. It can not be invoked at all if the transform
      * has been automatically invoked by {@link TileManagerFactory}.
      *
-     * @param gridToCRS The "grid to CRS" transform.
+     * @param  gridToCRS The "<cite>grid to real world</cite>" transform mapping
+     *         pixel {@linkplain PixelOrientation#UPPER_LEFT upper left} corner.
      * @throws IllegalStateException if a transform was already assigned to at least one tile.
      * @throws IOException If an I/O operation was required and failed.
      */
@@ -120,7 +124,8 @@ public abstract class TileManager implements Serializable {
 
     /**
      * Sets the grid geometry to the given value. This method is for {@link TileManagerFactory}
-     * usage only, which will set the geometry computed by {@link RegionCalculator}.
+     * usage only, which will set the geometry computed by {@link RegionCalculator}. The given
+     * geometry shall maps pixel upper left corner.
      */
     synchronized void setGridGeometry(final ImageGeometry geometry) {
         if (this.geometry != null) {
@@ -134,11 +139,16 @@ public abstract class TileManager implements Serializable {
      * This information is typically available only when {@linkplain AffineTransform affine
      * transform} were explicitly given to {@linkplain Tile#Tile(ImageReaderSpi,Object,int,
      * Rectangle,AffineTransform) tile constructor}.
+     * <p>
+     * Note that the {@linkplain ImageGeometry#getGridToCRS() grid to CRS} transform of the
+     * returned geometry maps pixel {@linkplain PixelOrientation#UPPER_LEFT upper left} corner.
+     * This is different than OGC practice which maps pixel center, but is consistent with
+     * Java2D practice for which this class is designed.
      *
      * @return The grid geometry, or {@code null} if this information is not available.
      * @throws IOException If an I/O operation was required and failed.
      *
-     * @see Tile#getGridToCRS
+     * @see Tile#getGridToCRS()
      */
     public synchronized ImageGeometry getGridGeometry() throws IOException {
         return geometry;

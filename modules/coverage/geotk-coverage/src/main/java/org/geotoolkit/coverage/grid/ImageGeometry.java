@@ -20,13 +20,13 @@ package org.geotoolkit.coverage.grid;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
+import java.awt.image.RenderedImage;
 import java.io.Serializable;
 
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.lang.Immutable;
-import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
@@ -37,13 +37,19 @@ import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 /**
  * A simple grid geometry holding the grid envelope as a {@linkplain Rectangle rectangle} and the
  * <cite>grid to CRS</cite> relationship as an {@linkplain AffineTransform affine transform}.
- * This grid geometry does not hold any Coordinate Reference System information. Because of that,
- * it is not suitable to {@link GridCoverage2D} (the later rather use {@link GridGeometry2D}).
- * But it is sometime used with plain {@linkplain java.awt.image.RenderedImage rendered image}
- * instances.
+ * <p>
+ * This class does not specify whatever the <cite>grid to CRS</cite> transform maps pixel
+ * {@linkplain PixelOrientation#CENTER center} or {@linkplain PixelOrientation#UPPER_LEFT
+ * upper left} corner. The OGC convention is to map pixel center, while the Java2D convention
+ * is to map pixel corner. It is user responsibility to know the convention in use. For a more
+ * powerful class providing support for arbitrary convention, see {@link GridGeometry2D}.
+ * <p>
+ * This grid geometry does not hold any Coordinate Reference System information. Consequently
+ * it is not suitable for usage with {@link GridCoverage2D}. This {@code ImageGeometry} class
+ * is rather designed as a lightweight container for usage with {@link RenderedImage} instances.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.15
  *
  * @see GridGeometry2D
  * @see GeneralGridGeometry
@@ -52,14 +58,14 @@ import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
  * @module
  */
 @Immutable
-public class ImageGeometry implements GridGeometry, Serializable, Cloneable {
+public class ImageGeometry implements GridGeometry, Serializable {
     /**
      * For cross-version compatibility.
      */
     private static final long serialVersionUID = 1985363181119389264L;
 
     /**
-     * The grid envelope. This is called "grid range" for legacy raisons.
+     * The grid envelope. This is called "grid range" for legacy reasons.
      */
     private final GridEnvelope2D gridRange;
 
@@ -110,7 +116,11 @@ public class ImageGeometry implements GridGeometry, Serializable, Cloneable {
      * @return The image envelope in "real world" coordinates.
      *
      * @since 3.00
+     *
+     * @deprecated Since {@code ImageGeometry} does not specify whatever the transform maps pixel
+     * center or corner, users are required to provide an explicit {@link PixelOrientation} argument.
      */
+    @Deprecated
     public Rectangle2D getEnvelope() {
         return getEnvelope(PixelOrientation.CENTER);
     }
@@ -123,8 +133,8 @@ public class ImageGeometry implements GridGeometry, Serializable, Cloneable {
      * <p>
      * According OGC specification, the transform shall maps pixel center. However Java2D usage
      * is to maps the upper-left corner. Because this {@code ImageGeometry} class is primarily
-     * designed for use with {@linkplain java.awt.image.RenderedImage rendered images}, this
-     * method allows to override the OGC behavior with the Java2D one if needed.
+     * designed for use with {@linkplain RenderedImage rendered images}, this method allows to
+     * override the OGC behavior with the Java2D one if needed.
      *
      * @param  orientation Whatever the transform maps pixel center or a corner. If this argument
      *         is not provided, the default value is {@link PixelOrientation#CENTER CENTER}.
@@ -175,19 +185,5 @@ public class ImageGeometry implements GridGeometry, Serializable, Cloneable {
                    Utilities.equals(gridToCRS, that.gridToCRS);
         }
         return false;
-    }
-
-    /**
-     * Returns a clone of this image geometry.
-     *
-     * @return A clone of this grid geometry.
-     */
-    @Override
-    public ImageGeometry clone() {
-        try {
-            return (ImageGeometry) super.clone();
-        } catch (CloneNotSupportedException exception) {
-            throw new AssertionError(exception); // Should never happen, since we are cloneable.
-        }
     }
 }

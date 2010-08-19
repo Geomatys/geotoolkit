@@ -38,14 +38,20 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.stream.ImageInputStream;
 
+import org.opengis.metadata.spatial.PixelOrientation;
+
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.FrequencySortedSet;
-import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.internal.image.io.Formats;
+import org.geotoolkit.internal.image.io.GridDomainAccessor;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 
@@ -98,6 +104,11 @@ public class MosaicImageReader extends ImageReader implements Closeable, Disposa
      * {@link #abort} only. Changes must be performed inside a {@code synchronized(this)} block.
      */
     private transient ImageReader reading;
+
+    /**
+     * The image metadata, created when first needed.
+     */
+    private transient IIOMetadata[] metadata;
 
     /**
      * The logging level for tiling information during reads. Note that we choose a default
@@ -194,6 +205,7 @@ public class MosaicImageReader extends ImageReader implements Closeable, Disposa
     public void setInput(Object input, final boolean seekForwardOnly, final boolean ignoreMetadata)
             throws IllegalArgumentException
     {
+        metadata = null;
         final TileManager[] managers;
         try {
             managers = TileManagerFactory.DEFAULT.createFromObject(input);
@@ -973,13 +985,10 @@ public class MosaicImageReader extends ImageReader implements Closeable, Disposa
     }
 
     /**
-     * Returns the metadata associated with the given image, or {@code null}.
-     * The default implementation returns {@code null} in all cases.
-     *
-     * {@note A previous implementation was iterating over every tiles and attempted to merge
-     * the metadata using the <code>IIOMetadata.mergeTree(String, Node)</code> method. However
-     * this was extremely slow on large mosaics, and the result was usually not the expected
-     * one since the merge operation is hard to implement correctly.}
+     * Returns the metadata associated with the given image, or {@code null} if none.
+     * The default implementation returns an instance of {@link SpatialMetadata}
+     * with a {@code "RectifiedGridDomain"} node inferred from the information
+     * returned by {@link TileManager#getGridGeometry()}.
      *
      * @param  imageIndex the index of the image whose metadata is to be retrieved.
      * @return The metadata, or {@code null}.
@@ -989,7 +998,24 @@ public class MosaicImageReader extends ImageReader implements Closeable, Disposa
      */
     @Override
     public IIOMetadata getImageMetadata(final int imageIndex) throws IOException {
-        return null;
+        IIOMetadata md = null;
+        if (metadata != null) {
+            md = metadata[imageIndex];
+        }
+        if (md == null) {
+            final ImageGeometry geom = getTileManager(imageIndex).getGridGeometry();
+            if (geom != null) {
+                final SpatialMetadata sp = new SpatialMetadata(SpatialMetadataFormat.IMAGE, this, null);
+                final GridDomainAccessor accessor = new GridDomainAccessor(sp);
+                accessor.setAll(geom.getGridToCRS(), geom.getGridRange(), null, PixelOrientation.UPPER_LEFT);
+                if (metadata == null) {
+                    metadata = new SpatialMetadata[getNumImages(true)];
+                }
+                metadata[imageIndex] = sp;
+                md = sp;
+            }
+        }
+        return md;
     }
 
     /**
@@ -1431,11 +1457,12 @@ public class MosaicImageReader extends ImageReader implements Closeable, Disposa
 
     /**
      * Allows any resources held by this reader to be released. The default implementation
-     * closes any image input streams thay may be held by tiles, then disposes every
+     * closes any image input streams that may be held by tiles, then disposes every
      * {@linkplain Tile#getImageReader tile image readers}.
      */
     @Override
     public void dispose() {
+        metadata = null;
         input = null;
         try {
             close();
