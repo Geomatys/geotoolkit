@@ -24,13 +24,13 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.shapefile.ShpFileType;
 import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.resources.NIOUtilities;
-import org.geotoolkit.util.logging.Logging;
+
+import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
 
 /**
  * The general use of this class is: <CODE><PRE>
@@ -51,7 +51,6 @@ import org.geotoolkit.util.logging.Logging;
  */
 public class ShapefileReader{
 
-    private static final Logger LOGGER = Logging.getLogger(ShapefileReader.class);
     
     /**
      *  Used to mark the current shape is not known, either because someone moved the reader

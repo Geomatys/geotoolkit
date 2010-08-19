@@ -16,16 +16,16 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
-import static org.geotoolkit.data.shapefile.ShpFileType.*;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.logging.Logger;
 
 import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.data.shapefile.StorageFile;
 import org.geotoolkit.data.shapefile.shp.IndexFile;
-import org.geotoolkit.util.logging.Logging;
+
+import static org.geotoolkit.data.shapefile.ShpFileType.*;
+import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
 
 /**
  * Creates a .fix file (fid index).
@@ -34,7 +34,6 @@ import org.geotoolkit.util.logging.Logging;
  * @module pending
  */
 public class FidIndexer {
-    static Logger LOGGER = Logging.getLogger("org.geotoolkit.data.shapefile");
 
     /**
      * Generates the FID index file for the shpFile

@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
-import java.util.logging.Level;
-import static org.geotoolkit.data.shapefile.ShpFileType.FIX;
 
 import java.io.IOException;
 import java.net.URL;
@@ -26,13 +24,15 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.NoSuchElementException;
-import java.util.logging.Logger;
-import org.geotoolkit.data.DataStoreRuntimeException;
 
+import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureIDReader;
 import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.resources.NIOUtilities;
+
+import static org.geotoolkit.data.shapefile.ShpFileType.FIX;
+import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
 
 /**
  * This object reads from a file the fid of a feature in a shapefile.
@@ -41,8 +41,6 @@ import org.geotoolkit.resources.NIOUtilities;
  * @module pending
  */
 public class IndexedFidReader implements FeatureIDReader {
-    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging
-            .getLogger("org.geotoolkit.data.shapefile");
     private ReadableByteChannel readChannel;
     private ByteBuffer buffer;
     private long count;

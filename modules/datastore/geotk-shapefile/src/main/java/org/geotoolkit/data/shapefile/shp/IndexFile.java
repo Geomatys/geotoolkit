@@ -23,12 +23,12 @@ import java.nio.IntBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
-import java.util.logging.Logger;
 
 import org.geotoolkit.data.shapefile.ShpFileType;
 import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.resources.NIOUtilities;
-import org.geotoolkit.util.logging.Logging;
+
+import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
 
 /**
  * IndexFile parser for .shx files.<br>
@@ -43,7 +43,6 @@ import org.geotoolkit.util.logging.Logging;
  * @module pending
  */
 public class IndexFile {
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data.shapefile");
     private static final int RECS_IN_BUFFER = 2000;
 
     private boolean useMemoryMappedBuffer;
