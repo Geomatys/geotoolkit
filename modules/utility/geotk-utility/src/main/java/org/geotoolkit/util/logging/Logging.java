@@ -699,7 +699,7 @@ search:     while (configs.hasMoreElements()) try {
      * @param method  The method name where the error occurred.
      * @param error   The error.
      * @return {@code true} if the error has been logged, or {@code false} if the logger
-     *         doesn't log anything at the specified level.
+     *         doesn't log anything at the {@link Level#FINE FINE} level.
      *
      * @since 2.5
      */
@@ -719,7 +719,7 @@ search:     while (configs.hasMoreElements()) try {
      * @param method  The method name where the error occurred.
      * @param error   The error.
      * @return {@code true} if the error has been logged, or {@code false} if the logger
-     *         doesn't log anything at the specified level.
+     *         doesn't log anything at the {@link Level#FINE FINE} level.
      *
      * @since 2.5
      */
@@ -740,7 +740,7 @@ search:     while (configs.hasMoreElements()) try {
      * @param method  The method name where the error occurred.
      * @param error   The error.
      * @return {@code true} if the error has been logged, or {@code false} if the logger
-     *         doesn't log anything at the specified level.
+     *         doesn't log anything at the {@link Level#SEVERE SEVERE} level.
      *
      * @since 3.00
      */

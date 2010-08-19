@@ -356,9 +356,9 @@ public abstract class CommandLine implements Runnable {
      */
     private PrintWriter writer(final OutputStream stream) {
         if (encoding != null) {
-            return new PrintWriter(new OutputStreamWriter(stream, encoding));
+            return new PrintWriter(new OutputStreamWriter(stream, encoding), true);
         } else {
-            return new PrintWriter(stream);
+            return new PrintWriter(stream, true);
         }
     }
 
@@ -378,7 +378,7 @@ public abstract class CommandLine implements Runnable {
 
     /**
      * Assigns values to every fields declared in the given class. Fields in parent classes
-     * are assigned first. In case of failure, all remainding fields are still processed (so
+     * are assigned first. In case of failure, all remanding fields are still processed (so
      * we can hopefully build a output stream with the user's encoding) before to report the
      * error.
      *

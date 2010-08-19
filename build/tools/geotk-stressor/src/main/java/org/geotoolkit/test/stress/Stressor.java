@@ -164,7 +164,6 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
             }
             buffer.append("), scale=").append((float) mean(getScale(geometry)));
             out.println(buffer.append(", ").append(geometry.getEnvelope()));
-            out.flush();
             try {
                 Thread.sleep(random.nextInt(MAXIMAL_PAUSE) + 1);
             } catch (InterruptedException e) {

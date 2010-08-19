@@ -19,8 +19,11 @@ package org.geotoolkit.test.stress;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.awt.image.RenderedImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
@@ -41,6 +44,7 @@ import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
+import org.geotoolkit.image.io.mosaic.TileManagerFactory;
 
 
 /**
@@ -96,10 +100,11 @@ public class CoverageReadWriteStressor extends Stressor {
      * an {@link ImageCoverageReader} for the given input.
      *
      * @param  input The input to use.
+     * @param  out   Where to print information messages.
      * @throws CoverageStoreException If an error occurred while reading the input.
      */
-    public CoverageReadWriteStressor(final Object input) throws CoverageStoreException {
-        this(createReader(input), 0);
+    CoverageReadWriteStressor(Object input, PrintWriter out) throws CoverageStoreException {
+        this(createReader(input, out), 0);
     }
 
     /**
@@ -124,14 +129,17 @@ public class CoverageReadWriteStressor extends Stressor {
      * with {@code ".serialized"}, it will be deserialized.
      *
      * @param  input The input to give to the image reader.
+     * @param  out   Where to print information messages.
      * @return The image reader using the given input.
      */
-    private static GridCoverageReader createReader(Object input) throws CoverageStoreException {
+    private static GridCoverageReader createReader(Object input, final PrintWriter out)
+            throws CoverageStoreException
+    {
         if (input instanceof GridCoverageReader) {
             return (GridCoverageReader) input;
         }
         final GridCoverageReader reader = new ImageCoverageReader();
-        input = createReaderInput(input);
+        input = createReaderInput(input, out);
         reader.setInput(input);
         return reader;
     }
@@ -140,15 +148,26 @@ public class CoverageReadWriteStressor extends Stressor {
      * Creates the input of a coverage reader.
      *
      * @param  input The input to give to the image reader.
+     * @param  out   Where to print information messages.
      * @return A potentially modified input to give to the image reader.
      */
-    static Object createReaderInput(Object input) throws CoverageStoreException {
+    static Object createReaderInput(Object input, final PrintWriter out) throws CoverageStoreException {
         if (input instanceof File) {
-            final File file = (File) input;
-            if (file.getName().endsWith(".serialized")) try {
-                final ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
-                input = in.readObject();
-                in.close();
+            File file = (File) input;
+            out.println("Loading " + file);
+            try {
+                if (file.isFile() && file.getName().endsWith(".serialized")) {
+                    final ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
+                    input = in.readObject();
+                    in.close();
+                } else {
+                    input = TileManagerFactory.DEFAULT.create(file);
+                    file = new File(file, "TileManager.serialized");
+                    out.println("Saving " + file);
+                    final ObjectOutputStream bs = new ObjectOutputStream(new FileOutputStream(file));
+                    bs.writeObject(input);
+                    bs.close();
+                }
             } catch (IOException e) { // TODO: use multi-catch with JDK7.
                 throw new CoverageStoreException(e);
             } catch (ClassNotFoundException e) {

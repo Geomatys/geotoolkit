@@ -21,14 +21,22 @@ import java.util.Map;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+import java.io.InvalidClassException;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
+import javax.imageio.ImageIO;
+import javax.imageio.spi.ImageReaderSpi;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.coverage.grid.ImageGeometry;
@@ -36,7 +44,7 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 
 /**
- * Creates {@link TileManager} instances from a collection of tiles.
+ * Creates {@link TileManager} instances from a collection or a directory of tiles.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.15
@@ -61,8 +69,8 @@ public class TileManagerFactory extends Factory {
 
     /**
      * Creates tile managers from the specified object, which may be {@code null}. If non-null, the
-     * object shall be an instance of {@code TileManager[]}, {@code TileManager}, {@code Tile[]} or
-     * {@code Collection<Tile>}.
+     * object shall be an instance of {@code TileManager[]}, {@code TileManager}, {@code Tile[]},
+     * {@code Collection<Tile>} or {@link File}.
      *
      * @param  tiles The tiles, or {@code null}.
      * @return The tile managers, or {@code null} if {@code tiles} was null.
@@ -76,6 +84,8 @@ public class TileManagerFactory extends Factory {
         final TileManager[] managers;
         if (tiles == null) {
             managers = null;
+        } else if (tiles instanceof File) {
+            managers = create((File) tiles);
         } else if (tiles instanceof TileManager[]) {
             managers = ((TileManager[]) tiles).clone();
         } else if (tiles instanceof TileManager) {
@@ -99,6 +109,128 @@ public class TileManagerFactory extends Factory {
             }
         }
         return managers;
+    }
+
+    /**
+     * Creates a tile manager from the given file or directory.
+     * <p>
+     * <ul>
+     *   <li>If the argument {@linkplain File#isFile() is a file} having the {@code ".serialized"}
+     *       suffix, then this method deserializes the object in the given file and passes it to
+     *       {@link #createFromObject(Object)}.</li>
+     *   <li>If the given argument {@linkplain File#isDirectory() is a directory}, then this
+     *       method delegates to {@link #create(File, FileFilter, ImageReaderSpi)} which scan
+     *       all image files found in the directory.</li>
+     *   <li>Otherwise an exception is thrown.</li>
+     * </ul>
+     *
+     * @param  file The serialized file or the directory to scan.
+     * @return A tile manager created from the tiles in the given directory.
+     * @throws IOException If the given file is not recognized, or an I/O operation failed.
+     *
+     * @since 3.15
+     */
+    public TileManager[] create(final File file) throws IOException {
+        if (file.isFile()) {
+            final String suffix = file.getName();
+            if (!suffix.endsWith(".serialized")) {
+                throw new IOException(Errors.format(Errors.Keys.UNKNOWN_FILE_SUFFIX_$1, suffix));
+            }
+            final ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
+            final Object manager;
+            try {
+                manager = in.readObject();
+            } catch (ClassNotFoundException cause) {
+                InvalidClassException ex = new InvalidClassException(cause.getLocalizedMessage());
+                ex.initCause(cause);
+                throw ex;
+            }
+            in.close();
+            return createFromObject(manager);
+        } else if (file.isDirectory()) {
+            return create(file, null, null);
+        } else {
+            throw new IOException(Errors.format(Errors.Keys.NOT_A_DIRECTORY_$1, file));
+        }
+    }
+
+    /**
+     * Creates tile managers from the files found in the given directory. This method scans
+     * also the sub-directories recursively if the given file filter accepts directories.
+     * <p>
+     * Each image file in the given directory shall have a
+     * <a href="http://fr.wikipedia.org/wiki/World_file">>World File</a> of the same name,
+     * typically with the {@code ".tfw"} extension.
+     * <p>
+     * If the file filter is null, a default file filter will be created from the given SPI.
+     * If the given SPI is null, a SPI will be inferred automatically for each image files
+     * found in the directory.
+     *
+     * @param  directory  The directory to scan.
+     * @param  filter     An optional file filter, or {@code null} for a default filter.
+     * @param  spi        An optional image provider, or {@code null} for auto-detect.
+     * @return A tile manager created from the tiles in the given directory.
+     * @throws IOException If the given file is not a directory, or an I/O operation failed.
+     *
+     * @since 3.15
+     */
+    public TileManager[] create(final File directory, FileFilter filter, final ImageReaderSpi spi)
+            throws IOException
+    {
+        if (filter == null) {
+            final String[] suffixes;
+            if (spi != null) {
+                suffixes = spi.getFileSuffixes();
+            } else {
+                suffixes = ImageIO.getReaderFileSuffixes();
+            }
+            if (suffixes != null) {
+                filter = new FileFilter() {
+                    @Override public boolean accept(final File pathname) {
+                        if (pathname.isDirectory()) {
+                            return true;
+                        }
+                        String suffix = pathname.getName();
+                        final int s = suffix.lastIndexOf('.');
+                        suffix = (s >= 0) ? suffix.substring(s + 1) : "";
+                        return XArrays.containsIgnoreCase(suffixes, suffix);
+                    }
+                };
+            }
+        }
+        final ArrayList<Tile> tiles = new ArrayList<Tile>();
+        createTilesFromFiles(directory, filter, spi, 0, tiles);
+        return create(tiles);
+    }
+
+    /**
+     * Fills the given tiles collection with all tiles found in the given directory and
+     * sub-directories which are accepted by the given optional file filter.
+     *
+     * @param directory  The directory to scan.
+     * @param filter     An optional file filter, or {@code null}.
+     * @param spi        An optional image provider, or {@code null} for auto-detect.
+     * @param imageIndex The image index (usually 0).
+     * @param tiles      The collection to fill with new tiles.
+     *
+     * @since 3.15
+     */
+    private static void createTilesFromFiles(final File directory, final FileFilter filter,
+            final ImageReaderSpi spi, final int imageIndex, final ArrayList<Tile> tiles)
+            throws IOException
+    {
+        final File[] files = directory.listFiles(filter);
+        if (files == null) {
+            throw new IOException(Errors.format(Errors.Keys.NOT_A_DIRECTORY_$1, directory));
+        }
+        tiles.ensureCapacity(tiles.size() + files.length);
+        for (final File file : files) {
+            if (file.isDirectory()) {
+                createTilesFromFiles(file, filter, spi, imageIndex, tiles);
+            } else {
+                tiles.add(new Tile(spi, file, imageIndex));
+            }
+        }
     }
 
     /**

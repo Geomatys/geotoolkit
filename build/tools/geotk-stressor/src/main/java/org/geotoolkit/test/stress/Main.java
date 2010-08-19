@@ -106,7 +106,7 @@ public final class Main extends CommandLine {
      */
     @Action(minimalArgumentCount=1, maximalArgumentCount=1)
     public void coverages() throws CoverageStoreException {
-        final Object input = CoverageReadWriteStressor.createReaderInput(new File(arguments[0]));
+        final Object input = CoverageReadWriteStressor.createReaderInput(new File(arguments[0]), out);
         final StressorGroup<CoverageReadWriteStressor> stressors =
                 new StressorGroup<CoverageReadWriteStressor>(duration * 1000, out);
         /*
@@ -114,7 +114,7 @@ public final class Main extends CommandLine {
          * maximal size, maximal scale and locale given as parameters on the command line.
          */
         for (int i=numThreads; --i>=0;) {
-            final CoverageReadWriteStressor stressor = new CoverageReadWriteStressor(input);
+            final CoverageReadWriteStressor stressor = new CoverageReadWriteStressor(input, out);
             if (minSize != null) {
                 final int[] size = stressor.getMinimalGridSize();
                 Arrays.fill(size, minSize);
