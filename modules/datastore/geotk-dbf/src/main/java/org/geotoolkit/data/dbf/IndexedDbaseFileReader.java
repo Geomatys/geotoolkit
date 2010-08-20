@@ -93,14 +93,14 @@ public class IndexedDbaseFileReader extends DbaseFileReader {
 
     public void goTo(int recno) throws IOException, UnsupportedOperationException {
 
-        if (this.randomAccessEnabled) {
-            long newPosition = this.header.getHeaderLength()
-                    + this.header.getRecordLength() * (long)(recno - 1);
+        if (randomAccessEnabled) {
+            final long newPosition = header.getHeaderLength()
+                    + header.getRecordLength() * (long)(recno - 1);
 
-            if (this.useMemoryMappedBuffer) {
+            if (useMemoryMappedBuffer) {
                 buffer.position((int)newPosition);
             } else {
-                FileChannel fc = (FileChannel) this.channel;
+                final FileChannel fc = (FileChannel) channel;
                 fc.position(newPosition);
                 buffer.limit(buffer.capacity());
                 buffer.position(0);

@@ -21,15 +21,10 @@
 package org.geotoolkit.data.dbf;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.nio.channels.WritableByteChannel;
 import java.nio.charset.Charset;
-import java.text.FieldPosition;
-import java.text.NumberFormat;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 
 
 /**
@@ -51,7 +46,7 @@ import java.util.Locale;
 public class DbaseFileWriter {
 
     private DbaseFileHeader header;
-    private DbaseFileWriter.FieldFormatter formatter;
+    private DbaseFieldFormatter formatter;
     WritableByteChannel channel;
     private ByteBuffer buffer;
     private final Number NULL_NUMBER = new Integer(0);
@@ -94,7 +89,7 @@ public class DbaseFileWriter {
         this.header = header;
         this.channel = out;
         this.charset = charset == null ? Charset.defaultCharset() : charset;
-        this.formatter = new DbaseFileWriter.FieldFormatter(this.charset);
+        this.formatter = new DbaseFieldFormatter(this.charset);
         init();
     }
 
@@ -133,7 +128,7 @@ public class DbaseFileWriter {
         buffer.put((byte) ' ');
 
         for (int i = 0; i < header.getNumFields(); i++) {
-            String fieldString = fieldString(record[i], i);
+            String fieldString = header.getField(i).string(record[i], formatter);
             if (header.getFieldLength(i) != fieldString.getBytes(charset.name()).length) {
                 // System.out.println(i + " : " + header.getFieldName(i)+" value
                 // = "+fieldString+"");
@@ -145,56 +140,6 @@ public class DbaseFileWriter {
         }
 
         write();
-    }
-
-    private String fieldString(Object obj, final int col) {
-        String o;
-        final int fieldLen = header.getFieldLength(col);
-        switch (header.getFieldType(col)) {
-        case 'C':
-        case 'c':
-            o = formatter.getFieldString(fieldLen, obj == null ? NULL_STRING
-                    : obj.toString());
-            break;
-        case 'L':
-        case 'l':
-            o = (obj == null ? "F" : obj == Boolean.TRUE ? "T" : "F");
-            // o = formatter.getFieldString(
-            // fieldLen,
-            // o
-            // );
-            break;
-        case 'M':
-        case 'G':
-            o = formatter.getFieldString(fieldLen, obj == null ? NULL_STRING
-                    : obj.toString());
-            break;
-        case 'N':
-        case 'n':
-            // int?
-            if (header.getFieldDecimalCount(col) == 0) {
-
-                o = formatter.getFieldString(fieldLen, 0,
-                        (Number) (obj == null ? NULL_NUMBER : obj));
-                break;
-            }
-        case 'F':
-        case 'f':
-            o = formatter.getFieldString(fieldLen, header
-                    .getFieldDecimalCount(col),
-                    (Number) (obj == null ? NULL_NUMBER : obj));
-            break;
-        case 'D':
-        case 'd':
-            o = formatter
-                    .getFieldString((Date) (obj == null ? NULL_DATE : obj));
-            break;
-        default:
-            throw new RuntimeException("Unknown type "
-                    + header.getFieldType(col));
-        }
-
-        return o;
     }
 
     /**
@@ -218,131 +163,6 @@ public class DbaseFileWriter {
         buffer = null;
         channel = null;
         formatter = null;
-    }
-
-    /** Utility for formatting Dbase fields. */
-    public static class FieldFormatter {
-        private StringBuffer buffer = new StringBuffer(255);
-        private NumberFormat numFormat = NumberFormat
-                .getNumberInstance(Locale.US);
-        private Calendar calendar = Calendar.getInstance(Locale.US);
-        private String emptyString;
-        private static final int MAXCHARS = 255;
-        private Charset charset;
-
-        public FieldFormatter(Charset charset) {
-            // Avoid grouping on number format
-            numFormat.setGroupingUsed(false);
-
-            // build a 255 white spaces string
-            StringBuffer sb = new StringBuffer(MAXCHARS);
-            sb.setLength(MAXCHARS);
-            for (int i = 0; i < MAXCHARS; i++) {
-                sb.setCharAt(i, ' ');
-            }
-            
-            this.charset = charset;
-
-            emptyString = sb.toString();
-        }
-
-        public String getFieldString(int size, String s) {
-            try {
-                buffer.replace(0, size, emptyString);
-                buffer.setLength(size);
-                // international characters must be accounted for so size != length.
-                int maxSize = size;
-                if (s != null) {
-                    buffer.replace(0, size, s);
-                    int currentBytes = s.substring(0, Math.min(size, s.length()))
-                            .getBytes(charset.name()).length;
-                    if (currentBytes > size) {
-                        char[] c = new char[1];
-                        for (int index = size - 1; currentBytes > size; index--) {
-                            c[0] = buffer.charAt(index);
-                            String string = new String(c);
-                            buffer.deleteCharAt(index);
-                            currentBytes -= string.getBytes().length;
-                            maxSize--;
-                        }
-                    } else {
-                        if (s.length() < size) {
-                            maxSize = size - (currentBytes - s.length());
-                            for (int i = s.length(); i < size; i++) {
-                                buffer.append(' ');
-                            }
-                        }
-                    }
-                }
-
-                buffer.setLength(maxSize);
-    
-                return buffer.toString();
-            } catch(UnsupportedEncodingException e) {
-                throw new RuntimeException("This error should never occurr", e);
-            }
-        }
-
-        public String getFieldString(Date d) {
-
-            if (d != null) {
-                buffer.delete(0, buffer.length());
-
-                calendar.setTime(d);
-                int year = calendar.get(Calendar.YEAR);
-                int month = calendar.get(Calendar.MONTH) + 1; // returns 0
-                                                                // based month?
-                int day = calendar.get(Calendar.DAY_OF_MONTH);
-
-                if (year < 1000) {
-                    if (year >= 100) {
-                        buffer.append("0");
-                    } else if (year >= 10) {
-                        buffer.append("00");
-                    } else {
-                        buffer.append("000");
-                    }
-                }
-                buffer.append(year);
-
-                if (month < 10) {
-                    buffer.append("0");
-                }
-                buffer.append(month);
-
-                if (day < 10) {
-                    buffer.append("0");
-                }
-                buffer.append(day);
-            } else {
-                buffer.setLength(8);
-                buffer.replace(0, 8, emptyString);
-            }
-
-            buffer.setLength(8);
-            return buffer.toString();
-        }
-
-        public String getFieldString(int size, int decimalPlaces, Number n) {
-            buffer.delete(0, buffer.length());
-
-            if (n != null) {
-                numFormat.setMaximumFractionDigits(decimalPlaces);
-                numFormat.setMinimumFractionDigits(decimalPlaces);
-                numFormat.format(n, buffer, new FieldPosition(
-                        NumberFormat.INTEGER_FIELD));
-            }
-
-            int diff = size - buffer.length();
-            if (diff >= 0) {
-                while (diff-- > 0) {
-                    buffer.insert(0, ' ');
-                }
-            } else {
-                buffer.setLength(size);
-            }
-            return buffer.toString();
-        }
     }
 
 }

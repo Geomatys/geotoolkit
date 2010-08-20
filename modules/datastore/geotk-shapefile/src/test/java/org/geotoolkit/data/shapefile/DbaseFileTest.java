@@ -24,6 +24,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotoolkit.ShapeTestData;
+import org.geotoolkit.data.dbf.DbaseFieldFormatter;
 import org.geotoolkit.data.dbf.DbaseFileHeader;
 import org.geotoolkit.data.dbf.DbaseFileReader;
 import org.geotoolkit.data.dbf.DbaseFileWriter;
@@ -177,7 +178,7 @@ public class DbaseFileTest extends AbstractTestCaseSupport {
     }
 
     public void testFieldFormatter() throws Exception {
-        DbaseFileWriter.FieldFormatter formatter = new DbaseFileWriter.FieldFormatter(Charset.defaultCharset());
+        DbaseFieldFormatter formatter = new DbaseFieldFormatter(Charset.defaultCharset());
 
         String stringWithInternationChars = "hello " + '\u20ac';
         // if (verbose) {

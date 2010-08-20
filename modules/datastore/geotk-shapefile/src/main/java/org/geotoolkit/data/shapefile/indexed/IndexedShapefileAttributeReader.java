@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -37,13 +38,10 @@ import org.opengis.feature.type.PropertyDescriptor;
 public class IndexedShapefileAttributeReader extends ShapefileAttributeReader
         implements RecordNumberTracker {
 
-    protected Iterator<Data> goodRecs;
-
+    protected final Iterator<Data> goodRecs;
+    private final CloseableCollection<Data> closeableCollection;
     private int recno;
-
     private Data next;
-
-    private CloseableCollection<Data> closeableCollection;
 
     public IndexedShapefileAttributeReader( List<? extends PropertyDescriptor> attributes,
             ShapefileReader shp, IndexedDbaseFileReader dbf,
@@ -78,7 +76,6 @@ public class IndexedShapefileAttributeReader extends ShapefileAttributeReader
                 closeableCollection.closeIterator(goodRecs);
                 closeableCollection.close();
             }
-            goodRecs = null;
         }
     }
 

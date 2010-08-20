@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,7 +18,6 @@
 package org.geotoolkit.data.shapefile.indexed;
 
 import java.io.IOException;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -26,42 +26,27 @@ import org.geotoolkit.index.Data;
 
 /**
  * Currently just wraps ArrayList and delegates to that class
+ * 
  * @author jesse
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class CloseableArrayList extends AbstractList<Data> implements
+public class CloseableArrayList extends ArrayList<Data> implements
         CloseableCollection<Data> {
 
-    private final ArrayList<Data> container ;
+    public CloseableArrayList() {
+    }
 
     public CloseableArrayList(int length) {
-        container = new ArrayList<Data>(length);
+        super(length);
     }
-
-    public CloseableArrayList() {
-        container = new ArrayList<Data>();
-    }
-
-    @Override
-    public Data get(int index) {
-        return container.get(index);
-    }
-
-    @Override
-    public int size() {
-        return container.size();
-    }
-
     
+    @Override
     public void close() throws IOException {
         // do nothing
-        
     }
 
-    public boolean add(Data o) {
-        return container.add(o);
-    }
-
+    @Override
     public void closeIterator( Iterator<Data> iter ) throws IOException {
         // do nothing
     }

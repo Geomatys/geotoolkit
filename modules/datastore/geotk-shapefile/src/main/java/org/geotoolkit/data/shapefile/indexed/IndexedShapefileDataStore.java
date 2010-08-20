@@ -515,9 +515,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
                         }
                         records.add(data);
                     } catch (Exception e) {
-                        IOException exception = new IOException();
-                        exception.initCause(e);
-                        throw exception;
+                        throw new IOException(e);
                     }
                 }
             } finally {

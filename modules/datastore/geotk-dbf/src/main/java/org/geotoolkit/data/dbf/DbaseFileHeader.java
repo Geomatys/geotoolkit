@@ -76,28 +76,6 @@ public class DbaseFileHeader {
     private int largestFieldSize = 0;
 
 
-    /**
-     * Class for holding the information assicated with a record.
-     */
-    class DbaseField {
-
-        // Field Name
-        String fieldName;
-
-        // Field Type (C N L D or M)
-        char fieldType;
-
-        // Field Data Address offset from the start of the record.
-        int fieldDataAddress;
-
-        // Length of the data in bytes
-        int fieldLength;
-
-        // Field decimal count in Binary, indicating where the decimal is
-        int decimalCount;
-
-    }
-
     // collection of header records.
     // lets start out with a zero-length array, just in case
     private DbaseField[] fields = new DbaseField[0];
@@ -130,16 +108,20 @@ public class DbaseFileHeader {
      * @return A Class which closely represents the dbase field type.
      */
     public Class getFieldClass(int i) {
+        return getFieldClass(fields[i].fieldType, fields[i].decimalCount, fields[i].fieldLength);
+    }
+
+    private static Class getFieldClass(char fieldType, int decimalCount, int fieldLength) {
         final Class typeClass;
 
-        switch (fields[i].fieldType) {
+        switch (fieldType) {
             case 'C':
                 typeClass = String.class;
                 break;
 
             case 'N':
-                if (fields[i].decimalCount == 0) {
-                    if (fields[i].fieldLength < 10) {
+                if (decimalCount == 0) {
+                    if (fieldLength < 10) {
                         typeClass = Integer.class;
                     } else {
                         typeClass = Long.class;
@@ -168,6 +150,11 @@ public class DbaseFileHeader {
 
         return typeClass;
     }
+
+    DbaseField getField(int index){
+        return fields[index];
+    }
+
 
     /**
      * Add a column to this DbaseFileHeader. The type is one of (C N L or D)
@@ -209,125 +196,99 @@ public class DbaseFileHeader {
         }
         int tempLength = 1; // the length is used for the offset, and there is a
                             // * for deleted as the first byte
-        DbaseField[] tempFieldDescriptors = new DbaseField[fields.length + 1];
+        final DbaseField[] tempFieldDescriptors = new DbaseField[fields.length + 1];
         for (int i = 0; i < fields.length; i++) {
-            fields[i].fieldDataAddress = tempLength;
-            tempLength = tempLength + fields[i].fieldLength;
-            tempFieldDescriptors[i] = fields[i];
+            tempFieldDescriptors[i] = DbaseField.create(fields[i],tempLength);
+            tempLength += fields[i].fieldLength;
         }
-        tempFieldDescriptors[fields.length] = new DbaseField();
-        tempFieldDescriptors[fields.length].fieldLength = inFieldLength;
-        tempFieldDescriptors[fields.length].decimalCount = inDecimalCount;
-        tempFieldDescriptors[fields.length].fieldDataAddress = tempLength;
 
         // set the field name
-        String tempFieldName = inFieldName;
-        if (tempFieldName == null) {
-            tempFieldName = "NoName";
+        if (inFieldName == null) {
+            inFieldName = "NoName";
         }
         // Fix for GEOT-42, ArcExplorer will not handle field names > 10 chars
         // Sorry folks.
-        if (tempFieldName.length() > 10) {
-            tempFieldName = tempFieldName.substring(0, 10);
+        if (inFieldName.length() > 10) {
+            inFieldName = inFieldName.substring(0, 10);
             if (LOGGER.isLoggable(Level.WARNING)) {
-                LOGGER.warning("FieldName " + inFieldName
-                        + " is longer than 10 characters, truncating to "
-                        + tempFieldName);
+                LOGGER.log(Level.WARNING, "FieldName {0} is longer than 10 characters, truncating to {1}", new Object[]{inFieldName, inFieldName});
             }
         }
-        tempFieldDescriptors[fields.length].fieldName = tempFieldName;
 
         // the field type
         if ((inFieldType == 'C') || (inFieldType == 'c')) {
-            tempFieldDescriptors[fields.length].fieldType = 'C';
+            inFieldType = 'C';
             if (inFieldLength > 254) {
                 if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.fine("Field Length for "
-                                    + inFieldName
-                                    + " set to "
-                                    + inFieldLength
-                                    + " Which is longer than 254, not consistent with dbase III");
+                    LOGGER.log(Level.FINE, "Field Length for {0} set to {1} Which is longer than 254, not consistent with dbase III", new Object[]{inFieldName, inFieldLength});
                 }
             }
         } else if ((inFieldType == 'S') || (inFieldType == 's')) {
-            tempFieldDescriptors[fields.length].fieldType = 'C';
+            inFieldType = 'C';
             if (LOGGER.isLoggable(Level.WARNING)) {
-                LOGGER.warning("Field type for "
-                                + inFieldName
-                                + " set to S which is flat out wrong people!, I am setting this to C, in the hopes you meant character.");
+                LOGGER.log(Level.WARNING, "Field type for {0} set to S which is flat out wrong people!, I am setting this to C, in the hopes you meant character.", inFieldName);
             }
             if (inFieldLength > 254) {
                 if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.fine("Field Length for "
-                                    + inFieldName
-                                    + " set to "
-                                    + inFieldLength
-                                    + " Which is longer than 254, not consistent with dbase III");
+                    LOGGER.log(Level.FINE, "Field Length for {0} set to {1} Which is longer than 254, not consistent with dbase III", new Object[]{inFieldName, inFieldLength});
                 }
             }
-            tempFieldDescriptors[fields.length].fieldLength = 8;
+            inFieldLength = 8;
         } else if ((inFieldType == 'D') || (inFieldType == 'd')) {
-            tempFieldDescriptors[fields.length].fieldType = 'D';
+            inFieldType = 'D';
             if (inFieldLength != 8) {
                 if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.fine("Field Length for " + inFieldName + " set to "
-                            + inFieldLength + " Setting to 8 digets YYYYMMDD");
+                    LOGGER.log(Level.FINE, "Field Length for {0} set to {1} Setting to 8 digets YYYYMMDD", new Object[]{inFieldName, inFieldLength});
                 }
             }
-            tempFieldDescriptors[fields.length].fieldLength = 8;
+            inFieldLength = 8;
         } else if ((inFieldType == 'F') || (inFieldType == 'f')) {
-            tempFieldDescriptors[fields.length].fieldType = 'F';
+            inFieldType = 'F';
             if (inFieldLength > 20) {
                 if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.fine("Field Length for "
-                                    + inFieldName
-                                    + " set to "
-                                    + inFieldLength
-                                    + " Preserving length, but should be set to Max of 20 not valid for dbase IV, and UP specification, not present in dbaseIII.");
+                    LOGGER.log(Level.FINE, "Field Length for {0} set to {1} Preserving length, but should be set to Max of 20 not valid for dbase IV, and UP specification, not present in dbaseIII.", new Object[]{inFieldName, inFieldLength});
                 }
             }
         } else if ((inFieldType == 'N') || (inFieldType == 'n')) {
-            tempFieldDescriptors[fields.length].fieldType = 'N';
+            inFieldType = 'N';
             if (inFieldLength > 18) {
                 if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.fine("Field Length for "
-                                    + inFieldName
-                                    + " set to "
-                                    + inFieldLength
-                                    + " Preserving length, but should be set to Max of 18 for dbase III specification.");
+                    LOGGER.log(Level.FINE, "Field Length for {0} set to {1} Preserving length, but should be set to Max of 18 for dbase III specification.", new Object[]{inFieldName, inFieldLength});
                 }
             }
             if (inDecimalCount < 0) {
                 if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.fine("Field Decimal Position for " + inFieldName
-                            + " set to " + inDecimalCount
-                            + " Setting to 0 no decimal data will be saved.");
+                    LOGGER.log(Level.FINE, "Field Decimal Position for {0} set to {1} Setting to 0 no decimal data will be saved.", new Object[]{inFieldName, inDecimalCount});
                 }
-                tempFieldDescriptors[fields.length].decimalCount = 0;
+                inDecimalCount = 0;
             }
             if (inDecimalCount > inFieldLength - 1) {
                 if (LOGGER.isLoggable(Level.WARNING)) {
-                    LOGGER.warning("Field Decimal Position for " + inFieldName
-                            + " set to " + inDecimalCount + " Setting to "
-                            + (inFieldLength - 1)
-                            + " no non decimal data will be saved.");
+                    LOGGER.log(Level.WARNING, "Field Decimal Position for {0} set to {1} Setting to {2} no non decimal data will be saved.", new Object[]{inFieldName, inDecimalCount, inFieldLength - 1});
                 }
-                tempFieldDescriptors[fields.length].decimalCount = inFieldLength - 1;
+                inDecimalCount = inFieldLength - 1;
             }
         } else if ((inFieldType == 'L') || (inFieldType == 'l')) {
-            tempFieldDescriptors[fields.length].fieldType = 'L';
+            inFieldType = 'L';
             if (inFieldLength != 1) {
                 if (LOGGER.isLoggable(Level.FINE)) {
-                    LOGGER.fine("Field Length for " + inFieldName + " set to "
-                            + inFieldLength
-                            + " Setting to length of 1 for logical fields.");
+                    LOGGER.log(Level.FINE, "Field Length for {0} set to {1} Setting to length of 1 for logical fields.", new Object[]{inFieldName, inFieldLength});
                 }
             }
-            tempFieldDescriptors[fields.length].fieldLength = 1;
+            inFieldLength = 1;
         } else {
             throw new DbaseFileException("Undefined field type " + inFieldType
                     + " For column " + inFieldName);
         }
+
+        try {
+            tempFieldDescriptors[fields.length] = DbaseField.create(
+                    inFieldName, inFieldType, tempLength, inFieldLength, inDecimalCount,
+                    getFieldClass(inFieldType, inDecimalCount, inFieldLength));
+        } catch (IOException ex) {
+            throw new DbaseFileException("Invalid field declaration", ex);
+        }
+
         // the length of a record
         tempLength = tempLength + tempFieldDescriptors[fields.length].fieldLength;
 
@@ -346,7 +307,7 @@ public class DbaseFileHeader {
      *                The name of the field, will ignore case and trim.
      * @return index of the removed column, -1 if no found
      */
-    public int removeColumn(String inFieldName) {
+    public int removeColumn(String inFieldName) throws IOException {
 
         int retCol = -1;
         int tempLength = 1;
@@ -360,8 +321,13 @@ public class DbaseFileHeader {
                             + inFieldName + "' for removal");
                     return retCol;
                 }
-                tempFieldDescriptors[j] = fields[i];
-                tempFieldDescriptors[j].fieldDataAddress = tempLength;
+                tempFieldDescriptors[j] = DbaseField.create(
+                        fields[i].fieldName,
+                        fields[i].fieldType,
+                        tempLength,
+                        fields[i].fieldLength,
+                        fields[i].decimalCount,
+                        fields[i].clazz);
                 tempLength += tempFieldDescriptors[j].fieldLength;
                 // only increment j on non-matching fields
                 j++;
@@ -548,7 +514,6 @@ public class DbaseFileHeader {
         // read all of the header records
         List lfields = new ArrayList();
         for (int i = 0; i < fieldCnt; i++) {
-            DbaseField field = new DbaseField();
 
             // read the field name
             byte[] buffer = new byte[11];
@@ -558,27 +523,27 @@ public class DbaseFileHeader {
             if (nullPoint != -1) {
                 name = name.substring(0, nullPoint);
             }
-            field.fieldName = name.trim();
+            String fieldName = name.trim();
 
             // read the field type
-            field.fieldType = (char) in.get();
+            char fieldType = (char) in.get();
 
             // read the field data address, offset from the start of the record.
-            field.fieldDataAddress = in.getInt();
+            int fieldDataAddress = in.getInt();
 
             // read the field length in bytes
             int length = (int) in.get();
             if (length < 0) {
                 length = length + 256;
             }
-            field.fieldLength = length;
+            int fieldLength = length;
 
             if (length > largestFieldSize) {
                 largestFieldSize = length;
             }
 
             // read the field decimal count in bytes
-            field.decimalCount = (int) in.get();
+            int decimalCount = (int) in.get();
 
             // rreservedvededved bytes.
             // in.skipBytes(14);
@@ -587,6 +552,9 @@ public class DbaseFileHeader {
             // some broken shapefiles have 0-length attributes. The reference
             // implementation
             // (ArcExplorer 2.0, built with MapObjects) just ignores them.
+            final DbaseField field = DbaseField.create(fieldName, fieldType,
+                        fieldDataAddress, fieldLength, decimalCount,
+                        getFieldClass(fieldType, decimalCount, fieldLength));
             if (field.fieldLength > 0) {
                 lfields.add(field);
             }
