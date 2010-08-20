@@ -56,8 +56,8 @@ import org.geotoolkit.xml.Namespaces;
 @XmlType(name = "MD_Georectified", propOrder={
     "checkPointAvailable",
     "checkPointDescription",
-/// "cornerPoints",
-/// "centerPoint",
+    "cornerPoints",
+    "centerPoint",
     "pointInPixel",
     "transformationDimensionDescription",
     "transformationDimensionMapping",
@@ -213,7 +213,7 @@ public class DefaultGeorectified extends DefaultGridSpatialRepresentation implem
      * georectified grid; at least two corner points along one diagonal are required.
      */
     @Override
-/// @XmlElement(name = "cornerPoints")
+    @XmlElement(name = "cornerPoints")
     public synchronized List<Point> getCornerPoints() {
         return cornerPoints = nonNullList(cornerPoints, Point.class);
     }
@@ -233,7 +233,7 @@ public class DefaultGeorectified extends DefaultGridSpatialRepresentation implem
      * spatial dimensions.
      */
     @Override
-/// @XmlElement(name = "centerPoint")
+    @XmlElement(name = "centerPoint")
     public synchronized Point getCenterPoint() {
         return centerPoint;
     }

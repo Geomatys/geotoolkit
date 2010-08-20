@@ -63,6 +63,7 @@
     @XmlJavaTypeAdapter(GeometricObjectsAdapter.class),
     @XmlJavaTypeAdapter(PixelOrientationAdapter.class),
     @XmlJavaTypeAdapter(TopologyLevelAdapter.class),
+    @XmlJavaTypeAdapter(GeometryAdapter.class),
 
     // Primitive type handling
     @XmlJavaTypeAdapter(DoubleAdapter.class),  @XmlJavaTypeAdapter(type=double.class,  value=DoubleAdapter.class),
@@ -86,3 +87,4 @@ import org.geotoolkit.internal.jaxb.primitive.BooleanAdapter;
 import org.geotoolkit.internal.jaxb.primitive.DoubleAdapter;
 import org.geotoolkit.internal.jaxb.primitive.IntegerAdapter;
 import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
+import org.geotoolkit.internal.jaxb.geometry.GeometryAdapter;
