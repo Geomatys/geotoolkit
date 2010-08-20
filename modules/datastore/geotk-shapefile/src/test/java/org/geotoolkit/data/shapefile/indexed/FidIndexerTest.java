@@ -16,12 +16,12 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
-import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
-import org.geotoolkit.data.shapefile.fix.FidIndexer;
 import java.io.IOException;
 
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.shapefile.ShpFiles;
+import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
+import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
 
 public class FidIndexerTest extends FIDTestCase {
     public  FidIndexerTest( ) throws IOException {
@@ -37,7 +37,7 @@ public class FidIndexerTest extends FIDTestCase {
      */
     public void testGenerate() throws Exception {
         ShpFiles shpFiles = new ShpFiles(backshp.toURL());
-        FidIndexer.generate(shpFiles);
+        IndexedFidWriter.generate(shpFiles);
 
         IndexedShapefileDataStore ds = new IndexedShapefileDataStore(backshp
                 .toURL(), null, false, false, IndexType.NONE);

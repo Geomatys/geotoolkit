@@ -16,8 +16,7 @@
  */
 package org.geotoolkit.data.shapefile.fix;
 
-import static org.geotoolkit.data.shapefile.ShpFileType.*;
-
+import java.net.URL;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -25,6 +24,10 @@ import java.nio.channels.FileChannel;
 
 import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.data.shapefile.StorageFile;
+import org.geotoolkit.data.shapefile.shx.ShxReader;
+
+import static org.geotoolkit.data.shapefile.ShpFileType.*;
+import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
 
 /**
  * The Writer writes out the fid and record number of features to the fid index file.
@@ -250,6 +253,47 @@ public class IndexedFidWriter {
 
     public boolean isClosed() {
         return closed;
+    }
+
+    /**
+     * Generates the FID index file for the shpFile
+     */
+    public static synchronized void generate(URL shpURL) throws IOException {
+        generate(new ShpFiles(shpURL));
+    }
+
+    /**
+     * Generates the FID index file for the shpFiles
+     */
+    public static void generate(ShpFiles shpFiles) throws IOException {
+        LOGGER.fine("Generating fids for " + shpFiles.get(SHP));
+
+        ShxReader indexFile = null;
+        StorageFile file = shpFiles.getStorageFile(FIX);
+        IndexedFidWriter writer = null;
+
+        try {
+            indexFile = new ShxReader(shpFiles, false);
+
+            // writer closes channel for you.
+            writer = new IndexedFidWriter(shpFiles, file);
+
+            for (int i = 0, j = indexFile.getRecordCount(); i < j; i++) {
+                writer.next();
+            }
+
+        } finally {
+            try {
+                if (writer != null) {
+                    writer.close();
+                }
+                file.replaceOriginal();
+            } finally {
+                if (indexFile != null) {
+                    indexFile.close();
+                }
+            }
+        }
     }
 
     public static final IndexedFidWriter EMPTY_WRITER = new IndexedFidWriter(){

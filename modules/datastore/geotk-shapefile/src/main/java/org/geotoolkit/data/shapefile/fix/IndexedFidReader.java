@@ -23,6 +23,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
 
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureIDReader;
@@ -66,7 +67,6 @@ public class IndexedFidReader implements FeatureIDReader {
             throws IOException {
         this(shpFiles);
         this.reader = reader;
-
     }
 
     public IndexedFidReader( ShpFiles shpFiles, ReadableByteChannel in ) throws IOException {
@@ -89,7 +89,6 @@ public class IndexedFidReader implements FeatureIDReader {
         if (buffer.position() == 0) {
             done = true;
             count = 0;
-
             return;
         }
 
@@ -150,11 +149,10 @@ public class IndexedFidReader implements FeatureIDReader {
      */
     public long findFid(String fid) throws IOException {
         try {
-            int idx = typeName.length(); //typeName already contains the trailing "."
-            long desired = -1;
+            final long desired;
             if(fid.startsWith(typeName)){
                 try{
-                    desired =  Long.parseLong(fid.substring(idx), 10);
+                    desired =  Long.parseLong(fid.substring(typeName.length()), 10);
                 }catch(NumberFormatException e){
                     return -1;
                 }
@@ -162,7 +160,7 @@ public class IndexedFidReader implements FeatureIDReader {
                 return -1;
             }
 
-            if ((desired < 0)) {
+            if (desired < 0) {
                 return -1;
             }
 
@@ -172,9 +170,7 @@ public class IndexedFidReader implements FeatureIDReader {
                 return search(desired, -1, this.count, count - 1);
             }
         } catch (NumberFormatException e) {
-            LOGGER
-                    .warning("Fid is not recognized as a fid for this shapefile: "
-                            + typeName);
+            LOGGER.log(Level.WARNING, "Fid is not recognized as a fid for this shapefile: {0}", typeName);
             return -1;
         }
     }
@@ -285,7 +281,7 @@ public class IndexedFidReader implements FeatureIDReader {
         if (buffer.position() == buffer.limit()) {
             buffer.position(0);
 
-            FileChannel fc = (FileChannel) readChannel;
+            final FileChannel fc = (FileChannel) readChannel;
 
             final int read;
             try {

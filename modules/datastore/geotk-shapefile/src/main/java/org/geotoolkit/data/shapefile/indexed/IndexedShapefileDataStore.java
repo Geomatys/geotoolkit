@@ -81,7 +81,7 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.index.quadtree.LazyTyleSearchIterator;
 import org.geotoolkit.index.quadtree.SearchIterator;
 import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
-import org.geotoolkit.data.shapefile.fix.FidIndexer;
+import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -367,7 +367,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * @throws IOException
      */
     public void generateFidIndex() throws IOException {
-        FidIndexer.generate(shpFiles);
+        IndexedFidWriter.generate(shpFiles);
     }
 
     /**

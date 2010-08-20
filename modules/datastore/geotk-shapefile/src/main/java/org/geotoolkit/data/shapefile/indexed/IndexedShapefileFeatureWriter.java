@@ -33,7 +33,6 @@ import org.geotoolkit.data.shapefile.ShpFileType;
 import org.geotoolkit.data.shapefile.ShpFiles;
 import org.geotoolkit.data.shapefile.StorageFile;
 import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
-import org.geotoolkit.data.shapefile.fix.FidIndexer;
 import org.geotoolkit.internal.io.IOUtilities;
 
 import org.opengis.feature.simple.SimpleFeature;
@@ -129,7 +128,7 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
         try {
             if (shpFiles.isLocal()) {
                 if (indexedShapefileDataStore.needsGeneration(ShpFileType.FIX)) {
-                    FidIndexer.generate(shpFiles);
+                    IndexedFidWriter.generate(shpFiles);
                 }
 
                 deleteFile(ShpFileType.QIX);

@@ -16,9 +16,6 @@
  */
 package org.geotoolkit.data.shapefile.fix;
 
-import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
-import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
-import org.geotoolkit.data.shapefile.fix.FidIndexer;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -32,8 +29,8 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.shapefile.indexed.FIDTestCase;
 import org.geotoolkit.data.shapefile.indexed.IndexType;
 import org.geotoolkit.data.shapefile.indexed.IndexedShapefileDataStore;
+
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 
 
 public class IndexedFidReaderTest extends FIDTestCase {
@@ -49,7 +46,7 @@ public class IndexedFidReaderTest extends FIDTestCase {
         super.setUp();
 
         ShpFiles shpFiles = new ShpFiles(backshp.toURL());
-        FidIndexer.generate(shpFiles);
+        IndexedFidWriter.generate(shpFiles);
 
         indexFile = new ShxReader(shpFiles, false);
         reader = new IndexedFidReader(shpFiles);

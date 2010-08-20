@@ -30,8 +30,6 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
 
-import org.geotoolkit.internal.io.IOUtilities;
-
 import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
 import static org.geotoolkit.data.shapefile.ShpFiles.*;
 

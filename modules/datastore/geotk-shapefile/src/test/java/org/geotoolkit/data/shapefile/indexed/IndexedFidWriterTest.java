@@ -18,7 +18,6 @@ package org.geotoolkit.data.shapefile.indexed;
 
 import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
 import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
-import org.geotoolkit.data.shapefile.fix.FidIndexer;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
@@ -65,7 +64,7 @@ public class IndexedFidWriterTest extends FIDTestCase {
      * Test method for 'org.geotoolkit.index.fid.IndexedFidWriter.hasNext()'
      */
     public void testHasNext() throws MalformedURLException, IOException {
-        FidIndexer.generate(backshp.toURL());
+        IndexedFidWriter.generate(backshp.toURL());
         initWriter();
 
         for( int i = 1, j = indexFile.getRecordCount(); i < j; i++ ) {
@@ -78,7 +77,7 @@ public class IndexedFidWriterTest extends FIDTestCase {
      * Test method for 'org.geotoolkit.index.fid.IndexedFidWriter.remove()'
      */
     public void testRemove() throws MalformedURLException, IOException {
-        FidIndexer.generate(backshp.toURL());
+        IndexedFidWriter.generate(backshp.toURL());
         initWriter();
         writer.next();
         writer.remove();
@@ -100,7 +99,7 @@ public class IndexedFidWriterTest extends FIDTestCase {
     }
 
     public void testRemoveCounting() throws Exception {
-        FidIndexer.generate(backshp.toURL());
+        IndexedFidWriter.generate(backshp.toURL());
         initWriter();
         writer.next();
         writer.remove();

@@ -136,7 +136,7 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
         final FileChannel shxChannel = storageFiles.get(SHX).getWriteChannel();
         shpWriter = new ShapefileWriter(shpChannel, shxChannel);
 
-        dbfHeader = ShapefileDataStore.createDbaseHeader(featureType);
+        dbfHeader = DbaseFileHeader.createDbaseHeader(featureType);
         dbfChannel = storageFiles.get(DBF).getWriteChannel();
         dbfWriter = new DbaseFileWriter(dbfHeader, dbfChannel, dbfCharset);
 

@@ -20,8 +20,10 @@
  */
 package org.geotoolkit.data.dbf;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.io.EOFException;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.ReadableByteChannel;
@@ -32,8 +34,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 
 import org.geotoolkit.util.logging.Logging;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
 
 /**
  * Class to represent the header of a Dbase III file. Creation date: (5/15/2001
@@ -719,6 +724,58 @@ public class DbaseFileHeader {
         }
 
         return fs.toString();
+    }
+
+
+    /**
+     * Attempt to create a DbaseFileHeader for the FeatureType. Note, we cannot
+     * set the number of records until the write has completed.
+     *
+     * @param featureType DOCUMENT ME!
+     * @return DOCUMENT ME!
+     * @throws IOException DOCUMENT ME!
+     * @throws DbaseFileException DOCUMENT ME!
+     */
+    public static DbaseFileHeader createDbaseHeader(SimpleFeatureType featureType)
+            throws IOException,DbaseFileException {
+
+        final DbaseFileHeader header = new DbaseFileHeader();
+
+        for (int i=0, n=featureType.getAttributeCount(); i<n; i++) {
+            final AttributeDescriptor type = featureType.getDescriptor(i);
+            final Class<?> colType = type.getType().getBinding();
+            final String colName = type.getLocalName();
+
+            int fieldLen = FeatureTypeUtilities.getFieldLength(type);
+            if (fieldLen == FeatureTypeUtilities.ANY_LENGTH)
+                fieldLen = 255;
+            if ((colType == Integer.class) || (colType == Short.class)
+                    || (colType == Byte.class)) {
+                header.addColumn(colName, 'N', Math.min(fieldLen, 9), 0);
+            } else if (colType == Long.class) {
+                header.addColumn(colName, 'N', Math.min(fieldLen, 19), 0);
+            } else if (colType == BigInteger.class) {
+                header.addColumn(colName, 'N', Math.min(fieldLen, 33), 0);
+            } else if (Number.class.isAssignableFrom(colType)) {
+                int l = Math.min(fieldLen, 33);
+                int d = Math.max(l - 2, 0);
+                header.addColumn(colName, 'N', l, d);
+            } else if (java.util.Date.class.isAssignableFrom(colType)) {
+                header.addColumn(colName, 'D', fieldLen, 0);
+            } else if (colType == Boolean.class) {
+                header.addColumn(colName, 'L', 1, 0);
+            } else if (CharSequence.class.isAssignableFrom(colType)) {
+                // Possible fix for GEOT-42 : ArcExplorer doesn't like 0 length
+                // ensure that maxLength is at least 1
+                header.addColumn(colName, 'C', Math.min(254, fieldLen), 0);
+            } else if (Geometry.class.isAssignableFrom(colType)) {
+                continue;
+            } else {
+                throw new IOException("Unable to write : " + colType.getName());
+            }
+        }
+
+        return header;
     }
 
 }

@@ -47,13 +47,14 @@ public final class ShxReader {
     private static final int RECS_IN_BUFFER = 2000;
 
     private final FileChannel channel;
-    private boolean useMemoryMappedBuffer;
+    private final ByteBuffer buffer;
+    private final boolean useMemoryMappedBuffer;
+    private final ShapefileHeader header;
+
     private int channelOffset;
-    private ByteBuffer buf = null;
     private int lastIndex = -1;
     private int recOffset;
     private int recLen;
-    private ShapefileHeader header = null;
     private int[] content;
 
     private volatile boolean closed = false;
@@ -70,24 +71,25 @@ public final class ShxReader {
         final ReadableByteChannel byteChannel = shpFiles.getReadChannel(ShpFileType.SHX, this);
 
         try {
-            readHeader(byteChannel);
+            header = readHeader(byteChannel);
             if (byteChannel instanceof FileChannel) {
 
                 this.channel = (FileChannel) byteChannel;
                 if (useMemoryMappedBuffer) {
                     LOGGER.finest("Memory mapping file...");
-                    this.buf = this.channel.map(FileChannel.MapMode.READ_ONLY,
+                    this.buffer = this.channel.map(FileChannel.MapMode.READ_ONLY,
                             0, this.channel.size());
 
                     this.channelOffset = 0;
                 } else {
                     LOGGER.finest("Reading from file...");
-                    this.buf = ByteBuffer.allocateDirect(8 * RECS_IN_BUFFER);
+                    this.buffer = ByteBuffer.allocateDirect(8 * RECS_IN_BUFFER);
                     this.channelOffset = 100;
                 }
 
             } else {
                 this.channel = null;
+                this.buffer = null;
                 LOGGER.finest("Loading all shx...");
                 readRecords(byteChannel);
                 byteChannel.close();
@@ -116,13 +118,13 @@ public final class ShxReader {
 
     }
 
-    private void readHeader(ReadableByteChannel channel) throws IOException {
+    private static ShapefileHeader readHeader(ReadableByteChannel channel) throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocateDirect(100);
         while (buffer.remaining() > 0) {
             channel.read(buffer);
         }
         buffer.flip();
-        header = ShapefileHeader.read(buffer, true);
+        return ShapefileHeader.read(buffer, true);
     }
 
     private void readRecords(ReadableByteChannel channel) throws IOException {
@@ -134,8 +136,7 @@ public final class ShxReader {
             channel.read(buffer);
         }
         buffer.flip();
-        final int records = remaining / 4;
-        content = new int[records];
+        content = new int[remaining / 4]; // 2 integer for each record
         final IntBuffer ints = buffer.asIntBuffer();
         ints.get(content);
     }
@@ -143,25 +144,23 @@ public final class ShxReader {
     private void readRecord(int index) throws IOException {
         check();
         final int pos = 100 + index * 8;
-        if (this.useMemoryMappedBuffer) {
-
-        } else {
-            if (pos - this.channelOffset < 0
-                    || this.channelOffset + buf.limit() <= pos
-                    || this.lastIndex == -1) {
+        if (!useMemoryMappedBuffer) {
+            if (pos - channelOffset < 0
+                    || channelOffset + buffer.limit() <= pos
+                    || lastIndex == -1) {
                 LOGGER.finest("Filling buffer...");
-                this.channelOffset = pos;
-                this.channel.position(pos);
-                buf.clear();
-                this.channel.read(buf);
-                buf.flip();
+                channelOffset = pos;
+                channel.position(pos);
+                buffer.clear();
+                channel.read(buffer);
+                buffer.flip();
             }
         }
 
-        buf.position(pos - this.channelOffset);
-        this.recOffset = buf.getInt();
-        this.recLen = buf.getInt();
-        this.lastIndex = index;
+        buffer.position(pos - channelOffset);
+        recOffset = buffer.getInt();
+        recLen    = buffer.getInt();
+        lastIndex = index;
     }
 
     public void close() throws IOException {
@@ -169,7 +168,6 @@ public final class ShxReader {
         if (channel != null && channel.isOpen()) {
             channel.close();
         }
-        this.buf = null;
         this.content = null;
     }
 

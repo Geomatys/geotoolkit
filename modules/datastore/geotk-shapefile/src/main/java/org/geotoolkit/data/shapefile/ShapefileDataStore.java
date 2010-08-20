@@ -2,6 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
+ *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -73,6 +74,7 @@ import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.type.BasicFeatureTypes;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.referencing.CRS;
@@ -258,19 +260,17 @@ public class ShapefileDataStore extends AbstractDataStore{
                 try {
                     in.read(buffer);
                     buffer.flip();
-
                     final ShapefileHeader header = ShapefileHeader.read(buffer, true);
-                    final JTSEnvelope2D bounds = new JTSEnvelope2D(schema.getCoordinateReferenceSystem());
-                    bounds.include(header.minX(), header.minY());
-                    bounds.include(header.minX(), header.minY());
 
                     final com.vividsolutions.jts.geom.Envelope env =
-                            new com.vividsolutions.jts.geom.Envelope(header.minX(), header.maxX(), header.minY(), header.maxY());
+                            new com.vividsolutions.jts.geom.Envelope(
+                            header.minX(), header.maxX(), header.minY(), header.maxY());
 
                     if (schema != null) {
                         return new JTSEnvelope2D(env, schema.getCoordinateReferenceSystem());
+                    }else{
+                        return new JTSEnvelope2D(env, null);
                     }
-                    return new JTSEnvelope2D(env, null);
                 } finally {
                     in.close();
                 }
@@ -330,7 +330,7 @@ public class ShapefileDataStore extends AbstractDataStore{
         final Name defaultGeomName = schema.getGeometryDescriptor().getName();
 
         if (query.getSortBy() != null) {
-            throw new DataStoreException("The ShapeFIleDatastore does not support sortby query");
+            throw new DataStoreException("The ShapeFileDatastore does not support sortby query");
         }
         // gather attributes needed by the query tool, they will be used by the
         // query filter
@@ -351,13 +351,13 @@ public class ShapefileDataStore extends AbstractDataStore{
                         schema, propertyNames);
 
                 FeatureReader reader = createFeatureReader(typeName,getAttributesReader(false), newSchema,hints);
-                QueryBuilder query2 = new QueryBuilder(query.getTypeName());
-                query2.setProperties(query.getPropertyNames());
-                query2.setFilter(query.getFilter());
-                query2.setHints(query.getHints());
-                query2.setCRS(query.getCoordinateSystemReproject());
-                query2.setResolution(query.getResolution());
-                reader = handleRemaining(reader, query2.buildQuery());
+                final QueryBuilder remaining = new QueryBuilder(query.getTypeName());
+                remaining.setProperties(query.getPropertyNames());
+                remaining.setFilter(query.getFilter());
+                remaining.setHints(query.getHints());
+                remaining.setCRS(query.getCoordinateSystemReproject());
+                remaining.setResolution(query.getResolution());
+                reader = handleRemaining(reader, remaining.buildQuery());
 
                 return reader;
             } catch (SchemaException se) {
@@ -501,7 +501,7 @@ public class ShapefileDataStore extends AbstractDataStore{
                 assert !shxChannel.isOpen();
             }
 
-            final DbaseFileHeader dbfheader = createDbaseHeader(schema);
+            final DbaseFileHeader dbfheader = DbaseFileHeader.createDbaseHeader(schema);
             dbfheader.setNumRecords(0);
 
             final WritableByteChannel dbfChannel = dbfStoragefile.getWriteChannel();
@@ -706,14 +706,15 @@ public class ShapefileDataStore extends AbstractDataStore{
     protected ShapefileAttributeReader getAttributesReader(boolean readDbf)
             throws DataStoreException {
 
+        final SimpleFeatureType schema = getFeatureType();
+
         if (!readDbf) {
             getLogger().fine("The DBF file won't be opened since no attributes will be read from it");
             final AttributeDescriptor[] desc = new AttributeDescriptor[]{schema.getGeometryDescriptor()};
             return new ShapefileAttributeReader(desc, openShapeReader(), null);
         }
 
-        final List<AttributeDescriptor> atts = (schema == null) ? readAttributes(getDefaultNamespace()) :
-                                                                  schema.getAttributeDescriptors();
+        final List<AttributeDescriptor> atts =  schema.getAttributeDescriptors();
         return new ShapefileAttributeReader(atts, openShapeReader(), openDbfReader());
     }
 
@@ -783,62 +784,6 @@ public class ShapefileDataStore extends AbstractDataStore{
             // could happen if shx file does not exist remotely
             return null;
         }
-    }
-
-    /**
-     * Attempt to create a DbaseFileHeader for the FeatureType. Note, we cannot
-     * set the number of records until the write has completed.
-     *
-     * @param featureType
-     *                DOCUMENT ME!
-     *
-     * @return DOCUMENT ME!
-     *
-     * @throws IOException
-     *                 DOCUMENT ME!
-     * @throws DbaseFileException
-     *                 DOCUMENT ME!
-     */
-    protected static DbaseFileHeader createDbaseHeader(SimpleFeatureType featureType)
-            throws IOException,DbaseFileException {
-
-        final DbaseFileHeader header = new DbaseFileHeader();
-
-        for (int i=0, n=featureType.getAttributeCount(); i<n; i++) {
-            final AttributeDescriptor type = featureType.getDescriptor(i);
-            final Class<?> colType = type.getType().getBinding();
-            final String colName = type.getLocalName();
-
-            int fieldLen = FeatureTypeUtilities.getFieldLength(type);
-            if (fieldLen == FeatureTypeUtilities.ANY_LENGTH)
-                fieldLen = 255;
-            if ((colType == Integer.class) || (colType == Short.class)
-                    || (colType == Byte.class)) {
-                header.addColumn(colName, 'N', Math.min(fieldLen, 9), 0);
-            } else if (colType == Long.class) {
-                header.addColumn(colName, 'N', Math.min(fieldLen, 19), 0);
-            } else if (colType == BigInteger.class) {
-                header.addColumn(colName, 'N', Math.min(fieldLen, 33), 0);
-            } else if (Number.class.isAssignableFrom(colType)) {
-                int l = Math.min(fieldLen, 33);
-                int d = Math.max(l - 2, 0);
-                header.addColumn(colName, 'N', l, d);
-            } else if (java.util.Date.class.isAssignableFrom(colType)) {
-                header.addColumn(colName, 'D', fieldLen, 0);
-            } else if (colType == Boolean.class) {
-                header.addColumn(colName, 'L', 1, 0);
-            } else if (CharSequence.class.isAssignableFrom(colType)) {
-                // Possible fix for GEOT-42 : ArcExplorer doesn't like 0 length
-                // ensure that maxLength is at least 1
-                header.addColumn(colName, 'C', Math.min(254, fieldLen), 0);
-            } else if (Geometry.class.isAssignableFrom(colType)) {
-                continue;
-            } else {
-                throw new IOException("Unable to write : " + colType.getName());
-            }
-        }
-
-        return header;
     }
 
 }
