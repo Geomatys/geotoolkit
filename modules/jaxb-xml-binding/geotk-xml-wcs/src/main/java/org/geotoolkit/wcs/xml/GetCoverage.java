@@ -18,7 +18,7 @@ package org.geotoolkit.wcs.xml;
 
 import java.awt.Dimension;
 import java.util.List;
-import org.geotoolkit.util.Versioned;
+import org.geotoolkit.ows.xml.RequestBase;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -31,10 +31,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public interface GetCoverage extends Versioned {
+public interface GetCoverage extends RequestBase {
 
-    String getService();
-    
     /**
      * Returns the {@link CoordinateReferenceSystem} of the request, or {@code null}
      * if none.

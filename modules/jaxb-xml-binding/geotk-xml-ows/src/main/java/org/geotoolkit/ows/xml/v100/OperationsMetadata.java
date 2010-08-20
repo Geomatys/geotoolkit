@@ -130,6 +130,23 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
     }
 
     /**
+     * Update all the url in a OWS capabilities document.
+     *
+     * @param url The url of the web application.
+     * @param service the initials of the web serviceType (WMS, SOS, WCS, CSW, ...).
+     * This string correspound to the resource name in lower case.
+     */
+    public void updateURL(String url, String service) {
+       for (Operation op: operation) {
+            for (DCP dcp: op.getDCP()) {
+                for (OnlineResourceType method:dcp.getHTTP().getGetOrPost()) {
+                    method.setHref(url + service.toLowerCase() + "?");
+                }
+            }
+       }
+    }
+    
+    /**
      * Gets the value of the parameter property.
      */
     public List<DomainType> getParameter() {
@@ -245,7 +262,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
                 if (operation.get(i) != null)
                     s.append(operation.get(i)).append('\n');
                 else
-                    s.append("operation n" + i + " is null").append('\n');
+                    s.append("operation n").append(i).append(" is null").append('\n');
             }
         }
         if (parameter != null) {
