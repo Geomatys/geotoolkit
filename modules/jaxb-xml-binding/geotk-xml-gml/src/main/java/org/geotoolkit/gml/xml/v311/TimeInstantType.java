@@ -16,10 +16,14 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.util.Collection;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.temporal.Instant;
+import org.opengis.temporal.Period;
+import org.opengis.temporal.Position;
 
 
 /**
@@ -48,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "TimeInstantType", propOrder = {
     "timePosition"
 })
-public class TimeInstantType extends AbstractTimeGeometricPrimitiveType {
+public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implements Instant {
 
     @XmlElement(required = true)
     private TimePositionType timePosition;
@@ -87,6 +91,18 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType {
      */
     public void setTimePosition(TimePositionType value) {
         this.timePosition = value;
+    }
+
+    public Position getPosition() {
+        return timePosition;
+    }
+
+    public Collection<Period> getBegunBy() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Collection<Period> getEndedBy() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

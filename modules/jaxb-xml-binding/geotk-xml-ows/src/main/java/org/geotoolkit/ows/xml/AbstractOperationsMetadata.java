@@ -23,4 +23,12 @@ package org.geotoolkit.ows.xml;
  */
 public interface AbstractOperationsMetadata {
 
+    /**
+     * Update all the url in a OWS capabilities document.
+     *
+     * @param url The url of the web application.
+     * @param service the initials of the web serviceType (WMS, SOS, WCS, CSW, ...).
+     * This string correspound to the resource name in lower case.
+     */
+    void updateURL(String url, String service);
 }

@@ -25,8 +25,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.ows.xml.RequestBase;
 import org.geotoolkit.util.Version;
-import org.geotoolkit.util.Versioned;
 
 
 /**
@@ -69,7 +69,7 @@ import org.geotoolkit.util.Versioned;
     "tileCol"
 })
 @XmlRootElement(name = "GetTile")
-public class GetTile implements Versioned {
+public class GetTile implements RequestBase {
 
     @XmlElement(name = "Layer", required = true)
     private String layer;
@@ -285,12 +285,9 @@ public class GetTile implements Versioned {
      *     {@link String }
      *     
      */
+    @Override
     public String getService() {
-        if (service == null) {
-            return "WMTS";
-        } else {
-            return service;
-        }
+        return service;
     }
 
     /**
@@ -313,6 +310,7 @@ public class GetTile implements Versioned {
      *     {@link String }
      *     
      */
+    @Override
     public Version getVersion() {
         if (version != null) {
             return new Version(version);

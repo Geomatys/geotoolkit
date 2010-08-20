@@ -26,6 +26,7 @@ import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
 //Junit dependencies
 import org.geotoolkit.gml.xml.v311.ObjectFactory;
 import org.geotoolkit.gml.xml.v311.TimePeriodType;
+import org.geotoolkit.gml.xml.v311.TimePositionType;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -88,6 +89,13 @@ public class GmlXMLBindingTest {
         TimePeriodType tp = new TimePeriodType(d1);
 
         marshaller.marshal(FACTORY.createTimePeriod(tp), sw);
+
+
+        TimePositionType tpos = new TimePositionType("2002-08-15");
+        tp = new TimePeriodType(tpos);
+
+        marshaller.marshal(FACTORY.createTimePeriod(tp), sw);
+        System.out.println(sw.toString());
 
     }
 }

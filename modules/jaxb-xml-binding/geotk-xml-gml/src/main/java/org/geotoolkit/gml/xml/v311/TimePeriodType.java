@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.Duration;
 import org.geotoolkit.util.Utilities;
+import org.opengis.temporal.Instant;
+import org.opengis.temporal.Period;
 
 
 /**
@@ -61,7 +63,7 @@ import org.geotoolkit.util.Utilities;
     "duration",
     "timeInterval"
 })
-public class TimePeriodType extends AbstractTimeGeometricPrimitiveType {
+public class TimePeriodType extends AbstractTimeGeometricPrimitiveType  implements Period {
 
     protected TimePositionType beginPosition;
     protected TimeInstantPropertyType begin;
@@ -266,6 +268,24 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType {
         this.end = value;
     }
 
+    public Instant getBeginning() {
+        if (begin != null) {
+            return begin.getTimeInstant();
+        } else if (beginPosition != null) {
+            return new TimeInstantType(beginPosition);
+        }
+        return null;
+    }
+
+    public Instant getEnding() {
+        if (end != null) {
+            return end.getTimeInstant();
+        } else if (endPosition != null) {
+            return new TimeInstantType(endPosition);
+        }
+        return null;
+    }
+    
     /**
      * Gets the value of the duration property.
      * 

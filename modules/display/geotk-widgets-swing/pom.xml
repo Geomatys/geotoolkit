@@ -144,7 +144,7 @@
     <repository>
       <id>netbeans</id>
         <name>Repository for hosting NetBeans API artifacts</name>
-        <url>http://deadlock.netbeans.org/maven2/</url>
+        <url>http://bits.netbeans.org/maven2/</url>
         <releases>
           <enabled>true</enabled>
         </releases>

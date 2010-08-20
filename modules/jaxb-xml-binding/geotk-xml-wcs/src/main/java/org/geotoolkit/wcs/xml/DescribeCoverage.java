@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.wcs.xml;
 
-import org.geotoolkit.util.Versioned;
+import org.geotoolkit.ows.xml.RequestBase;
 
 /**
  *  Super abstract type for all the different versions of DescribeCoverage request.
@@ -24,6 +24,6 @@ import org.geotoolkit.util.Versioned;
  * @author Guilhem Legal
  * @module pending
  */
-public interface DescribeCoverage extends Versioned {
+public interface DescribeCoverage extends RequestBase {
     String toKvp();
 }

@@ -16,17 +16,25 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.Utilities;
+import org.opengis.temporal.Position;
+import org.opengis.temporal.TemporalPosition;
+import org.opengis.util.InternationalString;
 
 
 /**
@@ -60,7 +68,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "TimePositionType", propOrder = {
     "value"
 })
-public class TimePositionType {
+public class TimePositionType implements Position {
 
     @XmlValue
     private String value;
@@ -201,6 +209,29 @@ public class TimePositionType {
         this.indeterminatePosition = value;
     }
 
+    public TemporalPosition anyOther() {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public Date getDate() {
+        if (value != null && !value.isEmpty()) {
+            try {
+                return formatter.parse(value);
+            } catch (ParseException ex) {
+                Logger.getLogger(TimePositionType.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return null;
+    }
+
+    public Time getTime() {
+        return Time.valueOf(value);
+    }
+
+    public InternationalString getDateTime() {
+        return new SimpleInternationalString(value);
+    }
+    
     /**
      * Verify if this entry is identical to the specified object.
      */
@@ -241,7 +272,7 @@ public class TimePositionType {
         if (indeterminatePosition != null) {
             s.append("indeterminatePosition:").append(indeterminatePosition.value()).append('\n');
         }
-        s.append("value = " + value);
+        s.append("value = ").append(value);
 
         return s.toString();
     }
