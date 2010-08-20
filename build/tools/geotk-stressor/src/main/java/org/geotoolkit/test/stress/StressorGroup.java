@@ -48,11 +48,12 @@ import org.geotoolkit.util.NullArgumentException;
  */
 public class StressorGroup<S extends Stressor> implements Runnable, ThreadFactory {
     /**
-     * The output stream where to print reports.
+     * The output stream where to print reports, and the error stream where to reports error
+     * (also used for log messages).
      *
      * @since 3.15
      */
-    protected final PrintWriter out;
+    protected final PrintWriter out, err;
 
     /**
      * The group of all threads to be created by this stressor.
@@ -94,7 +95,7 @@ public class StressorGroup<S extends Stressor> implements Runnable, ThreadFactor
      * @param duration The test duration, in milliseconds.
      */
     public StressorGroup(final long duration) {
-        this(duration, new PrintWriter(System.out, true));
+        this(duration, new PrintWriter(System.out, true), new PrintWriter(System.err, true));
     }
 
     /**
@@ -102,14 +103,16 @@ public class StressorGroup<S extends Stressor> implements Runnable, ThreadFactor
      *
      * @param duration The test duration, in milliseconds.
      * @param out      The output stream where to print reports.
+     * @param err      The error stream where to reports error (also used for log messages).
      */
-    public StressorGroup(final long duration, final PrintWriter out) {
+    public StressorGroup(final long duration, final PrintWriter out, final PrintWriter err) {
         this.threadGroup = new ThreadGroup("Stressors");
         this.threadCount = new AtomicInteger();
         this.stressors   = new ArrayList<S>();
         this.executor    = Executors.newCachedThreadPool(this);
         this.duration    = duration;
         this.out         = out;
+        this.err         = err;
     }
 
     /**
@@ -136,7 +139,6 @@ public class StressorGroup<S extends Stressor> implements Runnable, ThreadFactor
         if (stressor == null) {
             throw new NullArgumentException();
         }
-        stressor.out = out;
         stressors.add(stressor);
     }
 
@@ -165,12 +167,15 @@ public class StressorGroup<S extends Stressor> implements Runnable, ThreadFactor
             tasks = executor.invokeAll(stressors);
             executor.shutdown();
             if (!executor.awaitTermination(duration + 60000, TimeUnit.MILLISECONDS)) {
-                out.println("Timeout elapsed.");
+                out.flush();
+                err.println("Timeout elapsed.");
             }
         } catch (InterruptedException e) {
-            e.printStackTrace(out);
+            out.flush();
+            e.printStackTrace(err);
             return;
         }
+        err.flush();
         final Statistics  statsRaw   = new Statistics();
         final Statistics  statsByMpx = new Statistics();
         final TableWriter table      = new TableWriter(out);

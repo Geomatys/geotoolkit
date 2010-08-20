@@ -17,9 +17,11 @@
  */
 package org.geotoolkit.test.stress;
 
-import java.io.PrintWriter;
 import java.awt.image.RenderedImage;
 import java.util.concurrent.Callable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.LogRecord;
 
 import org.opengis.coverage.grid.GridEnvelope;
 
@@ -27,6 +29,7 @@ import org.geotoolkit.math.Statistics;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.util.Strings;
+import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -38,6 +41,11 @@ import org.geotoolkit.util.Strings;
  * @since 3.14
  */
 public abstract class Stressor extends RequestGenerator implements Callable<Statistics> {
+    /**
+     * The logger to use for reporting information.
+     */
+    protected static final Logger LOGGER = Logging.getLogger(Stressor.class);
+
     /**
      * The length (in characters) of the thread field.
      */
@@ -75,14 +83,6 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
     Statistics statsByMpx;
 
     /**
-     * The output stream where to print reports. It will be set to the
-     * {@link StressorGroup#out} value before {@link #call()} is invoked.
-     *
-     * @since 3.15
-     */
-    PrintWriter out;
-
-    /**
      * The image viewer, or {@code null} if none.
      */
     ImageViewer viewer;
@@ -107,9 +107,8 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
      */
     @Override
     public Statistics call() throws CoverageStoreException {
-        if (out == null) {
-            out = new PrintWriter(System.out, true);
-        }
+        final String sourceClassName = getClass().getName();
+
         threadName = Thread.currentThread().getName();
         statsByMpx = new Statistics();
         final Statistics statistics = new Statistics();
@@ -163,7 +162,15 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
                 insertSpaces(buffer.length(), buffer.append(envelope.getSpan(i)), GRID_SIZE_FIELD_LENGTH);
             }
             buffer.append("), scale=").append((float) mean(getScale(geometry)));
-            out.println(buffer.append(", ").append(geometry.getEnvelope()));
+            buffer.append(", ").append(geometry.getEnvelope());
+            /*
+             * Log progress information and wait.
+             */
+            final LogRecord record = new LogRecord(Level.INFO, buffer.toString());
+            record.setSourceClassName(sourceClassName);
+            record.setSourceMethodName("call");
+            record.setLoggerName(LOGGER.getName());
+            LOGGER.log(record);
             try {
                 Thread.sleep(random.nextInt(MAXIMAL_PAUSE) + 1);
             } catch (InterruptedException e) {

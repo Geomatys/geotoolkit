@@ -188,7 +188,7 @@ public class MosaicBuilder implements LogProducer {
 
     /**
      * Sets the logging level for tile information during read and write operations.
-     * The default value is {@link Level#FINE}. A {@code null} value restore the default.
+     * The default value is {@link Level#FINE}. A {@code null} value restores the default.
      *
      * @param level The new logging level.
      */

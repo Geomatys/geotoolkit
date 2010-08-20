@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.io;
 
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.logging.Level;
 import java.util.concurrent.CancellationException;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
@@ -95,6 +96,19 @@ public class ImageCoverageWriter extends GridCoverageWriter {
      * Creates a new instance.
      */
     public ImageCoverageWriter() {
+    }
+
+    /**
+     * Sets the logging level to use for write operations. If the {@linkplain #imageWriter image
+     * writer} implements the {@link org.geotoolkit.util.logging.LogProducer} interface, then it
+     * is also set to the given level.
+     *
+     * @since 3.15
+     */
+    @Override
+    public void setLogLevel(final Level level) {
+        super.setLogLevel(level);
+        setLogLevel(imageWriter, level);
     }
 
     /**
@@ -254,7 +268,10 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                         IOUtilities.close(oldOutput);
                     }
                 }
+                setLogLevel(newWriter, level);
                 setLocale(newWriter, locale);
+                logCodecCreation(true, ImageCoverageWriter.class, "setOutput",
+                        newWriter, newWriter.getOriginatingProvider());
             }
             imageWriter = newWriter;
         } catch (IOException e) {
@@ -274,12 +291,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
      *       one of the {@linkplain ImageWriterSpi#getFormatNames() format names declared by
      *       the provider}. If not, then this method returns {@code false}.</li>
      *
-     *   <li>Next, this method checks if the suffix of the given output is one of the
-     *       {@linkplain ImageWriterSpi#getFileSuffixes() file suffixes known to the provider}.
-     *       If not or if the given object has no suffix (for example if it is an instance of
-     *       {@link ImageOutputStream}), then this method returns {@code false}.</li>
-     *
-     *   <li>Finally, this method checks if the writer
+     *   <li>Next, this method checks if the writer
      *       {@linkplain ImageWriterSpi#canEncodeImage(RenderedImage) can encode} the given image.</li>
      * </ol>
      * <p>
@@ -305,13 +317,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                 return false;
             }
         }
-        if (IOUtilities.canProcessAsPath(output)) {
-            final String[] suffixes = provider.getFileSuffixes();
-            if (suffixes != null && XArrays.containsIgnoreCase(suffixes, IOUtilities.extension(output))) {
-                return provider.canEncodeImage(image);
-            }
-        }
-        return false;
+        return provider.canEncodeImage(image);
     }
 
     /**

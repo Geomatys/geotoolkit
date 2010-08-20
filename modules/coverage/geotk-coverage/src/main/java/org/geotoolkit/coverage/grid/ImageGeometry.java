@@ -44,9 +44,11 @@ import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
  * is to map pixel corner. It is user responsibility to know the convention in use. For a more
  * powerful class providing support for arbitrary convention, see {@link GridGeometry2D}.
  * <p>
- * This grid geometry does not hold any Coordinate Reference System information. Consequently
- * it is not suitable for usage with {@link GridCoverage2D}. This {@code ImageGeometry} class
- * is rather designed as a lightweight container for usage with {@link RenderedImage} instances.
+ * This grid geometry does not hold any
+ * {@linkplain org.opengis.referencing.crs.CoordinateReferenceSystem Coordinate Reference System}
+ * information. Consequently it is not suitable for usage with {@link GridCoverage2D}. This
+ * {@code ImageGeometry} class is rather designed as a lightweight container for usage with
+ * {@link RenderedImage} instances.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.15

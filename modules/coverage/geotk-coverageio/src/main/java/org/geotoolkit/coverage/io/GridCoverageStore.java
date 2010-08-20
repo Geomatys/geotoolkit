@@ -26,7 +26,11 @@ import java.awt.geom.AffineTransform;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.concurrent.CancellationException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.LogRecord;
 import javax.imageio.IIOParam;
+import javax.imageio.spi.ImageReaderWriterSpi;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
@@ -44,8 +48,12 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.Localized;
+import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.logging.LogProducer;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.referencing.CRS;
@@ -69,12 +77,19 @@ import org.geotoolkit.geometry.Envelope2D;
  * {@linkplain #reset() reset} or {@linkplain #dispose() dispose} the reader or writer.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @since 3.12
  * @module
  */
-public abstract class GridCoverageStore implements Localized {
+public abstract class GridCoverageStore implements LogProducer, Localized {
+    /**
+     * The logger to use for logging messages during read and write operations.
+     *
+     * @since 3.15
+     */
+    static final Logger LOGGER = Logging.getLogger(GridCoverageStore.class);
+
     /**
      * The dimension of <var>x</var> ordinates, which is {@value}. This is used for example with
      * multi-dimensional dataset (e.g. cubes), in order to determine which dataset dimension to
@@ -118,6 +133,13 @@ public abstract class GridCoverageStore implements Localized {
      * The hints to use for fetching factories. This is initialized to the system defaults.
      */
     private final Hints hints;
+
+    /**
+     * The logging level to use for read and write operations.
+     *
+     * @since 3.15
+     */
+    Level level;
 
     /**
      * The locale to use for formatting messages, or {@code null} for a default locale.
@@ -179,6 +201,49 @@ public abstract class GridCoverageStore implements Localized {
      */
     protected GridCoverageStore() {
         hints = new Hints();
+        level = Level.FINE;
+    }
+
+    /**
+     * Returns the logging level to use for read and write operations.
+     *
+     * @return The current logging level.
+     *
+     * @since 3.15
+     */
+    @Override
+    public Level getLogLevel() {
+        return level;
+    }
+
+    /**
+     * Sets the logging level to use for read and write operations. The default
+     * value is {@link Level#FINE}. A {@code null} value restores the default.
+     *
+     * @param level The new logging level, or {@code null} for the default.
+     *
+     * @since 3.15
+     */
+    @Override
+    public void setLogLevel(Level level) {
+        if (level == null) {
+            level = Level.FINE;
+        }
+        this.level = level;
+    }
+
+    /**
+     * If the given object is an instance of {@link LogProducer}, copies the log level.
+     *
+     * @param object The object on which to set the log level.
+     * @param level  The log level, or {@code null} for the default.
+     *
+     * @since 3.15
+     */
+    static void setLogLevel(final Object object, final Level level) {
+        if (object instanceof LogProducer) {
+            ((LogProducer) object).setLogLevel(level);
+        }
     }
 
     /**
@@ -293,6 +358,34 @@ public abstract class GridCoverageStore implements Localized {
             }
         }
         return message;
+    }
+
+    /**
+     * Logs a "Created encoder|decoder of class Foo" message.
+     *
+     * @param write {@code true} for "encoder", or {@code false} for "decoder".
+     * @param caller The caller class.
+     * @param method The caller method.
+     * @param codec The object for which to write the class name.
+     * @param The provider (for image reader/writer), or {@code null}.
+     */
+    final void logCodecCreation(final boolean write, final Class<?> caller, final String method,
+            final Object codec, final ImageReaderWriterSpi spi)
+    {
+        if (LOGGER.isLoggable(level)) {
+            String message = Loggings.getResources(locale).getString(
+                    Loggings.Keys.CREATED_CODEC_OF_CLASS_$2, write ? 1 : 0, codec.getClass().getName());
+            if (spi != null) {
+                final StringBuilder buffer = new StringBuilder(message).append('\n');
+                Formats.formatDescription(spi, locale, buffer);
+                message = buffer.toString();
+            }
+            final LogRecord record = new LogRecord(level, message);
+            record.setLoggerName(LOGGER.getName());
+            record.setSourceClassName(caller.getName());
+            record.setSourceMethodName(method);
+            LOGGER.log(record);
+        }
     }
 
     /**

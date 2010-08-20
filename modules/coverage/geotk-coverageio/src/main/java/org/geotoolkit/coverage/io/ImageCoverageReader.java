@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Collections;
 import java.util.concurrent.CancellationException;
+import java.util.logging.Level;
 import java.io.IOException;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
@@ -234,6 +235,19 @@ public class ImageCoverageReader extends GridCoverageReader {
     }
 
     /**
+     * Sets the logging level to use for read operations. If the {@linkplain #imageReader image
+     * reader} implements the {@link org.geotoolkit.util.logging.LogProducer} interface, then it
+     * is also set to the given level.
+     *
+     * @since 3.15
+     */
+    @Override
+    public void setLogLevel(final Level level) {
+        super.setLogLevel(level);
+        setLogLevel(imageReader, level);
+    }
+
+    /**
      * {@inheritDoc}
      * <p>
      * The given locale will also be given to the wrapped {@linkplain #imageReader image reader},
@@ -371,7 +385,10 @@ public class ImageCoverageReader extends GridCoverageReader {
                     if (oldReader != null) {
                         oldReader.dispose();
                     }
+                    setLogLevel(newReader, level);
                     setLocale(newReader, locale);
+                    logCodecCreation(false, ImageCoverageReader.class, "setInput",
+                            newReader, newReader.getOriginatingProvider());
                 }
                 imageReader = newReader;
             }

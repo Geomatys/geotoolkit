@@ -49,7 +49,7 @@ public interface LogProducer {
 
     /**
      * Sets the logging level to the given value.
-     * A {@code null} value restore the default level.
+     * A {@code null} value restores the default level.
      *
      * @param level The new logging level, or {@code null} for the default.
      */

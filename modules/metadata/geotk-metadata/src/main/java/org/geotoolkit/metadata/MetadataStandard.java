@@ -32,6 +32,7 @@ import org.opengis.annotation.UML;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.converter.Classes;
@@ -65,7 +66,7 @@ import org.geotoolkit.util.converter.Classes;
  * the tree of XML nodes to be associated with raster data.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
+ * @version 3.15
  *
  * @since 2.4
  * @module
@@ -107,10 +108,11 @@ public final class MetadataStandard {
     public static final MetadataStandard ISO_19123;
     static {
         final String[] prefix = {"Default", "Abstract"};
-        ISO_19111 = new MetadataStandard("ISO 19111", "org.opengis.referencing.", "org.geotoolkit.referencing.",  prefix);
-        ISO_19115 = new MetadataStandard("ISO 19115", "org.opengis.metadata.",    "org.geotoolkit.metadata.iso.", prefix);
-        ISO_19119 = new MetadataStandard("ISO 19119", "org.opengis.service.",  null, null);
-        ISO_19123 = new MetadataStandard("ISO 19123", "org.opengis.coverage.", null, null);
+        final String[] acronyms = {"CoordinateSystem", "CS", "CoordinateReferenceSystem", "CRS"};
+        ISO_19111 = new MetadataStandard("ISO 19111", "org.opengis.referencing.", "org.geotoolkit.referencing.",  prefix, acronyms);
+        ISO_19115 = new MetadataStandard("ISO 19115", "org.opengis.metadata.",    "org.geotoolkit.metadata.iso.", prefix, null);
+        ISO_19119 = new MetadataStandard("ISO 19119", "org.opengis.service.",  null, null, null);
+        ISO_19123 = new MetadataStandard("ISO 19123", "org.opengis.coverage.", null, null, null);
     }
 
     /**
@@ -129,10 +131,25 @@ public final class MetadataStandard {
     private final String implementationPackage;
 
     /**
-     * The prefix that implementation classes may have, or {@code null} if none.
+     * The prefixes that implementation classes may have, or {@code null} if none.
      * The most common prefix should be first, since the prefix will be tried in that order.
+     *
+     * @see #getImplementation(Class)
      */
     private final String[] prefix;
+
+    /**
+     * The acronyms that implementation classes may have, or {@code null} if none. If non-null,
+     * then this array shall contain (<var>full text</var>, <var>acronym</var>) pairs. The full
+     * text shall appear that the end of the class name, otherwise it is not replaced. This is
+     * necessary in order to avoid the replacement of {@code "DefaultCoordinateSystemAxis"} by
+     * {@code "DefaultCSAxis"}.
+     *
+     * @see #getImplementation(Class)
+     *
+     * @since 3.15
+     */
+    private final String[] acronyms;
 
     /**
      * Accessors for the specified implementations.
@@ -142,6 +159,8 @@ public final class MetadataStandard {
     /**
      * Implementations for a given interface, or {@code null} if none.
      * If non-null, then this map will be filled as needed.
+     *
+     * @see #getImplementation(Class)
      */
     private final Map<Class<?>,Class<?>> implementations;
 
@@ -164,7 +183,7 @@ public final class MetadataStandard {
      * @param interfacePackage The root package for metadata interfaces.
      */
     public MetadataStandard(String interfacePackage) {
-        this(interfacePackage.substring(interfacePackage.lastIndexOf('.')+1), interfacePackage, null, null);
+        this(interfacePackage.substring(interfacePackage.lastIndexOf('.')+1), interfacePackage, null, null, null);
     }
 
     /**
@@ -175,9 +194,10 @@ public final class MetadataStandard {
      * @param interfacePackage The root package for metadata interfaces.
      * @param implementationPackage The root package for metadata implementations.
      * @param prefix The prefix of implementation class. This array is not cloned.
+     * @param acronyms An array of (full text, acronyms) pairs. This array is not cloned.
      */
     private MetadataStandard(final String name, String interfacePackage,
-            String implementationPackage, final String[] prefix)
+            String implementationPackage, final String[] prefix, final String[] acronyms)
     {
         if (!interfacePackage.endsWith(".")) {
             interfacePackage += '.';
@@ -187,11 +207,15 @@ public final class MetadataStandard {
                 implementationPackage += '.';
             }
             implementations = new HashMap<Class<?>,Class<?>>();
+            if (prefix == null) {
+                throw new NullArgumentException();
+            }
         } else {
             implementations = null;
         }
         this.interfacePackage      = interfacePackage;
         this.implementationPackage = implementationPackage;
+        this.acronyms              = acronyms;
         this.prefix                = prefix;
         this.name                  = name;
     }
@@ -308,31 +332,48 @@ public final class MetadataStandard {
                 synchronized (implementations) {
                     Class<?> candidate = implementations.get(type);
                     if (candidate != null) {
-                        return candidate;
+                        return candidate.equals(Void.TYPE) ? type : candidate;
                     }
+                    /*
+                     * Prepares a buffer with a copy of the class name in which the interface
+                     * package has been replaced by the implementation package, and some text
+                     * have been replaced by their acronym (if any).
+                     */
                     final StringBuilder buffer = new StringBuilder(implementationPackage)
                             .append(name.substring(interfacePackage.length()));
-                    final int prefixPosition = buffer.lastIndexOf(".") + 1;
-                    int length = 0;
-                    if (prefix != null) {
-                        for (final String p : prefix) {
-                            name = buffer.replace(prefixPosition, prefixPosition+length, p).toString();
-                            try {
-                                candidate = Class.forName(name);
-                            } catch (ClassNotFoundException e) {
-                                Logging.recoverableException(MetadataStandard.class, "getImplementation", e);
-                                length = p.length();
-                                continue;
+                    if (acronyms != null) {
+                        for (int i=0; i<acronyms.length; i+=2) {
+                            final String acronym = acronyms[i];
+                            if (Strings.endsWith(buffer, acronym, false)) {
+                                buffer.setLength(buffer.length() - acronym.length());
+                                buffer.append(acronyms[i+1]);
+                                break;
                             }
-                            if (candidate.isAnnotationPresent(Deprecated.class)) {
-                                // Skip deprecated implementations.
-                                length = p.length();
-                                continue;
-                            }
-                            implementations.put(type, candidate);
-                            return candidate;
                         }
                     }
+                    /*
+                     * Try to insert a prefix in front of the class name, until a match is found.
+                     */
+                    final int prefixPosition = buffer.lastIndexOf(".") + 1;
+                    int length = 0;
+                    for (final String p : prefix) {
+                        name = buffer.replace(prefixPosition, prefixPosition+length, p).toString();
+                        try {
+                            candidate = Class.forName(name);
+                        } catch (ClassNotFoundException e) {
+                            Logging.recoverableException(MetadataStandard.class, "getImplementation", e);
+                            length = p.length();
+                            continue;
+                        }
+                        if (candidate.isAnnotationPresent(Deprecated.class)) {
+                            // Skip deprecated implementations.
+                            length = p.length();
+                            continue;
+                        }
+                        implementations.put(type, candidate);
+                        return candidate;
+                    }
+                    implementations.put(type, Void.TYPE); // Marker for "class not found".
                 }
             }
         }

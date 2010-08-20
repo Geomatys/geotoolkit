@@ -39,13 +39,14 @@ import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.resources.Vocabulary;
 
 
 /**
  * Utility methods about image formats.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @since 3.01
  * @module
@@ -478,6 +479,35 @@ attmpt: while (true) {
             choices = XArrays.resize(choices, count);
         }
         return choices;
+    }
+
+    /**
+     * Formats a description from the information provided in the given {@link ImageReaderWriterSpi}.
+     *
+     * @param spi      The provider from which to extract the information.
+     * @param locale   The locale to use for localizing the description.
+     * @param appendTo The buffer where to append the description.
+     *
+     * @since 3.15
+     */
+    public static void formatDescription(final ImageReaderWriterSpi spi, final Locale locale,
+            final StringBuilder appendTo)
+    {
+        final Vocabulary resources = Vocabulary.getResources(locale);
+        String text = spi.getDescription(locale);
+        if (text == null) {
+            text = resources.getString(Vocabulary.Keys.UNKNOWN);
+        }
+        appendTo.append(text);
+        text = spi.getVersion();
+        if (text != null) {
+            appendTo.append(" (").append(resources.getString(Vocabulary.Keys.VERSION_$1, text));
+            text = spi.getVendorName();
+            if (text != null) {
+                appendTo.append(", ").append(text);
+            }
+            appendTo.append(')');
+        }
     }
 
     /**

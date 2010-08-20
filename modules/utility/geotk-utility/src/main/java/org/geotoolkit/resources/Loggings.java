@@ -59,7 +59,7 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int AMBIGUOUS_ELLIPSOID = 1;
 
         /**
-         * {3,choice,0#Apply|Reuse} operation "{1}" on coverage "{0}" with interpolation "{2}".
+         * {3,choice,0#Apply|1#Reuse} operation "{1}" on coverage "{0}" with interpolation "{2}".
          */
         public static final int APPLIED_OPERATION_$4 = 2;
 
@@ -135,6 +135,11 @@ public final class Loggings extends IndexedResourceBundle {
          * Connected to EPSG database "{0}" on "{1}".
          */
         public static final int CONNECTED_EPSG_DATABASE_$2 = 16;
+
+        /**
+         * Created {0,choice,0#decoder|1#encoder} of class {1}.
+         */
+        public static final int CREATED_CODEC_OF_CLASS_$2 = 61;
 
         /**
          * Created coordinate operation "{0}" for source CRS "{1}" and target CRS "{2}".

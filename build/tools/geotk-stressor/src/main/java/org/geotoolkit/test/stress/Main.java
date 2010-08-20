@@ -106,15 +106,15 @@ public final class Main extends CommandLine {
      */
     @Action(minimalArgumentCount=1, maximalArgumentCount=1)
     public void coverages() throws CoverageStoreException {
-        final Object input = CoverageReadWriteStressor.createReaderInput(new File(arguments[0]), out);
+        final Object input = CoverageReadWriteStressor.createReaderInput(new File(arguments[0]));
         final StressorGroup<CoverageReadWriteStressor> stressors =
-                new StressorGroup<CoverageReadWriteStressor>(duration * 1000, out);
+                new StressorGroup<CoverageReadWriteStressor>(duration * 1000, out, err);
         /*
          * Creates a new stressor for each thread, and configures it to the minimal and
          * maximal size, maximal scale and locale given as parameters on the command line.
          */
         for (int i=numThreads; --i>=0;) {
-            final CoverageReadWriteStressor stressor = new CoverageReadWriteStressor(input, out);
+            final CoverageReadWriteStressor stressor = new CoverageReadWriteStressor(input);
             if (minSize != null) {
                 final int[] size = stressor.getMinimalGridSize();
                 Arrays.fill(size, minSize);
@@ -147,9 +147,11 @@ public final class Main extends CommandLine {
          * Process the (native) or (standard) suffix if any (which may change the codec
          * preference settings performed above), and set the format name of each stressor.
          */
-        final String format = CoverageReadWriteStressor.processFormatName(outputFormat);
-        for (final CoverageReadWriteStressor stressor : stressors.getStressors()) {
-            stressor.outputFormat = format;
+        if (outputFormat != null) {
+            final String format = CoverageReadWriteStressor.processFormatName(outputFormat);
+            for (final CoverageReadWriteStressor stressor : stressors.getStressors()) {
+                stressor.outputFormat = format;
+            }
         }
         stressors.run();
     }

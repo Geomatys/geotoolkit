@@ -148,7 +148,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
 
     /**
      * Sets the logging level for tile information during reads. The default
-     * value is {@link Level#FINE}. A {@code null} value restore the default.
+     * value is {@link Level#FINE}. A {@code null} value restores the default.
      *
      * @param level The new logging level, or {@code null} for the default.
      */
