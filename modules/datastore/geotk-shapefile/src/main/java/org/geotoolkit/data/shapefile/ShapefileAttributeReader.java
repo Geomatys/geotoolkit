@@ -152,8 +152,15 @@ public class ShapefileAttributeReader extends AbstractPropertyReader {
      */
     @Override
     public void next() throws IOException {
-        record = shp.nextRecord();
+        nextShape();
+        nextDbf();
+    }
 
+    protected void nextShape() throws IOException {
+        record = shp.nextRecord();
+    }
+
+    protected void nextDbf() throws IOException {
         if (dbf != null) {
             row = dbf.readRow();
         }
