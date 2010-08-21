@@ -83,6 +83,18 @@ public final class HintsPending extends Hints {
      */
     public static final Key PROPERTY_IS_CALCULATED = new Key(Boolean.class);
 
+
+    /**
+     * This flag indicates that the datastore can ignore features which are smaller
+     * than the given resolution. Datastore are supposed to
+     * try to conform to this request only if it doesnt requiere to much work.
+     * For exemple when exploring a quad tree, tiles can be ignored when there bbox
+     * is to small or when the feature bbox can be read before.
+     *
+     * Default value is null.
+     */
+    public static final Key KEY_IGNORE_SMALL_FEATURES = new Key(double[].class);
+
     private HintsPending(){}
 
 }

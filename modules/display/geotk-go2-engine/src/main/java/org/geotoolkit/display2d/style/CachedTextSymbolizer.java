@@ -160,7 +160,11 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
 
     @Override
     public float getMargin(Feature feature, float coeff) {
-        return 0f;
+        if(feature == null){
+            return Float.NaN;
+        }else{
+            return 0;
+        }
     }
 
     @Override

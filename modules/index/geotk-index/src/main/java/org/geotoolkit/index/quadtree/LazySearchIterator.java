@@ -56,7 +56,7 @@ public class LazySearchIterator implements SearchIterator<AbstractNode> {
     //curent visited node
     private AbstractNode current = null;
 
-    public LazySearchIterator(AbstractNode node, Envelope bounds) {
+    public LazySearchIterator(AbstractNode node, Envelope bounds, double[] minRes) {
         this.bounds = bounds;
         this.closed = false;
 
@@ -184,10 +184,10 @@ public class LazySearchIterator implements SearchIterator<AbstractNode> {
 
         private Data next = null;
 
-        public Buffered(AbstractNode node, Envelope bounds, DataReader reader, int bufferSize){
+        public Buffered(AbstractNode node, Envelope bounds, double[] minRes, DataReader reader, int bufferSize){
             this.bufferSize = bufferSize;
             this.reader = reader;
-            this.ite = new LazySearchIterator(node, bounds);
+            this.ite = new LazySearchIterator(node, bounds, minRes);
             indices = new int[bufferSize];
             datas = new Data[bufferSize];
         }

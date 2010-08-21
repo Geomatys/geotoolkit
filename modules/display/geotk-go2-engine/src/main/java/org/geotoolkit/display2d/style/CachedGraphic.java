@@ -400,6 +400,8 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
      */
     public float getMargin(Feature feature,float coeff) {
         evaluate();
+
+        final boolean noFeature = (feature == null);
         
 //        //we have a cachedImage, we return it's bigest attribut
 //        BufferedImage img = (BufferedImage)cachedValues.get(ID_BUFFER);
@@ -414,7 +416,12 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
 
         if(Float.isNaN(candidateOpacity)){
             final Expression expOpacity = styleElement.getOpacity();
-            candidateOpacity = GO2Utilities.evaluate(expOpacity, feature, Number.class, 1f).floatValue();
+            if(noFeature){
+                //can not evaluate
+                return Float.NaN;
+            }else{
+                candidateOpacity = GO2Utilities.evaluate(expOpacity, feature, Number.class, 1f).floatValue();
+            }
         }
 
         if(candidateOpacity == 0) return 0;
@@ -427,7 +434,12 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
 
         if(Float.isNaN(candidateSize)){
             final Expression expSize = styleElement.getSize();
-            candidateSize = GO2Utilities.evaluate(expSize, feature, Number.class, 16f).floatValue();
+            if(noFeature){
+                //can not evaluate
+                return Float.NaN;
+            }else{
+                candidateSize = GO2Utilities.evaluate(expSize, feature, Number.class, 16f).floatValue();
+            }
         }
 
         if(candidateSize == 0) return 0;
@@ -442,12 +454,24 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
         
         //we have a cached mark ------------------------------------------------------------------
         if(cachedMark != null){
-            subBuffer = cachedMark.getImage(feature, candidateSize*coeff,null);
+            if(noFeature){
+                if(cachedMark.isStatic()){
+                    subBuffer = cachedMark.getImage(feature, candidateSize*coeff,null);
+                }
+            }else{
+                subBuffer = cachedMark.getImage(feature, candidateSize*coeff,null);
+            }
         }
         
         //we have a cached external --------------------------------------------------------------
         if(cachedExternal != null){
-            subBuffer = cachedExternal.getImage(candidateSize,coeff,null);
+            if(noFeature){
+                if(cachedExternal.isStatic()){
+                    subBuffer = cachedExternal.getImage(candidateSize,coeff,null);
+                }
+            }else{
+                subBuffer = cachedExternal.getImage(candidateSize,coeff,null);
+            }
         }
 
         if(subBuffer == null) return 0;

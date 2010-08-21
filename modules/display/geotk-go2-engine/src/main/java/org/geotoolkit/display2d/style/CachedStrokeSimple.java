@@ -269,7 +269,12 @@ public class CachedStrokeSimple extends CachedStroke{
         
         if(Float.isNaN(cachedWidth)){
             final Expression expWidth = styleElement.getWidth();
-            return GO2Utilities.evaluate(expWidth, feature, Float.class, 1f);
+            if(feature == null){
+                //can not evaluate
+                return Float.NaN;
+            }else{
+                return GO2Utilities.evaluate(expWidth, feature, Float.class, 1f);
+            }
         }
 
         return cachedWidth * coeff;

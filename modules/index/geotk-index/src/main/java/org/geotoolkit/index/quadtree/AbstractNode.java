@@ -263,4 +263,14 @@ public abstract class AbstractNode {
         }
     }
 
+    /**
+     * Returns true if the node is larger or heigher then the given resolution.
+     */
+    public boolean isBigger(double[] res){
+        if(res != null){
+            return (res[0] <= maxx-minx) || (res[1] <= maxy-miny);
+        }
+        return true;
+    }
+
 }

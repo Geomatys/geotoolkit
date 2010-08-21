@@ -52,6 +52,7 @@ public class LazyTyleSearchIterator implements SearchIterator<AbstractNode> {
     }
 
     private final Envelope bounds;
+    private final double[] minRes;
     private boolean closed;
 
     //the current path where we are, Integer is the current visited child node index.
@@ -61,8 +62,9 @@ public class LazyTyleSearchIterator implements SearchIterator<AbstractNode> {
     private AbstractNode current = null;
     private boolean safe = false;
 
-    public LazyTyleSearchIterator(AbstractNode node, Envelope bounds) {
+    public LazyTyleSearchIterator(AbstractNode node, Envelope bounds, double[] minRes) {
         this.bounds = bounds;
+        this.minRes = minRes;
         this.closed = false;
 
         final int relation = node.relation(bounds);
@@ -161,6 +163,11 @@ public class LazyTyleSearchIterator implements SearchIterator<AbstractNode> {
                 //prepare next node search
                 segment.childIndex++;
 
+                //check the node size
+                if(!child.isBigger(minRes)){
+                    continue childLoop;
+                }
+
                 if(segment.relation == CONTAINED){
                     //safe to add all child without test
                     path.addLast(new Segment(child, -1, CONTAINED));
@@ -210,8 +217,8 @@ public class LazyTyleSearchIterator implements SearchIterator<AbstractNode> {
         private Data next = null;
         private boolean safe = false;
 
-        public Buffered(AbstractNode node, Envelope bounds, DataReader reader, int bufferSize){
-            this.ite = new LazyTyleSearchIterator(node, bounds);
+        public Buffered(AbstractNode node, Envelope bounds, double[] minRes, DataReader reader, int bufferSize){
+            this.ite = new LazyTyleSearchIterator(node, bounds, minRes);
             this.bufferSize = bufferSize;
             this.reader = reader;
             indices = new int[bufferSize];

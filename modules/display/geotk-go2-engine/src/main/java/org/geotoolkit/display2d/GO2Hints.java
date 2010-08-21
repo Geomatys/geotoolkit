@@ -19,6 +19,7 @@ package org.geotoolkit.display2d;
 
 import java.awt.RenderingHints.Key;
 import java.awt.image.ColorModel;
+
 import org.geotoolkit.display.canvas.HintKey;
 
 /**
@@ -87,7 +88,7 @@ public class GO2Hints {
      *
      * Default value is false.
      */
-    public static final Key KEY_COVERAGE_WRITER = new HintKey(8, Class.class);
+    public static final Key KEY_COVERAGE_WRITER = new HintKey(8, Boolean.class);
 
     public static final Boolean MULTI_THREAD_ON = Boolean.TRUE;
     public static final Boolean MULTI_THREAD_OFF = Boolean.FALSE;

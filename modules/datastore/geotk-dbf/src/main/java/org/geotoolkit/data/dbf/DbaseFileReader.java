@@ -65,7 +65,7 @@ public class DbaseFileReader {
 
     public final class Row {
         public Object read(int column) throws IOException {
-            int offset = getOffset(column);
+            final int offset = getOffset(column);
             return fieldReaders[column].read(charBuffer, offset);
         }
 
@@ -98,7 +98,6 @@ public class DbaseFileReader {
     protected boolean useMemoryMappedBuffer;
     protected boolean randomAccessEnabled;
     protected long currentOffset = 0;
-    private Charset stringCharset;
 
     /**
      * Creates a new instance of DBaseFileReader
@@ -112,7 +111,6 @@ public class DbaseFileReader {
 
         if(charset == null) charset = DEFAULT_STRING_CHARSET;
 
-        this.stringCharset = charset;
         this.charset = Charset.forName("ISO-8859-1"); // charset;
 
         this.useMemoryMappedBuffer = useMemoryMappedBuffer;

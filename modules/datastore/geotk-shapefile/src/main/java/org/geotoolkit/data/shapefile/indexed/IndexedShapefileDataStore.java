@@ -82,6 +82,7 @@ import org.geotoolkit.index.quadtree.LazyTyleSearchIterator;
 import org.geotoolkit.index.quadtree.SearchIterator;
 import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
 import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
+import org.geotoolkit.factory.HintsPending;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -323,7 +324,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
                         ExtractBoundsFilterVisitor.BOUNDS_VISITOR, new JTSEnvelope2D());
                 queryFilter = Filter.INCLUDE;
                 reader = createFeatureReader(
-                        getBBoxAttributesReader(readProperties, bbox),
+                        getBBoxAttributesReader(readProperties, bbox, queryHints),
                         readSchema, queryHints);
 
             }else{
@@ -445,14 +446,16 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
 
 
     protected IndexedShapefileAttributeReader getBBoxAttributesReader(
-            List<PropertyDescriptor> properties, final Envelope bbox)
+            List<PropertyDescriptor> properties, final Envelope bbox, Hints hints)
             throws DataStoreException {
+
+        final double[] minRes = (double[]) hints.get(HintsPending.KEY_IGNORE_SMALL_FEATURES);
 
         CloseableCollection<Data> goodCollec = null;
         try {
             final QuadTree quadTree = openQuadTree();
             if ((quadTree != null)) {
-                goodCollec = quadTree.search(bbox);
+                goodCollec = quadTree.search(bbox,minRes);
             }
 
         } catch (StoreException e) {
@@ -469,7 +472,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         }
 
         return new BBOXIndexedShapefileAttributeReader(properties,
-                openShapeReader(), dbfR, goodCollec, col.bboxIterator(),bbox);
+                openShapeReader(), dbfR, goodCollec, col.bboxIterator(),bbox,minRes);
     }
 
     /**
@@ -813,15 +816,28 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
 
         private final Object[] buffer = new Object[metaData.length];
         private final PreparedGeometry boundingGeometry;
-        private final Envelope bbox;
+
+        //features must be within this bbox
+        private final double bboxMinX;
+        private final double bboxMinY;
+        private final double bboxMaxX;
+        private final double bboxMaxY;
+
+        //feature bbox must be bigger than this
+        private final double[] minRes;
+        
         private boolean hasNext = false;
         private int geomAttIndex = 0;
 
         public BBOXIndexedShapefileAttributeReader(List<? extends PropertyDescriptor> properties,
                 ShapefileReader shpReader, IndexedDbaseFileReader dbfR, CloseableCollection<Data> goodRec,
-                SearchIterator<Data> ite, Envelope bbox){
+                SearchIterator<Data> ite, Envelope bbox, double[] minRes){
             super(properties,shpReader,dbfR,goodRec,ite);
-            this.bbox = bbox;
+            this.bboxMinX = bbox.getMinX();
+            this.bboxMinY = bbox.getMinY();
+            this.bboxMaxX = bbox.getMaxX();
+            this.bboxMaxY = bbox.getMaxY();
+            this.minRes = minRes;
             this.boundingGeometry = toGeometry(bbox);
 
             for(int i=0,n=properties.size();i<n;i++){
@@ -852,15 +868,30 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             while(!hasNext && super.hasNext()){
                 super.next();
                 if(((LazyTyleSearchIterator.Buffered)goodRecs).isSafe()){
+
+                    //check minSize
+                    if(minRes != null && !(minRes[0] <= (record.maxX-record.minX) || minRes[1] <= (record.maxY-record.minY))){
+                        //System.out.println("doesn't match");
+                        continue;
+                    }
+
                     super.read(buffer);
                     hasNext = true;
-                    continue;
+                    return;
                 }
 
-                if(!(bbox.getMinX() > record.maxX ||
-                     bbox.getMaxX() < record.minX ||
-                     bbox.getMinY() > record.maxY ||
-                     bbox.getMaxY() < record.minY)){
+                //check if we are in the bbox
+                if(!(bboxMinX > record.maxX ||
+                     bboxMaxX < record.minX ||
+                     bboxMinY > record.maxY ||
+                     bboxMaxY < record.minY)){
+
+                    //check minSize
+                    if(minRes != null && !(minRes[0] <= (record.maxX-record.minX) || minRes[1] <= (record.maxY-record.minY))){
+                        //System.out.println("doesn't match");
+                        continue;
+                    }
+
                     super.read(buffer);
                     final Geometry candidate = (Geometry)buffer[geomAttIndex];
                     hasNext = boundingGeometry.intersects(candidate);

@@ -192,19 +192,30 @@ public class QuadTree {
      * @return A List of Integer
      */
     public CloseableCollection<Data> search(Envelope bounds) throws StoreException {
+        return search(bounds,null);
+    }
+
+    /**
+     *
+     * @param bounds
+     * @param minRes : nodes with a small envelope then the given resolution will be ignored.
+     * @return A List of Integer
+     */
+    public CloseableCollection<Data> search(Envelope bounds, double[] minRes) throws StoreException {
         if (LOGGER.isLoggable(Level.FINEST)) {
             LOGGER.log(Level.FINEST, "Querying {0}", bounds);
         }
 
         LazySearchCollection lazySearchCollection;
         try {
-            lazySearchCollection = new LazySearchCollection(this, bounds);
+            lazySearchCollection = new LazySearchCollection(this, bounds, minRes);
         } catch (RuntimeException e) {
             LOGGER.warning("IOException occurred while reading root");
             return null;
         }
         return lazySearchCollection;
     }
+
 
     /**
      * Closes this QuadTree after use...

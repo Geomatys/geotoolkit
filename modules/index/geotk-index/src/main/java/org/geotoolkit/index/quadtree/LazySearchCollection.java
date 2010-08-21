@@ -43,10 +43,16 @@ public class LazySearchCollection extends AbstractCollection<Data> implements
 
     private final QuadTree tree;
     private final Envelope bounds;
+    private final double[] minRes;
 
     public LazySearchCollection(QuadTree tree, Envelope bounds) {
+        this(tree,bounds,null);
+    }
+
+    public LazySearchCollection(QuadTree tree, Envelope bounds, double[] minRes) {
         this.tree = tree;
         this.bounds = bounds;
+        this.minRes = minRes;
     }
 
     /**
@@ -55,7 +61,7 @@ public class LazySearchCollection extends AbstractCollection<Data> implements
      */
     public SearchIterator<Data> bboxIterator() {
         final SearchIterator<Data> iterator = new LazyTyleSearchIterator.Buffered(
-                tree.getRoot(), bounds,tree.getDataReader(),MAX_INDICES);
+                tree.getRoot(), bounds,minRes,tree.getDataReader(),MAX_INDICES);
         tree.registerIterator(iterator);
         return iterator;
     }
@@ -69,7 +75,7 @@ public class LazySearchCollection extends AbstractCollection<Data> implements
     @Override
     public SearchIterator<Data> iterator() {
         final SearchIterator<Data> iterator = new LazySearchIterator.Buffered(
-                tree.getRoot(), bounds, tree.getDataReader(),MAX_INDICES);
+                tree.getRoot(), bounds,minRes, tree.getDataReader(),MAX_INDICES);
         tree.registerIterator(iterator);
         return iterator;
     }

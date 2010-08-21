@@ -1010,6 +1010,25 @@ public final class GO2Utilities {
         return atts;
     }
 
+    /**
+     * This information can be used to determinate if geometries smaller then a pixel
+     * can be ignore when rendering.
+     *
+     * @return true if there is a visible margin used in this symbols.
+     */
+    public static boolean visibleMargin(final CachedRule[] rules, float minMargin, RenderingContext2D context){
+        for(CachedRule r : rules){
+            for(CachedSymbolizer s : r.symbolizers()){
+                final float m = s.getMargin(null, context);
+                if(Float.isNaN(m) || m>=minMargin){
+                    //margin can not be evaluate or is bigger
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public static List<Rule> getValidRules(final Style style, final double scale, FeatureType type) {
         final List<Rule> validRules = new ArrayList<Rule>();
 
