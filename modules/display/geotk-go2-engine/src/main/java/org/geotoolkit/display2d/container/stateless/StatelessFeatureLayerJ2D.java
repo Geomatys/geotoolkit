@@ -729,7 +729,6 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             //style does not expend itself further than the feature geometry
             //that mean geometries smaller than a pixel will not be renderer are barely visible
             queryHints.put(HintsPending.KEY_IGNORE_SMALL_FEATURES, renderingContext.getResolution(layerCRS));
-            System.out.println(">>>>>>>>> ignoring small "+renderingContext.getResolution(layerCRS)[0]);
         }
 
         //add reprojection -----------------------------------------------------

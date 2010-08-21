@@ -28,7 +28,7 @@ import org.geotoolkit.index.quadtree.DataReader;
  *
  * @author Johann Sorel (Geomatys)
  */
-public class IndexDataReader implements DataReader {
+public class IndexDataReader implements DataReader<IndexDataReader.ShpData> {
 
     public static final DataDefinition DATA_DEFINITION = new DataDefinition("US-ASCII", Integer.class, Long.class);
 
@@ -39,7 +39,7 @@ public class IndexDataReader implements DataReader {
     }
 
     @Override
-    public Data read(int recno) throws IOException {
+    public ShpData read(int recno) throws IOException {
         return new ShpData(recno+1, (long)indexfile.getOffsetInBytes(recno));
     }
 
@@ -58,8 +58,8 @@ public class IndexDataReader implements DataReader {
 
     public static final class ShpData implements Data{
 
-        private final int v1;
-        private final long v2;
+        public final int v1;
+        public final long v2;
 
         public ShpData(int v1, long v2){
             this.v1 = v1;

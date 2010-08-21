@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.geotoolkit.data.shapefile.ShapefileAttributeReader;
 import org.geotoolkit.data.dbf.IndexedDbaseFileReader;
+import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.Data;
@@ -38,14 +39,14 @@ import org.opengis.feature.type.PropertyDescriptor;
 public class IndexedShapefileAttributeReader extends ShapefileAttributeReader
         implements RecordNumberTracker {
 
-    protected final Iterator<Data> goodRecs;
-    private final CloseableCollection<Data> closeableCollection;
+    protected final Iterator<ShpData> goodRecs;
+    private final CloseableCollection<ShpData> closeableCollection;
     private int recno;
-    private Data next;
+    private ShpData next;
 
     public IndexedShapefileAttributeReader( List<? extends PropertyDescriptor> attributes,
             ShapefileReader shp, IndexedDbaseFileReader dbf,
-            CloseableCollection<Data> col, Iterator<Data> goodRecs) {
+            CloseableCollection<ShpData> col, Iterator<ShpData> goodRecs) {
         this(attributes.toArray(new PropertyDescriptor[attributes.size()]), shp, dbf, col, goodRecs);
     }
 
@@ -60,7 +61,7 @@ public class IndexedShapefileAttributeReader extends ShapefileAttributeReader
      */
     public IndexedShapefileAttributeReader(PropertyDescriptor[] atts,
             ShapefileReader shp, IndexedDbaseFileReader dbf,
-            CloseableCollection<Data> col, Iterator<Data> goodRecs) {
+            CloseableCollection<ShpData> col, Iterator<ShpData> goodRecs) {
         super(atts, shp, dbf);
         this.goodRecs = goodRecs;
         this.closeableCollection = col;
@@ -89,9 +90,8 @@ public class IndexedShapefileAttributeReader extends ShapefileAttributeReader
             if (next != null)
                 return true;
             if (this.goodRecs.hasNext()) {
-
-                next = (Data) goodRecs.next();
-                this.recno = ((Integer) next.getValue(0)).intValue();
+                next = goodRecs.next();
+                recno = next.v1;
                 return true;
             }
             return false;
@@ -102,23 +102,31 @@ public class IndexedShapefileAttributeReader extends ShapefileAttributeReader
 
     @Override
     public void next() throws IOException {
-        if (!hasNextInternal())
+        moveToNextShape();
+        moveToNextDbf();
+    }
+
+    protected void moveToNextShape() throws IOException{
+        if (!hasNextInternal()){
             throw new IndexOutOfBoundsException("No more features in reader");
-        if (this.goodRecs != null) {
-            this.recno = ((Integer) next.getValue(0)).intValue();
-
-            if (dbf != null) {
-                ((IndexedDbaseFileReader) dbf).goTo(this.recno);
-            }
-
-            Long l = (Long) next.getValue(1);
-            shp.goTo((int) l.longValue());
-            next = null;
-        } else {
-            this.recno++;
         }
 
-        super.next();
+        if (this.goodRecs != null) {
+            shp.goTo((int) next.v2);
+            next = null;
+            nextShape();
+        } else {
+            this.recno++;
+            super.next();
+        }
+
+    }
+
+    protected void moveToNextDbf() throws IOException{
+        if (this.goodRecs != null && dbf != null) {
+            ((IndexedDbaseFileReader) dbf).goTo(this.recno);
+            nextDbf();
+        }
     }
 
     @Override

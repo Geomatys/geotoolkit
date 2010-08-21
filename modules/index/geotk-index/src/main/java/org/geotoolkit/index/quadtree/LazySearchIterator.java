@@ -165,7 +165,7 @@ public class LazySearchIterator implements SearchIterator<AbstractNode> {
     /**
      * Holds a buffer of values to avoid open files to often.
      */
-    public static final class Buffered implements SearchIterator<Data>{
+    public static final class Buffered<T extends Data> implements SearchIterator<T>{
 
         private final int bufferSize;
 
@@ -182,7 +182,7 @@ public class LazySearchIterator implements SearchIterator<AbstractNode> {
         private int indexSize = 0;
         private int index = 0;
 
-        private Data next = null;
+        private T next = null;
 
         public Buffered(AbstractNode node, Envelope bounds, double[] minRes, DataReader reader, int bufferSize){
             this.bufferSize = bufferSize;
@@ -199,9 +199,9 @@ public class LazySearchIterator implements SearchIterator<AbstractNode> {
         }
 
         @Override
-        public Data next() {
+        public T next() {
             findNext();
-            final Data temp = next;
+            final T temp = next;
             next = null;
             return temp;
         }
@@ -215,7 +215,7 @@ public class LazySearchIterator implements SearchIterator<AbstractNode> {
 
             //next one in the cache
             if(index<indexSize){
-                next = datas[index];
+                next = (T) datas[index];
                 //prepare next one
                 index++;
                 return;
@@ -233,7 +233,7 @@ public class LazySearchIterator implements SearchIterator<AbstractNode> {
             }
 
             if(indexSize>0){
-                next = datas[0];
+                next = (T) datas[0];
                 index++;
             }
         }

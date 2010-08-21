@@ -31,8 +31,8 @@ import org.geotoolkit.index.Data;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class CloseableArrayList extends ArrayList<Data> implements
-        CloseableCollection<Data> {
+public class CloseableArrayList<T extends Data> extends ArrayList<T> implements
+        CloseableCollection<T> {
 
     public CloseableArrayList() {
     }
@@ -47,7 +47,7 @@ public class CloseableArrayList extends ArrayList<Data> implements
     }
 
     @Override
-    public void closeIterator( Iterator<Data> iter ) throws IOException {
+    public void closeIterator( Iterator<T> iter ) throws IOException {
         // do nothing
     }
     

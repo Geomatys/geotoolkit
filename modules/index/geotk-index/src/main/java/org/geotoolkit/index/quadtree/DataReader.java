@@ -24,12 +24,12 @@ import org.geotoolkit.index.Data;
  *
  * @author Johann Sorel (Geomatys)
  */
-public interface DataReader {
+public interface DataReader<T extends Data> {
 
     /**
      * Read a single data value.
      */
-    Data read(int id) throws IOException;
+    T read(int id) throws IOException;
 
     /**
      * Read a buffer of values.

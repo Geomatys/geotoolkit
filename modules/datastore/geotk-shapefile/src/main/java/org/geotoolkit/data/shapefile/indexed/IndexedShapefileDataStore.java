@@ -363,7 +363,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             List<? extends PropertyDescriptor> properties, Filter filter) throws DataStoreException{
         
 
-        CloseableCollection<Data> goodRecs = null;
+        CloseableCollection<ShpData> goodRecs = null;
         if (filter instanceof Id && shpFiles.isLocal() && shpFiles.exists(FIX)) {
             final Id fidFilter = (Id) filter;
 
@@ -422,7 +422,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
 
         final double[] minRes = (double[]) hints.get(HintsPending.KEY_IGNORE_SMALL_FEATURES);
 
-        CloseableCollection<Data> goodCollec = null;
+        CloseableCollection<ShpData> goodCollec = null;
         try {
             final QuadTree quadTree = openQuadTree();
             if ((quadTree != null)) {
@@ -456,14 +456,14 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * @throws IOException
      * @throws TreeException
      */
-    private CloseableCollection<Data> queryFidIndex(Set<Identifier> idsSet) throws IOException {
+    private CloseableCollection<ShpData> queryFidIndex(Set<Identifier> idsSet) throws IOException {
 
         if (!indexUseable(FIX)) {
             return null;
         }
 
         final IndexedFidReader reader = new IndexedFidReader(shpFiles);
-        final CloseableCollection<Data> records = new CloseableArrayList(idsSet.size());
+        final CloseableCollection<ShpData> records = new CloseableArrayList(idsSet.size());
 
         try {
             final ShxReader shx = openIndexFile();
@@ -479,7 +479,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
                         continue;
                     }
                     try {
-                        Data data = new ShpData(
+                        ShpData data = new ShpData(
                                 (int)(recno+1),
                                 (long)shx.getOffsetInBytes((int) recno));
                         if(getLogger().isLoggable(Level.FINEST)){
@@ -593,9 +593,9 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * @throws IOException
      * @throws TreeException DOCUMENT ME!
      */
-    private CloseableCollection<Data> queryQuadTree(Envelope bbox)
+    private CloseableCollection<ShpData> queryQuadTree(Envelope bbox)
             throws DataStoreException, IOException, TreeException {
-        CloseableCollection<Data> tmp = null;
+        CloseableCollection<ShpData> tmp = null;
 
         try {
             final QuadTree quadTree = openQuadTree();
@@ -710,7 +710,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
 
         final Set records = new HashSet();
         if (!fids.isEmpty()) {
-            Collection<Data> recordsFound = null;
+            Collection<ShpData> recordsFound = null;
             try {
                 recordsFound = queryFidIndex(fids);
             } catch (IOException ex) {

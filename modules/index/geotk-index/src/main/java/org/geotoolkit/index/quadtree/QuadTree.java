@@ -43,13 +43,13 @@ import com.vividsolutions.jts.geom.Envelope;
  * @author Tommaso Nolli
  * @module pending
  */
-public class QuadTree {
+public class QuadTree<T extends Data> {
 
     private static final double SPLITRATIO = 0.55d;
 
     public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.index.quadtree");
 
-    private final DataReader dataReader;
+    private final DataReader<T> dataReader;
     //open iterators
     private final Set iterators = new HashSet();
 
@@ -65,7 +65,7 @@ public class QuadTree {
      * @param maxBounds
      *                The bounds of all geometries to be indexed
      */
-    public QuadTree(int numShapes, Envelope maxBounds, DataReader file) {
+    public QuadTree(int numShapes, Envelope maxBounds, DataReader<T> file) {
         this(numShapes, 0, maxBounds, file);
     }
 
@@ -191,7 +191,7 @@ public class QuadTree {
      * @param bounds
      * @return A List of Integer
      */
-    public CloseableCollection<Data> search(Envelope bounds) throws StoreException {
+    public CloseableCollection<T> search(Envelope bounds) throws StoreException {
         return search(bounds,null);
     }
 
@@ -201,7 +201,7 @@ public class QuadTree {
      * @param minRes : nodes with a small envelope then the given resolution will be ignored.
      * @return A List of Integer
      */
-    public CloseableCollection<Data> search(Envelope bounds, double[] minRes) throws StoreException {
+    public CloseableCollection<T> search(Envelope bounds, double[] minRes) throws StoreException {
         if (LOGGER.isLoggable(Level.FINEST)) {
             LOGGER.log(Level.FINEST, "Querying {0}", bounds);
         }

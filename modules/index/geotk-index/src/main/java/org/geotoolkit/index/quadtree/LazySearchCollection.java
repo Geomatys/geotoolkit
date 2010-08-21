@@ -26,7 +26,6 @@ import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.Data;
 
 import com.vividsolutions.jts.geom.Envelope;
-import java.util.Arrays;
 
 /**
  * A collection that will open and close the QuadTree and find the next id in
@@ -36,20 +35,20 @@ import java.util.Arrays;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class LazySearchCollection extends AbstractCollection<Data> implements
-        CloseableCollection<Data> {
+public class LazySearchCollection<T extends Data> extends AbstractCollection<T> implements
+        CloseableCollection<T> {
 
     private static final int MAX_INDICES = Short.MAX_VALUE;
 
-    private final QuadTree tree;
+    private final QuadTree<T> tree;
     private final Envelope bounds;
     private final double[] minRes;
 
-    public LazySearchCollection(QuadTree tree, Envelope bounds) {
+    public LazySearchCollection(QuadTree<T> tree, Envelope bounds) {
         this(tree,bounds,null);
     }
 
-    public LazySearchCollection(QuadTree tree, Envelope bounds, double[] minRes) {
+    public LazySearchCollection(QuadTree<T> tree, Envelope bounds, double[] minRes) {
         this.tree = tree;
         this.bounds = bounds;
         this.minRes = minRes;
@@ -59,8 +58,8 @@ public class LazySearchCollection extends AbstractCollection<Data> implements
      * More accurate iterator when plenty of nodes, also hase a isSafe methode
      * to test if the value is safe to be used untested.
      */
-    public SearchIterator<Data> bboxIterator() {
-        final SearchIterator<Data> iterator = new LazyTyleSearchIterator.Buffered(
+    public SearchIterator<T> bboxIterator() {
+        final SearchIterator<T> iterator = new LazyTyleSearchIterator.Buffered(
                 tree.getRoot(), bounds,minRes,tree.getDataReader(),MAX_INDICES);
         tree.registerIterator(iterator);
         return iterator;
@@ -73,8 +72,8 @@ public class LazySearchCollection extends AbstractCollection<Data> implements
      * @see java.util.AbstractCollection#iterator()
      */
     @Override
-    public SearchIterator<Data> iterator() {
-        final SearchIterator<Data> iterator = new LazySearchIterator.Buffered(
+    public SearchIterator<T> iterator() {
+        final SearchIterator<T> iterator = new LazySearchIterator.Buffered(
                 tree.getRoot(), bounds,minRes, tree.getDataReader(),MAX_INDICES);
         tree.registerIterator(iterator);
         return iterator;
@@ -123,7 +122,7 @@ public class LazySearchCollection extends AbstractCollection<Data> implements
     }
 
     @Override
-    public void closeIterator( Iterator<Data> iter ) throws IOException {
+    public void closeIterator( Iterator<T> iter ) throws IOException {
         try {
             tree.close(iter);
         } catch (StoreException e) {

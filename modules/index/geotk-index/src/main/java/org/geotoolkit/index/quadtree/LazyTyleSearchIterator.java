@@ -196,7 +196,7 @@ public class LazyTyleSearchIterator implements SearchIterator<AbstractNode> {
     /**
      * Holds a buffer of values to avoid open files to often.
      */
-    public static final class Buffered implements SearchIterator<Data>{
+    public static final class Buffered<T extends Data>implements SearchIterator<T>{
 
         private final int bufferSize;
 
@@ -214,7 +214,7 @@ public class LazyTyleSearchIterator implements SearchIterator<AbstractNode> {
         private int indexSize = 0;
         private int index = 0;
 
-        private Data next = null;
+        private T next = null;
         private boolean safe = false;
 
         public Buffered(AbstractNode node, Envelope bounds, double[] minRes, DataReader reader, int bufferSize){
@@ -233,9 +233,9 @@ public class LazyTyleSearchIterator implements SearchIterator<AbstractNode> {
         }
 
         @Override
-        public Data next() {
+        public T next() {
             findNext();
-            final Data temp = next;
+            final T temp = next;
             next = null;
             return temp;
         }
@@ -253,7 +253,7 @@ public class LazyTyleSearchIterator implements SearchIterator<AbstractNode> {
 
             //next one in the cache
             if(index<indexSize){
-                next = datas[index];
+                next = (T) datas[index];
                 safe = safes[index];
                 //prepare next one
                 index++;
@@ -272,7 +272,7 @@ public class LazyTyleSearchIterator implements SearchIterator<AbstractNode> {
             }
 
             if(indexSize>0){
-                next = datas[0];
+                next = (T) datas[0];
                 safe = safes[0];
                 index++;
             }

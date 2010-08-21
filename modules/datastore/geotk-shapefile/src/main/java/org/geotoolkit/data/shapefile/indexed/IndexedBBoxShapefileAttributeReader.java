@@ -29,9 +29,9 @@ import java.io.IOException;
 import java.util.List;
 
 import org.geotoolkit.data.dbf.IndexedDbaseFileReader;
+import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.index.CloseableCollection;
-import org.geotoolkit.index.Data;
 import org.geotoolkit.index.quadtree.LazyTyleSearchIterator;
 import org.geotoolkit.index.quadtree.SearchIterator;
 
@@ -62,8 +62,8 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
     private int geomAttIndex = 0;
 
     public IndexedBBoxShapefileAttributeReader(List<? extends PropertyDescriptor> properties,
-            ShapefileReader shpReader, IndexedDbaseFileReader dbfR, CloseableCollection<Data> goodRec,
-            SearchIterator<Data> ite, Envelope bbox, double[] minRes) {
+            ShapefileReader shpReader, IndexedDbaseFileReader dbfR, CloseableCollection<ShpData> goodRec,
+            SearchIterator<ShpData> ite, Envelope bbox, double[] minRes) {
         super(properties, shpReader, dbfR, goodRec, ite);
         this.bboxMinX = bbox.getMinX();
         this.bboxMinY = bbox.getMinY();
@@ -98,7 +98,11 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
 
     private void findNext() throws IOException {
         while (!hasNext && super.hasNext()) {
-            super.next();
+
+            //only move to the next shape, avoid moving in the dbf until
+            //we are sure we need it
+            moveToNextShape();
+
             if (((LazyTyleSearchIterator.Buffered) goodRecs).isSafe()) {
 
                 //check minSize
@@ -107,6 +111,7 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
                     continue;
                 }
 
+                moveToNextDbf();
                 super.read(buffer);
                 hasNext = true;
                 return;
@@ -124,6 +129,7 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
                     continue;
                 }
 
+                moveToNextDbf();
                 super.read(buffer);
                 final Geometry candidate = (Geometry) buffer[geomAttIndex];
                 hasNext = boundingGeometry.intersects(candidate);
