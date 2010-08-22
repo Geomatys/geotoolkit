@@ -198,6 +198,11 @@ public class LazyTyleSearchIterator implements SearchIterator<AbstractNode> {
      */
     public static final class Buffered<T extends Data>implements SearchIterator<T>{
 
+        //first bit contain the boolean safe value
+        private static int SAFE_MASK = 0x1;
+        //we append this value on each id to preserve sort order when we add the safe bit
+        private static int LB = 1<<31;
+
         private final int bufferSize;
 
         private final LazyTyleSearchIterator ite;
@@ -210,7 +215,6 @@ public class LazyTyleSearchIterator implements SearchIterator<AbstractNode> {
 
         private final int[] indices;
         private final Data[] datas;
-        private final boolean[] safes;
         private int indexSize = 0;
         private int index = 0;
 
@@ -223,7 +227,6 @@ public class LazyTyleSearchIterator implements SearchIterator<AbstractNode> {
             this.reader = reader;
             indices = new int[bufferSize];
             datas = new Data[bufferSize];
-            safes = new boolean[bufferSize];
         }
 
         @Override
@@ -254,7 +257,8 @@ public class LazyTyleSearchIterator implements SearchIterator<AbstractNode> {
             //next one in the cache
             if(index<indexSize){
                 next = (T) datas[index];
-                safe = safes[index];
+                //first bit contain the boolean safe value
+                safe = (indices[index] & SAFE_MASK) != 0;
                 //prepare next one
                 index++;
                 return;
@@ -264,16 +268,20 @@ public class LazyTyleSearchIterator implements SearchIterator<AbstractNode> {
             fillIndices();
 
             // sort so offset lookup is faster
-            sort1(indices,safes,0,indexSize);
+            Arrays.sort(indices,0,indexSize);
             try{
-                reader.read(indices, datas, indexSize);
+                for(int i=0;i<indexSize;i++){
+                    //extract the id from the value
+                    datas[i] = reader.read( (indices[i]^LB) >>> 1);
+                }
             }catch(IOException ex) {
                 throw new RuntimeException(ex);
             }
 
             if(indexSize>0){
                 next = (T) datas[0];
-                safe = safes[0];
+                //first bit contain the boolean safe value
+                safe = (indices[0] & SAFE_MASK) != 0;
                 index++;
             }
         }
@@ -304,19 +312,37 @@ public class LazyTyleSearchIterator implements SearchIterator<AbstractNode> {
          * @return true if the buffer is at max capacity
          */
         private boolean fillWithNode(){
+            final boolean nodeSafe = ite.isSafe();
             int remaining = nodeIds.length-inc;
             if(bufferSize-indexSize > remaining){
                 //we have enough space to store all remaining ids
-                System.arraycopy(nodeIds, inc, indices, indexSize, remaining);
-                Arrays.fill(safes, indexSize, indexSize+remaining, ite.isSafe());
+                
+                if(nodeSafe){
+                    for(int i=inc,j=indexSize,n=inc+remaining; i<n; i++,j++){
+                        indices[j] = (nodeIds[i]<<1)^LB + 1;
+                    }
+                }else{
+                    for(int i=inc,j=indexSize,n=inc+remaining; i<n; i++,j++){
+                        indices[j] = (nodeIds[i]<<1)^LB;
+                    }
+                }
+
                 indexSize += remaining;
                 node = null;
                 return false;
             }else{
                 //copy part of the ids
                 remaining = bufferSize-indexSize;
-                System.arraycopy(nodeIds, inc, indices, indexSize, remaining);
-                Arrays.fill(safes, indexSize, indexSize+remaining, ite.isSafe());
+                if(nodeSafe){
+                    for(int i=inc,j=indexSize,n=inc+remaining; i<n; i++,j++){
+                        indices[j] = (nodeIds[i]<<1)^LB + 1;
+                    }
+                }else{
+                    for(int i=inc,j=indexSize,n=inc+remaining; i<n; i++,j++){
+                        indices[j] = (nodeIds[i]<<1)^LB;
+                    }
+                }
+
                 indexSize += remaining;
                 inc += remaining;
                 return true;
@@ -334,97 +360,5 @@ public class LazyTyleSearchIterator implements SearchIterator<AbstractNode> {
         }
 
     }
-
-
-
-
-    /**
-     * Sorts the specified sub-array of integers into ascending order.
-     * Apply the same sorting on the boolean array.
-     */
-    private static void sort1(int[] x,boolean[] safes, int off, int len) {
-	// Insertion sort on smallest arrays
-	if (len < 7) {
-	    for (int i=off; i<len+off; i++)
-		for (int j=i; j>off && x[j-1]>x[j]; j--)
-		    swap(x,safes, j, j-1);
-	    return;
-	}
-
-	// Choose a partition element, v
-	int m = off + (len >> 1);       // Small arrays, middle element
-	if (len > 7) {
-	    int l = off;
-	    int n = off + len - 1;
-	    if (len > 40) {        // Big arrays, pseudomedian of 9
-		int s = len/8;
-		l = med3(x, l,     l+s, l+2*s);
-		m = med3(x, m-s,   m,   m+s);
-		n = med3(x, n-2*s, n-s, n);
-	    }
-	    m = med3(x, l, m, n); // Mid-size, med of 3
-	}
-	int v = x[m];
-
-	// Establish Invariant: v* (<v)* (>v)* v*
-	int a = off, b = a, c = off + len - 1, d = c;
-	while(true) {
-	    while (b <= c && x[b] <= v) {
-		if (x[b] == v)
-		    swap(x,safes, a++, b);
-		b++;
-	    }
-	    while (c >= b && x[c] >= v) {
-		if (x[c] == v)
-		    swap(x,safes, c, d--);
-		c--;
-	    }
-	    if (b > c)
-		break;
-	    swap(x,safes, b++, c--);
-	}
-
-	// Swap partition elements back to middle
-	int s, n = off + len;
-	s = Math.min(a-off, b-a  );  vecswap(x,safes, off, b-s, s);
-	s = Math.min(d-c,   n-d-1);  vecswap(x,safes, b,   n-s, s);
-
-	// Recursively sort non-partition-elements
-	if ((s = b-a) > 1)
-	    sort1(x,safes, off, s);
-	if ((s = d-c) > 1)
-	    sort1(x,safes, n-s, s);
-    }
-
-    /**
-     * Swaps x[a] with x[b].
-     */
-    private static void swap(int x[],boolean[] safes, int a, int b) {
-	int t = x[a];
-	x[a] = x[b];
-	x[b] = t;
-
-        boolean k = safes[a];
-	safes[a] = safes[b];
-	safes[b] = k;
-    }
-
-    /**
-     * Swaps x[a .. (a+n-1)] with x[b .. (b+n-1)].
-     */
-    private static void vecswap(int x[],boolean[] safes, int a, int b, int n) {
-	for (int i=0; i<n; i++, a++, b++)
-	    swap(x, safes,a, b);
-    }
-
-    /**
-     * Returns the index of the median of the three indexed integers.
-     */
-    private static int med3(int x[], int a, int b, int c) {
-	return (x[a] < x[b] ?
-		(x[b] < x[c] ? b : x[a] < x[c] ? c : a) :
-		(x[b] > x[c] ? b : x[a] > x[c] ? c : a));
-    }
-
 
 }
