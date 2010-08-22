@@ -20,9 +20,13 @@ package org.geotoolkit.image.io.mosaic;
 
 /**
  * The policy for {@linkplain MosaicImageReader#getImageTypes computing image types} in a mosaic.
+ * Those policies offer various compromise between performance and safety in presence of a mosaic
+ * of heterogenous image format. The {@link #SUPPORTED_BY_ALL} mode is the safest one, but may be
+ * very expensive to compute. The {@link #SUPPORTED_BY_FIRST} mode is faster, but assume that every
+ * tiles in a mosaic use the same image format.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.15
  *
  * @see MosaicImageReadParam#getImageTypePolicy
  * @see MosaicImageReader#getDefaultImageTypePolicy
@@ -49,12 +53,32 @@ public enum ImageTypePolicy {
     SUPPORTED_BY_ONE(true),
 
     /**
+     * Returns {@linkplain javax.imageio.ImageTypeSpecifier type specifiers} that are supported
+     * by one of the first tiles to be read. This policy is similar to {@link #SUPPORTED_BY_ONE},
+     * except that the result is cached for all future invocation of the {@code read} method,
+     * unless a new input is set.
+     *
+     * @since 3.15
+     */
+    SUPPORTED_BY_FIRST(true),
+
+    /**
      * Returns a single {@linkplain javax.imageio.ImageTypeSpecifier type specifier} for images
      * of {@link java.awt.image.BufferedImage#TYPE_INT_ARGB TYPE_INT_ARGB}. This policy should
      * be used only when tiles are known in advance to be compatible with the ARGB model, and
      * this model is wanted.
      */
-    ALWAYS_ARGB(false);
+    ALWAYS_ARGB(false),
+
+    /**
+     * Returns a single {@linkplain javax.imageio.ImageTypeSpecifier type specifier} for images
+     * of {@link java.awt.image.BufferedImage#TYPE_INT_RGB TYPE_INT_RGB}. This policy should
+     * be used only when tiles are known in advance to be compatible with the RGB model, and
+     * this model is wanted.
+     *
+     * @since 3.15
+     */
+    ALWAYS_RGB(false);
 
     /**
      * {@code true} if reading a single tile with this policy can be delegated directly to the

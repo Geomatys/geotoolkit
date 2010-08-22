@@ -211,24 +211,31 @@ final class GDALTileManager extends TileManager implements Comparator<Rectangle>
      */
     @Override
     public int compare(final Rectangle r1, final Rectangle r2) {
+        return XMath.sgn(compare(r1, r2.x, r2.y));
+    }
+
+    /**
+     * Compares one rectangle with the (x,y) location of an other rectangle for order.
+     */
+    private long compare(final Rectangle r1, final int x2, final int y2) {
         int p1, p2;
         if (sortedByY) {
             p1 = r1.y;
-            p2 = r2.y;
+            p2 = y2;
         } else {
             p1 = r1.x;
-            p2 = r2.x;
+            p2 = x2;
         }
         if (p1 == p2) {
             if (sortedByY) {
                 p1 = r1.x;
-                p2 = r2.x;
+                p2 = x2;
             } else {
                 p1 = r1.y;
-                p2 = r2.y;
+                p2 = y2;
             }
         }
-        return XMath.sgn(p1 - p2);
+        return (long) p1 - (long) p2;
     }
 
     /**
@@ -308,13 +315,18 @@ final class GDALTileManager extends TileManager implements Comparator<Rectangle>
     {
         /*
          * Get the tile arrays in the regions intersecting the requested region.
-         *
-         * TODO: We should take advantage from the fact that regions are sorted.
+         * This loop takes advantage of the regions ordering for stopping as soon as possible.
          */
+        final int xmax = region.x + region.width;
+        final int ymax = region.y + region.height;
         int intersectCount = 0;
         Tile[][] intersect = new Tile[Math.min(tilesByRegion.length, 4)][];
         for (int i=0; i<tileRegions.length; i++) {
-            if (region.intersects(tileRegions[i])) {
+            final Rectangle tr = tileRegions[i];
+            if (compare(tr, xmax, ymax) > 0) {
+                break; // There is no way the following tiles can intersect.
+            }
+            if (region.intersects(tr)) {
                 if (intersectCount == intersect.length) {
                     intersect = Arrays.copyOf(intersect, intersectCount << 1);
                 }
@@ -418,8 +430,14 @@ final class GDALTileManager extends TileManager implements Comparator<Rectangle>
      */
     @Override
     public boolean intersects(final Rectangle region, final Dimension subsampling) {
+        final int xmax = region.x + region.width;
+        final int ymax = region.y + region.height;
         for (int i=0; i<tileRegions.length; i++) {
-            if (region.intersects(tileRegions[i])) {
+            final Rectangle tr = tileRegions[i];
+            if (compare(tr, xmax, ymax) > 0) {
+                break; // There is no way the following tiles can intersect.
+            }
+            if (region.intersects(tr)) {
                 final Tile[] array = tilesByRegion[i];
                 for (int j=array.length; --j>=0;) {
                     final Dimension s = array[j].getSubsampling();

@@ -112,6 +112,13 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
     private transient IIOMetadata[] metadata;
 
     /**
+     * The cached image type, used only for {@link ImageTypePolicy#SUPPORTED_BY_FIRST}.
+     *
+     * @since 3.15
+     */
+    private transient ImageTypeSpecifier cachedImageType;
+
+    /**
      * The logging level for tiling information during reads. Note that we choose a default
      * level slightly higher than the intermediate results logged by {@link RTree}.
      */
@@ -208,6 +215,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
     public void setInput(Object input, final boolean seekForwardOnly, final boolean ignoreMetadata)
             throws IllegalArgumentException
     {
+        cachedImageType = null;
         metadata = null;
         final TileManager[] managers;
         try {
@@ -697,18 +705,18 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
      * <p>
      * <ul>
      *   <li>{@link ImageTypePolicy#SUPPORTED_BY_ALL SUPPORTED_BY_ALL} if two or more</li>
-     *   <li>{@link ImageTypePolicy#SUPPORTED_BY_ONE SUPPORTED_BY_ONE} if exactly one</li>
+     *   <li>{@link ImageTypePolicy#SUPPORTED_BY_FIRST SUPPORTED_BY_FIRST} if exactly one</li>
      *   <li>{@link ImageTypePolicy#ALWAYS_ARGB ALWAYS_ARGB} if none.</li>
      * </ul>
      * <p>
-     * Note that {@link ImageTypePolicy#SUPPORTED_BY_ONE SUPPORTED_BY_ONE} is <strong>not</strong>
+     * Note that {@link ImageTypePolicy#SUPPORTED_BY_FIRST SUPPORTED_BY_FIRST} is <strong>not</strong>
      * a really safe choice even if there is only one provider, because the image type can also
      * depends on {@linkplain Tile#getInput tile input}. However the safest choice in all cases
      * ({@link ImageTypePolicy#SUPPORTED_BY_ALL SUPPORTED_BY_ALL}) is costly and often not
      * necessary. The current implementation is a compromise between safety and performance.
      * <p>
      * If Java assertions are enabled, this reader will verify that {@code SUPPORTED_BY_ONE}
-     * produces the same result than {@code SUPPORTED_BY_ALL}.
+     * and  {@code SUPPORTED_BY_FIRST} produce the same result than {@code SUPPORTED_BY_ALL}.
      * <p>
      * Subclasses can override this method if they want a different policy.
      *
@@ -717,7 +725,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
     public ImageTypePolicy getDefaultImageTypePolicy() {
         switch (providers.size()) {
             default: return ImageTypePolicy.SUPPORTED_BY_ALL;
-            case 1:  return ImageTypePolicy.SUPPORTED_BY_ONE;
+            case 1:  return ImageTypePolicy.SUPPORTED_BY_FIRST;
             case 0:  return ImageTypePolicy.ALWAYS_ARGB;
         }
     }
@@ -730,6 +738,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
         final int type;
         switch (policy) {
             case ALWAYS_ARGB: type = BufferedImage.TYPE_INT_ARGB; break;
+            case ALWAYS_RGB:  type = BufferedImage.TYPE_INT_RGB;  break;
             default: throw new IllegalArgumentException(policy.toString());
         }
         return ImageTypeSpecifier.createFromBufferedImageType(type);
@@ -746,7 +755,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
      *   <li>For {@link ImageTypePolicy#SUPPORTED_BY_ALL SUPPORTED_BY_ALL}, this method invokes
      *       {@code getRawImageType} for every tile readers, omits the types that are not declared
      *       in <code>{@linkplain ImageReader#getImageTypes getImageTypes}(imageIndex)</code> for
-     *       every tile readers, and returns the most common remainding value. If none is found,
+     *       every tile readers, and returns the most common remaining value. If none is found,
      *       then some {@linkplain ImageReader#getRawImageType default specifier} is returned.</li>
      * </ul>
      *
@@ -756,31 +765,61 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
      */
     @Override
     public ImageTypeSpecifier getRawImageType(final int imageIndex) throws IOException {
+        ImageTypeSpecifier type = getRawImageType(null, getDefaultImageTypePolicy(), imageIndex);
+        if (type == null) {
+            type = super.getRawImageType(imageIndex);
+        }
+        return type;
+    }
+
+    /**
+     * Implementation of {@link #getRawImageType(int)}, which can be restricted to a subset
+     * of the tile collection.
+     *
+     * @param tiles      The tiles to use for computing the type, or {@code null} for all of them.
+     * @param policy     The image type policy.
+     * @param imageIndex The index of the requested image.
+     * @return A raw image type specifier, or {@code null} if none were found.
+     * @throws IOException If an error occurs reading the information from the input source.
+     */
+    @SuppressWarnings("fallthrough")
+    private ImageTypeSpecifier getRawImageType(Collection<Tile> tiles, final ImageTypePolicy policy,
+            final int imageIndex) throws IOException
+    {
         ImageTypeSpecifier type = null;
-        final ImageTypePolicy policy = getDefaultImageTypePolicy();
         switch (policy) {
             default: {
                 type = getPredefinedImageType(policy);
                 break;
             }
+            case SUPPORTED_BY_FIRST: {
+                if (cachedImageType != null) {
+                    return cachedImageType;
+                }
+                // Fall through
+            }
             case SUPPORTED_BY_ONE: {
-                final Collection<Tile> tiles = getTileManager(imageIndex).getTiles();
+                if (tiles == null) {
+                    tiles = getTileManager(imageIndex).getTiles();
+                }
                 final Tile tile = getSpecificTile(tiles);
                 if (tile != null) {
-                    type = getTileReader(tile).getRawImageType(imageIndex);
+                    type = getTileReader(tile).getRawImageType(tile.getImageIndex());
                     assert type == null || // Should never be null with non-broken ImageReader.
                            type.equals(getRawImageType(tiles)) : incompatibleImageType(tile);
                 }
                 break;
             }
             case SUPPORTED_BY_ALL: {
-                final Collection<Tile> tiles = getTileManager(imageIndex).getTiles();
+                if (tiles == null) {
+                    tiles = getTileManager(imageIndex).getTiles();
+                }
                 type = getRawImageType(tiles);
                 break;
             }
         }
-        if (type == null) {
-            type = super.getRawImageType(imageIndex);
+        if (policy == ImageTypePolicy.SUPPORTED_BY_FIRST) {
+            cachedImageType = type;
         }
         return type;
     }
@@ -909,6 +948,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
                 types = Collections.singleton(getPredefinedImageType(policy)).iterator();
                 break;
             }
+            case SUPPORTED_BY_FIRST:
             case SUPPORTED_BY_ONE: {
                 final Collection<Tile> tiles = getTileManager(imageIndex).getTiles();
                 final Tile tile = getSpecificTile(tiles);
@@ -916,7 +956,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
                     final Collection<ImageTypeSpecifier> t = Collections.emptySet();
                     return t.iterator();
                 }
-                types = getTileReader(tile).getImageTypes(imageIndex);
+                types = getTileReader(tile).getImageTypes(tile.getImageIndex());
                 assert (types = containsAll(getImageTypes(tiles, null), types)) != null : incompatibleImageType(tile);
                 break;
             }
@@ -1123,25 +1163,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
                     if (policy == null) {
                         policy = getImageTypePolicy(param);
                     }
-                    switch (policy) {
-                        default: {
-                            imageType = getPredefinedImageType(policy);
-                            break;
-                        }
-                        case SUPPORTED_BY_ONE: {
-                            final Tile tile = getSpecificTile(tiles);
-                            if (tile != null) {
-                                imageType = getTileReader(tile).getRawImageType(tile.getImageIndex());
-                                assert imageType == null || // Should never be null with non-broken ImageReader.
-                                       imageType.equals(getRawImageType(tiles)) : incompatibleImageType(tile);
-                            }
-                            break;
-                        }
-                        case SUPPORTED_BY_ALL: {
-                            imageType = getRawImageType(tiles);
-                            break;
-                        }
-                    }
+                    imageType = getRawImageType(tiles, policy, imageIndex);
                     if (imageType == null) {
                         /*
                          * This case occurs if the tiles collection is empty.  We want to produce
@@ -1465,6 +1487,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
      */
     @Override
     public void dispose() {
+        cachedImageType = null;
         metadata = null;
         input = null;
         try {
