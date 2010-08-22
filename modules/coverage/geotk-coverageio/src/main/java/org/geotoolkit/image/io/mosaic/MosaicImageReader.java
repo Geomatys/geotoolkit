@@ -705,7 +705,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
      * a really safe choice even if there is only one provider, because the image type can also
      * depends on {@linkplain Tile#getInput tile input}. However the safest choice in all cases
      * ({@link ImageTypePolicy#SUPPORTED_BY_ALL SUPPORTED_BY_ALL}) is costly and often not
-     * necessary. The current implementation is a compromize between safety and performance.
+     * necessary. The current implementation is a compromise between safety and performance.
      * <p>
      * If Java assertions are enabled, this reader will verify that {@code SUPPORTED_BY_ONE}
      * produces the same result than {@code SUPPORTED_BY_ALL}.
@@ -1131,7 +1131,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
                         case SUPPORTED_BY_ONE: {
                             final Tile tile = getSpecificTile(tiles);
                             if (tile != null) {
-                                imageType = getTileReader(tile).getRawImageType(imageIndex);
+                                imageType = getTileReader(tile).getRawImageType(tile.getImageIndex());
                                 assert imageType == null || // Should never be null with non-broken ImageReader.
                                        imageType.equals(getRawImageType(tiles)) : incompatibleImageType(tile);
                             }

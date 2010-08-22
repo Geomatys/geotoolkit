@@ -44,7 +44,7 @@ import org.geotoolkit.resources.Errors;
 
 
 /**
- * A grid coverage reader for a layer. This project provides a way to read the data using only
+ * A grid coverage reader for a layer. This class provides a way to read the data using only
  * the {@link GridCoverageReader} API. Alternative ways to read the same data are:
  * <p>
  * <ul>

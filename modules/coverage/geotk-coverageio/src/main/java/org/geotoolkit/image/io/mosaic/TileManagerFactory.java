@@ -367,7 +367,7 @@ public class TileManagerFactory extends Factory {
      * <p>
      * Subclasses can override this method if they want to create other kinds of tile managers.
      *
-     * @param tiles A copy of user-supplied tiles.
+     * @param  tiles A copy of user-supplied tiles.
      * @return The tile manager for the given tiles.
      * @throws IOException If an I/O operation was required and failed.
      */
@@ -376,10 +376,15 @@ public class TileManagerFactory extends Factory {
         try {
             manager = new GridTileManager(tiles);
         } catch (IllegalArgumentException e) {
-            // Failed to created the instance optimized for grid.
-            // Fallback on the more generic instance using RTree.
-            Logging.recoverableException(TileManagerFactory.class, "createGeneric", e);
-            return new TreeTileManager(tiles);
+            Logging.recoverableException(GridTileManager.class, "<init>", e);
+            try {
+                manager = new GDALTileManager(tiles);
+            } catch (IllegalArgumentException e2) {
+                // Failed to created the instance optimized for grid.
+                // Fallback on the more generic instance using RTree.
+                Logging.recoverableException(GDALTileManager.class, "<init>", e2);
+                return new TreeTileManager(tiles);
+            }
         }
         // Intentional side effect: use ComparedTileManager only if assertions are enabled.
         assert (manager = new ComparedTileManager(manager, new TreeTileManager(tiles))) != null;

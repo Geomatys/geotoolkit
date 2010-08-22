@@ -31,7 +31,6 @@ import org.geotoolkit.gui.swing.tree.TreeNodeFilter;
 import org.geotoolkit.util.Comparators;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -47,7 +46,7 @@ import org.geotoolkit.util.logging.Logging;
  * more may slow down the execution.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.04
  *
  * @since 2.5
  * @module
@@ -208,38 +207,16 @@ final class TreeTileManager extends TileManager implements TreeNodeFilter {
     }
 
     /**
-     * Returns {@code true} if the given array contains at least one tile using an image
-     * index different than zero. This is a cheap test for a common case, since out non-
-     * GDAL tile layout does not use overview bundled in the base tile.
-     */
-    private static boolean hasOverviews(final Tile[] tiles) {
-        for (final Tile tile : tiles) {
-            if (tile.getImageIndex() != 0) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Returns the RTree, creating it if necessary. Calls to this method must be followed by a
      * {@code try ... finally} block with call to {@link #release} in the {@code finally} block.
      */
     private synchronized RTree getTree() throws IOException {
         if (trees == null) {
-            TreeNode root = null;
-            if (hasOverviews(tiles)) try {
-                root = new GDALNode(tiles);
-            } catch (IllegalArgumentException e) {
-                Logging.recoverableException(GDALNode.class, "<init>", e);
-            }
-            if (root == null) {
-                root = new GridNode(tiles);
-                assert root.containsAll(allTiles);
-            }
-            final RTree   tree  = new RTree(root);
-            final RTree[] trees = new RTree[CONCURRENT_THREADS];
+            final TreeNode root  = new GridNode(tiles);
+            final RTree    tree  = new RTree(root);
+            final RTree[]  trees = new RTree[CONCURRENT_THREADS];
             trees[0] = tree;
+            assert root.containsAll(allTiles);
             this.trees = trees; // Save last so it is saved only on success.
         }
         /*

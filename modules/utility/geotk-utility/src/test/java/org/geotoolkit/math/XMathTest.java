@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.math;
 
-import java.util.Arrays;
 import org.geotoolkit.util.XArrays;
 import static org.geotoolkit.math.XMath.*;
 
@@ -29,7 +28,7 @@ import static org.junit.Assert.*;
  * Tests the {@link XMath} static methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.09
+ * @version 3.15
  *
  * @since 2.5
  */
@@ -134,16 +133,30 @@ public final class XMathTest {
                 assertEquals(i, divisors[divisors.length - 1]);
             }
         }
-        assertTrue(Arrays.equals(divisors(2000), new int[] {
+        assertArrayEquals(new int[] {
             1, 2, 4, 5, 8, 10, 16, 20, 25, 40, 50, 80, 100, 125, 200, 250, 400, 500, 1000, 2000
-        }));
-        assertTrue(Arrays.equals(divisors(4331), new int[] {
+        }, divisors(2000));
+
+        assertArrayEquals(new int[] {
             1, 61, 71, 4331
-        }));
-        assertTrue(Arrays.equals(divisors(7800), new int[] {
+        }, divisors(4331));
+
+        assertArrayEquals(new int[] {
             1, 2, 3, 4, 5, 6, 8, 10, 12, 13, 15, 20, 24, 25, 26, 30, 39, 40, 50, 52, 60, 65, 75,
             78, 100, 104, 120, 130, 150, 156, 195, 200, 260, 300, 312, 325, 390, 520, 600, 650,
             780, 975, 1300, 1560, 1950, 2600, 3900, 7800
-        }));
+        }, divisors(7800));
+    }
+
+    /**
+     * Tests the {@link XMath#commonDivisors} method.
+     *
+     * @since 3.15
+     */
+    @Test
+    public void testCommonDivisors() {
+        assertArrayEquals(new int[] {
+            1, 5
+        }, commonDivisors(2000, 15));
     }
 }

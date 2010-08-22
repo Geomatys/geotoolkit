@@ -73,6 +73,7 @@ final class GridTileManager extends TileManager {
 
     /**
      * Creates a new tile manager from an existing collection of overviews.
+     * This is for use by {@link MosaicBuilder} only.
      *
      * @param root The root overview to assign to the tile manageR.
      */

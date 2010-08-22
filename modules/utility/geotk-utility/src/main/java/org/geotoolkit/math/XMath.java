@@ -28,7 +28,7 @@ import org.geotoolkit.resources.Errors;
  * Simple mathematical functions in addition to the ones provided in {@link Math}.
  *
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
- * @version 3.09
+ * @version 3.15
  *
  * @since 1.0
  * @module
@@ -63,6 +63,11 @@ public final class XMath {
      * of the first prime number that can not be stored as 16 bits unsigned.
      */
     private static final int MAX_PRIMES_LENGTH = 6542;
+
+    /**
+     * Small tolerance factor for working around floating point rounding errors.
+     */
+    private static final double EPS = 1E-6;
 
     /**
      * Do not allow instantiation of this class.
@@ -540,7 +545,7 @@ next:           while (true) {
          * values before that point, i.e. if n=p1*p2 and p2 is greater than 'sqrt', than p1
          * most be lower than 'sqrt'.
          */
-        final int sqrt = (int) (Math.sqrt(number) + 1E-6); // Really wants rounding toward 0.
+        final int sqrt = (int) (Math.sqrt(number) + EPS); // Really wants rounding toward 0.
         for (int p,i=0; (p=primeNumber(i)) <= sqrt; i++) {
             if (number % p == 0) {
                 if (count == divisors.length) {
@@ -592,5 +597,48 @@ next:           while (true) {
         divisors = XArrays.resize(divisors, count);
         assert XArrays.isSorted(divisors, true);
         return divisors;
+    }
+
+    /**
+     * Returns the divisors which are common to all the specified numbers.
+     *
+     * @param  numbers The numbers for which to compute the divisors.
+     * @return The divisors common to all the given numbers, in strictly increasing order.
+     *
+     * @since 3.15
+     */
+    public static int[] commonDivisors(final int... numbers) {
+        if (numbers.length == 0) {
+            return new int[0];
+        }
+        /*
+         * Get the smallest value. We will compute the divisors only for this value,
+         * since we know that any value greater that the minimal value can not be a
+         * common divisor.
+         */
+        int minValue = Integer.MAX_VALUE;
+        for (int i=0; i<numbers.length; i++) {
+            final int n = Math.abs(numbers[i]);
+            if (n <= minValue) {
+                minValue = n;
+            }
+        }
+        int[] divisors = divisors(minValue);
+        /*
+         * Tests if the divisors we just found are also divisors of all other numbers.
+         * Removes those which are not.
+         */
+        int count = divisors.length;
+        for (int i=0; i<numbers.length; i++) {
+            final int n = Math.abs(numbers[i]);
+            if (n != minValue) {
+                for (int j=count; --j>0;) { // Do not test j==0, since divisors[0] ==  1.
+                    if (n % divisors[j] != 0) {
+                        System.arraycopy(divisors, j+1, divisors, j, --count - j);
+                    }
+                }
+            }
+        }
+        return XArrays.resize(divisors, count);
     }
 }
