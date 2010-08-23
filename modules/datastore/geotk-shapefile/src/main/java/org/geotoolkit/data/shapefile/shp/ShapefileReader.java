@@ -149,18 +149,43 @@ public class ShapefileReader{
      */
     public ShapefileReader(ShpFiles shapefileFiles, boolean strict,
             boolean useMemoryMapped) throws IOException, DataStoreException {
+        this(shapefileFiles,strict,useMemoryMapped,null);
+    }
+
+    /**
+     * Creates a new instance of ShapeFile.
+     *
+     * @param shapefileFiles
+     *                The ReadableByteChannel this reader will use.
+     * @param strict
+     *                True to make the header parsing throw Exceptions if the
+     *                version or magic number are incorrect.
+     * @throws IOException
+     *                 If problems arise.
+     * @throws ShapefileException
+     *                 If for some reason the file contains invalid records.
+     */
+    public ShapefileReader(ShpFiles shapefileFiles, boolean strict,
+            boolean useMemoryMapped, ShxReader shxReader) throws IOException, DataStoreException {
         this.channel = shapefileFiles.getReadChannel(ShpFileType.SHP, this);
         this.useMemoryMappedBuffer = useMemoryMapped;
         randomAccessEnabled = channel instanceof FileChannel;
-        try {
-            shxReader = new ShxReader(shapefileFiles, true);
-        } catch(Exception e) {
-            LOGGER.log(Level.FINE, "Could not open the .shx file, continuing " +
-            		"assuming the .shp file is not sparse", e);
-            currentShape = UNKNOWN;
+
+        if(shxReader == null){
+            try {
+                shxReader = new ShxReader(shapefileFiles, true);
+            } catch(Exception e) {
+                LOGGER.log(Level.FINE, "Could not open the .shx file, continuing " +
+                            "assuming the .shp file is not sparse", e);
+                currentShape = UNKNOWN;
+            }
         }
+
+        this.shxReader = shxReader;
+
         init(strict);
     }
+
     
     /**
      * Disables .shx file usage. By doing so you drop support for sparse shapefiles, the 

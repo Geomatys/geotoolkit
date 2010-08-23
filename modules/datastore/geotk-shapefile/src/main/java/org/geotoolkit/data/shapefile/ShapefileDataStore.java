@@ -728,8 +728,18 @@ public class ShapefileDataStore extends AbstractDataStore{
      * @throws IOException If an error occurs during creation.
      */
     protected ShapefileReader openShapeReader() throws DataStoreException {
+        return openShapeReader(null);
+    }
+
+    /**
+     * Convenience method for opening a ShapefileReader.
+     *
+     * @return A new ShapefileReader.
+     * @throws IOException If an error occurs during creation.
+     */
+    protected ShapefileReader openShapeReader(ShxReader shx) throws DataStoreException {
         try {
-            return new ShapefileReader(shpFiles, true, useMemoryMappedBuffer);
+            return new ShapefileReader(shpFiles, true, useMemoryMappedBuffer,shx);
         } catch (IOException se) {
             throw new DataStoreException("Error creating ShapefileReader", se);
         }

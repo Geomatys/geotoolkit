@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
-import org.geotoolkit.index.quadtree.DataReader;
 import com.vividsolutions.jts.geom.Envelope;
 
 import java.io.File;
@@ -36,6 +35,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DefaultSimpleFeatureReader;
@@ -65,9 +65,9 @@ import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.Data;
 import org.geotoolkit.index.LockTimeoutException;
 import org.geotoolkit.index.TreeException;
+import org.geotoolkit.index.quadtree.DataReader;
 import org.geotoolkit.index.quadtree.QuadTree;
 import org.geotoolkit.index.quadtree.StoreException;
-import org.geotoolkit.index.quadtree.fs.FileSystemIndexStore;
 import org.geotoolkit.index.rtree.RTree;
 import org.geotoolkit.util.NullProgressListener;
 import org.geotoolkit.data.query.QueryUtilities;
@@ -209,20 +209,19 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
     /**
      * Forces the spatial index to be created
      */
-    public void createSpatialIndex() throws IOException {
+    public final void createSpatialIndex() throws IOException {
         buildQuadTree(maxDepth);
     }
 
     @Override
     protected void finalize() throws Throwable {
+        super.finalize();
         if (rtree != null) {
             try {
                 rtree.close();
             } catch (Exception e) {
-                e.printStackTrace();
-                getLogger()
-                        .severe("org.geotoolkit.data.shapefile.indexed.IndexedShapeFileDataStore#finalize(): Error closing rtree. "
-                                + e.getLocalizedMessage());
+                getLogger().log(Level.WARNING, "org.geotoolkit.data.shapefile.indexed"
+                        + ".IndexedShapeFileDataStore#finalize(): Error closing rtree. {0}", e.getLocalizedMessage());
             }
         }
     }
@@ -356,7 +355,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * 
      * @throws IOException
      */
-    public void generateFidIndex() throws IOException {
+    public final void generateFidIndex() throws IOException {
         IndexedFidWriter.generate(shpFiles);
     }
 
@@ -424,9 +423,17 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         final double[] minRes = (double[]) hints.get(HintsPending.KEY_IGNORE_SMALL_FEATURES);
 
         CloseableCollection<ShpData> goodCollec = null;
+        
+        final ShxReader shx;
+        try {
+            shx = openIndexFile();
+        } catch (IOException ex) {
+            throw new DataStoreException("Error opening Shx file: " + ex.getMessage(), ex);
+        }
+
         try {
             final QuadTree quadTree = openQuadTree();
-            final DataReader dr = new IndexDataReader(openIndexFile());
+            final DataReader dr = new IndexDataReader(shx);
             if ((quadTree != null)) {
                 goodCollec = quadTree.search(dr,bbox,minRes);
             }
@@ -445,7 +452,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         }
 
         return new IndexedBBoxShapefileAttributeReader(properties,
-                openShapeReader(), dbfR, goodCollec, col.bboxIterator(),bbox,minRes);
+                openShapeReader(shx), dbfR, goodCollec, col.bboxIterator(),bbox,minRes);
     }
 
     /**
@@ -538,7 +545,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         return true;
     }
 
-    boolean needsGeneration(ShpFileType indexType) {
+    final boolean needsGeneration(ShpFileType indexType) {
         if (!shpFiles.isLocal())
             throw new IllegalStateException(
                     "This method only applies if the files are local and the file can be created");
