@@ -131,6 +131,7 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
 
                 moveToNextDbf();
                 super.read(buffer);
+//                hasNext = true;
                 final Geometry candidate = (Geometry) buffer[geomAttIndex];
                 hasNext = boundingGeometry.intersects(candidate);
             }

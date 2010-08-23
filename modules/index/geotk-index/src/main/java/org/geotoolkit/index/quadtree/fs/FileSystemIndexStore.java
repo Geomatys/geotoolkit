@@ -17,9 +17,7 @@
  */
 package org.geotoolkit.index.quadtree.fs;
 
-import org.geotoolkit.index.quadtree.AbstractNode;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -27,13 +25,11 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.logging.Level;
 
+import org.geotoolkit.index.quadtree.AbstractNode;
 import org.geotoolkit.index.quadtree.DataReader;
 import org.geotoolkit.index.quadtree.IndexStore;
-import org.geotoolkit.index.quadtree.Node;
 import org.geotoolkit.index.quadtree.QuadTree;
 import org.geotoolkit.index.quadtree.StoreException;
-
-import com.vividsolutions.jts.geom.Envelope;
 
 import static org.geotoolkit.index.quadtree.fs.IndexHeader.*;
 
@@ -184,7 +180,7 @@ public class FileSystemIndexStore implements IndexStore {
         int offset = 0;
 
         for (int i=0,n=node.getNumSubNodes(); i<n; i++) {
-            AbstractNode tmp = node.getSubNode(i);
+            final AbstractNode tmp = node.getSubNode(i);
             offset += (4 * 8); // Envelope size
             offset += ((tmp.getNumShapeIds() + 3) * 4); // Entries size + 3
             offset += this.getSubNodeOffset(tmp);
@@ -201,7 +197,7 @@ public class FileSystemIndexStore implements IndexStore {
      * @see IndexStore#load(org.geotoolkit.data.shapefile.shp.IndexFile)
      */
     @Override
-    public QuadTree load(DataReader indexfile) throws StoreException {
+    public QuadTree load(DataReader dataReader) throws StoreException {
         QuadTree tree = null;
 
         try {
@@ -209,41 +205,7 @@ public class FileSystemIndexStore implements IndexStore {
                 QuadTree.LOGGER.log(Level.FINEST, "Opening QuadTree {0}", this.file.getCanonicalPath());
             }
 
-            final FileInputStream fis = new FileInputStream(file);
-            final FileChannel channel = fis.getChannel();
-
-            final IndexHeader header = new IndexHeader(channel);
-
-            final ByteOrder order = byteToOrder(header.getByteOrder());
-            final ByteBuffer buf = ByteBuffer.allocate(8);
-            buf.order(order);
-            channel.read(buf);
-            buf.flip();
-
-            tree = new QuadTree(buf.getInt(), buf.getInt(), indexfile) {
-                @Override
-                public void insert(int recno, Envelope bounds) {
-                    throw new UnsupportedOperationException("File quadtrees are immutable");
-                }
-
-                @Override
-                public boolean trim() {
-                    return false;
-                }
-
-                @Override
-                public void close() throws StoreException {
-                    super.close();
-                    try {
-                        channel.close();
-                        fis.close();
-                    } catch (IOException e) {
-                        throw new StoreException(e);
-                    }
-                }
-            };
-
-            tree.setRoot(FileSystemNode.readNode(channel, order));
+            tree = FileSystemQuadTree.load(file, dataReader);
 
             QuadTree.LOGGER.finest("QuadTree opened");
         } catch (IOException e) {
@@ -253,47 +215,35 @@ public class FileSystemIndexStore implements IndexStore {
         return tree;
     }
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @param order
-     * 
-     */
-    private static ByteOrder byteToOrder(byte order) {
-        ByteOrder ret = null;
-
-        switch (order) {
-            case NATIVE_ORDER:
-                ret = ByteOrder.nativeOrder();break;
-
-            case LSB_ORDER:
-            case NEW_LSB_ORDER:
-                ret = ByteOrder.LITTLE_ENDIAN;break;
-
-            case MSB_ORDER:
-            case NEW_MSB_ORDER:
-                ret = ByteOrder.BIG_ENDIAN;break;
-        }
-
-        return ret;
+    static FileSystemNode readNode(FileChannel channel, ByteOrder order) throws IOException {
+        final ScrollingBuffer buffer = new ScrollingBuffer(channel, order);
+        return readNode(buffer);
     }
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @return Returns the byteOrder.
-     */
-    public int getByteOrder() {
-        return this.byteOrder;
+    static FileSystemNode readNode(ScrollingBuffer buf)
+            throws IOException {
+        // offset
+        final int offset = buf.getInt();
+
+        // envelope
+        final double x1 = buf.getDouble();
+        final double y1 = buf.getDouble();
+        final double x2 = buf.getDouble();
+        final double y2 = buf.getDouble();
+
+        // shapes in this node
+        final int numShapesId = buf.getInt();
+        final int[] ids = new int[numShapesId];
+        buf.getIntArray(ids);
+        final int numSubNodes = buf.getInt();
+
+        // let's create the new node
+        final FileSystemNode node = new FileSystemNode(
+                x1,y1,x2,y2, buf,(int)buf.getPosition(),offset);
+        node.setShapesId(ids);
+        node.setNumSubNodes(numSubNodes);
+
+        return node;
     }
 
-    /**
-     * DOCUMENT ME!
-     * 
-     * @param byteOrder
-     *                The byteOrder to set.
-     */
-    public void setByteOrder(byte byteOrder) {
-        this.byteOrder = byteOrder;
-    }
 }

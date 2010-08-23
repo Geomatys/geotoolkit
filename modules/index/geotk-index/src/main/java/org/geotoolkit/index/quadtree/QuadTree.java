@@ -70,6 +70,19 @@ public class QuadTree<T extends Data> {
     }
 
     /**
+     * Constructor. WARNING: using this constructor, you have to manually set
+     * the root
+     *
+     * @param numShapes
+     *                The total number of shapes to index
+     * @param maxDepth
+     *                The max depth of the index, must be <= 65535
+     */
+    public QuadTree(int numShapes, int maxDepth, DataReader file) {
+        this(numShapes, maxDepth, null, file);
+    }
+
+    /**
      * Constructor.
      * 
      * @param numShapes
@@ -109,16 +122,16 @@ public class QuadTree<T extends Data> {
     }
 
     /**
-     * Constructor. WARNING: using this constructor, you have to manually set
-     * the root
-     * 
-     * @param numShapes
-     *                The total number of shapes to index
-     * @param maxDepth
-     *                The max depth of the index, must be <= 65535
+     * Will cause the tree to explore every node.
      */
-    public QuadTree(int numShapes, int maxDepth, DataReader file) {
-        this(numShapes, maxDepth, null, file);
+    public void loadAll() throws StoreException{
+        load(getRoot());
+    }
+
+    private void load(AbstractNode node) throws StoreException{
+        for(int i=0, n=node.getNumSubNodes(); i<n; i++){
+            load(node.getSubNode(i));
+        }
     }
 
     /**

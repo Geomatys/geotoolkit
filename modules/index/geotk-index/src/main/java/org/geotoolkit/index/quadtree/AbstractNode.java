@@ -44,6 +44,12 @@ public abstract class AbstractNode {
     private int numShapesId;
     private int[] shapesId;
 
+    /**
+     * @param env the node envelope
+     */
+    public AbstractNode(Envelope env) {
+        this(env.getMinX(),env.getMinY(),env.getMaxX(),env.getMaxY());
+    }
 
     /**
      * @param envelope the node bounds [MinX,MinY,MaxX,MaxY]
@@ -58,15 +64,6 @@ public abstract class AbstractNode {
         Arrays.fill(this.shapesId, -1);
     }
 
-    public AbstractNode(Envelope env) {
-        this.minx = env.getMinX();
-        this.miny = env.getMinY();
-        this.maxx = env.getMaxX();
-        this.maxy = env.getMaxY();
-        this.shapesId = new int[1];
-        this.numShapesId = 0;
-        Arrays.fill(this.shapesId, -1);
-    }
 
     public abstract void setSubNodes(AbstractNode ... nodes);
 

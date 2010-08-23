@@ -18,6 +18,7 @@ package org.geotoolkit.index.quadtree.fs;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.channels.ReadableByteChannel;
 import java.nio.charset.Charset;
 import org.geotoolkit.index.quadtree.QuadTree;
@@ -103,10 +104,41 @@ public class IndexHeader {
 
     /**
      * DOCUMENT ME!
-     *
      * @return Returns the byteOrder.
      */
-    public byte getByteOrder() {
+    public byte getByteOrderValue() {
         return this.byteOrder;
     }
+
+    /**
+     * DOCUMENT ME!
+     * @param order
+     */
+    public ByteOrder getByteOrder() {
+        return byteToOrder(this.byteOrder);
+    }
+
+    /**
+     * DOCUMENT ME!
+     * @param order
+     */
+    public static ByteOrder byteToOrder(byte order) {
+        ByteOrder ret = null;
+
+        switch (order) {
+            case NATIVE_ORDER:
+                ret = ByteOrder.nativeOrder();break;
+
+            case LSB_ORDER:
+            case NEW_LSB_ORDER:
+                ret = ByteOrder.LITTLE_ENDIAN;break;
+
+            case MSB_ORDER:
+            case NEW_MSB_ORDER:
+                ret = ByteOrder.BIG_ENDIAN;break;
+        }
+
+        return ret;
+    }
+
 }
