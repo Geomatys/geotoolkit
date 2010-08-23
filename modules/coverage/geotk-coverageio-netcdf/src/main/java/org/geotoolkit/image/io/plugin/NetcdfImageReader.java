@@ -61,6 +61,7 @@ import ucar.nc2.NetcdfFile;
 import org.geotoolkit.image.io.Protocol;
 import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.image.io.FileImageReader;
+import org.geotoolkit.image.io.MultidimensionalImageStore;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.SampleConverter;
 import org.geotoolkit.image.io.SpatialImageReadParam;
@@ -110,7 +111,9 @@ import org.geotoolkit.util.logging.Logging;
  * @since 3.08 (derived from 2.4)
  * @module
  */
-public class NetcdfImageReader extends FileImageReader implements NamedImageStore, CancelTask {
+public class NetcdfImageReader extends FileImageReader implements
+        MultidimensionalImageStore, NamedImageStore, CancelTask
+{
     /**
      * The enhancements to enable when opening a NetCDF data set.
      */

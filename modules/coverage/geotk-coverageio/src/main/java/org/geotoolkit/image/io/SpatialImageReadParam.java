@@ -149,7 +149,7 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      *
      * @since 3.08
      */
-    private DimensionSlices dimensionSlices;
+    private DimensionSlices<DimensionSlice> dimensionSlices;
 
     /**
      * The name of the color palette.
@@ -220,7 +220,7 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      */
     public DimensionSlice newDimensionSlice() {
         if (dimensionSlices == null) {
-            dimensionSlices = new DimensionSlices(this);
+            dimensionSlices = new DimensionSlices<DimensionSlice>(this);
         }
         return new DimensionSlice(dimensionSlices);
     }
@@ -239,7 +239,7 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      */
     public Set<DimensionSlice> getDimensionSlices() {
         if (dimensionSlices == null) {
-            dimensionSlices = new DimensionSlices(this);
+            dimensionSlices = new DimensionSlices<DimensionSlice>(this);
         }
         return dimensionSlices;
     }

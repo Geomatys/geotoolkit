@@ -38,7 +38,7 @@ import static org.geotoolkit.image.io.DimensionSlice.API;
 
 
 /**
- * A set of {@link DimensionSlice} instances, which contains also the implementation
+ * A set of {@link DimensionIdentification} instances, which contains also the implementation
  * of public {@link SpatialImageReadParam} and {@link SpatialImageWriteParam} API.
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -47,7 +47,7 @@ import static org.geotoolkit.image.io.DimensionSlice.API;
  * @since 3.08
  * @module
  */
-final class DimensionSlices extends AbstractSet<DimensionSlice> {
+final class DimensionSlices<E extends DimensionIdentification> extends AbstractSet<E> {
     /**
      * The parameters that created this object.
      */
@@ -57,7 +57,7 @@ final class DimensionSlices extends AbstractSet<DimensionSlice> {
      * For <var>n</var>-dimensional images where <var>n</var>&gt;2, the data to
      * select in arbitrary dimensions. Will be created only when first needed.
      */
-    Map<Object,DimensionSlice> identifiersMap;
+    Map<Object,E> identifiersMap;
 
     /**
      * For <var>n</var>-dimensional images, the standard Java API to use for setting the index.
@@ -69,7 +69,7 @@ final class DimensionSlices extends AbstractSet<DimensionSlice> {
     /**
      * The dimension slices, or {@code null} if not yet computed.
      */
-    private Set<DimensionSlice> slices;
+    private Set<E> slices;
 
     /**
      * Creates a new {@code DimensionSlices} instance.
@@ -91,10 +91,10 @@ final class DimensionSlices extends AbstractSet<DimensionSlice> {
     /**
      * Returns the dimension slices.
      */
-    private Set<DimensionSlice> slices() {
+    private Set<E> slices() {
         if (slices == null) {
             if (identifiersMap != null) {
-                slices = new LinkedHashSet<DimensionSlice>(identifiersMap.values());
+                slices = new LinkedHashSet<E>(identifiersMap.values());
             } else {
                 slices = Collections.emptySet();
             }
@@ -124,7 +124,7 @@ final class DimensionSlices extends AbstractSet<DimensionSlice> {
      * Returns an iterator over the dimension slices.
      */
     @Override
-    public Iterator<DimensionSlice> iterator() {
+    public Iterator<E> iterator() {
         return slices().iterator();
     }
 
@@ -144,19 +144,19 @@ final class DimensionSlices extends AbstractSet<DimensionSlice> {
     }
 
     /**
-     * Adds an identifier for the dimension represented by the given {@code DimensionSlice}.
+     * Adds an identifier for the dimension represented by the given {@code DimensionIdentification}.
      *
      * @param  identifier The identifier to add.
      * @throws IllegalArgumentException If the given identifier is already assigned
-     *         to an other {@code DimensionSlice} instance.
+     *         to an other {@code DimensionIdentification} instance.
      */
-    final void addDimensionId(final DimensionSlice dimension, final Object identifier)
+    final void addDimensionId(final E dimension, final Object identifier)
             throws IllegalArgumentException
     {
         if (identifiersMap == null) {
-            identifiersMap = new LinkedHashMap<Object,DimensionSlice>();
+            identifiersMap = new LinkedHashMap<Object,E>();
         }
-        final DimensionSlice old = identifiersMap.put(identifier, dimension);
+        final E old = identifiersMap.put(identifier, dimension);
         if (old != null && !old.equals(dimension)) {
             identifiersMap.put(identifier, old); // Restore the previous value.
             throw new IllegalArgumentException(Errors.getResources(getLocale())
@@ -200,7 +200,7 @@ final class DimensionSlices extends AbstractSet<DimensionSlice> {
         if (identifiersMap != null) {
             Map<Integer,Object> found = null;
             for (final Object id : dimensionIds) {
-                final DimensionSlice source = identifiersMap.get(id);
+                final DimensionSlice source = (DimensionSlice) identifiersMap.get(id);
                 if (source != null) {
                     final Integer index = source.getSliceIndex();
                     if (found == null) {
@@ -230,16 +230,16 @@ final class DimensionSlices extends AbstractSet<DimensionSlice> {
      *         that identify the dimension for which the slice is desired.
      * @return The first slice found for the given dimension identifiers, or {@code null} if none.
      */
-    DimensionSlice getDimensionSlice(final WarningProducer caller,
+    final E getDimensionSlice(final WarningProducer caller,
             final Class<? extends WarningProducer> callerClass, final Object... dimensionIds)
     {
         if (identifiersMap != null) {
-            Map<DimensionSlice,Object> found = null;
+            Map<E,Object> found = null;
             for (final Object id : dimensionIds) {
-                final DimensionSlice slice = identifiersMap.get(id);
+                final E slice = identifiersMap.get(id);
                 if (slice != null) {
                     if (found == null) {
-                        found = new LinkedHashMap<DimensionSlice,Object>(4);
+                        found = new LinkedHashMap<E,Object>(4);
                     }
                     final Object old = found.put(slice, id);
                     if (old != null) {
@@ -247,7 +247,7 @@ final class DimensionSlices extends AbstractSet<DimensionSlice> {
                     }
                 }
             }
-            final DimensionSlice slice = first(found, caller, callerClass, "getDimensionSlice");
+            final E slice = first(found, caller, callerClass, "getDimensionSlice");
             if (slice != null) {
                 return slice;
             }
@@ -258,7 +258,7 @@ final class DimensionSlices extends AbstractSet<DimensionSlice> {
     /**
      * Returns the first key in the given map. If the map has more than one entry,
      * a warning is emitted. If the map is empty, {@code null} is returned. This
-     * method is used for determining the {@link DimensionSlice} instance to use
+     * method is used for determining the {@link DimensionIdentification} instance to use
      * after we have iterated over the properties of all axes in a coordinate system.
      *
      * @param  <T>         Either {@link Integer} or {@link API}.
