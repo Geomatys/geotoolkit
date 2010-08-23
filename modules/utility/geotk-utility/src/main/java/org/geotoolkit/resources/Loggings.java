@@ -137,14 +137,15 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int CONNECTED_EPSG_DATABASE_$2 = 16;
 
         /**
-         * {0,choice,0#Loading|1#Writing} completed in {6} milliseconds.
-         * • Coverage name:      {1}
-         * • Coverage type(s):   {2}
-         * • Coverage size:      {3} pixels
-         * • Coverage CRS:       {4}
-         * • {0,choice,0#Required transform:|1#Applied transform: } {5}
+         * {0,choice,0#Loading|1#Writing} of {1}:
+         * • Coverage name:      {2}
+         * • Coverage type(s):   {3}
+         * • Coverage size:      {4} pixels
+         * • Coverage CRS:       {5}
+         * • {0,choice,0#Required transform:|1#Applied transform: } {6}
+         * • Elapsed time:       {7} milliseconds.
          */
-        public static final int COVERAGE_STORE_$7 = 62;
+        public static final int COVERAGE_STORE_$8 = 62;
 
         /**
          * Created {0,choice,0#decoder|1#encoder} of class {1}.

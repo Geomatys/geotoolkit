@@ -35,6 +35,7 @@ import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -98,18 +99,22 @@ final class ImageCoverageStore {
      *
      * @param store      The object which is invoking this method.
      * @param caller     The caller class (not necessarily {@code object.getClass()}.
+     * @param stream     The input or output file or stream.
+     * @param imageIndex The index of the image being read or written.
      * @param coverage   The coverage read or written.
      * @param actualSize The actual image size (may be different than the coverage grid envelope),
      *                   or {@code null} to compute it from the grid envelope.
      * @param crs        The coordinate reference system (may be different than the coverage CRS),
      *                   or {@code null} for the coverage CRS.
-     * @param timeNanos  The elapsed execution time, in nanoseconds.
      * @param destToExtractedGrid The transform from the destination grid to the extracted source
      *                   grid, or {@code null}.
+     * @param timeNanos  The elapsed execution time, in nanoseconds.
      */
     static void logOperation(
             final GridCoverageStore   store,
             final Class<?>            caller,
+                  Object              stream,
+            final int                 imageIndex,
             final GridCoverage        coverage,
             final Dimension           actualSize,
             CoordinateReferenceSystem crs,
@@ -118,6 +123,21 @@ final class ImageCoverageStore {
     {
         assert caller.isInstance(store) : caller;
         final Locale locale = store.locale;
+        /*
+         * Get the input or output.
+         */
+        if (stream instanceof Object[]) {
+            final Object[] array = (Object[]) stream;
+            if (imageIndex < array.length) {
+                stream = array[imageIndex];
+            }
+        }
+        final String streamName;
+        if (IOUtilities.canProcessAsPath(stream)) {
+            streamName = IOUtilities.name(stream);
+        } else {
+            streamName = Classes.getShortClassName(stream);
+        }
         /*
          * Get the coverage name, or "untitled" if unknown.
          */
@@ -214,8 +234,8 @@ final class ImageCoverageStore {
          */
         final boolean write = (store instanceof GridCoverageWriter);
         final LogRecord record = Loggings.getResources(locale).getLogRecord(
-                store.level, Loggings.Keys.COVERAGE_STORE_$7, new Object[] {
-                        write ? 1 : 0, name.toString(locale), viewTypes,
+                store.level, Loggings.Keys.COVERAGE_STORE_$8, new Object[] {
+                        write ? 1 : 0, streamName, name.toString(locale), viewTypes,
                         size, crsName, transform, timeNanos / 1E+6
         });
         record.setLoggerName(LOGGER.getName());

@@ -970,7 +970,7 @@ public class ImageCoverageReader extends GridCoverageReader {
         final GridCoverage2D coverage = factory.create(name, image, gridGeometry, bands, null, properties);
         if (loggingEnabled) {
             fullTime = System.nanoTime() - fullTime;
-            ImageCoverageStore.logOperation(this, ImageCoverageReader.class,
+            ImageCoverageStore.logOperation(this, ImageCoverageReader.class, input, index,
                     coverage, null, null, destToExtractedGrid, fullTime);
         }
         return coverage;

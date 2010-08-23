@@ -557,7 +557,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
             if (param != null) {
                 crs = param.getCoordinateReferenceSystem();
             }
-            ImageCoverageStore.logOperation(this, ImageCoverageWriter.class,
+            ImageCoverageStore.logOperation(this, ImageCoverageWriter.class, output, 0,
                     coverage, size, crs, destToExtractedGrid, fullTime);
         }
     }
