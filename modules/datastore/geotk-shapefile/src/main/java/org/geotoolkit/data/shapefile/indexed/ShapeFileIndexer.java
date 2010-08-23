@@ -39,6 +39,7 @@ import org.geotoolkit.util.NullProgressListener;
 import org.opengis.util.ProgressListener;
 
 import com.vividsolutions.jts.geom.Envelope;
+import org.geotoolkit.index.quadtree.DataReader;
 
 /**
  * Utility class for Shapefile spatial indexing
@@ -135,7 +136,9 @@ public class ShapeFileIndexer {
         Envelope bounds = new Envelope(header.minX(), header.maxX(), header
                 .minY(), header.maxY());
 
-        tree = new QuadTree(numRecs, max, bounds, new IndexDataReader(shpIndex));
+        DataReader dr = new IndexDataReader(shpIndex);
+
+        tree = new QuadTree(numRecs, max, bounds);
         try {
             Record rec = null;
 

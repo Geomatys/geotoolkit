@@ -40,16 +40,18 @@ public class LazySearchCollection<T extends Data> extends AbstractCollection<T> 
 
     private static final int MAX_INDICES = Short.MAX_VALUE;
 
-    private final QuadTree<T> tree;
+    private final QuadTree tree;
     private final Envelope bounds;
     private final double[] minRes;
+    private final DataReader<T> reader;
 
-    public LazySearchCollection(QuadTree<T> tree, Envelope bounds) {
-        this(tree,bounds,null);
+    public LazySearchCollection(QuadTree tree, DataReader<T> reader, Envelope bounds) {
+        this(tree,reader,bounds,null);
     }
 
-    public LazySearchCollection(QuadTree<T> tree, Envelope bounds, double[] minRes) {
+    public LazySearchCollection(QuadTree tree, DataReader<T> reader, Envelope bounds, double[] minRes) {
         this.tree = tree;
+        this.reader = reader;
         this.bounds = bounds;
         this.minRes = minRes;
     }
@@ -60,11 +62,10 @@ public class LazySearchCollection<T extends Data> extends AbstractCollection<T> 
      */
     public SearchIterator<T> bboxIterator() {
         final SearchIterator<T> iterator = new LazyTyleSearchIterator.Buffered(
-                tree.getRoot(), bounds,minRes,tree.getDataReader(),MAX_INDICES);
+                tree.getRoot(), bounds,minRes,reader,MAX_INDICES);
         tree.registerIterator(iterator);
         return iterator;
     }
-
 
     /*
      * (non-Javadoc)
@@ -74,7 +75,7 @@ public class LazySearchCollection<T extends Data> extends AbstractCollection<T> 
     @Override
     public SearchIterator<T> iterator() {
         final SearchIterator<T> iterator = new LazySearchIterator.Buffered(
-                tree.getRoot(), bounds,minRes, tree.getDataReader(),MAX_INDICES);
+                tree.getRoot(), bounds,minRes, reader,MAX_INDICES);
         tree.registerIterator(iterator);
         return iterator;
     }
@@ -115,8 +116,8 @@ public class LazySearchCollection<T extends Data> extends AbstractCollection<T> 
     @Override
     public void close() {
         try {
-            tree.close();
-        } catch (StoreException e) {
+            reader.close();
+        } catch (IOException e) {
             QuadTree.LOGGER.log(Level.WARNING, "Error closing QuadTree", e);
         }
     }

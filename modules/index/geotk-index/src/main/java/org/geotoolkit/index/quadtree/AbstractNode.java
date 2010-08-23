@@ -18,7 +18,6 @@
 package org.geotoolkit.index.quadtree;
 
 import com.vividsolutions.jts.geom.Envelope;
-import java.util.Arrays;
 import java.util.logging.Level;
 
 /**
@@ -29,6 +28,8 @@ import java.util.logging.Level;
  * @module pending
  */
 public abstract class AbstractNode {
+
+    private static final int[] EMPTY_ARRAY = new int[0];
 
     public static final int NONE = 0;
     public static final int INTERSECT = 1;
@@ -41,7 +42,6 @@ public abstract class AbstractNode {
     private double miny;
     private double maxx;
     private double maxy;
-    private int numShapesId;
     private int[] shapesId;
 
     /**
@@ -59,9 +59,7 @@ public abstract class AbstractNode {
         this.miny = miny;
         this.maxx = maxx;
         this.maxy = maxy;
-        this.shapesId = new int[1];
-        this.numShapesId = 0;
-        Arrays.fill(this.shapesId, -1);
+        this.shapesId = EMPTY_ARRAY;
     }
 
 
@@ -104,7 +102,7 @@ public abstract class AbstractNode {
      * @return Returns the number of records stored.
      */
     public int getNumShapeIds() {
-        return this.numShapesId;
+        return this.shapesId.length;
     }
 
     /**
@@ -122,16 +120,11 @@ public abstract class AbstractNode {
      * @param id
      */
     public void addShapeId(int id) {
-        if (this.shapesId.length == this.numShapesId) {
-            // Increase the array
-            final int[] newIds = new int[this.numShapesId * 2];
-            Arrays.fill(newIds, -1);
-            System.arraycopy(this.shapesId, 0, newIds, 0, this.numShapesId);
-            this.shapesId = newIds;
-        }
-
-        this.shapesId[this.numShapesId] = id;
-        this.numShapesId++;
+        final int[] old = shapesId;
+        final int size = shapesId.length;
+        shapesId = new int[size+1];
+        System.arraycopy(old, 0, shapesId, 0, size);
+        shapesId[size] = id;
     }
 
     /**
@@ -142,11 +135,6 @@ public abstract class AbstractNode {
      * @throws ArrayIndexOutOfBoundsException DOCUMENT ME!
      */
     public int getShapeId(int pos) {
-        if (pos >= this.numShapesId) {
-            throw new ArrayIndexOutOfBoundsException("Requsted " + pos
-                    + " but size = " + this.numShapesId);
-        }
-
         return this.shapesId[pos];
     }
 
@@ -156,17 +144,9 @@ public abstract class AbstractNode {
      */
     public void setShapesId(int[] ids) {
         if (ids == null) {
-            this.numShapesId = 0;
+            this.shapesId = EMPTY_ARRAY;
         } else {
             this.shapesId = ids;
-            this.numShapesId = 0;
-
-            for(int i : ids) {
-                if (i == -1) {
-                    break;
-                }
-                this.numShapesId++;
-            }
         }
     }
 

@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.index.quadtree;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashSet;
@@ -43,13 +42,12 @@ import com.vividsolutions.jts.geom.Envelope;
  * @author Tommaso Nolli
  * @module pending
  */
-public class QuadTree<T extends Data> {
+public class QuadTree {
 
     private static final double SPLITRATIO = 0.55d;
 
     public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.index.quadtree");
 
-    private final DataReader<T> dataReader;
     //open iterators
     private final Set iterators = new HashSet();
 
@@ -65,8 +63,8 @@ public class QuadTree<T extends Data> {
      * @param maxBounds
      *                The bounds of all geometries to be indexed
      */
-    public QuadTree(int numShapes, Envelope maxBounds, DataReader<T> file) {
-        this(numShapes, 0, maxBounds, file);
+    public QuadTree(int numShapes, Envelope maxBounds) {
+        this(numShapes, 0, maxBounds);
     }
 
     /**
@@ -78,8 +76,8 @@ public class QuadTree<T extends Data> {
      * @param maxDepth
      *                The max depth of the index, must be <= 65535
      */
-    public QuadTree(int numShapes, int maxDepth, DataReader file) {
-        this(numShapes, maxDepth, null, file);
+    public QuadTree(int numShapes, int maxDepth) {
+        this(numShapes, maxDepth, null);
     }
 
     /**
@@ -92,7 +90,7 @@ public class QuadTree<T extends Data> {
      * @param maxBounds
      *                The bounds of all geometries to be indexed
      */
-    public QuadTree(int numShapes, int maxDepth, Envelope maxBounds, DataReader reader) {
+    public QuadTree(int numShapes, int maxDepth, Envelope maxBounds) {
         if (maxDepth > 65535) {
             throw new IllegalArgumentException("maxDepth must be <= 65535 value is " + maxDepth);
         }
@@ -118,7 +116,6 @@ public class QuadTree<T extends Data> {
                 numNodes = numNodes * 2;
             }
         }
-        this.dataReader = reader;
     }
 
     /**
@@ -204,8 +201,8 @@ public class QuadTree<T extends Data> {
      * @param bounds
      * @return A List of Integer
      */
-    public CloseableCollection<T> search(Envelope bounds) throws StoreException {
-        return search(bounds,null);
+    public <T extends Data> CloseableCollection<T> search(DataReader<T> reader, Envelope bounds) throws StoreException {
+        return search(reader,bounds,null);
     }
 
     /**
@@ -214,14 +211,15 @@ public class QuadTree<T extends Data> {
      * @param minRes : nodes with a small envelope then the given resolution will be ignored.
      * @return A List of Integer
      */
-    public CloseableCollection<T> search(Envelope bounds, double[] minRes) throws StoreException {
+    public <T extends Data> CloseableCollection<T> search(DataReader<T> reader,Envelope bounds,
+                                                       double[] minRes) throws StoreException {
         if (LOGGER.isLoggable(Level.FINEST)) {
             LOGGER.log(Level.FINEST, "Querying {0}", bounds);
         }
 
         LazySearchCollection lazySearchCollection;
         try {
-            lazySearchCollection = new LazySearchCollection(this, bounds, minRes);
+            lazySearchCollection = new LazySearchCollection(this, reader, bounds, minRes);
         } catch (RuntimeException e) {
             LOGGER.warning("IOException occurred while reading root");
             return null;
@@ -362,11 +360,6 @@ public class QuadTree<T extends Data> {
     }
 
     public void close() throws StoreException {
-        try {
-            dataReader.close();
-        } catch (IOException e) {
-            throw new StoreException("error closing indexfile", e.getCause());
-        }
         if (!iterators.isEmpty()) {
             throw new StoreException("There are still open iterators!!");
         }
@@ -376,7 +369,4 @@ public class QuadTree<T extends Data> {
         iterators.add(object);
     }
 
-    public DataReader getDataReader() {
-        return dataReader;
-    }
 }

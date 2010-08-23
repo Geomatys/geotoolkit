@@ -197,7 +197,7 @@ public class FileSystemIndexStore implements IndexStore {
      * @see IndexStore#load(org.geotoolkit.data.shapefile.shp.IndexFile)
      */
     @Override
-    public QuadTree load(DataReader dataReader) throws StoreException {
+    public QuadTree load() throws StoreException {
         QuadTree tree = null;
 
         try {
@@ -205,7 +205,7 @@ public class FileSystemIndexStore implements IndexStore {
                 QuadTree.LOGGER.log(Level.FINEST, "Opening QuadTree {0}", this.file.getCanonicalPath());
             }
 
-            tree = FileSystemQuadTree.load(file, dataReader);
+            tree = FileSystemQuadTree.load(file);
 
             QuadTree.LOGGER.finest("QuadTree opened");
         } catch (IOException e) {

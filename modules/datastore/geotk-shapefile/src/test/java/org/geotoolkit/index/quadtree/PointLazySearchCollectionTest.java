@@ -34,6 +34,7 @@ public class PointLazySearchCollectionTest extends AbstractTestCaseSupport {
     private File file;
     private IndexedShapefileDataStore ds;
     private QuadTree tree;
+    private DataReader dr;
     private Iterator iterator;
     private CoordinateReferenceSystem crs;
 
@@ -46,7 +47,9 @@ public class PointLazySearchCollectionTest extends AbstractTestCaseSupport {
         file = copyShapefiles("shapes/archsites.shp");
         ds = new IndexedShapefileDataStore(file.toURL());
         ds.buildQuadTree(0);
-        tree = LineLazySearchCollectionTest.openQuadTree(file);
+        final Object[] v = LineLazySearchCollectionTest.openQuadTree(file);
+        tree = (QuadTree) v[0];
+        dr = (DataReader) v[1];
         crs = ds.getFeatureType(ds.getNames().iterator().next()).getCoordinateReferenceSystem();
     }
 
@@ -61,14 +64,14 @@ public class PointLazySearchCollectionTest extends AbstractTestCaseSupport {
     public void testGetAllFeatures() throws Exception {
         JTSEnvelope2D env = new JTSEnvelope2D(585000, 610000,
                 4910000, 4930000, crs);
-        LazySearchCollection collection = new LazySearchCollection(tree, env);
+        LazySearchCollection collection = new LazySearchCollection(tree,dr, env);
         assertEquals(25, collection.size());
     }
 
     public void testGetOneFeatures() throws Exception {
         JTSEnvelope2D env = new JTSEnvelope2D(597867, 598068,
                 4918863, 4919031, crs);
-        LazySearchCollection collection = new LazySearchCollection(tree, env);
+        LazySearchCollection collection = new LazySearchCollection(tree,dr, env);
         assertEquals(1, collection.size());
 
     }
@@ -76,7 +79,7 @@ public class PointLazySearchCollectionTest extends AbstractTestCaseSupport {
     public void testGetNoFeatures() throws Exception {
         JTSEnvelope2D env = new JTSEnvelope2D(592211, 597000,
                 4910947, 4913500, crs);
-        LazySearchCollection collection = new LazySearchCollection(tree, env);
+        LazySearchCollection collection = new LazySearchCollection(tree,dr, env);
         assertEquals(0, collection.size());
     }
 }

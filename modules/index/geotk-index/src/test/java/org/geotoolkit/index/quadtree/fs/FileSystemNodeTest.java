@@ -6,7 +6,6 @@
 package org.geotoolkit.index.quadtree.fs;
 
 import org.geotoolkit.index.quadtree.AbstractNode;
-import org.geotoolkit.index.quadtree.Node;
 import com.vividsolutions.jts.geom.Envelope;
 import java.io.IOException;
 import org.geotoolkit.index.quadtree.DataReader;
@@ -84,7 +83,7 @@ public class FileSystemNodeTest {
         };
 
 
-        final QuadTree tree = store.load(reader);
+        final QuadTree tree = store.load();
         assertEquals(10,tree.getMaxDepth());
         assertEquals(new Envelope(-8.86966023318779,3.188061808903407,36.113981340792286,43.55971524165336),
                    tree.getRoot().getBounds(new Envelope()));
@@ -96,7 +95,7 @@ public class FileSystemNodeTest {
             root.getSubNode(i);
         }
 
-        CloseableCollection col = tree.search(new Envelope(-8,3,37,40));
+        CloseableCollection col = tree.search(reader,new Envelope(-8,3,37,40));
         Iterator ite = col.iterator();
         while(ite.hasNext()){
             ite.next();

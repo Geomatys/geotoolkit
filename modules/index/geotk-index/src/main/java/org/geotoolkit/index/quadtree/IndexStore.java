@@ -36,9 +36,7 @@ public interface IndexStore {
     /**
      * Loads a <code>QuadTree</code>
      * 
-     * @return the loaded <code>QuadTree</code>
-     * 
      * @throws StoreException
      */
-    public QuadTree load(DataReader reader) throws StoreException;
+    public QuadTree load() throws StoreException;
 }

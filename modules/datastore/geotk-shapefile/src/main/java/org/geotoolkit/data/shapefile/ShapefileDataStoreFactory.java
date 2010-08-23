@@ -81,9 +81,16 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
     public static final GeneralParameterDescriptor DBFCHARSET =
             new DefaultParameterDescriptor("charset","character used to decode strings from the DBF file",Charset.class,Charset.forName("ISO-8859-1"),false);
 
+    /**
+     * Optional - load in memory the quadtree if exist.
+     */
+    public static final GeneralParameterDescriptor LOAD_QIX =
+            new DefaultParameterDescriptor("load qix","Load in memory the quadtree if exist.",Boolean.class,Boolean.FALSE,false);
+
+
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("ShapefileParameters",
-                new GeneralParameterDescriptor[]{URLP,NAMESPACE,MEMORY_MAPPED,CREATE_SPATIAL_INDEX,DBFCHARSET});
+                new GeneralParameterDescriptor[]{URLP,NAMESPACE,MEMORY_MAPPED,CREATE_SPATIAL_INDEX,DBFCHARSET,LOAD_QIX});
 
     public ShapefileDataStoreFactory(){
     }
@@ -173,7 +180,10 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
             isMemoryMapped = Boolean.FALSE;
         }
 
-        final ShpFiles shpFiles = new ShpFiles(url);
+        //index loading hints
+        final Boolean loadQix = (Boolean) params.parameter(LOAD_QIX.getName().toString()).getValue();
+
+        final ShpFiles shpFiles = new ShpFiles(url, (loadQix == null) ? false : loadQix );
         final boolean isLocal = shpFiles.isLocal();
 
         if (isLocal && !shpFiles.exists(ShpFileType.SHP)) {

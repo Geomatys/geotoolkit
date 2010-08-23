@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
+import org.geotoolkit.index.quadtree.DataReader;
 import com.vividsolutions.jts.geom.Envelope;
 
 import java.io.File;
@@ -425,11 +426,12 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         CloseableCollection<ShpData> goodCollec = null;
         try {
             final QuadTree quadTree = openQuadTree();
+            final DataReader dr = new IndexDataReader(openIndexFile());
             if ((quadTree != null)) {
-                goodCollec = quadTree.search(bbox,minRes);
+                goodCollec = quadTree.search(dr,bbox,minRes);
             }
 
-        } catch (StoreException e) {
+        } catch (Exception e) {
             throw new DataStoreException("Error querying index: " + e.getMessage());
         }
         final LazySearchCollection col = (LazySearchCollection) goodCollec;
@@ -599,8 +601,9 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
 
         try {
             final QuadTree quadTree = openQuadTree();
+            final DataReader dr = new IndexDataReader(openIndexFile());
             if ((quadTree != null) && !bbox.contains(quadTree.getRoot().getBounds(new Envelope()))) {
-                tmp = quadTree.search(bbox);
+                tmp = quadTree.search(dr,bbox);
 
                 if (tmp == null || !tmp.isEmpty())
                     return tmp;
@@ -644,28 +647,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * @throws StoreException
      */
     protected QuadTree openQuadTree() throws StoreException {
-        if (!shpFiles.isLocal()) {
-            return null;
-        }
-        final URL treeURL = shpFiles.acquireRead(QIX, this);
-
-        try {
-            final File treeFile = toFile(treeURL);
-            if (!treeFile.exists() || (treeFile.length() == 0)) {
-                treeType = IndexType.NONE;
-                return null;
-            }
-
-            try {
-                final FileSystemIndexStore store = new FileSystemIndexStore(treeFile);
-                return store.load(new IndexDataReader(openIndexFile()));
-            } catch (IOException e) {
-                throw new StoreException(e);
-            }
-        } finally {
-            shpFiles.unlockRead(treeURL, this);
-        }
-
+        return shpFiles.getQIX();
     }
 
     /**
@@ -759,6 +741,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      */
     public void buildQuadTree(int maxDepth) throws TreeException {
         if (shpFiles.isLocal()) {
+            shpFiles.unloadIndexes();
             getLogger().fine("Creating spatial index for " + shpFiles.get(SHP));
 
             final ShapeFileIndexer indexer = new ShapeFileIndexer();

@@ -26,8 +26,6 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 
-import org.geotoolkit.index.Data;
-import org.geotoolkit.index.quadtree.DataReader;
 import org.geotoolkit.index.quadtree.QuadTree;
 import org.geotoolkit.index.quadtree.StoreException;
 
@@ -36,9 +34,9 @@ import org.geotoolkit.index.quadtree.StoreException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class FileSystemQuadTree<T extends Data> extends QuadTree<T> {
+public class FileSystemQuadTree extends QuadTree {
 
-    public static FileSystemQuadTree load(File file, DataReader indexfile) throws IOException, StoreException{
+    public static FileSystemQuadTree load(File file) throws IOException, StoreException{
         final FileInputStream fis = new FileInputStream(file);
         final FileChannel channel = fis.getChannel();
 
@@ -49,15 +47,15 @@ public class FileSystemQuadTree<T extends Data> extends QuadTree<T> {
         channel.read(buf);
         buf.flip();
 
-        return new FileSystemQuadTree(buf.getInt(), buf.getInt(), indexfile, fis, channel, order);
+        return new FileSystemQuadTree(buf.getInt(), buf.getInt(), fis, channel, order);
     }
 
     private final FileInputStream fis;
     private final FileChannel channel;
 
-    public FileSystemQuadTree(int numShapes, int maxDepth, DataReader<T> file, FileInputStream fis, 
+    public FileSystemQuadTree(int numShapes, int maxDepth, FileInputStream fis, 
                               FileChannel channel, ByteOrder order) throws IOException{
-        super(numShapes,maxDepth,file);
+        super(numShapes,maxDepth);
         this.fis = fis;
         this.channel = channel;
         setRoot(FileSystemIndexStore.readNode(channel, order));
@@ -81,6 +79,15 @@ public class FileSystemQuadTree<T extends Data> extends QuadTree<T> {
             fis.close();
         } catch (IOException e) {
             throw new StoreException(e);
+        }
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        try{
+            close();
+        }finally{
+            super.finalize();
         }
     }
 

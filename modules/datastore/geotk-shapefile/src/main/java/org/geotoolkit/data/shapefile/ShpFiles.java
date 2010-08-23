@@ -46,6 +46,9 @@ import java.util.Map.Entry;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 
+import org.geotoolkit.index.quadtree.QuadTree;
+import org.geotoolkit.index.quadtree.StoreException;
+import org.geotoolkit.index.quadtree.fs.FileSystemIndexStore;
 import org.geotoolkit.internal.io.IOUtilities;
 
 import static org.geotoolkit.data.shapefile.ShpFileType.*;
@@ -73,6 +76,7 @@ import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
  * @module pending
  */
 public class ShpFiles {
+
     /**
      * The urls for each type of file that is associated with the shapefile. The
      * key is the type of file
@@ -90,37 +94,17 @@ public class ShpFiles {
      */
     private final Map<Thread, Collection<ShpFilesLocker>> lockers = new HashMap<Thread, Collection<ShpFilesLocker>>();
 
-    /**
-     * Searches for all the files and adds then to the map of files.
-     * 
-     * @param fileName
-     *                the filename or url of any one of the shapefile files
-     * @throws MalformedURLException
-     *                 if it isn't possible to create a URL from string. It will
-     *                 be used to create a file and create a URL from that if
-     *                 both fail this exception is thrown
-     */
-    public ShpFiles(String fileName) throws MalformedURLException {
-        try {
-            URL url = new URL(fileName);
-            init(url);
-        } catch (MalformedURLException e) {
-            init(new File(fileName).toURI().toURL());
-        }
-        
-    }
+
+    private final boolean loadQuadTree;
 
     /**
      * Searches for all the files and adds then to the map of files.
      * 
-     * @param file
-     *                any one of the shapefile files
-     * 
-     * @throws FileNotFoundException
-     *                 if the shapefile associated with file is not found
+     * @param file any one of the shapefile files
+     * @throws FileNotFoundException if the shapefile associated with file is not found
      */
-    public ShpFiles(File file) throws MalformedURLException {
-        init(file.toURI().toURL());
+    public ShpFiles(Object path) throws IllegalArgumentException {
+        this(path,false);
     }
 
     /**
@@ -128,11 +112,31 @@ public class ShpFiles {
      * 
      * @param url any one of the shapefile files
      */
-    public ShpFiles(URL url) throws IllegalArgumentException {
-        init(url);
-    }
+    public ShpFiles(Object path, boolean loadQix) throws IllegalArgumentException {
+        URL url = null;
 
-    private void init(final URL url) {
+        if(path instanceof String){
+            try {
+                url = new URL(path.toString());
+            } catch (MalformedURLException e) {
+                try {
+                    url = new File(path.toString()).toURI().toURL();
+                } catch (MalformedURLException ex) {
+                    throw new IllegalArgumentException(ex);
+                }
+            }
+        }else if(path instanceof File){
+            try {
+                url = ((File) path).toURI().toURL();
+            } catch (MalformedURLException ex) {
+                throw new IllegalArgumentException(ex);
+            }
+        }else if(path instanceof URL){
+            url = (URL) path;
+        }
+
+        loadQuadTree = loadQix;
+
         final String base = baseName(url);
         if (base == null) {
             throw new IllegalArgumentException(url.getPath()
@@ -1010,5 +1014,59 @@ public class ShpFiles {
             return new File(path3);
         }
     }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // Indexes files : store only one of each for all readers //////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    private FileSystemIndexStore qixStore = null;
+    private QuadTree quadTree = null;
+
+    public synchronized void unloadIndexes(){
+        if(quadTree != null){
+            try {
+                quadTree.close();
+            } catch (StoreException ex) {
+                LOGGER.log(Level.WARNING, "Failed to close quad tree.", ex);
+                quadTree = null;
+            }
+        }
+    }
+
+    public synchronized QuadTree getQIX() throws StoreException{
+        if(quadTree == null){
+
+            if (!isLocal()) {
+                return null;
+            }
+            final URL treeURL = acquireRead(QIX, this);
+
+            try {
+                final File treeFile = toFile(treeURL);
+                if (!treeFile.exists() || (treeFile.length() == 0)) {
+                    return null;
+                }
+
+                if(qixStore == null){
+                    qixStore = new FileSystemIndexStore(treeFile);
+                }
+
+                if(loadQuadTree){
+                    //we store the quad tree for reuse
+                    quadTree = qixStore.load();
+                    quadTree.loadAll();
+                    return quadTree;
+                }else{
+                    return qixStore.load();
+                }
+                
+            } finally {
+                unlockRead(treeURL, this);
+            }
+        }
+
+        return quadTree;
+    }
+
 
 }
