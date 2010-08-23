@@ -28,9 +28,7 @@ import java.util.MissingResourceException;
 import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.logging.LogRecord;
 import javax.imageio.IIOParam;
-import javax.imageio.spi.ImageReaderWriterSpi;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
@@ -51,9 +49,7 @@ import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.logging.LogProducer;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.internal.io.IOUtilities;
-import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.referencing.CRS;
@@ -361,34 +357,6 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
     }
 
     /**
-     * Logs a "Created encoder|decoder of class Foo" message.
-     *
-     * @param write {@code true} for "encoder", or {@code false} for "decoder".
-     * @param caller The caller class.
-     * @param method The caller method.
-     * @param codec The object for which to write the class name.
-     * @param The provider (for image reader/writer), or {@code null}.
-     */
-    final void logCodecCreation(final boolean write, final Class<?> caller, final String method,
-            final Object codec, final ImageReaderWriterSpi spi)
-    {
-        if (LOGGER.isLoggable(level)) {
-            String message = Loggings.getResources(locale).getString(
-                    Loggings.Keys.CREATED_CODEC_OF_CLASS_$2, write ? 1 : 0, codec.getClass().getName());
-            if (spi != null) {
-                final StringBuilder buffer = new StringBuilder(message).append('\n');
-                Formats.formatDescription(spi, locale, buffer);
-                message = buffer.toString();
-            }
-            final LogRecord record = new LogRecord(level, message);
-            record.setLoggerName(LOGGER.getName());
-            record.setSourceClassName(caller.getName());
-            record.setSourceMethodName(method);
-            LOGGER.log(record);
-        }
-    }
-
-    /**
      * Converts geodetic parameters to pixel parameters and stores the result in the given
      * {@code IIOParam} object. This method expects a {@code gridGeometry} argument, which
      * is the grid geometry of the source coverage. Coordinate transformations are applied
@@ -428,9 +396,9 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
             final GridCoverageStoreParam geodeticParam, final IIOParam pixelParam)
             throws CoverageStoreException
     {
-        final MathTransform2D destToSourceGrid;
+        final MathTransform2D destToExtractedGrid;
         try {
-            destToSourceGrid = geodeticToPixelCoordinates(gridGeometry,
+            destToExtractedGrid = geodeticToPixelCoordinates(gridGeometry,
                     geodeticParam.getValidEnvelope(),
                     geodeticParam.getResolution(),
                     geodeticParam.getCoordinateReferenceSystem(),
@@ -440,7 +408,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
         } catch (Exception e) { // There is many different exceptions thrown by the above.
             throw new CoverageStoreException(formatErrorMessage(e), e);
         }
-        return destToSourceGrid;
+        return destToExtractedGrid;
     }
 
     /**
@@ -832,7 +800,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
     /**
      * Work-around for rounding error.
      */
-    private static double fixRoundingError(double value) {
+    static double fixRoundingError(double value) {
         final double v = value * 360;
         final double r = XMath.roundIfAlmostInteger(v, ULP_TOLERANCE);
         if (r != v) {

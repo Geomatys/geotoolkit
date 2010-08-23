@@ -22,6 +22,7 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.concurrent.CancellationException;
 import java.awt.Rectangle;
+import java.awt.Dimension;
 import java.awt.RenderingHints;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
@@ -42,6 +43,7 @@ import javax.media.jai.operator.WarpDescriptor;
 import org.opengis.util.InternationalString;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.io.TableWriter;
@@ -270,8 +272,10 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                 }
                 setLogLevel(newWriter, level);
                 setLocale(newWriter, locale);
-                logCodecCreation(true, ImageCoverageWriter.class, "setOutput",
-                        newWriter, newWriter.getOriginatingProvider());
+                if (LOGGER.isLoggable(level)) {
+                    ImageCoverageStore.logCodecCreation(this, ImageCoverageWriter.class,
+                            newWriter, newWriter.getOriginatingProvider());
+                }
             }
             imageWriter = newWriter;
         } catch (IOException e) {
@@ -398,9 +402,14 @@ public class ImageCoverageWriter extends GridCoverageWriter {
      * parameter given to this {@code write} method.
      */
     @Override
-    public void write(GridCoverage coverage, GridCoverageWriteParam param)
+    public void write(final GridCoverage coverage, final GridCoverageWriteParam param)
             throws CoverageStoreException, CancellationException
     {
+        final boolean loggingEnabled = LOGGER.isLoggable(level);
+        long fullTime = (loggingEnabled) ? System.nanoTime() : 0;
+        /*
+         * Parameters check.
+         */
         abortRequested = false;
         GridGeometry2D gridGeometry = GridGeometry2D.wrap(coverage.getGridGeometry());
         RenderedImage image = coverage.getRenderableImage(gridGeometry.gridDimensionX,
@@ -425,8 +434,9 @@ public class ImageCoverageWriter extends GridCoverageWriter {
         } catch (IOException e) {
             throw new CoverageStoreException(formatErrorMessage(e), e);
         }
+        MathTransform2D destToExtractedGrid = null;
         if (param != null) {
-            final MathTransform2D destToExtractedGrid = geodeticToPixelCoordinates(gridGeometry, param, imageParam);
+            destToExtractedGrid = geodeticToPixelCoordinates(gridGeometry, param, imageParam);
             imageParam.setSourceBands(param.getSourceBands());
             final Rectangle sourceRegion  = imageParam.getSourceRegion();
             final Rectangle requestRegion = destGridGeometry.getGridRange2D();
@@ -447,7 +457,8 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                 final ImageLayout layout = new ImageLayout(requestRegion.x, requestRegion.y,
                         requestRegion.width, requestRegion.height);
                 final RenderingHints hints = new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout);
-                final Warp warp = WarpTransform2D.getWarp(name, (MathTransform2D) destGridToSource);
+                destToExtractedGrid = (MathTransform2D) destGridToSource; // Will be used for logging purpose.
+                final Warp warp = WarpTransform2D.getWarp(name, destToExtractedGrid);
                 if (false) {
                     /*
                      * To be enabled only when debugging.
@@ -483,7 +494,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                      *         └─────┴─────┘
                      *                   (11,12)
                      */
-                    Object tr = destGridToSource;
+                    Object tr = destToExtractedGrid;
                     if (tr instanceof LinearTransform) {
                         tr = ((LinearTransform) tr).getMatrix();
                     }
@@ -524,12 +535,30 @@ public class ImageCoverageWriter extends GridCoverageWriter {
         }
         /*
          * Now process to the coverage writing.
+         * Finally, logs the operation (if logging are enabled).
          */
         final IIOImage bundle = new IIOImage(image, null, imageMetadata);
         try {
             imageWriter.write(streamMetadata, bundle, imageParam);
         } catch (IOException e) {
             throw new CoverageStoreException(formatErrorMessage(e), e);
+        }
+        if (loggingEnabled) {
+            fullTime = System.nanoTime() - fullTime;
+            final Dimension size = new Dimension(image.getWidth(), image.getHeight());
+            if (imageParam != null) {
+                final Rectangle request = imageParam.getSourceRegion();
+                if (request != null) {
+                    size.width  = Math.min(size.width,  request.width  / imageParam.getSourceXSubsampling());
+                    size.height = Math.min(size.height, request.height / imageParam.getSourceXSubsampling());
+                }
+            }
+            CoordinateReferenceSystem crs = null;
+            if (param != null) {
+                crs = param.getCoordinateReferenceSystem();
+            }
+            ImageCoverageStore.logOperation(this, ImageCoverageWriter.class,
+                    coverage, size, crs, destToExtractedGrid, fullTime);
         }
     }
 

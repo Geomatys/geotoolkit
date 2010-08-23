@@ -42,6 +42,7 @@ import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.metadata.spatial.Georectified;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.datum.PixelInCell;
 
@@ -387,8 +388,10 @@ public class ImageCoverageReader extends GridCoverageReader {
                     }
                     setLogLevel(newReader, level);
                     setLocale(newReader, locale);
-                    logCodecCreation(false, ImageCoverageReader.class, "setInput",
-                            newReader, newReader.getOriginatingProvider());
+                    if (LOGGER.isLoggable(level)) {
+                        ImageCoverageStore.logCodecCreation(this, ImageCoverageReader.class,
+                                newReader, newReader.getOriginatingProvider());
+                    }
                 }
                 imageReader = newReader;
             }
@@ -804,6 +807,12 @@ public class ImageCoverageReader extends GridCoverageReader {
     public GridCoverage2D read(final int index, final GridCoverageReadParam param)
             throws CoverageStoreException, CancellationException
     {
+        final boolean loggingEnabled = LOGGER.isLoggable(level);
+        long fullTime = (loggingEnabled) ? System.nanoTime() : 0;
+        ignoreGridTransforms = !loggingEnabled;
+        /*
+         * Parameters check.
+         */
         abortRequested = false;
         final ImageReader imageReader = this.imageReader; // Protect from changes.
         if (imageReader == null) {
@@ -819,6 +828,7 @@ public class ImageCoverageReader extends GridCoverageReader {
         }
         final int[] srcBands;
         final int[] dstBands;
+        MathTransform2D destToExtractedGrid = null;
         if (param != null) {
             srcBands = param.getSourceBands();
             dstBands = param.getDestinationBands();
@@ -830,7 +840,7 @@ public class ImageCoverageReader extends GridCoverageReader {
              * Convert geodetic envelope and resolution to pixel coordinates.
              * Store the result of the above conversions in the ImageReadParam object.
              */
-            geodeticToPixelCoordinates(gridGeometry, param, imageParam);
+            destToExtractedGrid = geodeticToPixelCoordinates(gridGeometry, param, imageParam);
             /*
              * Conceptually we could compute right now:
              *
@@ -957,7 +967,13 @@ public class ImageCoverageReader extends GridCoverageReader {
                         newGridToCRS, gridGeometry.getCoordinateReferenceSystem(), null);
             }
         }
-        return factory.create(name, image, gridGeometry, bands, null, properties);
+        final GridCoverage2D coverage = factory.create(name, image, gridGeometry, bands, null, properties);
+        if (loggingEnabled) {
+            fullTime = System.nanoTime() - fullTime;
+            ImageCoverageStore.logOperation(this, ImageCoverageReader.class,
+                    coverage, null, null, destToExtractedGrid, fullTime);
+        }
+        return coverage;
     }
 
     /**

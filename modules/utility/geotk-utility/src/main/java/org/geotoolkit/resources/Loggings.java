@@ -137,6 +137,16 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int CONNECTED_EPSG_DATABASE_$2 = 16;
 
         /**
+         * {0,choice,0#Loading|1#Writing} completed in {6} milliseconds.
+         * • Coverage name:      {1}
+         * • Coverage type(s):   {2}
+         * • Coverage size:      {3} pixels
+         * • Coverage CRS:       {4}
+         * • {0,choice,0#Required transform:|1#Applied transform: } {5}
+         */
+        public static final int COVERAGE_STORE_$7 = 62;
+
+        /**
          * Created {0,choice,0#decoder|1#encoder} of class {1}.
          */
         public static final int CREATED_CODEC_OF_CLASS_$2 = 61;
@@ -223,7 +233,7 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int LOADING_DATUM_ALIASES_$1 = 32;
 
         /**
-         * Loading region x=[{0} … {1}], y=[{2} … {3}] in {4} seconds:
+         * Loading region x=[{0} … {1}], y=[{2} … {3}] in {4} milliseconds:
          * {5,choice,0#success|1#canceled|2#FAILURE}.
          */
         public static final int LOADING_REGION_$6 = 60;
