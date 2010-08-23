@@ -22,7 +22,7 @@
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
   <groupId>org.geotoolkit.project</groupId>
-  <artifactId>geotk-stress</artifactId>
+  <artifactId>geotk-stressor</artifactId>
   <packaging>jar</packaging>
   <name>Scalability test</name>
 
