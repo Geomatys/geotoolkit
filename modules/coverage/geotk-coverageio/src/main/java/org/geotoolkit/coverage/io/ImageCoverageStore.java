@@ -49,6 +49,10 @@ import static org.geotoolkit.coverage.io.GridCoverageStore.fixRoundingError;
 
 /**
  * Static utilities methods for use by {@link ImageCoverageReader} and {@link ImageCoverageStore}.
+ * Current implementation contains mostly method related to logging. They are isolated in this
+ * class in order to reduce the amount of code de load when there is no logging. To make that
+ * effective, it is caller responsibility to check if logging are enabled before to invoke any
+ * method in this class.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.15
@@ -124,7 +128,12 @@ final class ImageCoverageStore {
         assert caller.isInstance(store) : caller;
         final Locale locale = store.locale;
         /*
-         * Get the input or output.
+         * Get a string representation of the input or output. If the input/output is
+         * a character sequence, a file or a URI/URL, then its string representation is
+         * returned. Otherwise we will use only the class name.
+         *
+         * In the particular where the input is an array, we assume that each array element
+         * is for an image at the corresponding index. This is what MosaicImageReader does.
          */
         if (stream instanceof Object[]) {
             final Object[] array = (Object[]) stream;
@@ -139,7 +148,9 @@ final class ImageCoverageStore {
             streamName = Classes.getShortClassName(stream);
         }
         /*
-         * Get the coverage name, or "untitled" if unknown.
+         * Get the coverage name, or "untitled" if unknown. This is often "unknown"
+         * unless the ImageReader implements the NamedImageStore interface, as for
+         * the NetCDF format.
          */
         InternationalString name = null;
         if (coverage instanceof AbstractCoverage) {
@@ -149,7 +160,8 @@ final class ImageCoverageStore {
             name = Vocabulary.formatInternational(Vocabulary.Keys.UNTITLED);
         }
         /*
-         * Get the view types.
+         * Get the view types (PHOTOGRAPHIC, RENDERED, PACKED, NATIVE, GEOPHYSICS).
+         * This is specific to GridCoverage2D. For all other cases, we will write "none".
          */
         final String viewTypes;
         if (coverage instanceof GridCoverage2D) {
@@ -158,7 +170,10 @@ final class ImageCoverageStore {
             viewTypes = Vocabulary.getResources(locale).getString(Vocabulary.Keys.NONE);
         }
         /*
-         * Get the coverage dimension.
+         * Get the coverage dimension. In the special case of ImageCoverageWriter, the
+         * dimension of the image actually written may be different than the dimension
+         * of the coverage, if a subregion has been supplied in the ImageWriteParam.
+         * The 'actualSize' argument allows to specify the dimension actually written.
          */
         final GridEnvelope ge = coverage.getGridGeometry().getGridRange();
         final int dimension = ge.getDimension();
@@ -178,7 +193,9 @@ final class ImageCoverageStore {
         }
         final String size = buffer.toString();
         /*
-         * Get the coordinate reference system.
+         * Format the CRS name and its identifier (if any). In the case of ImageCoverageWriter,
+         * the formatted CRS may be different than the coverage CRS since a resampling may have
+         * been performed on-the-fly.
          */
         String crsName = null;
         if (crs == null) {
@@ -203,7 +220,8 @@ final class ImageCoverageStore {
         }
         /*
          * Get the "source to destination" transform. We will format affine transform
-         * in a special way. Usually, we have only scale and translation terms.
+         * in a special way since it is the most common case and usually contains only
+         * translation and scale factors.
          */
         String transform = null;
         if (destToExtractedGrid != null && !destToExtractedGrid.isIdentity()) try {

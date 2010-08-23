@@ -100,6 +100,7 @@ final class ImageViewer extends JPanel {
     public static Window show(final List<? extends Stressor> stressors) {
         final JFrame frame = new JFrame("Stressor");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(600, 800); // For platforms that don't support setExtendedState(int).
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         final int n  = stressors.size();
         final int nx = (int) Math.round(Math.sqrt(n));
