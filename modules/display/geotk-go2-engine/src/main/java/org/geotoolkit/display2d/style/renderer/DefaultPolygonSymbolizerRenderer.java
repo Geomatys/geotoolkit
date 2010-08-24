@@ -24,7 +24,6 @@ import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.display.canvas.VisitFilter;
@@ -70,7 +69,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
         //test if the symbol is visible on this feature
         if(symbol.isVisible(feature)){
 
-            final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(symbol.getSource().getGeometryPropertyName());
+            final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(geomPropertyName);
 
             //symbolizer doesnt match the featuretype, no geometry found with this name.
             if(projectedGeometry == null) return;
@@ -95,13 +94,11 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
 
     private void portray(ProjectedGeometry projectedGeometry, Feature feature) throws PortrayalException{
 
-        final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
-        final float coeff = renderingContext.getUnitCoefficient(symbolUnit);
         final float offset = symbol.getOffset(feature, coeff);
         final Shape shape;
 
         try {
-            if(NonSI.PIXEL.equals(symbolUnit)){
+            if(dispGeom){
                 renderingContext.switchToDisplayCRS();
                 shape = (offset != 0) ? bufferDisplayGeometry(renderingContext, projectedGeometry, offset)
                                       : projectedGeometry.getDisplayShape();
@@ -139,7 +136,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
         g2d.fill(shape);
         if(symbol.isStrokeVisible(feature)){
             final CachedStroke cachedStroke = symbol.getCachedStroke();
-        if(cachedStroke instanceof CachedStrokeSimple){
+            if(cachedStroke instanceof CachedStrokeSimple){
             final CachedStrokeSimple cs = (CachedStrokeSimple)cachedStroke;
                 g2d.setComposite(cs.getJ2DComposite(feature));
                 g2d.setPaint(cs.getJ2DPaint(feature, x, y, coeff, hints));
@@ -200,13 +197,11 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
         //test if the symbol is visible on this feature
         if(!symbol.isVisible(feature)) return false;
 
-        final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(symbol.getSource().getGeometryPropertyName());
+        final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(geomPropertyName);
 
         //symbolizer doesnt match the featuretype, no geometry found with this name.
         if(projectedGeometry == null) return false;
 
-        final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
-        final float coeff = renderingContext.getUnitCoefficient(symbolUnit);
         final float offset = symbol.getOffset(feature, coeff);
 
         //we switch to  more appropriate context CRS for rendering -------------
@@ -214,7 +209,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
         final Shape j2dShape;
 
         try{
-            if(NonSI.PIXEL.equals(symbolUnit)){
+            if(dispGeom){
                 CRSShape = mask;
 
                 j2dShape = (offset != 0) ? bufferDisplayGeometry(renderingContext, projectedGeometry, offset)

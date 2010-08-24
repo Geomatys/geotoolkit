@@ -344,19 +344,13 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             final CachedRule rule = renderers.rules[i];
             final Filter rulefilter = rule.getFilter();
 
+            //encapsulate interator
             for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
                 if(monitor.stopRequested()) return;
-                final RenderingIterator ite = getIterator(features, context, params);
+                RenderingIterator ite = getIterator(features, context, params);
+                ite = new FilterGraphicIterator(ite, rulefilter, painted);
                 try {
-                    while (ite.hasNext()) {
-                        if(monitor.stopRequested()) return;
-                        final ProjectedFeature pf = ite.next();
-                        final Feature f = pf.getFeature();
-                        if (rulefilter == null || rulefilter.evaluate(pf.getFeature())) {
-                            painted.add(f.getIdentifier().getID());
-                            renderer.portray(pf);
-                        }
-                    }
+                    renderer.portray(ite);
                 } finally {
                     try {
                         ite.close();
@@ -790,5 +784,61 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         }
 
     }
+
+    protected static class FilterGraphicIterator implements RenderingIterator{
+
+        private RenderingIterator ite;
+        private Filter filter;
+        private ProjectedFeature next = null;
+        private final Set<String> ids;
+
+        public FilterGraphicIterator(RenderingIterator ite, Filter filter, Set<String> ids) {
+            this.ite = ite;
+            this.filter = filter;
+            this.ids = ids;
+        }
+
+        @Override
+        public boolean hasNext() {
+            findNext();
+            return next != null;
+        }
+
+        @Override
+        public ProjectedFeature next() {
+            //we know the hasNext has been called before
+            final ProjectedFeature t = next;
+            next = null;
+            return t;
+        }
+
+        private void findNext(){
+            if(next != null){
+                return;
+            }
+
+            while(ite.hasNext()){
+                final ProjectedFeature candidate = ite.next();
+                final Feature f = candidate.getFeature();
+                if(filter.evaluate(f)){
+                    next = candidate;
+                    ids.add(f.getIdentifier().getID());
+                    return;
+                }
+            }
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public void close() throws IOException {
+            ite.close();
+        }
+
+    }
+
 
 }

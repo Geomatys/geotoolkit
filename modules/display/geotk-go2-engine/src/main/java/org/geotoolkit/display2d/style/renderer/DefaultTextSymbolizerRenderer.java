@@ -20,10 +20,7 @@ package org.geotoolkit.display2d.style.renderer;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Paint;
-import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
 
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
@@ -42,12 +39,10 @@ import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.display2d.style.labeling.DefaultPointLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.DefaultLinearLabelDescriptor;
-import org.geotoolkit.display2d.style.labeling.DefaultLabelLayer;
 import org.geotoolkit.display2d.style.labeling.LabelLayer;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 import org.opengis.feature.Feature;
-import org.opengis.util.FactoryException;
 
 /**
  * @author Johann Sorel (Geomatys)
@@ -81,23 +76,18 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 
         //test if the symbol is visible on this feature
         if(symbol.isVisible(feature)){
-            final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
             
             //we adjust coefficient for rendering ------------------------------
             float coeff = 1;
-            if(symbolUnit.equals(NonSI.PIXEL)){
+            if(dispGeom){
                 //symbol is in display unit
                 coeff = 1;
             }else{
                 //we have a special unit we must adjust the coefficient
                 coeff = renderingContext.getUnitCoefficient(symbolUnit);
                 // calculate scale difference between objective and display
-                try{
-                    final AffineTransform inverse = renderingContext.getAffineTransform(renderingContext.getObjectiveCRS(), renderingContext.getDisplayCRS());
-                    coeff *= Math.abs(XAffineTransform.getScale(inverse));
-                }catch(FactoryException ex){
-                    throw new PortrayalException("Could not calculate display to objective transform",ex);
-                }
+                final AffineTransform inverse = renderingContext.getObjectiveToDisplay();
+                coeff *= Math.abs(XAffineTransform.getScale(inverse));
             }
 
 

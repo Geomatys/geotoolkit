@@ -27,7 +27,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.Iterator;
 import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
 
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
@@ -41,7 +40,6 @@ import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 
 import org.opengis.feature.Feature;
-import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -65,14 +63,12 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
         //test if the symbol is visible on this feature
         if(!symbol.isVisible(feature)) return;
 
-        final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(symbol.getSource().getGeometryPropertyName());
+        final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(geomPropertyName);
 
         //symbolizer doesnt match the featuretype, no geometry found with this name.
         if(projectedGeometry == null) return;
 
         g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
-
-        final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
 
         //we switch to  more appropriate context CRS for rendering ---------
         // a point symbolis always paint in display unit -------------------
@@ -87,12 +83,8 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
             //we have a special unit we must adjust the coefficient
             coeff = renderingContext.getUnitCoefficient(symbolUnit);
             // calculate scale difference between objective and display
-            try{
-                final AffineTransform inverse = renderingContext.getAffineTransform(renderingContext.getObjectiveCRS(), renderingContext.getDisplayCRS());
-                coeff *= Math.abs(XAffineTransform.getScale(inverse));
-            }catch(FactoryException ex){
-                throw new PortrayalException("Could not calculate objective to display transform",ex);
-            }
+            final AffineTransform inverse = renderingContext.getObjectiveToDisplay();
+            coeff *= Math.abs(XAffineTransform.getScale(inverse));
         }
 
         //create the image--------------------------------------------------
@@ -146,8 +138,6 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
 
         g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
 
-        final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
-
         //we switch to  more appropriate context CRS for rendering ---------
         // a point symbolis always paint in display unit -------------------
         renderingContext.switchToDisplayCRS();
@@ -160,12 +150,8 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
             //we have a special unit we must adjust the coefficient
             coeff = renderingContext.getUnitCoefficient(symbolUnit);
             // calculate scale difference between objective and display
-            try{
-                final AffineTransform inverse = renderingContext.getAffineTransform(renderingContext.getObjectiveCRS(), renderingContext.getDisplayCRS());
-                coeff *= Math.abs(XAffineTransform.getScale(inverse));
-            }catch(FactoryException ex){
-                throw new PortrayalException("Could not calculate objective to display transform",ex);
-            }
+            final AffineTransform inverse = renderingContext.getObjectiveToDisplay();
+            coeff *= Math.abs(XAffineTransform.getScale(inverse));
         }
 
         //caches
@@ -185,7 +171,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
             //test if the symbol is visible on this feature
             if(!symbol.isVisible(feature)) return;
 
-            final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(symbol.getSource().getGeometryPropertyName());
+            final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(geomPropertyName);
 
             //symbolizer doesnt match the featuretype, no geometry found with this name.
             if(projectedGeometry == null) return;
@@ -259,12 +245,10 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
         //test if the symbol is visible on this feature
         if(!(symbol.isVisible(feature))) return false;
 
-        final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(symbol.getSource().getGeometryPropertyName());
+        final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(geomPropertyName);
 
         //symbolizer doesnt match the featuretype, no geometry found with this name.
         if(projectedGeometry == null) return false;
-
-        final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
 
         //we adjust coefficient for rendering ----------------------------------
         float coeff = 1;
@@ -275,13 +259,8 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
             //we have a special unit we must adjust the coefficient
             coeff = renderingContext.getUnitCoefficient(symbolUnit);
             // calculate scale difference between objective and display
-            try{
-                final AffineTransform inverse = renderingContext.getAffineTransform(renderingContext.getObjectiveCRS(), renderingContext.getDisplayCRS());
-                coeff *= Math.abs(XAffineTransform.getScale(inverse));
-            }catch(FactoryException ex){
-                ex.printStackTrace();
-                return false;
-            }
+            final AffineTransform inverse = renderingContext.getObjectiveToDisplay();
+            coeff *= Math.abs(XAffineTransform.getScale(inverse));
         }
 
         //create the image------------------------------------------------------

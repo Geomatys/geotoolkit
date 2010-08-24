@@ -216,9 +216,12 @@ public class MultiLineHandler implements ShapeHandler {
             final Coordinate[] coords;
             int length = finish - partOffsets[part];
             if (length == 1) {
-                coords = new Coordinate[2];
-                coords[0] = new Coordinate(dbuffer.get(), dbuffer.get());
-                coords[1] = new Coordinate(coords[0]);
+                final double x = dbuffer.get();
+                final double y = dbuffer.get();
+                coords = new Coordinate[]{
+                    new Coordinate(x,y),
+                    new Coordinate(x,y)
+                };
             } else {
                 coords = new Coordinate[length];
                 for(int i=0,n=coords.length; i<n; i++){

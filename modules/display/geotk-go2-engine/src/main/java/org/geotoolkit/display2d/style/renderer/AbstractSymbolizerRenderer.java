@@ -21,6 +21,8 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.util.Iterator;
 import java.util.logging.Logger;
+import javax.measure.unit.NonSI;
+import javax.measure.unit.Unit;
 
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
@@ -30,6 +32,7 @@ import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.geometry.Envelope;
+import org.opengis.style.Symbolizer;
 
 /**
  * Abstract symbolizer renderer, stores graphics2d and often used object in
@@ -38,7 +41,7 @@ import org.opengis.geometry.Envelope;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer> implements SymbolizerRenderer{
+public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? extends Symbolizer>> implements SymbolizerRenderer{
 
     protected static final Logger LOGGER = Logging.getLogger(AbstractSymbolizerRenderer.class);
 
@@ -48,12 +51,23 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer> imp
     protected final CanvasMonitor monitor;
     protected final C symbol;
 
+    protected final Unit symbolUnit;
+    protected final float coeff;
+    protected final boolean dispGeom;
+    protected final String geomPropertyName;
+
     public AbstractSymbolizerRenderer(C symbol, RenderingContext2D context){
         this.symbol = symbol;
         this.renderingContext = context;
         this.g2d = renderingContext.getGraphics();
         this.monitor = renderingContext.getMonitor();
         this.hints = renderingContext.getRenderingHints();
+
+        this.symbolUnit = symbol.getSource().getUnitOfMeasure();
+        this.coeff = renderingContext.getUnitCoefficient(symbolUnit);
+        this.dispGeom = (NonSI.PIXEL == symbolUnit);
+        this.geomPropertyName = symbol.getSource().getGeometryPropertyName();
+
     }
 
     @Override

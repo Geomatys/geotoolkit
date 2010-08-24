@@ -113,6 +113,7 @@ public final class ShxReader {
 
     private void check() {
         if (closed) {
+            closer.printStackTrace();
             throw new IllegalStateException("Index file has been closed");
         }
 
@@ -163,7 +164,13 @@ public final class ShxReader {
         lastIndex = index;
     }
 
+    Exception closer = null;
+
     public void close() throws IOException {
+
+        closer = new Exception("Closing");
+
+
         closed = true;
         if (channel != null && channel.isOpen()) {
             channel.close();

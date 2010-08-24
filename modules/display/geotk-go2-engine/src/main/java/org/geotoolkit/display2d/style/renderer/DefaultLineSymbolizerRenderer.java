@@ -24,6 +24,8 @@ import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Iterator;
+import java.util.logging.Level;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
@@ -55,25 +57,11 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedLineSymbolizer>{
 
+    private final CachedStroke cachedStroke;
+
     public DefaultLineSymbolizerRenderer(CachedLineSymbolizer symbol, RenderingContext2D context){
         super(symbol,context);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void portray(ProjectedFeature projectedFeature) throws PortrayalException{
-        final Feature feature = projectedFeature.getFeature();
-        final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(symbol.getSource().getGeometryPropertyName());
-
-        //symbolizer doesnt match the featuretype, no geometry found with this name.
-        if(projectedGeometry == null) return;
-
-        //test if the symbol is visible on this feature
-        if(symbol.isVisible(feature)){
-            portray(projectedGeometry, feature);
-        }
+        cachedStroke = symbol.getCachedStroke();
     }
 
     /**
@@ -90,13 +78,123 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
         portray(projectedGeometry, null);
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void portray(ProjectedFeature projectedFeature) throws PortrayalException{
+        final Feature feature = projectedFeature.getFeature();
+        final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(geomPropertyName);
+
+        //symbolizer doesnt match the featuretype, no geometry found with this name.
+        if(projectedGeometry == null) return;
+
+        //test if the symbol is visible on this feature
+        if(symbol.isVisible(feature)){
+            portray(projectedGeometry, feature);
+        }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void portray(Iterator<ProjectedFeature> graphics) throws PortrayalException {
+
+        if(dispGeom){
+            renderingContext.switchToDisplayCRS();
+        }else{
+            renderingContext.switchToObjectiveCRS();
+        }
+
+        while(graphics.hasNext()){
+            final ProjectedFeature projectedFeature = graphics.next();
+            final Feature feature = projectedFeature.getFeature();
+            final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(geomPropertyName);
+
+            //symbolizer doesnt match the featuretype, no geometry found with this name.
+            if(projectedGeometry == null) continue;
+
+            //test if the symbol is visible on this feature
+            if(!symbol.isVisible(feature)){
+                continue;
+            }
+
+
+            final Shape j2dShape;
+            try{
+                j2dShape = (dispGeom)? projectedGeometry.getDisplayShape()
+                                     : projectedGeometry.getObjectiveShape();
+            } catch (TransformException ex) {
+                throw new PortrayalException("Could not calculate objective projected geometry",ex);
+            }
+
+            //handle offset
+            final float offset = symbol.getOffset(feature, coeff);
+            if(offset != 0){
+                g2d.translate(offset, 0);
+            }
+
+            if(cachedStroke instanceof CachedStrokeSimple){
+                final CachedStrokeSimple cs = (CachedStrokeSimple)cachedStroke;
+                g2d.setComposite(cs.getJ2DComposite(feature));
+
+                if(cs.isMosaicPaint()){
+                    //we need to find the top left bounds of the geometry
+                    final float margin = symbol.getMargin(feature, coeff) /2f;
+                    final Rectangle2D bounds = j2dShape.getBounds2D();
+                    final int x = (int) (bounds.getMinX() - margin);
+                    final int y = (int) (bounds.getMinY() - margin);
+                    g2d.setPaint(cs.getJ2DPaint(feature, x, y, coeff, hints));
+                }else{
+                    g2d.setPaint(cs.getJ2DPaint(feature, 0, 0, coeff, hints));
+                }
+                g2d.setStroke(cs.getJ2DStroke(feature,coeff));
+                g2d.draw(j2dShape);
+            }else if(cachedStroke instanceof CachedStrokeGraphic){
+                final CachedStrokeGraphic gc = (CachedStrokeGraphic)cachedStroke;
+                final float initGap = gc.getInitialGap(feature);
+                final Point2D pt = new Point2D.Double();
+                final CachedGraphicStroke cgs = gc.getCachedGraphic();
+                final Image img = cgs.getImage(feature, 1, hints);
+                final float imgWidth = img.getWidth(null);
+                final float imgHeight = img.getHeight(null);
+                final float gap = gc.getGap(feature)+ imgWidth;
+                final AffineTransform trs = new AffineTransform();
+
+                final PathIterator ite = j2dShape.getPathIterator(null);
+                final PathWalker walker = new DefaultPathWalker(ite);
+                walker.walk(initGap);
+                while(!walker.isFinished()){
+                    //paint the motif --------------------------------------------------
+                    walker.getPosition(pt);
+                    final float angle = walker.getRotation();
+                    trs.setToTranslation(pt.getX(), pt.getY());
+                    trs.rotate(angle);
+                    final float[] anchor = cgs.getAnchor(feature, null);
+                    final float[] disp = cgs.getDisplacement(feature, null);
+                    trs.translate(-imgWidth*anchor[0], -imgHeight*anchor[1]);
+                    trs.translate(disp[0], -disp[1]);
+
+                    g2d.drawImage(img, trs, null);
+
+                    //walk over the gap ------------------------------------------------
+                    walker.walk(gap);
+                }
+            }
+
+            if(offset != 0){
+                g2d.translate(-offset, 0);
+            }
+        }
+
+    }
+
     private void portray(ProjectedGeometry projectedGeometry, Feature feature) throws PortrayalException{
 
-        final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
-        final float coeff = renderingContext.getUnitCoefficient(symbolUnit);
         final Shape j2dShape;
 
-        if(NonSI.PIXEL == symbolUnit){
+        if(dispGeom){
             renderingContext.switchToDisplayCRS();
             try {
                 j2dShape = projectedGeometry.getDisplayShape();
@@ -118,7 +216,6 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
             g2d.translate(offset, 0);
         }
 
-        final CachedStroke cachedStroke = symbol.getCachedStroke();
         if(cachedStroke instanceof CachedStrokeSimple){
             final CachedStrokeSimple cs = (CachedStrokeSimple)cachedStroke;
             g2d.setComposite(cs.getJ2DComposite(feature));
@@ -187,33 +284,29 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
         //test if the symbol is visible on this feature
         if(!(symbol.isVisible(feature))) return false;
 
-        final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(symbol.getSource().getGeometryPropertyName());
+        final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(geomPropertyName);
 
         //symbolizer doesnt match the featuretype, no geometry found with this name.
         if(projectedGeometry == null) return false;
 
         //Test composites ------------------------------------------------------
-        if(symbol.getCachedStroke() instanceof CachedStrokeSimple){
-            CachedStrokeSimple cs = (CachedStrokeSimple) symbol.getCachedStroke();
+        if(cachedStroke instanceof CachedStrokeSimple){
+            final CachedStrokeSimple cs = (CachedStrokeSimple)cachedStroke;
             final float strokeAlpha = cs.getJ2DComposite(feature).getAlpha();
             if(strokeAlpha < GO2Utilities.SELECTION_LOWER_ALPHA){
                 //feature graphic is translucide, not selectable
                 return false;
             }
         }
-
-        final Unit symbolUnit = symbol.getSource().getUnitOfMeasure();
-        final float coeff = renderingContext.getUnitCoefficient(symbolUnit);
-
         
-        if(NonSI.PIXEL.equals(symbolUnit)){
+        if(dispGeom){
 
             final Geometry j2dShape;
 
             try {
                 j2dShape = projectedGeometry.getDisplayGeometry();
             } catch (TransformException ex) {
-                ex.printStackTrace();
+                LOGGER.log(Level.WARNING, "Error while accesing geometry.",ex);
                 return false;
             }
 
@@ -240,15 +333,15 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
                         renderingContext.getAffineTransform(renderingContext.getDisplayCRS(), renderingContext.getObjectiveCRS()));
                 ((TransformedShape)CRSShape).setOriginalShape(search.getDisplayShape());
             } catch (TransformException ex) {
-                ex.printStackTrace();
+                LOGGER.log(Level.WARNING, "Error while accesing geometry.",ex);
                 return false;
             } catch (FactoryException ex) {
-                ex.printStackTrace();
+                LOGGER.log(Level.WARNING, "Error while accesing geometry.",ex);
                 return false;
             }
 
-            if(symbol.getCachedStroke() instanceof CachedStrokeSimple){
-                final CachedStrokeSimple cs = (CachedStrokeSimple) symbol.getCachedStroke();
+            if(cachedStroke instanceof CachedStrokeSimple){
+                final CachedStrokeSimple cs = (CachedStrokeSimple)cachedStroke;
                 final java.awt.Stroke stroke = cs.getJ2DStroke(feature,coeff);
                 final Area area = new Area(stroke.createStrokedShape(j2dShape));
 

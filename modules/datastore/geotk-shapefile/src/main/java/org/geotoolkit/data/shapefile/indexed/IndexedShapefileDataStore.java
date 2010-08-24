@@ -452,7 +452,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         }
 
         return new IndexedBBoxShapefileAttributeReader(properties,
-                openShapeReader(shx), dbfR, goodCollec, col.bboxIterator(),bbox,minRes);
+                openShapeReader(), dbfR, goodCollec, col.bboxIterator(),bbox,minRes);
     }
 
     /**
