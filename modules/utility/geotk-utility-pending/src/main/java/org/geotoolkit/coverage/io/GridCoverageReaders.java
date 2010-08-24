@@ -23,8 +23,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.URL;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageReader;
@@ -131,15 +134,16 @@ public class GridCoverageReaders {
     }
 
     /**
-     * Open an already existing mosaic.
-     *
-     * @param file : File folder where all tiles are stored or a serialized TileManager
-     * @return GridCoverageReader
+     * Open a tile manager or create it from a folder of images.
+     * The tile manager classe is concurrent and can be used by several 
+     * grid coverage reader at the same time.
+     * 
+     * @param file
+     * @return Entry<TileManager,CoordinateReferenceSystem>
      * @throws IOException
      * @throws CoverageStoreException
      */
-    public static GridCoverageReader openMosaic(File file) throws IOException, CoverageStoreException{
-
+    public static Entry<TileManager,CoordinateReferenceSystem> openTileManager(File file) throws IOException, CoverageStoreException{
         TileManager manager = null;
         final CoordinateReferenceSystem crs;
         if(file.exists() && !file.isDirectory()){
@@ -153,7 +157,7 @@ public class GridCoverageReaders {
             }finally{
                 in.close();
             }
-            
+
             if(obj instanceof TileManager){
                 manager = (TileManager)obj;
 
@@ -206,25 +210,49 @@ public class GridCoverageReaders {
             }
         }
 
+        return new SimpleEntry<TileManager, CoordinateReferenceSystem>(manager, crs);
+    }
 
-        final TileManager fm = manager;
+    /**
+     * Convert a tile manager and a crs to a grid coverage reader.
+     *
+     * @param tm
+     * @param crs
+     * @return
+     * @throws CoverageStoreException
+     */
+    public static GridCoverageReader toCoverageReader(final TileManager tm,
+            final CoordinateReferenceSystem crs) throws CoverageStoreException{
+
         final ImageCoverageReader reader = new ImageCoverageReader() {
             @Override
             public GridGeometry2D getGridGeometry(int index) throws CoverageStoreException {
                 //override the CRS
                 final GridGeometry gridGeom;
                 try {
-                    gridGeom = fm.getGridGeometry();
+                    gridGeom = tm.getGridGeometry();
                 } catch (IOException ex) {
                     throw new CoverageStoreException(ex);
                 }
                 return new GridGeometry2D(gridGeom.getGridRange(), gridGeom.getGridToCRS(), crs);
             }
-
         };
 
-        reader.setInput(manager);
+        reader.setInput(tm);
         return reader;
+    }
+
+    /**
+     * Open an already existing mosaic.
+     *
+     * @param file : File folder where all tiles are stored or a serialized TileManager
+     * @return GridCoverageReader
+     * @throws IOException
+     * @throws CoverageStoreException
+     */
+    public static GridCoverageReader openMosaic(File file) throws IOException, CoverageStoreException{
+        final Entry<TileManager,CoordinateReferenceSystem> entry = openTileManager(file);
+        return toCoverageReader(entry.getKey(), entry.getValue());
     }
 
     /**
