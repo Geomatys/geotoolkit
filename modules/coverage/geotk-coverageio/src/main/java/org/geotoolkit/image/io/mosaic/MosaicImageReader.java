@@ -41,6 +41,7 @@ import javax.imageio.stream.ImageInputStream;
 import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.io.TableWriter;
+import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
@@ -52,6 +53,7 @@ import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
@@ -1046,11 +1048,33 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
             md = metadata[imageIndex];
         }
         if (md == null) {
-            final ImageGeometry geom = getTileManager(imageIndex).getGridGeometry();
+            final TileManager manager = getTileManager(imageIndex);
+            final ImageGeometry geom = manager.getGridGeometry();
             if (geom != null) {
                 final SpatialMetadata sp = new SpatialMetadata(SpatialMetadataFormat.IMAGE, this, null);
                 final GridDomainAccessor accessor = new GridDomainAccessor(sp);
                 accessor.setAll(geom.getGridToCRS(), geom.getGridRange(), null, PixelOrientation.UPPER_LEFT);
+                /*
+                 * Add the CRS, if the tile manager has been created from a directory or a file
+                 * is associated with a PRJ file.
+                 */
+                File file = manager.getSourceFile();
+                if (file != null) {
+                    String name = file.getName();
+                    final int i = name.lastIndexOf('.');
+                    if (i > 0) { // Do not accept a leading point.
+                        name = name.substring(0, i);
+                    }
+                    name += ".prj";
+                    file = new File(file.getParent(), name);
+                    if (file.isFile()) {
+                        final ReferencingBuilder helper = new ReferencingBuilder(sp);
+                        helper.setCoordinateReferenceSystem(PrjFiles.read(file));
+                    }
+                }
+                /*
+                 * Cache the metadata.
+                 */
                 if (metadata == null) {
                     metadata = new SpatialMetadata[getNumImages(true)];
                 }

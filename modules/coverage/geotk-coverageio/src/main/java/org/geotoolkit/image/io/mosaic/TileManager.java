@@ -52,7 +52,7 @@ import org.geotoolkit.resources.Errors;
  * But subclasses can make such assumption for better performances.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.15
  *
  * @since 2.5
  * @module
@@ -77,9 +77,44 @@ public abstract class TileManager implements Serializable {
     transient Set<ImageReaderSpi> providers;
 
     /**
+     * If this tile manager has been created by reading a "{@code TileManager.serialized}"
+     * file or by scanning a directory, that file or directory. Otherwise {@code null}.
+     *
+     * @since 3.15
+     */
+    private File sourceFile;
+
+    /**
      * Creates a tile manager.
      */
     protected TileManager() {
+    }
+
+    /**
+     * Sets the file or directory from which this tile manager has been created.
+     * At most one non-null file can be specified.
+     *
+     * @param file The file or directory from which this tile manager has been created.
+     *
+     * @since 3.15
+     */
+    final synchronized void setSourceFile(final File file) {
+        if (sourceFile != null) {
+            throw new IllegalStateException();
+        }
+        sourceFile = file;
+    }
+
+    /**
+     * Returns the file or directory from which this tile manager has been created.
+     *
+     * @return The file or directory from which this tile manager has been created,
+     *         or {@code null} if none or unknown.
+     *
+     * @since 3.15
+     */
+    final synchronized File getSourceFile() {
+        return sourceFile;
     }
 
     /**

@@ -146,7 +146,7 @@ public class TileManagerFactory extends Factory {
                 throw ex;
             }
             in.close();
-            return createFromObject(manager);
+            return setSourceFile(createFromObject(manager), file);
         } else if (file.isDirectory()) {
             return create(file, null, null);
         } else {
@@ -159,7 +159,7 @@ public class TileManagerFactory extends Factory {
      * also the sub-directories recursively if the given file filter accepts directories.
      * <p>
      * Each image file in the given directory shall have a
-     * <a href="http://fr.wikipedia.org/wiki/World_file">>World File</a> of the same name,
+     * <a href="http://fr.wikipedia.org/wiki/World_file">World File</a> of the same name,
      * typically with the {@code ".tfw"} extension.
      * <p>
      * If the file filter is null, a default file filter will be created from the given SPI.
@@ -200,7 +200,18 @@ public class TileManagerFactory extends Factory {
         }
         final ArrayList<Tile> tiles = new ArrayList<Tile>();
         createTilesFromFiles(directory, filter, spi, 0, tiles);
-        return create(tiles);
+        return setSourceFile(create(tiles), directory);
+    }
+
+    /**
+     * Invokes {@link TileManager#setSourceFile(File)} for all managers in the given array.
+     * Returns the given array for convenience.
+     */
+    private static TileManager[] setSourceFile(final TileManager[] managers, final File file) {
+        for (final TileManager manager : managers) {
+            manager.setSourceFile(file);
+        }
+        return managers;
     }
 
     /**

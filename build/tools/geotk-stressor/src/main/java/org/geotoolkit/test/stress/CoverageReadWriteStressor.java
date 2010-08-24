@@ -19,9 +19,7 @@ package org.geotoolkit.test.stress;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.awt.image.RenderedImage;
 import javax.imageio.ImageIO;
@@ -152,21 +150,15 @@ public class CoverageReadWriteStressor extends Stressor {
             File file = (File) input;
             LOGGER.log(Level.INFO, "Loading {0}", file);
             try {
-                if (file.isFile() && file.getName().endsWith(".serialized")) {
-                    final ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
-                    input = in.readObject();
-                    in.close();
-                } else {
-                    input = TileManagerFactory.DEFAULT.create(file);
+                input = TileManagerFactory.DEFAULT.create(file);
+                if (!file.isFile() || !file.getName().endsWith(".serialized")) {
                     file = new File(file, "TileManager.serialized");
                     LOGGER.log(Level.INFO, "Saving {0}", file);
                     final ObjectOutputStream bs = new ObjectOutputStream(new FileOutputStream(file));
                     bs.writeObject(input);
                     bs.close();
                 }
-            } catch (IOException e) { // TODO: use multi-catch with JDK7.
-                throw new CoverageStoreException(e);
-            } catch (ClassNotFoundException e) {
+            } catch (IOException e) {
                 throw new CoverageStoreException(e);
             }
         }
