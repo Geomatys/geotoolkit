@@ -342,7 +342,13 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
 
         //store the ids of the features painted during the first round -----------------------------
-        final Set<FeatureId> painted = new HashSet<FeatureId>();
+        final Set<FeatureId> painted;
+        if(renderers.elseRuleIndex >= renderers.rules.length){
+            painted = new HashSet<FeatureId>();
+        }else{
+            //no need to store ids since we don't have any else rule
+            painted = null;
+        }
 
         //render the main rules ------------------------------------------------
         for (int i = 0; i < renderers.elseRuleIndex; i++) {
@@ -375,7 +381,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                 if(k==0){
                     //first pass, we must filter using the rule filter
                     //next passes have a ids filter, so need to filter anymore
-                    ite = new FilterGraphicIterator(ite, rulefilter, ruleFeatures);
+                    ite = new FilterGraphicIterator(ite, rulefilter, (n>1)?ruleFeatures:null);
                 }
 
                 try {
@@ -389,7 +395,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                 }
             }
 
-            painted.addAll(ruleFeatures);
+            if(painted!=null){ painted.addAll(ruleFeatures); }
         }
 
         //render the else rules ------------------------------------------------
@@ -1026,7 +1032,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                 final Feature f = candidate.getFeature();
                 if(filter.evaluate(f)){
                     next = candidate;
-                    ids.add(f.getIdentifier());
+                    if(ids!=null){ids.add(f.getIdentifier());}
                     return;
                 }
             }

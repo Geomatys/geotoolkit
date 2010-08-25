@@ -315,6 +315,10 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
                         getBBoxAttributesReader(readProperties, bbox, queryHints),
                         readSchema, queryHints);
 
+            }else if(queryFilter instanceof Id && ((Id)queryFilter).getIdentifiers().isEmpty()){
+                //in case we have an empty id set
+                return GenericEmptyFeatureIterator.createReader(getFeatureType());
+
             }else{
                 reader = createFeatureReader(
                     getAttributesReader(readProperties, queryFilter),
