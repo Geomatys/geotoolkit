@@ -61,7 +61,7 @@ import org.geotoolkit.resources.Errors;
  * to the values declared in the PostGIS {@code "spatial_ref_sys"} table.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.15
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -348,10 +348,12 @@ final class SpatialRefSysEntry {
      * The {@link #createSpatioTemporalCRS} method must have been invoked before this method.
      */
     final GeneralGridGeometry createGridGeometry(final Dimension size, final AffineTransform gridToCRS,
-            final double[] altitudes, final MathTransformFactory mtFactory) throws FactoryException
+            final double[] altitudes, final MathTransformFactory mtFactory, final boolean includeTime)
+            throws FactoryException
     {
         assert uninitialized() == 0 : this;
-        final int dim = spatioTemporalCRS.getCoordinateSystem().getDimension();
+        final CoordinateReferenceSystem crs = getSpatioTemporalCRS(includeTime);
+        final int dim = crs.getCoordinateSystem().getDimension();
         final int[] lower = new int[dim];
         final int[] upper = new int[dim];
         final Matrix matrix = MatrixFactory.create(dim + 1);
@@ -373,8 +375,7 @@ final class SpatialRefSysEntry {
         upper[0] = size.width;
         upper[1] = size.height;
         final GridEnvelope gridRange = new GeneralGridEnvelope(lower, upper, false);
-        return new GeneralGridGeometry(gridRange, pixelInCell,
-                mtFactory.createAffineTransform(matrix), spatioTemporalCRS);
+        return new GeneralGridGeometry(gridRange, pixelInCell, mtFactory.createAffineTransform(matrix), crs);
     }
 
     /**

@@ -62,7 +62,7 @@ import org.geotoolkit.referencing.operation.matrix.XMatrix;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Sam Hiatt
- * @version 3.10
+ * @version 3.15
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -92,6 +92,13 @@ final class GridGeometryEntry extends DefaultEntry {
      * basis).
      */
     final GeneralGridGeometry geometry;
+
+    /**
+     * Same as {@link #geometry}, but without temporal component.
+     *
+     * @since 3.15
+     */
+    final GeneralGridGeometry spatialGeometry;
 
     /**
      * The "grid to CRS" affine transform for the horizontal part. The vertical
@@ -146,7 +153,12 @@ final class GridGeometryEntry extends DefaultEntry {
                 throw new IllegalArgumentException(); // See 'indexOfNearestAltitude' for this limitation.
             }
         }
-        geometry = srsEntry.createGridGeometry(size, gridToCRS, verticalOrdinates, mtFactory);
+        geometry = srsEntry.createGridGeometry(size, gridToCRS, verticalOrdinates, mtFactory, true);
+        if (srsEntry.temporalCRS != null) {
+            spatialGeometry = srsEntry.createGridGeometry(size, gridToCRS, verticalOrdinates, mtFactory, false);
+        } else {
+            spatialGeometry = geometry;
+        }
         standardEnvelope = srsEntry.toDatabaseHorizontalCRS().createTransformedShape(getHorizontalEnvelope());
         double min = Double.NaN, max = Double.NaN;
         if (verticalOrdinates != null && verticalOrdinates.length != 0) {
@@ -258,7 +270,7 @@ final class GridGeometryEntry extends DefaultEntry {
      * Convenience method returning the two first dimensions of the grid range.
      */
     public Dimension getImageSize() {
-        final GridEnvelope gridRange = geometry.getGridRange();
+        final GridEnvelope gridRange = spatialGeometry.getGridRange();
         return new Dimension(gridRange.getSpan(0), gridRange.getSpan(1));
     }
 
@@ -266,7 +278,7 @@ final class GridGeometryEntry extends DefaultEntry {
      * Convenience method returning the two first dimensions of the grid range.
      */
     public Rectangle getImageBounds() {
-        final GridEnvelope gridRange = geometry.getGridRange();
+        final GridEnvelope gridRange = spatialGeometry.getGridRange();
         return new Rectangle(gridRange.getLow (0), gridRange.getLow (1),
                              gridRange.getSpan(0), gridRange.getSpan(1));
     }
@@ -279,7 +291,7 @@ final class GridGeometryEntry extends DefaultEntry {
      * @throws TransformException If the resolution can not be converted to the database CRS.
      */
     public Dimension2D getStandardResolution() throws TransformException {
-        final double[] resolution = geometry.getResolution();
+        final double[] resolution = spatialGeometry.getResolution();
         if (resolution != null) {
             final MathTransform2D toDatabaseHorizontalCRS = srsEntry.toDatabaseHorizontalCRS();
             if (toDatabaseHorizontalCRS != null) {
@@ -311,7 +323,7 @@ final class GridGeometryEntry extends DefaultEntry {
      * (but not guaranteed) to be an instance of {@link Rectangle2D}. It can be freely modified.
      */
     private Shape getHorizontalEnvelope() {
-        final GridEnvelope gridRange = geometry.getGridRange();
+        final GridEnvelope gridRange = spatialGeometry.getGridRange();
         Shape shape = new Rectangle2D.Double(
                 gridRange.getLow (0), gridRange.getLow (1),
                 gridRange.getSpan(0), gridRange.getSpan(1));
@@ -323,7 +335,7 @@ final class GridGeometryEntry extends DefaultEntry {
      * Returns the coordinates (in coverage CRS) at the center of the image.
      */
     private Point2D getHorizontalCenter() {
-        final GridEnvelope gridRange = geometry.getGridRange();
+        final GridEnvelope gridRange = spatialGeometry.getGridRange();
         Point2D center = new Point2D.Double(
                 gridRange.getLow(0) + 0.5*gridRange.getSpan(0),
                 gridRange.getLow(1) + 0.5*gridRange.getSpan(1));

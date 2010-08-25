@@ -692,7 +692,7 @@ final class LayerEntry extends DefaultEntry implements Layer {
             final FrequencySortedSet<GeneralGridGeometry> geometries = new FrequencySortedSet<GeneralGridGeometry>(true);
             int i = 0;
             for (final GridGeometryEntry entry : extents) {
-                GeneralGridGeometry gg = entry.geometry;
+                GeneralGridGeometry gg = entry.spatialGeometry;
                 final DefaultTemporalCRS temporalCRS = entry.getTemporalCRS();
                 if (temporalCRS != null) {
                     /*
@@ -711,6 +711,7 @@ final class LayerEntry extends DefaultEntry implements Layer {
                     final double min = (startTime != null) ? temporalCRS.toValue(startTime) : Double.NEGATIVE_INFINITY;
                     final double max = (  endTime != null) ? temporalCRS.toValue(  endTime) : Double.POSITIVE_INFINITY;
                     if (!Double.isInfinite(min) || !Double.isInfinite(max)) {
+                        gg = entry.geometry;
                         final double interval;
                         if (!Double.isNaN(timeInterval)) {
                             final long dt = Math.round(timeInterval * GridCoverageTable.MILLIS_IN_DAY);

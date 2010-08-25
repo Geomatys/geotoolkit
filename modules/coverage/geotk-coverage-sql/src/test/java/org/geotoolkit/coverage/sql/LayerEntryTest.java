@@ -25,6 +25,7 @@ import java.sql.SQLException;
 
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.crs.GeographicCRS;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.util.MeasurementRange;
@@ -44,7 +45,7 @@ import static org.geotoolkit.coverage.sql.LayerTableTest.*;
  * Tests {@link LayerEntry}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.15
  *
  * @since 3.10 (derived from Seagis)
  */
@@ -145,6 +146,34 @@ public final class LayerEntryTest extends CatalogTestBase {
         assertEquals("X scale",  0.087890625, matrix.getElement(0, 0), EPS);
         assertEquals("Y scale", -0.087890625, matrix.getElement(1, 1), EPS);
         assertEquals("T scale",            8, matrix.getElement(2, 2), EPS);
+        assertSame("Shall be cached.", geometries, entry.getGridGeometries());
+    }
+
+    /**
+     * Tests the calculation of the grid geometry for a layer that doesn't contain time axis.
+     * We expect a plain {@link GeographicCRS}.
+     *
+     * @throws SQLException If the test can't connect to the database.
+     * @throws CoverageStoreException If an error occurred while querying the layer.
+     *
+     * @since 3.15
+     */
+    @Test
+    public void testGridGeometriesNoTime() throws SQLException, CoverageStoreException {
+        final LayerEntry entry = getLayer(BLUEMARBLE);
+        final SortedSet<GeneralGridGeometry> geometries = entry.getGridGeometries();
+        assertEquals("Expected exactly one grid geometry.", 1, geometries.size());
+        final GeneralGridGeometry geom = geometries.first();
+        assertTrue(geom.getCoordinateReferenceSystem() instanceof GeographicCRS);
+        assertArrayEquals("GridEnvelope check (lower)", new int[2],
+                geom.getGridRange().getLow().getCoordinateValues());
+        assertArrayEquals("GridEnvelope check (upper)", new int[] {2879, 1439},
+                geom.getGridRange().getHigh().getCoordinateValues());
+        final Matrix matrix = ((LinearTransform) geom.getGridToCRS(PixelInCell.CELL_CORNER)).getMatrix();
+        assertEquals("X translation", -180, matrix.getElement(0, 2), EPS);
+        assertEquals("Y translation",   90, matrix.getElement(1, 2), EPS);
+        assertEquals("X scale",      0.125, matrix.getElement(0, 0), EPS);
+        assertEquals("Y scale",     -0.125, matrix.getElement(1, 1), EPS);
         assertSame("Shall be cached.", geometries, entry.getGridGeometries());
     }
 
