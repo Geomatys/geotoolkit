@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -47,12 +47,17 @@ import org.opengis.referencing.crs.VerticalCRS;
  * Utilities methods that provide conversion functionnalities between real objects and queries
  * (in both ways).
  *
- * @version $Id$
- *
  * @author Cédric Briançon (Geomatys)
  * @author Johann Sorel (Geomatys)
  */
 public final class RequestsUtilities {
+    /**
+     * List of supported mime-types.
+     */
+    private static final Set<String> SUPPORTED_FORMATS = new HashSet<String>(Arrays.asList(ImageIO.getWriterMIMETypes()));
+    static {
+        SUPPORTED_FORMATS.addAll(Arrays.asList(ImageIO.getWriterFormatNames()));
+    }
 
     private RequestsUtilities() {}
 
@@ -114,7 +119,7 @@ public final class RequestsUtilities {
      * @param envelope The envelope to return the CRS code.
      */
     public static String toCrsCode(final Envelope envelope) {
-        if (envelope.getCoordinateReferenceSystem().equals(DefaultGeographicCRS.WGS84)) {
+        if (CRS.equalsIgnoreMetadata(envelope.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84)) {
             return "EPSG:4326";
         }
         final Set<ReferenceIdentifier> identifiers = envelope.getCoordinateReferenceSystem().getIdentifiers();
@@ -146,23 +151,30 @@ public final class RequestsUtilities {
      *
      * @param bbox Coordinates of the bounding box, seperated by comas.
      * @param crs  The {@linkplain CoordinateReferenceSystem coordinate reference system} in
-     *             which the envelope is expressed. Should not be {@code null}.
+     *             which the envelope is expressed. Must not be {@code null}.
      * @return The enveloppe for the bounding box specified, or an
      *         {@linkplain GeneralEnvelope#setToInfinite infinite envelope}
      *         if the bbox is {@code null}.
+     * @throws IllegalArgumentException if the given CRS is {@code null}, or if the bbox string
+     *                                  contains too much parameters to fill the CRS ranges.
      */
     public static Envelope toEnvelope(final String bbox, final CoordinateReferenceSystem crs)
                                                               throws IllegalArgumentException
     {
-        final GeneralEnvelope envelope = new GeneralEnvelope(2);
-        envelope.setCoordinateReferenceSystem(crs);
-        envelope.setToInfinite();
+        if (crs == null) {
+            throw new IllegalArgumentException("The CRS must not be null");
+        }
         if (bbox == null) {
-            return envelope;
+            final GeneralEnvelope infinite = new GeneralEnvelope(crs);
+            infinite.setToInfinite();
+            return infinite;
         }
 
+        final GeneralEnvelope envelope = new GeneralEnvelope(crs);
+        final int dimension = envelope.getDimension();
         final StringTokenizer tokens = new StringTokenizer(bbox, ",;");
-        final double[] coordinates = new double[envelope.getDimension() * 2];
+        final double[] coordinates = new double[dimension * 2];
+
         int index = 0;
         while (tokens.hasMoreTokens()) {
             final double value = toDouble(tokens.nextToken());
@@ -196,7 +208,6 @@ public final class RequestsUtilities {
          * is a little-bit counter-intuitive, it is worth to perform this check in order to
          * avoid a NonInvertibleTransformException at some later stage.
          */
-        final int dimension = envelope.getDimension();
         for (index = 0; index < dimension; index++) {
             final double minimum = envelope.getMinimum(index);
             final double maximum = envelope.getMaximum(index);
@@ -213,7 +224,7 @@ public final class RequestsUtilities {
      *
      * @param bbox Coordinates of the bounding box, seperated by comas.
      * @param crs  The {@linkplain CoordinateReferenceSystem coordinate reference system} in
-     *             which the envelope is expressed. Should not be {@code null}.
+     *             which the envelope is expressed. Must not be {@code null}.
      * @return The enveloppe for the bounding box specified, or an
      *         {@linkplain GeneralEnvelope#setToInfinite infinite envelope}
      *         if the bbox is {@code null}.
@@ -324,6 +335,7 @@ public final class RequestsUtilities {
      * Returns the format if it is a known format, that can be used for writting.
      *
      * @param format The format chosen, as a string.
+     * @return The supported format, or {@code null} if the given format is {@code null}.
      * @throws IllegalArgumentException if the given string is not a known format.
      */
     public static String toFormat(String format) throws IllegalArgumentException {
@@ -331,9 +343,7 @@ public final class RequestsUtilities {
             return null;
         }
         format = format.trim();
-        final Set<String> formats = new HashSet<String>(Arrays.asList(ImageIO.getWriterMIMETypes()));
-        formats.addAll(Arrays.asList(ImageIO.getWriterFormatNames()));
-        if (!formats.contains(format)) {
+        if (!SUPPORTED_FORMATS.contains(format)) {
             throw new IllegalArgumentException("Invalid format specified.");
         }
         return format;
