@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
@@ -62,9 +63,11 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.container.statefull.StatefullCachedRule;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
+import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.filter.DefaultId;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.style.StyleUtilities;
@@ -76,7 +79,9 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
+import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
@@ -96,7 +101,7 @@ import static org.geotoolkit.display2d.GO2Utilities.*;
  * @module pending
  */
 public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
-    
+
     public StatelessFeatureLayerJ2D(ReferencedCanvas2D canvas, FeatureMapLayer layer){
         super(canvas, layer);
     }
@@ -106,9 +111,9 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
      */
     @Override
     public void paint(final RenderingContext2D renderingContext) {
-        
+
         //we abort painting if the layer is not visible.
-        if (!layer.isVisible()) return;  
+        if (!layer.isVisible()) return;
 
         //search for a special graphic renderer
         final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) layer.getGraphicBuilder(GraphicJ2D.class);
@@ -201,7 +206,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
     }
 
     protected void paintVectorLayer(final CachedRule[] rules, final RenderingContext2D context) {
-        
+
         final CanvasMonitor monitor = context.getMonitor();
         final Query query = prepareQuery(context, layer, rules);
 
@@ -209,7 +214,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
         //we do not check if the collection is empty or not since
         //it can be a very expensive operation
-        
+
         //prepare the rendering parameters
         final StatefullContextParams params = prepareContextParams(context, null);
 
@@ -239,7 +244,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                 monitor.exceptionOccured(ex, Level.WARNING);
             }
         }
-  
+
     }
 
     protected RenderingIterator getIterator(FeatureCollection<? extends Feature> features,
@@ -252,10 +257,10 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
     /**
      * Render by feature order.
-     * @param features 
+     * @param features
      * @param renderers
-     * @param context 
-     * @param params 
+     * @param context
+     * @param params
      * @throws PortrayalException
      */
     protected final void renderByFeatureOrder(FeatureCollection<? extends Feature> features,
@@ -336,19 +341,43 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         }
 
 
-        //store the ids of the features painted
-        final Set<String> painted = new HashSet<String>();
+        //store the ids of the features painted during the first round -----------------------------
+        final Set<FeatureId> painted = new HashSet<FeatureId>();
+
         //render the main rules ------------------------------------------------
         for (int i = 0; i < renderers.elseRuleIndex; i++) {
             if(monitor.stopRequested()) return;
             final CachedRule rule = renderers.rules[i];
             final Filter rulefilter = rule.getFilter();
 
+            //starting from second path and after, we ask for features knowing there ids
+            //it should be much more efficient.
+            final Set<FeatureId> ruleFeatures = new HashSet<FeatureId>();
+            FeatureCollection<? extends Feature> col = features;
+
             //encapsulate interator
-            for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
+            for (int k=0,n=renderers.renderers[i].length; k<n;k++){
+
+                final SymbolizerRenderer renderer = renderers.renderers[i][k];
                 if(monitor.stopRequested()) return;
-                RenderingIterator ite = getIterator(features, context, params);
-                ite = new FilterGraphicIterator(ite, rulefilter, painted);
+
+                if(k==1){
+                    //we have collected all ids from the last round, let's optimize the query
+                    try {
+                        col = layer.getCollection().subCollection(idQuery(context, layer,
+                                new CachedRule[]{rule}, new DefaultId(ruleFeatures)));
+                    } catch (DataStoreException ex) {
+                        throw new PortrayalException(ex);
+                    }
+                }
+
+                RenderingIterator ite = getIterator(col, context, params);
+                if(k==0){
+                    //first pass, we must filter using the rule filter
+                    //next passes have a ids filter, so need to filter anymore
+                    ite = new FilterGraphicIterator(ite, rulefilter, ruleFeatures);
+                }
+
                 try {
                     renderer.portray(ite);
                 } finally {
@@ -359,6 +388,8 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                     }
                 }
             }
+
+            painted.addAll(ruleFeatures);
         }
 
         //render the else rules ------------------------------------------------
@@ -375,7 +406,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                         if(monitor.stopRequested()) return;
                         final ProjectedFeature pf = ite.next();
                         final Feature f = pf.getFeature();
-                        if (!painted.contains(f.getIdentifier().getID())
+                        if (!painted.contains(f.getIdentifier())
                             && (rulefilter == null || rulefilter.evaluate(pf.getFeature()))) {
                             renderer.portray(pf);
                         }
@@ -463,7 +494,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                         }
                     }
                 }
-                
+
             }
         }finally{
             iterator.close();
@@ -477,7 +508,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
      */
     @Override
     public List<Graphic> getGraphicAt(RenderingContext rdcontext, SearchArea mask, VisitFilter filter, List<Graphic> graphics) {
-        
+
         if(!layer.isSelectable()) return graphics;
 
         if(!(rdcontext instanceof RenderingContext2D)) return graphics;
@@ -487,7 +518,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         if (!layer.isVisible()) return graphics;
 
         final Name featureTypeName = layer.getCollection().getFeatureType().getName();
-        final CachedRule[] rules = GO2Utilities.getValidCachedRules(layer.getStyle(), 
+        final CachedRule[] rules = GO2Utilities.getValidCachedRules(layer.getStyle(),
                 c2d.getSEScale(), featureTypeName);
 
         //we perform a first check on the style to see if there is at least
@@ -727,11 +758,184 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
         //add reprojection -----------------------------------------------------
         qb.setCRS(renderingContext.getObjectiveCRS2D());
-        
+
         //set the acumulated hints
         qb.setHints(queryHints);
         return qb.buildQuery();
     }
+
+    protected static Query idQuery(RenderingContext2D renderingContext, FeatureMapLayer layer, CachedRule[] rules, Filter ids){
+
+        final FeatureCollection<? extends Feature> fs            = layer.getCollection();
+        final FeatureType schema                                 = fs.getFeatureType();
+        final GeometryDescriptor geomDesc                        = schema.getGeometryDescriptor();
+        final CoordinateReferenceSystem layerCRS                 = schema.getCoordinateReferenceSystem();
+        final String geomAttName                                 = (geomDesc!=null)? geomDesc.getLocalName() : null;
+        final RenderingHints hints                               = renderingContext.getRenderingHints();
+
+        Filter filter;
+
+        //concatenate geographique filter with data filter if there is one
+        if(layer.getQuery() != null && layer.getQuery().getFilter() != null){
+            filter = FILTER_FACTORY.and(ids,layer.getQuery().getFilter());
+        }else{
+            filter = ids;
+        }
+
+
+        //concatenate with temporal range if needed ----------------------------
+        final Filter temporalFilter;
+        final Date[] temporal = renderingContext.getTemporalRange().clone();
+        final Expression[] layerTemporalRange = layer.getTemporalRange().clone();
+
+        if(temporal[0] == null){
+            temporal[0] = new Date(Long.MIN_VALUE);
+        }
+        if(temporal[1] == null){
+            temporal[1] = new Date(Long.MAX_VALUE);
+        }
+
+        if(layerTemporalRange[0] != null && layerTemporalRange[1] != null){
+            temporalFilter = FILTER_FACTORY.and(
+                    FILTER_FACTORY.lessOrEqual(layerTemporalRange[0], FILTER_FACTORY.literal(temporal[1])),
+                    FILTER_FACTORY.greaterOrEqual(layerTemporalRange[1], FILTER_FACTORY.literal(temporal[0])));
+        }else if(layerTemporalRange[0] != null){
+            temporalFilter = FILTER_FACTORY.and(
+                    FILTER_FACTORY.lessOrEqual(layerTemporalRange[0], FILTER_FACTORY.literal(temporal[1])),
+                    FILTER_FACTORY.greaterOrEqual(layerTemporalRange[0], FILTER_FACTORY.literal(temporal[0])));
+        }else if(layerTemporalRange[1] != null){
+            temporalFilter = FILTER_FACTORY.and(
+                    FILTER_FACTORY.lessOrEqual(layerTemporalRange[1], FILTER_FACTORY.literal(temporal[1])),
+                    FILTER_FACTORY.greaterOrEqual(layerTemporalRange[1], FILTER_FACTORY.literal(temporal[0])));
+        }else{
+            temporalFilter = Filter.INCLUDE;
+        }
+
+        if(temporalFilter != Filter.INCLUDE){
+            filter = FILTER_FACTORY.and(filter,temporalFilter);
+        }
+
+        //concatenate with elevation range if needed ---------------------------
+        final Filter verticalFilter;
+        final Double[] vertical = renderingContext.getElevationRange().clone();
+        final Expression[] layerVerticalRange = layer.getElevationRange().clone();
+
+        if(vertical[0] == null){
+            vertical[0] = Double.NEGATIVE_INFINITY;
+        }
+        if(vertical[1] == null){
+            vertical[1] = Double.POSITIVE_INFINITY;
+        }
+
+        if(layerVerticalRange[0] != null && layerVerticalRange[1] != null){
+            verticalFilter = FILTER_FACTORY.and(
+                    FILTER_FACTORY.lessOrEqual(layerVerticalRange[0], FILTER_FACTORY.literal(vertical[1])),
+                    FILTER_FACTORY.greaterOrEqual(layerVerticalRange[1], FILTER_FACTORY.literal(vertical[0])));
+        }else if(layerVerticalRange[0] != null){
+            verticalFilter = FILTER_FACTORY.and(
+                    FILTER_FACTORY.lessOrEqual(layerVerticalRange[0], FILTER_FACTORY.literal(vertical[1])),
+                    FILTER_FACTORY.greaterOrEqual(layerVerticalRange[0], FILTER_FACTORY.literal(vertical[0])));
+        }else if(layerVerticalRange[1] != null){
+            verticalFilter = FILTER_FACTORY.and(
+                    FILTER_FACTORY.lessOrEqual(layerVerticalRange[1], FILTER_FACTORY.literal(vertical[1])),
+                    FILTER_FACTORY.greaterOrEqual(layerVerticalRange[1], FILTER_FACTORY.literal(vertical[0])));
+        }else{
+            verticalFilter = Filter.INCLUDE;
+        }
+
+        if(verticalFilter != Filter.INCLUDE){
+            filter = FILTER_FACTORY.and(filter,verticalFilter);
+        }
+
+        final Set<String> copy = new HashSet<String>();
+        for(CachedRule r : rules){
+            for(CachedSymbolizer c : r.symbolizers()){
+                c.getRequieredAttributsName(copy);
+            }
+        }
+        if(geomAttName != null){
+            copy.add(geomAttName);
+        }
+        final String[] atts = copy.toArray(new String[copy.size()]);
+
+        //check that properties names does not hold sub properties values, if one is found
+        //then we reduce it to the first parent property.
+        for(int i=0; i<atts.length; i++){
+            String attName = atts[i];
+            int index = attName.indexOf('/');
+            if(index >=0){
+                //remove all xpath filtering and indexing
+                int n = attName.indexOf('[', index+1);
+                while(n > 0){
+                    int d = attName.indexOf(']', n);
+                    if(d>0){
+                        attName = attName.substring(index, n)+attName.substring(d+1);
+                    }else{
+                        break;
+                    }
+                    n = attName.indexOf('[', index+1);
+                }
+
+                //looks like we have a path
+                int nextOcc = attName.indexOf('/', index+1);
+                int startBracket = attName.indexOf('{', index+1);
+                int endBracket = attName.indexOf('}', index+1);
+                if(nextOcc> startBracket && nextOcc<endBracket){
+                    //in a qname, ignore this slash
+                    nextOcc = attName.indexOf('/', endBracket+1);
+                }
+
+                if(endBracket > index){
+                    //this is a path, reduce it
+                    atts[i] = attName.substring(index+1, nextOcc);
+                }
+            }
+        }
+
+        //optimize the filter---------------------------------------------------
+        filter = FilterUtilities.prepare(filter,Feature.class);
+
+        final Hints queryHints = new Hints();
+        final QueryBuilder qb = new QueryBuilder();
+        qb.setTypeName(schema.getName());
+        qb.setFilter(filter);
+        qb.setProperties(atts);
+
+        //add resampling -------------------------------------------------------
+        Boolean resample = (hints == null) ? null : (Boolean) hints.get(GO2Hints.KEY_GENERALIZE);
+        if(!Boolean.FALSE.equals(resample)){
+            //we only disable resampling if it is explictly specified
+            final double[] res = renderingContext.getResolution(layerCRS);
+
+            //adjust with the generalization factor
+            final Number n =  (hints==null) ? null : (Number)hints.get(GO2Hints.KEY_GENERALIZE_FACTOR);
+            final double factor;
+            if(n != null){
+                factor = n.doubleValue();
+            }else{
+                factor = GO2Hints.GENERALIZE_FACTOR_DEFAULT.doubleValue();
+            }
+            res[0] *= factor;
+            res[1] *= factor;
+            qb.setResolution(renderingContext.getResolution(layerCRS));
+        }
+
+        //add ignore flag ------------------------------------------------------
+        if(!GO2Utilities.visibleMargin(rules, 1.01f, renderingContext)){
+            //style does not expend itself further than the feature geometry
+            //that mean geometries smaller than a pixel will not be renderer are barely visible
+            queryHints.put(HintsPending.KEY_IGNORE_SMALL_FEATURES, renderingContext.getResolution(layerCRS));
+        }
+
+        //add reprojection -----------------------------------------------------
+        qb.setCRS(renderingContext.getObjectiveCRS2D());
+
+        //set the acumulated hints
+        qb.setHints(queryHints);
+        return qb.buildQuery();
+    }
+
+
 
     private StatefullContextParams prepareContextParams(RenderingContext2D renderingContext,
             StatefullContextParams params){
@@ -746,7 +950,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         params.objectiveToDisplay.setTransform(objtoDisp);
         ((CoordinateSequenceMathTransformer)params.objToDisplayTransformer.getCSTransformer())
                 .setTransform(objtoDisp);
-        
+
         return params;
     }
 
@@ -790,11 +994,11 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         private RenderingIterator ite;
         private Filter filter;
         private ProjectedFeature next = null;
-        private final Set<String> ids;
+        private final Set<FeatureId> ids;
 
-        public FilterGraphicIterator(RenderingIterator ite, Filter filter, Set<String> ids) {
+        public FilterGraphicIterator(RenderingIterator ite, Filter filter, Set<FeatureId> ids) {
             this.ite = ite;
-            this.filter = filter;
+            this.filter = (filter==null)?Filter.INCLUDE : filter ;
             this.ids = ids;
         }
 
@@ -822,7 +1026,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                 final Feature f = candidate.getFeature();
                 if(filter.evaluate(f)){
                     next = candidate;
-                    ids.add(f.getIdentifier().getID());
+                    ids.add(f.getIdentifier());
                     return;
                 }
             }
