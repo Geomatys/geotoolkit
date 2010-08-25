@@ -102,7 +102,7 @@ public class DefaultPortrayalService implements PortrayalService{
      * Cache the link between mime-type -> java-type
      * exemple : image/png -> png
      */
-    private static final Map<String,String> MIME_CACHE = new ConcurrentHashMap<String, String>();
+    static final Map<String,String> MIME_CACHE = new ConcurrentHashMap<String, String>();
 
     private DefaultPortrayalService(){}
     

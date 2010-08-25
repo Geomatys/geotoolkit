@@ -134,6 +134,14 @@ public class DisplayObject {
     }
 
     /**
+     * Reset Hints and use the given ones.
+     */
+    public void setRenderingHints(Hints hints){
+        this.hints.clear();
+        this.hints.add(hints);
+    }
+
+    /**
      * Adds a property change listener to the listener list. The listener is registered
      * for all properties. For example, {@value AbstractCanvas#DISPLAY_CRS_PROPERTY}.
      *
