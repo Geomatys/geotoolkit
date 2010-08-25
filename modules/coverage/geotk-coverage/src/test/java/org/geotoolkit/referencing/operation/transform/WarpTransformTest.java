@@ -21,7 +21,6 @@ import java.util.Random;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
-import java.awt.geom.AffineTransform;
 
 import javax.media.jai.Warp;
 import javax.media.jai.WarpAffine;
@@ -37,10 +36,10 @@ import org.junit.*;
 
 
 /**
- * Tests the {@link WarpTransform2D} and {@link WarpAdapter} classes.
+ * Tests the {@link WarpTransform2D} class.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @since 2.1
  */
@@ -85,7 +84,7 @@ public final class WarpTransformTest extends TransformTestCase {
         /*
          * Gets the transform. We specify a bounding box which contains all points.
          */
-        final Point ext = new Point(WIDTH,HEIGHT);
+        final Point ext = new Point(WIDTH, HEIGHT);
         formula.transform(ext);
         transform = new WarpTransform2D(
                 new Rectangle(0, 0, WIDTH, HEIGHT), sources, 0,
@@ -192,72 +191,5 @@ public final class WarpTransformTest extends TransformTestCase {
             }, 2);
             assertInstanceOf("Expected a quatratic warp.", WarpQuadratic.class, warp);
         }
-    }
-
-    /**
-     * Tests the {@link WarpAdapter} class using an affine transform.
-     */
-    @Test
-    public void testAdapter() {
-        tolerance = 1E-5;
-        final AffineTransform atr = AffineTransform.getScaleInstance(0.25, 0.5);
-        atr.translate(4, 2);
-        final AffineTransform2D transform = new AffineTransform2D(atr);
-        final WarpAffine        warp      = new WarpAffine       (atr);
-        final WarpAdapter       adapter   = new WarpAdapter("test", transform);
-        final Random            random    = new Random(-854734760285695284L);
-        for (int i=0; i<200; i++) {
-            Point2D source   = new Point2D.Double(random.nextDouble()*100, random.nextDouble()*100);
-            Point2D expected = warp   .mapDestPoint(source);
-            Point2D computed = adapter.mapDestPoint(source);
-            assertEquals("X", expected.getX(), computed.getX(), tolerance);
-            assertEquals("Y", expected.getY(), computed.getY(), tolerance);
-
-            // Tries inverse transform.
-            expected = warp   .mapSourcePoint(source);
-            computed = adapter.mapSourcePoint(source);
-            assertEquals("X", expected.getX(), computed.getX(), tolerance);
-            assertEquals("Y", expected.getY(), computed.getY(), tolerance);
-
-            // Tries warpPoint
-            final float[] exp = warp   .warpPoint((int)source.getX(), (int)source.getY(), null);
-            final float[] com = adapter.warpPoint((int)source.getX(), (int)source.getY(), null);
-            assertEquals("X", exp[0], com[0], tolerance);
-            assertEquals("Y", exp[1], com[1], tolerance);
-        }
-    }
-
-    /**
-     * Creates a warp transform from the given affine transform coefficients,
-     * and ensure that it produces the same result than the original transform,
-     * taking in account the 0.5 offset.
-     *
-     * @since 3.14
-     */
-    private void createAffine(final double scaleX, final double scaleY,
-            final double translateX, final double translateY)
-    {
-        final AffineTransform2D tr = new AffineTransform2D(scaleX, 0, 0, scaleY, translateX, translateY);
-        transform = tr;
-        final Point2D.Double referencePoint = new Point2D.Double(0.5, 0.5);
-        assertSame(referencePoint, tr.transform(referencePoint, referencePoint));
-        final Warp warp = WarpTransform2D.getWarp(null, tr);
-        assertTrue(warp instanceof WarpAffine);
-
-        final float[] coordinates = warp.warpPoint(0, 0, null);
-        assertEquals(2, coordinates.length);
-        assertEquals("X value", referencePoint.x - 0.5, coordinates[0], tolerance);
-        assertEquals("Y value", referencePoint.y - 0.5, coordinates[1], tolerance);
-    }
-
-    /**
-     * Tests the {@link WarpTransform2D#getWarp} method with an affine transform.
-     *
-     * @since 3.14
-     */
-    @Test
-    public void testGetWarpAffine() {
-        createAffine(1, 1, 8, 9);
-        createAffine(2, 3, 8, 9);
     }
 }
