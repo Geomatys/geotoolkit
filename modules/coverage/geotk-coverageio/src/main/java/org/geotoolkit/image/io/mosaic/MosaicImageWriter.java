@@ -50,6 +50,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.lang.reflect.UndeclaredThrowableException;
 
+import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.Disposable;
@@ -100,7 +101,7 @@ import org.geotoolkit.util.converter.Classes;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @since 2.5
  * @module
@@ -111,6 +112,16 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
      * because this is the value of newly created image, and we do not fill them at this time.
      */
     private static final int FILL_VALUE = 0;
+
+    /**
+     * The preferred tile size inside the images. This apply only to format that support tile
+     * size, like TIFF. The tile size effectively used may be slightly different.
+     *
+     * {@note The default value used by GDAL is 64.}
+     *
+     * @since 3.15
+     */
+    private static final int IMAGE_TILE_SIZE = 64;
 
     /**
      * The logging level for tiling information during reads and writes.
@@ -446,6 +457,8 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
         final long maximumMemory = getMaximumMemoryAllocation();
         int maximumPixelCount = (int) (maximumMemory / bytesPerPixel);
         BufferedImage image = null;
+        int cachedImageWidth  = 0, cachedImageTileWidth  = 0,
+            cachedImageHeight = 0, cachedImageTileHeight = 0;
         while (!tiles.isEmpty()) {
             if (abortRequested()) {
                 processWriteAborted();
@@ -576,6 +589,18 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
                     onTileWrite(tile, wp);
                     wp.setSourceRegion(sourceRegion);
                     wp.setSourceSubsampling(xSubsampling, ySubsampling, 0, 0);
+                    if (wp.canWriteTiles()) {
+                        if (cachedImageWidth != sourceRegion.width) {
+                            cachedImageWidth  = sourceRegion.width;
+                            cachedImageTileWidth = imageTileSize(cachedImageWidth);
+                        }
+                        if (cachedImageHeight != sourceRegion.height) {
+                            cachedImageHeight  = sourceRegion.height;
+                            cachedImageTileHeight = imageTileSize(cachedImageHeight);
+                        }
+                        wp.setTilingMode(ImageWriteParam.MODE_EXPLICIT);
+                        wp.setTiling(cachedImageTileWidth, cachedImageTileHeight, 0, 0);
+                    }
                     final IIOImage iioImage = new IIOImage(image, null, null);
                     /*
                      * Submit the image write for execution in a background thread.
@@ -1568,6 +1593,21 @@ search: for (final Tile tile : tiles) {
             stream.close();
         }
         throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.NO_IMAGE_WRITER));
+    }
+
+    /**
+     * Suggests a tile size for the given image size. This is invoked only for image format
+     * that support tiling, for example TIFF. Current implementation search for the first
+     * value equals or greater than 64, which is the tile size used by GDAL.
+     *
+     * @param  imageSize The image size.
+     * @return The suggested tile size.
+     */
+    private static int imageTileSize(final int imageSize) {
+        final int[] divisors = XMath.divisors(imageSize);
+        int i = Arrays.binarySearch(divisors, IMAGE_TILE_SIZE);
+        if (i < 0) i = ~i;
+        return (i < divisors.length) ? divisors[i] : imageSize;
     }
 
     /**
