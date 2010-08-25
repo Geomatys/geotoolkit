@@ -32,7 +32,15 @@ import org.geotoolkit.map.MapContext;
  */
 public class SceneDef {
 
-    private final List<PortrayalExtension> extensions = new ArrayList<PortrayalExtension>();
+    private final List<PortrayalExtension> extensions = new ArrayList<PortrayalExtension>(){
+
+        @Override
+        public boolean add(PortrayalExtension e) {
+            if(e == null) return false;
+            return super.add(e);
+        }
+
+    };
     private Hints hints = new Hints();
     private MapContext context = null;
 

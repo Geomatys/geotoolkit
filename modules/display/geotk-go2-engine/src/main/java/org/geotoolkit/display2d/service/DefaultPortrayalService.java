@@ -272,7 +272,7 @@ public class DefaultPortrayalService implements PortrayalService{
         final List<PortrayalExtension> extensions = sceneDef.extensions();
         if(extensions != null){
             for(final PortrayalExtension extension : extensions){
-                extension.completeCanvas(canvas);
+                if(extension != null) extension.completeCanvas(canvas);
             }
         }
 
