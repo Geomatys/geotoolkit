@@ -35,7 +35,7 @@ public class ScrollingBuffer {
 
     private final FileChannel channel;
     private final ByteOrder order;
-    private ByteBuffer buffer;
+    ByteBuffer original;
     /** the initial position of the buffer in the channel */
     private long bufferStart;
 
@@ -46,38 +46,38 @@ public class ScrollingBuffer {
         this.bufferStart = channel.position();
 
         // start with an 8kb buffer
-        this.buffer = ByteBuffer.allocateDirect(8 * 1024);
-        this.buffer.order(order);
-        channel.read(buffer);
-        buffer.flip();
+        this.original = ByteBuffer.allocateDirect(8 * 1024);
+        this.original.order(order);
+        channel.read(original);
+        original.flip();
     }
 
     public int getInt() throws IOException {
-        if (buffer.remaining() < 4) {
+        if (original.remaining() < 4) {
             refillBuffer(4);
         }
-        return buffer.getInt();
+        return original.getInt();
     }
 
     public double getDouble() throws IOException {
-        if (buffer.remaining() < 8) {
+        if (original.remaining() < 8) {
             refillBuffer(8);
         }
-        return buffer.getDouble();
+        return original.getDouble();
     }
 
     public void getIntArray(int[] array) throws IOException {
         final int size = array.length * 4;
-        if (buffer.remaining() < size) {
+        if (original.remaining() < size) {
             refillBuffer(size);
         }
         // read the array using a view
-        final IntBuffer intView = buffer.asIntBuffer();
+        final IntBuffer intView = original.asIntBuffer();
         intView.limit(array.length);
         intView.get(array);
         // don't forget to update the original buffer position, since the
         // view is independent
-        buffer.position(buffer.position() + size);
+        original.position(original.position() + size);
     }
 
     /**
@@ -87,24 +87,24 @@ public class ScrollingBuffer {
      */
     void refillBuffer(int requiredSize) throws IOException {
         // compute the actual position up to we have read something
-        final long currentPosition = bufferStart + buffer.position();
+        final long currentPosition = bufferStart + original.position();
         // if the buffer is not big enough enlarge it
-        if (buffer.capacity() < requiredSize) {
-            int size = buffer.capacity();
+        if (original.capacity() < requiredSize) {
+            int size = original.capacity();
             while (size < requiredSize) {
                 size *= 2;
             }
-            buffer = ByteBuffer.allocateDirect(size);
-            buffer.order(order);
+            original = ByteBuffer.allocateDirect(size);
+            original.order(order);
         }
         readBuffer(currentPosition);
     }
 
     private void readBuffer(long currentPosition) throws IOException {
         channel.position(currentPosition);
-        buffer.clear();
-        channel.read(buffer);
-        buffer.flip();
+        original.clear();
+        channel.read(original);
+        original.flip();
         bufferStart = currentPosition;
     }
 
@@ -118,8 +118,8 @@ public class ScrollingBuffer {
         // if the new position is already in the buffer, just move the
         // buffer position
         // otherwise we have to reload it
-        if (newPosition >= bufferStart && newPosition <= bufferStart + buffer.limit()) {
-            buffer.position((int) (newPosition - bufferStart));
+        if (newPosition >= bufferStart && newPosition <= bufferStart + original.limit()) {
+            original.position((int) (newPosition - bufferStart));
         } else {
             readBuffer(newPosition);
         }
@@ -131,7 +131,7 @@ public class ScrollingBuffer {
      * @return
      */
     public long getPosition() {
-        return bufferStart + buffer.position();
+        return bufferStart + original.position();
     }
 
 }

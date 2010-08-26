@@ -26,7 +26,6 @@ import java.nio.channels.FileChannel;
 import java.util.logging.Level;
 
 import org.geotoolkit.index.quadtree.AbstractNode;
-import org.geotoolkit.index.quadtree.DataReader;
 import org.geotoolkit.index.quadtree.IndexStore;
 import org.geotoolkit.index.quadtree.QuadTree;
 import org.geotoolkit.index.quadtree.StoreException;
@@ -216,23 +215,26 @@ public class FileSystemIndexStore implements IndexStore {
     }
 
     static FileSystemNode readNode(FileChannel channel, ByteOrder order) throws IOException {
-        final ScrollingBuffer buffer = new ScrollingBuffer(channel, order);
-        return readNode(buffer);
+        return readNode(new ScrollingBuffer(channel, order));
     }
 
     static FileSystemNode readNode(ScrollingBuffer buf)
             throws IOException {
+
+        // offset(4) + envelope(32) + nbIds(4)
+        buf.refillBuffer(40);
+
         // offset
-        final int offset = buf.getInt();
+        final int offset = buf.original.getInt();
 
         // envelope
-        final double x1 = buf.getDouble();
-        final double y1 = buf.getDouble();
-        final double x2 = buf.getDouble();
-        final double y2 = buf.getDouble();
+        final double x1 = buf.original.getDouble();
+        final double y1 = buf.original.getDouble();
+        final double x2 = buf.original.getDouble();
+        final double y2 = buf.original.getDouble();
 
         // shapes in this node
-        final int numShapesId = buf.getInt();
+        final int numShapesId = buf.original.getInt();
         final int[] ids = new int[numShapesId];
         buf.getIntArray(ids);
         final int numSubNodes = buf.getInt();
