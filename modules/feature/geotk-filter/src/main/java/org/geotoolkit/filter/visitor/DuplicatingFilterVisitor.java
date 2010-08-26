@@ -23,6 +23,8 @@ import java.util.List;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.filter.DefaultLiteral;
+import org.geotoolkit.filter.binaryspatial.LooseBBox;
 
 import org.opengis.filter.And;
 import org.opengis.filter.ExcludeFilter;
@@ -234,7 +236,11 @@ public class DuplicatingFilterVisitor implements FilterVisitor, ExpressionVisito
             final Literal l = (Literal) exp2;
             final Object obj = l.getValue();
             if(obj instanceof BoundingBox){
-                return getFactory(extraData).bbox(exp1, (BoundingBox) obj);
+                if(filter instanceof LooseBBox){
+                    return new LooseBBox((PropertyName)exp1, new DefaultLiteral<BoundingBox>((BoundingBox) obj));
+                }else{
+                    return getFactory(extraData).bbox(exp1, (BoundingBox) obj);
+                }
             }else{
                 throw new IllegalArgumentException("Illegal BBOX filter, "
                     + "second expression should have been a literal with a boundingBox value but value was a : \n" + obj.getClass());

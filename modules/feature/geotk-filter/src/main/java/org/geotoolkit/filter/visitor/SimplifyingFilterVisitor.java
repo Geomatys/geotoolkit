@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 
 import org.opengis.filter.And;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.Id;
 import org.opengis.filter.Or;
 import org.opengis.filter.identity.FeatureId;
