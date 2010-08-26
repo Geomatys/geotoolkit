@@ -145,7 +145,7 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
             attReader.shp.disableShxUsage();
             if(attReader.hasNext()) {
                 shapeType = attReader.shp.getHeader().getShapeType();
-                handler = shapeType.getShapeHandler();
+                handler = shapeType.getShapeHandler(true);
                 shpWriter.writeHeaders(bounds, shapeType, records, shapefileLength);
             }
         }
@@ -222,7 +222,7 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
         try{
             if (attReader != null && attReader.hasNext()) {
                 shapeType = attReader.shp.getHeader().getShapeType();
-                handler = shapeType.getShapeHandler();
+                handler = shapeType.getShapeHandler(true);
 
                 // handle the case where zero records have been written, but the
                 // stream is closed and the headers
@@ -389,7 +389,7 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
 
                 // we must go back and annotate this after writing
                 shpWriter.writeHeaders(new Envelope(), shapeType, 0, 0);
-                handler = shapeType.getShapeHandler();
+                handler = shapeType.getShapeHandler(true);
             } catch (Exception se) {
                 throw new DataStoreRuntimeException("Unexpected Error", se);
             }

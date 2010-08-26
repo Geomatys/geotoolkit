@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -126,6 +127,8 @@ public class ShapefileReader{
 
     private final boolean randomAccessEnabled;
 
+    private final boolean read3D;
+
     private boolean useMemoryMappedBuffer;
 
     private long currentOffset = 0L;
@@ -148,8 +151,8 @@ public class ShapefileReader{
      *                 If for some reason the file contains invalid records.
      */
     public ShapefileReader(ShpFiles shapefileFiles, boolean strict,
-            boolean useMemoryMapped) throws IOException, DataStoreException {
-        this(shapefileFiles,strict,useMemoryMapped,null);
+            boolean useMemoryMapped, boolean read3D) throws IOException, DataStoreException {
+        this(shapefileFiles,strict,useMemoryMapped,null,read3D);
     }
 
     /**
@@ -166,9 +169,10 @@ public class ShapefileReader{
      *                 If for some reason the file contains invalid records.
      */
     public ShapefileReader(ShpFiles shapefileFiles, boolean strict,
-            boolean useMemoryMapped, ShxReader shxReader) throws IOException, DataStoreException {
+            boolean useMemoryMapped, ShxReader shxReader, boolean read3D) throws IOException, DataStoreException {
         this.channel = shapefileFiles.getReadChannel(ShpFileType.SHP, this);
         this.useMemoryMappedBuffer = useMemoryMapped;
+        this.read3D = read3D;
         randomAccessEnabled = channel instanceof FileChannel;
 
         if(shxReader == null){
@@ -186,7 +190,40 @@ public class ShapefileReader{
         init(strict);
     }
 
-    
+    private void init(boolean strict) throws IOException, DataStoreException {
+        header = readHeader(channel, strict);
+        fileShapeType = header.getShapeType();
+        handler = fileShapeType.getShapeHandler(read3D);
+
+        // recordHeader = ByteBuffer.allocateDirect(8);
+        // recordHeader.order(ByteOrder.BIG_ENDIAN);
+
+        if (handler == null) {
+            throw new IOException("Unsuported shape type:" + fileShapeType);
+        }
+
+        if (channel instanceof FileChannel && useMemoryMappedBuffer) {
+            final FileChannel fc = (FileChannel) channel;
+            buffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+            buffer.position(100);
+            this.currentOffset = 0;
+        } else {
+            // force useMemoryMappedBuffer to false
+            this.useMemoryMappedBuffer = false;
+            // start with 8K buffer
+            buffer = ByteBuffer.allocateDirect(8 * 1024);
+            fill(buffer, channel);
+            buffer.flip();
+            this.currentOffset = 100;
+        }
+
+        headerTransfer = ByteBuffer.allocate(8);
+        headerTransfer.order(ByteOrder.BIG_ENDIAN);
+
+        // make sure the record end is set now...
+        record.end = this.toFileOffset(buffer.position());
+    }
+
     /**
      * Disables .shx file usage. By doing so you drop support for sparse shapefiles, the 
      * .shp will have to be without holes, all the valid shapefile records will have to
@@ -265,40 +302,6 @@ public class ShapefileReader{
             buffer.limit(buffer.position());
         }
         return r;
-    }
-
-    private void init(boolean strict) throws IOException, DataStoreException {
-        header = readHeader(channel, strict);
-        fileShapeType = header.getShapeType();
-        handler = fileShapeType.getShapeHandler();
-
-        // recordHeader = ByteBuffer.allocateDirect(8);
-        // recordHeader.order(ByteOrder.BIG_ENDIAN);
-
-        if (handler == null) {
-            throw new IOException("Unsuported shape type:" + fileShapeType);
-        }
-
-        if (channel instanceof FileChannel && useMemoryMappedBuffer) {
-            final FileChannel fc = (FileChannel) channel;
-            buffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
-            buffer.position(100);
-            this.currentOffset = 0;
-        } else {
-            // force useMemoryMappedBuffer to false
-            this.useMemoryMappedBuffer = false;
-            // start with 8K buffer
-            buffer = ByteBuffer.allocateDirect(8 * 1024);
-            fill(buffer, channel);
-            buffer.flip();
-            this.currentOffset = 100;
-        }
-
-        headerTransfer = ByteBuffer.allocate(8);
-        headerTransfer.order(ByteOrder.BIG_ENDIAN);
-
-        // make sure the record end is set now...
-        record.end = this.toFileOffset(buffer.position());
     }
 
     /**

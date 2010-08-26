@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,14 +17,12 @@
  */
 package org.geotoolkit.data.shapefile.shp;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import java.nio.ByteBuffer;
 
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import java.nio.DoubleBuffer;
 
 import org.geotoolkit.storage.DataStoreException;
@@ -34,16 +33,14 @@ import org.geotoolkit.storage.DataStoreException;
  *
  * @author Ian Schneider
  * @author aaime
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class MultiLineHandler implements ShapeHandler {
-
-    private final ShapeType shapeType;
-
+public class MultiLineHandler extends AbstractShapeHandler {
 
     /** Create a MultiLineHandler for ShapeType.ARC */
-    public MultiLineHandler() {
-        shapeType = ShapeType.ARC;
+    public MultiLineHandler(boolean read3D) {
+        super(ShapeType.ARC,read3D);
     }
 
     /**
@@ -53,12 +50,11 @@ public class MultiLineHandler implements ShapeHandler {
      * @param type The ShapeType to use.
      * @throws DataStoreException If the ShapeType is not correct (see constructor).
      */
-    public MultiLineHandler(ShapeType type) throws DataStoreException {
+    public MultiLineHandler(ShapeType type,boolean read3D) throws DataStoreException {
+        super(type,read3D);
         if ((type != ShapeType.ARC) && (type != ShapeType.ARCM) && (type != ShapeType.ARCZ)) {
             throw new DataStoreException("MultiLineHandler constructor - expected type to be 3, 13 or 23");
         }
-
-        shapeType = type;
     }
 
     /**
@@ -100,7 +96,7 @@ public class MultiLineHandler implements ShapeHandler {
         if (type == ShapeType.NULL) {
             return createNull();
         }
-        final int dimensions = (shapeType == ShapeType.ARCZ) ? 3 : 2;
+        final int dimensions = (read3D && shapeType == ShapeType.ARCZ) ? 3 : 2;
         // skip bounding box (not needed)
         buffer.position(buffer.position() + 4 * 8);
 

@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,7 +17,6 @@
  */
 package org.geotoolkit.data.shapefile.shp;
 
-import com.vividsolutions.jts.geom.GeometryFactory;
 import java.nio.ByteBuffer;
 
 /**
@@ -30,14 +30,17 @@ import java.nio.ByteBuffer;
  */
 public interface ShapeHandler {
 
-    static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
-
     /**
      * Get the ShapeType of this handler.
      * 
      * @return The ShapeType.
      */
     public ShapeType getShapeType();
+
+    /**
+     * @return true if the Z value from the geometry will be readed.
+     */
+    public boolean read3D();
 
     /**
      * Read a geometry from the ByteBuffer. The buffer's position, byteOrder,

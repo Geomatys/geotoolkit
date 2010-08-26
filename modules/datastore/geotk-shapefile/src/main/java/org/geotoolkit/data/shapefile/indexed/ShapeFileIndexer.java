@@ -93,7 +93,7 @@ public class ShapeFileIndexer {
         File treeFile = storage.getFile();
 
         try {
-            reader = new ShapefileReader(shpFiles, true, false);
+            reader = new ShapefileReader(shpFiles, true, false,false);
 
             switch (idxType) {
             case QIX:

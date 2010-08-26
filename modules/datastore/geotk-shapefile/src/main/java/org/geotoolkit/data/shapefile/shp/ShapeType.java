@@ -3,7 +3,8 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
- *
+ *    (C) 2010, Geomatys
+ * 
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
  *    License as published by the Free Software Foundation;
@@ -169,24 +170,24 @@ public enum ShapeType {
      * @throws ShapefileException If the ShapeType is bogus.
      * @return The correct handler for this ShapeType. Returns a new one.
      */
-    public ShapeHandler getShapeHandler() throws DataStoreException {
+    public ShapeHandler getShapeHandler(boolean read3D) throws DataStoreException {
         switch (id) {
             case 1:
             case 11:
             case 21:
-                return new PointHandler(this);
+                return new PointHandler(this,read3D);
             case 3:
             case 13:
             case 23:
-                return new MultiLineHandler(this);
+                return new MultiLineHandler(this,read3D);
             case 5:
             case 15:
             case 25:
-                return new PolygonHandler(this);
+                return new PolygonHandler(this,read3D);
             case 8:
             case 18:
             case 28:
-                return new MultiPointHandler(this);
+                return new MultiPointHandler(this,read3D);
             default:
                 return null;
         }

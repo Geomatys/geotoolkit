@@ -47,7 +47,7 @@ public class PolygonHandler2Test extends org.geotoolkit.data.shapefile.AbstractT
         c[1] = new Coordinate(1, 1, Double.NaN);
         c[2] = new Coordinate(1, 2, 3);
 
-        PolygonHandler handler = new PolygonHandler();
+        PolygonHandler handler = new PolygonHandler(true);
         assertTrue(handler.getShapeType() == ShapeType.POLYGON);
 
         for (int i = 0, ii = c.length; i < ii; i++) {
@@ -82,7 +82,7 @@ public class PolygonHandler2Test extends org.geotoolkit.data.shapefile.AbstractT
             }
         }
 
-        PolygonHandler ph = new PolygonHandler();
+        PolygonHandler ph = new PolygonHandler(true);
         List assigned = ph.assignHolesToShells(shells, holes);
         assertEquals(((ArrayList) assigned.get(0)).size(), holes.size());
     }

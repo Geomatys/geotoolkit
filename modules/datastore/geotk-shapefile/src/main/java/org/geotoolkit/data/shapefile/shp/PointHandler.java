@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -27,24 +28,22 @@ import org.geotoolkit.storage.DataStoreException;
  * 
  * @author aaime
  * @author Ian Schneider
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class PointHandler implements ShapeHandler {
+public class PointHandler extends AbstractShapeHandler {
 
-    private final ShapeType shapeType;
+    public PointHandler(boolean read3D) {
+        super(ShapeType.POINT,read3D); //2d
+    }
 
-    public PointHandler(ShapeType type) throws DataStoreException {
+    public PointHandler(ShapeType type, boolean read3D) throws DataStoreException {
+        super(type,read3D);
         if ((type != ShapeType.POINT) && (type != ShapeType.POINTM)
                 && (type != ShapeType.POINTZ)) { // 2d, 2d+m, 3d+m
             throw new DataStoreException(
                     "PointHandler constructor: expected a type of 1, 11 or 21");
         }
-
-        shapeType = type;
-    }
-
-    public PointHandler() {
-        shapeType = ShapeType.POINT; // 2d
     }
 
     /**

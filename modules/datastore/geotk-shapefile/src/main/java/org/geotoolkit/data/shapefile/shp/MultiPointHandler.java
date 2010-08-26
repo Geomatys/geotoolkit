@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -31,25 +32,23 @@ import org.geotoolkit.storage.DataStoreException;
  * 
  * @author aaime
  * @author Ian Schneider
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class MultiPointHandler implements ShapeHandler {
+public class MultiPointHandler extends AbstractShapeHandler {
     
-    private final ShapeType shapeType;
-
     /** Creates new MultiPointHandler */
-    public MultiPointHandler() {
-        shapeType = ShapeType.POINT;
+    public MultiPointHandler(boolean read3D) {
+        super(ShapeType.POINT,read3D);
     }
 
-    public MultiPointHandler(ShapeType type) throws DataStoreException {
+    public MultiPointHandler(ShapeType type, boolean read3D) throws DataStoreException {
+        super(type,read3D);
         if ((type != ShapeType.MULTIPOINT) && (type != ShapeType.MULTIPOINTM)
                 && (type != ShapeType.MULTIPOINTZ)) {
             throw new DataStoreException(
                     "Multipointhandler constructor - expected type to be 8, 18, or 28");
         }
-
-        shapeType = type;
     }
 
     /**
@@ -105,7 +104,7 @@ public class MultiPointHandler implements ShapeHandler {
             return createNull();
         }
 
-        final int dimensions = (shapeType == ShapeType.MULTIPOINTZ)? 3 : 2;
+        final int dimensions = (read3D && shapeType == ShapeType.MULTIPOINTZ)? 3 : 2;
 
         // read bounding box (not needed)
         buffer.position(buffer.position() + 32);

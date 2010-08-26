@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -39,27 +40,26 @@ import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
  * 
  * @author aaime
  * @author Ian Schneider
+ * @author Johann Sorel (Geomatys)
  * @version $Id$
  * @module pending
  */
-public class PolygonHandler implements ShapeHandler {
+public class PolygonHandler extends AbstractShapeHandler {
 
-    private final ShapeType shapeType;
     private final List<LinearRing> shells = new ArrayList<LinearRing>();
     private final List<LinearRing> holes = new ArrayList<LinearRing>();
 
-    public PolygonHandler() {
-        shapeType = ShapeType.POLYGON;
+    public PolygonHandler(boolean read3D) {
+        super(ShapeType.POLYGON,read3D);
     }
 
-    public PolygonHandler(ShapeType type) throws DataStoreException {
+    public PolygonHandler(ShapeType type, boolean read3D) throws DataStoreException {
+        super(type,read3D);
         if ((type != ShapeType.POLYGON) && (type != ShapeType.POLYGONM)
                 && (type != ShapeType.POLYGONZ)) {
             throw new DataStoreException(
                     "PolygonHandler constructor - expected type to be 5, 15, or 25.");
         }
-
-        shapeType = type;
     }
 
     // returns true if testPoint is a point in the pointList list.
@@ -147,7 +147,7 @@ public class PolygonHandler implements ShapeHandler {
         }
 
         final DoubleBuffer dbuffer = buffer.asDoubleBuffer();
-        final int dimensions = (shapeType == ShapeType.POLYGONZ)? 3:2;
+        final int dimensions = (read3D && shapeType == ShapeType.POLYGONZ)? 3:2;
 
         //read everything in one round : +2 for minZ/maxZ
         final double[] coords = new double[numPoints*dimensions + ((dimensions==2)?0:2)];

@@ -325,6 +325,10 @@ public class ShapefileDataStore extends AbstractDataStore{
         final Name[] propertyNames = query.getPropertyNames();
         final Name defaultGeomName = schema.getGeometryDescriptor().getName();
 
+        //check if we must read the 3d values
+        final CoordinateReferenceSystem reproject = query.getCoordinateSystemReproject();
+        final boolean read3D = (reproject==null || (reproject != null && CRS.getVerticalCRS(reproject)!=null));
+
         if (query.getSortBy() != null) {
             throw new DataStoreException("The ShapeFileDatastore does not support sortby query");
         }
@@ -346,7 +350,7 @@ public class ShapefileDataStore extends AbstractDataStore{
                 final SimpleFeatureType newSchema = (SimpleFeatureType) FeatureTypeUtilities.createSubType(
                         schema, propertyNames);
 
-                FeatureReader reader = createFeatureReader(typeName,getAttributesReader(false), newSchema,hints);
+                FeatureReader reader = createFeatureReader(typeName,getAttributesReader(false,read3D), newSchema,hints);
                 final QueryBuilder remaining = new QueryBuilder(query.getTypeName());
                 remaining.setProperties(query.getPropertyNames());
                 remaining.setFilter(query.getFilter());
@@ -368,7 +372,7 @@ public class ShapefileDataStore extends AbstractDataStore{
                     newSchema = schema;
                 }
 
-                FeatureReader reader = createFeatureReader(typeName,getAttributesReader(true), newSchema, hints);
+                FeatureReader reader = createFeatureReader(typeName,getAttributesReader(true,read3D), newSchema, hints);
                 QueryBuilder query2 = new QueryBuilder(query.getTypeName());
                 query2.setProperties(query.getPropertyNames());
                 query2.setFilter(query.getFilter());
@@ -393,7 +397,7 @@ public class ShapefileDataStore extends AbstractDataStore{
     public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
         typeCheck(typeName);
 
-        final ShapefileAttributeReader attReader = getAttributesReader(true);
+        final ShapefileAttributeReader attReader = getAttributesReader(true,true);
         FeatureReader<SimpleFeatureType, SimpleFeature> featureReader;
         try {
             featureReader = createFeatureReader(typeName.getLocalPart(), attReader, schema,null);
@@ -597,7 +601,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * @throws DataStoreException If AttributeType reading fails
      */
     protected List<AttributeDescriptor> readAttributes(String namespace) throws DataStoreException {
-        final ShapefileReader shp = openShapeReader();
+        final ShapefileReader shp = openShapeReader(true);
         final DbaseFileReader dbf = openDbfReader();
 
         CoordinateReferenceSystem crs = null;
@@ -699,7 +703,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * @param readDbf - if true, the dbf fill will be opened and read
      * @throws IOException
      */
-    protected ShapefileAttributeReader getAttributesReader(boolean readDbf)
+    protected ShapefileAttributeReader getAttributesReader(boolean readDbf, boolean read3D)
             throws DataStoreException {
 
         final SimpleFeatureType schema = getFeatureType();
@@ -707,11 +711,11 @@ public class ShapefileDataStore extends AbstractDataStore{
         if (!readDbf) {
             getLogger().fine("The DBF file won't be opened since no attributes will be read from it");
             final AttributeDescriptor[] desc = new AttributeDescriptor[]{schema.getGeometryDescriptor()};
-            return new ShapefileAttributeReader(desc, openShapeReader(), null);
+            return new ShapefileAttributeReader(desc, openShapeReader(read3D), null);
         }
 
         final List<AttributeDescriptor> atts =  schema.getAttributeDescriptors();
-        return new ShapefileAttributeReader(atts, openShapeReader(), openDbfReader());
+        return new ShapefileAttributeReader(atts, openShapeReader(read3D), openDbfReader());
     }
 
     protected DefaultSimpleFeatureReader createFeatureReader(String typeName,
@@ -727,19 +731,9 @@ public class ShapefileDataStore extends AbstractDataStore{
      * @return A new ShapefileReader.
      * @throws IOException If an error occurs during creation.
      */
-    protected ShapefileReader openShapeReader() throws DataStoreException {
-        return openShapeReader(null);
-    }
-
-    /**
-     * Convenience method for opening a ShapefileReader.
-     *
-     * @return A new ShapefileReader.
-     * @throws IOException If an error occurs during creation.
-     */
-    protected ShapefileReader openShapeReader(ShxReader shx) throws DataStoreException {
+    protected ShapefileReader openShapeReader(boolean read3D) throws DataStoreException {
         try {
-            return new ShapefileReader(shpFiles, true, useMemoryMappedBuffer,shx);
+            return new ShapefileReader(shpFiles, true, useMemoryMappedBuffer,null,read3D);
         } catch (IOException se) {
             throw new DataStoreException("Error creating ShapefileReader", se);
         }

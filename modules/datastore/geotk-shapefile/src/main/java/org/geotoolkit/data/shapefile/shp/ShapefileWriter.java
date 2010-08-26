@@ -131,7 +131,7 @@ public class ShapefileWriter {
             int numberOfGeometries, int fileLength) throws IOException {
 
         try {
-            handler = type.getShapeHandler();
+            handler = type.getShapeHandler(true);
         } catch (DataStoreException se) {
             throw new RuntimeException("unexpected Exception", se);
         }
@@ -221,7 +221,7 @@ public class ShapefileWriter {
      */
     public void write(GeometryCollection geometries, ShapeType type)
             throws IOException, DataStoreException {
-        handler = type.getShapeHandler();
+        handler = type.getShapeHandler(true);
 
         writeHeaders(geometries, type);
 

@@ -49,7 +49,7 @@ public class PolygonHandlerTest extends AbstractTestCaseSupport {
         c[0] = new Coordinate(0, 0, 0);
         c[1] = new Coordinate(1, 1, Double.NaN);
         c[2] = new Coordinate(1, 2, 3);
-        PolygonHandler handler = new PolygonHandler();
+        PolygonHandler handler = new PolygonHandler(true);
         assertTrue(handler.getShapeType() == ShapeType.POLYGON);
         for (int i = 0, ii = c.length; i < ii; i++) {
             assertTrue(handler.pointInList(c[i], c));
@@ -83,7 +83,7 @@ public class PolygonHandlerTest extends AbstractTestCaseSupport {
             }
         }
 
-        PolygonHandler ph = new PolygonHandler();
+        PolygonHandler ph = new PolygonHandler(true);
         List assigned = ph.assignHolesToShells(shells, holes);
         assertEquals(((ArrayList) assigned.get(0)).size(), holes.size());
 

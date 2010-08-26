@@ -111,9 +111,9 @@ public class ShapefileTest extends AbstractTestCaseSupport {
         final URL url2 = ShapeTestData.url(AbstractTestCaseSupport.class, STATEPOP); // Backed by File
         final URL url3 = ShapeTestData.url(AbstractTestCaseSupport.class, STATEPOP_IDX);
         final ShapefileReader reader1 = new ShapefileReader(new ShpFiles(url1),
-                false, false);
+                false, false, true);
         final ShapefileReader reader2 = new ShapefileReader(new ShpFiles(url2),
-                false, false);
+                false, false, true);
         final ShxReader index = new ShxReader(new ShpFiles(url3), false);
         try {
             for (int i = 0; i < index.getRecordCount(); i++) {
@@ -164,7 +164,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
     public void testSkippingRecords() throws Exception {
         final URL url = ShapeTestData.url(STATEPOP);
         final ShapefileReader r = new ShapefileReader(new ShpFiles(url), false,
-                false);
+                false, true);
         try {
             int idx = 0;
             while (r.hasNext()) {
@@ -189,7 +189,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
     public void testShapefileReaderRecord() throws Exception {
         final URL c1 = ShapeTestData.url(STATEPOP);
         ShapefileReader reader = new ShapefileReader(new ShpFiles(c1), false,
-                false);
+                false, true);
         URL c2;
         try {
             ArrayList offsets = new ArrayList();
@@ -204,7 +204,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
             copyShapefiles(STATEPOP);
             reader.close();
             c2 = ShapeTestData.url(AbstractTestCaseSupport.class, STATEPOP);
-            reader = new ShapefileReader(new ShpFiles(c2), false, false);
+            reader = new ShapefileReader(new ShpFiles(c2), false, false, true);
             for (int i = 0, ii = offsets.size(); i < ii; i++) {
                 reader.shapeAt(((Integer) offsets.get(i)).intValue());
             }
@@ -216,7 +216,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
     protected void loadShapes(String resource, int expected) throws Exception {
         final URL url = ShapeTestData.url(resource);
         ShapefileReader reader = new ShapefileReader(new ShpFiles(url), false,
-                false);
+                false, true);
         int cnt = 0;
         try {
             while (reader.hasNext()) {
@@ -234,7 +234,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
             throws Exception {
         final URL url = ShapeTestData.url(resource);
         ShapefileReader reader = new ShapefileReader(new ShpFiles(url), false,
-                false);
+                false, true);
         int cnt = 0;
         try {
             while (reader.hasNext()) {

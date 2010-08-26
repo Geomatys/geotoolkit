@@ -42,7 +42,7 @@ public class ShapefileTest extends org.geotoolkit.data.shapefile.ShapefileTest {
     public void testShapefileReaderRecord() throws Exception {
         File file = copyShapefiles(STATEPOP);
         ShpFiles shpFiles = new ShpFiles(file.toURI().toURL());
-        ShapefileReader reader = new ShapefileReader(shpFiles, false, false);
+        ShapefileReader reader = new ShapefileReader(shpFiles, false, false, true);
         ArrayList offsets = new ArrayList();
 
         while (reader.hasNext()) {
@@ -56,7 +56,7 @@ public class ShapefileTest extends org.geotoolkit.data.shapefile.ShapefileTest {
         }
         reader.close();
         copyShapefiles(STATEPOP);
-        reader = new ShapefileReader(shpFiles, false, false);
+        reader = new ShapefileReader(shpFiles, false, false, true);
 
         for (int i = 0, ii = offsets.size(); i < ii; i++) {
             reader.shapeAt(((Integer) offsets.get(i)).intValue());
@@ -67,7 +67,7 @@ public class ShapefileTest extends org.geotoolkit.data.shapefile.ShapefileTest {
 
     protected void loadShapes(String resource, int expected) throws Exception {
         ShpFiles shpFiles = new ShpFiles(ShapeTestData.url(resource));
-        ShapefileReader reader = new ShapefileReader(shpFiles, false, false);
+        ShapefileReader reader = new ShapefileReader(shpFiles, false, false, true);
         int cnt = 0;
         try {
             while (reader.hasNext()) {
@@ -84,7 +84,7 @@ public class ShapefileTest extends org.geotoolkit.data.shapefile.ShapefileTest {
     protected void loadMemoryMapped(String resource, int expected)
             throws Exception {
         ShpFiles shpFiles = new ShpFiles(ShapeTestData.url(resource));
-        ShapefileReader reader = new ShapefileReader(shpFiles, false, false);
+        ShapefileReader reader = new ShapefileReader(shpFiles, false, false, true);
         int cnt = 0;
         try {
             while (reader.hasNext()) {
