@@ -109,7 +109,7 @@ class ShapeCoordinateSequence2D implements CoordinateSequence {
         double maxX = minX;
         double maxY = minY;
         
-        for(int i=2; i<size; i++){
+        for(int i=2,n=size*2; i<n; i++){
             final double x = coordinates[i];
             final double y = coordinates[++i];
             if(x < minX) minX = x;

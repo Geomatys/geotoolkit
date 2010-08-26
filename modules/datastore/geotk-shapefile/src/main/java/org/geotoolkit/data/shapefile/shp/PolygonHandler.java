@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.shapefile.shp;
 
+import java.nio.DoubleBuffer;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +45,8 @@ import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
 public class PolygonHandler implements ShapeHandler {
 
     private final ShapeType shapeType;
+    private final List<LinearRing> shells = new ArrayList<LinearRing>();
+    private final List<LinearRing> holes = new ArrayList<LinearRing>();
 
     public PolygonHandler() {
         shapeType = ShapeType.POLYGON;
@@ -127,8 +130,13 @@ public class PolygonHandler implements ShapeHandler {
         if (type == ShapeType.NULL) {
             return createNull();
         }
+
+        //clear from previous read
+        shells.clear();
+        holes.clear();
+
         // skip the bounds
-        buffer.position(buffer.position() + 4 * 8);
+        buffer.position(buffer.position() + 32);
 
         final int numParts = buffer.getInt();
         final int numPoints = buffer.getInt();
@@ -138,65 +146,49 @@ public class PolygonHandler implements ShapeHandler {
             partOffsets[i] = buffer.getInt();
         }
 
-        final List<LinearRing> shells = new ArrayList<LinearRing>();
-        final List<LinearRing> holes = new ArrayList<LinearRing>();
+        final DoubleBuffer dbuffer = buffer.asDoubleBuffer();
+        final int dimensions = (shapeType == ShapeType.POLYGONZ)? 3:2;
 
-        final Coordinate[] coords = new Coordinate[numPoints];
-        for (int t = 0; t < numPoints; t++) {
-            coords[t] = new Coordinate(buffer.getDouble(), buffer.getDouble());
-        }
+        //read everything in one round : +2 for minZ/maxZ
+        final double[] coords = new double[numPoints*dimensions + ((dimensions==2)?0:2)];
+        final int xySize = numPoints*2;
+        dbuffer.get(coords);
 
-        if (shapeType == ShapeType.POLYGONZ) {
-            // skip zmin and zmax
-            buffer.position(buffer.position() + 2 * 8);
-
-            for (int t = 0; t < numPoints; t++) {
-                coords[t].z = buffer.getDouble();
-            }
-        }
-
-        int offset = 0;
-        int start;
-        int finish;
-        int length;
-
+        int coordIndex = 0;
         for (int part = 0; part < numParts; part++) {
-            start = partOffsets[part];
 
+            final int finish;
             if (part == (numParts - 1)) {
                 finish = numPoints;
             } else {
                 finish = partOffsets[part + 1];
             }
+            final int length = finish - partOffsets[part];
 
-            length = finish - start;
-
-            // Use the progressive CCW algorithm.
-            // basically the area algorithm for polygons
-            // which also tells us vertex order based upon the
-            // sign of the area.
-            Coordinate[] points = new Coordinate[length];
-            // double area = 0;
-            // int sx = offset;
-            for (int i = 0; i < length; i++) {
-                points[i] = coords[offset++];
-                // int j = sx + (i + 1) % length;
-                // area += points[i].x * coords[j].y;
-                // area -= points[i].y * coords[j].x;
-            }
-            // area = -area / 2;
-            // REVISIT: polyons with only 1 or 2 points are not polygons -
+            // REVISIT: polyons with only 1 to 3 points are not polygons -
             // geometryFactory will bomb so we skip if we find one.
-            if (points.length == 0 || points.length > 3) {
-                LinearRing ring = GEOMETRY_FACTORY.createLinearRing(points);
+            if(length > 0 && length < 4){
+                coordIndex += length;
+                continue;
+            }
 
-                if (CGAlgorithms.isCCW(points)) {
-                    // counter-clockwise
-                    holes.add(ring);
-                } else {
-                    // clockwise
-                    shells.add(ring);
+            final Coordinate[] points = new Coordinate[length];
+            for (int i = 0; i < length; i++) {
+                if(dimensions==2){
+                    points[i] = new Coordinate(coords[coordIndex*2],coords[coordIndex*2+1]);
+                }else{
+                    points[i] = new Coordinate(coords[coordIndex*2],coords[coordIndex*2+1],coords[xySize+coordIndex+2]);
                 }
+                coordIndex++;
+            }
+
+            final LinearRing ring = GEOMETRY_FACTORY.createLinearRing(points);
+            if (CGAlgorithms.isCCW(points)) {
+                // counter-clockwise
+                holes.add(ring);
+            } else {
+                // clockwise
+                shells.add(ring);
             }
         }
 
@@ -217,6 +209,103 @@ public class PolygonHandler implements ShapeHandler {
             return buildGeometries(shells, holes, holesForShells);
         }
     }
+
+
+//    @Override
+//    public Object read(ByteBuffer buffer, ShapeType type) {
+//        if (type == ShapeType.NULL) {
+//            return createNull();
+//        }
+//        // skip the bounds
+//        buffer.position(buffer.position() + 4 * 8);
+//
+//        final int numParts = buffer.getInt();
+//        final int numPoints = buffer.getInt();
+//        final int[] partOffsets = new int[numParts];
+//
+//        for (int i = 0; i < numParts; i++) {
+//            partOffsets[i] = buffer.getInt();
+//        }
+//
+//        final List<LinearRing> shells = new ArrayList<LinearRing>();
+//        final List<LinearRing> holes = new ArrayList<LinearRing>();
+//
+//        final Coordinate[] coords = new Coordinate[numPoints];
+//        for (int t = 0; t < numPoints; t++) {
+//            coords[t] = new Coordinate(buffer.getDouble(), buffer.getDouble());
+//        }
+//
+//        if (shapeType == ShapeType.POLYGONZ) {
+//            // skip zmin and zmax
+//            buffer.position(buffer.position() + 2 * 8);
+//
+//            for (int t = 0; t < numPoints; t++) {
+//                coords[t].z = buffer.getDouble();
+//            }
+//        }
+//
+//        int offset = 0;
+//        int start;
+//        int finish;
+//        int length;
+//
+//        for (int part = 0; part < numParts; part++) {
+//            start = partOffsets[part];
+//
+//            if (part == (numParts - 1)) {
+//                finish = numPoints;
+//            } else {
+//                finish = partOffsets[part + 1];
+//            }
+//
+//            length = finish - start;
+//
+//            // Use the progressive CCW algorithm.
+//            // basically the area algorithm for polygons
+//            // which also tells us vertex order based upon the
+//            // sign of the area.
+//            Coordinate[] points = new Coordinate[length];
+//            // double area = 0;
+//            // int sx = offset;
+//            for (int i = 0; i < length; i++) {
+//                points[i] = coords[offset++];
+//                // int j = sx + (i + 1) % length;
+//                // area += points[i].x * coords[j].y;
+//                // area -= points[i].y * coords[j].x;
+//            }
+//            // area = -area / 2;
+//            // REVISIT: polyons with only 1 or 2 points are not polygons -
+//            // geometryFactory will bomb so we skip if we find one.
+//            if (points.length == 0 || points.length > 3) {
+//                LinearRing ring = GEOMETRY_FACTORY.createLinearRing(points);
+//
+//                if (CGAlgorithms.isCCW(points)) {
+//                    // counter-clockwise
+//                    holes.add(ring);
+//                } else {
+//                    // clockwise
+//                    shells.add(ring);
+//                }
+//            }
+//        }
+//
+//        // quick optimization: if there's only one shell no need to check
+//        // for holes inclusion
+//        if (shells.size() == 1) {
+//            return createMulti(shells.get(0), holes);
+//        }
+//        // if for some reason, there is only one hole, we just reverse it and
+//        // carry on.
+//        else if (holes.size() == 1 && shells.isEmpty()) {
+//            //LOGGER.warning("only one hole in this polygon record");
+//            return createMulti(JTSUtilities.reverseRing(holes.get(0)));
+//        } else {
+//
+//            // build an association between shells and holes
+//            final List<List<LinearRing>> holesForShells = assignHolesToShells(shells, holes);
+//            return buildGeometries(shells, holes, holesForShells);
+//        }
+//    }
 
     /**
      * @param shells

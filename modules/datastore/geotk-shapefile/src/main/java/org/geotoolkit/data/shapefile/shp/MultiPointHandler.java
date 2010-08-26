@@ -21,7 +21,9 @@ import java.nio.ByteBuffer;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
+import java.nio.DoubleBuffer;
 
 import org.geotoolkit.storage.DataStoreException;
 
@@ -94,8 +96,7 @@ public class MultiPointHandler implements ShapeHandler {
     }
 
     private Object createNull() {
-        Coordinate[] c = null;
-        return GEOMETRY_FACTORY.createMultiPoint(c);
+        return GEOMETRY_FACTORY.createMultiPoint(new Point[0]);
     }
 
     @Override
@@ -104,29 +105,58 @@ public class MultiPointHandler implements ShapeHandler {
             return createNull();
         }
 
+        final int dimensions = (shapeType == ShapeType.MULTIPOINTZ)? 3 : 2;
+
         // read bounding box (not needed)
-        buffer.position(buffer.position() + 4 * 8);
-
+        buffer.position(buffer.position() + 32);
         final int numpoints = buffer.getInt();
-        final Coordinate[] coords = new Coordinate[numpoints];
 
-        for (int t = 0; t < numpoints; t++) {
-            final double x = buffer.getDouble();
-            final double y = buffer.getDouble();
-            coords[t] = new Coordinate(x, y);
+        final DoubleBuffer dbuffer = buffer.asDoubleBuffer();
+
+        final double[] coords = new double[numpoints*dimensions];
+        final int xySize = numpoints*2;
+        dbuffer.get(coords,0,xySize);
+
+        if(dimensions==2){
+            return GEOMETRY_FACTORY.createMultiPoint(new ShapeCoordinateSequence2D(coords));
+        } else {
+            // z min, max
+            dbuffer.position(dbuffer.position() + 2);
+            dbuffer.get(coords,xySize,numpoints);
+            return GEOMETRY_FACTORY.createMultiPoint(new ShapeCoordinateSequence3D(coords));
         }
 
-        if (shapeType == ShapeType.MULTIPOINTZ) {
-            //skip zmin zmax
-            buffer.position(buffer.position() + 2 * 8);
-
-            for (int t = 0; t < numpoints; t++) {
-                coords[t].z = buffer.getDouble(); // z
-            }
-        }
-
-        return GEOMETRY_FACTORY.createMultiPoint(coords);
     }
+
+//    @Override
+//    public Object read(ByteBuffer buffer, ShapeType type) {
+//        if (type == ShapeType.NULL) {
+//            return createNull();
+//        }
+//
+//        // read bounding box (not needed)
+//        buffer.position(buffer.position() + 4 * 8);
+//
+//        final int numpoints = buffer.getInt();
+//        final Coordinate[] coords = new Coordinate[numpoints];
+//
+//        for (int t = 0; t < numpoints; t++) {
+//            final double x = buffer.getDouble();
+//            final double y = buffer.getDouble();
+//            coords[t] = new Coordinate(x, y);
+//        }
+//
+//        if (shapeType == ShapeType.MULTIPOINTZ) {
+//            //skip zmin zmax
+//            buffer.position(buffer.position() + 2 * 8);
+//
+//            for (int t = 0; t < numpoints; t++) {
+//                coords[t].z = buffer.getDouble(); // z
+//            }
+//        }
+//
+//        return GEOMETRY_FACTORY.createMultiPoint(coords);
+//    }
 
     @Override
     public void write(ByteBuffer buffer, Object geometry) {

@@ -94,92 +94,6 @@ public class MultiLineHandler implements ShapeHandler {
         return GEOMETRY_FACTORY.createMultiLineString((LineString[]) null);
     }
 
-//    @Override
-//    public Object read(ByteBuffer buffer, ShapeType type) {
-//
-//        if (type == ShapeType.NULL) {
-//            return createNull();
-//        }
-//        final int dimensions = (shapeType == ShapeType.ARCZ) ? 3 : 2;
-//        // skip bounding box (not needed)
-//        buffer.position(buffer.position() + 4 * 8);
-//
-//        final int numParts = buffer.getInt();
-//        final int numPoints = buffer.getInt(); // total number of points
-//
-//        //store each line string buffer start position
-//        final int[] partOffsets = new int[numParts];
-//        for (int i = 0; i < numParts; i++) {
-//            partOffsets[i] = buffer.getInt();
-//        }
-//
-//        // read the first two coordinates and start building the coordinate sequences
-//        final double[][] lines = new double[numParts][0];
-//        //use a double buffer to increase bulk reading
-//        final DoubleBuffer dbuffer = buffer.asDoubleBuffer();
-//
-//        for (int part = 0; part < numParts; part++) {
-//
-//            final int finish;
-//            if (part == (numParts - 1)) {
-//                finish = numPoints;
-//            } else {
-//                finish = partOffsets[part + 1];
-//            }
-//
-//            final int length = finish - partOffsets[part];
-//            final double[] coords;
-//            if (length == 1) {
-//                //only one point for a line, JTS do not like that, so we make two points at same place.
-//                coords = new double[2*dimensions];
-//                dbuffer.get(coords, 0, 2);
-//                coords[2] = coords[0];
-//                coords[3] = coords[1];
-//            } else {
-//                coords = new double[length*dimensions];
-//                dbuffer.get(coords, 0, length*2);
-//            }
-//            lines[part] = coords;
-//        }
-//
-//        // if we have another coordinate, read and add to the coordinate
-//        // sequences
-//        if (dimensions == 3) {
-//            // z min, max
-//            dbuffer.position(dbuffer.position() + 2);
-//            for (int part = 0; part < numParts; part++) {
-//
-//                final int finish;
-//                if (part == (numParts - 1)) {
-//                    finish = numPoints;
-//                } else {
-//                    finish = partOffsets[part + 1];
-//                }
-//
-//                final double[] coords = lines[part];
-//                final int length = finish - partOffsets[part];
-//                if (length == 1) {
-//                    //only one point for a line, JTS do not like that, so we make two points at same place.
-//                    coords[4] = coords[5] = dbuffer.get();
-//                } else {
-//                    dbuffer.get(coords, length*2, length);
-//                }
-//            }
-//        }
-//
-//        // Prepare line strings and return the multilinestring
-//        final LineString[] lineStrings = new LineString[numParts];
-//        for (int part = 0; part < numParts; part++) {
-//            if(dimensions == 2){
-//                lineStrings[part] = GEOMETRY_FACTORY.createLineString(new ShapeCoordinateSequence2D(lines[part]));
-//            }else{
-//                lineStrings[part] = GEOMETRY_FACTORY.createLineString(new ShapeCoordinateSequence3D(lines[part]));
-//            }
-//        }
-//
-//        return GEOMETRY_FACTORY.createMultiLineString(lineStrings);
-//    }
-
     @Override
     public Object read(ByteBuffer buffer, ShapeType type) {
 
@@ -200,7 +114,7 @@ public class MultiLineHandler implements ShapeHandler {
         }
 
         // read the first two coordinates and start building the coordinate sequences
-        final Coordinate[][] lines = new Coordinate[numParts][0];
+        final double[][] lines = new double[numParts][0];
         //use a double buffer to increase bulk reading
         final DoubleBuffer dbuffer = buffer.asDoubleBuffer();
 
@@ -213,20 +127,17 @@ public class MultiLineHandler implements ShapeHandler {
                 finish = partOffsets[part + 1];
             }
 
-            final Coordinate[] coords;
-            int length = finish - partOffsets[part];
+            final int length = finish - partOffsets[part];
+            final double[] coords;
             if (length == 1) {
-                final double x = dbuffer.get();
-                final double y = dbuffer.get();
-                coords = new Coordinate[]{
-                    new Coordinate(x,y),
-                    new Coordinate(x,y)
-                };
+                //only one point for a line, JTS do not like that, so we make two points at same place.
+                coords = new double[2*dimensions];
+                dbuffer.get(coords, 0, 2);
+                coords[2] = coords[0];
+                coords[3] = coords[1];
             } else {
-                coords = new Coordinate[length];
-                for(int i=0,n=coords.length; i<n; i++){
-                    coords[i] = new Coordinate(dbuffer.get(), dbuffer.get());
-                }
+                coords = new double[length*dimensions];
+                dbuffer.get(coords, 0, length*2);
             }
             lines[part] = coords;
         }
@@ -245,15 +156,13 @@ public class MultiLineHandler implements ShapeHandler {
                     finish = partOffsets[part + 1];
                 }
 
-                final Coordinate[] coords = lines[part];
-                int length = finish - partOffsets[part];
+                final double[] coords = lines[part];
+                final int length = finish - partOffsets[part];
                 if (length == 1) {
-                    coords[0].z = dbuffer.get();
-                    coords[1].z = coords[0].z;
+                    //only one point for a line, JTS do not like that, so we make two points at same place.
+                    coords[4] = coords[5] = dbuffer.get();
                 } else {
-                    for(Coordinate coord : coords){
-                        coord.z = dbuffer.get();
-                    }
+                    dbuffer.get(coords, length*2, length);
                 }
             }
         }
@@ -261,11 +170,102 @@ public class MultiLineHandler implements ShapeHandler {
         // Prepare line strings and return the multilinestring
         final LineString[] lineStrings = new LineString[numParts];
         for (int part = 0; part < numParts; part++) {
-            lineStrings[part] = GEOMETRY_FACTORY.createLineString(new CoordinateArraySequence(lines[part]));
+            if(dimensions == 2){
+                lineStrings[part] = GEOMETRY_FACTORY.createLineString(new ShapeCoordinateSequence2D(lines[part]));
+            }else{
+                lineStrings[part] = GEOMETRY_FACTORY.createLineString(new ShapeCoordinateSequence3D(lines[part]));
+            }
         }
 
         return GEOMETRY_FACTORY.createMultiLineString(lineStrings);
     }
+
+//    @Override
+//    public Object read(ByteBuffer buffer, ShapeType type) {
+//
+//        if (type == ShapeType.NULL) {
+//            return createNull();
+//        }
+//        final int dimensions = (shapeType == ShapeType.ARCZ) ? 3 : 2;
+//        // skip bounding box (not needed)
+//        buffer.position(buffer.position() + 4 * 8);
+//
+//        final int numParts = buffer.getInt();
+//        final int numPoints = buffer.getInt(); // total number of points
+//
+//        //store each line string buffer start position
+//        final int[] partOffsets = new int[numParts];
+//        for (int i = 0; i < numParts; i++) {
+//            partOffsets[i] = buffer.getInt();
+//        }
+//
+//        // read the first two coordinates and start building the coordinate sequences
+//        final Coordinate[][] lines = new Coordinate[numParts][0];
+//        //use a double buffer to increase bulk reading
+//        final DoubleBuffer dbuffer = buffer.asDoubleBuffer();
+//
+//        for (int part = 0; part < numParts; part++) {
+//
+//            final int finish;
+//            if (part == (numParts - 1)) {
+//                finish = numPoints;
+//            } else {
+//                finish = partOffsets[part + 1];
+//            }
+//
+//            final Coordinate[] coords;
+//            int length = finish - partOffsets[part];
+//            if (length == 1) {
+//                final double x = dbuffer.get();
+//                final double y = dbuffer.get();
+//                coords = new Coordinate[]{
+//                    new Coordinate(x,y),
+//                    new Coordinate(x,y)
+//                };
+//            } else {
+//                coords = new Coordinate[length];
+//                for(int i=0,n=coords.length; i<n; i++){
+//                    coords[i] = new Coordinate(dbuffer.get(), dbuffer.get());
+//                }
+//            }
+//            lines[part] = coords;
+//        }
+//
+//        // if we have another coordinate, read and add to the coordinate
+//        // sequences
+//        if (dimensions == 3) {
+//            // z min, max
+//            dbuffer.position(dbuffer.position() + 2);
+//            for (int part = 0; part < numParts; part++) {
+//
+//                final int finish;
+//                if (part == (numParts - 1)) {
+//                    finish = numPoints;
+//                } else {
+//                    finish = partOffsets[part + 1];
+//                }
+//
+//                final Coordinate[] coords = lines[part];
+//                int length = finish - partOffsets[part];
+//                if (length == 1) {
+//                    coords[0].z = dbuffer.get();
+//                    coords[1].z = coords[0].z;
+//                } else {
+//                    for(Coordinate coord : coords){
+//                        coord.z = dbuffer.get();
+//                    }
+//                }
+//            }
+//        }
+//
+//        // Prepare line strings and return the multilinestring
+//        final LineString[] lineStrings = new LineString[numParts];
+//        for (int part = 0; part < numParts; part++) {
+//            lineStrings[part] = GEOMETRY_FACTORY.createLineString(new CoordinateArraySequence(lines[part]));
+//        }
+//
+//        return GEOMETRY_FACTORY.createMultiLineString(lineStrings);
+//    }
 
     @Override
     public void write(ByteBuffer buffer, Object geometry) {
