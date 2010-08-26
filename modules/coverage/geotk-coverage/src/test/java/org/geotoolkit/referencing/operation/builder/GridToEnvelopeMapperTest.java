@@ -37,8 +37,7 @@ import static org.junit.Assert.*;
 
 
 /**
- * Tests {@link GridToEnvelopeMapper}. This test appears in the coverage module instead
- * of the referencing module because it need an implementation of {@link GridEnvelope}.
+ * Tests {@link GridToEnvelopeMapper}.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
@@ -108,7 +107,7 @@ public final class GridToEnvelopeMapperTest {
             // This is the expected exception.
         }
         try {
-            new GridToEnvelopeMapper(gridEnvelope, envelope);
+            assertNotNull(new GridToEnvelopeMapper(gridEnvelope, envelope));
             fail();
         } catch (MismatchedDimensionException e) {
             // This is the expected exception.

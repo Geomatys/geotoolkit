@@ -44,7 +44,6 @@ import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.image.io.IIOListeners;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
@@ -703,7 +702,7 @@ public class MosaicBuilder implements LogProducer {
          */
         if (mosaicEnvelope != null && !mosaicEnvelope.isNull()) {
             final GridToEnvelopeMapper mapper = createGridToEnvelopeMapper(output);
-            mapper.setGridRange(new GridEnvelope2D(untiledBounds));
+            mapper.setGridRange(untiledBounds);
             mapper.setEnvelope(mosaicEnvelope);
             output.setGridToCRS((AffineTransform) mapper.createTransform());
         } else if (input != null) {

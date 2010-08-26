@@ -17,6 +17,9 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
+import java.awt.geom.Point2D;
+
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
@@ -67,6 +70,14 @@ final class PrivateTransform2D extends AbstractMathTransform implements MathTran
     @Override
     protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff) throws TransformException {
         tr.transform(srcPts, srcOff, dstPts, dstOff, 1);
+    }
+
+    /**
+     * Returns the derivative at the given position.
+     */
+    @Override
+    public Matrix derivative(final Point2D point) throws TransformException {
+        return tr.derivative(point);
     }
 
     /**

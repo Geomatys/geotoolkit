@@ -18,8 +18,10 @@
 package org.geotoolkit.referencing.operation.builder;
 
 import java.util.Arrays;
-import java.awt.image.BufferedImage;
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.Envelope;
@@ -31,9 +33,12 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 
+import org.geotoolkit.geometry.Envelope2D;
+import org.geotoolkit.coverage.grid.GridEnvelope2D;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 import org.geotoolkit.internal.referencing.AxisDirections;
+import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
@@ -43,7 +48,7 @@ import org.geotoolkit.resources.Errors;
  * A helper class for building <var>n</var>-dimensional {@linkplain AffineTransform affine transform}
  * mapping {@linkplain GridEnvelope grid envelopes} to georeferenced {@linkplain Envelope envelopes}.
  * The affine transform will be computed automatically from the information specified by the
- * {@link #setGridRange setGridRange} and {@link #setEnvelope setEnvelope} methods, which are
+ * {@link #setGridRange(GridEnvelope)} and {@link #setEnvelope(Envelope)} methods, which are
  * mandatory. All other setter methods are optional hints about the affine transform to be created.
  * This builder is convenient when the following conditions are meet:
  *
@@ -63,7 +68,7 @@ import org.geotoolkit.resources.Errors;
  *       <i>etc</i>.</p></li>
  * </ul>
  *
- * In such case (and assuming that the image's CRS has the same characteristics than the
+ * In such case (and assuming that the image CRS has the same characteristics than the
  * {@link BufferedImage}'s CRS described above):
  *
  * <ul>
@@ -79,12 +84,12 @@ import org.geotoolkit.resources.Errors;
  *       {@link AxisDirection#WEST WEST} (<var>x</var> axis) or {@link AxisDirection#NORTH NORTH}
  *       (<var>y</var> axis), in order to get them oriented toward the {@link AxisDirection#EAST
  *       EAST} or {@link AxisDirection#SOUTH SOUTH} direction respectively. The later may seems
- *       unatural, but it reflects the fact that row values are increasing down in an
+ *       unnatural, but it reflects the fact that row values are increasing down in an
  *       {@link BufferedImage}'s CRS.</p></li>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.15
  *
  * @since 2.3
  * @module
@@ -243,7 +248,7 @@ public class GridToEnvelopeMapper {
     /**
      * Sets whatever the grid coordinates map {@linkplain PixelInCell#CELL_CENTER pixel center}
      * or {@linkplain PixelInCell#CELL_CORNER pixel corner}. The former is OGC convention
-     * while the later is Java2D/JAI convention.
+     * while the later is Java2D/JAI convention. The default is cell center (OGC convention).
      *
      * @param anchor Whatever the grid coordinates map pixel center or corner.
      *
@@ -258,7 +263,8 @@ public class GridToEnvelopeMapper {
     }
 
     /**
-     * Returns the grid envelope.
+     * Returns the grid envelope. For performance reason, this method does not
+     * clone the grid envelope. So the returned object should not be modified.
      *
      * @return The grid envelope.
      * @throws IllegalStateException if the grid envelope has not yet been defined.
@@ -286,7 +292,43 @@ public class GridToEnvelopeMapper {
     }
 
     /**
-     * Returns the georeferenced envelope. For performance reason, this method do not
+     * Sets the grid envelope as a two-dimensional rectangle. This convenience method
+     * creates a {@link GridEnvelope2D} from the given rectangle and delegates to the
+     * {@link #setGridRange(GridEnvelope)} method.
+     *
+     * @param gridEnvelope The new grid envelope.
+     *
+     * @since 3.15
+     */
+    public void setGridRange(final Rectangle gridEnvelope) {
+        final GridEnvelope ge;
+        if (gridEnvelope instanceof GridEnvelope) {
+            ge = (GridEnvelope) gridEnvelope;
+        } else {
+            ensureNonNull("gridEnvelope", gridEnvelope);
+            ge = new GridEnvelope2D(gridEnvelope);
+        }
+        setGridRange(ge);
+    }
+
+    /**
+     * Sets the grid envelope as a two-dimensional rectangle. This convenience method
+     * creates a {@link GridEnvelope2D} from the given rectangle and delegates to the
+     * {@link #setGridRange(GridEnvelope)} method.
+     *
+     * @param x The minimal <var>x</var> ordinate.
+     * @param y The minimal <var>y</var> ordinate.
+     * @param width  The number of valid ordinates along the <var>x</var> axis.
+     * @param height The number of valid ordinates along the <var>y</var> axis.
+     *
+     * @since 3.15
+     */
+    public void setGridRange(final int x, final int y, final int width, final int height) {
+        setGridRange((GridEnvelope) new GridEnvelope2D(x, y, width, height));
+    }
+
+    /**
+     * Returns the georeferenced envelope. For performance reason, this method does not
      * clone the envelope. So the returned object should not be modified.
      *
      * @return The envelope.
@@ -313,6 +355,42 @@ public class GridToEnvelopeMapper {
             this.userEnvelope = envelope;
             reset();
         }
+    }
+
+    /**
+     * Sets the envelope as a two-dimensional rectangle. This convenience method creates an
+     * {@link Envelope2D} from the given rectangle and delegates to the
+     * {@link #setEnvelope(Envelope)} method.
+     *
+     * @param envelope The new envelope.
+     *
+     * @since 3.15
+     */
+    public void setEnvelope(final Rectangle2D envelope) {
+        final Envelope env;
+        if (envelope instanceof Envelope) {
+            env = (Envelope) envelope;
+        } else {
+            ensureNonNull("envelope", envelope);
+            env = new Envelope2D(null, envelope);
+        }
+        setEnvelope(env);
+    }
+
+    /**
+     * Sets the envelope as a two-dimensional rectangle. This convenience method creates an
+     * {@link Envelope2D} from the given rectangle and delegates to the
+     * {@link #setEnvelope(Envelope)} method.
+     *
+     * @param x The <var>x</var> minimal value.
+     * @param y The <var>y</var> minimal value.
+     * @param width The envelope width.
+     * @param height The envelope height.
+     *
+     * @since 3.15
+     */
+    public void setEnvelope(final double x, final double y, final double width, final double height) {
+        setEnvelope((Envelope) new Envelope2D(null, x, y, width, height));
     }
 
     /**
@@ -507,9 +585,11 @@ public class GridToEnvelopeMapper {
     }
 
     /**
-     * Creates a math transform using the information provided by setter methods.
+     * Creates a <cite>Grid to Envelope</cite> (a.k.a. <cite>grid to CRS</cite>) transform using
+     * the information provided by setter methods. The default implementation returns an instance
+     * of {@link LinearTransform}, but subclasses could create more complex transforms.
      *
-     * @return The math transform.
+     * @return The <cite>grid to CRS</cite> transform.
      * @throws IllegalStateException if the grid envelope or the georeferenced envelope were not set.
      */
     public MathTransform createTransform() throws IllegalStateException {
@@ -561,9 +641,10 @@ public class GridToEnvelopeMapper {
     }
 
     /**
-     * Returns the math transform as a two-dimensional affine transform.
+     * Returns the <cite>Grid to Envelope</cite> (a.k.a. <cite>grid to CRS</cite>)
+     * transform as a two-dimensional affine transform.
      *
-     * @return The math transform as a two-dimensional affine transform.
+     * @return The <cite>grid to CRS</cite> transform as a two-dimensional affine transform.
      * @throws IllegalStateException if the math transform is not of the appropriate type.
      */
     public AffineTransform createAffineTransform() throws IllegalStateException {
