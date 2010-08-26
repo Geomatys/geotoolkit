@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
+import org.geotoolkit.filter.DefaultLiteral;
 import java.awt.RenderingHints;
 import java.io.Closeable;
 import java.io.IOException;
@@ -69,6 +70,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.filter.DefaultId;
 import org.geotoolkit.filter.FilterUtilities;
+import org.geotoolkit.filter.binaryspatial.LooseBBox;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.style.StyleUtilities;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
@@ -609,7 +611,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         //}else{
         //make a bbox filter
         if(geomAttName != null){
-            filter = FILTER_FACTORY.bbox(FILTER_FACTORY.property(geomAttName),bbox);
+            filter = new LooseBBox(FILTER_FACTORY.property(geomAttName),new DefaultLiteral<BoundingBox>(bbox));
         }else{
             filter = Filter.EXCLUDE;
         }

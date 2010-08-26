@@ -75,6 +75,7 @@ import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.data.shapefile.fix.IndexedFidReader;
 import org.geotoolkit.data.shapefile.fix.IndexedFidWriter;
 import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.filter.binaryspatial.LooseBBox;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -312,7 +313,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
                         ExtractBoundsFilterVisitor.BOUNDS_VISITOR, new JTSEnvelope2D());
                 queryFilter = Filter.INCLUDE;
                 reader = createFeatureReader(
-                        getBBoxAttributesReader(readProperties, bbox, queryHints),
+                        getBBoxAttributesReader(readProperties, bbox, (queryFilter instanceof LooseBBox), queryHints),
                         readSchema, queryHints);
 
             }else if(queryFilter instanceof Id && ((Id)queryFilter).getIdentifiers().isEmpty()){
@@ -421,7 +422,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
 
 
     protected IndexedShapefileAttributeReader getBBoxAttributesReader(
-            List<PropertyDescriptor> properties, final Envelope bbox, Hints hints)
+            List<PropertyDescriptor> properties, final Envelope bbox, boolean loose, Hints hints)
             throws DataStoreException {
 
         final double[] minRes = (double[]) hints.get(HintsPending.KEY_IGNORE_SMALL_FEATURES);
@@ -456,7 +457,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         }
 
         return new IndexedBBoxShapefileAttributeReader(properties,
-                openShapeReader(), dbfR, goodCollec, col.bboxIterator(),bbox,minRes);
+                openShapeReader(), dbfR, goodCollec, col.bboxIterator(),bbox,loose,minRes);
     }
 
     /**

@@ -55,10 +55,10 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
     private static final PreparedGeometryFactory PREPARED_FACTORY = new PreparedGeometryFactory();
 
     //cache the bbox geometry
-    private final PreparedGeometry boundingGeometry;
-    private final com.vividsolutions.jts.geom.Envelope boundingEnv;
-    private final CoordinateReferenceSystem crs;
-    private final int srid;
+    protected final PreparedGeometry boundingGeometry;
+    protected final com.vividsolutions.jts.geom.Envelope boundingEnv;
+    protected final CoordinateReferenceSystem crs;
+    protected final int srid;
 
     public DefaultBBox(PropertyName property, DefaultLiteral<BoundingBox> bbox) {
         super(nonNullPropertyName(property),bbox);

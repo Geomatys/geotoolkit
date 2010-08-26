@@ -58,18 +58,21 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
     private final double bboxMaxY;
     //feature bbox must be bigger than this
     private final double[] minRes;
+    //if we must be accurate or not in intersection test
+    private final boolean loose;
     private boolean hasNext = false;
     private int geomAttIndex = 0;
 
     public IndexedBBoxShapefileAttributeReader(List<? extends PropertyDescriptor> properties,
             ShapefileReader shpReader, IndexedDbaseFileReader dbfR, CloseableCollection<ShpData> goodRec,
-            SearchIterator<ShpData> ite, Envelope bbox, double[] minRes) {
+            SearchIterator<ShpData> ite, Envelope bbox, boolean loose, double[] minRes) {
         super(properties, shpReader, dbfR, goodRec, ite);
         this.bboxMinX = bbox.getMinX();
         this.bboxMinY = bbox.getMinY();
         this.bboxMaxX = bbox.getMaxX();
         this.bboxMaxY = bbox.getMaxY();
         this.minRes = minRes;
+        this.loose = loose;
         this.boundingGeometry = toGeometry(bbox);
 
         for (int i = 0, n = properties.size(); i < n; i++) {
@@ -131,9 +134,13 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
 
                 moveToNextDbf();
                 super.read(buffer);
-//                hasNext = true;
-                final Geometry candidate = (Geometry) buffer[geomAttIndex];
-                hasNext = boundingGeometry.intersects(candidate);
+
+                if(loose){
+                    hasNext = true;
+                }else{
+                    final Geometry candidate = (Geometry) buffer[geomAttIndex];
+                    hasNext = boundingGeometry.intersects(candidate);
+                }
             }
         }
     }
