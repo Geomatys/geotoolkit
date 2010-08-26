@@ -208,7 +208,7 @@ public class PolygonHandler implements ShapeHandler {
         // if for some reason, there is only one hole, we just reverse it and
         // carry on.
         else if (holes.size() == 1 && shells.isEmpty()) {
-            LOGGER.warning("only one hole in this polygon record");
+            //LOGGER.warning("only one hole in this polygon record");
             return createMulti(JTSUtilities.reverseRing(holes.get(0)));
         } else {
 
@@ -308,7 +308,7 @@ public class PolygonHandler implements ShapeHandler {
             }
 
             if (minShell == null) {
-                LOGGER.warning("polygon found with a hole thats not inside a shell");
+                //LOGGER.warning("polygon found with a hole thats not inside a shell");
                 // now reverse this bad "hole" and turn it into a shell
                 shells.add(JTSUtilities.reverseRing(testRing));
                 holesForShells.add(new ArrayList());
