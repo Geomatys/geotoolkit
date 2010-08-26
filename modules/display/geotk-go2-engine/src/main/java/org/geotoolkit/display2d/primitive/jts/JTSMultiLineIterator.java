@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.display2d.primitive.jts;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
@@ -132,17 +131,15 @@ public final class JTSMultiLineIterator extends JTSGeometryIterator<MultiLineStr
     @Override
     public int currentSegment(double[] coords) {
         if (currentCoord == 0) {
-            final Coordinate c = currentSequence.getCoordinate(currentCoord);
-            coords[0] = c.x;
-            coords[1] = c.y;
+            coords[0] = currentSequence.getX(currentCoord);
+            coords[1] = currentSequence.getY(currentCoord);
             transform.transform(coords, 0, coords, 0, 1);
             return SEG_MOVETO;
         } else if (currentCoord == coordinateCount) {
             return SEG_CLOSE;
         } else {
-            final Coordinate c = currentSequence.getCoordinate(currentCoord);
-            coords[0] = c.x;
-            coords[1] = c.y;
+            coords[0] = currentSequence.getX(currentCoord);
+            coords[1] = currentSequence.getY(currentCoord);
             transform.transform(coords, 0, coords, 0, 1);            
             return SEG_LINETO;
         }
@@ -154,17 +151,15 @@ public final class JTSMultiLineIterator extends JTSGeometryIterator<MultiLineStr
     @Override
     public int currentSegment(float[] coords) {
         if (currentCoord == 0) {
-            final Coordinate c = currentSequence.getCoordinate(currentCoord);
-            coords[0] = (float) c.x;
-            coords[1] = (float) c.y;
+            coords[0] = (float) currentSequence.getX(currentCoord);
+            coords[1] = (float) currentSequence.getY(currentCoord);
             transform.transform(coords, 0, coords, 0, 1);
             return SEG_MOVETO;
         } else if (currentCoord == coordinateCount) {
             return SEG_CLOSE;
         } else {
-            final Coordinate c = currentSequence.getCoordinate(currentCoord);
-            coords[0] = (float) c.x;
-            coords[1] = (float) c.y;
+            coords[0] = (float) currentSequence.getX(currentCoord);
+            coords[1] = (float) currentSequence.getY(currentCoord);
             transform.transform(coords, 0, coords, 0, 1);
             return SEG_LINETO;
         }
