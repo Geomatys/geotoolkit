@@ -27,7 +27,6 @@ import org.opengis.coverage.grid.GridEnvelope;
 
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
-import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.logging.Logging;
 
@@ -103,10 +102,10 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
      * still busy at 100% despite this pause.
      *
      * @return The statistics about the execution time, in milliseconds.
-     * @throws CoverageStoreException If an error occurred during the test.
+     * @throws Exception If an error occurred during the test.
      */
     @Override
-    public Statistics call() throws CoverageStoreException {
+    public Statistics call() throws Exception {
         final String sourceClassName = getClass().getName();
 
         threadName = Thread.currentThread().getName();
@@ -194,19 +193,19 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
      *
      * @param  request The grid geometry to request.
      * @return An image which represent the result of the request, or {@code null} if none.
-     * @throws CoverageStoreException If an error occurred during the test.
+     * @throws Exception If an error occurred during the test.
      */
-    protected abstract RenderedImage executeQuery(GeneralGridGeometry request) throws CoverageStoreException;
+    protected abstract RenderedImage executeQuery(GeneralGridGeometry request) throws Exception;
 
     /**
      * Invoked when the test is done. The default implementation does nothing.
      * Subclasses shall override this method if they have any resources that
      * need to be disposed.
      *
-     * @throws CoverageStoreException If an error occurred while disposing the resources.
+     * @throws Exception If an error occurred while disposing the resources.
      *
      * @since 3.15
      */
-    protected void dispose() throws CoverageStoreException {
+    protected void dispose() throws Exception {
     }
 }

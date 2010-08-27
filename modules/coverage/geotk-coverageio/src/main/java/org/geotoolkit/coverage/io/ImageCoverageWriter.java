@@ -454,8 +454,15 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                  */
                 final InternationalString name = (coverage instanceof AbstractCoverage) ?
                         ((AbstractCoverage) coverage).getName() : null;
-                final ImageLayout layout = new ImageLayout(requestRegion.x, requestRegion.y,
+                final ImageLayout layout = new ImageLayout(
+                        requestRegion.x,     requestRegion.y,
                         requestRegion.width, requestRegion.height);
+                /*
+                 * Some codecs (e.g. JPEG) require that the whole image is available
+                 * as a single raster.
+                 */
+                layout.setTileWidth (requestRegion.width);
+                layout.setTileHeight(requestRegion.height);
                 final RenderingHints hints = new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout);
                 destToExtractedGrid = (MathTransform2D) destGridToSource; // Will be used for logging purpose.
                 final Warp warp = WarpTransform2D.getWarp(name, destToExtractedGrid);

@@ -32,6 +32,7 @@ import javax.imageio.IIOParam;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
+import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
@@ -453,9 +454,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
         Shape shapeToRead = gridToCRS.createTransformedShape(gridRange); // Will be clipped later.
         Rectangle2D geodeticBounds = (shapeToRead instanceof Rectangle2D) ?
                 (Rectangle2D) shapeToRead : shapeToRead.getBounds2D();
-        if (geodeticBounds.isEmpty()) {
-            throw new CoverageStoreException(formatErrorMessage(Errors.Keys.EMPTY_ENVELOPE));
-        }
+        ensureNonEmpty(geodeticBounds);
         /*
          * Transform the envelope if needed. We will remember the MathTransform because it will
          * be needed for transforming the resolution later. Then, check if the requested region
@@ -497,9 +496,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
                     area.intersect(new Area(requestRect));
                     geodeticBounds = (shapeToRead = area).getBounds2D();
                 }
-                if (geodeticBounds.isEmpty()) {
-                    throw new CoverageStoreException(formatErrorMessage(Errors.Keys.EMPTY_ENVELOPE));
-                }
+                ensureNonEmpty(geodeticBounds);
             }
         }
         /*
@@ -611,6 +608,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
             } else if (dataCRS != null && !CRS.equalsIgnoreMetadata(dataCRS, crs)) {
                 final CoordinateOperation op = createOperation(dataCRS, crs);
                 geodeticBounds = CRS.transform(op, geodeticBounds, geodeticBounds);
+                ensureNonEmpty(geodeticBounds);
             }
             validEnvelope = new Envelope2D(crs, geodeticBounds);
         } else {
@@ -647,6 +645,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
                         requestEnvelope.getMaximum(Y_DIMENSION));
                 bounds.intersect(validEnvelope);
                 validEnvelope.setRect(bounds);
+                ensureNonEmpty(validEnvelope);
             }
         }
         /*
@@ -722,9 +721,22 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
         /*
          * At this point, we are ready to create the 'gridToCRS' transform of the target coverage.
          * We take this opportunity for creating the full grid geometry of the requested coverage.
+         * Note that the grid envelope is empty if the transform from grid to envelope as infinite
+         * coefficient values. This happen for example with Mercator projection close to poles.
          */
         MathTransform destToExtractedGrid = ProjectiveTransform.create(m);
         destGridGeometry = new GridGeometry2D(PixelInCell.CELL_CORNER, destToExtractedGrid, requestEnvelope, hints);
+        final GridEnvelope destRange = destGridGeometry.getGridRange();
+        for (int i=destRange.getDimension(); --i>=0;) {
+            if (destRange.getSpan(i) <= 0) {
+                String message = formatErrorMessage(Errors.Keys.VALUE_TEND_TOWARD_INFINITY);
+                if (requestCRS != null) {
+                    message = requestCRS.getCoordinateSystem().getAxis(i).getName().getCode()
+                            + ": " + message;
+                }
+                throw new CoverageStoreException(message);
+            }
+        }
         /*
          * Concatenate the transforms. We get the transform from what the grid that the user
          * requested to the grid actually used in the source image, assuming the source grid
@@ -743,6 +755,15 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
                             (double) -ymin / (double) ySubsampling));
         }
         return (MathTransform2D) destToExtractedGrid;
+    }
+
+    /**
+     * Ensures that the given rectangle is not empty.
+     */
+    private void ensureNonEmpty(final Rectangle2D envelope) throws CoverageStoreException {
+        if (envelope.isEmpty()) {
+            throw new CoverageStoreException(formatErrorMessage(Errors.Keys.EMPTY_ENVELOPE));
+        }
     }
 
     /**

@@ -30,10 +30,18 @@ import javax.imageio.stream.ImageInputStream;
 import java.util.logging.Level;
 import java.util.Locale;
 
+import org.opengis.geometry.Envelope;
+import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.referencing.datum.PixelInCell;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
@@ -42,6 +50,7 @@ import org.geotoolkit.coverage.io.GridCoverageWriteParam;
 import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
+import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.image.io.mosaic.TileManagerFactory;
 
 
@@ -71,6 +80,11 @@ public class CoverageReadWriteStressor extends Stressor {
      * The index of the image to read (usually 0).
      */
     protected final int imageIndex;
+
+    /**
+     * If specified, reproject the request result in the given CRS.
+     */
+    protected CoordinateReferenceSystem outputCRS;
 
     /**
      * If specified, write the request result in an image of the given format and read it back. It
@@ -116,9 +130,35 @@ public class CoverageReadWriteStressor extends Stressor {
     private CoverageReadWriteStressor(final GridCoverageReader reader, final int imageIndex)
             throws CoverageStoreException
     {
-        super(reader.getGridGeometry(imageIndex));
+        super(clip(reader.getGridGeometry(imageIndex)));
         this.reader     = reader;
         this.imageIndex = imageIndex;
+    }
+
+    /**
+     * Clips the given geometry. This can be used when the input raster include the poles
+     * and the output raster user some CRS like Mercator.
+     * <p>
+     * This code is disabled for now - it have to be enabled manually if desired.
+     * A future version may detect automatically whatever a clip is desired or not
+     * depending on the source coordinate system axes.
+     */
+    private static GeneralGridGeometry clip(GeneralGridGeometry geometry) {
+        if (false) {
+            GridEnvelope range = geometry.getGridRange();
+            final int[] lower = range.getLow().getCoordinateValues();
+            final int[] upper = range.getHigh().getCoordinateValues();
+            for (int i=range.getDimension(); --i>=0;) {
+                final int hs = (upper[i] - lower[i] + 1) / 200;
+                lower[i] += hs;
+                upper[i] -= hs;
+            }
+            range = new GeneralGridEnvelope(lower, upper, true);
+            geometry = new GeneralGridGeometry(range, PixelInCell.CELL_CORNER,
+                    geometry.getGridToCRS(PixelInCell.CELL_CORNER),
+                    geometry.getCoordinateReferenceSystem());
+        }
+        return geometry;
     }
 
     /**
@@ -210,21 +250,40 @@ public class CoverageReadWriteStressor extends Stressor {
     /**
      * Reads the given random request. If {@link #outputFormat} is non-null, the image will be
      * written in a memory buffer, then read again (unless the output is not shown in a viewer).
+     *
+     * @throws CoverageStoreException If an error occurred while using the {@link org.geotoolkit.coverage.io} API.
+     * @throws IOException If an error occurred while using the {@link javax.imageio} API.
+     * @throws TransformException If an error occurred while projecting the source envelope.
      */
     @Override
-    protected RenderedImage executeQuery(final GeneralGridGeometry request) throws CoverageStoreException {
+    protected RenderedImage executeQuery(final GeneralGridGeometry request)
+            throws CoverageStoreException, IOException, TransformException
+    {
         /*
          * Tests read operation.
          */
         final GridCoverageReadParam readParam = new GridCoverageReadParam();
         readParam.setEnvelope(request.getEnvelope());
         readParam.setResolution(getResolution(request));
-        final GridCoverage2D coverage = (GridCoverage2D) reader.read(imageIndex, readParam);
+        GridCoverage2D coverage = (GridCoverage2D) reader.read(imageIndex, readParam);
         if (outputFormat != null) {
             /*
              * Tests write operation.
              */
             final GridCoverageWriteParam writeParam = new GridCoverageWriteParam(readParam);
+            if (outputCRS != null) {
+                final Envelope sourceEnvelope = writeParam.getEnvelope();
+                final Envelope targetEnvelope = CRS.transform(sourceEnvelope, outputCRS);
+                final double[] resolution     = writeParam.getResolution();
+                if (resolution != null) {
+                    for (int i=0; i<resolution.length; i++) {
+                        // The naive algoritm below assumes that axis order didn't changed.
+                        resolution[i] *= targetEnvelope.getSpan(i) / sourceEnvelope.getSpan(i);
+                    }
+                }
+                writeParam.setEnvelope(targetEnvelope);
+                writeParam.setResolution(resolution);
+            }
             writeParam.setFormatName(outputFormat);
             if (out == null) {
                 out = new MemoryOutputStream();
@@ -241,21 +300,21 @@ public class CoverageReadWriteStressor extends Stressor {
              * We will skip this step if there is no visual check.
              */
             if (viewer != null) {
-                final RenderedImage image;
-                try {
-                    final ImageInputStream in = ImageIO.createImageInputStream(out.getInputStream());
-                    if (imageReader == null) {
-                        imageReader = XImageIO.getReaderByFormatName(outputFormat, null, Boolean.TRUE, Boolean.TRUE);
-                    }
-                    imageReader.setInput(in);
-                    image = imageReader.read(0);
-                    imageReader.reset();
-                    in.close();
-                } catch (IOException e) {
-                    throw new CoverageStoreException(e);
+                final ImageInputStream in = ImageIO.createImageInputStream(out.getInputStream());
+                if (imageReader == null) {
+                    imageReader = XImageIO.getReaderByFormatName(outputFormat, null, Boolean.TRUE, Boolean.TRUE);
                 }
+                imageReader.setInput(in);
+                final RenderedImage image = imageReader.read(0);
+                imageReader.reset();
+                in.close();
                 return image;
             }
+        } else if (outputCRS != null) {
+            /*
+             * No write operation, but a CRS is specified. Test reprojection.
+             */
+            coverage = (GridCoverage2D) Operations.DEFAULT.resample(coverage, outputCRS);
         }
         return coverage.view(ViewType.RENDERED).getRenderedImage();
     }
@@ -264,7 +323,7 @@ public class CoverageReadWriteStressor extends Stressor {
      * Disposes the reader, the writer and the buffer after the test is done.
      */
     @Override
-    protected void dispose() throws CoverageStoreException {
+    protected void dispose() throws Exception {
         reader.dispose();
         if (writer != null) {
             writer.dispose();

@@ -20,12 +20,16 @@ package org.geotoolkit.test.stress;
 import java.io.File;
 import java.util.Arrays;
 
+import org.opengis.util.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import org.geotoolkit.lang.Setup;
 import org.geotoolkit.console.Action;
 import org.geotoolkit.console.Option;
 import org.geotoolkit.console.CommandLine;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.image.jai.Registry;
+import org.geotoolkit.referencing.CRS;
 
 
 /**
@@ -82,6 +86,12 @@ public final class Main extends CommandLine {
     private String outputFormat;
 
     /**
+     * The CRS of output images, or {@code null} if none.
+     */
+    @Option
+    private String outputCRS;
+
+    /**
      * {@code true} if the results shall be shown in windows.
      */
     @Option
@@ -103,9 +113,14 @@ public final class Main extends CommandLine {
      * which is the image input to use (typically as the filename of a serialized Java Object).
      *
      * @throws CoverageStoreException If an error occurred while creating a coverage reader.
+     * @throws FactoryException If the output CRS is unknown.
      */
     @Action(minimalArgumentCount=1, maximalArgumentCount=1)
-    public void coverages() throws CoverageStoreException {
+    public void coverages() throws CoverageStoreException, FactoryException {
+        CoordinateReferenceSystem crs = null;
+        if (outputCRS != null) {
+            crs = CRS.decode(outputCRS);
+        }
         final Object input = CoverageReadWriteStressor.createReaderInput(new File(arguments[0]));
         final StressorGroup<CoverageReadWriteStressor> stressors =
                 new StressorGroup<CoverageReadWriteStressor>(duration * 1000, out, err);
@@ -128,6 +143,7 @@ public final class Main extends CommandLine {
             if (maxScale != null) {
                 stressor.setMaximumScale(maxScale);
             }
+            stressor.outputCRS = crs;
             stressor.setLocale(locale);
             stressors.add(stressor);
         }
