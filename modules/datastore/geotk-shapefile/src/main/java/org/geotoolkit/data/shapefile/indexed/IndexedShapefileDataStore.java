@@ -379,7 +379,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         if (filter instanceof Id && shpFiles.isLocal() && shpFiles.exists(FIX)) {
             final Id fidFilter = (Id) filter;
 
-            final TreeSet idsSet = new TreeSet(IDENTIFIER_COMPARATOR);
+            final TreeSet<Identifier> idsSet = new TreeSet<Identifier>(IDENTIFIER_COMPARATOR);
             idsSet.addAll(fidFilter.getIdentifiers());
             try {
                 goodRecs = queryFidIndex(idsSet);

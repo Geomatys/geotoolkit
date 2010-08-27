@@ -732,7 +732,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      */
     protected ShapefileReader openShapeReader(boolean read3D, double[] res) throws DataStoreException {
         try {
-            return new ShapefileReader(shpFiles, true, useMemoryMappedBuffer,null,read3D,res);
+            return new ShapefileReader(shpFiles, true, useMemoryMappedBuffer,read3D,res);
         } catch (IOException se) {
             throw new DataStoreException("Error creating ShapefileReader", se);
         }

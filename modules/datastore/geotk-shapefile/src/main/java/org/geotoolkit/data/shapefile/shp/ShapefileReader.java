@@ -50,7 +50,6 @@ import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
  * @module pending
  */
 public class ShapefileReader{
-
     
     /**
      *  Used to mark the current shape is not known, either because someone moved the reader
@@ -64,22 +63,16 @@ public class ShapefileReader{
      */
     public final class Record {
         int length;
-
         int number = 0;
-
         int offset; // Relative to the whole file
-
         int start = 0; // Relative to the current loaded buffer
 
         /** The minimum X value. */
         public double minX;
-
         /** The minimum Y value. */
         public double minY;
-
         /** The maximum X value. */
         public double maxX;
-
         /** The maximum Y value. */
         public double maxY;
 
@@ -122,33 +115,19 @@ public class ShapefileReader{
         }
     }
 
-    private ShapeHandler handler;
-
-    private ShapefileHeader header;
-
-    private ReadableByteChannel channel;
-
-    ByteBuffer buffer;
-
-    private ShapeType fileShapeType = ShapeType.UNDEFINED;
-
-    private ByteBuffer headerTransfer;
-
+    private final ShapeHandler handler;
+    private final ShapefileHeader header;
+    private final ShapeType fileShapeType;
+    private final ByteBuffer headerTransfer;
     private final Record record = new Record();
-
     private final boolean randomAccessEnabled;
+    private final boolean useMemoryMappedBuffer;
 
-    private final boolean read3D;
-
-    private boolean useMemoryMappedBuffer;
-
-    private long currentOffset = 0L;
-    
-    private int currentShape = 0;
-    
+    private long currentOffset = 0L;    
+    private int currentShape = 0;    
     private ShxReader shxReader;
-
-    private final double[] resample;
+    private ReadableByteChannel channel;
+    ByteBuffer buffer;
 
     /**
      * Creates a new instance of ShapeFile.
@@ -165,25 +144,7 @@ public class ShapefileReader{
      */
     public ShapefileReader(ShpFiles shapefileFiles, boolean strict,
             boolean useMemoryMapped, boolean read3D) throws IOException, DataStoreException {
-        this(shapefileFiles,strict,useMemoryMapped,null,read3D,null);
-    }
-
-    /**
-     * Creates a new instance of ShapeFile.
-     * 
-     * @param shapefileFiles
-     *                The ReadableByteChannel this reader will use.
-     * @param strict
-     *                True to make the header parsing throw Exceptions if the
-     *                version or magic number are incorrect.
-     * @throws IOException
-     *                 If problems arise.
-     * @throws ShapefileException
-     *                 If for some reason the file contains invalid records.
-     */
-    public ShapefileReader(ShpFiles shapefileFiles, boolean strict,
-            boolean useMemoryMapped, boolean read3D, double[] resample) throws IOException, DataStoreException {
-        this(shapefileFiles,strict,useMemoryMapped,null,read3D, resample);
+        this(shapefileFiles,strict,useMemoryMapped,read3D,null);
     }
 
     /**
@@ -200,41 +161,29 @@ public class ShapefileReader{
      *                 If for some reason the file contains invalid records.
      */
     public ShapefileReader(ShpFiles shapefileFiles, boolean strict,boolean useMemoryMapped, 
-            ShxReader shxReader, boolean read3D, double[] resample) throws IOException, DataStoreException {
+            boolean read3D, double[] resample) throws IOException, DataStoreException {
         this.channel = shapefileFiles.getReadChannel(ShpFileType.SHP, this);
-        this.useMemoryMappedBuffer = useMemoryMapped;
-        this.read3D = read3D;
-        this.resample = resample;
-        randomAccessEnabled = channel instanceof FileChannel;
+        this.randomAccessEnabled = channel instanceof FileChannel;
 
-        if(shxReader == null){
-            try {
-                shxReader = new ShxReader(shapefileFiles, true);
-            } catch(Exception e) {
-                LOGGER.log(Level.FINE, "Could not open the .shx file, continuing " +
-                            "assuming the .shp file is not sparse", e);
-                currentShape = UNKNOWN;
-            }
-        }
-
-        this.shxReader = shxReader;
-
-        init(strict);
-    }
-
-    private void init(boolean strict) throws IOException, DataStoreException {
         header = readHeader(channel, strict);
+
+        try {
+            shxReader = new ShxReader(shapefileFiles, true);
+        } catch(Exception e) {
+            LOGGER.log(Level.FINE, "Could not open the .shx file, continuing " +
+                        "assuming the .shp file is not sparse", e);
+            currentShape = UNKNOWN;
+        }
+        
         fileShapeType = header.getShapeType();
         handler = fileShapeType.getShapeHandler(read3D,resample);
-
-        // recordHeader = ByteBuffer.allocateDirect(8);
-        // recordHeader.order(ByteOrder.BIG_ENDIAN);
 
         if (handler == null) {
             throw new IOException("Unsuported shape type:" + fileShapeType);
         }
 
-        if (channel instanceof FileChannel && useMemoryMappedBuffer) {
+        if (channel instanceof FileChannel && useMemoryMapped) {
+            this.useMemoryMappedBuffer = useMemoryMapped;
             final FileChannel fc = (FileChannel) channel;
             buffer = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
             buffer.position(100);
@@ -362,7 +311,6 @@ public class ShapefileReader{
         }
         shxReader = null;
         channel = null;
-        header = null;
     }
 
     public boolean supportsRandomAccess() {
@@ -723,13 +671,6 @@ public class ShapefileReader{
         }
         
         return count;
-    }
-
-    /**
-     * @param handler The handler to set.
-     */
-    public void setHandler(ShapeHandler handler) {
-        this.handler = handler;
     }
 
 }

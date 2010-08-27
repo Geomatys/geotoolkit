@@ -61,7 +61,7 @@ public final class ShxReader {
 
     /**
      * Load the index file from the given channel.
-     * 
+     *
      * @param shpFiles The channel to read from.
      * @throws IOException If an error occurs.
      */
