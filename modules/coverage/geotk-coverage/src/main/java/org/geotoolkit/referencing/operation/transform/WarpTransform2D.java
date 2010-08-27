@@ -21,10 +21,8 @@ import java.util.Arrays;
 import java.io.Serializable;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.geom.AffineTransform;
 
 import javax.media.jai.Warp;
-import javax.media.jai.WarpAffine;
 import javax.media.jai.WarpOpImage;
 import javax.media.jai.WarpPolynomial;
 import javax.media.jai.operator.WarpDescriptor;
@@ -41,8 +39,6 @@ import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
-import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 import static org.geotoolkit.referencing.operation.provider.WarpPolynomial.*;
 
@@ -171,10 +167,10 @@ public class WarpTransform2D extends AbstractMathTransform implements MathTransf
      *
      * @param srcBounds Bounding box of source coordinates, or {@code null} if unknown.
      * @param srcCoords Source coordinates with <var>x</var> and <var>y</var> alternating.
-     * @param srcOffset The inital entry of {@code srcCoords} to be used.
+     * @param srcOffset The initial entry of {@code srcCoords} to be used.
      * @param dstBounds Bounding box of destination coordinates, or {@code null} if unknown.
      * @param dstCoords Destination coordinates with <var>x</var> and <var>y</var> alternating.
-     * @param dstOffset The inital entry of {@code destCoords} to be used.
+     * @param dstOffset The initial entry of {@code destCoords} to be used.
      * @param numCoords The number of coordinates from {@code srcCoords} and {@code destCoords} to be used.
      * @param degree    The desired degree of the warp polynomials.
      */
@@ -323,33 +319,16 @@ public class WarpTransform2D extends AbstractMathTransform implements MathTransf
      * in Java2D usage.
      *
      * @param  name The image name or {@linkplain org.geotoolkit.coverage.grid.GridCoverage2D coverage}
-     *         name, or {@code null} in unknown. Used only for formatting error message if some
+     *         name, or {@code null} if unknown. Used only for formatting error message if some
      *         {@link TransformException} are thrown by the supplied transform.
      * @param  transform The transform to returns as an image warp.
      * @return The warp for the given transform.
+     *
+     * @deprecated Moved to {@link WarpFactory#create(CharSequence, MathTransform2D)
      */
+    @Deprecated
     public static Warp getWarp(CharSequence name, final MathTransform2D transform) {
-        if (transform instanceof WarpTransform2D) {
-            return ((WarpTransform2D) transform).getWarp();
-        }
-        if (transform instanceof AffineTransform) {
-            final AffineTransform tr = new AffineTransform((AffineTransform) transform);
-            /*
-             * A tolerance factor of 1E-6 shoud not make any visible difference for image
-             * having a width or height of less than 0.5 million pixels. For larger image,
-             * it is not sure that the unrounded transform is the accurate one. Typically,
-             * the transform was really expected to have integer scale factors.
-             *
-             * Integer scale factors can make the rendering much faster, by allowing JAI
-             * to use optimized code path (for example using integer arithmetic).
-             */
-            XAffineTransform.roundIfAlmostInteger(tr, 1E-6);
-            return new WarpAffine(tr);
-        }
-        if (name == null) {
-            name = Vocabulary.formatInternational(Vocabulary.Keys.UNKNOWN);
-        }
-        return new WarpAdapter(name, transform);
+        return WarpFactory.DEFAULT.create(name, transform);
     }
 
     /**

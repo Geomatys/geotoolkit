@@ -43,13 +43,14 @@ import javax.media.jai.operator.WarpDescriptor;
 import org.opengis.util.InternationalString;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.referencing.operation.MathTransform2D;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.mosaic.MosaicImageWriter;
-import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
+import org.geotoolkit.referencing.operation.transform.WarpFactory;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.AbstractCoverage;
@@ -465,7 +466,12 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                 layout.setTileHeight(requestRegion.height);
                 final RenderingHints hints = new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout);
                 destToExtractedGrid = (MathTransform2D) destGridToSource; // Will be used for logging purpose.
-                final Warp warp = WarpTransform2D.getWarp(name, destToExtractedGrid);
+                final Warp warp;
+                try {
+                    warp = WarpFactory.DEFAULT.create(name, destToExtractedGrid, sourceRegion);
+                } catch (TransformException e) {
+                    throw new CoverageStoreException(formatErrorMessage(e), e);
+                }
                 if (false) {
                     /*
                      * To be enabled only when debugging.

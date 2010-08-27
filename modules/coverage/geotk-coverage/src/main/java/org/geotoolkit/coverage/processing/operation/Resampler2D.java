@@ -73,6 +73,7 @@ import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.geotoolkit.referencing.operation.transform.IdentityTransform;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
+import org.geotoolkit.referencing.operation.transform.WarpFactory;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.internal.image.ImageUtilities;
@@ -612,7 +613,7 @@ final class Resampler2D extends GridCoverage2D {
                 operation = "Warp";
                 final Warp warp;
                 if (forceAdapter) {
-                    warp = WarpTransform2D.getWarp(name, transform);
+                    warp = WarpFactory.DEFAULT.create(name, transform, sourceBB);
                 } else {
                     final Rectangle imageBB;
                     if (layout.getMinX  (sourceImage) == targetBB.x &&
@@ -864,10 +865,11 @@ final class Resampler2D extends GridCoverage2D {
      * @param  mtFactory  A math transform factory in case new transforms need to be created.
      * @return The warp.
      * @throws FactoryException if the warp can't be created.
+     * @throws TransformException if the warp can't be created.
      */
     private static Warp createWarp(final CharSequence name, final Rectangle sourceBB, final Rectangle targetBB,
                                    final MathTransform2D allSteps2D, final MathTransformFactory mtFactory)
-            throws FactoryException
+            throws FactoryException, TransformException
     {
         MathTransform2D transform = allSteps2D;
         Rectangle actualBB = null;
@@ -896,7 +898,7 @@ final class Resampler2D extends GridCoverage2D {
              * Otherwise we assume that the difference is caused by rounding error and we will try
              * progressive empirical adjustment in order to get the rectangles to fit.
              */
-            final Warp warp = WarpTransform2D.getWarp(name, transform);
+            final Warp warp = WarpFactory.DEFAULT.create(name, transform, sourceBB);
             if (true) {
                 return warp;
             }
