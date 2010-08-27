@@ -754,7 +754,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             }
             res[0] *= factor;
             res[1] *= factor;
-            qb.setResolution(renderingContext.getResolution(layerCRS));
+            qb.setResolution(res);
         }
 
         //add ignore flag ------------------------------------------------------

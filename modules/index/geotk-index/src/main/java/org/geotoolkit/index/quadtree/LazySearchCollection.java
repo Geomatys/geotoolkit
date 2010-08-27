@@ -60,8 +60,8 @@ public class LazySearchCollection<T extends Data> extends AbstractCollection<T> 
      * More accurate iterator when plenty of nodes, also hase a isSafe methode
      * to test if the value is safe to be used untested.
      */
-    public SearchIterator<T> bboxIterator() {
-        final SearchIterator<T> iterator = new LazyTyleSearchIterator.Buffered(
+    public LazyTyleSearchIterator.Buffered<T> bboxIterator() {
+        final LazyTyleSearchIterator.Buffered<T> iterator = new LazyTyleSearchIterator.Buffered(
                 tree.getRoot(), bounds,minRes,reader,MAX_INDICES);
         tree.registerIterator(iterator);
         return iterator;

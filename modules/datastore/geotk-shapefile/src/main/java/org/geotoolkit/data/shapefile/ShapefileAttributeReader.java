@@ -43,9 +43,27 @@ public class ShapefileAttributeReader extends AbstractPropertyReader {
     protected DbaseFileReader.Row row;
     protected ShapefileReader.Record record;
 
+    //feature bbox must be bigger than this, otherwise shape geometry is only estimated
+    private final boolean estimateRes;
+    private final double estimateX;
+    private final double estimateY;
+
     public ShapefileAttributeReader(List<? extends PropertyDescriptor> atts,
             ShapefileReader shp, DbaseFileReader dbf) {
         this(atts.toArray(new PropertyDescriptor[atts.size()]), shp, dbf);
+    }
+
+    /**
+     * Create the shapefile reader
+     *
+     * @param atts - the attributes that we are going to read.
+     * @param shp - the shapefile reader, required
+     * @param dbf - the dbf file reader. May be null, in this case no
+     *              attributes will be read from the dbf file
+     */
+    public ShapefileAttributeReader(PropertyDescriptor[] atts,
+            ShapefileReader shp, DbaseFileReader dbf) {
+        this(atts,shp,dbf,null);
     }
 
     /**
@@ -57,10 +75,19 @@ public class ShapefileAttributeReader extends AbstractPropertyReader {
      *              attributes will be read from the dbf file
      */
     public ShapefileAttributeReader(PropertyDescriptor[] atts,
-            ShapefileReader shp, DbaseFileReader dbf) {
+            ShapefileReader shp, DbaseFileReader dbf, double[] estimateRes) {
         super(atts);
         this.shp = shp;
         this.dbf = dbf;
+        if(estimateRes != null){
+            this.estimateRes = true;
+            this.estimateX = estimateRes[0];
+            this.estimateY = estimateRes[1];
+        }else{
+            this.estimateRes = false;
+            this.estimateX = 0;
+            this.estimateY = 0;
+        }
 
         //the attribut descriptor might define types that are mare restrictive
         //then what the readers can do.
@@ -174,7 +201,14 @@ public class ShapefileAttributeReader extends AbstractPropertyReader {
 
         final int index = attributIndex[param];
         if(index == -1){
-            return record.shape();
+            if(estimateRes &&
+               !(estimateX <= (record.maxX - record.minX) || estimateY <= (record.maxY - record.minY))){
+                //read estimated shape
+                return record.estimatedShape();
+            }else{
+                //read full shape
+                return record.shape();
+            }
         }else if(row != null) {
             if(narrowing[param]){
                 //must procede to a retype

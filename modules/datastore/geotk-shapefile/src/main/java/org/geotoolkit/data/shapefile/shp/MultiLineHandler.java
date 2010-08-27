@@ -91,6 +91,13 @@ public class MultiLineHandler extends AbstractShapeHandler {
     }
 
     @Override
+    public Object estimated(double minX, double maxX, double minY, double maxY) {
+        final double[] array = new double[]{minX,minY,maxX,maxY};
+        return GEOMETRY_FACTORY.createMultiLineString(new LineString[] {
+               GEOMETRY_FACTORY.createLineString(new ShapeCoordinateSequence2D(array,2))});
+    }
+
+    @Override
     public Object read(ByteBuffer buffer, ShapeType type) {
 
         if (type == ShapeType.NULL) {
@@ -175,6 +182,8 @@ public class MultiLineHandler extends AbstractShapeHandler {
 
         return GEOMETRY_FACTORY.createMultiLineString(lineStrings);
     }
+
+
 
 //    @Override
 //    public Object read(ByteBuffer buffer, ShapeType type) {

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
+import org.geotoolkit.index.quadtree.LazyTyleSearchIterator;
 import com.vividsolutions.jts.geom.Envelope;
 
 import java.io.File;
@@ -35,7 +36,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DefaultSimpleFeatureReader;
@@ -444,7 +444,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
 
         try {
             final QuadTree quadTree = openQuadTree();
-            final DataReader dr = new IndexDataReader(shx);
+            final DataReader<ShpData> dr = new IndexDataReader(shx);
             if ((quadTree != null)) {
                 goodCollec = quadTree.search(dr,bbox,minRes);
             }
@@ -452,7 +452,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         } catch (Exception e) {
             throw new DataStoreException("Error querying index: " + e.getMessage());
         }
-        final LazySearchCollection col = (LazySearchCollection) goodCollec;
+        final LazySearchCollection<ShpData> col = (LazySearchCollection) goodCollec;
         
         //check if we need to open the dbf reader, no need when only geometry
         final IndexedDbaseFileReader dbfR;
@@ -462,8 +462,9 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             dbfR = openDbfReader();
         }
 
-        return new IndexedBBoxShapefileAttributeReader(properties,
-                openShapeReader(read3D,res), dbfR, goodCollec, col.bboxIterator(),bbox,loose,minRes);
+        return new IndexedBBoxShapefileAttributeReader(properties, 
+                openShapeReader(read3D,res), dbfR, col,
+                (LazyTyleSearchIterator.Buffered<ShpData>)col.bboxIterator(),bbox,loose,res, minRes);
     }
 
     /**

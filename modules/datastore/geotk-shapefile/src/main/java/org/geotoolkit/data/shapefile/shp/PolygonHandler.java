@@ -126,6 +126,19 @@ public class PolygonHandler extends AbstractShapeHandler {
     }
 
     @Override
+    public Object estimated(double minX, double maxX, double minY, double maxY) {
+        final double[] array = new double[]{
+            minX,minY,
+            minX,maxY,
+            maxX,maxY,
+            maxX,minY,
+            minX,minY
+        };
+        final LinearRing shell = GEOMETRY_FACTORY.createLinearRing(new ShapeCoordinateSequence2D(array, 5));
+        return GEOMETRY_FACTORY.createMultiPolygon(new Polygon[] {GEOMETRY_FACTORY.createPolygon(shell, null)});
+    }
+    
+    @Override
     public Object read(ByteBuffer buffer, ShapeType type) {
         if (type == ShapeType.NULL) {
             return createNull();

@@ -99,6 +99,17 @@ public class ShapefileReader{
             return shape;
         }
 
+        /**
+         * Generate and estimated geometry calculated from the bounding box.
+         * It can be used when the bounding box is  already smaller then what we need.
+         * Whatever shape it has will have no consequences.
+         *
+         * @return an average shape generated using the bounding box
+         */
+        public Object estimatedShape() {
+            return handler.estimated(minX, maxX, minY, maxY);
+        }
+
         public int offset() {
             return offset;
         }

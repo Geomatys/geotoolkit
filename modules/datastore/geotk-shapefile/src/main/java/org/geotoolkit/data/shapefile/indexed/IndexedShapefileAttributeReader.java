@@ -26,7 +26,6 @@ import org.geotoolkit.data.dbf.IndexedDbaseFileReader;
 import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.index.CloseableCollection;
-import org.geotoolkit.index.Data;
 
 import org.opengis.feature.type.PropertyDescriptor;
 
@@ -36,18 +35,24 @@ import org.opengis.feature.type.PropertyDescriptor;
  * file may not be necessary, if not, just pass null as the DbaseFileReader
  * @module pending
  */
-public class IndexedShapefileAttributeReader extends ShapefileAttributeReader
+public class IndexedShapefileAttributeReader <T extends Iterator<ShpData>> extends ShapefileAttributeReader
         implements RecordNumberTracker {
 
-    protected final Iterator<ShpData> goodRecs;
+    protected final T goodRecs;
     private final CloseableCollection<ShpData> closeableCollection;
     private int recno;
     private ShpData next;
 
     public IndexedShapefileAttributeReader( List<? extends PropertyDescriptor> attributes,
-            ShapefileReader shp, IndexedDbaseFileReader dbf,
-            CloseableCollection<ShpData> col, Iterator<ShpData> goodRecs) {
-        this(attributes.toArray(new PropertyDescriptor[attributes.size()]), shp, dbf, col, goodRecs);
+            ShapefileReader shp, IndexedDbaseFileReader dbf, CloseableCollection<ShpData> col,
+            T goodRecs) {
+        this(attributes, shp, dbf, col, goodRecs,null);
+    }
+
+    public IndexedShapefileAttributeReader( List<? extends PropertyDescriptor> attributes,
+            ShapefileReader shp, IndexedDbaseFileReader dbf, CloseableCollection<ShpData> col,
+            T goodRecs, double[] estimateRes) {
+        this(attributes.toArray(new PropertyDescriptor[attributes.size()]), shp, dbf, col, goodRecs,estimateRes);
     }
 
     /**
@@ -61,8 +66,8 @@ public class IndexedShapefileAttributeReader extends ShapefileAttributeReader
      */
     public IndexedShapefileAttributeReader(PropertyDescriptor[] atts,
             ShapefileReader shp, IndexedDbaseFileReader dbf,
-            CloseableCollection<ShpData> col, Iterator<ShpData> goodRecs) {
-        super(atts, shp, dbf);
+            CloseableCollection<ShpData> col, T goodRecs, double[] estimateRes) {
+        super(atts, shp, dbf,estimateRes);
         this.goodRecs = goodRecs;
         this.closeableCollection = col;
         this.recno = 0;

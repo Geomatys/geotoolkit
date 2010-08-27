@@ -55,6 +55,15 @@ public interface ShapeHandler {
     public Object read(ByteBuffer buffer, ShapeType type);
 
     /**
+     * Generate and estimated geometry calculated from the bounding box.
+     * It can be used when the bounding box is  already smaller then what we need.
+     * Whatever shape it has will have no consequences.
+     * 
+     * @return an average shape generated using the bounding box
+     */
+    public Object estimated(double minX, double maxX, double minY, double maxY);
+
+    /**
      * Write the geometry into the ByteBuffer. The position, byteOrder, and
      * limit are all set. The handler is not responsible for writing the record
      * or shape type integer.

@@ -73,6 +73,12 @@ public class PointHandler extends AbstractShapeHandler {
     }
 
     @Override
+    public Object estimated(double minX, double maxX, double minY, double maxY) {
+        final Coordinate coord = new Coordinate((minX + maxX) / 2, (minY + maxY) / 2);
+        return GEOMETRY_FACTORY.createPoint(coord);
+    }
+    
+    @Override
     public Object read(ByteBuffer buffer, ShapeType type) {
         if (type == ShapeType.NULL) {
             return createNull();

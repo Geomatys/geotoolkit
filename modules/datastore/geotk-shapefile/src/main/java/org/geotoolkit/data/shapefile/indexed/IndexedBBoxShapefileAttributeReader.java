@@ -33,7 +33,7 @@ import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
 import org.geotoolkit.data.shapefile.shp.ShapefileReader;
 import org.geotoolkit.index.CloseableCollection;
 import org.geotoolkit.index.quadtree.LazyTyleSearchIterator;
-import org.geotoolkit.index.quadtree.SearchIterator;
+import org.geotoolkit.index.quadtree.LazyTyleSearchIterator.Buffered;
 
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
@@ -44,7 +44,7 @@ import org.opengis.feature.type.PropertyDescriptor;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttributeReader{
+public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttributeReader<LazyTyleSearchIterator.Buffered<ShpData>>{
 
     private static final PreparedGeometryFactory PREPARED_FACTORY = new PreparedGeometryFactory();
     private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
@@ -56,8 +56,11 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
     private final double bboxMinY;
     private final double bboxMaxX;
     private final double bboxMaxY;
-    //feature bbox must be bigger than this
-    private final double[] minRes;
+
+    //feature bbox must be bigger than this, otherwise they are bypassed
+    private final boolean minRes;
+    private final double minResX;
+    private final double minResY;
     //if we must be accurate or not in intersection test
     private final boolean loose;
     private boolean hasNext = false;
@@ -65,13 +68,21 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
 
     public IndexedBBoxShapefileAttributeReader(List<? extends PropertyDescriptor> properties,
             ShapefileReader shpReader, IndexedDbaseFileReader dbfR, CloseableCollection<ShpData> goodRec,
-            SearchIterator<ShpData> ite, Envelope bbox, boolean loose, double[] minRes) {
-        super(properties, shpReader, dbfR, goodRec, ite);
+            LazyTyleSearchIterator.Buffered<ShpData> ite, Envelope bbox, boolean loose, double[] estimateRes, double[] minRes) {
+        super(properties, shpReader, dbfR, goodRec, ite,estimateRes);
         this.bboxMinX = bbox.getMinX();
         this.bboxMinY = bbox.getMinY();
         this.bboxMaxX = bbox.getMaxX();
         this.bboxMaxY = bbox.getMaxY();
-        this.minRes = minRes;
+        if(minRes != null){
+            this.minRes = true;
+            this.minResX = minRes[0];
+            this.minResY = minRes[1];
+        }else{
+            this.minRes = false;
+            this.minResX = 0;
+            this.minResY = 0;
+        }
         this.loose = loose;
         this.boundingGeometry = toGeometry(bbox);
 
@@ -106,11 +117,10 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
             //we are sure we need it
             moveToNextShape();
 
-            if (((LazyTyleSearchIterator.Buffered) goodRecs).isSafe()) {
+            if (goodRecs.isSafe()) {
 
                 //check minSize
-                if (minRes != null && !(minRes[0] <= (record.maxX - record.minX) || minRes[1] <= (record.maxY - record.minY))) {
-                    //System.out.println("doesn't match");
+                if (minRes && !(minResX <= (record.maxX - record.minX) || minResY <= (record.maxY - record.minY))) {
                     continue;
                 }
 
@@ -127,8 +137,7 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
                     || bboxMaxY < record.minY)) {
 
                 //check minSize
-                if (minRes != null && !(minRes[0] <= (record.maxX - record.minX) || minRes[1] <= (record.maxY - record.minY))) {
-                    //System.out.println("doesn't match");
+                if (minRes && !(minResX <= (record.maxX - record.minX) || minResY <= (record.maxY - record.minY))) {
                     continue;
                 }
 
