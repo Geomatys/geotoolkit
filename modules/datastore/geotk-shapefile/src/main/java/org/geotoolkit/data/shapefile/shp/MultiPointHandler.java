@@ -94,7 +94,7 @@ public class MultiPointHandler extends AbstractShapeHandler {
         return length;
     }
 
-    private Object createNull() {
+    protected Object createNull() {
         return GEOMETRY_FACTORY.createMultiPoint(new Point[0]);
     }
 

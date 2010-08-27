@@ -46,8 +46,8 @@ import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
  */
 public class PolygonHandler extends AbstractShapeHandler {
 
-    private final List<LinearRing> shells = new ArrayList<LinearRing>();
-    private final List<LinearRing> holes = new ArrayList<LinearRing>();
+    protected final List<LinearRing> shells = new ArrayList<LinearRing>();
+    protected final List<LinearRing> holes = new ArrayList<LinearRing>();
 
     public PolygonHandler(boolean read3D) {
         super(ShapeType.POLYGON,read3D);
@@ -63,7 +63,7 @@ public class PolygonHandler extends AbstractShapeHandler {
     }
 
     // returns true if testPoint is a point in the pointList list.
-    boolean pointInList(Coordinate testPoint, Coordinate[] pointList) {
+    protected boolean pointInList(Coordinate testPoint, Coordinate[] pointList) {
         Coordinate p;
 
         for (int t = pointList.length - 1; t >= 0; t--) {
@@ -312,7 +312,7 @@ public class PolygonHandler extends AbstractShapeHandler {
      * @param holes
      * @param holesForShells
      */
-    private Geometry buildGeometries(final List<LinearRing> shells, final List<LinearRing> holes,
+    protected Geometry buildGeometries(final List<LinearRing> shells, final List<LinearRing> holes,
             final List<List<LinearRing>> holesForShells) {
         final Polygon[] polygons;
 
@@ -353,7 +353,7 @@ public class PolygonHandler extends AbstractShapeHandler {
      * @param shells
      * @param holes
      */
-    List<List<LinearRing>> assignHolesToShells(final List<LinearRing> shells, final List<LinearRing> holes) {
+    protected List<List<LinearRing>> assignHolesToShells(final List<LinearRing> shells, final List<LinearRing> holes) {
 
         final int shellSize = shells.size();
         final int holeSize = holes.size();
@@ -410,17 +410,17 @@ public class PolygonHandler extends AbstractShapeHandler {
         return holesForShells;
     }
 
-    private MultiPolygon createMulti(LinearRing single) {
+    protected MultiPolygon createMulti(LinearRing single) {
         return createMulti(single, java.util.Collections.EMPTY_LIST);
     }
 
-    private MultiPolygon createMulti(LinearRing single, List<LinearRing> holes) {
+    protected MultiPolygon createMulti(LinearRing single, List<LinearRing> holes) {
         return GEOMETRY_FACTORY
                 .createMultiPolygon(new Polygon[] { GEOMETRY_FACTORY
                         .createPolygon(single, holes.toArray(new LinearRing[holes.size()])) });
     }
 
-    private MultiPolygon createNull() {
+    protected MultiPolygon createNull() {
         return GEOMETRY_FACTORY.createMultiPolygon(null);
     }
 
