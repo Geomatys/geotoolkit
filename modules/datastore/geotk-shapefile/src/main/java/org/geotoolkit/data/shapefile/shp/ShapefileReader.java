@@ -136,24 +136,8 @@ public class ShapefileReader{
     private int currentShape = 0;
     
     private ShxReader shxReader;
-    
-    /**
-     * Creates a new instance of ShapeFile.
-     * 
-     * @param shapefileFiles
-     *                The ReadableByteChannel this reader will use.
-     * @param strict
-     *                True to make the header parsing throw Exceptions if the
-     *                version or magic number are incorrect.
-     * @throws IOException
-     *                 If problems arise.
-     * @throws ShapefileException
-     *                 If for some reason the file contains invalid records.
-     */
-    public ShapefileReader(ShpFiles shapefileFiles, boolean strict,
-            boolean useMemoryMapped, boolean read3D) throws IOException, DataStoreException {
-        this(shapefileFiles,strict,useMemoryMapped,null,read3D);
-    }
+
+    private final double[] resample;
 
     /**
      * Creates a new instance of ShapeFile.
@@ -169,10 +153,47 @@ public class ShapefileReader{
      *                 If for some reason the file contains invalid records.
      */
     public ShapefileReader(ShpFiles shapefileFiles, boolean strict,
-            boolean useMemoryMapped, ShxReader shxReader, boolean read3D) throws IOException, DataStoreException {
+            boolean useMemoryMapped, boolean read3D) throws IOException, DataStoreException {
+        this(shapefileFiles,strict,useMemoryMapped,null,read3D,null);
+    }
+
+    /**
+     * Creates a new instance of ShapeFile.
+     * 
+     * @param shapefileFiles
+     *                The ReadableByteChannel this reader will use.
+     * @param strict
+     *                True to make the header parsing throw Exceptions if the
+     *                version or magic number are incorrect.
+     * @throws IOException
+     *                 If problems arise.
+     * @throws ShapefileException
+     *                 If for some reason the file contains invalid records.
+     */
+    public ShapefileReader(ShpFiles shapefileFiles, boolean strict,
+            boolean useMemoryMapped, boolean read3D, double[] resample) throws IOException, DataStoreException {
+        this(shapefileFiles,strict,useMemoryMapped,null,read3D, resample);
+    }
+
+    /**
+     * Creates a new instance of ShapeFile.
+     *
+     * @param shapefileFiles
+     *                The ReadableByteChannel this reader will use.
+     * @param strict
+     *                True to make the header parsing throw Exceptions if the
+     *                version or magic number are incorrect.
+     * @throws IOException
+     *                 If problems arise.
+     * @throws ShapefileException
+     *                 If for some reason the file contains invalid records.
+     */
+    public ShapefileReader(ShpFiles shapefileFiles, boolean strict,boolean useMemoryMapped, 
+            ShxReader shxReader, boolean read3D, double[] resample) throws IOException, DataStoreException {
         this.channel = shapefileFiles.getReadChannel(ShpFileType.SHP, this);
         this.useMemoryMappedBuffer = useMemoryMapped;
         this.read3D = read3D;
+        this.resample = resample;
         randomAccessEnabled = channel instanceof FileChannel;
 
         if(shxReader == null){
@@ -193,7 +214,7 @@ public class ShapefileReader{
     private void init(boolean strict) throws IOException, DataStoreException {
         header = readHeader(channel, strict);
         fileShapeType = header.getShapeType();
-        handler = fileShapeType.getShapeHandler(read3D);
+        handler = fileShapeType.getShapeHandler(read3D,resample);
 
         // recordHeader = ByteBuffer.allocateDirect(8);
         // recordHeader.order(ByteOrder.BIG_ENDIAN);

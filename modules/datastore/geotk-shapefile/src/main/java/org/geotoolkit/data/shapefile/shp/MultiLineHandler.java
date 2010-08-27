@@ -86,7 +86,7 @@ public class MultiLineHandler extends AbstractShapeHandler {
         }
     }
 
-    private Object createNull() {
+    protected Object createNull() {
         return GEOMETRY_FACTORY.createMultiLineString((LineString[]) null);
     }
 

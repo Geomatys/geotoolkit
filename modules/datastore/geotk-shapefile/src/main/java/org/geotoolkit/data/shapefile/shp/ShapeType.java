@@ -171,6 +171,10 @@ public enum ShapeType {
      * @return The correct handler for this ShapeType. Returns a new one.
      */
     public ShapeHandler getShapeHandler(boolean read3D) throws DataStoreException {
+        return getShapeHandler(read3D, null);
+    }
+
+    public ShapeHandler getShapeHandler(boolean read3D, double[] res) throws DataStoreException {
         switch (id) {
             case 1:
             case 11:
@@ -179,20 +183,22 @@ public enum ShapeType {
             case 3:
             case 13:
             case 23:
-                return new MultiLineHandler(this,read3D);
+                return (res == null) ? new MultiLineHandler(this,read3D) :
+                                       new DecimateMultiLineHandler(this,read3D,res);
             case 5:
             case 15:
             case 25:
-                return new PolygonHandler(this,read3D);
+                return (res == null) ? new PolygonHandler(this,read3D) :
+                                       new DecimatePolygonHandler(this,read3D,res);
             case 8:
             case 18:
             case 28:
-                return new MultiPointHandler(this,read3D);
+                return (res == null) ? new MultiPointHandler(this,read3D) :
+                                       new DecimateMultiPointHandler(this,read3D,res);
             default:
                 return null;
         }
     }
-
 
     /**
      * Determine the best ShapeType for a given Geometry.
@@ -200,11 +206,11 @@ public enum ShapeType {
      * @param geom The Geometry to analyze.
      * @return The best ShapeType for the Geometry.
      */
-    public static final ShapeType findBestGeometryType(Geometry geom) {
+    public static ShapeType findBestGeometryType(Geometry geom) {
         return findBestGeometryType(geom.getClass());
     }
 
-    public static final ShapeType findBestGeometryType(Class geomType) {
+    public static ShapeType findBestGeometryType(Class geomType) {
         if (Point.class.isAssignableFrom(geomType)) {
             return ShapeType.POINT;
         } else if (MultiPoint.class.isAssignableFrom(geomType)) {
