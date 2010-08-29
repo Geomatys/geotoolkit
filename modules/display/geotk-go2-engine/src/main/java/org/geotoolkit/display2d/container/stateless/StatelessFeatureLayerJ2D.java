@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
+import java.awt.Image;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
@@ -470,15 +471,16 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             size += cr.symbolizers().length;
         }
 
-        final BufferedImage[] images = new BufferedImage[size];
+        final Image[] images = new BufferedImage[size];
         final RenderingContext2D[] ctxs = new RenderingContext2D[size];
         final SymbolizerRenderer[][] renderers = new SymbolizerRenderer[rules.length][0];
 
         //first buffer is the current one
-        images[0] = (BufferedImage) context.getCanvas().getSnapShot();
+        images[0] = context.getCanvas().getSnapShot();
         ctxs[0] = context;
         for(int i=1;i<size;i++){
-            final BufferedImage buffer = new BufferedImage(images[0].getWidth(), images[0].getHeight(), BufferedImage.TYPE_INT_ARGB);
+            final BufferedImage buffer = new BufferedImage(images[0].getWidth(null),
+                             images[0].getHeight(null), BufferedImage.TYPE_INT_ARGB);
             final RenderingContext2D ctx = context.create(buffer.createGraphics());
             images[i] = buffer;
             ctxs[i] = ctx;
@@ -545,7 +547,9 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         final Graphics2D g = ctxs[0].getGraphics();
         g.setComposite(ALPHA_COMPOSITE_1F);
         for(int i=1;i<size;i++){
-            g.drawImage(images[i], 0, 0, null);
+            final BufferedImage img = (BufferedImage) images[i];
+            g.drawImage(img, 0, 0, null);
+            img.getGraphics().dispose();
         }
         
     }
