@@ -21,6 +21,7 @@ import java.awt.RenderingHints.Key;
 import java.awt.image.ColorModel;
 
 import org.geotoolkit.display.canvas.HintKey;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.Static;
 
 /**
@@ -32,6 +33,32 @@ import org.geotoolkit.lang.Static;
 @Static
 public final class GO2Hints {
 
+    private static class NamedKey extends Hints.Key{
+
+        private final String name;
+
+        private NamedKey(Class c){
+            this(c,null);
+        }
+
+        private NamedKey(Class c, String name){
+            super(c);
+            this.name = name;
+        }
+
+        @Override
+        public String toString() {
+            if(name != null){
+                return name;
+            }else{
+                return super.toString();
+            }
+        }
+
+
+
+    }
+
     private GO2Hints(){}
     
     /**
@@ -41,25 +68,25 @@ public final class GO2Hints {
      * 
      * WARNING : experimental
      */
-    public static final Key KEY_MULTI_THREAD = new HintKey(1, Boolean.class);
+    public static final Key KEY_MULTI_THREAD = new NamedKey(Boolean.class, "GO2 - MultiThread");
 
     /**
      * Configure the generalization, false by default in stateless mode, true
      * in statefull mode.
      */
-    public static final Key KEY_GENERALIZE = new HintKey(2, Boolean.class);
+    public static final Key KEY_GENERALIZE = new NamedKey(Boolean.class, "GO2 - Generalize");
 
     /**
      * Configure the generalize effect, in display unit (pixel most of the time).
      * Values near 1 have the most efficient performance/quality ratio.
      */
-    public static final Key KEY_GENERALIZE_FACTOR = new HintKey(3, Number.class);
+    public static final Key KEY_GENERALIZE_FACTOR = new NamedKey(Number.class, "GO2 - Generalize factor");
 
     /**
      * Configure the go2 engine to use JTS or ISO geometries.
      * Default is ISO.
      */
-    public static final Key KEY_GEOMETRY_BINDING = new HintKey(4, String.class);
+    public static final Key KEY_GEOMETRY_BINDING = new NamedKey(String.class, "GO2 - Geometry binding");
 
     /**
      * Configure the go2 engine to render in order symbolizer then feature.
@@ -67,7 +94,7 @@ public final class GO2Hints {
      * produce in stateless mode.
      * Default value is False : Feature priority
      */
-    public static final Key KEY_SYMBOL_RENDERING_ORDER = new HintKey(5, Boolean.class);
+    public static final Key KEY_SYMBOL_RENDERING_ORDER = new NamedKey(Boolean.class, "GO2 - Symbol rendering order");
     
     /**
      * Configure the label renderer used.
@@ -77,13 +104,13 @@ public final class GO2Hints {
      * then you can provide the label renderer with this hint.
      * The given class must be an instance of org.geotoolkit.display2d.style.labeling.LabelRenderer
      */
-    public static final Key KEY_LABEL_RENDERER_CLASS = new HintKey(6, Class.class);
+    public static final Key KEY_LABEL_RENDERER_CLASS = new NamedKey(Class.class, "GO2 - Label Renderer");
 
     /**
      * Force the canvas to use the given color model.
      * This only works with the J2DBufferedCanvas.
      */
-    public static final Key KEY_COLOR_MODEL = new HintKey(7, ColorModel.class);
+    public static final Key KEY_COLOR_MODEL = new NamedKey(ColorModel.class, "GO2 - ColorModel");
 
     /**
      * Ask the portrayal service to use the grid coverage writer when possible.
@@ -93,7 +120,7 @@ public final class GO2Hints {
      *
      * Default value is false.
      */
-    public static final Key KEY_COVERAGE_WRITER = new HintKey(8, Boolean.class);
+    public static final Key KEY_COVERAGE_WRITER = new NamedKey(Boolean.class, "GO2 - Coverage writer");
     
     /**
      * When the symbol rendering order is actuvated it requieres several painting
@@ -103,7 +130,7 @@ public final class GO2Hints {
      * 
      * Default value is false.
      */
-    public static final Key KEY_PARALLAL_BUFFER = new HintKey(9, Boolean.class);
+    public static final Key KEY_PARALLAL_BUFFER = new NamedKey(Boolean.class, "GO2 - Parallal Buffer");
 
     public static final Boolean MULTI_THREAD_ON = Boolean.TRUE;
     public static final Boolean MULTI_THREAD_OFF = Boolean.FALSE;
