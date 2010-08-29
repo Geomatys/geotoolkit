@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@ import java.awt.RenderingHints.Key;
 import java.awt.image.ColorModel;
 
 import org.geotoolkit.display.canvas.HintKey;
+import org.geotoolkit.lang.Static;
 
 /**
  * Set of hints used by the Go2 Renderer
@@ -28,13 +29,17 @@ import org.geotoolkit.display.canvas.HintKey;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GO2Hints {
+@Static
+public final class GO2Hints {
 
+    private GO2Hints(){}
+    
     /**
      * Configure the multithreading support. This usually makes the canvas
      * build several buffered images to render each layer separately.
      * This raises memory concumption.
-     * WARNING, not implemented yet in the Go2 engine.
+     * 
+     * WARNING : experimental
      */
     public static final Key KEY_MULTI_THREAD = new HintKey(1, Boolean.class);
 
@@ -63,7 +68,7 @@ public class GO2Hints {
      * Default value is False : Feature priority
      */
     public static final Key KEY_SYMBOL_RENDERING_ORDER = new HintKey(5, Boolean.class);
-
+    
     /**
      * Configure the label renderer used.
      * The default label renderer is Straight forward and doesn't make any overlaping check or anything,
@@ -89,6 +94,16 @@ public class GO2Hints {
      * Default value is false.
      */
     public static final Key KEY_COVERAGE_WRITER = new HintKey(8, Boolean.class);
+    
+    /**
+     * When the symbol rendering order is actuvated it requieres several painting
+     * pathes to make the image. this can be reduced by used a buffered image for
+     * each symbol, this consume N time more memory but can have significant performance
+     * benefit.
+     * 
+     * Default value is false.
+     */
+    public static final Key KEY_PARALLAL_BUFFER = new HintKey(9, Boolean.class);
 
     public static final Boolean MULTI_THREAD_ON = Boolean.TRUE;
     public static final Boolean MULTI_THREAD_OFF = Boolean.FALSE;
@@ -98,6 +113,8 @@ public class GO2Hints {
     public static final Boolean SYMBOL_RENDERING_SECOND = Boolean.FALSE;
     public static final Boolean COVERAGE_WRITER_ON = Boolean.TRUE;
     public static final Boolean COVERAGE_WRITER_OFF = Boolean.FALSE;
+    public static final Boolean PARALLAL_BUFFER_ON = Boolean.TRUE;
+    public static final Boolean PARALLAL_BUFFER_OFF = Boolean.FALSE;
 
     /**
      * A value of 1.3 looks like the best average generalisation.

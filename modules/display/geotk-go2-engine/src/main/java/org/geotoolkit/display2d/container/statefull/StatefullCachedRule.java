@@ -2,7 +2,6 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
@@ -54,7 +53,7 @@ public class StatefullCachedRule {
     /**
      * sort the rules, isolate the else rules, they must be handle differently
      */
-    private static int sortByElseRule(CachedRule[] sortedRules){
+    public static int sortByElseRule(CachedRule[] sortedRules){
         int elseRuleIndex = sortedRules.length;
 
         for(int i=0; i<elseRuleIndex; i++){

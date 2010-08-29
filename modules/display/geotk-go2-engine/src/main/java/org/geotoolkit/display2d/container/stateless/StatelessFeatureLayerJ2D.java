@@ -17,8 +17,9 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
-import org.geotoolkit.filter.DefaultLiteral;
+import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,7 +30,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
@@ -49,6 +49,8 @@ import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
+import org.geotoolkit.filter.DefaultLiteral;
+import org.geotoolkit.filter.DefaultId;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -68,7 +70,6 @@ import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
-import org.geotoolkit.filter.DefaultId;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.binaryspatial.LooseBBox;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
@@ -81,7 +82,6 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
-import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.BoundingBox;
@@ -229,19 +229,16 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             return;
         }
 
-        //prepare the renderers
-        final StatefullCachedRule preparedRenderers = new StatefullCachedRule(rules, context);
-
         final Boolean SymbolOrder = (Boolean) canvas.getRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER);
         if(SymbolOrder == null || SymbolOrder == false){
             try{
-                renderByFeatureOrder(features, context, preparedRenderers, params);
+                renderByFeatureOrder(features, context, rules, params);
             }catch(PortrayalException ex){
                 monitor.exceptionOccured(ex, Level.WARNING);
             }
         }else{
             try{
-                renderBySymbolOrder(features, context, preparedRenderers, params);
+                renderBySymbolOrder(features, context, rules, params);
             }catch(PortrayalException ex){
                 monitor.exceptionOccured(ex, Level.WARNING);
             }
@@ -266,10 +263,14 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
      * @throws PortrayalException
      */
     protected final void renderByFeatureOrder(FeatureCollection<? extends Feature> features,
-            RenderingContext2D context, StatefullCachedRule renderers, StatefullContextParams params)
-            throws PortrayalException{
+            RenderingContext2D context, final CachedRule[] rules, StatefullContextParams params)
+            throws PortrayalException{        
         final CanvasMonitor monitor = context.getMonitor();
         final RenderingIterator statefullIterator = getIterator(features, context, params);
+
+
+        //prepare the renderers
+        final StatefullCachedRule renderers = new StatefullCachedRule(rules, context);
 
         try{
             //performance routine, only one symbol to render
@@ -324,16 +325,17 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
      * render by symbol order.
      */
     protected final void renderBySymbolOrder(FeatureCollection<? extends Feature> features,
-            RenderingContext2D context, StatefullCachedRule renderers, StatefullContextParams params)
+            RenderingContext2D context, final CachedRule[] rules, StatefullContextParams params)
             throws PortrayalException {
-        final CanvasMonitor monitor = context.getMonitor();
-
+                
         //performance routine, only one symbol to render
-        if(renderers.rules.length == 1
-           && (renderers.rules[0].getFilter() == null || renderers.rules[0].getFilter() == Filter.INCLUDE)
-           && renderers.rules[0].symbolizers().length == 1){
+        if(rules.length == 1
+           && (rules[0].getFilter() == null || rules[0].getFilter() == Filter.INCLUDE)
+           && rules[0].symbolizers().length == 1){
             final RenderingIterator statefullIterator = getIterator(features, context, params);
-            renderers.renderers[0][0].portray(statefullIterator);
+            final CachedSymbolizer s = rules[0].symbolizers()[0];
+            final SymbolizerRenderer renderer = s.getRenderer().createRenderer(s, context);
+            renderer.portray(statefullIterator);
             try {
                 statefullIterator.close();
             } catch (IOException ex) {
@@ -341,8 +343,27 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             }
             return;
         }
-
-
+                
+        final Boolean parallal = (Boolean)context.getCanvas().getRenderingHint(GO2Hints.KEY_PARALLAL_BUFFER);        
+        if(parallal != null && parallal){
+            renderBySymbolParallal(features, context, rules, params);
+        }else{
+            renderBySymbolStream(features, context, rules, params);
+        }        
+    }
+    
+    /**
+     * Render vy symbol order in mutiple passes. consume less memory but requiere
+     * more time.
+     */
+    private void renderBySymbolStream(FeatureCollection<? extends Feature> features,
+            RenderingContext2D context, final CachedRule[] rules, StatefullContextParams params)
+            throws PortrayalException {
+        final CanvasMonitor monitor = context.getMonitor();
+        
+        //prepare the renderers
+        final StatefullCachedRule renderers = new StatefullCachedRule(rules, context);
+                
         //store the ids of the features painted during the first round -----------------------------
         final Set<FeatureId> painted;
         if(renderers.elseRuleIndex >= renderers.rules.length){
@@ -427,10 +448,108 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                     }
                 }
             }
+        }        
+    }
+    
+    /**
+     * Render by symbol order in a single pass, this results in creating a buffered image
+     * for each symbol, which may be expensive in memory but efficient in performance.
+     */
+    private void renderBySymbolParallal(FeatureCollection<? extends Feature> features,
+            RenderingContext2D context, final CachedRule[] rules, StatefullContextParams params)
+            throws PortrayalException {
+                
+        final CanvasMonitor monitor = context.getMonitor();
+
+        final int elseRuleIndex = StatefullCachedRule.sortByElseRule(rules);
+
+
+        //store the ids of the features painted during the first round -----------------------------
+        int size=0;
+        for(CachedRule cr : rules){
+            size += cr.symbolizers().length;
         }
 
-    }
+        final BufferedImage[] images = new BufferedImage[size];
+        final RenderingContext2D[] ctxs = new RenderingContext2D[size];
+        final SymbolizerRenderer[][] renderers = new SymbolizerRenderer[rules.length][0];
 
+        //first buffer is the current one
+        images[0] = (BufferedImage) context.getCanvas().getSnapShot();
+        ctxs[0] = context;
+        for(int i=1;i<size;i++){
+            final BufferedImage buffer = new BufferedImage(images[0].getWidth(), images[0].getHeight(), BufferedImage.TYPE_INT_ARGB);
+            final RenderingContext2D ctx = context.create(buffer.createGraphics());
+            images[i] = buffer;
+            ctxs[i] = ctx;
+        }
+
+        int inc=0;
+        for(int i=0;i<rules.length;i++){
+            final CachedRule cr = rules[i];
+            final int slenght = cr.symbolizers().length;
+            renderers[i] = new SymbolizerRenderer[slenght];
+
+            for(int j=0;j<slenght;j++){
+                final CachedSymbolizer cs = cr.symbolizers()[j];
+                renderers[i][j] = cs.getRenderer().createRenderer(cs, ctxs[inc++]);
+            }
+        }
+
+
+        final RenderingIterator statefullIterator = getIterator(features, context, params);
+
+        try{
+
+            while(statefullIterator.hasNext()){
+                if(monitor.stopRequested()) return;
+                final ProjectedFeature projectedFeature = statefullIterator.next();
+
+                boolean painted = false;
+                for(int i=0; i<elseRuleIndex; i++){
+                    final CachedRule rule = rules[i];
+                    final Filter ruleFilter = rule.getFilter();
+                    //test if the rule is valid for this feature
+                    if (ruleFilter == null || ruleFilter.evaluate(projectedFeature.getFeature())) {
+                        painted = true;
+                        for (final SymbolizerRenderer renderer : renderers[i]) {
+                            renderer.portray(projectedFeature);
+                        }
+                    }
+                }
+
+                //the feature hasn't been painted, paint it with the 'else' rules
+                if(!painted){
+                    for(int i=elseRuleIndex; i<rules.length; i++){
+                        final CachedRule rule = rules[i];
+                        final Filter ruleFilter = rule.getFilter();
+                        //test if the rule is valid for this feature
+                        if (ruleFilter == null || ruleFilter.evaluate(projectedFeature.getFeature())) {
+                            for (final SymbolizerRenderer renderer : renderers[i]) {
+                                renderer.portray(projectedFeature);
+                            }
+                        }
+                    }
+                }
+            }
+        }finally{
+            try {
+                statefullIterator.close();
+            } catch (IOException ex) {
+                getLogger().log(Level.WARNING, null, ex);
+            }
+        }
+
+        //merge images --------------------------
+        ctxs[0].switchToDisplayCRS();
+        final Graphics2D g = ctxs[0].getGraphics();
+        g.setComposite(ALPHA_COMPOSITE_1F);
+        for(int i=1;i<size;i++){
+            g.drawImage(images[i], 0, 0, null);
+        }
+        
+    }
+    
 
     protected List<Graphic> searchGraphicAt(final FeatureMapLayer layer, final CachedRule[] rules,
             final RenderingContext2D renderingContext, final SearchAreaJ2D mask, VisitFilter visitFilter, List<Graphic> graphics) {
@@ -943,8 +1062,6 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         return qb.buildQuery();
     }
 
-
-
     private StatefullContextParams prepareContextParams(RenderingContext2D renderingContext,
             StatefullContextParams params){
         final CoordinateReferenceSystem displayCRS   = renderingContext.getDisplayCRS();
@@ -962,9 +1079,10 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         return params;
     }
 
+    
     protected static interface RenderingIterator extends Iterator<ProjectedFeature>,Closeable{}
 
-    protected static class GraphicIterator implements RenderingIterator{
+    private static class GraphicIterator implements RenderingIterator{
 
         private final FeatureIterator<? extends Feature> ite;
         private final StatefullProjectedFeature projected;
@@ -997,7 +1115,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
     }
 
-    protected static class FilterGraphicIterator implements RenderingIterator{
+    private static class FilterGraphicIterator implements RenderingIterator{
 
         private RenderingIterator ite;
         private Filter filter;

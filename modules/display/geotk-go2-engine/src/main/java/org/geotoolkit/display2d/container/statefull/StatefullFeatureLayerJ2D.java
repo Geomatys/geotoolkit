@@ -171,19 +171,16 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         //we do not check if the collection is empty or not since
         //it can be a very expensive operation
 
-        //prepare the renderers
-        final StatefullCachedRule preparedRenderers = new StatefullCachedRule(rules, context);
-
         final Boolean SymbolOrder = (Boolean) canvas.getRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER);
         if(SymbolOrder == null || SymbolOrder == false){
             try{
-                renderByFeatureOrder(features, context, preparedRenderers, params);
+                renderByFeatureOrder(features, context, rules, params);
             }catch(PortrayalException ex){
                 monitor.exceptionOccured(ex, Level.WARNING);
             }
         }else{
             try{
-                renderBySymbolOrder(features, context, preparedRenderers, params);
+                renderBySymbolOrder(features, context, rules, params);
             }catch(PortrayalException ex){
                 monitor.exceptionOccured(ex, Level.WARNING);
             }
