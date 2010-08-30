@@ -43,6 +43,7 @@ public final  class JTSPolygonIterator extends JTSGeometryIterator<Polygon> {
 
     /** The array of coordinates that represents the line geometry */
     private CoordinateSequence coords = null;
+    private int csSize = 0;
 
     /** True when the iteration is terminated */
     private boolean done = false;
@@ -81,6 +82,7 @@ public final  class JTSPolygonIterator extends JTSGeometryIterator<Polygon> {
         currentRing = 0;
         currentCoord = 0;
         coords = rings[0].getCoordinateSequence();
+        csSize = coords.size()-1;
         done = false;
     }
 
@@ -91,7 +93,7 @@ public final  class JTSPolygonIterator extends JTSGeometryIterator<Polygon> {
     public int currentSegment(double[] coords) {
         // first make sure we're not at the last element, this prevents us from exceptions
         // in the case where coords.size() == 0
-        if (currentCoord == this.coords.size()) {
+        if (currentCoord == csSize) {
             return SEG_CLOSE;
         } else if (currentCoord == 0) {
             coords[0] = this.coords.getX(0);
@@ -113,7 +115,7 @@ public final  class JTSPolygonIterator extends JTSGeometryIterator<Polygon> {
     public int currentSegment(float[] coords) {
         // first make sure we're not at the last element, this prevents us from exceptions
         // in the case where coords.size() == 0
-        if (currentCoord == this.coords.size()) {
+        if (currentCoord == csSize) {
             return SEG_CLOSE;
         } else if (currentCoord == 0) {
             coords[0] = (float)this.coords.getX(0);
@@ -155,11 +157,12 @@ public final  class JTSPolygonIterator extends JTSGeometryIterator<Polygon> {
      */
     @Override
     public void next() {
-        if (currentCoord == coords.size()) {
+        if (currentCoord == csSize) {
             if (currentRing < (rings.length - 1)) {
                 currentCoord = 0;
                 currentRing++;
                 coords = rings[currentRing].getCoordinateSequence();
+                csSize = coords.size()-1;
             } else {
                 done = true;
             }

@@ -49,6 +49,7 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
     public void reset(){
         currentGeom = 0;
         done = false;
+        nbGeom = geometry.getNumGeometries();
         if(geometry != null && nbGeom > 0){
             prepareIterator(geometry.getGeometryN(0));
         }else{
@@ -167,6 +168,8 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
      */
     @Override
     public void next() {
+        currentIterator.next();
+
         if (currentIterator.isDone()) {
             if (currentGeom < (nbGeom - 1)) {
                 currentGeom++;
@@ -174,8 +177,6 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
             } else {
                 done = true;
             }
-        } else {
-            currentIterator.next();
         }
     }
     
