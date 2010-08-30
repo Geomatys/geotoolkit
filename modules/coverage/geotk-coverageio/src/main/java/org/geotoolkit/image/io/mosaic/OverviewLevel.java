@@ -439,8 +439,8 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
      * This method is <strong>not</strong> synchronized, because it is invoked
      * only by {@link MosaicBuilder} soon after {@code OverviewLevel} creation.
      */
-    final void removeTile(final int x, final int y) {
-        final int i = getIndex(x, y);
+    final void removeTile(final int tileX, final int tileY) {
+        final int i = getIndex(tileX, tileY);
         assert tiles == null || tiles.get(i) == null;
         if (patternUsed == null) {
             patternUsed = new IntegerList(nx*ny, patterns.length, true);
@@ -487,18 +487,22 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
      */
     private Rectangle toTileIndex(final Rectangle search) {
         final Rectangle index = new Rectangle(dx * xSubsampling, dy * ySubsampling);
-
-        // Computes min values.
+        /*
+         * Computes min values.
+         */
         int x = search.x - mosaic.x * xSubsampling;
         int y = search.y - mosaic.y * ySubsampling;
         if (x >= 0) index.x = x / index.width;  // Otherwise lets (x,y) to its default value (0).
         if (y >= 0) index.y = y / index.height;
-
-        // Computes max values. We round (width,height) toward higher integer.
-        x += search.width;
-        y += search.height;
-        index.width  = Math.min(nx, (x + (index.width  - 1)) / index.width)  - index.x;
-        index.height = Math.min(ny, (y + (index.height - 1)) / index.height) - index.y;
+        /*
+         * Computes max values, inclusive. Round upper tiles indices toward lower integers
+         * because they are inclusive, then add 1 to make them exclusive. The result is not
+         * allowed to be greater than (nx, ny).
+         */
+        x += search.width  - 1;
+        y += search.height - 1;
+        index.width  = Math.min(nx, x / index.width  + 1) - index.x;
+        index.height = Math.min(ny, y / index.height + 1) - index.y;
         return index;
     }
 
@@ -521,16 +525,16 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
     /**
      * Returns the flat index for the given 2D index.
      *
-     * @param  x,y The tile location, with (0,0) as the upper-left tile.
+     * @param  tileX,tileY The tile location, with (0,0) as the upper-left tile.
      * @return The corresponding index in a flat array.
      * @throws IndexOutOfBoundsException if the given index is out of bounds.
      */
-    private int getIndex(final int x, final int y) throws IndexOutOfBoundsException {
-        if (x < 0 || x >= nx || y < 0 || y >= ny) {
+    private int getIndex(final int tileX, final int tileY) throws IndexOutOfBoundsException {
+        if (tileX < 0 || tileX >= nx || tileY < 0 || tileY >= ny) {
             throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_$1,
-                    "(" + x + ',' + y + ')'));
+                    "(" + tileX + ',' + tileY + ')'));
         }
-        return y * nx + x;
+        return tileY * nx + tileX;
     }
 
     /**
@@ -673,8 +677,8 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
      * @throws IndexOutOfBoundsException if the given index is out of bounds.
      * @throws MalformedURLException if an error occurred while creating the URL for the tile.
      */
-    final Tile getTile(final int x, final int y) throws IndexOutOfBoundsException, MalformedURLException {
-        final int index = getIndex(x, y);
+    final Tile getTile(final int tileX, final int tileY) throws IndexOutOfBoundsException, MalformedURLException {
+        final int index = getIndex(tileX, tileY);
         /*
          * Checks for fully-created instance. Those instances are expected to exist if
          * some tile do not comply to a general pattern that this class can recognize.
@@ -718,7 +722,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
                 formatter.applyPattern(pattern.substring(pattern.indexOf(':') + 1));
                 lastPattern = p;
             }
-            filename = formatter.generateFilename(ordinal, x, y);
+            filename = formatter.generateFilename(ordinal, tileX, tileY);
         }
         /*
          * We now have the filename to be given to the tile. Creates the appropriate object
@@ -743,17 +747,20 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
          * Now creates the definitive tile. The tiles in the last
          * row or last column may be smaller than other tiles.
          */
-        return new Tile(tile, input, getCellBounds(x, y));
+        return new Tile(tile, input, getCellBounds(tileX, tileY));
     }
 
     /**
-     * Computes the bounds that the tile at the given index would have.
+     * Computes the bounds that the tile at the given index would have, in relative coordinates
+     * (<strong>not</strong> premultiplied by {@link #xSubsampling} and {@link #ySubsampling}).
      * This method does not check if a special tile is defined for that index.
      */
-    private Rectangle getCellBounds(int x, int y) {
+    private Rectangle getCellBounds(final int tileX, final int tileY) {
+        final int x = tileX * dx;
+        final int y = tileY * dy;
         return new Rectangle(
-                mosaic.x + (x *= dx),
-                mosaic.y + (y *= dy),
+                mosaic.x + x,
+                mosaic.y + y,
                 Math.min(dx, mosaic.width  - x),
                 Math.min(dy, mosaic.height - y));
     }
@@ -800,19 +807,21 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
             final Dimension subsampling, final long costLimit) throws IOException
     {
         final Rectangle atr = toTileIndex(search);
-        final int xmin = atr.x;
-        final int ymin = atr.y;
-        final int xmax = atr.width  + xmin;
-        final int ymax = atr.height + ymin;
+        final int minTileX = atr.x;                 // Inclusive
+        final int minTileY = atr.y;
+        final int maxTileX = atr.width  + minTileX; // Exclusive
+        final int maxTileY = atr.height + minTileY;
         /*
          * Recycles the rectangle created by toTileIndex. The "atr" name stands for "Absolute
          * Tile Region". Width and height will not change anymore. X and y will be set later.
          */
         atr.width  = dx * xSubsampling;
         atr.height = dy * ySubsampling;
+        final int ox = mosaic.x * xSubsampling;
+        final int oy = mosaic.y * ySubsampling;
         final int size = addTo.size();
         if (size == 0) {
-            final int n = (xmax - xmin) * (ymax - ymin);
+            final int n = (maxTileX - minTileX) * (maxTileY - minTileY);
             addTo.ensureCapacity(n);
         }
         /*
@@ -821,9 +830,9 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
          * finer levels into the mix (as the loop below may do).
          */
         long totalCost = 0;
-        for (int y=ymin; y<ymax; y++) {
-nextTile:   for (int x=xmin; x<xmax; x++) {
-                final Tile tile = getTile(x, y);
+        for (int tileY=minTileY; tileY<maxTileY; tileY++) {
+nextTile:   for (int tileX=minTileX; tileX<maxTileX; tileX++) {
+                final Tile tile = getTile(tileX, tileY);
                 if (tile == null) {
                     continue;
                 }
@@ -849,10 +858,10 @@ nextTile:   for (int x=xmin; x<xmax; x++) {
                         addTo.subList(size, addTo.size()).clear();
                         return -1;
                     }
-                    atr.x = atr.width  * x;
-                    atr.y = atr.height * y;
+                    atr.x = ox + atr.width  * tileX;
+                    atr.y = oy + atr.height * tileY;
                     // Following assertion is enforced only if the Tile is not a custom implementation.
-                    assert atr.contains(tile.getAbsoluteRegion()) || !tile.getClass().equals(Tile.class);
+                    assert atr.contains(tile.getAbsoluteRegion()) || !tile.getClass().equals(Tile.class) : tile;
                     OverviewLevel previous = this;
                     while ((previous = previous.getFinerLevel()) != null) {
                         if (!previous.isAbsoluteTilesRegion(atr)) {
