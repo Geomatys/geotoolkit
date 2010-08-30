@@ -199,9 +199,9 @@ public class LazyTyleSearchIterator implements SearchIterator<AbstractNode> {
     public static final class Buffered<T extends Data>implements SearchIterator<T>{
 
         //first bit contain the boolean safe value
-        private static int SAFE_MASK = 0x1;
+        private static final int SAFE_MASK = 0x1;
         //we append this value on each id to preserve sort order when we add the safe bit
-        private static int LB = 1<<31;
+        private static final int LB = 1<<31;
 
         private final int bufferSize;
 

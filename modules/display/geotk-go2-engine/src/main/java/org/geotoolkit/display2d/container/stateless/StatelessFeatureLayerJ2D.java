@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
+import java.util.Arrays;
+import javax.media.jai.JAI;
 import java.awt.Image;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -31,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
+import javax.media.jai.TileRecycler;
 
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
@@ -472,12 +475,15 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         
         final Image[][] images = new Image[rules.length][0];
         final SymbolizerRenderer[][] renderers = new SymbolizerRenderer[rules.length][0];
+        final boolean[][] used = new boolean[rules.length][0];
 
         for(int i=0;i<rules.length;i++){
             final CachedRule cr = rules[i];
             final CachedSymbolizer[] css = cr.symbolizers();
             images[i] = new Image[css.length];
             renderers[i] = new SymbolizerRenderer[css.length];
+            used[i] = new boolean[css.length];
+            Arrays.fill(used[i], false);
 
             for(int k=0; k<css.length; k++){
                 final CachedSymbolizer cs = css[k];
@@ -503,6 +509,8 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
         final RenderingIterator statefullIterator = getIterator(features, context, params);
 
+        //TileRecycler tr = JAI.getDefaultInstance().getRenderingHint(JAI.KEY_TILE_RECYCLER);
+
         try{
 
             while(statefullIterator.hasNext()){
@@ -516,7 +524,10 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                     //test if the rule is valid for this feature
                     if (ruleFilter == null || ruleFilter.evaluate(projectedFeature.getFeature())) {
                         painted = true;
-                        for (final SymbolizerRenderer renderer : renderers[i]) {
+                        final SymbolizerRenderer[] rss = renderers[i];
+                        for (int k=0;k<rss.length;k++) {
+                            final SymbolizerRenderer renderer = rss[k];
+                            used[i][k] = true;
                             renderer.portray(projectedFeature);
                         }
                     }
@@ -529,7 +540,10 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                         final Filter ruleFilter = rule.getFilter();
                         //test if the rule is valid for this feature
                         if (ruleFilter == null || ruleFilter.evaluate(projectedFeature.getFeature())) {
-                            for (final SymbolizerRenderer renderer : renderers[i]) {
+                            final SymbolizerRenderer[] rss = renderers[i];
+                            for (int k=0;k<rss.length;k++) {
+                                final SymbolizerRenderer renderer = rss[k];
+                                used[i][k] = true;
                                 renderer.portray(projectedFeature);
                             }
                         }
@@ -551,7 +565,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         for(int i=0;i<images.length;i++){
             for(int k=0,n=images[i].length; k<n; k++){
                 final Image img = images[i][k];
-                if(img != originalBuffer){
+                if(img != originalBuffer && used[i][k]){
                     g.drawImage(img, 0, 0, null);
                     img.getGraphics().dispose();
                 }
