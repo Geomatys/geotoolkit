@@ -130,7 +130,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
     /**
      * The styles associated to the {@link #layers}.
      */
-    private String[] styles;
+    private String[] styles = new String[0];
 
     /**
      * Optional SLD file for the layer to request.
@@ -489,8 +489,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      * Returns the style names.
      */
     public String[] getStyles() {
-
-        return styles != null ? styles.clone() : null;
+        return styles.clone();
     }
 
     /**
