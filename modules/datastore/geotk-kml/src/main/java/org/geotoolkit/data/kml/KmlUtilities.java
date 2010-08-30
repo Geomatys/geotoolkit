@@ -106,11 +106,24 @@ public class KmlUtilities {
         String g = Integer.toHexString(color.getGreen());
         String b = Integer.toHexString(color.getBlue());
         String a = Integer.toHexString(color.getAlpha());
-        r = ((r.length() == 1) ? "0" : "") + r;
-        g = ((g.length() == 1) ? "0" : "") + g;
-        b = ((b.length() == 1) ? "0" : "") + b;
-        a = ((a.length() == 1) ? "0" : "") + a;
-        return a + b + g + r;
+        StringBuilder sb = new StringBuilder();
+        if(a.length() == 1){
+            sb.append('0');
+        }
+        sb.append(a);
+        if(b.length() == 1){
+            sb.append('0');
+        }
+        sb.append(b);
+        if(g.length() == 1){
+            sb.append('0');
+        }
+        sb.append(g);
+        if(r.length() == 1){
+            sb.append('0');
+        }
+        sb.append(r);
+        return sb.toString();
     }
 
     /**
@@ -233,14 +246,13 @@ public class KmlUtilities {
         return angle;
     }
 
-//    public static Date toDate(String kmlDateTimeType) throws ParseException{
-//        Date date = new Date();
-//        kmlDateTimeType.
-//        DateFormat dateFormat = new SimpleDateFormat("yyyy-mm-dd");
-//        return dateFormat.parse(kmlDateTimeType);
-//    }
-
-    public static String toString(Coordinate coordinate) {
+    /**
+     * <p>Retrieves a coma separated StringBuilder from a 2D/3D coordinate.</p>
+     *
+     * @param coordinate
+     * @return
+     */
+    public static StringBuilder toString(Coordinate coordinate) {
         final StringBuilder sb = new StringBuilder();
         sb.append(coordinate.x);
         sb.append(',');
@@ -249,9 +261,15 @@ public class KmlUtilities {
             sb.append(',');
             sb.append(coordinate.z);
         }
-        return sb.toString();
+        return sb;
     }
 
+    /**
+     * <p>Retrieves a XML list (space separated values) of coordinates.</p>
+     *
+     * @param coordinates
+     * @return
+     */
     public static String toString(CoordinateSequence coordinates){
         final StringBuilder sb = new StringBuilder();
 
@@ -263,7 +281,12 @@ public class KmlUtilities {
         return sb.toString();
     }
 
-
+    /**
+     * <p>Retrieves Coordinate (2D/3D) from coma separated values.</p>
+     *
+     * @param coordinates
+     * @return
+     */
     public static Coordinate toCoordinate(String coordinates){
         final String[] coordinatesList = coordinates.split(",");
         final Coordinate c = new Coordinate();
@@ -277,87 +300,151 @@ public class KmlUtilities {
         return c;
     }
 
-    public static String getFormatedString(Calendar calendar, boolean forceDateTime){
-        String result = "";
+    /**
+     * <p>Retrieves XML formated time.</p>
+     *
+     * @param hours
+     * @param minutes
+     * @param seconds
+     * @param milli
+     * @param forceTime
+     * @return
+     */
+    public static StringBuilder getXMLFormatedTime(
+            int hours, int minutes, int seconds, int milli, boolean forceTime){
 
-        int milli = calendar.get(Calendar.MILLISECOND);
-        int seconds = calendar.get(Calendar.SECOND);
-        int minutes = calendar.get(Calendar.MINUTE);
-        int hours = calendar.get(Calendar.HOUR_OF_DAY);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
-        int month = calendar.get(Calendar.MONTH)+1;
-        int year;
+        final StringBuilder time = new StringBuilder();
+        if(!(hours == 0 && minutes == 0 && seconds == 0 && milli == 0) || forceTime){
+            time.append('T');
+            if(hours < 10) {
+                time.append('0');
+            }
+            time.append(hours);
+
+            time.append(':');
+            if(minutes < 10) {
+                time.append('0');
+            }
+            time.append(minutes);
+
+            time.append(':');
+            if(seconds < 10) {
+                time.append('0');
+            }
+            time.append(seconds);
+
+            if (milli != 0){
+                time.append('.');
+                time.append(milli);
+            }
+        }
+        return time;
+    }
+
+    /**
+     * <p>Retrieves XML formated timezone.</p>
+     *
+     * @param zoneOffset
+     * @return
+     */
+    public static StringBuilder getXMLFormatedTimeZone(int zoneOffset) {
+
+        final StringBuilder timeZone = new StringBuilder();
+        int minutesOffset = zoneOffset / (60 * 1000);
+        final int hoursOffset = Math.abs(minutesOffset / 60);
+        minutesOffset = (minutesOffset % 60)*60;
+
+        if(zoneOffset == 0){
+            timeZone.append('Z');
+        } else {
+            if(zoneOffset > 0)
+                timeZone.append('+');
+            else if (zoneOffset < 0)
+                timeZone.append('-');
+            
+            if(hoursOffset < 10)
+                timeZone.append('0');
+            timeZone.append(hoursOffset);
+            timeZone.append(':');
+            if(minutesOffset < 10)
+                timeZone.append('0');
+            timeZone.append(minutesOffset);
+        }
+        return timeZone;
+    }
+
+    /**
+     * <p>Retrieves XML formated date</p>
+     *
+     * @param year
+     * @param month
+     * @param day
+     * @param forceDay
+     * @return
+     */
+    public static StringBuilder getXMLFormatedDate(int year, int month, int day, boolean forceDay){
+        final StringBuilder date = new StringBuilder();
+        date.append(year);
+        if (day > 1 || forceDay){
+            date.append('-');
+            if(month < 10)
+                date.append('0');
+            date.append(month);
+            date.append('-');
+            if(day < 10)
+                date.append('0');
+            date.append(day);
+        } else if (month > 1){
+            date.append('-');
+            if(month < 10)
+                date.append('0');
+            date.append(month);
+        }
+        return date;
+    }
+
+    /**
+     * <p>Retrieves XML formated datetime from Calendar.</p>
+     *
+     * @param calendar
+     * @param forceDateTime
+     * @return
+     */
+    public static String getXMLFormatedCalendar(Calendar calendar, boolean forceDateTime){
+        final StringBuilder date, time;
+
+        final int day = calendar.get(Calendar.DAY_OF_MONTH);
+        final int month = calendar.get(Calendar.MONTH)+1;
+        final int year;
         if(calendar.get(Calendar.ERA) == GregorianCalendar.BC){
             year = -calendar.get(Calendar.YEAR);
         } else {
             year = calendar.get(Calendar.YEAR);
         }
 
-        boolean isOffset = (calendar.getTimeZone() != null);
-        boolean isTime = !(hours == 0 && minutes == 0 && seconds == 0 && milli == 0);
+        time = getXMLFormatedTime(calendar.get(
+                Calendar.HOUR_OF_DAY),
+                calendar.get(Calendar.MINUTE),
+                calendar.get(Calendar.SECOND),
+                calendar.get(Calendar.MILLISECOND),
+                forceDateTime);
 
-
-        if(isOffset){
-            int zoneOffset = calendar.get(Calendar.ZONE_OFFSET);
-            int minutesOffset = zoneOffset / (60 * 1000);
-            int hoursOffset = minutesOffset / 60;
-            minutesOffset = (minutesOffset % 60)*60;
-            String zhh = null, zmm = null, zs= null;
-
-            if(minutesOffset < 10)
-                zmm = "0"+minutesOffset;
-            else
-                zmm = Integer.toString(minutesOffset);
-
-            if(hoursOffset < 10 && hoursOffset > -10){
-                if(hoursOffset < 0)
-                    hoursOffset = -hoursOffset;
-                zhh = "0"+hoursOffset;
-            }else
-                zhh = Integer.toString(hoursOffset);
-
-            if(zoneOffset > 0)
-                result = '+'+zhh+':'+zmm;
-            else if (zoneOffset < 0)
-                result = '-'+zhh+':'+zmm;
-            else
-                result = "Z";
+        if(calendar.getTimeZone() != null){
+            time.append(getXMLFormatedTimeZone(calendar.get(Calendar.ZONE_OFFSET)));
         }
 
-        if (milli != 0){
-            result = "."+milli+result;
-        }
-
-        if (isTime || forceDateTime){
-            if(seconds < 10)
-                result = ":0"+seconds+result;
-            else
-                result = ":"+seconds+result;
-            if(minutes < 10)
-                result = ":0"+minutes+result;
-            else
-                result = ":"+minutes+result;
-            if(hours < 10)
-                result = "T0"+hours+result;
-            else
-                result = "T"+hours+result;
-        }
-
-        String date;
-        if (day > 1 || forceDateTime){
-            date = year+"-"+
-                ((month < 10) ? ("0"+month) : month) +"-"+
-                ((day < 10) ? ("0"+day) : day);}
-        else if (month > 1)
-            date = year+"-"+
-                ((month < 10) ? ("0"+month) : month);
-        else
-            date = Integer.toString(year);
-        return date+result;
+        date = getXMLFormatedDate(year, month, day, forceDateTime);
+        
+        return date.append(time).toString();
     }
 
+    /**
+     *
+     * @param d
+     * @return true if d is not infinite nor NaN.
+     */
     public static boolean isFiniteNumber(double d){
-        return !(Double.isInfinite(d) && Double.isNaN(d));
+        return !Double.isInfinite(d) && !Double.isNaN(d);
     }
 
 }

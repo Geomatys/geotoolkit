@@ -16,10 +16,8 @@
  */
 package org.geotoolkit.data.kml;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -27,12 +25,9 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Paint;
-import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.File;
@@ -55,9 +50,6 @@ import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.AbstractStyleSelector;
 import org.geotoolkit.data.kml.model.BalloonStyle;
 import org.geotoolkit.data.kml.model.BasicLink;
-import org.geotoolkit.data.kml.model.DefaultLineString;
-import org.geotoolkit.data.kml.model.DefaultLinearRing;
-import org.geotoolkit.data.kml.model.DefaultPoint;
 import org.geotoolkit.data.kml.model.Icon;
 import org.geotoolkit.data.kml.model.IconStyle;
 import org.geotoolkit.data.kml.model.Kml;
@@ -84,13 +76,9 @@ import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.DefaultProjectedGeometry;
-import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
 import org.geotoolkit.display2d.style.labeling.DefaultLabelLayer;
-import org.geotoolkit.display2d.style.labeling.DefaultLabelRenderer;
-import org.geotoolkit.display2d.style.labeling.DefaultLinearLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.DefaultPointLabelDescriptor;
-import org.geotoolkit.display2d.style.labeling.LabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.LabelLayer;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -106,10 +94,6 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
@@ -649,7 +633,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             portrayLabelStyle(x, y, s,
                     (String) placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue(),
                     centroid);
-            portrayFlag(x, y);
+            //portrayFlag(x, y);
         }
 
     }
@@ -1005,8 +989,11 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      * @param y
      * @param style
      * @param fixedToScreen
+     * @param informationResource
      */
-    private void portrayBalloonStyle(double x, double y, Style style, boolean fixedToScreen, Feature informationResource) {
+    private void portrayBalloonStyle(
+            double x, double y, Style style,
+            boolean fixedToScreen, Feature informationResource) {
 
         // MathTransform
         MathTransform transform = null;
@@ -1014,7 +1001,8 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         //Fixed to screen for ScrenOverlays
         if (!fixedToScreen) {
             try {
-                transform = context2d.getMathTransform(DefaultGeographicCRS.WGS84, context2d.getDisplayCRS());
+                transform = context2d.getMathTransform(
+                        DefaultGeographicCRS.WGS84, context2d.getDisplayCRS());
             } catch (FactoryException ex) {
                 context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
                 return;
@@ -1038,7 +1026,8 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                 do {
                     int end = Math.min(begin + linewidth, length);
                     balloonWidth = Math.max(balloonWidth,
-                            FONT_METRICS.stringWidth(balloonStyle.getText().toString().substring(begin, end)));
+                            FONT_METRICS.stringWidth(balloonStyle.getText()
+                            .toString().substring(begin, end)));
                     begin += linewidth;
                     balloonLines++;
                 } while (begin + linewidth < length);
@@ -1060,9 +1049,10 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                 }
 
                 // acurate dimensions / position
-                int left, right, top, bottom, VExc, HExc, coeff;
+                int left, right, top, bottom, vExc, hExc, coeff;
                 if (cdata) {
-                    String content = this.retrieveBalloonInformations(balloonStyle.getText().toString(), informationResource);
+                    String content = this.retrieveBalloonInformations(
+                            balloonStyle.getText().toString(), informationResource);
                     if ("<html>".equals(content.substring(0, 5))) {
                         jep = new JLabel(content);
                     } else {
@@ -1077,16 +1067,16 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                     top = (int) tab[1] - (preferredDim.height + 2) - coeff;
                     bottom = (int) tab[1] - coeff;
                     right = left + preferredDim.width + 1;
-                    VExc = (preferredDim.width + 2) / 10;
-                    HExc = (preferredDim.height + 2) / 7;
+                    vExc = (preferredDim.width + 2) / 10;
+                    hExc = (preferredDim.height + 2) / 7;
                 } else {
                     coeff = ((balloonLines + 1) * FONT_METRICS.getHeight() + balloonWidth) / 4;
                     left = (int) tab[0] - (balloonWidth + 2) / 2;
                     right = (int) tab[0] + (balloonWidth + 2) / 2;
                     top = (int) tab[1] - ((balloonLines + 1) * FONT_METRICS.getHeight() + 2) - coeff;
                     bottom = (int) tab[1] - coeff;
-                    VExc = (balloonWidth + 2) / 10;
-                    HExc = (balloonLines * FONT_METRICS.getHeight() + 2) / 7;
+                    vExc = (balloonWidth + 2) / 10;
+                    hExc = (balloonLines * FONT_METRICS.getHeight() + 2) / 7;
                 }
 
                 // Print balloon structure
@@ -1094,17 +1084,23 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                 p.moveTo(left, top);
 
                 // top and right sides
-                p.curveTo(left + (right - left) / 9, top - VExc, left + 8 * (right - left) / 9, top - VExc, right, top);
-                p.curveTo(right + HExc, bottom + 5 * (top - bottom) / 6, right + HExc, bottom + (top - bottom) / 6, right, bottom);
+                p.curveTo(left + (right - left) / 9, top - vExc,
+                        left + 8 * (right - left) / 9, top - vExc, right, top);
+                p.curveTo(right + hExc, bottom + 5 * (top - bottom) / 6,
+                        right + hExc, bottom + (top - bottom) / 6, right, bottom);
 
                 // bottom
-                p.curveTo(left + 8 * (right - left) / 9, bottom + VExc, left + 7 * (right - left) / 9, bottom, left + 2 * (right - left) / 3, bottom + VExc);
+                p.curveTo(left + 8 * (right - left) / 9, bottom + vExc,
+                        left + 7 * (right - left) / 9, bottom,
+                        left + 2 * (right - left) / 3, bottom + vExc);
                 p.lineTo((int) tab[0], (int) tab[1]);
-                p.lineTo(left + (right - left) / 3, bottom + VExc);
-                p.curveTo(left + 2 * (right - left) / 9, bottom, left + (right - left) / 9, bottom + VExc, left, bottom);
+                p.lineTo(left + (right - left) / 3, bottom + vExc);
+                p.curveTo(left + 2 * (right - left) / 9, bottom,
+                        left + (right - left) / 9, bottom + vExc, left, bottom);
 
                 // left side
-                p.curveTo(left - HExc, bottom + (top - bottom) / 6, left - HExc, bottom + 5 * (top - bottom) / 6, left, top);
+                p.curveTo(left - hExc, bottom + (top - bottom) / 6, left - hExc,
+                        bottom + 5 * (top - bottom) / 6, left, top);
                 p.closePath();
 
                 // balloon color
@@ -1166,7 +1162,6 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
 
         // MathTransform
         MathTransform transform;
-        Graphics2D graphic = context2d.getGraphics();
 
         try {
             transform = context2d.getMathTransform(DefaultGeographicCRS.WGS84, context2d.getDisplayCRS());
@@ -1180,7 +1175,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             if (labelStyle != null) {
 //                graphic.setFont(new Font(FONT.getName(),
 //                        FONT.getStyle(), FONT.getSize() * (int) labelStyle.getScale()));
-                graphic.setColor(labelStyle.getColor());
+//                graphic.setColor(labelStyle.getColor());
 //                double[] tab = new double[]{x, y};
 //                try {
 //                    transform.transform(tab, 0, tab, 0, 1);
@@ -1191,14 +1186,15 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
 
                 DefaultProjectedGeometry projectedGeometry = new DefaultProjectedGeometry(geom);
                 projectedGeometry.setObjToDisplay(transform);
-                LabelLayer labelLayer = new DefaultLabelLayer(false, true);
+                LabelLayer labelLayer = new DefaultLabelLayer(false, false);
 //                Paint textPaint;
 //                textPaint.
+                float displayFactor = 0.1f;//0.1f pour corriger l'erreur d'affichage (devrait être fixé normalement à 1)
                 labelLayer.labels().add(
                         new DefaultPointLabelDescriptor(content,
                         new Font(FONT.getName(),
                         FONT.getStyle(), FONT.getSize() * (int) labelStyle.getScale()),
-                        graphic.getPaint(), 0, null, 0, 0, (float) x, (float) y, 0, context2d.getObjectiveCRS(),
+                        labelStyle.getColor(), 0, null, 0.5f, 0.5f, (float) x * displayFactor, (float) y * displayFactor, 0, context2d.getObjectiveCRS(),
                         projectedGeometry));
                 context2d.getLabelRenderer(true).append(labelLayer);
                 //graphic.drawString(content, (int) tab[0], (int) tab[1]);

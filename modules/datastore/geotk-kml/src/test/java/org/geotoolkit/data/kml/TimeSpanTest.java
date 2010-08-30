@@ -95,7 +95,7 @@ public class TimeSpanTest {
         FastDateParser du = new FastDateParser();
         Calendar calendarBegin = du.getCalendar(begin);
         assertEquals(calendarBegin, timeSpan.getBegin());
-        assertEquals(begin, KmlUtilities.getFormatedString(calendarBegin, false));
+        assertEquals(begin, KmlUtilities.getXMLFormatedCalendar(calendarBegin, false));
     }
 
     @Test

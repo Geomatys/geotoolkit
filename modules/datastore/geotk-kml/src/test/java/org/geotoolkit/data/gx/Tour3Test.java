@@ -22,7 +22,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.gx.model.GxModelConstants;
@@ -84,18 +83,28 @@ public class Tour3Test {
     public void tearDown() {
     }
 
+    /*
+     * Methode de test en lecture
+     */
     @Test
-    public void tour3ReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
+    public void tour3ReadTest()
+            throws IOException, XMLStreamException, URISyntaxException, KmlException {
 
-        Iterator i;
-
+        // Instanciation du reader Kml
         final KmlReader reader = new KmlReader();
+
+        // Instanciation du reader d'extensions à partir du reader Kml
         final GxReader gxReader = new GxReader(reader);
+
+        // Affectation au reader Kml du fichier de lecture et d'un reader d'extensions
         reader.setInput(new File(pathToTestFile));
         reader.addExtensionReader(gxReader);
+
+        // Lecture, puis libération du reader Kml
         final Kml kmlObjects = reader.read();
         reader.dispose();
 
+        // Vérification du contenu lu...
         final NetworkLinkControl networkLinkControl = kmlObjects.getNetworkLinkControl();
         final Update update = networkLinkControl.getUpdate();
         assertEquals(new URI("http://myserver.com/Bof.kml"), update.getTargetHref());
@@ -105,24 +114,35 @@ public class Tour3Test {
 
         final Delete delete = (Delete) update.getUpdates().get(0);
         assertEquals(1, delete.getFeatures().size());
-        assertTrue(((Feature) delete.getFeatures().get(0)).getType().equals(GxModelConstants.TYPE_TOUR));
+        assertTrue(((Feature) delete.getFeatures().get(0)).getType()
+                .equals(GxModelConstants.TYPE_TOUR));
 
         final Feature tour = (Feature) delete.getFeatures().get(0);
-        final PlayList playlist = (PlayList) tour.getProperty(GxModelConstants.ATT_TOUR_PLAY_LIST.getName()).getValue();
+        final PlayList playlist = (PlayList) tour.getProperty(
+                GxModelConstants.ATT_TOUR_PLAY_LIST.getName()).getValue();
         assertEquals(0, playlist.getTourPrimitives().size());
 
     }
 
+    /*
+     * Méthode de test en écriture
+     */
     @Test
-    public void tour3WriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
+    public void tour3WriteTest() 
+            throws KmlException, IOException, XMLStreamException,
+            ParserConfigurationException, SAXException, URISyntaxException {
+
+        // Récupération des instances de deux fabriques (Kml et extensions Gx)
         final GxFactory gxFactory = DefaultGxFactory.getInstance();
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
+        // Construction de l'objet Kml
         final PlayList playList = gxFactory.createPlayList();
 
         final Feature tour = gxFactory.createTour();
         Collection<Property> tourProperties = tour.getProperties();
-        tourProperties.add(FF.createAttribute(playList, GxModelConstants.ATT_TOUR_PLAY_LIST, null));
+        tourProperties.add(FF.createAttribute(
+                playList, GxModelConstants.ATT_TOUR_PLAY_LIST, null));
 
         final Delete delete = kmlFactory.createDelete();
         delete.setFeatures(Arrays.asList(tour));
@@ -135,18 +155,29 @@ public class Tour3Test {
         networkLinkControl.setUpdate(update);
 
         final Kml kml = kmlFactory.createKml(networkLinkControl, null, null, null);
+
+        // Ajout de l'espace de nom des extensions avec un préfixe
         kml.addExtensionUri(GxConstants.URI_GX, "gx");
 
+        // Création du fichier d'écriture
         final File temp = File.createTempFile("testTour3", ".kml");
         temp.deleteOnExit();
 
+        // Instanciation du writer Kml
         final KmlWriter writer = new KmlWriter();
+
+        // Instanciation du writer d'extensions à partir du writer Kml
         final GxWriter gxWriter = new GxWriter(writer);
+
+        // Affectation du fichier de sortie et du writer d'extensions au writer Kml
         writer.setOutput(temp);
         writer.addExtensionWriter(GxConstants.URI_GX, gxWriter);
+
+        // Écriture, puis libération du writer Kml
         writer.write(kml);
         writer.dispose();
 
+        // Vérification du contenu écrit...
         DomCompare.compare(
                 new File(pathToTestFile), temp);
     }

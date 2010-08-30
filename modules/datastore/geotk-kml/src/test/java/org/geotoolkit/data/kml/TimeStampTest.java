@@ -95,7 +95,7 @@ public class TimeStampTest {
         FastDateParser du = new FastDateParser();
         Calendar calendarWhen = du.getCalendar(when);
         assertEquals(calendarWhen, timeStamp.getWhen());
-        assertEquals(when, KmlUtilities.getFormatedString(calendarWhen,false));
+        assertEquals(when, KmlUtilities.getXMLFormatedCalendar(calendarWhen,false));
     }
 
     @Test

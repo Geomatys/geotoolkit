@@ -2629,7 +2629,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      */
     private void writeCalendar(Calendar calendar) throws XMLStreamException{
-        writer.writeCharacters(KmlUtilities.getFormatedString(calendar, true));
+        writer.writeCharacters(KmlUtilities.getXMLFormatedCalendar(calendar, true));
     }
 
     /**

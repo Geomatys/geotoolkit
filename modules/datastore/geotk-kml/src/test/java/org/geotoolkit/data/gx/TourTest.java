@@ -81,7 +81,9 @@ public class TourTest {
     }
 
     @Test
-    public void tourReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
+    public void tourReadTest() 
+            throws IOException, XMLStreamException,
+            URISyntaxException, KmlException {
 
         Iterator i;
 
@@ -94,28 +96,44 @@ public class TourTest {
 
         final Feature document = kmlObjects.getAbstractFeature();
         assertTrue(document.getType().equals(KmlModelConstants.TYPE_DOCUMENT));
-        assertEquals("gx:AnimatedUpdate example", document.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-        assertTrue((Boolean) document.getProperty(KmlModelConstants.ATT_OPEN.getName()).getValue());
+        assertEquals("gx:AnimatedUpdate example", document.getProperty(
+                KmlModelConstants.ATT_NAME.getName()).getValue());
+        assertTrue((Boolean) document.getProperty(
+                KmlModelConstants.ATT_OPEN.getName()).getValue());
         
-        assertTrue(document.getProperty(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).getValue() instanceof Feature);
-        Feature tour = (Feature) document.getProperty(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).getValue();
+        assertTrue(document.getProperty(
+                KmlModelConstants.ATT_DOCUMENT_FEATURES.getName())
+                .getValue() instanceof Feature);
+        Feature tour = (Feature) document.getProperty(
+                KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).getValue();
         assertTrue(tour.getType().equals(GxModelConstants.TYPE_TOUR));
 
-        assertEquals("Play me!", tour.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
-        assertEquals(1,tour.getProperties(GxModelConstants.ATT_TOUR_PLAY_LIST.getName()).size());
+        assertEquals("Play me!", tour.getProperty(
+                KmlModelConstants.ATT_NAME.getName()).getValue());
+        assertEquals(1,tour.getProperties(
+                GxModelConstants.ATT_TOUR_PLAY_LIST.getName()).size());
 
-        i = tour.getProperties(GxModelConstants.ATT_TOUR_PLAY_LIST.getName()).iterator();
+        i = tour.getProperties(
+                GxModelConstants.ATT_TOUR_PLAY_LIST.getName()).iterator();
+
+        if(i.hasNext()){
+            final Object object = ((Property) i.next()).getValue();
+            assertTrue(object instanceof PlayList);
+        }
     }
 
     @Test
-    public void tourWriteTest() throws KmlException, IOException, XMLStreamException, ParserConfigurationException, SAXException, URISyntaxException {
+    public void tourWriteTest() 
+            throws KmlException, IOException, XMLStreamException,
+            ParserConfigurationException, SAXException, URISyntaxException {
         final GxFactory gxFactory = DefaultGxFactory.getInstance();
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
         final PlayList playList = gxFactory.createPlayList();
         final Feature tour = gxFactory.createTour();
         Collection<Property> tourProperties = tour.getProperties();
-        tourProperties.add(FF.createAttribute("Play me!", KmlModelConstants.ATT_NAME, null));
+        tourProperties.add(FF.createAttribute(
+                "Play me!", KmlModelConstants.ATT_NAME, null));
         tourProperties.add(FF.createAttribute(playList, GxModelConstants.ATT_TOUR_PLAY_LIST, null));
 
 
