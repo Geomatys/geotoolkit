@@ -42,7 +42,7 @@ import static java.lang.Math.*;
  * Base class for tests of {@link UnitaryProjection} implementations.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.16
  *
  * @since 3.00
  */
@@ -90,7 +90,7 @@ public abstract class ProjectionTestCase extends TransformTestCase {
      * @return Newly created projection parameters.
      */
     static UnitaryProjection.Parameters parameters(final ParameterDescriptorGroup descriptor, final boolean ellipse) {
-        return parameters(descriptor, ellipse, 0);
+        return parameters(descriptor, ellipse, 0, UnitaryProjection.Parameters.class);
     }
 
     /**
@@ -102,8 +102,8 @@ public abstract class ProjectionTestCase extends TransformTestCase {
      * @return Newly created projection parameters.
      */
     @SuppressWarnings("fallthrough")
-    static UnitaryProjection.Parameters parameters(final ParameterDescriptorGroup descriptor,
-            final boolean ellipse, final int numStandardParallels)
+    static <T extends UnitaryProjection.Parameters> T parameters(final ParameterDescriptorGroup descriptor,
+            final boolean ellipse, final int numStandardParallels, final Class<T> type)
     {
         final ParameterValueGroup values = descriptor.createValue();
         final Ellipsoid ellipsoid = ellipse ? DefaultEllipsoid.WGS84 : DefaultEllipsoid.SPHERE;
@@ -115,7 +115,15 @@ public abstract class ProjectionTestCase extends TransformTestCase {
             case 1:  values.parameter("standard_parallel_1").setValue(0);
             case 0:  break;
         }
-        return new UnitaryProjection.Parameters(descriptor, values);
+        final UnitaryProjection.Parameters param;
+        if (TransverseMercator.Parameters.class.isAssignableFrom(type)) {
+            param = new TransverseMercator.Parameters(descriptor, values);
+        } else if (ObliqueMercator.Parameters.class.isAssignableFrom(type)) {
+            param = new ObliqueMercator.Parameters(descriptor, values);
+        } else {
+            param = new UnitaryProjection.Parameters(descriptor, values);
+        }
+        return type.cast(param);
     }
 
     /**

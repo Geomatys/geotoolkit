@@ -17,12 +17,16 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
+import java.awt.geom.Point2D;
+
 import org.junit.*;
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.test.Depend;
+
+import static java.lang.Math.*;
 import static org.geotoolkit.referencing.operation.provider.TransverseMercator.PARAMETERS;
 import static org.geotoolkit.referencing.operation.projection.TransverseMercator.Parameters;
 
@@ -31,7 +35,7 @@ import static org.geotoolkit.referencing.operation.projection.TransverseMercator
  * Tests the {@link TransverseMercator} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.16
  *
  * @since 3.00
  */
@@ -42,6 +46,22 @@ public class TransverseMercatorTest extends ProjectionTestCase {
      */
     public TransverseMercatorTest() {
         super(TransverseMercator.class, null);
+    }
+
+    /**
+     * Returns a new instance of {@link TransverseMercator}.
+     *
+     * @param  ellipse {@code false} for a sphere, or {@code true} for WGS84 ellipsoid.
+     * @return Newly created projection.
+     */
+    private static TransverseMercator create(final boolean ellipse) {
+        final TransverseMercator.Parameters parameters = parameters(PARAMETERS, ellipse, 0,
+                TransverseMercator.Parameters.class);
+        if (ellipse) {
+            return new TransverseMercator(parameters);
+        } else {
+            return new TransverseMercator.Spherical(parameters);
+        }
     }
 
     /**
@@ -110,5 +130,26 @@ public class TransverseMercatorTest extends ProjectionTestCase {
         final double[] expected = new double[] {577274.99, 69740.50};
         tolerance = 0.005;
         verifyTransform(point, expected);
+    }
+
+    /**
+     * Creates a projection and derivates a few points.
+     *
+     * @throws TransformException Should never happen.
+     *
+     * @since 3.16
+     */
+    @Test
+    public void testDerivative() throws TransformException {
+        tolerance = 1E-9;
+        transform = create(false);
+        assertTrue(isSpherical());
+        validate();
+
+        final double delta = toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+        final Point2D.Double point = new Point2D.Double();
+        checkDerivative2D(point, delta);
+        point.x = toRadians(-3); point.y = toRadians(30); checkDerivative2D(point, delta);
+        point.x = toRadians(+6); point.y = toRadians(60); checkDerivative2D(point, delta);
     }
 }

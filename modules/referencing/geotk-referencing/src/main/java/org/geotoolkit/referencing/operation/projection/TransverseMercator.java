@@ -21,8 +21,10 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
+import java.awt.geom.Point2D;
 import static java.lang.Math.*;
 
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -30,6 +32,8 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.opengis.parameter.ParameterNotFoundException;
+import org.geotoolkit.referencing.operation.matrix.Matrix2;
+
 import static org.geotoolkit.referencing.operation.provider.TransverseMercator.*;
 
 
@@ -80,7 +84,7 @@ import static org.geotoolkit.referencing.operation.provider.TransverseMercator.*
  * @author André Gosselin (MPO)
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
- * @version 3.00
+ * @version 3.16
  *
  * @see Mercator
  * @see ObliqueMercator
@@ -404,8 +408,7 @@ public class TransverseMercator extends CassiniOrMercator {
         {
             double x = rollLongitude(srcPts[srcOff]);
             double y = srcPts[srcOff + 1];
-            double cosphi = cos(y);
-            double b = cosphi * sin(x);
+            double b = cos(y) * sin(x);
             /*
              * Using Snyder's equation for calculating y, instead of the one used in Proj4.
              * Potential problems when y and x = 90 degrees, but behaves ok in tests.
@@ -471,6 +474,35 @@ public class TransverseMercator extends CassiniOrMercator {
                 return true;
             }
         }
+    }
+
+    /**
+     * Gets the derivative of this transform at a point.
+     * The current implementation is derived from the spherical formulas.
+     *
+     * @param  point The coordinate point where to evaluate the derivative.
+     * @return The derivative at the specified point as a 2&times;2 matrix.
+     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
+     *
+     * @since 3.16
+     */
+    @Override
+    public Matrix derivative(final Point2D point) throws ProjectionException {
+        final double λ    = point.getX();
+        final double φ    = point.getY();
+        final double sinλ = sin(λ);
+        final double cosλ = cos(λ);
+        final double sinφ = sin(φ);
+        final double cosφ = cos(φ);
+        final double tanφ = sinφ / cosφ;
+        final double sct  = cosλ*cosλ + tanφ*tanφ;
+        double b = cosφ * sinλ;
+        b = b*b - 1;
+        return new Matrix2(
+                -(cosφ * cosλ) / b,         // dx/dλ
+                tanφ * sinλ / sct,          // dy/dλ
+                (sinφ * sinλ) / b,          // dx/dφ
+                cosλ / (cosφ*cosφ * sct));  // dy/dφ
     }
 
     /**

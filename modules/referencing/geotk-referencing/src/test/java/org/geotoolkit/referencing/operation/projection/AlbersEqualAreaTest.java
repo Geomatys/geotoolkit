@@ -62,7 +62,7 @@ public class AlbersEqualAreaTest extends ProjectionTestCase {
      * @return Newly created projection.
      */
     private static AlbersEqualArea create(final boolean ellipse, double phi1, double phi2) {
-        final UnitaryProjection.Parameters parameters = parameters(PARAMETERS, ellipse, 2);
+        final UnitaryProjection.Parameters parameters = parameters(PARAMETERS, ellipse, 2, UnitaryProjection.Parameters.class);
         parameters.standardParallels[0] = phi1;
         parameters.standardParallels[1] = phi2;
         if (ellipse) {
