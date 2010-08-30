@@ -49,6 +49,7 @@ import org.geotoolkit.map.DynamicMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.wms.GetLegendRequest;
 import org.geotoolkit.wms.GetMapRequest;
@@ -129,7 +130,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
     /**
      * The styles associated to the {@link #layers}.
      */
-    private String[] styles;
+    private String[] styles = new String[0];
 
     /**
      * Optional SLD file for the layer to request.
@@ -530,10 +531,11 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      * @param format The mime type of an output format.
      */
     public void setFormat(String format) {
-        this.format = format;
-        if (this.format == null) {
-            format = "image/png";
+        if (format == null) {
+            throw new NullArgumentException("format  = "+format);
         }
+        this.format = format;
+        
     }
 
     /**
