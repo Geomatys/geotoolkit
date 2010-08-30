@@ -93,6 +93,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.Rule;
 import org.opengis.style.Style;
 import org.opengis.style.Symbolizer;
+import org.opengis.style.TextSymbolizer;
 
 import static org.geotoolkit.display2d.GO2Utilities.*;
 
@@ -466,35 +467,36 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
 
         //store the ids of the features painted during the first round -----------------------------
-        int size=0;
-        for(CachedRule cr : rules){
-            size += cr.symbolizers().length;
-        }
-
-        final Image[] images = new BufferedImage[size];
-        final RenderingContext2D[] ctxs = new RenderingContext2D[size];
+        final BufferedImage originalBuffer = (BufferedImage) context.getCanvas().getSnapShot();
+        final RenderingContext2D originalContext = context;
+        
+        final Image[][] images = new Image[rules.length][0];
         final SymbolizerRenderer[][] renderers = new SymbolizerRenderer[rules.length][0];
 
-        //first buffer is the current one
-        images[0] = context.getCanvas().getSnapShot();
-        ctxs[0] = context;
-        for(int i=1;i<size;i++){
-            final BufferedImage buffer = new BufferedImage(images[0].getWidth(null),
-                             images[0].getHeight(null), BufferedImage.TYPE_INT_ARGB);
-            final RenderingContext2D ctx = context.create(buffer.createGraphics());
-            images[i] = buffer;
-            ctxs[i] = ctx;
-        }
-
-        int inc=0;
         for(int i=0;i<rules.length;i++){
             final CachedRule cr = rules[i];
-            final int slenght = cr.symbolizers().length;
-            renderers[i] = new SymbolizerRenderer[slenght];
+            final CachedSymbolizer[] css = cr.symbolizers();
+            images[i] = new Image[css.length];
+            renderers[i] = new SymbolizerRenderer[css.length];
 
-            for(int j=0;j<slenght;j++){
-                final CachedSymbolizer cs = cr.symbolizers()[j];
-                renderers[i][j] = cs.getRenderer().createRenderer(cs, ctxs[inc++]);
+            for(int k=0; k<css.length; k++){
+                final CachedSymbolizer cs = css[k];
+                if(cs.getSource() instanceof TextSymbolizer){
+                    images[i][k] = originalBuffer;
+                    renderers[i][k] = cs.getRenderer().createRenderer(cs, originalContext);
+                }else{
+                    if(i==0 && k==0){
+                        //first buffer is the current one
+                        images[i][k] = originalBuffer ;
+                        renderers[i][k] = cs.getRenderer().createRenderer(cs, originalContext);
+                    }else{
+                        final BufferedImage img = new BufferedImage(originalBuffer.getWidth(),
+                                       originalBuffer.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                        final RenderingContext2D ctx = context.create(img.createGraphics());
+                        images[i][k] = img ;
+                        renderers[i][k] = cs.getRenderer().createRenderer(cs, ctx);
+                    }
+                }
             }
         }
 
@@ -543,17 +545,19 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         }
 
         //merge images --------------------------
-        ctxs[0].switchToDisplayCRS();
-        final Graphics2D g = ctxs[0].getGraphics();
+        originalContext.switchToDisplayCRS();
+        final Graphics2D g = originalContext.getGraphics();
         g.setComposite(ALPHA_COMPOSITE_1F);
-        for(int i=1;i<size;i++){
-            final BufferedImage img = (BufferedImage) images[i];
-            g.drawImage(img, 0, 0, null);
-            img.getGraphics().dispose();
+        for(int i=0;i<images.length;i++){
+            for(int k=0,n=images[i].length; k<n; k++){
+                final Image img = images[i][k];
+                if(img != originalBuffer){
+                    g.drawImage(img, 0, 0, null);
+                    img.getGraphics().dispose();
+                }
+            }
         }
-        
-    }
-    
+    }    
 
     protected List<Graphic> searchGraphicAt(final FeatureMapLayer layer, final CachedRule[] rules,
             final RenderingContext2D renderingContext, final SearchAreaJ2D mask, VisitFilter visitFilter, List<Graphic> graphics) {
