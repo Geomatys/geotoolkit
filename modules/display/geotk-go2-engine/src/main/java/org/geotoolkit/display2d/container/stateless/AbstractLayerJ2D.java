@@ -17,13 +17,23 @@
 
 package org.geotoolkit.display2d.container.stateless;
 
+import java.awt.Point;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
 import java.beans.PropertyChangeEvent;
 import java.util.EventObject;
+import javax.media.jai.JAI;
+import javax.media.jai.TileFactory;
+import javax.media.jai.TileRecycler;
+
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
+
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
@@ -33,6 +43,10 @@ import org.opengis.referencing.operation.TransformException;
  * @module pending
  */
 public abstract class AbstractLayerJ2D<T extends MapLayer> extends AbstractGraphicJ2D{
+
+    private static final TileRecycler TILE_RECYCLER = (TileRecycler)JAI.getDefaultInstance().getRenderingHint(JAI.KEY_TILE_RECYCLER);
+    private static final TileFactory TILE_FACTORY = (TileFactory)JAI.getDefaultInstance().getRenderingHint(JAI.KEY_TILE_FACTORY);
+    private static final Point pt = new Point(0, 0);
 
     private final LayerListener listener = new LayerListener() {
 
@@ -93,6 +107,17 @@ public abstract class AbstractLayerJ2D<T extends MapLayer> extends AbstractGraph
     @Override
     public T getUserObject() {
         return layer;
+    }
+
+    protected BufferedImage createBufferedImage(ColorModel cm, SampleModel model){
+        final WritableRaster raster = TILE_FACTORY.createTile(model, pt);
+        return new BufferedImage(cm, raster, cm.isAlphaPremultiplied(), null);
+    }
+
+    protected void recycleBufferedImage(BufferedImage img){
+        if(img != null){
+            TILE_RECYCLER.recycleTile(img.getRaster());
+        }
     }
 
 }

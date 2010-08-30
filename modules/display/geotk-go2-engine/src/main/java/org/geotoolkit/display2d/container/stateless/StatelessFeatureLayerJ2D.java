@@ -23,6 +23,8 @@ import java.awt.Image;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.SampleModel;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -471,6 +473,8 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
         //store the ids of the features painted during the first round -----------------------------
         final BufferedImage originalBuffer = (BufferedImage) context.getCanvas().getSnapShot();
+        final ColorModel cm = ColorModel.getRGBdefault();
+        final SampleModel sm = cm.createCompatibleSampleModel(originalBuffer.getWidth(), originalBuffer.getHeight());
         final RenderingContext2D originalContext = context;
         
         final Image[][] images = new Image[rules.length][0];
@@ -481,38 +485,14 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
             final CachedRule cr = rules[i];
             final CachedSymbolizer[] css = cr.symbolizers();
             images[i] = new Image[css.length];
-            renderers[i] = new SymbolizerRenderer[css.length];
+            //renderers[i] = new SymbolizerRenderer[css.length];
             used[i] = new boolean[css.length];
             Arrays.fill(used[i], false);
-
-            for(int k=0; k<css.length; k++){
-                final CachedSymbolizer cs = css[k];
-                if(cs.getSource() instanceof TextSymbolizer){
-                    images[i][k] = originalBuffer;
-                    renderers[i][k] = cs.getRenderer().createRenderer(cs, originalContext);
-                }else{
-                    if(i==0 && k==0){
-                        //first buffer is the current one
-                        images[i][k] = originalBuffer ;
-                        renderers[i][k] = cs.getRenderer().createRenderer(cs, originalContext);
-                    }else{
-                        final BufferedImage img = new BufferedImage(originalBuffer.getWidth(),
-                                       originalBuffer.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                        final RenderingContext2D ctx = context.create(img.createGraphics());
-                        images[i][k] = img ;
-                        renderers[i][k] = cs.getRenderer().createRenderer(cs, ctx);
-                    }
-                }
-            }
         }
-
 
         final RenderingIterator statefullIterator = getIterator(features, context, params);
 
-        //TileRecycler tr = JAI.getDefaultInstance().getRenderingHint(JAI.KEY_TILE_RECYCLER);
-
         try{
-
             while(statefullIterator.hasNext()){
                 if(monitor.stopRequested()) return;
                 final ProjectedFeature projectedFeature = statefullIterator.next();
@@ -524,7 +504,33 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                     //test if the rule is valid for this feature
                     if (ruleFilter == null || ruleFilter.evaluate(projectedFeature.getFeature())) {
                         painted = true;
-                        final SymbolizerRenderer[] rss = renderers[i];
+                        SymbolizerRenderer[] rss = renderers[i];
+
+                        //if not created yet --------------
+                        if(rss.length==0){
+                            final CachedSymbolizer[] css = rule.symbolizers();
+                            renderers[i] = new SymbolizerRenderer[css.length];
+                            for(int k=0; k<css.length; k++){
+                                final CachedSymbolizer cs = css[k];
+                                if(cs.getSource() instanceof TextSymbolizer){
+                                    images[i][k] = originalBuffer;
+                                    renderers[i][k] = cs.getRenderer().createRenderer(cs, originalContext);
+                                }else{
+                                    if(i==0 && k==0){
+                                        //first buffer is the current one
+                                        images[i][k] = originalBuffer ;
+                                        renderers[i][k] = cs.getRenderer().createRenderer(cs, originalContext);
+                                    }else{
+                                        final BufferedImage img = createBufferedImage(cm, sm);
+                                        final RenderingContext2D ctx = context.create(img.createGraphics());
+                                        images[i][k] = img ;
+                                        renderers[i][k] = cs.getRenderer().createRenderer(cs, ctx);
+                                    }
+                                }
+                            }
+                            rss = renderers[i];
+                        }
+
                         for (int k=0;k<rss.length;k++) {
                             final SymbolizerRenderer renderer = rss[k];
                             used[i][k] = true;
@@ -540,7 +546,35 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                         final Filter ruleFilter = rule.getFilter();
                         //test if the rule is valid for this feature
                         if (ruleFilter == null || ruleFilter.evaluate(projectedFeature.getFeature())) {
-                            final SymbolizerRenderer[] rss = renderers[i];
+                            SymbolizerRenderer[] rss = renderers[i];
+
+                            //if not created yet --------------
+                            if(rss.length==0){
+                                final CachedSymbolizer[] css = rule.symbolizers();
+                                renderers[i] = new SymbolizerRenderer[css.length];
+                                for(int k=0; k<css.length; k++){
+                                    final CachedSymbolizer cs = css[k];
+                                    if(cs.getSource() instanceof TextSymbolizer){
+                                        images[i][k] = originalBuffer;
+                                        renderers[i][k] = cs.getRenderer().createRenderer(cs, originalContext);
+                                    }else{
+                                        if(i==0 && k==0){
+                                            //first buffer is the current one
+                                            images[i][k] = originalBuffer ;
+                                            renderers[i][k] = cs.getRenderer().createRenderer(cs, originalContext);
+                                        }else{
+                                            final BufferedImage img = createBufferedImage(cm, sm);
+                                            final RenderingContext2D ctx = context.create(img.createGraphics());
+                                            images[i][k] = img ;
+                                            renderers[i][k] = cs.getRenderer().createRenderer(cs, ctx);
+                                        }
+                                    }
+                                }
+                                rss = renderers[i];
+                            }
+
+
+
                             for (int k=0;k<rss.length;k++) {
                                 final SymbolizerRenderer renderer = rss[k];
                                 used[i][k] = true;
@@ -565,9 +599,11 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         for(int i=0;i<images.length;i++){
             for(int k=0,n=images[i].length; k<n; k++){
                 final Image img = images[i][k];
-                if(img != originalBuffer && used[i][k]){
-                    g.drawImage(img, 0, 0, null);
-                    img.getGraphics().dispose();
+                if(img != originalBuffer){
+                    if(used[i][k]){
+                        g.drawImage(img, 0, 0, null);
+                    }
+                    recycleBufferedImage((BufferedImage)img);
                 }
             }
         }
