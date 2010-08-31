@@ -18,7 +18,10 @@
 package org.geotoolkit.referencing.operation.transform;
 
 import java.awt.geom.AffineTransform;
+
 import org.opengis.referencing.operation.TransformException;
+
+import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.referencing.operation.matrix.Matrix3;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
@@ -33,7 +36,7 @@ import org.junit.*;
  * use {@code ProjectiveTransform} as a reference, this time with NaN values.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.15
  *
  * @since 3.00
  */
@@ -175,5 +178,30 @@ public final class ProjectiveTransformTest extends TransformTestCase {
         for (int i=0; i<source.length; i++) {
             assertEquals("Inverse transform", source[i], result[i], tolerance);
         }
+    }
+
+    /**
+     * Tests the {@link ProjectiveTransform#derivative(Point2D)} method. We use the same
+     * values than {@link AffineTransform2DTest#testDerivative()} for easier comparison.
+     *
+     * @throws TransformException Should never happen.
+     *
+     * @since 3.15
+     */
+    @Test
+    public void testDerivative() throws TransformException {
+        /*
+         * Create any kind of transform having different coefficients for every values.
+         */
+        final AffineTransform tr = new AffineTransform();
+        tr.scale(-8, 12);
+        tr.translate(42, 50);
+        tr.rotate(0.2);
+        /*
+         * Tests derivative.
+         */
+        transform = new ProjectiveTransform(new Matrix3(tr));
+        tolerance = 1E-10;
+        checkDerivative(new DirectPosition2D(-10, 5), 3);
     }
 }

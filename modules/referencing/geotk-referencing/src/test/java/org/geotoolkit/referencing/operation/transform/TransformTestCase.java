@@ -36,6 +36,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.GeneralParameterValue;
+import org.opengis.geometry.DirectPosition;
 
 import org.geotoolkit.test.Tools;
 import org.geotoolkit.test.Commons;
@@ -57,7 +58,7 @@ import org.opengis.test.Validators;
  * the convenience methods defined in GeoAPI and adds a few {@code asserts} statements.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @since 2.0
  */
@@ -65,7 +66,7 @@ public abstract class TransformTestCase extends org.opengis.test.referencing.Tra
     /**
      * The number of ordinates to use for stressing the math transform. We use a number that
      * encompass at least 2 time the default buffer size in order to test the code that use
-     * the buffer. We add an arbitrary number just for making the transform's job harder.
+     * the buffer. We add an arbitrary number just for making the transform job harder.
      */
     static final int ORDINATE_COUNT = AbstractMathTransform.MAXIMUM_BUFFER_SIZE * 2 + 137;
 
@@ -98,7 +99,7 @@ public abstract class TransformTestCase extends org.opengis.test.referencing.Tra
      * Creates a new test case using the given hints for fetching the factories.
      *
      * @param type  The base class of the transform being tested.
-     * @param hints The hints to use for fecthing factories, or {@code null} for the default ones.
+     * @param hints The hints to use for fetching factories, or {@code null} for the default ones.
      */
     protected TransformTestCase(final Class<? extends MathTransform> type, final Hints hints) {
         assertTrue("Tests should be run with assertions enabled.", type.desiredAssertionStatus());
@@ -167,7 +168,7 @@ public abstract class TransformTestCase extends org.opengis.test.referencing.Tra
     /**
      * Prints the current {@linkplain #transform transform} WKT as Java code snipset. This method
      * is a helper tool for building test cases. This method may be invoked temporarily while the
-     * developper is creating the test suite, but should never be invoked after the test suite is
+     * developer is creating the test suite, but should never be invoked after the test suite is
      * "final".
      */
     protected final void printAsJavaCode() {
@@ -196,9 +197,9 @@ public abstract class TransformTestCase extends org.opengis.test.referencing.Tra
     }
 
     /**
-     * Asserts that the parameteters of current {@linkplain #transform transform} are equal to
-     * the given ones. This method can check the descriptor separatly, for easier isolation of
-     * mistmatch in case of failure.
+     * Asserts that the parameters of current {@linkplain #transform transform} are equal to
+     * the given ones. This method can check the descriptor separately, for easier isolation of
+     * mismatch in case of failure.
      *
      * @param descriptor
      *          The expected parameter descriptor, or {@code null} for bypassing this check.
@@ -405,15 +406,52 @@ public abstract class TransformTestCase extends org.opengis.test.referencing.Tra
         assertSame(P1, transform.transform(P1, P1));
         assertSame(P2, transform.transform(P2, P2));
         assertEquals("scaleX", (P2.x - P1.x) / delta, matrix.getElement(0, 0), tolerance);
-        assertEquals("shearY", (P2.y - P1.y) / delta, matrix.getElement(0, 1), tolerance);
+        assertEquals("shearY", (P2.y - P1.y) / delta, matrix.getElement(1, 0), tolerance);
 
         // Next, test the vertical component of the derivative.
         P1.x = x; P1.y = y - delta/2;
         P2.x = x; P2.y = y + delta/2;
         assertSame(P1, transform.transform(P1, P1));
         assertSame(P2, transform.transform(P2, P2));
-        assertEquals("shearX", (P2.x - P1.x) / delta, matrix.getElement(1, 0), tolerance);
+        assertEquals("shearX", (P2.x - P1.x) / delta, matrix.getElement(0, 1), tolerance);
         assertEquals("scaleY", (P2.y - P1.y) / delta, matrix.getElement(1, 1), tolerance);
+    }
+
+    /**
+     * Computes the derivative at the given point, and compares the matrix values with
+     * estimations computed from the corners of a cube around the given point.
+     *
+     * @param  point The point where to compute the derivative, in radians.
+     * @param  delta The distance between 2 points to use for computing derivatives, in
+     *         units of the source CRS. It should be a small value, for example 1 metre.
+     * @throws TransformException If the derivative can not be computed,
+     *         or a point can not be projected.
+     *
+     * @since 3.15
+     */
+    protected final void checkDerivative(final DirectPosition point, final double delta)
+            throws TransformException
+    {
+        final Matrix matrix = transform.derivative(point);
+        final int sourceDim = matrix.getNumCol();
+        final int targetDim = matrix.getNumRow();
+        final GeneralDirectPosition S1 = new GeneralDirectPosition(sourceDim);
+        final GeneralDirectPosition S2 = new GeneralDirectPosition(sourceDim);
+        final GeneralDirectPosition T1 = new GeneralDirectPosition(targetDim);
+        final GeneralDirectPosition T2 = new GeneralDirectPosition(targetDim);
+        for (int i=0; i<sourceDim; i++) {
+            S1.setLocation(point);
+            S2.setLocation(point);
+            final double ordinate = point.getOrdinate(i);
+            S1.setOrdinate(i, ordinate - delta/2);
+            S2.setOrdinate(i, ordinate + delta/2);
+            assertSame(T1, transform.transform(S1, T1));
+            assertSame(T2, transform.transform(S2, T2));
+            for (int j=0; j<targetDim; j++) {
+                assertEquals("derivative(" + j + ',' + i + ')',
+                        (T2.getOrdinate(j) - T1.getOrdinate(j)) / delta, matrix.getElement(j, i), tolerance);
+            }
+        }
     }
 
     /**
