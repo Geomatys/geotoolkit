@@ -26,6 +26,7 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.GeocentricCRS;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
@@ -121,7 +122,12 @@ public class GeocentricToEllipsoid extends MathTransformProvider {
         final double semiMajor = doubleValue(SEMI_MAJOR, values);
         final double semiMinor = doubleValue(SEMI_MINOR, values);
         final int    dimension = EllipsoidToGeocentric.dimension(values);
-        MathTransform transform = new GeocentricTransform(semiMajor, semiMinor, SI.METRE, dimension != 2).inverse();
+        MathTransform transform = GeocentricTransform.create(semiMajor, semiMinor, SI.METRE, dimension != 2);
+        try {
+            transform = transform.inverse();
+        } catch (NoninvertibleTransformException e) {
+            throw new AssertionError(e); // Should never happen in Geotk implementation.
+        }
         if (dimension != targetDimension.intValue()) {
             transform = new MathTransformDecorator(transform, complement);
         }

@@ -151,7 +151,10 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
      * @param ellipsoid The ellipsoid.
      * @param hasHeight {@code true} if geographic coordinates include an ellipsoidal
      *        height (i.e. are 3-D), or {@code false} if they are only 2-D.
+     *
+     * @deprecated Use {@link #create(Ellipsoid, boolean)} instead.
      */
+    @Deprecated
     public GeocentricTransform(final Ellipsoid ellipsoid, final boolean hasHeight) {
         this(ellipsoid.getSemiMajorAxis(),
              ellipsoid.getSemiMinorAxis(),
@@ -160,13 +163,23 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
 
     /**
      * Constructs a transform from the specified parameters.
+     * <p>
+     * <strong>WARNING:</strong> Current implementation expects longitude and latitude ordinates
+     * in decimal degrees, but it may be changed to radians in a future version. The static factory
+     * method will preserve the decimal degrees contract.
      *
      * @param semiMajor The semi-major axis length.
      * @param semiMinor The semi-minor axis length.
      * @param units     The axis units.
      * @param hasHeight {@code true} if geographic coordinates include an ellipsoidal
      *        height (i.e. are 3-D), or {@code false} if they are only 2-D.
+     *
+     * @see #create(double, double, Unit, boolean)
+     *
+     * @deprecated Use {@link #create(double, double, Unit, boolean)} instead. This constructor
+     *             Will be given protected access in a future version.
      */
+    @Deprecated
     public GeocentricTransform(final double  semiMajor,
                                final double  semiMinor,
                                final Unit<Length> units,
@@ -182,6 +195,48 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
         ep2 = (a2 - b2) / b2;
         checkArgument("a", a, Double.MAX_VALUE);
         checkArgument("b", b, a);
+    }
+
+    /**
+     * Constructs a transform from the specified ellipsoid. The returned transform expects
+     * (<var>longitude</var>, <var>latitude</var>, <var>height</var>) source coordinates
+     * where the longitudes and latitudes are in <em>decimal degrees</em>, and the height
+     * is optional (depending on the value of the {@code hasHeight} argument).
+     *
+     * @param ellipsoid The ellipsoid.
+     * @param hasHeight {@code true} if geographic coordinates include an ellipsoidal
+     *        height (i.e. are 3-D), or {@code false} if they are only 2-D.
+     * @return The transform from geographic to geocentric coordinates.
+     *
+     * @since 3.15
+     */
+    public static MathTransform create(final Ellipsoid ellipsoid, final boolean hasHeight) {
+        return create(ellipsoid.getSemiMajorAxis(),
+                      ellipsoid.getSemiMinorAxis(),
+                      ellipsoid.getAxisUnit(), hasHeight);
+    }
+
+    /**
+     * Constructs a transform from the specified parameters. The returned transform expects
+     * (<var>longitude</var>, <var>latitude</var>, <var>height</var>) source coordinates
+     * where the longitudes and latitudes are in <em>decimal degrees</em>, and the height
+     * is optional (depending on the value of the {@code hasHeight} argument).
+     *
+     * @param  semiMajor The semi-major axis length.
+     * @param  semiMinor The semi-minor axis length.
+     * @param  units     The axis units.
+     * @param  hasHeight {@code true} if geographic coordinates include an ellipsoidal
+     *         height (i.e. are 3-D), or {@code false} if they are only 2-D.
+     * @return The transform from geographic to geocentric coordinates.
+     *
+     * @since 3.15
+     */
+    public static MathTransform create(final double semiMajor,
+                                       final double semiMinor,
+                                       final Unit<Length> units,
+                                       final boolean hasHeight)
+    {
+        return new GeocentricTransform(semiMajor, semiMinor, units, hasHeight);
     }
 
     /**

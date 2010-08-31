@@ -83,7 +83,7 @@ public final class GeocentricTransformTest extends TransformTestCase {
             5124304.35
         };
         tolerance = 1E-2;
-        transform = new GeocentricTransform(DefaultEllipsoid.WGS84, true);
+        transform = GeocentricTransform.create(DefaultEllipsoid.WGS84, true);
         validate();
         verifyTransform(source, target);
         stress(CoordinateDomain.GEOGRAPHIC, 306954540);
@@ -115,7 +115,7 @@ public final class GeocentricTransformTest extends TransformTestCase {
             28.02                      // Height
         };
         tolerance = 1.5E-2;
-        transform = new GeocentricTransform(DefaultEllipsoid.INTERNATIONAL_1924, true).inverse();
+        transform = GeocentricTransform.create(DefaultEllipsoid.INTERNATIONAL_1924, true).inverse();
         validate();
         verifyTransform(source, target);
         stress(CoordinateDomain.GEOCENTRIC, 831342815);
@@ -241,7 +241,7 @@ public final class GeocentricTransformTest extends TransformTestCase {
      * @since 3.16
      */
     private void testDerivative(final Ellipsoid ellipsoid, final boolean hasHeight) throws TransformException {
-        transform = new GeocentricTransform(ellipsoid, hasHeight);
+        transform = GeocentricTransform.create(ellipsoid, hasHeight);
         DirectPosition point = hasHeight ? new GeneralDirectPosition(-10, 40, 200) : new DirectPosition2D(-10, 40);
         /*
          * Derivative of the direct transform.

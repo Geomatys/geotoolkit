@@ -159,6 +159,10 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
      * Constructs a Molodensky transform from the specified parameters.
      * This constructor is for subclasses only; client code should use
      * the {@link #create create} static method instead.
+     * <p>
+     * <strong>WARNING:</strong> Current implementation expects longitude and latitude ordinates
+     * in decimal degrees, but it may be changed to radians in a future version. The static factory
+     * method will preserve the decimal degrees contract.
      *
      * @param abridged {@code true} for the abridged formula, or {@code false} for the complete one.
      * @param sa       The source semi-major axis length in meters.
@@ -170,6 +174,8 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
      * @param dx       The <var>x</var> translation in meters.
      * @param dy       The <var>y</var> translation in meters.
      * @param dz       The <var>z</var> translation in meters.
+     *
+     * @see #create(boolean, double, double, boolean, double, double, boolean, double, double, double)
      */
     protected MolodenskyTransform(final boolean abridged,
             final double sa, final double sb, final boolean source3D,
@@ -224,7 +230,10 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
     }
 
     /**
-     * Constructs a transform from the specified Molodensky parameters.
+     * Constructs a transform from the specified Molodensky parameters. The returned transform
+     * works on (<var>longitude</var>, <var>latitude</var>, <var>height</var>) coordinates
+     * where the longitudes and latitudes are in <em>decimal degrees</em>, and the height is
+     * optional (depending on the value of the {@code source3D} and {@code target3D} arguments).
      *
      * @param abridged {@code true} for the abridged formula, or {@code false} for the complete one.
      * @param a        The source semi-major axis length in meters.

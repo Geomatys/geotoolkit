@@ -28,6 +28,7 @@ import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Transformation;
+import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.lang.Immutable;
@@ -345,13 +346,15 @@ public class PositionVector7Param extends MathTransformProvider {
         }
         ensureValid(major, semiMajor);
         ensureValid(minor, semiMinor);
-        final GeocentricTransform step;
-        step = new GeocentricTransform(semiMajor, semiMinor, SI.METRE, hasHeight);
+        final MathTransform step;
+        step = GeocentricTransform.create(semiMajor, semiMinor, SI.METRE, hasHeight);
         // Note: dimension may be 0 if not user-provided, which is treated as 2.
         if (dim == SRC_DIM) {
             return ConcatenatedTransform.create(step, transform);
-        } else {
+        } else try {
             return ConcatenatedTransform.create(transform, step.inverse());
+        } catch (NoninvertibleTransformException e) {
+            throw new AssertionError(e); // Should never happen in Geotk implementation.
         }
     }
 
