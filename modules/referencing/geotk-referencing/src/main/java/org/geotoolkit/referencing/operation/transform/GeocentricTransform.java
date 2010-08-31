@@ -37,7 +37,11 @@ import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.datum.Ellipsoid;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.geometry.DirectPosition;
 
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
@@ -45,11 +49,15 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.parameter.ParameterGroup;
+import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.geotoolkit.referencing.operation.matrix.Matrix3;
+import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.provider.EllipsoidToGeocentric;
 import org.geotoolkit.referencing.operation.provider.GeocentricToEllipsoid;
 
 import static java.lang.Math.*;
 import static java.lang.Double.doubleToLongBits;
+import static org.geotoolkit.internal.referencing.MatrixUtilities.invert;
 
 
 /**
@@ -64,9 +72,9 @@ import static java.lang.Double.doubleToLongBits;
  *   <li>{@link org.geotoolkit.referencing.operation.provider.GeocentricToEllipsoid}</li>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author PROJ4 Project for formulas
- * @version 3.00
+ * @version 3.16
  *
  * @since 1.2
  * @module
@@ -130,7 +138,7 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
      * {@code true} if geographic coordinates include an ellipsoidal
      * height (i.e. are 3-D), or {@code false} if they are strictly 2-D.
      */
-    private final boolean hasHeight;
+    final boolean hasHeight;
 
     /**
      * The inverse of this transform. Will be created only when needed.
@@ -297,17 +305,18 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
             }
         }
         while (--numPts >= 0) {
-            final double L = toRadians(srcPts[srcOff++]);      // Longitude
-            final double P = toRadians(srcPts[srcOff++]);      // Latitude
+            final double λ = toRadians(srcPts[srcOff++]);      // Longitude
+            final double φ = toRadians(srcPts[srcOff++]);      // Latitude
             final double h = hasHeight ? srcPts[srcOff++] : 0; // Height above the ellipsoid (m)
 
-            final double cosLat = cos(P);
-            final double sinLat = sin(P);
-            final double rn = a / sqrt(1 - e2 * (sinLat*sinLat));
+            final double cosφ = cos(φ);
+            final double sinφ = sin(φ);
+            final double rn = a / sqrt(1 - e2 * (sinφ*sinφ));
+            final double rcosφ = (rn + h) * cosφ;
 
-            dstPts[dstOff++] = (rn + h) * cosLat * cos(L);  // X: Toward prime meridian
-            dstPts[dstOff++] = (rn + h) * cosLat * sin(L);  // Y: Toward East
-            dstPts[dstOff++] = (rn * (1-e2) + h) * sinLat;  // Z: Toward North
+            dstPts[dstOff++] = rcosφ * cos(λ);            // X: Toward prime meridian
+            dstPts[dstOff++] = rcosφ * sin(λ);            // Y: Toward East
+            dstPts[dstOff++] = (rn * (1-e2) + h) * sinφ;  // Z: Toward North
 
             srcOff += srcInc;
             dstOff += dstInc;
@@ -343,17 +352,18 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
             }
         }
         while (--numPts >= 0) {
-            final double L = toRadians(srcPts[srcOff++]);       // Longitude
-            final double P = toRadians(srcPts[srcOff++]);       // Latitude
+            final double λ = toRadians(srcPts[srcOff++]);       // Longitude
+            final double φ = toRadians(srcPts[srcOff++]);       // Latitude
             final double h = hasHeight ? srcPts[srcOff++] : 0;  // Height above the ellipsoid (m)
 
-            final double cosLat = cos(P);
-            final double sinLat = sin(P);
-            final double rn = a / sqrt(1 - e2 * (sinLat*sinLat));
+            final double cosφ = cos(φ);
+            final double sinφ = sin(φ);
+            final double rn = a / sqrt(1 - e2 * (sinφ*sinφ));
+            final double rcosφ = (rn + h) * cosφ;
 
-            dstPts[dstOff++] = (float) ((rn + h) * cosLat * cos(L)); // X: Toward prime meridian
-            dstPts[dstOff++] = (float) ((rn + h) * cosLat * sin(L)); // Y: Toward East
-            dstPts[dstOff++] = (float) ((rn * (1-e2) + h) * sinLat); // Z: Toward North
+            dstPts[dstOff++] = (float) (rcosφ * cos(λ));           // X: Toward prime meridian
+            dstPts[dstOff++] = (float) (rcosφ * sin(λ));           // Y: Toward East
+            dstPts[dstOff++] = (float) ((rn * (1-e2) + h) * sinφ); // Z: Toward North
 
             srcOff += srcInc;
             dstOff += dstInc;
@@ -367,17 +377,18 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
     @Override
     public void transform(float[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts) {
         while (--numPts >= 0) {
-            final double L = toRadians(srcPts[srcOff++]);       // Longitude
-            final double P = toRadians(srcPts[srcOff++]);       // Latitude
+            final double λ = toRadians(srcPts[srcOff++]);       // Longitude
+            final double φ = toRadians(srcPts[srcOff++]);       // Latitude
             final double h = hasHeight ? srcPts[srcOff++] : 0;  // Height above the ellipsoid (m)
 
-            final double cosLat = cos(P);
-            final double sinLat = sin(P);
-            final double rn = a / sqrt(1 - e2 * (sinLat*sinLat));
+            final double cosφ = cos(φ);
+            final double sinφ = sin(φ);
+            final double rn = a / sqrt(1 - e2 * (sinφ*sinφ));
+            final double rcosφ = (rn + h) * cosφ;
 
-            dstPts[dstOff++] = (rn + h) * cosLat * cos(L); // X: Toward prime meridian
-            dstPts[dstOff++] = (rn + h) * cosLat * sin(L); // Y: Toward East
-            dstPts[dstOff++] = (rn * (1-e2) + h) * sinLat; // Z: Toward North
+            dstPts[dstOff++] = rcosφ * cos(λ);           // X: Toward prime meridian
+            dstPts[dstOff++] = rcosφ * sin(λ);           // Y: Toward East
+            dstPts[dstOff++] = (rn * (1-e2) + h) * sinφ; // Z: Toward North
         }
     }
 
@@ -388,17 +399,18 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
     @Override
     public void transform(double[] srcPts, int srcOff, float[] dstPts, int dstOff, int numPts) {
         while (--numPts >= 0) {
-            final double L = toRadians(srcPts[srcOff++]);       // Longitude
-            final double P = toRadians(srcPts[srcOff++]);       // Latitude
+            final double λ = toRadians(srcPts[srcOff++]);       // Longitude
+            final double φ = toRadians(srcPts[srcOff++]);       // Latitude
             final double h = hasHeight ? srcPts[srcOff++] : 0;  // Height above the ellipsoid (m)
 
-            final double cosLat = cos(P);
-            final double sinLat = sin(P);
-            final double rn = a / sqrt(1 - e2 * (sinLat*sinLat));
+            final double cosφ = cos(φ);
+            final double sinφ = sin(φ);
+            final double rn = a / sqrt(1 - e2 * (sinφ*sinφ));
+            final double rcosφ = (rn + h) * cosφ;
 
-            dstPts[dstOff++] = (float) ((rn + h) * cosLat * cos(L)); // X: Toward prime meridian
-            dstPts[dstOff++] = (float) ((rn + h) * cosLat * sin(L)); // Y: Toward East
-            dstPts[dstOff++] = (float) ((rn * (1-e2) + h) * sinLat); // Z: Toward North
+            dstPts[dstOff++] = (float) (rcosφ * cos(λ));           // X: Toward prime meridian
+            dstPts[dstOff++] = (float) (rcosφ * sin(λ));           // Y: Toward East
+            dstPts[dstOff++] = (float) ((rn * (1-e2) + h) * sinφ); // Z: Toward North
         }
     }
 
@@ -424,7 +436,7 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
      */
     final void inverseTransform(final float[] srcPts1, final double[] srcPts2, int srcOff,
                                 final float[] dstPts1, final double[] dstPts2, int dstOff,
-                                int numPts, final boolean descending)
+                                int numPts, final boolean hasHeight, final boolean descending)
     {
         boolean computeHeight = hasHeight;
         assert (computeHeight=true) == true; // Force computeHeight to true if assertions are enabled.
@@ -491,9 +503,8 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
                 }
                 // If assertion are enabled, then transform the
                 // result and compare it with the input array.
-                double distance;
-                assert MAX_ERROR > (distance = checkTransform(new double[]
-                        {x,y,z, longitude, latitude, height})) : distance;
+                final double error;
+                assert MAX_ERROR > (error = checkTransform(x,y,z, longitude, latitude, height)) : error;
             }
             if (descending) {
                 srcOff -= 6;
@@ -506,12 +517,65 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
      * Transform the last half if the specified array and returns the distance
      * with the first half. Array {@code points} must have a length of 6.
      */
-    private double checkTransform(final double[] points) {
+    private double checkTransform(final double... points) {
         transform(points, 3, points, 3, 1, true);
-        final double dx = points[0]-points[3];
-        final double dy = points[1]-points[4];
-        final double dz = points[2]-points[5];
+        final double dx = points[0] - points[3];
+        final double dy = points[1] - points[4];
+        final double dz = points[2] - points[5];
         return sqrt(dx*dx + dy*dy + dz*dz);
+    }
+
+    /**
+     * Gets the derivative of this transform at a point.
+     *
+     * @param  point The coordinate point where to evaluate the derivative.
+     * @return The derivative at the specified point as a 3&times;2 or 3&times;3 matrix.
+     *
+     * @since 3.16
+     */
+    @Override
+    public Matrix derivative(final DirectPosition point) {
+        return derivative(point, hasHeight);
+    }
+
+    /**
+     * Implementation of {@link #derivative(DirectPosition)} with the possibility
+     * to override the value of the {@link #hasHeight} by the given boolean value.
+     */
+    final Matrix derivative(final DirectPosition point, final boolean hasHeight) {
+        final int dimSource = hasHeight ? 3 : 2;
+        final int dimPoint = point.getDimension();
+        if (dimPoint != dimSource) {
+            throw new MismatchedDimensionException(constructMessage("point", dimPoint, dimSource));
+        }
+        final double λ = toRadians(point.getOrdinate(0));      // Longitude
+        final double φ = toRadians(point.getOrdinate(1));      // Latitude
+        final double h = hasHeight ? point.getOrdinate(2) : 0; // Height above the ellipsoid (m)
+        final double cosλ = cos(λ);
+        final double sinλ = sin(λ);
+        final double cosφ = cos(φ);
+        final double sinφ = sin(φ);
+        final double ads  = 1 - e2 * (sinφ*sinφ);
+        final double rn   = a / sqrt(ads);
+        /*
+         * Note: we multiply the radius by PI/180 despite (a + h) being a linear measure,
+         * because we need that multiplication factor for all qualtities derivated by λ or
+         * φ, since those quantities were converted from degrees to radians by this method.
+         */
+        final double sdλ = toRadians(rn + h);
+        final double sdφ = toRadians((1-e2) * (rn/ads) + h);
+        final double dXλ = -sdλ * (cosφ * sinλ);
+        final double dXφ = -sdφ * (sinφ * cosλ);
+        final double dYλ =  sdλ * (cosφ * cosλ);
+        final double dYφ = -sdφ * (sinφ * sinλ);
+        final double dZφ =  sdφ * cosφ;
+        if (hasHeight) {
+            return new Matrix3(dXλ, dXφ, cosφ*cosλ,
+                               dYλ, dYφ, cosφ*sinλ,
+                                 0, dZφ, sinφ);
+        } else {
+            return new GeneralMatrix(3, 2, new double[] {dXλ, dXφ, dYλ, dYφ, 0, dZφ});
+        }
     }
 
     /**
@@ -572,8 +636,8 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
      * parameters. The method used here is derived from "<cite>An Improved Algorithm
      * for Geocentric to Geodetic Coordinate Conversion</cite>", by Ralph Toms, Feb 1996.
      *
-     * @author Martin Desruisseaux (IRD)
-     * @version 3.00
+     * @author Martin Desruisseaux (IRD, Geomatys)
+     * @version 3.16
      *
      * @since 2.0
      * @module
@@ -616,7 +680,7 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
         protected void transform(final double[] srcPts, final int srcOff,
                                  final double[] dstPts, final int dstOff)
         {
-            inverseTransform(null, srcPts, srcOff, null, dstPts, dstOff, 1, false);
+            inverseTransform(null, srcPts, srcOff, null, dstPts, dstOff, 1, hasHeight, false);
         }
 
         /**
@@ -643,7 +707,7 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
                     }
                 }
             }
-            inverseTransform(null, srcPts, srcOff, null, dstPts, dstOff, numPts, descending);
+            inverseTransform(null, srcPts, srcOff, null, dstPts, dstOff, numPts, hasHeight, descending);
         }
 
         /**
@@ -670,7 +734,7 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
                     }
                 }
             }
-            inverseTransform(srcPts, null, srcOff, dstPts, null, dstOff, numPts, descending);
+            inverseTransform(srcPts, null, srcOff, dstPts, null, dstOff, numPts, hasHeight, descending);
         }
 
         /**
@@ -678,7 +742,7 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
          */
         @Override
         public void transform(float [] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts) {
-            inverseTransform(srcPts, null, srcOff, null, dstPts, dstOff, numPts, false);
+            inverseTransform(srcPts, null, srcOff, null, dstPts, dstOff, numPts, hasHeight, false);
         }
 
         /**
@@ -686,7 +750,35 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
          */
         @Override
         public void transform(double[] srcPts, int srcOff, float [] dstPts, int dstOff, int numPts) {
-            inverseTransform(null, srcPts, srcOff, dstPts, null, dstOff, numPts, false);
+            inverseTransform(null, srcPts, srcOff, dstPts, null, dstOff, numPts, hasHeight, false);
+        }
+
+        /**
+         * Gets the derivative of this transform at a point. If there is no height, then this
+         * method drops the last row, which is the result of ellipsoidal height computation.
+         * This is consistent with what the {@code transform} method does.
+         *
+         * @since 3.16
+         */
+        @Override
+        public Matrix derivative(DirectPosition point) throws TransformException {
+            if (hasHeight) {
+                return super.derivative(point);
+            }
+            final double[] ordinates = point.getCoordinate();
+            if (ordinates.length != 3) {
+                throw new MismatchedDimensionException(constructMessage("point", ordinates.length, 3));
+            }
+            inverseTransform(null, ordinates, 0, null, ordinates, 0, 1, true, false);
+            point = new GeneralDirectPosition(ordinates);
+            Matrix m = invert(GeocentricTransform.this.derivative(point, true));
+            assert m.getNumCol() == 3 && m.getNumRow() == 3;
+            final double[] elements = new double[6];
+            for (int i=0; i<elements.length; i++) {
+                elements[i] = m.getElement(i / 3, i % 3);
+            }
+            m = new GeneralMatrix(2, 3, elements);
+            return m;
         }
 
         /**

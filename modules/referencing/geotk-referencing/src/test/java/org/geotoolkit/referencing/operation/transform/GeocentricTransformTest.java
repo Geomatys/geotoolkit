@@ -21,10 +21,13 @@ import java.util.Random;
 import javax.vecmath.Point3d;
 
 import org.opengis.util.FactoryException;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.TransformException;
 
+import org.geotoolkit.geometry.DirectPosition2D;
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.crs.DefaultGeocentricCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.datum.BursaWolfParameters;
@@ -32,6 +35,7 @@ import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 
 import org.geotoolkit.test.Depend;
 import org.junit.*;
+import org.opengis.referencing.datum.Ellipsoid;
 
 
 /**
@@ -43,8 +47,8 @@ import org.junit.*;
  *   <li>{@link DefaultEllipsoid}</li>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.16
  *
  * @since 2.1
  */
@@ -224,5 +228,60 @@ public final class GeocentricTransformTest extends TransformTestCase {
                 // Orthodromic distance computation didn't converge. Ignore...
             }
         }
+    }
+
+    /**
+     * Executes the derivative test using the given ellipsoid.
+     *
+     * @param  ellipsoid The ellipsoid to use for the test.
+     * @param  hasHeight {@code true} if geographic coordinates include an ellipsoidal
+     *         height (i.e. are 3-D), or {@code false} if they are only 2-D.
+     * @throws TransformException Should never happen.
+     *
+     * @since 3.16
+     */
+    private void testDerivative(final Ellipsoid ellipsoid, final boolean hasHeight) throws TransformException {
+        transform = new GeocentricTransform(ellipsoid, hasHeight);
+        DirectPosition point = hasHeight ? new GeneralDirectPosition(-10, 40, 200) : new DirectPosition2D(-10, 40);
+        /*
+         * Derivative of the direct transform.
+         */
+        tolerance = 1E-2;
+        double delta = Math.toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+        checkDerivative(point, delta);
+        /*
+         * Derivative of the inverse transform.
+         */
+        point = transform.transform(point, null);
+        transform = transform.inverse();
+        tolerance = 1E-8;
+        delta = 1; // Approximatively one metre.
+        checkDerivative(point, delta);
+    }
+
+    /**
+     * Tests the {@link GeocentricTransform#derivative} method on a sphere.
+     *
+     * @throws TransformException Should never happen.
+     *
+     * @since 3.16
+     */
+    @Test
+    public void testDerivativeSphere() throws TransformException {
+        testDerivative(DefaultEllipsoid.SPHERE, true);
+        testDerivative(DefaultEllipsoid.SPHERE, false);
+    }
+
+    /**
+     * Tests the {@link GeocentricTransform#derivative} method on an ellipsoid.
+     *
+     * @throws TransformException Should never happen.
+     *
+     * @since 3.16
+     */
+    @Test
+    public void testDerivative() throws TransformException {
+        testDerivative(DefaultEllipsoid.WGS84, true);
+        testDerivative(DefaultEllipsoid.WGS84, false);
     }
 }
