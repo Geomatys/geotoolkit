@@ -25,12 +25,18 @@ import static java.util.Collections.*;
  */
 public class DefaultCountry implements Country {
 
-    private final List<GenericTypedGrPostal> addressLines;
-    private final List<CountryNameCode> countryNameCodes;
-    private final List<GenericTypedGrPostal> countryNames;
+    private List<GenericTypedGrPostal> addressLines;
+    private List<CountryNameCode> countryNameCodes;
+    private List<GenericTypedGrPostal> countryNames;
     private AdministrativeArea administrativeArea;
     private Locality locality;
     private Thoroughfare thoroughfare;
+
+    public DefaultCountry(){
+        this.addressLines = EMPTY_LIST;
+        this.countryNameCodes = EMPTY_LIST;
+        this.countryNames = EMPTY_LIST;
+    }
 
     /**
      *
@@ -97,4 +103,58 @@ public class DefaultCountry implements Country {
      */
     @Override
     public Thoroughfare getThoroughfare() {return this.thoroughfare;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAddressLines(List<GenericTypedGrPostal> addressLines) {
+        this.addressLines = addressLines;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setCountryNamesCodes(List<CountryNameCode> countryNameCodes) {
+        this.countryNameCodes = countryNameCodes;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setCountryNames(List<GenericTypedGrPostal> countryNames) {
+        this.countryNames = countryNames;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAdministrativeArea(AdministrativeArea administrativeArea) {
+        this.administrativeArea = administrativeArea;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLocality(Locality locality) {
+        this.locality = locality;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setThoroughfare(Thoroughfare thoroughfare) {
+        this.thoroughfare = thoroughfare;
+    }
 }

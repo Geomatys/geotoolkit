@@ -51,20 +51,38 @@ public interface Country {
      *
      * @return
      */
-    public List<GenericTypedGrPostal> getAddressLines();
+    List<GenericTypedGrPostal> getAddressLines();
+
+    /**
+     *
+     * @param addressLines
+     */
+    void setAddressLines(List<GenericTypedGrPostal> addressLines);
 
     /**
      *
      * @return
      */
-    public List<CountryNameCode> getCountryNameCodes();
+    List<CountryNameCode> getCountryNameCodes();
+
+    /**
+     * 
+     * @param countryNameCodes
+     */
+    void setCountryNamesCodes(List<CountryNameCode> countryNameCodes);
 
     /**
      * <p>Specification of the name of a country.</p>
      *
      * @return
      */
-    public List<GenericTypedGrPostal> getCountryNames();
+    List<GenericTypedGrPostal> getCountryNames();
+
+    /**
+     * 
+     * @param countryNames
+     */
+    void setCountryNames(List<GenericTypedGrPostal> countryNames);
 
     /*
      * === CHOICE ===
@@ -74,20 +92,37 @@ public interface Country {
      *
      * @return
      */
-    public AdministrativeArea getAdministrativeArea();
+    AdministrativeArea getAdministrativeArea();
+
+    /**
+     * 
+     * @param administrativeArea
+     */
+    void setAdministrativeArea(AdministrativeArea administrativeArea);
 
     /**
      *
      * @return
      */
-    public Locality getLocality();
+    Locality getLocality();
+
+    /**
+     * 
+     * @param locality
+     */
+    void setLocality(Locality locality);
 
     /**
      * 
      * @return
      */
-    public Thoroughfare getThoroughfare();
+    Thoroughfare getThoroughfare();
 
+    /**
+     * 
+     * @param thoroughfare
+     */
+    void setThoroughfare(Thoroughfare thoroughfare);
     /*
      * === END OF CHOICE ===
      */

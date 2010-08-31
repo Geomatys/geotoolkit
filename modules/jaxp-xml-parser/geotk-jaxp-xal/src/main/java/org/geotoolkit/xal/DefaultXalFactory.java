@@ -148,6 +148,14 @@ import org.geotoolkit.xal.model.XalException;
  */
 public class DefaultXalFactory implements XalFactory {
 
+    private static final XalFactory XALF = new DefaultXalFactory();
+
+    private DefaultXalFactory(){}
+    
+    public static XalFactory getInstance(){
+        return XALF;
+    }
+
     /**
      *
      * @{@inheritDoc }
@@ -174,6 +182,15 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
+    public AddressDetails createAddressDetails(){
+        return new DefaultAddressDetails();
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
     public AddressLines createAddressLines(List<GenericTypedGrPostal> addressLines) {
         return new DefaultAddressLines(addressLines);
     }
@@ -183,8 +200,26 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
+    public AddressLines createAddressLines() {
+        return new DefaultAddressLines();
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
     public GenericTypedGrPostal createGenericTypedGrPostal(String type, GrPostal grPostal, String Content) {
         return new DefaultGenericTypedGrPostal(type, grPostal, Content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public GenericTypedGrPostal createGenericTypedGrPostal() {
+        return new DefaultGenericTypedGrPostal();
     }
 
     /**
@@ -217,6 +252,15 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
+    public PostalServiceElements createPostalServiceElements(){
+        return new DefaultPostalServiceElements();
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
     public SortingCode createSortingCode(String type, GrPostal grPostal) {
         return new DefaultSortingCode(type, grPostal);
     }
@@ -236,9 +280,27 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
+    public AddressIdentifier createAddressIdentifier() {
+        return new DefaultAddressIdentifier();
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
     public Country createCountry(List<GenericTypedGrPostal> addressLines, List<CountryNameCode> countryNameCodes,
             List<GenericTypedGrPostal> countryNames, Object localisation) throws XalException {
         return new DefaultCountry(addressLines, countryNameCodes, countryNames, localisation);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public Country createCountry(){
+        return new DefaultCountry();
     }
 
     /**

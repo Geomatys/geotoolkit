@@ -44,6 +44,12 @@ public interface AddressLines {
      * 
      * @return
      */
-    public List<GenericTypedGrPostal> getAddressLines();
+    List<GenericTypedGrPostal> getAddressLines();
+
+    /**
+     * 
+     * @param addressLines
+     */
+    void setAddressLines(List<GenericTypedGrPostal> addressLines);
 
 }

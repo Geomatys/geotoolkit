@@ -64,73 +64,139 @@ public interface PostalServiceElements {
      *
      * @return
      */
-    public List<AddressIdentifier> getAddressIdentifiers();
+    List<AddressIdentifier> getAddressIdentifiers();
 
     /**
      * <p>Directly affects postal service distribution.</p>
      *
      * @return
      */
-    public GenericTypedGrPostal getEndorsementLineCode();
+    GenericTypedGrPostal getEndorsementLineCode();
 
     /**
      * <p>Required for some postal services</p>
      *
      * @return
      */
-    public GenericTypedGrPostal getKeyLineCode();
+    GenericTypedGrPostal getKeyLineCode();
 
     /**
      * <p>Required for some postal services.</p>
      *
      * @return
      */
-    public GenericTypedGrPostal getBarcode();
+    GenericTypedGrPostal getBarcode();
 
     /**
      *
      * @return
      */
-    public SortingCode getSortingCode();
+    SortingCode getSortingCode();
 
     /**
      * <p>Latitude of delivery address.</p>
      *
      * @return
      */
-    public GenericTypedGrPostal getAddressLatitude();
+    GenericTypedGrPostal getAddressLatitude();
 
     /**
      * <p>Latitude direction of delivery address;N = North and S = South.</p>
      *
      * @return
      */
-    public GenericTypedGrPostal getAddressLatitudeDirection();
+    GenericTypedGrPostal getAddressLatitudeDirection();
 
     /**
      * <p>Longtitude of delivery address.</p>
      *
      * @return
      */
-    public GenericTypedGrPostal getAddressLongitude();
+    GenericTypedGrPostal getAddressLongitude();
 
     /**
      * <p>Longtitude direction of delivery address;N=North and S=South.</p>
      *
      * @return
      */
-    public GenericTypedGrPostal getAddressLongitudeDirection();
+    GenericTypedGrPostal getAddressLongitudeDirection();
 
     /**
      *
      * @return
      */
-    public List<GenericTypedGrPostal> getSupplementaryPostalServiceData();
+    List<GenericTypedGrPostal> getSupplementaryPostalServiceData();
 
     /**
      * <p>Specific to postal service.</p>
      *
      * @return
      */
-    public String getType();
+    String getType();
+
+    /**
+     *
+     * @param addressIdentifiers
+     */
+    void setAddressIdentifiers(List<AddressIdentifier> addressIdentifiers);
+
+    /**
+     *
+     * @param endorsementLineCode
+     */
+    void setEndorsementLineCode(GenericTypedGrPostal endorsementLineCode);
+
+    /**
+     *
+     * @param keyLineCode
+     */
+    void setKeyLineCode(GenericTypedGrPostal keyLineCode);
+
+    /**
+     *
+     * @param barcode
+     */
+    void setBarcode(GenericTypedGrPostal barcode);
+
+    /**
+     *
+     * @param sortingCode
+     */
+    void setSortingCode(SortingCode sortingCode);
+
+    /**
+     *
+     * @param addressLatitude
+     */
+    void setAddressLatitude(GenericTypedGrPostal addressLatitude);
+
+    /**
+     *
+     * @param addressLatitudeDirection
+     */
+    void setAddressLatitudeDirection(GenericTypedGrPostal addressLatitudeDirection);
+
+    /**
+     *
+     * @param addressLongitude
+     */
+    void setAddressLongitude(GenericTypedGrPostal addressLongitude);
+
+    /**
+     *
+     * @param addressLongitudeDirection
+     */
+    void setAddressLongitudeDirection(GenericTypedGrPostal addressLongitudeDirection);
+
+    /**
+     *
+     * @param supplementaryPostalServiceData
+     */
+    void setSupplementaryPostalServiceData(List<GenericTypedGrPostal> supplementaryPostalServiceData);
+
+    /**
+     *
+     * @param type
+     */
+    void setType(String type);
 }

@@ -20,15 +20,12 @@ package org.geotoolkit.xal.model;
  *
  * @author Samuel Andrés
  */
-public class DefaultSubPremiseNumber implements SubPremiseNumber {
+public class DefaultSubPremiseNumber extends DefaultGenericTypedGrPostal implements SubPremiseNumber {
 
     private final String indicator;
     private final AfterBeforeEnum indicatorOccurrence;
     private final AfterBeforeEnum numberTypeOccurrence;
     private final String premiseNumberSeparator;
-    private final String type;
-    private final GrPostal grPostal;
-    private final String content;
 
     /**
      *
@@ -43,13 +40,11 @@ public class DefaultSubPremiseNumber implements SubPremiseNumber {
     public DefaultSubPremiseNumber(String indicator, AfterBeforeEnum indicatorOccurrence,
             AfterBeforeEnum numberTypeOccurrence, String premiseNumberSeparator,
             String type, GrPostal grPostal, String content){
+        super(type, grPostal, content);
         this.indicator = indicator;
         this.indicatorOccurrence = indicatorOccurrence;
         this.numberTypeOccurrence = numberTypeOccurrence;
         this.premiseNumberSeparator = premiseNumberSeparator;
-        this.type = type;
-        this.grPostal = grPostal;
-        this.content = content;
     }
 
     /**
@@ -79,25 +74,4 @@ public class DefaultSubPremiseNumber implements SubPremiseNumber {
      */
     @Override
     public String getPremiseNumberSeparator() {return this.premiseNumberSeparator;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public String getContent() {return this.content;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public String getType() {return this.type;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public GrPostal getGrPostal() {return this.grPostal;}
 }

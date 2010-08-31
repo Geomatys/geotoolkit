@@ -123,15 +123,13 @@ import static org.geotoolkit.data.kml.xml.KmlConstants.*;
  */
 public class KmlWriter extends StaxStreamWriter {
 
-    private String URI_KML;
-    private final XalWriter xalWriter = new XalWriter();
-    private final AtomWriter atomWriter = new AtomWriter();
+    private static String URI_KML;
+    private static final XalWriter XAL_WRITER = new XalWriter();
+    private static final AtomWriter ATOM_WRITER = new AtomWriter();
     private final List<StaxStreamWriter> extensionWriters = new ArrayList<StaxStreamWriter>();
     private final List<StaxStreamWriter> dataWriters = new ArrayList<StaxStreamWriter>();
 
-    public KmlWriter(){
-        super();
-    }
+    public KmlWriter(){}
 
     /**
      * <p>Set output. This method doesn't indicate kml uri version whose detection
@@ -145,8 +143,8 @@ public class KmlWriter extends StaxStreamWriter {
     @Override
     public void setOutput(Object output) throws XMLStreamException, IOException{
         super.setOutput(output);
-        this.xalWriter.setOutput(writer);
-        this.atomWriter.setOutput(writer);
+        XAL_WRITER.setOutput(writer);
+        ATOM_WRITER.setOutput(writer);
     }
 
     /**
@@ -163,7 +161,7 @@ public class KmlWriter extends StaxStreamWriter {
             throws XMLStreamException, IOException, KmlException{
         this.setOutput(output);
         if (URI_KML_2_2.equals(KmlVersionUri) || URI_KML_2_1.equals(KmlVersionUri))
-            this.URI_KML = KmlVersionUri;
+            URI_KML = KmlVersionUri;
         else
             throw new KmlException("Bad Kml version Uri. This reader supports 2.1 and 2.2 versions.");
     }
@@ -866,11 +864,11 @@ public class KmlWriter extends StaxStreamWriter {
     }
 
     private void writeAtomPersonConstruct(AtomPersonConstruct person) throws XMLStreamException{
-        this.atomWriter.writeAuthor(person);
+        ATOM_WRITER.writeAuthor(person);
     }
 
     private void writeAtomLink(AtomLink link) throws XMLStreamException{
-        this.atomWriter.writeLink(link);
+        ATOM_WRITER.writeLink(link);
     }
 
     /**
@@ -878,13 +876,13 @@ public class KmlWriter extends StaxStreamWriter {
      * @param details
      */
     private void writeXalAddresDetails(AddressDetails details) throws XMLStreamException{
-        this.xalWriter.setWriter(writer);
+        XAL_WRITER.setWriter(writer);
         try {
-            this.xalWriter.writeAddressDetails(details);
+            XAL_WRITER.writeAddressDetails(details);
         } catch (XalException ex) {
             Logger.getLogger(KmlWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
-        this.writer = this.xalWriter.getWriter();
+        this.writer = XAL_WRITER.getWriter();
     }
 
     /**
@@ -3491,9 +3489,9 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws KmlException
      */
     private void checkVersion(String version) throws KmlException{
-            if(this.URI_KML.equals(version))
+            if(URI_KML.equals(version))
                 return;
-        throw new KmlException("Kml writer error : Element not allowed by "+this.URI_KML+" namespace.");
+        throw new KmlException("Kml writer error : Element not allowed by "+URI_KML+" namespace.");
     }
 
     /**
@@ -3502,7 +3500,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @return
      */
     private boolean checkVersionSimple(String version){
-        return this.URI_KML.equals(version);
+        return URI_KML.equals(version);
     }
 
     /*

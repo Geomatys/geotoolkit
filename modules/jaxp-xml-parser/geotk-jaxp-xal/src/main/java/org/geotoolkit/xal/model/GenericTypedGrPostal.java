@@ -27,17 +27,36 @@ public interface GenericTypedGrPostal {
      * 
      * @return
      */
-    public String getContent();
+    String getContent();
 
     /**
      *
      * @return
      */
-    public String getType();
+    String getType();
 
     /**
      *
      * @return
      */
-    public GrPostal getGrPostal();
+    GrPostal getGrPostal();
+
+    /**
+     *
+     * @param content
+     */
+    void setContent(String content);
+
+    /**
+     *
+     * @param type
+     */
+    void setType(String type);
+
+    /**
+     * 
+     * @param grPostal
+     */
+    void setGrPostal(GrPostal grPostal);
+
 }

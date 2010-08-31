@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xAL xmlns="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0" Version="v">
+<AddressDetails>
+<Country>
+<AddressLine Type="type1" Code="code1">Première ligne</AddressLine>
+<AddressLine Type= "type2" Code="code2">Seconde ligne</AddressLine>
+<CountryNameCode Scheme="scheme1" Code="code1">countryNameCode1</CountryNameCode>
+<CountryNameCode Scheme="scheme2" Code="code2">countryNameCode2</CountryNameCode>
+<CountryName Type="typeCN" Code="codeCN">Country Name</CountryName>
+<AdministrativeArea>
+<AddressLine>Troisième ligne</AddressLine>
+<AdministrativeAreaName Type="typeAAN" Code="codeAAN">Administrative Area Name</AdministrativeAreaName>
+</AdministrativeArea>
+</Country>
+</AddressDetails>
+</xAL>

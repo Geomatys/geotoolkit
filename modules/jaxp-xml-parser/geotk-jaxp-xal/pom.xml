@@ -13,23 +13,25 @@
     </parent>
 
 
-
-    <!--
-    Module description.
-  -->
+  <!-- =========================================================== -->
+  <!--     Module Description                                      -->
+  <!-- =========================================================== -->
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-jaxp-xal</artifactId>
     <packaging>jar</packaging>
     <name>JAXP Parser XAL</name>
-    <description>
-        XAL stax readers and writers.
-    </description>
+    <description>eXtensible Address Language StAX readers and writers.</description>
+    <licenses>
+        <license>
+            <name>Lesser General Public License (LGPL)</name>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
 
-
-    <!--
-    Developers and contributors.
-  -->
+  <!-- =========================================================== -->
+  <!--     Developers and Contributors                             -->
+  <!-- =========================================================== -->
     <developers>
         <developer>
             <name>Samuel Andrés</name>
@@ -47,17 +49,37 @@
 
 
 
-    <!--
-    Required dependencies for building. These dependencies will be included
-    in the JARs' list that maven will put in the directory "target/binaries".
-  -->
+    <!-- =========================================================== -->
+    <!--     Dependencies                                            -->
+    <!-- =========================================================== -->
     <dependencies>
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-jaxp-core</artifactId>
             <version>${project.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-jaxp-core</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+            <classifier>tests</classifier>
+        </dependency>
     </dependencies>
 
+  <!-- =========================================================== -->
+  <!--     build     -->
+  <!-- =========================================================== -->
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.0.2</version>
+                <configuration>
+                    <source>1.6</source>
+                    <target>1.6</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>

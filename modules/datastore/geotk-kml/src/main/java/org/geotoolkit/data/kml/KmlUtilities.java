@@ -102,6 +102,17 @@ public class KmlUtilities {
      * @return
      */
     public static String toKmlColor(final Color color) {
+//        if(true){
+//            int argb = color.getRGB();
+//            StringBuffer sb = new StringBuffer(Integer.toHexString(argb));
+//            sb = sb.reverse();
+//            while(sb.length()<8){
+//                sb.append('0');
+//            }
+//            sb.insert(0, sb, 7, 8);
+//            sb.setLength(8);
+//            return sb.toString();
+//        }
         String r = Integer.toHexString(color.getRed());
         String g = Integer.toHexString(color.getGreen());
         String b = Integer.toHexString(color.getBlue());
@@ -125,6 +136,7 @@ public class KmlUtilities {
         sb.append(r);
         return sb.toString();
     }
+
 
     /**
      * <p>This method check value for Anglepos180 element.</p>

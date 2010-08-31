@@ -20,12 +20,9 @@ package org.geotoolkit.xal.model;
  *
  * @author Samuel Andrés
  */
-public class DefaultThoroughfareNumberPrefix implements ThoroughfareNumberPrefix {
+public class DefaultThoroughfareNumberPrefix extends DefaultGenericTypedGrPostal implements ThoroughfareNumberPrefix {
 
     private final String numberPrefixSeparator;
-    private final String type;
-    private final GrPostal grPostal;
-    private final String content;
 
     /**
      *
@@ -36,10 +33,8 @@ public class DefaultThoroughfareNumberPrefix implements ThoroughfareNumberPrefix
      */
     public DefaultThoroughfareNumberPrefix(String numberPrefixSeparator,
         String type, GrPostal grPostal, String content){
+        super(type, grPostal, content);
         this.numberPrefixSeparator = numberPrefixSeparator;
-        this.type = type;
-        this.grPostal = grPostal;
-        this.content = content;
     }
 
     /**
@@ -49,25 +44,5 @@ public class DefaultThoroughfareNumberPrefix implements ThoroughfareNumberPrefix
     @Override
     public String getNumberPrefixSeparator() {return this.numberPrefixSeparator;}
 
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public String getContent() {return this.content;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public String getType() {return this.type;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public GrPostal getGrPostal() {return this.grPostal;}
 
 }

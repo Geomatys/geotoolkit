@@ -20,12 +20,9 @@ package org.geotoolkit.xal.model;
  *
  * @author Samuel Andrés
  */
-public class DefaultBuildingName implements BuildingName {
+public class DefaultBuildingName extends DefaultGenericTypedGrPostal implements BuildingName {
 
-    private final String type;
     private final AfterBeforeEnum typeOccurrence;
-    private final GrPostal grPostal;
-    private final String content;
 
     /**
      *
@@ -36,10 +33,8 @@ public class DefaultBuildingName implements BuildingName {
      */
     public DefaultBuildingName(String type, AfterBeforeEnum typeOccurrence,
             GrPostal grPostal, String content){
-        this.type = type;
+        super(type, grPostal, content);
         this.typeOccurrence = typeOccurrence;
-        this.grPostal = grPostal;
-        this.content = content;
     }
 
     /**
@@ -48,26 +43,5 @@ public class DefaultBuildingName implements BuildingName {
      */
     @Override
     public AfterBeforeEnum getTypeOccurrence() {return this.typeOccurrence;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public String getContent() {return this.content;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public String getType() {return this.type;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public GrPostal getGrPostal() {return this.grPostal;}
 
 }

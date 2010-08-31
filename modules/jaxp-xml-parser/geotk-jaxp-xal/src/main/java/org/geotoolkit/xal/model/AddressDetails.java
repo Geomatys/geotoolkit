@@ -68,7 +68,13 @@ public interface AddressDetails {
      *
      * @return
      */
-    public PostalServiceElements getPostalServiceElements();
+    PostalServiceElements getPostalServiceElements();
+
+    /**
+     *
+     * @param postalServiceElements
+     */
+    void setPostalServiceElements(PostalServiceElements postalServiceElements);
 
     /*
      * === CHOICE: ===
@@ -80,37 +86,73 @@ public interface AddressDetails {
      *
      * @return
      */
-    public GenericTypedGrPostal getAddress();
+    GenericTypedGrPostal getAddress();
+
+    /**
+     * 
+     * @param address
+     */
+    void setAddress(GenericTypedGrPostal address);
 
     /**
      *
      * @return
      */
-    public AddressLines getAddressLines();
+    AddressLines getAddressLines();
+
+    /**
+     *
+     * @param addressLines
+     */
+    void setAddressLines(AddressLines addressLines);
 
     /**
      *
      * @return
      */
-    public Country getCountry();
+    Country getCountry();
+
+    /**
+     * 
+     * @param country
+     */
+    void setCountry(Country country);
 
     /**
      *
      * @return
      */
-    public AdministrativeArea getAdministrativeArea();
+    AdministrativeArea getAdministrativeArea();
+
+    /**
+     * 
+     * @param administrativeArea
+     */
+    void setAdministrativeArea(AdministrativeArea administrativeArea);
 
     /**
      *
      * @return
      */
-    public Locality getLocality();
+    Locality getLocality();
+
+    /**
+     * 
+     * @param locality
+     */
+    void setLocality(Locality locality);
 
     /**
      *
      * @return
      */
-    public Thoroughfare getThoroughfare();
+    Thoroughfare getThoroughfare();
+
+    /**
+     * 
+     * @param throughfare
+     */
+    void setThoroughfare(Thoroughfare throughfare);
 
     /*
      * === END OF THE CHOICE ===
@@ -123,40 +165,76 @@ public interface AddressDetails {
      * 
      * @return
      */
-    public String getAddressType();
+    String getAddressType();
+
+    /**
+     *
+     * @param addressType
+     */
+    void setAddressType(String addressType);
 
     /**
      * <p>Moved, Living, Investment, Deceased, etc...</p>
      * @return
      */
-    public String getCurrentStatus();
+    String getCurrentStatus();
+
+    /**
+     *
+     * @param currentStatus
+     */
+    void setCurrentStatus(String currentStatus);
 
     /**
      * <p>Start Date of the validity of address</p>
      *
      * @return
      */
-    public String getValidFromDate();
+    String getValidFromDate();
+
+    /**
+     * 
+     * @param validFromDate
+     */
+    void setValidFromDate(String validFromDate);
 
     /**
      * <p>End date of the validity of address</p>
      *
      * @return
      */
-    public String getValidToDate();
+    String getValidToDate();
+
+    /**
+     * 
+     * @param validToDate
+     */
+    void setValidToDate(String validToDate);
 
     /**
      * <p>Communication, Contact, etc.</p>
      * 
      * @return
      */
-    public String getUsage();
+    String getUsage();
+
+    /**
+     * 
+     * @param usage
+     */
+    void setUsage(String usage);
 
     /**
      *
      * @return
      */
-    public GrPostal getGrPostal();
+    GrPostal getGrPostal();
+
+    /**
+     * 
+     * @param grPostal
+     */
+    void setGrPostal(GrPostal grPostal);
 
     /**
      * <p>Key identifier for the element for not reinforced references
@@ -166,6 +244,11 @@ public interface AddressDetails {
      *
      * @return
      */
-    public String getAddressDetailsKey();
+    String getAddressDetailsKey();
     
+    /**
+     * 
+     * @param addressDetailsKey
+     */
+    void setAddressDetailsKey(String addressDetailsKey);
 }

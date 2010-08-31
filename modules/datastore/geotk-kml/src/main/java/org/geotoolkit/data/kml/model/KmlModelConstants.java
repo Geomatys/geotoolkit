@@ -23,17 +23,12 @@ import org.geotoolkit.atom.model.AtomLink;
 import org.geotoolkit.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.kml.xml.KmlConstants;
 import org.geotoolkit.xal.model.AddressDetails;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
-import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.FeatureTypeFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -41,9 +36,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Samuel Andrés
  */
 public class KmlModelConstants {
-
-    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
-            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
+//
+//    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
+//            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
     public static final CoordinateReferenceSystem KML_CRS = DefaultGeographicCRS.WGS84;
     public static final String KML_NAMESPACE = "http://www.opengis.net/kml";
@@ -114,7 +109,7 @@ public class KmlModelConstants {
     static {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-        final FeatureTypeFactory ftf = ftb.getFeatureTypeFactory();
+//        final FeatureTypeFactory ftf = ftb.getFeatureTypeFactory();
 
         //-------------------- GENERIC KML ENTITY ------------------------------
         ATT_ID_ATTRIBUTES = adb.create(

@@ -116,11 +116,23 @@ public interface XalFactory {
             String usage, GrPostal grPostal, String AddressDetailsKey) throws XalException;
 
     /**
+     * 
+     * @return
+     */
+    public AddressDetails createAddressDetails();
+
+    /**
      *
      * @param addressLines
      * @return
      */
     public AddressLines createAddressLines(List<GenericTypedGrPostal> addressLines);
+
+    /**
+     * 
+     * @return
+     */
+    public AddressLines createAddressLines();
 
     /**
      * 
@@ -130,6 +142,12 @@ public interface XalFactory {
      * @return
      */
     public GenericTypedGrPostal createGenericTypedGrPostal(String type, GrPostal grPostal, String Content);
+
+    /**
+     * 
+     * @return
+     */
+    public GenericTypedGrPostal createGenericTypedGrPostal();
 
     /**
      * 
@@ -160,6 +178,12 @@ public interface XalFactory {
 
     /**
      * 
+     * @return
+     */
+    public PostalServiceElements createPostalServiceElements();
+
+    /**
+     * 
      * @param type
      * @param grPostal
      * @return
@@ -178,6 +202,12 @@ public interface XalFactory {
 
     /**
      * 
+     * @return
+     */
+    public AddressIdentifier createAddressIdentifier();
+
+    /**
+     * 
      * @param addressLines
      * @param countryNameCodes
      * @param countryNames
@@ -187,6 +217,12 @@ public interface XalFactory {
      */
     public Country createCountry(List<GenericTypedGrPostal> addressLines,
             List<CountryNameCode> countryNameCodes, List<GenericTypedGrPostal> countryNames, Object localisation) throws XalException;
+
+    /**
+     * 
+     * @return
+     */
+    public Country createCountry();
 
     /**
      * 

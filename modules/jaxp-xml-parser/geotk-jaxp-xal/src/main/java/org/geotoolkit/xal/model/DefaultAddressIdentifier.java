@@ -22,11 +22,13 @@ package org.geotoolkit.xal.model;
  */
 public class DefaultAddressIdentifier implements AddressIdentifier {
 
-    private final String content;
-    private final String identifierType;
-    private final String type;
-    private final GrPostal grPostal;
+    private String content;
+    private String identifierType;
+    private String type;
+    private GrPostal grPostal;
 
+    public DefaultAddressIdentifier(){}
+    
     /**
      *
      * @param content
@@ -68,5 +70,41 @@ public class DefaultAddressIdentifier implements AddressIdentifier {
      */
     @Override
     public GrPostal getGrPostal() {return this.grPostal;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setIdentifierType(String identifierType) {
+        this.identifierType = identifierType;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setGrPostal(GrPostal grPostal) {
+        this.grPostal = grPostal;
+    }
 
 }

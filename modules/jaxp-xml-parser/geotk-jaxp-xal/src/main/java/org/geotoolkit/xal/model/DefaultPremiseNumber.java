@@ -20,15 +20,12 @@ package org.geotoolkit.xal.model;
  *
  * @author Samuel Andrés
  */
-public class DefaultPremiseNumber implements PremiseNumber {
+public class DefaultPremiseNumber extends DefaultGenericTypedGrPostal implements PremiseNumber {
 
     private final SingleRangeEnum numberType;
-    private final String type;
     private final String indicator;
     private final AfterBeforeEnum indicatorOccurrence;
     private final AfterBeforeEnum numberTypeOccurrence;
-    private final GrPostal grPostal;
-    private final String content;
 
     /**
      *
@@ -43,13 +40,11 @@ public class DefaultPremiseNumber implements PremiseNumber {
     public DefaultPremiseNumber(SingleRangeEnum numberType, String type, String indicator,
             AfterBeforeEnum indicatorOccurrence, AfterBeforeEnum numberTypeOccurrence,
             GrPostal grPostal, String content){
+        super(type, grPostal, content);
         this.numberType = numberType;
-        this.type = type;
         this.indicator = indicator;
         this.indicatorOccurrence = indicatorOccurrence;
         this.numberTypeOccurrence = numberTypeOccurrence;
-        this.grPostal = grPostal;
-        this.content = content;
     }
 
     /**
@@ -79,26 +74,5 @@ public class DefaultPremiseNumber implements PremiseNumber {
      */
     @Override
     public AfterBeforeEnum getNumberTypeOccurrence() {return this.numberTypeOccurrence;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public String getContent() {return this.content;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public String getType() {return this.type;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public GrPostal getGrPostal() {return this.grPostal;}
 
 }

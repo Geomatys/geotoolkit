@@ -20,15 +20,12 @@ package org.geotoolkit.xal.model;
  *
  * @author Samuel Andrés
  */
-public class DefaultThoroughfareNumber implements ThoroughfareNumber {
+public class DefaultThoroughfareNumber extends DefaultGenericTypedGrPostal implements ThoroughfareNumber {
 
     private final SingleRangeEnum numberType;
-    private final String type;
     private final String indicator;
     private final AfterBeforeEnum indicatorOccurence;
     private final AfterBeforeTypeNameEnum numberOccurrence;
-    private final GrPostal grPostal;
-    private final String content;
 
     /**
      *
@@ -42,13 +39,11 @@ public class DefaultThoroughfareNumber implements ThoroughfareNumber {
     public DefaultThoroughfareNumber(SingleRangeEnum numberType,
             String type, String indicator, AfterBeforeEnum indicatorOccurence,
             AfterBeforeTypeNameEnum numberOccurrence, GrPostal grPostal, String content){
+        super(type, grPostal, content);
         this.numberType = numberType;
-        this.type = type;
         this.indicator = indicator;
         this.indicatorOccurence = indicatorOccurence;
         this.numberOccurrence = numberOccurrence;
-        this.grPostal = grPostal;
-        this.content = content;
     }
 
     /**
@@ -56,21 +51,7 @@ public class DefaultThoroughfareNumber implements ThoroughfareNumber {
      * @{@inheritDoc }
      */
     @Override
-    public String getContent() {return this.content;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
     public SingleRangeEnum getNumberType() {return this.numberType;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public String getType() {return this.type;}
 
     /**
      *
@@ -92,12 +73,5 @@ public class DefaultThoroughfareNumber implements ThoroughfareNumber {
      */
     @Override
     public AfterBeforeTypeNameEnum getNumberOccurence() {return this.numberOccurrence;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public GrPostal getGrPostal() {return this.grPostal;}
 
 }

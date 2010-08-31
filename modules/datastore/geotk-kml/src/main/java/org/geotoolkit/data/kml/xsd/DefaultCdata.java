@@ -35,6 +35,7 @@ public class DefaultCdata implements Cdata{
 
     @Override
     public boolean equals(Object object){
+        super.equals(object);
         if (object instanceof Cdata)
             return CDATA.equals(((Cdata) object).toString());
         else

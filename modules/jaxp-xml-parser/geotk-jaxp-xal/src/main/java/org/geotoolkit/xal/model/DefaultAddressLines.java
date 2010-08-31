@@ -25,7 +25,11 @@ import static java.util.Collections.*;
  */
 public class DefaultAddressLines implements AddressLines {
 
-    private final List<GenericTypedGrPostal> addressLines;
+    private List<GenericTypedGrPostal> addressLines;
+
+    public DefaultAddressLines(){
+        this.addressLines = EMPTY_LIST;
+    }
     
     public DefaultAddressLines(List<GenericTypedGrPostal> addressLines){
         this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
@@ -37,5 +41,14 @@ public class DefaultAddressLines implements AddressLines {
      */
     @Override
     public List<GenericTypedGrPostal> getAddressLines() {return this.addressLines;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAddressLines(List<GenericTypedGrPostal> addressLines) {
+        this.addressLines = addressLines;
+    }
 
 }

@@ -126,21 +126,25 @@ import static org.geotoolkit.data.kml.xml.KmlConstants.*;
  */
 public class KmlReader extends StaxStreamReader {
 
-    private String URI_KML;
-    private static final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
-    private final XalReader xalReader = new XalReader();
-    private final AtomReader atomReader = new AtomReader();
+    private static String URI_KML;
+    private static KmlFactory KML_FACTORY;
+    private static final XalReader XAL_READER = new XalReader();
+    private static final AtomReader ATOM_READER = new AtomReader();
     private final FastDateParser fastDateParser = new FastDateParser();
     private final List<KmlExtensionReader> extensionReaders = new ArrayList<KmlExtensionReader>();
     private final List<KmlExtensionReader> dataReaders = new ArrayList<KmlExtensionReader>();
 
     public KmlReader() {
-        super();
+        KML_FACTORY = DefaultKmlFactory.getInstance();
 //        System.setProperty("javax.xml.stream.XMLInputFactory", "com.bea.xml.stream.MXParserFactory");
 //        System.setProperty("javax.xml.stream.XMLEventFactory", "com.bea.xml.stream.EventFactory");
 
 //        System.setProperty("javax.xml.stream.XMLInputFactory", "com.ctc.wstx.stax.WstxInputFactory");
 //        System.setProperty("javax.xml.stream.XMLEventFactory", "com.ctc.wstx.stax.WstxEventFactory");
+    }
+
+    public KmlReader(KmlFactory kmlFactory){
+        KML_FACTORY = kmlFactory;
     }
 
     /**
@@ -155,8 +159,8 @@ public class KmlReader extends StaxStreamReader {
     @Override
     public void setInput(Object input) throws IOException, XMLStreamException {
         super.setInput(input);
-        this.xalReader.setInput(reader);
-        this.atomReader.setInput(reader);
+        XAL_READER.setInput(reader);
+        ATOM_READER.setInput(reader);
     }
 
     /**
@@ -173,7 +177,7 @@ public class KmlReader extends StaxStreamReader {
             throws IOException, XMLStreamException, KmlException {
         this.setInput(input);
         if (URI_KML_2_2.equals(KmlVersionUri) || URI_KML_2_1.equals(KmlVersionUri))
-            this.URI_KML = KmlVersionUri;
+            URI_KML = KmlVersionUri;
         else
             throw new KmlException("Bad Kml version Uri. This reader supports 2.1 and 2.2 versions.");
     }
@@ -275,7 +279,7 @@ public class KmlReader extends StaxStreamReader {
      * @return
      */
     public String getVersionUri(){
-        return this.URI_KML;
+        return URI_KML;
     }
 
     /**
@@ -297,7 +301,7 @@ public class KmlReader extends StaxStreamReader {
                         if (URI_KML_2_2.equals(eUri)
                                 || URI_KML_2_1.equals(eUri)) {
                             if (TAG_KML.equals(eName)) {
-                                this.URI_KML = eUri;
+                                URI_KML = eUri;
 
                                 Map<String, String> extensionsUris = new HashMap<String, String>();
                                 for(int i = 0; i<reader.getNamespaceCount(); i++){
@@ -387,7 +391,7 @@ public class KmlReader extends StaxStreamReader {
                     break;
             }
         }
-        return KmlReader.kmlFactory.createKml(
+        return KmlReader.KML_FACTORY.createKml(
                 networkLinkControl, abstractFeature,
                 kmlSimpleExtensions, kmlObjectExtensions);
     }
@@ -537,7 +541,7 @@ public class KmlReader extends StaxStreamReader {
             }
         }
 
-        return KmlReader.kmlFactory.createPlacemark(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createPlacemark(objectSimpleExtensions, idAttributes,
                 name, visibility, open, author, link, address, addressDetails,
                 phoneNumber, snippet, description, view, timePrimitive, styleUrl,
                 styleSelector, region, extendedData, featureSimpleExtensions, featureObjectExtensions,
@@ -613,7 +617,7 @@ public class KmlReader extends StaxStreamReader {
             }
         }
 
-        return KmlReader.kmlFactory.createRegion(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createRegion(objectSimpleExtensions, idAttributes,
                 latLonAltBox, lod, regionSimpleExtensions, regionObjectExtentions);
     }
 
@@ -691,7 +695,7 @@ public class KmlReader extends StaxStreamReader {
             }
         }
 
-        return KmlReader.kmlFactory.createLod(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createLod(objectSimpleExtensions, idAttributes,
                 minLodPixels, maxLodPixels, minFadeExtent, maxFadeExtent,
                 lodSimpleExtentions, lodObjectExtensions);
     }
@@ -747,7 +751,7 @@ public class KmlReader extends StaxStreamReader {
             }
         }
         
-        return KmlReader.kmlFactory.createExtendedData(
+        return KmlReader.KML_FACTORY.createExtendedData(
                 datas, schemaDatas, anyOtherElements);
     }
 
@@ -787,7 +791,7 @@ public class KmlReader extends StaxStreamReader {
                     break;
             }
         }
-        return KmlReader.kmlFactory.createMetadata(content);
+        return KmlReader.KML_FACTORY.createMetadata(content);
     }
 
     /**
@@ -837,7 +841,7 @@ public class KmlReader extends StaxStreamReader {
 
         }
 
-        return KmlReader.kmlFactory.createData(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createData(objectSimpleExtensions, idAttributes,
                 name, displayName, value, dataExtensions);
     }
 
@@ -885,7 +889,7 @@ public class KmlReader extends StaxStreamReader {
             }
         }
 
-        return KmlReader.kmlFactory.createSchemaData(objectSimpleExtensions,
+        return KmlReader.KML_FACTORY.createSchemaData(objectSimpleExtensions,
                 idAttributes, schemaURL, simpleDatas, schemaDataExtensions);
     }
 
@@ -896,7 +900,7 @@ public class KmlReader extends StaxStreamReader {
      */
     private SimpleData readSimpleData() 
             throws XMLStreamException {
-        return KmlReader.kmlFactory.createSimpleData(
+        return KmlReader.KML_FACTORY.createSimpleData(
                 reader.getAttributeValue(null, ATT_NAME), reader.getElementText());
     }
 
@@ -994,7 +998,7 @@ public class KmlReader extends StaxStreamReader {
             }
         }
 
-        return KmlReader.kmlFactory.createNetworkLinkControl(minRefreshPeriod, maxSessionLength,
+        return KmlReader.KML_FACTORY.createNetworkLinkControl(minRefreshPeriod, maxSessionLength,
                 cookie, message, linkName, linkDescription, linkSnippet, expires, update, view,
                 networkLinkControlSimpleExtensions, networkLinkControlObjectExtensions);
     }
@@ -1051,7 +1055,7 @@ public class KmlReader extends StaxStreamReader {
             }
         }
 
-        return KmlReader.kmlFactory.createUpdate(targetHref, updates,
+        return KmlReader.KML_FACTORY.createUpdate(targetHref, updates,
                 updateOpExtensions, updateExtensions);
     }
 
@@ -1131,7 +1135,7 @@ public class KmlReader extends StaxStreamReader {
                     break;
             }
         }
-        return KmlReader.kmlFactory.createCreate(containers);
+        return KmlReader.KML_FACTORY.createCreate(containers);
     }
 
     /**
@@ -1184,7 +1188,7 @@ public class KmlReader extends StaxStreamReader {
                     break;
             }
         }
-        return KmlReader.kmlFactory.createDelete(features);
+        return KmlReader.KML_FACTORY.createDelete(features);
     }
 
     /**
@@ -1222,7 +1226,7 @@ public class KmlReader extends StaxStreamReader {
                     break;
             }
         }
-        return KmlReader.kmlFactory.createChange(objects);
+        return KmlReader.KML_FACTORY.createChange(objects);
     }
 
     /**
@@ -1358,7 +1362,7 @@ public class KmlReader extends StaxStreamReader {
             maxLines = Integer.parseInt(reader.getAttributeValue(null, ATT_MAX_LINES));
         }
         Object content = this.readElementText();
-        return KmlReader.kmlFactory.createSnippet(maxLines, content);
+        return KmlReader.KML_FACTORY.createSnippet(maxLines, content);
     }
 
     /**
@@ -1484,7 +1488,7 @@ public class KmlReader extends StaxStreamReader {
             }
         }
 
-        return KmlReader.kmlFactory.createPolygon(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createPolygon(objectSimpleExtensions, idAttributes,
                 abstractGeometrySimpleExtensions, abstractGeometryObjectExtensions,
                 extrude, tessellate, altitudeMode, outerBoundaryIs, innerBoundariesAre,
                 polygonSimpleExtensions, polygonObjectExtensions);
@@ -1563,7 +1567,7 @@ public class KmlReader extends StaxStreamReader {
             }
         }
 
-        return KmlReader.kmlFactory.createBoundary(
+        return KmlReader.KML_FACTORY.createBoundary(
                 linearRing, boundarySimpleExtensions, boundaryObjectExtensions);
     }
 
@@ -1661,7 +1665,7 @@ public class KmlReader extends StaxStreamReader {
 
         }
 
-        return KmlReader.kmlFactory.createModel(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createModel(objectSimpleExtensions, idAttributes,
                 abstractGeometrySimpleExtensions, abstractGeometryObjectExtensions,
                 altitudeMode, location, orientation, scale, link, resourceMap,
                 modelSimpleExtensions, modelObjectExtensions);
@@ -1732,7 +1736,7 @@ public class KmlReader extends StaxStreamReader {
             }
         }
 
-        return KmlReader.kmlFactory.createResourceMap(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createResourceMap(objectSimpleExtensions, idAttributes,
                 aliases, resourceMapSimpleExtensions, resourceMapObjectExtensions);
 
     }
@@ -1806,7 +1810,7 @@ public class KmlReader extends StaxStreamReader {
             }
         }
 
-        return KmlReader.kmlFactory.createAlias(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createAlias(objectSimpleExtensions, idAttributes,
                 targetHref, sourceHref, alaisSimpleExtensions, aliasObjectExtensions);
 
     }
@@ -1883,7 +1887,7 @@ public class KmlReader extends StaxStreamReader {
             }
         }
 
-        return KmlReader.kmlFactory.createScale(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createScale(objectSimpleExtensions, idAttributes,
                 x, y, z, scaleSimpleExtensions, scaleObjectExtensions);  
     }
 
@@ -1959,7 +1963,7 @@ public class KmlReader extends StaxStreamReader {
             }
         }
 
-        return KmlReader.kmlFactory.createLocation(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createLocation(objectSimpleExtensions, idAttributes,
                 longitude, latitude, altitude, locationSimpleExtensions, locationObjectExtensions);
     }
 
@@ -2034,7 +2038,7 @@ public class KmlReader extends StaxStreamReader {
             }
         }
 
-        return KmlReader.kmlFactory.createOrientation(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createOrientation(objectSimpleExtensions, idAttributes,
                 heading, tilt, roll, orientationSimpleExtensions, orientationObjectExtensions);
     }
 
@@ -2124,7 +2128,7 @@ public class KmlReader extends StaxStreamReader {
             }
         }
 
-        return KmlReader.kmlFactory.createLinearRing(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createLinearRing(objectSimpleExtensions, idAttributes,
                 abstractGeometrySimpleExtensions, abstractGeometryObjectExtensions,
                 extrude, tessellate, altitudeMode, coordinates,
                 linearRingSimpleExtensions, linearRingObjectExtensions);
@@ -2217,7 +2221,7 @@ public class KmlReader extends StaxStreamReader {
 
         }
 
-        return KmlReader.kmlFactory.createLineString(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createLineString(objectSimpleExtensions, idAttributes,
                 abstractGeometrySimpleExtensions, abstractGeometryObjectExtensions,
                 extrude, tessellate, altitudeMode, coordinates,
                 lineStringSimpleExtensions, lineStringObjectExtensions);
@@ -2300,7 +2304,7 @@ public class KmlReader extends StaxStreamReader {
             }
         }
 
-        return KmlReader.kmlFactory.createMultiGeometry(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createMultiGeometry(objectSimpleExtensions, idAttributes,
                 abstractGeometrySimpleExtensions, abstractGeometryObjectExtensions,
                 geometries, multiGeometrySimpleExtensions, multiGeometryObjectExtensions);
 
@@ -2524,7 +2528,7 @@ public class KmlReader extends StaxStreamReader {
 
         }
 
-        return KmlReader.kmlFactory.createGroundOverlay(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createGroundOverlay(objectSimpleExtensions, idAttributes,
                 name, visibility, open, author, link,
                 address, addressDetails, phoneNumber, snippet, description, view, timePrimitive,
                 styleUrl, styleSelector, region, extendedData,
@@ -2635,7 +2639,7 @@ public class KmlReader extends StaxStreamReader {
 
         }
 
-        return KmlReader.kmlFactory.createLink(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createLink(objectSimpleExtensions, idAttributes,
                 href, basicLinkSimpleExtensions, basicLinkObjectExtensions,
                 refreshMode, refreshInterval, viewRefreshMode, viewRefreshTime,
                 viewBoundScale, viewFormat, httpQuery,
@@ -2653,7 +2657,7 @@ public class KmlReader extends StaxStreamReader {
      */
     private Icon readIcon(String stopName) 
             throws XMLStreamException, KmlException, URISyntaxException{
-        return KmlReader.kmlFactory.createIcon(this.readLink(stopName));
+        return KmlReader.KML_FACTORY.createIcon(this.readLink(stopName));
     }
 
     /**
@@ -2668,7 +2672,7 @@ public class KmlReader extends StaxStreamReader {
     @Deprecated
     private Url readUrl(String stopName) 
             throws XMLStreamException, KmlException, URISyntaxException{
-        return KmlReader.kmlFactory.createUrl(this.readLink(stopName));
+        return KmlReader.KML_FACTORY.createUrl(this.readLink(stopName));
     }
 
     /**
@@ -2760,7 +2764,7 @@ public class KmlReader extends StaxStreamReader {
                     break;
             }
         }
-        return KmlReader.kmlFactory.createLatLonBox(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createLatLonBox(objectSimpleExtensions, idAttributes,
                 north, south, east, west,
                 abstractLatLonBoxSimpleExtensions, abstractLatLonBoxObjectExtensions,
                 rotation, latLonBoxSimpleExtensions, latLonBoxObjectExtensions);
@@ -2865,7 +2869,7 @@ public class KmlReader extends StaxStreamReader {
             }
 
         }
-        return KmlReader.kmlFactory.createLatLonAltBox(objectSimpleExtensions, 
+        return KmlReader.KML_FACTORY.createLatLonAltBox(objectSimpleExtensions,
                 idAttributes,north, south, east, west,
                 abstractLatLonBoxSimpleExtensions, abstractLatLonBoxObjectExtensions,
                 minAltitude, maxAltitude, altitudeMode,
@@ -2947,7 +2951,7 @@ public class KmlReader extends StaxStreamReader {
 
         }
 
-        return KmlReader.kmlFactory.createImagePyramid(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createImagePyramid(objectSimpleExtensions, idAttributes,
                 titleSize, maxWidth, maxHeight, gridOrigin,
                 imagePyramidSimpleExtensions, imagePyramidObjectExtensions);
     }
@@ -3031,7 +3035,7 @@ public class KmlReader extends StaxStreamReader {
 
         }
 
-        return KmlReader.kmlFactory.createViewVolume(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createViewVolume(objectSimpleExtensions, idAttributes,
                 leftFov, rightFov, bottomFov, topFov, near,
                 viewVolumeSimpleExtensions, viewVolumeObjectExtensions);
     }
@@ -3209,7 +3213,7 @@ public class KmlReader extends StaxStreamReader {
             }
         }
 
-        return KmlReader.kmlFactory.createPhotoOverlay(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createPhotoOverlay(objectSimpleExtensions, idAttributes,
                 name, visibility, open, author, link, address, addressDetails, phoneNumber,
                 snippet, description, view, timePrimitive, styleUrl, styleSelector, region, extendedData,
                 abstractOverlaySimpleExtensions, abstractOverlayObjectExtensions,
@@ -3392,7 +3396,7 @@ public class KmlReader extends StaxStreamReader {
 
         }
 
-        return KmlReader.kmlFactory.createScreenOverlay(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createScreenOverlay(objectSimpleExtensions, idAttributes,
                 name, visibility, open, author, link, address, addressDetails,
                 phoneNumber, snippet, description, view, timePrimitive, styleUrl, styleSelector,
                 region, extendedData, featureSimpleExtensions, featureObjectExtensions,
@@ -3539,7 +3543,7 @@ public class KmlReader extends StaxStreamReader {
                     break;
             }
         }
-        return KmlReader.kmlFactory.createLookAt(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createLookAt(objectSimpleExtensions, idAttributes,
                 abstractViewSimpleExtensions, abstractViewObjectExtensions,
                 longitude, latitude, altitude, heading, tilt, range, altitudeMode,
                 lookAtSimpleExtensions, lookAtObjectExtensions);
@@ -3640,7 +3644,7 @@ public class KmlReader extends StaxStreamReader {
                     break;
             }
         }
-        return KmlReader.kmlFactory.createCamera(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createCamera(objectSimpleExtensions, idAttributes,
                 abstractViewSimpleExtensions, abstractViewObjectExtensions,
                 longitude, latitude, altitude, heading, tilt, roll, altitudeMode,
                 cameraSimpleExtensions, cameraObjectExtensions);
@@ -3740,7 +3744,7 @@ public class KmlReader extends StaxStreamReader {
             }
 
         }
-        return KmlReader.kmlFactory.createStyleMap(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createStyleMap(objectSimpleExtensions, idAttributes,
                 styleSelectorSimpleExtensions, styleSelectorObjectExtensions,
                 pairs, styleMapSimpleExtensions, styleMapObjectExtensions);
     }
@@ -3818,7 +3822,7 @@ public class KmlReader extends StaxStreamReader {
             }
 
         }
-        return KmlReader.kmlFactory.createPair(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createPair(objectSimpleExtensions, idAttributes,
                 key, styleUrl, styleSelector, pairSimpleExtensions, pairObjectExtensions);
     }
 
@@ -3911,7 +3915,7 @@ public class KmlReader extends StaxStreamReader {
             }
 
         }
-        return KmlReader.kmlFactory.createStyle(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createStyle(objectSimpleExtensions, idAttributes,
                 styleSelectorSimpleExtensions, styleSelectorObjectExtensions,
                 iconStyle, labelStyle, lineStyle, polyStyle, balloonStyle, listStyle,
                 styleSimpleExtensions, styleObjectExtensions);
@@ -4017,7 +4021,7 @@ public class KmlReader extends StaxStreamReader {
 
         }
 
-        return KmlReader.kmlFactory.createIconStyle(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createIconStyle(objectSimpleExtensions, idAttributes,
                 subStyleSimpleExtensions, subStyleObjectExtensions,
                 color, colorMode,
                 colorStyleSimpleExtensions, colorStyleObjectExtensions,
@@ -4117,7 +4121,7 @@ public class KmlReader extends StaxStreamReader {
 
         }
 
-        return KmlReader.kmlFactory.createLabelStyle(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createLabelStyle(objectSimpleExtensions, idAttributes,
                 subStyleSimpleExtensions, subStyleObjectExtensions,
                 color, colorMode, colorStyleSimpleExtensions, colorStyleObjectExtensions,
                 scale, labelStyleSimpleExtensions, labelStyleObjectExtensions);
@@ -4215,7 +4219,7 @@ public class KmlReader extends StaxStreamReader {
 
         }
 
-        return KmlReader.kmlFactory.createLineStyle(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createLineStyle(objectSimpleExtensions, idAttributes,
                 subStyleSimpleExtensions, subStyleObjectExtensions,
                 color, colorMode, colorStyleSimpleExtensions, colorStyleObjectExtensions,
                 width, lineStyleSimpleExtensions, lineStyleObjectExtensions);
@@ -4315,7 +4319,7 @@ public class KmlReader extends StaxStreamReader {
 
         }
 
-        return KmlReader.kmlFactory.createPolyStyle(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createPolyStyle(objectSimpleExtensions, idAttributes,
                 subStyleSimpleExtensions, subStyleObjectExtensions,
                 color, colorMode, colorStyleSimpleExtensions, colorStyleObjectExtensions,
                 fill, outline, polyStyleSimpleExtensions, polyStyleObjectExtensions);
@@ -4411,7 +4415,7 @@ public class KmlReader extends StaxStreamReader {
 
         }
 
-        return KmlReader.kmlFactory.createBalloonStyle(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createBalloonStyle(objectSimpleExtensions, idAttributes,
                 subStyleSimpleExtensions, subStyleObjectExtensions,
                 bgColor, textColor, text, displayMode,
                 balloonStyleSimpleExtensions, balloonStyleObjectExtensions);
@@ -4431,7 +4435,7 @@ public class KmlReader extends StaxStreamReader {
         while (reader.hasNext()) {
             switch (reader.getEventType()) {
                 case XMLStreamConstants.CDATA:
-                    resultat = kmlFactory.createCdata(reader.getText());
+                    resultat = KML_FACTORY.createCdata(reader.getText());
                     break;
                 case XMLStreamConstants.CHARACTERS:
                     resultat = reader.getText();
@@ -4530,7 +4534,7 @@ public class KmlReader extends StaxStreamReader {
 
         }
 
-        return KmlReader.kmlFactory.createListStyle(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createListStyle(objectSimpleExtensions, idAttributes,
                 subStyleSimpleExtensions, subStyleObjectExtensions,
                 listItem, bgColor, itemIcons, maxSnippetLines,
                 listStyleSimpleExtensions, listStyleObjectExtensions);
@@ -4606,7 +4610,7 @@ public class KmlReader extends StaxStreamReader {
             }
         }
         
-        return KmlReader.kmlFactory.createItemIcon(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createItemIcon(objectSimpleExtensions, idAttributes,
                 states, href, itemIconSimpleExtensions, itemIconObjectExtensions);
     }
 
@@ -4697,7 +4701,7 @@ public class KmlReader extends StaxStreamReader {
 
         }
 
-        return KmlReader.kmlFactory.createBasicLink(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createBasicLink(objectSimpleExtensions, idAttributes,
                 href, basicLinkSimpleExtensions, basicLinkObjectExtensions);
     }
 
@@ -4742,7 +4746,7 @@ public class KmlReader extends StaxStreamReader {
             }
         }
 
-        return KmlReader.kmlFactory.createVec2(x, y, xUnit, yUnit);
+        return KmlReader.KML_FACTORY.createVec2(x, y, xUnit, yUnit);
     }
 
     /**
@@ -4839,7 +4843,7 @@ public class KmlReader extends StaxStreamReader {
                     break;
             }
         }
-        return KmlReader.kmlFactory.createTimeSpan(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createTimeSpan(objectSimpleExtensions, idAttributes,
                 abstractTimePrimitiveSimpleExtensions, abstractTimePrimitiveObjectExtensions,
                 begin, end, timeSpanSimpleExtensions, timeSpanObjectExtensions);
     }
@@ -4913,7 +4917,7 @@ public class KmlReader extends StaxStreamReader {
                     break;
             }
         }
-        return KmlReader.kmlFactory.createTimeStamp(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createTimeStamp(objectSimpleExtensions, idAttributes,
                 abstractTimePrimitiveSimpleExtensions, abstractTimePrimitiveObjectExtensions,
                 when, timeStampSimpleExtensions, timeStampObjectExtensions);
     }
@@ -4925,7 +4929,7 @@ public class KmlReader extends StaxStreamReader {
      */
     public AtomPersonConstruct readAtomPersonConstruct()
             throws XMLStreamException {
-        return this.atomReader.readAuthor();
+        return ATOM_READER.readAuthor();
     }
 
     /**
@@ -4935,7 +4939,7 @@ public class KmlReader extends StaxStreamReader {
      */
     public AtomLink readAtomLink()
             throws XMLStreamException {
-        return this.atomReader.readLink();
+        return ATOM_READER.readLink();
     }
 
     /**
@@ -4948,7 +4952,7 @@ public class KmlReader extends StaxStreamReader {
 
         AddressDetails resultat = null;
         try {
-            resultat = this.xalReader.readAddressDetails();
+            resultat = XAL_READER.readAddressDetails();
         } catch (XalException ex) {
             Logger.getLogger(KmlReader.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -5109,7 +5113,7 @@ public class KmlReader extends StaxStreamReader {
             }
 
         }
-        return KmlReader.kmlFactory.createFolder(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createFolder(objectSimpleExtensions, idAttributes,
                 name, visibility, open, author, link, address, addressDetails,
                 phoneNumber, snippet, description, view, timePrimitive, styleUrl, styleSelector, region, extendedData,
                 featureSimpleExtensions, featureObjectExtensions,
@@ -5274,7 +5278,7 @@ public class KmlReader extends StaxStreamReader {
             }
         }
 
-        return KmlReader.kmlFactory.createDocument(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createDocument(objectSimpleExtensions, idAttributes,
                 name, visibility, open, author, link, address, addressDetails,
                 phoneNumber, snippet, description,
                 view, timePrimitive, styleUrl, styleSelector, region, extendedData,
@@ -5322,7 +5326,7 @@ public class KmlReader extends StaxStreamReader {
 
         }
 
-        return KmlReader.kmlFactory.createSchema(simplefields, name, id, schemaExtensions);
+        return KmlReader.KML_FACTORY.createSchema(simplefields, name, id, schemaExtensions);
     }
 
     /**
@@ -5364,7 +5368,7 @@ public class KmlReader extends StaxStreamReader {
             }
         }
 
-        return KmlReader.kmlFactory.createSimpleField(displayName, type, name, simpleFieldExtensions);
+        return KmlReader.KML_FACTORY.createSimpleField(displayName, type, name, simpleFieldExtensions);
     }
 
     /**
@@ -5515,7 +5519,7 @@ public class KmlReader extends StaxStreamReader {
             }
         }
 
-        return KmlReader.kmlFactory.createNetworkLink(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createNetworkLink(objectSimpleExtensions, idAttributes,
                 name, visibility, open, author, atomLink, address, addressDetails,
                 phoneNumber, snippet, description, view, timePrimitive, styleUrl,
                 styleSelector, region, extendedData,
@@ -5605,7 +5609,7 @@ public class KmlReader extends StaxStreamReader {
             }
         }
 
-        return KmlReader.kmlFactory.createPoint(objectSimpleExtensions, idAttributes,
+        return KmlReader.KML_FACTORY.createPoint(objectSimpleExtensions, idAttributes,
                 abstractGeometrySimpleExtensions, abstractGeometryObjectExtensions,
                 extrude, altitudeMode, coordinates, pointSimpleExtensions, pointObjectExtensions);
     }
@@ -5623,10 +5627,10 @@ public class KmlReader extends StaxStreamReader {
         
         for (String coordinatesString : coordinatesStringList) {
             if(!coordinatesString.equals("")){
-                coordinatesList.add(KmlReader.kmlFactory.createCoordinate(coordinatesString));
+                coordinatesList.add(KmlReader.KML_FACTORY.createCoordinate(coordinatesString));
             }
         }
-        return KmlReader.kmlFactory.createCoordinates(coordinatesList);
+        return KmlReader.KML_FACTORY.createCoordinates(coordinatesList);
     }
 
     /**
@@ -5634,7 +5638,7 @@ public class KmlReader extends StaxStreamReader {
      * @return
      */
     public IdAttributes readIdAttributes() {
-        return KmlReader.kmlFactory.createIdAttributes(
+        return KmlReader.KML_FACTORY.createIdAttributes(
                 reader.getAttributeValue(null, ATT_ID), reader.getAttributeValue(null, ATT_TARGET_ID));
     }
 
@@ -5801,9 +5805,9 @@ public class KmlReader extends StaxStreamReader {
      */
     public void checkVersion(String... versions) throws KmlException{
         for(String version : versions)
-            if(this.URI_KML.equals(version))
+            if(URI_KML.equals(version))
                 return;
-        throw new KmlException("Kml reader error : Element not allowed by "+this.URI_KML+" namespace.");
+        throw new KmlException("Kml reader error : Element not allowed by "+URI_KML+" namespace.");
     }
 
     /**
@@ -5812,6 +5816,6 @@ public class KmlReader extends StaxStreamReader {
      * @return
      */
     public boolean checkVersionSimple(String version){
-        return this.URI_KML.equals(version);
+        return URI_KML.equals(version);
     }
 }

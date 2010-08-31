@@ -22,10 +22,12 @@ package org.geotoolkit.xal.model;
  */
 public class DefaultGenericTypedGrPostal implements GenericTypedGrPostal {
 
-    public final String type;
-    public final GrPostal grPostal;
-    public final String content;
-    
+    protected String type;
+    protected GrPostal grPostal;
+    protected String content;
+
+    public DefaultGenericTypedGrPostal(){}
+
     /**
      * 
      * @param type
@@ -58,6 +60,21 @@ public class DefaultGenericTypedGrPostal implements GenericTypedGrPostal {
      */
     @Override
     public GrPostal getGrPostal() {return this.grPostal;}
+
+    @Override
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    @Override
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    @Override
+    public void setGrPostal(GrPostal grPostal) {
+        this.grPostal = grPostal;
+    }
 
 
 }

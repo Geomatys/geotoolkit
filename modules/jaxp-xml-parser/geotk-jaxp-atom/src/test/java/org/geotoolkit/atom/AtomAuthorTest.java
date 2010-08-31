@@ -82,7 +82,7 @@ public class AtomAuthorTest {
 
      @Test
      public void atomAuthorWriteTest() throws IOException, XMLStreamException, ParserConfigurationException, SAXException {
-        final AtomFactory atomFactory = new DefaultAtomFactory();
+        final AtomFactory atomFactory = DefaultAtomFactory.getInstance();
 
         final List<Object> params = new ArrayList<Object>();
         params.add("Samuel");

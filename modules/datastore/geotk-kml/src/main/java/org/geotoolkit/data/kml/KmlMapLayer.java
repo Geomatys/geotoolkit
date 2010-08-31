@@ -17,7 +17,6 @@
 package org.geotoolkit.data.kml;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -106,7 +105,7 @@ import org.opengis.util.FactoryException;
  */
 public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
 
-    private static final GeometryFactory GF = new GeometryFactory();
+//    private static final GeometryFactory GF = new GeometryFactory();
     private final Kml kml;
     private RenderingContext2D context2d;
     private Map<String, Style> styles = new HashMap<String, Style>();
@@ -135,13 +134,24 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         ICON_PLACEMARK_POLYGON = ImageIO.read(KmlMapLayer.class.getResourceAsStream("polygon.png"));
         ICON_OVERLAY = ImageIO.read(KmlMapLayer.class.getResourceAsStream("overlay.png"));
 
+        // Font metrics initialization.
         Graphics2D g = (Graphics2D) new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB).getGraphics();
         g.setFont(FONT);
         FONT_METRICS = g.getFontMetrics();
     }
 
     /*
+     * -------------------------------------------------------------------------
      * BOUNDS METHODS
+     * -------------------------------------------------------------------------
+     */
+
+    /**
+     * <p>Retrieves Kmldocument bounds.</p>
+     *
+     * @{@inheritDoc }
+     *
+     * @return
      */
     @Override
     public Envelope getBounds() {
@@ -156,7 +166,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      * @return
      */
     private JTSEnvelope2D getFeatureEnvelope(Feature feature, JTSEnvelope2D envelope) {
-        FeatureType featureType = feature.getType();
+        final FeatureType featureType = feature.getType();
 
         if (featureType.equals(KmlModelConstants.TYPE_PLACEMARK)) {
             if (feature.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()) != null) {
@@ -180,7 +190,8 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         } else if (FeatureTypeUtilities.isDecendedFrom(featureType, KmlModelConstants.TYPE_OVERLAY)) {
             if (featureType.equals(KmlModelConstants.TYPE_GROUND_OVERLAY)) {
                 if (feature.getProperty(KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX.getName()) != null) {
-                    LatLonBox latLonBox = (LatLonBox) feature.getProperty(KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX.getName()).getValue();
+                    final LatLonBox latLonBox = (LatLonBox) feature.getProperty(
+                            KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX.getName()).getValue();
                     envelope.expandToInclude(
                             new JTSEnvelope2D(
                             latLonBox.getWest(), latLonBox.getEast(),
@@ -210,18 +221,35 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         return envelope;
     }
 
+    /*
+     * -------------------------------------------------------------------------
+     * QUERY METHODS
+     * -------------------------------------------------------------------------
+     */
+
     @Override
     public Object query(RenderingContext context) throws PortrayalException {
         return null;
     }
 
     /*
-     * GET LEGEND METHODS
+     * -------------------------------------------------------------------------
+     * LEGEND METHODS
+     * -------------------------------------------------------------------------
+     */
+
+    /**
+     *
+     * <p>Retrieves KML legend.</p>
+     *
+     * @{@inheritDoc }
+     * @return
+     * @throws PortrayalException
      */
     @Override
     public Image getLegend() throws PortrayalException {
         int width = 0, height = 0, y = 0;
-        List<Image> images = new ArrayList<Image>();
+        final List<Image> images = new ArrayList<Image>();
 
         try {
             images.add(this.legendAbstractFeature(this.kml.getAbstractFeature()));
@@ -234,8 +262,8 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             height += img.getHeight(null);
         }
 
-        BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphic = (Graphics2D) image.getGraphics();
+        final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        final Graphics2D graphic = (Graphics2D) image.getGraphics();
 
         for (Image img : images) {
             graphic.drawImage(img, 0, y, null);
@@ -299,22 +327,23 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         }
 
         // Apply styles
-        Style s = this.retrieveStyle(placemark);
-        BufferedImage image = new BufferedImage(
+        final Style s = this.retrieveStyle(placemark);
+        final BufferedImage image = new BufferedImage(
                 LEGEND_WIDTH_EXT + nameWidth,
                 LEGEND_HEIGHT_EXT,
                 BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphic = (Graphics2D) image.getGraphics();
+        final Graphics2D graphic = (Graphics2D) image.getGraphics();
         graphic.setFont(FONT);
 
-        AbstractGeometry geometry = (AbstractGeometry) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
+        final AbstractGeometry geometry = (AbstractGeometry) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
+
         if (s != null && s.getIconStyle() != null) {
-            IconStyle iconStyle = s.getIconStyle();
-            BasicLink bl = iconStyle.getIcon();
+            final IconStyle iconStyle = s.getIconStyle();
+            final BasicLink bl = iconStyle.getIcon();
             if (bl != null) {
                 if (bl.getHref() != null) {
-                    File img = new File(bl.getHref());
-                    BufferedImage buff = ImageIO.read(img);
+                    final File img = new File(bl.getHref());
+                    final BufferedImage buff = ImageIO.read(img);
                     graphic.drawImage(buff, 0, 4, LEGEND_WIDTH_INT, LEGEND_HEIGHT_INT, null);
                 }
             }
@@ -527,7 +556,17 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
     }
 
     /*
+     * -------------------------------------------------------------------------
      * PORTRAY METHODS
+     * -------------------------------------------------------------------------
+     */
+
+    /**
+     * <p>Portrays Kml.</p>
+     *
+     * @{@inheritDoc }
+     * @param context
+     * @throws PortrayalException
      */
     @Override
     public void portray(RenderingContext context) throws PortrayalException {
@@ -633,7 +672,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             portrayLabelStyle(x, y, s,
                     (String) placemark.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue(),
                     centroid);
-            //portrayFlag(x, y);
+            if (false) portrayFlag(x, y); // portray flag at Placemark center (set off)
         }
 
     }
@@ -723,25 +762,25 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         this.portrayCommonAbstractOverlay(groundOverlay);
 
         context2d.switchToDisplayCRS();
-        Graphics2D graphic = context2d.getGraphics();
+        final Graphics2D graphic = context2d.getGraphics();
 
         // Display image
-        BufferedImage image = ImageIO.read(new File(
+        final BufferedImage image = ImageIO.read(new File(
                 ((Icon) groundOverlay.getProperty(
                 KmlModelConstants.ATT_OVERLAY_ICON.getName()).getValue()).getHref()));
-        LatLonBox latLonBox = (LatLonBox) groundOverlay.getProperty(
+        final LatLonBox latLonBox = (LatLonBox) groundOverlay.getProperty(
                 KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX.getName()).getValue();
 
-        double north = latLonBox.getNorth();
-        double east = latLonBox.getEast();
-        double south = latLonBox.getSouth();
-        double west = latLonBox.getWest();
+        final double north = latLonBox.getNorth();
+        final double east = latLonBox.getEast();
+        final double south = latLonBox.getSouth();
+        final double west = latLonBox.getWest();
 
-        GeneralEnvelope envelope = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        final GeneralEnvelope envelope = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
         envelope.setRange(0, west, east);
         envelope.setRange(1, south, north);
-        GridCoverage2D coverage = new GridCoverageFactory().create("cov", image, envelope);
-        GridCoverage2D resampled = (GridCoverage2D) Operations.DEFAULT.resample(coverage, context2d.getObjectiveCRS2D());
+        final GridCoverage2D coverage = new GridCoverageFactory().create("cov", image, envelope);
+        final GridCoverage2D resampled = (GridCoverage2D) Operations.DEFAULT.resample(coverage, context2d.getObjectiveCRS2D());
 
         context2d.switchToObjectiveCRS();
 
@@ -752,8 +791,8 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         }
 
         // Apply styles
-        Style sty = this.retrieveStyle(groundOverlay);
-        portrayBalloonStyle((east + west) / 2, (north + south) / 2, sty, false, groundOverlay);
+        final Style localStyle = this.retrieveStyle(groundOverlay);
+        portrayBalloonStyle((east + west) / 2, (north + south) / 2, localStyle, false, groundOverlay);
     }
 
     /**
@@ -763,28 +802,29 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      */
     private void portrayScreenOverlay(Feature screenOverlay) throws IOException {
         this.portrayCommonAbstractOverlay(screenOverlay);
-        File img = new File(
+
+        final File img = new File(
                 ((Icon) screenOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_ICON.getName()).getValue()).getHref());
         context2d.switchToDisplayCRS();
 
-        BufferedImage image = ImageIO.read(img);
-        Graphics2D graphic = context2d.getGraphics();
-        Vec2 overlayXY = (Vec2) screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_OVERLAYXY.getName()).getValue();
-        Vec2 screenXY = (Vec2) screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_SCREENXY.getName()).getValue();
-        Vec2 size = (Vec2) screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_SIZE.getName()).getValue();
+        final BufferedImage image = ImageIO.read(img);
+        final Graphics2D graphic = context2d.getGraphics();
+        final Vec2 overlayXY = (Vec2) screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_OVERLAYXY.getName()).getValue();
+        final Vec2 screenXY = (Vec2) screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_SCREENXY.getName()).getValue();
+        final Vec2 size = (Vec2) screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_SIZE.getName()).getValue();
 
-        int width = (int) size.getX();
-        int height = (int) size.getY();
-        double coeffX = image.getWidth() / size.getX();
-        double coeffY = image.getHeight() / size.getY();
-        int x = (int) screenXY.getX() - (int) (overlayXY.getX() / coeffX);
-        int y = context2d.getCanvasDisplayBounds().height - (int) screenXY.getY() - height - (int) (overlayXY.getY() / coeffY);
+        final int width = (int) size.getX();
+        final int height = (int) size.getY();
+        final double coeffX = image.getWidth() / size.getX();
+        final double coeffY = image.getHeight() / size.getY();
+        final int x = (int) screenXY.getX() - (int) (overlayXY.getX() / coeffX);
+        final int y = context2d.getCanvasDisplayBounds().height - (int) screenXY.getY() - height - (int) (overlayXY.getY() / coeffY);
 
         graphic.drawImage(image, x, y, width, height, null);
 
         // Apply styles
-        Style s = this.retrieveStyle(screenOverlay);
-        portrayBalloonStyle(x + width, y, s, true, screenOverlay);
+        final Style localStyle = this.retrieveStyle(screenOverlay);
+        portrayBalloonStyle(x + width, y, localStyle, true, screenOverlay);
     }
 
     /**
@@ -817,7 +857,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         // MathTransform
         MathTransform transform = null;
         context2d.switchToDisplayCRS();
-        Graphics2D graphic = context2d.getGraphics();
+        final Graphics2D graphic = context2d.getGraphics();
         com.vividsolutions.jts.geom.Geometry ls = null;
 
         try {
@@ -834,13 +874,13 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             return;
         }
 
-        LineStyle lineStyle = style.getLineStyle();
+        final LineStyle lineStyle = style.getLineStyle();
         if (lineStyle != null) {
             graphic.setColor(lineStyle.getColor());
             graphic.setStroke(new BasicStroke((float) (lineStyle.getWidth())));
         }
 
-        Shape shape = new JTSGeometryJ2D(ls);
+        final Shape shape = new JTSGeometryJ2D(ls);
         graphic.draw(shape);
     }
 
@@ -866,7 +906,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         // MathTransform
         MathTransform transform = null;
         context2d.switchToDisplayCRS();
-        Graphics2D graphic = context2d.getGraphics();
+        final Graphics2D graphic = context2d.getGraphics();
         com.vividsolutions.jts.geom.Geometry pol = null;
 
         try {
@@ -883,11 +923,11 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             return;
         }
 
-        Shape shape = new JTSGeometryJ2D(pol);
+        final Shape shape = new JTSGeometryJ2D(pol);
 
         // Apply styles
         if (style != null) {
-            PolyStyle polyStyle = style.getPolyStyle();
+            final PolyStyle polyStyle = style.getPolyStyle();
             if (polyStyle != null) {
                 graphic.setColor(polyStyle.getColor());
                 graphic.setStroke(new BasicStroke((float) 0.05));
@@ -895,7 +935,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                     graphic.fill(shape);
                 }
                 if (polyStyle.getOutline() && style.getLineStyle() != null) {
-                    LineStyle lineStyle = style.getLineStyle();
+                    final LineStyle lineStyle = style.getLineStyle();
                     graphic.setColor(lineStyle.getColor());
                     graphic.draw(shape);
                 }
@@ -921,18 +961,18 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         }
 
         context2d.switchToDisplayCRS();
-        Graphics2D graphic = context2d.getGraphics();
+        final Graphics2D graphic = context2d.getGraphics();
 
         // Apply styles
         if (style != null) {
-            IconStyle iconStyle = style.getIconStyle();
+            final IconStyle iconStyle = style.getIconStyle();
             if (iconStyle != null) {
                 graphic.setColor(iconStyle.getColor());
-                BasicLink icon = iconStyle.getIcon();
-                File img = new File(icon.getHref());
-                BufferedImage image = ImageIO.read(img);
+                final BasicLink icon = iconStyle.getIcon();
+                final File img = new File(icon.getHref());
+                final BufferedImage image = ImageIO.read(img);
                 com.vividsolutions.jts.geom.Point p = (com.vividsolutions.jts.geom.Point) point;
-                double[] tab = new double[]{p.getX(), p.getY()};
+                final double[] tab = new double[]{p.getX(), p.getY()};
                 try {
                     transform.transform(tab, 0, tab, 0, 1);
                 } catch (TransformException ex) {
@@ -954,7 +994,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         // MathTransform
         MathTransform transform = null;
         context2d.switchToDisplayCRS();
-        Graphics2D graphic = context2d.getGraphics();
+        final Graphics2D graphic = context2d.getGraphics();
         com.vividsolutions.jts.geom.Geometry lr = null;
 
         try {
@@ -972,14 +1012,14 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         }
 
         if (style != null) {
-            LineStyle lineStyle = style.getLineStyle();
+            final LineStyle lineStyle = style.getLineStyle();
             if (lineStyle != null) {
                 graphic.setColor(lineStyle.getColor());
                 graphic.setStroke(new BasicStroke((float) (lineStyle.getWidth())));
             }
         }
 
-        Shape shape = new JTSGeometryJ2D(lr);
+        final Shape shape = new JTSGeometryJ2D(lr);
         graphic.draw(shape);
     }
 
@@ -1010,21 +1050,21 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         }
 
         context2d.switchToDisplayCRS();
-        Graphics2D graphic = context2d.getGraphics();
+        final Graphics2D graphic = context2d.getGraphics();
 
-        int linewidth = 40;
+        final int linewidth = FONT_METRICS.getHeight();
 
         if (style != null) {
-            BalloonStyle balloonStyle = style.getBalloonStyle();
+            final BalloonStyle balloonStyle = style.getBalloonStyle();
             if (balloonStyle != null) {
-                int length = balloonStyle.getText().toString().length();
+                final int length = balloonStyle.getText().toString().length();
                 int begin = 0, interligne = 0, balloonWidth = 0, balloonLines = 0;
-                boolean cdata = balloonStyle.getText() instanceof Cdata;
+                final boolean cdata = balloonStyle.getText() instanceof Cdata;
                 JLabel jep = null;
 
                 // balloon general dimensions
                 do {
-                    int end = Math.min(begin + linewidth, length);
+                    final int end = Math.min(begin + linewidth, length);
                     balloonWidth = Math.max(balloonWidth,
                             FONT_METRICS.stringWidth(balloonStyle.getText()
                             .toString().substring(begin, end)));
@@ -1036,7 +1076,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                     balloonLines++;
                 }
 
-                double[] tab = new double[]{x, y};
+                final double[] tab = new double[]{x, y};
 
                 // Fixed to screen for ScrenOverlays
                 if (!fixedToScreen) {
@@ -1050,6 +1090,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
 
                 // acurate dimensions / position
                 int left, right, top, bottom, vExc, hExc, coeff;
+
                 if (cdata) {
                     String content = this.retrieveBalloonInformations(
                             balloonStyle.getText().toString(), informationResource);
@@ -1080,7 +1121,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                 }
 
                 // Print balloon structure
-                Path2D p = new java.awt.geom.Path2D.Double();
+                final Path2D p = new java.awt.geom.Path2D.Double();
                 p.moveTo(left, top);
 
                 // top and right sides
@@ -1111,6 +1152,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
 
                 // print balloon text
                 graphic.setColor(balloonStyle.getTextColor());
+
                 if (cdata) {
                     graphic.translate(left, top);
                     jep.paint(graphic);
@@ -1171,7 +1213,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         }
 
         if (style != null) {
-            LabelStyle labelStyle = style.getLabelStyle();
+            final LabelStyle labelStyle = style.getLabelStyle();
             if (labelStyle != null) {
 //                graphic.setFont(new Font(FONT.getName(),
 //                        FONT.getStyle(), FONT.getSize() * (int) labelStyle.getScale()));
@@ -1184,12 +1226,12 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
 //                    return;
 //                }
 
-                DefaultProjectedGeometry projectedGeometry = new DefaultProjectedGeometry(geom);
+                final DefaultProjectedGeometry projectedGeometry = new DefaultProjectedGeometry(geom);
                 projectedGeometry.setObjToDisplay(transform);
-                LabelLayer labelLayer = new DefaultLabelLayer(false, false);
+                final LabelLayer labelLayer = new DefaultLabelLayer(false, false);
 //                Paint textPaint;
 //                textPaint.
-                float displayFactor = 0.1f;//0.1f pour corriger l'erreur d'affichage (devrait être fixé normalement à 1)
+                final float displayFactor = 0.1f;//0.1f pour corriger l'erreur d'affichage (devrait être fixé normalement à 1)
                 labelLayer.labels().add(
                         new DefaultPointLabelDescriptor(content,
                         new Font(FONT.getName(),
@@ -1212,7 +1254,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
     private void portrayFlag(double x, double y) throws IOException {
         // MathTransform
         MathTransform transform;
-        Graphics2D graphic = context2d.getGraphics();
+        final Graphics2D graphic = context2d.getGraphics();
 
         try {
             transform = context2d.getMathTransform(DefaultGeographicCRS.WGS84, context2d.getDisplayCRS());
@@ -1221,7 +1263,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             return;
         }
 
-        BufferedImage image = ICON_PLACEMARK;
+        final BufferedImage image = ICON_PLACEMARK;
         double[] tab = new double[]{x, y};
         try {
             transform.transform(tab, 0, tab, 0, 1);
@@ -1233,8 +1275,11 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
     }
 
     /*
+     * -------------------------------------------------------------------------
      * INDEX STYLES METHODS
+     * -------------------------------------------------------------------------
      */
+
     /**
      *
      * @param abstractStyleSelector
@@ -1268,8 +1313,11 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
     }
 
     /*
+     * -------------------------------------------------------------------------
      * RETRIEVE STYLES METHODS
+     * -------------------------------------------------------------------------
      */
+
     /**
      *
      * @param feature

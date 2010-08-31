@@ -22,21 +22,23 @@ package org.geotoolkit.xal.model;
  */
 public class DefaultAddressDetails implements AddressDetails {
 
-    private final PostalServiceElements postalServiceElements;
+    private PostalServiceElements postalServiceElements;
     private GenericTypedGrPostal address;
     private AddressLines addressLines;
     private Country country;
     private AdministrativeArea administrativeArea;
     private Locality locality;
     private Thoroughfare thoroughfare;
-    private final String addressType;
-    private final String currentStatus;
-    private final String validFromDate;
-    private final String validToDate;
-    private final String usage;
-    private final GrPostal grPostal;
-    private final String addressDetailsKey;
+    private String addressType;
+    private String currentStatus;
+    private String validFromDate;
+    private String validToDate;
+    private String usage;
+    private GrPostal grPostal;
+    private String addressDetailsKey;
 
+    public DefaultAddressDetails(){}
+    
     /**
      * 
      * @param postalServiceElements
@@ -176,5 +178,131 @@ public class DefaultAddressDetails implements AddressDetails {
      */
     @Override
     public String getAddressDetailsKey() {return this.addressDetailsKey;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostalServiceElements(PostalServiceElements postalServiceElements) {
+        this.postalServiceElements = postalServiceElements;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAddress(GenericTypedGrPostal address) {
+        this.address = address;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAddressLines(AddressLines addressLines) {
+        this.addressLines = addressLines;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setCountry(Country country) {
+        this.country = country;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAdministrativeArea(AdministrativeArea administrativeArea) {
+        this.administrativeArea = administrativeArea;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLocality(Locality locality) {
+        this.locality = locality;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setThoroughfare(Thoroughfare throughfare) {
+        this.thoroughfare = throughfare;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAddressType(String addressType) {
+        this.addressType = addressType;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setCurrentStatus(String currentStatus) {
+        this.currentStatus = currentStatus;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setValidFromDate(String validFromDate) {
+        this.validFromDate = validFromDate;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setValidToDate(String validToDate) {
+        this.validToDate = validToDate;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setUsage(String usage) {
+        this.usage = usage;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setGrPostal(GrPostal grPostal) {
+        this.grPostal = grPostal;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAddressDetailsKey(String addressDetailsKey) {
+        this.addressDetailsKey = addressDetailsKey;
+    }
 
 }

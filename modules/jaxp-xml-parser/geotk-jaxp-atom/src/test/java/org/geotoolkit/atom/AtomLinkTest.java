@@ -94,7 +94,7 @@ public class AtomLinkTest {
 
      @Test
      public void atomLinkWriteTest() throws XMLStreamException, IOException, ParserConfigurationException, SAXException {
-        final AtomFactory atomFactory = new DefaultAtomFactory();
+        final AtomFactory atomFactory = DefaultAtomFactory.getInstance();
 
         final AtomLink link = atomFactory.createAtomLink();
         link.setHref("HREF");

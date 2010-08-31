@@ -37,25 +37,49 @@ public interface AddressIdentifier {
      *
      * @return
      */
-    public String getContent();
+    String getContent();
 
     /**
      * <p>Type of identifier. eg. DPID as in Australia.</p>
      *
      * @return
      */
-    public String getIdentifierType();
+    String getIdentifierType();
 
     /**
      *
      * @return
      */
-    public String getType();
+    String getType();
     
     /**
      *
      * @return
      */
-    public GrPostal getGrPostal();
+    GrPostal getGrPostal();
+
+    /**
+     *
+     * @param content
+     */
+    void setContent(String content);
+
+    /**
+     *
+     * @param identifierType
+     */
+    void setIdentifierType(String identifierType);
+
+    /**
+     *
+     * @param type
+     */
+    void setType(String type);
+
+    /**
+     * 
+     * @param grPostal
+     */
+    void setGrPostal(GrPostal grPostal);
 
 }

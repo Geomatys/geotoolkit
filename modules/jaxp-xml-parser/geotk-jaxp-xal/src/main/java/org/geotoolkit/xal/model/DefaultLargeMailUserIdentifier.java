@@ -20,12 +20,9 @@ package org.geotoolkit.xal.model;
  *
  * @author Samuel Andrés
  */
-public class DefaultLargeMailUserIdentifier implements LargeMailUserIdentifier {
+public class DefaultLargeMailUserIdentifier extends DefaultGenericTypedGrPostal implements LargeMailUserIdentifier {
 
-    private final String type;
     private final String indicator;
-    private final GrPostal grPostal;
-    private final String content;
 
     /**
      *
@@ -36,10 +33,8 @@ public class DefaultLargeMailUserIdentifier implements LargeMailUserIdentifier {
      */
     public DefaultLargeMailUserIdentifier(String type,
             String indicator, GrPostal grPostal, String content){
-        this.type = type;
+        super(type, grPostal, content);
         this.indicator = indicator;
-        this.grPostal = grPostal;
-        this.content = content;
     }
 
     /**
@@ -48,26 +43,5 @@ public class DefaultLargeMailUserIdentifier implements LargeMailUserIdentifier {
      */
     @Override
     public String getIndicator() {return this.indicator;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public String getContent() {return this.content;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public String getType() {return this.type;}
-
-    /**
-     *
-     * @{@inheritDoc }
-     */
-    @Override
-    public GrPostal getGrPostal() {return this.grPostal;}
 
 }

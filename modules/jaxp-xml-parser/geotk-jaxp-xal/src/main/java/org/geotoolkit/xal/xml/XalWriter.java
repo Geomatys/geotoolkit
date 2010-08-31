@@ -200,7 +200,7 @@ public class XalWriter extends StaxStreamWriter {
     private void writePostalServiceElements(PostalServiceElements postalServiceElements) throws XMLStreamException{
         writer.writeStartElement(URI_XAL,TAG_POSTAL_SERVICE_ELEMENTS);
         if (postalServiceElements.getType() != null){
-            writer.writeAttribute(ATT_ADDRESS_TYPE, postalServiceElements.getType());
+            writer.writeAttribute(ATT_TYPE, postalServiceElements.getType());
         }
         if (postalServiceElements.getAddressIdentifiers() != null){
             for (AddressIdentifier addressIdentifier : postalServiceElements.getAddressIdentifiers()){
@@ -276,7 +276,7 @@ public class XalWriter extends StaxStreamWriter {
     }
 
     private void writeBarcode(GenericTypedGrPostal barcode) throws XMLStreamException{
-        writer.writeStartElement(URI_XAL,TAG_ENDORSEMENT_LINE_CODE);
+        writer.writeStartElement(URI_XAL,TAG_BARCODE);
         this.writeGenericTypedGrPostal(barcode);
         writer.writeEndElement();
     }

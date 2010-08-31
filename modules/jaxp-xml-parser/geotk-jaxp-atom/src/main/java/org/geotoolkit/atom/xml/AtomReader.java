@@ -35,10 +35,14 @@ import static org.geotoolkit.atom.xml.AtomConstants.*;
  */
 public class AtomReader extends StaxStreamReader {
 
-    private static final AtomFactory atomFactory = new DefaultAtomFactory();
+    private static AtomFactory ATOM_FACTORY;
 
     public AtomReader() {
-        super();
+        ATOM_FACTORY = DefaultAtomFactory.getInstance();
+    }
+
+    public AtomReader(AtomFactory atomFactory){
+        ATOM_FACTORY = atomFactory;
     }
 
     public XMLStreamReader getReader() {
@@ -67,7 +71,7 @@ public class AtomReader extends StaxStreamReader {
                         } else if (TAG_URI.equals(eName)) {
                             params.add(URI.create(reader.getElementText()));
                         } else if (TAG_EMAIL.equals(eName)) {
-                            params.add(atomFactory.createAtomEmail(reader.getElementText()));
+                            params.add(ATOM_FACTORY.createAtomEmail(reader.getElementText()));
                         }
                     }
                     break;
@@ -82,7 +86,7 @@ public class AtomReader extends StaxStreamReader {
 
         }
 
-        return AtomReader.atomFactory.createAtomPersonConstruct(params);
+        return AtomReader.ATOM_FACTORY.createAtomPersonConstruct(params);
     }
 
     /**
@@ -98,7 +102,7 @@ public class AtomReader extends StaxStreamReader {
         String title = reader.getAttributeValue(null, ATT_TITLE);
         String length = reader.getAttributeValue(null, ATT_LENGTH);
 
-        return AtomReader.atomFactory.createAtomLink(
+        return AtomReader.ATOM_FACTORY.createAtomLink(
                 href, rel, type, hreflang, title, length);
     }
 }
