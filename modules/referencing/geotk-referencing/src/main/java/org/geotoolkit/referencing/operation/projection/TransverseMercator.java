@@ -500,8 +500,8 @@ public class TransverseMercator extends CassiniOrMercator {
         b = b*b - 1;
         return new Matrix2(
                 -(cosφ * cosλ) / b,         // dx/dλ
+                 (sinφ * sinλ) / b,         // dx/dφ
                 tanφ * sinλ / sct,          // dy/dλ
-                (sinφ * sinλ) / b,          // dx/dφ
                 cosλ / (cosφ*cosφ * sct));  // dy/dφ
     }
 

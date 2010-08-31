@@ -90,7 +90,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author André Gosselin (MPO)
  * @author Rueben Schulz (UBC)
- * @version 3.14
+ * @version 3.15
  *
  * @since 1.0
  * @module
@@ -482,8 +482,8 @@ public class LambertConformal extends UnitaryProjection {
         final double dρ   = -n*ρ / cos(φ);
         return new Matrix2(
                 ρ  *  cosλ,    // dx/dλ
-                ρ  * -sinλ,    // dy/dλ
                 dρ *  sinλ,    // dx/dφ
+                ρ  * -sinλ,    // dy/dλ
                 dρ *  cosλ);   // dy/dφ
     }
 
