@@ -88,7 +88,7 @@ public class DefaultMultiGeometry extends DefaultAbstractGeometry implements Mul
      */
     @Override
     public void setGeometries(List<AbstractGeometry> geometries) {
-        this.geometries = geometries;
+        this.geometries = (geometries == null) ? EMPTY_LIST : geometries;
     }
 
     /**

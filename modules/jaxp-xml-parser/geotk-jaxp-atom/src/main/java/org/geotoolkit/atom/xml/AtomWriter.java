@@ -46,15 +46,13 @@ public class AtomWriter extends StaxStreamWriter {
      */
     public void writeAuthor(AtomPersonConstruct author) throws XMLStreamException {
         writer.writeStartElement(URI_ATOM, TAG_AUTHOR);
-        if (author.getParams() != null) {
-            for (Object param : author.getParams()) {
-                if (param instanceof String) {
-                    this.writeName((String) param);
-                } else if (param instanceof URI) {
-                    this.writeUri((URI) param);
-                } else if (param instanceof AtomEmail) {
-                    this.writeEmail((AtomEmail) param);
-                }
+        for (Object param : author.getParams()) {
+            if (param instanceof String) {
+                this.writeName((String) param);
+            } else if (param instanceof URI) {
+                this.writeUri((URI) param);
+            } else if (param instanceof AtomEmail) {
+                this.writeEmail((AtomEmail) param);
             }
         }
         writer.writeEndElement();

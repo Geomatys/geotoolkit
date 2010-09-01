@@ -28,8 +28,8 @@ import static org.geotoolkit.data.kml.xml.KmlConstants.*;
  */
 public class DefaultLineString extends com.vividsolutions.jts.geom.LineString implements LineString {
 
+    private final Extensions extensions = new Extensions();
     private IdAttributes idAttributes;
-    private Extensions extensions = new Extensions();
     private boolean extrude;
     private boolean tessellate;
     private AltitudeMode altitudeMode;

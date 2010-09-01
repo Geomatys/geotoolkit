@@ -51,7 +51,7 @@ public class DefaultItemIcon extends DefaultAbstractObject implements ItemIcon {
             List<SimpleTypeContainer> itemIconSimpleExtensions,
             List<Object> itemIconObjectExtensions) {
         super(objectSimpleExtensions, idAttributes);
-        this.states = states;
+        this.states = (states == null) ? EMPTY_LIST : states;
         this.href = href;
         if (itemIconSimpleExtensions != null) {
             this.extensions().simples(Extensions.Names.ITEM_ICON).addAll(itemIconSimpleExtensions);
@@ -85,7 +85,7 @@ public class DefaultItemIcon extends DefaultAbstractObject implements ItemIcon {
      */
     @Override
     public void setStates(List<ItemIconState> states) {
-        this.states = states;
+        this.states = (states == null) ? EMPTY_LIST : states;
     }
 
     /**

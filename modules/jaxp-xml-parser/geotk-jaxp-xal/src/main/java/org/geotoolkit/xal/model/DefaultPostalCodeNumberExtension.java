@@ -22,7 +22,12 @@ package org.geotoolkit.xal.model;
  */
 public class DefaultPostalCodeNumberExtension extends DefaultGenericTypedGrPostal implements PostalCodeNumberExtension {
 
-    private final String numberExtensionSeparator;
+    private String numberExtensionSeparator;
+
+    /**
+     * 
+     */
+    public DefaultPostalCodeNumberExtension(){}
 
     /**
      *
@@ -43,5 +48,14 @@ public class DefaultPostalCodeNumberExtension extends DefaultGenericTypedGrPosta
      */
     @Override
     public String getNumberExtensionSeparator() {return this.numberExtensionSeparator;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setNumberExtensionSeparator(String numberExtensionSeparator) {
+        this.numberExtensionSeparator = numberExtensionSeparator;
+    }
 
 }

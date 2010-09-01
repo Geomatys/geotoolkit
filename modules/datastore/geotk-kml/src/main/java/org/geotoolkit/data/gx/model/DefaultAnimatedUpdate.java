@@ -18,7 +18,6 @@ package org.geotoolkit.data.gx.model;
 
 import java.util.List;
 import org.geotoolkit.data.kml.model.DefaultAbstractObject;
-import org.geotoolkit.data.kml.model.Extensions;
 import org.geotoolkit.data.kml.model.IdAttributes;
 import org.geotoolkit.data.kml.model.Update;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;

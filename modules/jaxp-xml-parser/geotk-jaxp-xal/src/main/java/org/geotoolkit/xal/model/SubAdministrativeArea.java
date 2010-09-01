@@ -60,13 +60,25 @@ public interface SubAdministrativeArea {
      *
      * @return
      */
-    public List<GenericTypedGrPostal> getAddressLines();
+    List<GenericTypedGrPostal> getAddressLines();
+
+    /**
+     *
+     * @param addressLines
+     */
+    void setAddressLines(List<GenericTypedGrPostal> addressLines);
 
     /**
      *
      * @return
      */
-    public List<GenericTypedGrPostal> getSubAdministrativeAreaNames();
+    List<GenericTypedGrPostal> getSubAdministrativeAreaNames();
+
+    /**
+     *
+     * @param subAdministrativeAreaNames
+     */
+    void setSubAdministrativeAreaNames(List<GenericTypedGrPostal> subAdministrativeAreaNames);
 
     /*
      * === CHOICE: ===
@@ -76,19 +88,37 @@ public interface SubAdministrativeArea {
      *
      * @return
      */
-    public Locality getLocality();
+    Locality getLocality();
+
+    /**
+     *
+     * @param locality
+     */
+    void setLocality(Locality locality);
 
     /**
      *
      * @return
      */
-    public PostOffice getPostOffice();
+    PostOffice getPostOffice();
+
+    /**
+     *
+     * @param postOffice
+     */
+    void setPostOffice(PostOffice postOffice);
 
     /**
      * 
      * @return
      */
-    public PostalCode getPostalCode();
+    PostalCode getPostalCode();
+
+    /**
+     *
+     * @param postalCode
+     */
+    void setPostalCode(PostalCode postalCode);
 
     /*
      * === END OF CHOICE ===
@@ -101,7 +131,13 @@ public interface SubAdministrativeArea {
      *
      * @return
      */
-    public String getType();
+    String getType();
+
+    /**
+     *
+     * @param type
+     */
+    void setType(String type);
 
     /**
      * <p>Postal or Political - 
@@ -110,13 +146,25 @@ public interface SubAdministrativeArea {
      *
      * @return
      */
-    public String getUsageType();
+    String getUsageType();
+
+    /**
+     *
+     * @param usageType
+     */
+    void setUsageType(String usageType);
 
     /**
      * <p>Erode (Dist) where (Dist) is the Indicator.</p>
      *
      * @return
      */
-    public String getIndicator();
+    String getIndicator();
+
+    /**
+     * 
+     * @param indicator
+     */
+    void setIndicator(String indicator);
 
 }

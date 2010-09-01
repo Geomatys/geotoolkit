@@ -106,6 +106,6 @@ public class DefaultMultiTrack extends DefaultAbstractGeometry implements MultiT
      */
     @Override
     public void setTracks(List<Track> tracks) {
-        this.tracks = tracks;
+        this.tracks = (tracks == null) ? EMPTY_LIST : tracks;
     }
 }

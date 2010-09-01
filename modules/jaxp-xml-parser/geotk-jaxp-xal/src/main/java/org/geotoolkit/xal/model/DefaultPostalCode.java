@@ -25,11 +25,20 @@ import static java.util.Collections.*;
  */
 public class DefaultPostalCode implements PostalCode {
 
-    private final List<GenericTypedGrPostal> addressLines;
-    private final List<GenericTypedGrPostal> postalCodeNumbers;
-    private final List<PostalCodeNumberExtension> postalCodeNumberExtensions;
-    private final PostTown postTown;
-    private final String type;
+    private List<GenericTypedGrPostal> addressLines;
+    private List<GenericTypedGrPostal> postalCodeNumbers;
+    private List<PostalCodeNumberExtension> postalCodeNumberExtensions;
+    private PostTown postTown;
+    private String type;
+
+    /**
+     * 
+     */
+    public DefaultPostalCode(){
+        this.addressLines = EMPTY_LIST;
+        this.postalCodeNumbers = EMPTY_LIST;
+        this.postalCodeNumberExtensions = EMPTY_LIST;
+    }
 
     /**
      *
@@ -82,5 +91,50 @@ public class DefaultPostalCode implements PostalCode {
      */
     @Override
     public String getType() {return this.type;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAddressLines(List<GenericTypedGrPostal> addressLines) {
+        this.addressLines = addressLines;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostalCodeNumbers(List<GenericTypedGrPostal> postalCodeNumbers) {
+        this.postalCodeNumbers = postalCodeNumbers;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostalCodeNumberExtensions(List<PostalCodeNumberExtension> postalCodeNumberExtensions) {
+        this.postalCodeNumberExtensions = postalCodeNumberExtensions;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostTown(PostTown postTown) {
+        this.postTown = postTown;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setType(String type) {
+        this.type = type;
+    }
 
 }

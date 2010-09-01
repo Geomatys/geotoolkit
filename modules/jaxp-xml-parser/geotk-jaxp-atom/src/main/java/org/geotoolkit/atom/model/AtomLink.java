@@ -40,71 +40,71 @@ public interface AtomLink {
      *
      * @return
      */
-    public String getHref();
+    String getHref();
 
     /**
      *
      * @return
      */
-    public String getRel();
+    String getRel();
 
     /**
      *
      * @return
      */
-    public String getType();
+    String getType();
 
     /**
      *
      * @return
      */
-    public String getHreflang();
+    String getHreflang();
 
     /**
      *
      * @return
      */
-    public String getTitle();
+    String getTitle();
 
     /**
      * 
      * @return
      */
-    public String getLength();
+    String getLength();
 
     /**
      *
      * @param href
      */
-    public void setHref(final String href);
+    void setHref(final String href);
 
     /**
      *
      * @param rel
      */
-    public void setRel(final String rel);
+    void setRel(final String rel);
 
     /**
      *
      * @param type
      */
-    public void setType(final String type);
+    void setType(final String type);
 
     /**
      *
      * @param hreflang
      */
-    public void setHreflang(final String hreflang);
+    void setHreflang(final String hreflang);
 
     /**
      *
      * @param title
      */
-    public void setTitle(final String title);
+    void setTitle(final String title);
 
     /**
      *
      * @param length
      */
-    public void setLength(final String length);
+    void setLength(final String length);
 }

@@ -61,56 +61,110 @@ public interface PostBox {
      * 
      * @return
      */
-    public List<GenericTypedGrPostal> getAddressLines();
+    List<GenericTypedGrPostal> getAddressLines();
 
     /**
      *
      * @return
      */
-    public PostBoxNumber getPostBoxNumber();
+    PostBoxNumber getPostBoxNumber();
 
     /**
      *
      * @return
      */
-    public PostBoxNumberPrefix getPostBoxNumberPrefix();
+    PostBoxNumberPrefix getPostBoxNumberPrefix();
 
     /**
      *
      * @return
      */
-    public PostBoxNumberSuffix getPostBoxNumberSuffix();
+    PostBoxNumberSuffix getPostBoxNumberSuffix();
 
     /**
      *
      * @return
      */
-    public PostBoxNumberExtension getPostBoxNumberExtension();
+    PostBoxNumberExtension getPostBoxNumberExtension();
 
     /**
      *
      * @return
      */
-    public Firm getFirm();
+    Firm getFirm();
 
     /**
      *
      * @return
      */
-    public PostalCode getPostalCode();
+    PostalCode getPostalCode();
 
     /**
      * <p>Possible values are, not limited to: POBox and Freepost.</p>
      *
      * @return
      */
-    public String getType();
+    String getType();
 
     /**
      * <p>LOCKED BAG NO:1234 where the Indicator is NO: and Type is LOCKED BAG.</p>
      *
      * @return
      */
-    public String getIndicator();
+    String getIndicator();
+
+    /**
+     *
+     * @param addressLines
+     */
+    void setAddressLines(List<GenericTypedGrPostal> addressLines);
+
+    /**
+     *
+     * @param postBoxNumber
+     */
+    void setPostBoxNumber(PostBoxNumber postBoxNumber);
+
+    /**
+     *
+     * @param postBoxNumberPrefix
+     */
+    void setPostBoxNumberPrefix(PostBoxNumberPrefix postBoxNumberPrefix);
+
+    /**
+     *
+     * @param postBoxNumberSuffix
+     */
+    void setPostBoxNumberSuffix(PostBoxNumberSuffix postBoxNumberSuffix);
+
+    /**
+     *
+     * @param postBoxNumberExtension
+     */
+    void setPostBoxNumberExtension(PostBoxNumberExtension postBoxNumberExtension);
+
+    /**
+     *
+     * @param firm
+     */
+    void setFirm(Firm firm);
+
+    /**
+     *
+     * @param postalCode
+     */
+    void setPostalCode(PostalCode postalCode);
+
+    /**
+     *
+     * @param type
+     */
+    void setType(String type);
+
+    /**
+     * 
+     * @param indicator
+     */
+    void setIndicator(String indicator);
 
 }

@@ -27,7 +27,6 @@ import static org.geotoolkit.data.kml.xml.KmlConstants.*;
  */
 public class DefaultViewVolume extends DefaultAbstractObject implements ViewVolume {
 
-    private final Extensions exts = new Extensions();
     private double leftFov;
     private double rightFov;
     private double bottomFov;

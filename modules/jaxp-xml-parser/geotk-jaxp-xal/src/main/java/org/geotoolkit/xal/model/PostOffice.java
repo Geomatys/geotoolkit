@@ -58,7 +58,13 @@ public interface PostOffice {
      *
      * @return
      */
-    public List<GenericTypedGrPostal> getAddressLines();
+    List<GenericTypedGrPostal> getAddressLines();
+
+    /**
+     *
+     * @param addressLines
+     */
+    void setAddressLines(List<GenericTypedGrPostal> addressLines);
 
     /*
      * === CHOICE: ===
@@ -71,14 +77,26 @@ public interface PostOffice {
      *
      * @return
      */
-    public List<GenericTypedGrPostal> getPostOfficeNames();
+    List<GenericTypedGrPostal> getPostOfficeNames();
+
+    /**
+     *
+     * @param postOfficeNames
+     */
+    void setPostOfficeNames(List<GenericTypedGrPostal> postOfficeNames);
 
     /**
      * <p>Specification of the number of the postoffice. Common in rural postoffices.</p>
      *
      * @return
      */
-    public PostOfficeNumber getPostOfficeNumber();
+    PostOfficeNumber getPostOfficeNumber();
+
+    /**
+     *
+     * @param postOfficeNumber
+     */
+    void setPostOfficeNumber(PostOfficeNumber postOfficeNumber);
 
     /*
      * === END OF CHOICE ===
@@ -89,19 +107,37 @@ public interface PostOffice {
      *
      * @return
      */
-    public PostalRoute getPostalRoute();
+    PostalRoute getPostalRoute();
+
+    /**
+     *
+     * @param postalRoute
+     */
+    void setPostalRoute(PostalRoute postalRoute);
 
     /**
      *
      * @return
      */
-    public PostBox getPostBox();
+    PostBox getPostBox();
+
+    /**
+     *
+     * @param postBox
+     */
+    void setPostBox(PostBox postBox);
 
     /**
      *
      * @return
      */
-    public PostalCode getPostalCode();
+    PostalCode getPostalCode();
+
+    /**
+     *
+     * @param postalCode
+     */
+    void setPostalCode(PostalCode postalCode);
 
     /*
      * === ATTRIBUTES
@@ -111,13 +147,25 @@ public interface PostOffice {
      * <p>Could be a Mobile Postoffice Van as in Isreal.</p>
      * @return
      */
-    public String getType();
+    String getType();
+
+    /**
+     *
+     * @param type
+     */
+    void setType(String type);
 
     /**
      * <p>eg. Kottivakkam (P.O) here (P.O) is the Indicator.</p>
      *
      * @return
      */
-    public String getIndicator();
+    String getIndicator();
+
+    /**
+     * 
+     * @param indicator
+     */
+    void setIndicator(String indicator);
 
 }

@@ -329,10 +329,28 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
+    public AdministrativeArea createAdministrativeArea(){
+        return new DefaultAdministrativeArea();
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
     public SubAdministrativeArea createSubAdministrativeArea(List<GenericTypedGrPostal> addressLines,
             List<GenericTypedGrPostal> subAdministrativeAreaNames,
             Object localisation, String type, String usageType, String indicator) throws XalException {
         return new DefaultSubAdministrativeArea(addressLines, subAdministrativeAreaNames, localisation, type, usageType, indicator);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public SubAdministrativeArea createSubAdministrativeArea() {
+        return new DefaultSubAdministrativeArea();
     }
 
     /**
@@ -364,7 +382,8 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
-    public PostBoxNumberPrefix createPostBoxNumberPrefix(String numberPrefixSeparator, GrPostal grPostal, String content) {
+    public PostBoxNumberPrefix createPostBoxNumberPrefix(
+            String numberPrefixSeparator, GrPostal grPostal, String content) {
         return new DefaultPostBoxNumberPrefix(numberPrefixSeparator, grPostal, content);
     }
 
@@ -373,8 +392,27 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
-    public PostBoxNumberSuffix createPostBoxNumberSuffix(String numberSuffixSeparator, GrPostal grPostal, String content) {
+    public PostBoxNumberPrefix createPostBoxNumberPrefix() {
+        return new DefaultPostBoxNumberPrefix();
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PostBoxNumberSuffix createPostBoxNumberSuffix(
+            String numberSuffixSeparator, GrPostal grPostal, String content) {
         return new DefaultPostBoxNumberSuffix(numberSuffixSeparator, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PostBoxNumberSuffix createPostBoxNumberSuffix() {
+        return new DefaultPostBoxNumberSuffix();
     }
 
     /**
@@ -391,8 +429,19 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
-    public Firm createFirm(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> firmNames, List<Department> departments, MailStop mailStop, PostalCode postalCode, String type) {
+    public Firm createFirm(List<GenericTypedGrPostal> addressLines, 
+            List<GenericTypedGrPostal> firmNames, List<Department> departments,
+            MailStop mailStop, PostalCode postalCode, String type) {
         return new DefaultFirm(addressLines, firmNames, departments, mailStop, postalCode, type);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public Firm createFirm() {
+        return new DefaultFirm();
     }
 
     /**
@@ -414,6 +463,15 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
+    public PostBox createPostBox() {
+        return new DefaultPostBox();
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
     public Department createDepartment(List<GenericTypedGrPostal> addressLines,
             List<GenericTypedGrPostal> departmentNames, MailStop mailStop, PostalCode postalCode, String type) {
         return new DefaultDepartment(addressLines, departmentNames, mailStop, postalCode, type);
@@ -424,9 +482,27 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
+    public Department createDepartment() {
+        return new DefaultDepartment();
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
     public MailStop createMailStop(List<GenericTypedGrPostal> addressLines,
             List<GenericTypedGrPostal> mailStopNames, MailStopNumber mailStopNumber, String type) {
         return new DefaultMailStop(addressLines, mailStopNames, mailStopNumber, type);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public MailStop createMailStop() {
+        return new DefaultMailStop();
     }
 
     /**
@@ -454,9 +530,27 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
+    public PostalCode createPostalCode() {
+        return new DefaultPostalCode();
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
     public PostalCodeNumberExtension createPostalCodeNumberExtension(String type, String numberExtensionSeparator,
             GrPostal grPostal, String content) {
         return new DefaultPostalCodeNumberExtension(type, numberExtensionSeparator, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PostalCodeNumberExtension createPostalCodeNumberExtension() {
+        return new DefaultPostalCodeNumberExtension();
     }
 
     /**
@@ -476,6 +570,15 @@ public class DefaultXalFactory implements XalFactory {
     public PostTown createPostTown(List<GenericTypedGrPostal> addressLines,
             List<GenericTypedGrPostal> postTownNames, PostTownSuffix postTownSuffix, String type) {
         return new DefaultPostTown(addressLines, postTownNames, postTownSuffix, type);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PostTown createPostTown() {
+        return new DefaultPostTown();
     }
 
     /**
@@ -545,11 +648,29 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
+    public PostalRoute createPostalRoute(){
+        return new DefaultPostalRoute();
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
     public PostOffice createPostOffice(List<GenericTypedGrPostal> addressLines,
             Object localisation, PostalRoute postalRoute, PostBox postBox,
             PostalCode postalCode, String type, String indicator) throws XalException {
         return new DefaultPostOffice(addressLines, localisation, postalRoute,
                 postBox, postalCode, type, indicator);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PostOffice createPostOffice() {
+        return new DefaultPostOffice();
     }
 
     /**

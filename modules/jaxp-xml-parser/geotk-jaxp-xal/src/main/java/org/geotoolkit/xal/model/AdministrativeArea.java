@@ -58,19 +58,37 @@ public interface AdministrativeArea {
      *
      * @return
      */
-    public List<GenericTypedGrPostal> getAddressLines();
+    List<GenericTypedGrPostal> getAddressLines();
+
+    /**
+     *
+     * @param addressLines
+     */
+    void setAddressLines(List<GenericTypedGrPostal> addressLines);
 
     /**
      *
      * @return
      */
-    public List<GenericTypedGrPostal> getAdministrativeAreaNames();
+    List<GenericTypedGrPostal> getAdministrativeAreaNames();
+
+    /**
+     *
+     * @param administrativeAreaNames
+     */
+    void setAdministrativeAreaNames(List<GenericTypedGrPostal> administrativeAreaNames);
 
     /**
      *
      * @return
      */
-    public SubAdministrativeArea getSubAdministrativeArea();
+    SubAdministrativeArea getSubAdministrativeArea();
+
+    /**
+     *
+     * @param subAdministrativeArea
+     */
+    void setSubAdmonistrativeArea(SubAdministrativeArea subAdministrativeArea);
 
     /*
      * === CHOICE: ===
@@ -80,19 +98,37 @@ public interface AdministrativeArea {
      *
      * @return
      */
-    public Locality getLocality();
+    Locality getLocality();
+
+    /**
+     *
+     * @param locality
+     */
+    void setLocality(Locality locality);
 
     /**
      *
      * @return
      */
-    public PostOffice getPostOffice();
+    PostOffice getPostOffice();
+
+    /**
+     *
+     * @param postOffice
+     */
+    void setPostOffice(PostOffice postOffice);
 
     /**
      *
      * @return
      */
-    public PostalCode getPostalCode();
+    PostalCode getPostalCode();
+
+    /**
+     *
+     * @param postalCode
+     */
+    void setPostalCode(PostalCode postalCode);
 
     /*
      * === END OF CHOICE ===
@@ -105,7 +141,13 @@ public interface AdministrativeArea {
      *
      * @return
      */
-    public String getType();
+    String getType();
+
+    /**
+     *
+     * @param type
+     */
+    void setType(String type);
 
     /**
      * <p>ostal or Political - Sometimes locations must be distinguished between postal system,
@@ -113,12 +155,24 @@ public interface AdministrativeArea {
      *
      * @return
      */
-    public String getUsageType();
+    String getUsageType();
+
+    /**
+     * 
+     * @param usageType
+     */
+    void setUsageType(String usageType);
 
     /**
      * <p>Erode (Dist) where (Dist) is the Indicator.</p>
      *
      * @return
      */
-    public String getIndicator();
+    String getIndicator();
+
+    /**
+     *
+     * @param Indicator
+     */
+    void setIndicator(String Indicator);
 }

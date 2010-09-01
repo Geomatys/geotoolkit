@@ -57,6 +57,6 @@ public class DefaultChange implements Change {
      */
     @Override
     public void setObjects(List<Object> objects) {
-        this.objects = objects;
+        this.objects = (objects == null) ? EMPTY_LIST : objects;
     }
 }

@@ -25,15 +25,19 @@ import static java.util.Collections.*;
  */
 public class DefaultPostBox implements PostBox {
 
-    private final List<GenericTypedGrPostal> addressLines;
-    private final PostBoxNumber postBoxNumber;
-    private final PostBoxNumberPrefix postBoxNumberPrefix;
-    private final PostBoxNumberSuffix postBoxNumberSuffix;
-    private final PostBoxNumberExtension postBoxNumberExtension;
-    private final Firm firm;
-    private final PostalCode postalCode;
-    private final String type;
-    private final String indicator;
+    private List<GenericTypedGrPostal> addressLines;
+    private PostBoxNumber postBoxNumber;
+    private PostBoxNumberPrefix postBoxNumberPrefix;
+    private PostBoxNumberSuffix postBoxNumberSuffix;
+    private PostBoxNumberExtension postBoxNumberExtension;
+    private Firm firm;
+    private PostalCode postalCode;
+    private String type;
+    private String indicator;
+
+    public DefaultPostBox(){
+        this.addressLines = EMPTY_LIST;
+    }
 
     /**
      *
@@ -124,5 +128,86 @@ public class DefaultPostBox implements PostBox {
      */
     @Override
     public String getIndicator() {return this.indicator;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAddressLines(List<GenericTypedGrPostal> addressLines) {
+        this.addressLines = addressLines;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostBoxNumber(PostBoxNumber postBoxNumber) {
+        this.postBoxNumber = postBoxNumber;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostBoxNumberPrefix(PostBoxNumberPrefix postBoxNumberPrefix) {
+        this.postBoxNumberPrefix = postBoxNumberPrefix;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostBoxNumberSuffix(PostBoxNumberSuffix postBoxNumberSuffix) {
+        this.postBoxNumberSuffix = postBoxNumberSuffix;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostBoxNumberExtension(PostBoxNumberExtension postBoxNumberExtension) {
+        this.postBoxNumberExtension = postBoxNumberExtension;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setFirm(Firm firm) {
+        this.firm = firm;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostalCode(PostalCode postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setIndicator(String indicator) {
+        this.indicator = indicator;
+    }
 
 }

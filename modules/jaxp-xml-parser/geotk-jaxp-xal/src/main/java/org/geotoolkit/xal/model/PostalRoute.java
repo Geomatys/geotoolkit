@@ -43,7 +43,17 @@ import java.util.List;
  */
 public interface PostalRoute {
 
-    public List<GenericTypedGrPostal> getAddressLines();
+    /**
+     *
+     * @return
+     */
+    List<GenericTypedGrPostal> getAddressLines();
+
+    /**
+     *
+     * @param addressLines
+     */
+    void setAddressLines(List<GenericTypedGrPostal> addressLines);
 
     /*
      * === CHOICE: ===
@@ -54,24 +64,56 @@ public interface PostalRoute {
      *
      * @return
      */
-    public List<GenericTypedGrPostal> getPostalRouteNames();
+    List<GenericTypedGrPostal> getPostalRouteNames();
+
+    /**
+     *
+     * @param postalRouteNames
+     */
+    void setPostalRouteNames(List<GenericTypedGrPostal> postalRouteNames);
 
     /**
      * <p>Number of the Postal Route.</p>
      *
      * @return
      */
-    public PostalRouteNumber getPostalRouteNumber();
+    PostalRouteNumber getPostalRouteNumber();
+
+    /**
+     *
+     * @param postalRouteNumber
+     */
+    void setPostalRouteNumber(PostalRouteNumber postalRouteNumber);
 
     /*
      * === END OF CHOICE ===
      */
 
-    public PostBox getPostBox();
+    /**
+     *
+     * @return
+     */
+    PostBox getPostBox();
+
+    /**
+     *
+     * @param postBox
+     */
+    void setPostBox(PostBox postBox);
 
     /*
      * === ATTRIBUTES ===
      */
 
-    public String getType();
+    /**
+     *
+     * @return
+     */
+    String getType();
+
+    /**
+     * 
+     * @param type
+     */
+    void setType(String type);
 }

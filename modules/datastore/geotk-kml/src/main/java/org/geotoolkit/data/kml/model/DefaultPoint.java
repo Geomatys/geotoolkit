@@ -28,8 +28,8 @@ import static org.geotoolkit.data.kml.xml.KmlConstants.*;
  */
 public class DefaultPoint extends com.vividsolutions.jts.geom.Point implements Point {
 
-    private IdAttributes idAttributes;
     private final Extensions extensions = new Extensions();
+    private IdAttributes idAttributes;
     private boolean extrude;
     private AltitudeMode altitudeMode;
 

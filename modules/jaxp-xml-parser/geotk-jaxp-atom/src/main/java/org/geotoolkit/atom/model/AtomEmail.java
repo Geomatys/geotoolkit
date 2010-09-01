@@ -35,12 +35,12 @@ public interface AtomEmail {
      *
      * @return
      */
-    public String getAddress();
+    String getAddress();
 
     /**
      * 
      * @param address
      */
-    public void setAddress(String address);
+    void setAddress(String address);
 
 }

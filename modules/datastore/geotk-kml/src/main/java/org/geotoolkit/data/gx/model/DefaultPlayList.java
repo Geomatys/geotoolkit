@@ -38,7 +38,7 @@ public class DefaultPlayList extends DefaultAbstractObject implements PlayList {
             IdAttributes idAttributes,
             List<AbstractTourPrimitive> tourPrimitives){
         super(objectSimpleExtensions, idAttributes);
-        this.tourPrimitives = tourPrimitives;
+        this.tourPrimitives = (tourPrimitives == null) ? EMPTY_LIST : tourPrimitives;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class DefaultPlayList extends DefaultAbstractObject implements PlayList {
 
     @Override
     public void setTourPrimitives(List<AbstractTourPrimitive> tourPrimitives) {
-        this.tourPrimitives = tourPrimitives;
+        this.tourPrimitives = (tourPrimitives == null) ? EMPTY_LIST : tourPrimitives;
     }
 
 }

@@ -25,11 +25,16 @@ import static java.util.Collections.*;
  */
 public class DefaultPostalRoute implements PostalRoute {
 
-    private final List<GenericTypedGrPostal> addressLines;
+    private List<GenericTypedGrPostal> addressLines;
     private List<GenericTypedGrPostal> postalRouteNames;
     private PostalRouteNumber postalRouteNumber;
-    private final PostBox postBox;
-    private final String type;
+    private PostBox postBox;
+    private String type;
+
+    public DefaultPostalRoute(){
+        this.addressLines = EMPTY_LIST;
+        this.postalRouteNames = EMPTY_LIST;
+    }
 
     /**
      * 
@@ -91,5 +96,50 @@ public class DefaultPostalRoute implements PostalRoute {
      */
     @Override
     public String getType() {return this.type;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAddressLines(List<GenericTypedGrPostal> addressLines) {
+        this.addressLines = addressLines;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostalRouteNames(List<GenericTypedGrPostal> postalRouteNames) {
+        this.postalRouteNames = postalRouteNames;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostalRouteNumber(PostalRouteNumber postalRouteNumber) {
+        this.postalRouteNumber = postalRouteNumber;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostBox(PostBox postBox) {
+        this.postBox = postBox;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setType(String type) {
+        this.type = type;
+    }
 
 }

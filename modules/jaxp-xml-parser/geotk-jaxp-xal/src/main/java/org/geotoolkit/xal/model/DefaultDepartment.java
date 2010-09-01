@@ -25,11 +25,19 @@ import static java.util.Collections.*;
  */
 public class DefaultDepartment implements Department {
 
-    private final List<GenericTypedGrPostal> addressLines;
-    private final List<GenericTypedGrPostal> departmentNames;
-    private final MailStop mailStop;
-    private final PostalCode postalCode;
-    private final String type;
+    private List<GenericTypedGrPostal> addressLines;
+    private List<GenericTypedGrPostal> departmentNames;
+    private MailStop mailStop;
+    private PostalCode postalCode;
+    private String type;
+
+    /**
+     * 
+     */
+    public DefaultDepartment(){
+        this.addressLines = EMPTY_LIST;
+        this.departmentNames = EMPTY_LIST;
+    }
 
     /**
      *
@@ -82,5 +90,50 @@ public class DefaultDepartment implements Department {
      */
     @Override
     public String getType() {return this.type;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAddressLines(List<GenericTypedGrPostal> addressLines) {
+        this.addressLines = addressLines;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setDepartmentNames(List<GenericTypedGrPostal> departmentNames) {
+        this.departmentNames = departmentNames;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setMailStop(MailStop mailStop) {
+        this.mailStop = mailStop;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostalCode(PostalCode postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setType(String type) {
+        this.type = type;
+    }
 
 }

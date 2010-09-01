@@ -39,11 +39,11 @@ public interface AtomPersonConstruct {
      *
      * @return
      */
-    public List<Object> getParams();
+    List<Object> getParams();
 
     /**
      * 
      * @param params
      */
-    public void setParams(final List<Object> params);
+    void setParams(final List<Object> params);
 }

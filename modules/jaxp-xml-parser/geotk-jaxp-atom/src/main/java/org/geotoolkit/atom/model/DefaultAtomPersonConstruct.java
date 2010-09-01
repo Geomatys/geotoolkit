@@ -58,7 +58,7 @@ public class DefaultAtomPersonConstruct implements AtomPersonConstruct {
      */
     @Override
     public void setParams(final List<Object> params) {
-        this.params = this.verifParams(params);
+        this.params = (params == null) ? EMPTY_LIST : verifParams(params);
     }
 
     /**

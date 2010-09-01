@@ -46,37 +46,73 @@ public interface Firm {
      * 
      * @return
      */
-    public List<GenericTypedGrPostal> getAddressLines();
+    List<GenericTypedGrPostal> getAddressLines();
 
     /**
      * <p>Name of the firm.</p>
      *
      * @return
      */
-    public List<GenericTypedGrPostal> getFirmNames();
+    List<GenericTypedGrPostal> getFirmNames();
 
     /**
      *
      * @return
      */
-    public List<Department> getDepartments();
+    List<Department> getDepartments();
 
     /**
      * <p>A MailStop is where the the mail is delivered to within a premise/subpremise/firm or a facility.</p>
      *
      * @return
      */
-    public MailStop getMailStop();
+    MailStop getMailStop();
 
     /**
      *
      * @return
      */
-    public PostalCode getPostalCode();
+    PostalCode getPostalCode();
 
     /**
      *
      * @return
      */
-    public String getType();
+    String getType();
+
+    /**
+     *
+     * @param addressLines
+     */
+    void setAddressLines(List<GenericTypedGrPostal> addressLines);
+
+    /**
+     *
+     * @param firmNames
+     */
+    void setFirmNames(List<GenericTypedGrPostal> firmNames);
+
+    /**
+     *
+     * @param departments
+     */
+    void setDepartments(List<Department> departments);
+
+    /**
+     *
+     * @param mailStop
+     */
+    void setMailStop(MailStop mailStop);
+
+    /**
+     *
+     * @param postalCode
+     */
+    void setPostalCode(PostalCode postalCode);
+
+    /**
+     * 
+     * @param type
+     */
+    void setType(String type);
 }

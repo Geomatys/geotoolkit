@@ -25,10 +25,18 @@ import static java.util.Collections.*;
  */
 public class DefaultMailStop implements MailStop {
 
-    private final List<GenericTypedGrPostal> addressLines;
-    private final List<GenericTypedGrPostal> mailStopNames;
-    private final MailStopNumber mailStopNumber;
-    private final String type;
+    private List<GenericTypedGrPostal> addressLines;
+    private List<GenericTypedGrPostal> mailStopNames;
+    private MailStopNumber mailStopNumber;
+    private String type;
+
+    /**
+     * 
+     */
+    public DefaultMailStop(){
+        this.addressLines = EMPTY_LIST;
+        this.mailStopNames = EMPTY_LIST;
+    }
 
     /**
      *
@@ -72,5 +80,41 @@ public class DefaultMailStop implements MailStop {
      */
     @Override
     public String getType() {return this.type;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAddressLines(List<GenericTypedGrPostal> addressLines) {
+        this.addressLines = addressLines;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setMailStopNames(List<GenericTypedGrPostal> mailStopNames) {
+        this.mailStopNames = mailStopNames;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setMailStopNumber(MailStopNumber mailStopNumber) {
+        this.mailStopNumber = mailStopNumber;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setType(String type) {
+        this.type = type;
+    }
 
 }

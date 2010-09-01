@@ -38,18 +38,36 @@ public interface PostBoxNumberPrefix {
      * 
      * @return
      */
-    public String getContent();
+    String getContent();
 
     /**
      * <p>A-12 where 12 is number and A is prefix and "-" is the separator.</p>
      *
      * @return
      */
-    public String getNumberPrefixSeparator();
+    String getNumberPrefixSeparator();
 
     /**
      *
      * @return
      */
-    public GrPostal getGrPostal();
+    GrPostal getGrPostal();
+
+    /**
+     *
+     * @param content
+     */
+    void setContent(String content);
+
+    /**
+     *
+     * @param numberPrefixSeparator
+     */
+    void setNumberPrefixSeparator(String numberPrefixSeparator);
+
+    /**
+     * 
+     * @param grPostal
+     */
+    void setGrPostal(GrPostal grPostal);
 }

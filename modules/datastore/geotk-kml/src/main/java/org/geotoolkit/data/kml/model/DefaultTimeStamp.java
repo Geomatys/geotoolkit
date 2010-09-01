@@ -26,7 +26,6 @@ import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
  */
 public class DefaultTimeStamp extends DefaultAbstractTimePrimitive implements TimeStamp {
 
-    private final Extensions exts = new Extensions();
     private Calendar when;
 
     /**

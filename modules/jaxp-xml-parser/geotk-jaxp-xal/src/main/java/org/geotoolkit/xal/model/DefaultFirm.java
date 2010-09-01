@@ -25,12 +25,18 @@ import static java.util.Collections.*;
  */
 public class DefaultFirm implements Firm {
 
-    private final List<GenericTypedGrPostal> addressLines;
-    private final List<GenericTypedGrPostal> firmNames;
-    private final List<Department> departments;
-    private final MailStop mailStop;
-    private final PostalCode postalCode;
-    private final String type;
+    private List<GenericTypedGrPostal> addressLines;
+    private List<GenericTypedGrPostal> firmNames;
+    private List<Department> departments;
+    private MailStop mailStop;
+    private PostalCode postalCode;
+    private String type;
+
+    public DefaultFirm(){
+        this.addressLines = EMPTY_LIST;
+        this.firmNames = EMPTY_LIST;
+        this.departments = EMPTY_LIST;
+    }
 
     /**
      *
@@ -92,5 +98,59 @@ public class DefaultFirm implements Firm {
      */
     @Override
     public String getType() {return this.type;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAddressLines(List<GenericTypedGrPostal> addressLines) {
+        this.addressLines = addressLines;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setFirmNames(List<GenericTypedGrPostal> firmNames) {
+        this.firmNames = firmNames;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setDepartments(List<Department> departments) {
+        this.departments = departments;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setMailStop(MailStop mailStop) {
+        this.mailStop = mailStop;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostalCode(PostalCode postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setType(String type) {
+        this.type =type;
+    }
 
 }

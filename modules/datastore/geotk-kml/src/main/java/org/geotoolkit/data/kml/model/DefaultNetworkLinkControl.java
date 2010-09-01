@@ -266,6 +266,10 @@ public class DefaultNetworkLinkControl implements NetworkLinkControl {
         this.view = abstractView;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Extensions extensions() {
         return this.extensions;

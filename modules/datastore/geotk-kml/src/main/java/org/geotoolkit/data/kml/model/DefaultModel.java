@@ -26,7 +26,6 @@ import static org.geotoolkit.data.kml.xml.KmlConstants.*;
  */
 public class DefaultModel extends DefaultAbstractGeometry implements Model {
 
-    private final Extensions exts = new Extensions();
     private AltitudeMode altitudeMode;
     private Location location;
     private Orientation orientation;

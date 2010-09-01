@@ -28,8 +28,8 @@ import static java.util.Collections.*;
  */
 public class DefaultPolygon extends com.vividsolutions.jts.geom.Polygon implements Polygon {
 
-    private IdAttributes idAttributes;
     private final Extensions extensions = new Extensions();
+    private IdAttributes idAttributes;
     private boolean extrude;
     private boolean tessellate;
     private AltitudeMode altitudeMode;

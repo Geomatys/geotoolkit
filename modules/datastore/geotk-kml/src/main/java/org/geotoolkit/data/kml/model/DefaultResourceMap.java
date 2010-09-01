@@ -49,7 +49,7 @@ public class DefaultResourceMap extends DefaultAbstractObject implements Resourc
             List<SimpleTypeContainer> resourceMapSimpleExtensions,
             List<Object> resourceMapObjectExtensions) {
         super(objectSimpleExtensions, idAttributes);
-        this.aliases = aliases;
+        this.aliases = (aliases == null) ? EMPTY_LIST : aliases;
         if (resourceMapSimpleExtensions != null) {
             this.extensions().simples(Extensions.Names.RESOURCE_MAP).addAll(resourceMapSimpleExtensions);
         }
@@ -73,6 +73,6 @@ public class DefaultResourceMap extends DefaultAbstractObject implements Resourc
      */
     @Override
     public void setAliases(List<Alias> aliases) {
-        this.aliases = aliases;
+        this.aliases = (aliases == null) ? EMPTY_LIST : aliases;
     }
 }

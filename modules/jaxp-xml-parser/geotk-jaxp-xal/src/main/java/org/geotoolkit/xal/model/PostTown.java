@@ -51,24 +51,48 @@ public interface PostTown {
      * 
      * @return
      */
-    public List<GenericTypedGrPostal> getAddressLines();
+    List<GenericTypedGrPostal> getAddressLines();
 
     /**
      * <p>Name of the post town.</p>
      * 
      * @return
      */
-    public List<GenericTypedGrPostal> getPostTownNames();
+    List<GenericTypedGrPostal> getPostTownNames();
 
     /**
      *
      * @return
      */
-    public PostTownSuffix getPostTownSuffix();
+    PostTownSuffix getPostTownSuffix();
 
     /**
      * 
      * @return
      */
-    public String getType();
+    String getType();
+
+    /**
+     *
+     * @param addressLines
+     */
+    void setAddressLines(List<GenericTypedGrPostal> addressLines);
+
+    /**
+     *
+     * @param postTownNames
+     */
+    void setPostTownNames(List<GenericTypedGrPostal> postTownNames);
+
+    /**
+     *
+     * @param postTownSuffix
+     */
+    void setPostTownSuffix(PostTownSuffix postTownSuffix);
+
+    /**
+     * 
+     * @param type
+     */
+    void setType(String type);
 }

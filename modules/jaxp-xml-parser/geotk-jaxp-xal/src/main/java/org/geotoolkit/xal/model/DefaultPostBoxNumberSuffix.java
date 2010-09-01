@@ -22,9 +22,11 @@ package org.geotoolkit.xal.model;
  */
 public class DefaultPostBoxNumberSuffix implements PostBoxNumberSuffix {
 
-    private final String content;
-    private final String numberSuffixSeparator;
-    private final GrPostal grPostal;
+    private String content;
+    private String numberSuffixSeparator;
+    private GrPostal grPostal;
+
+    public DefaultPostBoxNumberSuffix(){}
 
     /**
      *
@@ -58,5 +60,32 @@ public class DefaultPostBoxNumberSuffix implements PostBoxNumberSuffix {
      */
     @Override
     public GrPostal getGrPostal() {return this.grPostal;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setNumberSuffixSeparator(String numberSuffixSeparator) {
+        this.numberSuffixSeparator = numberSuffixSeparator;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setGrPostal(GrPostal grPostal) {
+        this.grPostal = grPostal;
+    }
 
 }

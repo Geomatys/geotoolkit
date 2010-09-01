@@ -52,7 +52,7 @@ public interface PostalCode {
      *
      * @return
      */
-    public List<GenericTypedGrPostal> getAddressLines();
+    List<GenericTypedGrPostal> getAddressLines();
 
     /**
      * <p>Specification of a postcode.
@@ -61,23 +61,53 @@ public interface PostalCode {
      *
      * @return
      */
-    public List<GenericTypedGrPostal> getPostalCodeNumbers();
+    List<GenericTypedGrPostal> getPostalCodeNumbers();
 
     /**
      *
      * @return
      */
-    public List<PostalCodeNumberExtension> getPostalCodeNumberExtensions();
+    List<PostalCodeNumberExtension> getPostalCodeNumberExtensions();
 
     /**
      * 
      * @return
      */
-    public PostTown getPostTown();
+    PostTown getPostTown();
 
     /**
      * <p>Area Code, Postcode, Delivery code as in NZ, etc.</p>
      * @return
      */
-    public String getType();
+    String getType();
+
+    /**
+     *
+     * @param addressLines
+     */
+    void setAddressLines(List<GenericTypedGrPostal> addressLines);
+
+    /**
+     *
+     * @param postalCodeNumbers
+     */
+    void setPostalCodeNumbers(List<GenericTypedGrPostal> postalCodeNumbers);
+
+    /**
+     *
+     * @param postalCodeNumberExtensions
+     */
+    void setPostalCodeNumberExtensions(List<PostalCodeNumberExtension> postalCodeNumberExtensions);
+
+    /**
+     *
+     * @param postTown
+     */
+    void setPostTown(PostTown postTown);
+
+    /**
+     * 
+     * @param type
+     */
+    void setType(String type);
 }

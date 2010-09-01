@@ -67,7 +67,7 @@ public class DefaultListStyle extends DefaultAbstractSubStyle implements ListSty
                 abstractSubStyleObjectExtensions);
         this.listItem = listItem;
         this.bgColor = bgColor;
-        this.itemIcons = itemIcons;
+        this.itemIcons = (itemIcons == null) ? EMPTY_LIST : itemIcons;
         this.maxSnippetLines = maxSnippetLines;
         if (listStyleSimpleExtensions != null) {
             this.extensions().simples(Extensions.Names.LIST_STYLE).addAll(listStyleSimpleExtensions);
@@ -137,7 +137,7 @@ public class DefaultListStyle extends DefaultAbstractSubStyle implements ListSty
      */
     @Override
     public void setItemIcons(List<ItemIcon> itemIcons) {
-        this.itemIcons = itemIcons;
+        this.itemIcons = (itemIcons == null) ? EMPTY_LIST : itemIcons;
     }
 
     /**

@@ -58,6 +58,6 @@ public class DefaultDelete implements Delete {
      */
     @Override
     public void setFeatures(List<Feature> features) {
-        this.features = features;
+        this.features = (features == null) ? EMPTY_LIST : features;
     }
 }

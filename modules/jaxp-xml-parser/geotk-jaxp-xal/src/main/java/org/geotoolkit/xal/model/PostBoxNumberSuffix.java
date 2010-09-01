@@ -38,18 +38,36 @@ public interface PostBoxNumberSuffix {
      *
      * @return
      */
-    public String getContent();
+    String getContent();
 
     /**
      * <p>12-A where 12 is number and A is suffix and "-" is the separator</p>
      *
      * @return
      */
-    public String getNumberSuffixSeparator();
+    String getNumberSuffixSeparator();
 
     /**
      *
      * @return
      */
-    public GrPostal getGrPostal();
+    GrPostal getGrPostal();
+
+    /**
+     *
+     * @param content
+     */
+    void setContent(String content);
+
+    /**
+     *
+     * @param numberSuffixSeparator
+     */
+    void setNumberSuffixSeparator(String numberSuffixSeparator);
+
+    /**
+     * 
+     * @param grPostal
+     */
+    void setGrPostal(GrPostal grPostal);
 }

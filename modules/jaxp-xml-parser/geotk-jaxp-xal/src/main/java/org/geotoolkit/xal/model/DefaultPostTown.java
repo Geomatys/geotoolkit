@@ -25,10 +25,15 @@ import static java.util.Collections.*;
  */
 public class DefaultPostTown implements PostTown{
 
-    private final List<GenericTypedGrPostal> addressLines;
-    private final List<GenericTypedGrPostal> postTownNames;
-    private final PostTownSuffix postTownSuffix;
-    private final String type;
+    private List<GenericTypedGrPostal> addressLines;
+    private List<GenericTypedGrPostal> postTownNames;
+    private PostTownSuffix postTownSuffix;
+    private String type;
+
+    public DefaultPostTown(){
+        this.addressLines = EMPTY_LIST;
+        this.postTownNames = EMPTY_LIST;
+    }
 
     /**
      *
@@ -72,5 +77,41 @@ public class DefaultPostTown implements PostTown{
      */
     @Override
     public String getType() {return this.type;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAddressLines(List<GenericTypedGrPostal> addressLines) {
+        this.addressLines = addressLines;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostTownNames(List<GenericTypedGrPostal> postTownNames) {
+        this.postTownNames = postTownNames;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostTownSuffix(PostTownSuffix postTownSuffix) {
+        this.postTownSuffix = postTownSuffix;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setType(String type) {
+        this.type = type;
+    }
 
 }

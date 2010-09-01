@@ -58,6 +58,6 @@ public class DefaultCreate implements Create {
      */
     @Override
     public void setContainers(List<Feature> containers) {
-        this.containers = containers;
+        this.containers = (containers == null) ? EMPTY_LIST : containers;
     }
 }

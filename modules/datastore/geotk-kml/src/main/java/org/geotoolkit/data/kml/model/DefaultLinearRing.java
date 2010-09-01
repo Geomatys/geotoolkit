@@ -28,8 +28,8 @@ import static org.geotoolkit.data.kml.xml.KmlConstants.*;
  */
 public class DefaultLinearRing extends com.vividsolutions.jts.geom.LinearRing implements LinearRing {
 
+    private final Extensions extensions = new Extensions();
     protected IdAttributes idAttributes;
-    private final Extensions exts = new Extensions();
     private boolean extrude;
     private boolean tessellate;
     private AltitudeMode altitudeMode;
@@ -152,7 +152,7 @@ public class DefaultLinearRing extends com.vividsolutions.jts.geom.LinearRing im
      */
     @Override
     public Extensions extensions() {
-        return this.exts;
+        return this.extensions;
     }
 
     /**

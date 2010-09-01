@@ -2470,10 +2470,11 @@ public class KmlWriter extends StaxStreamWriter {
             this.writeCharacterContent(snippet);
         }
         else if (snippet instanceof Snippet){
+            Snippet s = (Snippet) snippet;
             writer.writeStartElement(URI_KML, TAG_SNIPPET_BIG);
-            if(DEF_MAX_SNIPPET_LINES_ATT != ((Snippet) snippet).getMaxLines())
-                writer.writeAttribute(ATT_MAX_LINES, String.valueOf(((Snippet) snippet).getMaxLines()));
-            this.writeCharacterContent(((Snippet) snippet).getContent());
+            if(DEF_MAX_SNIPPET_LINES_ATT != s.getMaxLines())
+                writer.writeAttribute(ATT_MAX_LINES, String.valueOf(s.getMaxLines()));
+            this.writeCharacterContent(s.getContent());
         }
         writer.writeEndElement();
     }

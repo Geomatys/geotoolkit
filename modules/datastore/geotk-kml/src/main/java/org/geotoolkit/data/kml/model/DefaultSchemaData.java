@@ -98,7 +98,7 @@ public class DefaultSchemaData extends DefaultAbstractObject implements SchemaDa
      */
     @Override
     public void setSimpleDatas(List<SimpleData> simpleDatas) {
-        this.simpleDatas = simpleDatas;
+        this.simpleDatas = (simpleDatas == null) ? EMPTY_LIST : simpleDatas;
     }
 
     /**
@@ -107,6 +107,6 @@ public class DefaultSchemaData extends DefaultAbstractObject implements SchemaDa
      */
     @Override
     public void setSchemaDataExtensions(List<Object> schemaDataExtensions) {
-        this.schemaDataExtensions = schemaDataExtensions;
+        this.schemaDataExtensions = (schemaDataExtensions == null) ? EMPTY_LIST : schemaDataExtensions;
     }
 }

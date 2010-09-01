@@ -25,14 +25,19 @@ import static java.util.Collections.*;
  */
 public class DefaultSubAdministrativeArea implements SubAdministrativeArea {
 
-    private final List<GenericTypedGrPostal> addressLines;
-    private final List<GenericTypedGrPostal> subAdministrativeAreaNames;
+    private List<GenericTypedGrPostal> addressLines;
+    private List<GenericTypedGrPostal> subAdministrativeAreaNames;
     private Locality locality;
     private PostOffice postOffice;
     private PostalCode postalCode;
-    private final String type;
-    private final String usageType;
-    private final String indicator;
+    private String type;
+    private String usageType;
+    private String indicator;
+
+    public DefaultSubAdministrativeArea(){
+        this.addressLines = EMPTY_LIST;
+        this.subAdministrativeAreaNames = EMPTY_LIST;
+    }
 
     /**
      * 
@@ -118,5 +123,77 @@ public class DefaultSubAdministrativeArea implements SubAdministrativeArea {
      */
     @Override
     public String getIndicator() {return this.indicator;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAddressLines(List<GenericTypedGrPostal> addressLines) {
+        this.addressLines = addressLines;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setSubAdministrativeAreaNames(List<GenericTypedGrPostal> subAdministrativeAreaNames) {
+        this.subAdministrativeAreaNames = subAdministrativeAreaNames;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLocality(Locality locality) {
+        this.locality = locality;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostOffice(PostOffice postOffice) {
+        this.postOffice = postOffice;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostalCode(PostalCode postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setUsageType(String usageType) {
+        this.usageType = usageType;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setIndicator(String indicator) {
+        this.indicator = indicator;
+    }
 
 }

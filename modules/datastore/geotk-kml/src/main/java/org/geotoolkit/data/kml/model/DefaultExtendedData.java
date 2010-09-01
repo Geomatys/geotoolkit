@@ -84,7 +84,7 @@ public class DefaultExtendedData implements ExtendedData {
      */
     @Override
     public void setDatas(List<Data> datas) {
-        this.datas = datas;
+        this.datas = (datas == null) ? EMPTY_LIST : datas;
     }
 
     /**
@@ -93,7 +93,7 @@ public class DefaultExtendedData implements ExtendedData {
      */
     @Override
     public void setSchemaData(List<SchemaData> schemaDatas) {
-        this.schemaDatas = schemaDatas;
+        this.schemaDatas = (schemaDatas == null) ? EMPTY_LIST : schemaDatas;
     }
 
     /**
@@ -102,6 +102,6 @@ public class DefaultExtendedData implements ExtendedData {
      */
     @Override
     public void setAnyOtherElements(List<Object> anyOtherElements) {
-        this.anyOtherElements = anyOtherElements;
+        this.anyOtherElements = (anyOtherElements == null) ? EMPTY_LIST : anyOtherElements;
     }
 }

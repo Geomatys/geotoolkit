@@ -95,7 +95,7 @@ public interface XalFactory {
      * @param version
      * @return
      */
-    public Xal createXal(List<AddressDetails> addressDetails, String version);
+    Xal createXal(List<AddressDetails> addressDetails, String version);
 
     /**
      *
@@ -111,7 +111,7 @@ public interface XalFactory {
      * @return
      * @throws XalException
      */
-    public AddressDetails createAddressDetails(PostalServiceElements postalServiceElements, Object localisation,
+    AddressDetails createAddressDetails(PostalServiceElements postalServiceElements, Object localisation,
             String addressType, String currentStatus, String validFromDate, String validToDate,
             String usage, GrPostal grPostal, String AddressDetailsKey) throws XalException;
 
@@ -119,20 +119,20 @@ public interface XalFactory {
      * 
      * @return
      */
-    public AddressDetails createAddressDetails();
+    AddressDetails createAddressDetails();
 
     /**
      *
      * @param addressLines
      * @return
      */
-    public AddressLines createAddressLines(List<GenericTypedGrPostal> addressLines);
+    AddressLines createAddressLines(List<GenericTypedGrPostal> addressLines);
 
     /**
      * 
      * @return
      */
-    public AddressLines createAddressLines();
+    AddressLines createAddressLines();
 
     /**
      * 
@@ -141,20 +141,20 @@ public interface XalFactory {
      * @param Content
      * @return
      */
-    public GenericTypedGrPostal createGenericTypedGrPostal(String type, GrPostal grPostal, String Content);
+    GenericTypedGrPostal createGenericTypedGrPostal(String type, GrPostal grPostal, String Content);
 
     /**
      * 
      * @return
      */
-    public GenericTypedGrPostal createGenericTypedGrPostal();
+    GenericTypedGrPostal createGenericTypedGrPostal();
 
     /**
      * 
      * @param code
      * @return
      */
-    public GrPostal createGrPostal(String code);
+    GrPostal createGrPostal(String code);
 
     /**
      * 
@@ -171,7 +171,7 @@ public interface XalFactory {
      * @param type
      * @return
      */
-    public PostalServiceElements createPostalServiceElements(List<AddressIdentifier> addressIdentifiers, GenericTypedGrPostal endorsementLineCode,
+    PostalServiceElements createPostalServiceElements(List<AddressIdentifier> addressIdentifiers, GenericTypedGrPostal endorsementLineCode,
             GenericTypedGrPostal keyLineCode, GenericTypedGrPostal barCode, SortingCode sortingCode, GenericTypedGrPostal addressLatitude,
             GenericTypedGrPostal addressLatitudeDirection, GenericTypedGrPostal addressLongitude, GenericTypedGrPostal addressLongitudeDirection,
             List<GenericTypedGrPostal> supplementaryPostalServiceData, String type);
@@ -180,7 +180,7 @@ public interface XalFactory {
      * 
      * @return
      */
-    public PostalServiceElements createPostalServiceElements();
+    PostalServiceElements createPostalServiceElements();
 
     /**
      * 
@@ -188,7 +188,7 @@ public interface XalFactory {
      * @param grPostal
      * @return
      */
-    public SortingCode createSortingCode(String type, GrPostal grPostal);
+    SortingCode createSortingCode(String type, GrPostal grPostal);
 
     /**
      *
@@ -198,13 +198,13 @@ public interface XalFactory {
      * @param grPostal
      * @return
      */
-    public AddressIdentifier createAddressIdentifier(String content, String identifierType, String type, GrPostal grPostal);
+    AddressIdentifier createAddressIdentifier(String content, String identifierType, String type, GrPostal grPostal);
 
     /**
      * 
      * @return
      */
-    public AddressIdentifier createAddressIdentifier();
+    AddressIdentifier createAddressIdentifier();
 
     /**
      * 
@@ -215,14 +215,14 @@ public interface XalFactory {
      * @return
      * @throws XalException
      */
-    public Country createCountry(List<GenericTypedGrPostal> addressLines,
+    Country createCountry(List<GenericTypedGrPostal> addressLines,
             List<CountryNameCode> countryNameCodes, List<GenericTypedGrPostal> countryNames, Object localisation) throws XalException;
 
     /**
      * 
      * @return
      */
-    public Country createCountry();
+    Country createCountry();
 
     /**
      * 
@@ -231,7 +231,7 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public CountryNameCode createCountryNameCode(String sheme, GrPostal grPostal, String content);
+    CountryNameCode createCountryNameCode(String sheme, GrPostal grPostal, String content);
 
     /**
      * 
@@ -245,9 +245,15 @@ public interface XalFactory {
      * @return
      * @throws XalException
      */
-    public AdministrativeArea createAdministrativeArea(List<GenericTypedGrPostal> addressLines,
+    AdministrativeArea createAdministrativeArea(List<GenericTypedGrPostal> addressLines,
             List<GenericTypedGrPostal> administrativeAreaNames, SubAdministrativeArea subAdministrativeArea,
             Object localisation, String type, String usageType, String indicator) throws XalException;
+
+    /**
+     * 
+     * @return
+     */
+    AdministrativeArea createAdministrativeArea();
 
     /**
      * 
@@ -260,9 +266,15 @@ public interface XalFactory {
      * @return
      * @throws XalException
      */
-    public SubAdministrativeArea createSubAdministrativeArea(List<GenericTypedGrPostal> addressLines,
+    SubAdministrativeArea createSubAdministrativeArea(List<GenericTypedGrPostal> addressLines,
             List<GenericTypedGrPostal> subAdministrativeAreaNames,
             Object localisation, String type, String usageType, String indicator) throws XalException;
+
+    /**
+     * 
+     * @return
+     */
+    SubAdministrativeArea createSubAdministrativeArea();
 
     /**
      * 
@@ -279,7 +291,7 @@ public interface XalFactory {
      * @return
      * @throws XalException
      */
-    public Locality createLocality(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> localityNames,
+    Locality createLocality(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> localityNames,
             Object postal,
             Thoroughfare thoroughfare, Premise premise, DependentLocality dependentLocality, PostalCode postalCode,
             String type, String usageType, String indicator) throws XalException;
@@ -290,7 +302,7 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public PostBoxNumber createPostBoxNumber(GrPostal grPostal, String content);
+    PostBoxNumber createPostBoxNumber(GrPostal grPostal, String content);
 
     /**
      * 
@@ -299,7 +311,14 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public PostBoxNumberPrefix createPostBoxNumberPrefix(String numberPrefixSeparator, GrPostal grPostal, String content);
+    PostBoxNumberPrefix createPostBoxNumberPrefix(
+            String numberPrefixSeparator, GrPostal grPostal, String content);
+
+    /**
+     * 
+     * @return
+     */
+    PostBoxNumberPrefix createPostBoxNumberPrefix();
 
     /**
      * 
@@ -308,7 +327,14 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public PostBoxNumberSuffix createPostBoxNumberSuffix(String numberSuffixSeparator, GrPostal grPostal, String content);
+    PostBoxNumberSuffix createPostBoxNumberSuffix(
+            String numberSuffixSeparator, GrPostal grPostal, String content);
+
+    /**
+     * 
+     * @return
+     */
+    PostBoxNumberSuffix createPostBoxNumberSuffix();
 
     /**
      * 
@@ -316,7 +342,7 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public PostBoxNumberExtension createPostBoxNumberExtension(String numberExtensionSeparator, String content);
+    PostBoxNumberExtension createPostBoxNumberExtension(String numberExtensionSeparator, String content);
 
     /**
      * 
@@ -328,8 +354,14 @@ public interface XalFactory {
      * @param type
      * @return
      */
-    public Firm createFirm(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> firmNames,
+    Firm createFirm(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> firmNames,
             List<Department> departments, MailStop mailStop, PostalCode postalCode, String type);
+
+    /**
+     * 
+     * @return
+     */
+    Firm createFirm();
 
     /**
      * 
@@ -344,10 +376,16 @@ public interface XalFactory {
      * @param indicator
      * @return
      */
-    public PostBox createPostBox(List<GenericTypedGrPostal> addressLines, PostBoxNumber postBoxNumber,
+    PostBox createPostBox(List<GenericTypedGrPostal> addressLines, PostBoxNumber postBoxNumber,
             PostBoxNumberPrefix postBoxNumberPrefix, PostBoxNumberSuffix postBoxNumberSuffix,
             PostBoxNumberExtension postBoxNumberExtension, Firm firm,
             PostalCode postalCode, String type, String indicator);
+
+    /**
+     * 
+     * @return
+     */
+     PostBox createPostBox();
 
     /**
      * 
@@ -358,8 +396,14 @@ public interface XalFactory {
      * @param type
      * @return
      */
-    public Department createDepartment(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> departmentNames,
+    Department createDepartment(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> departmentNames,
             MailStop mailStop, PostalCode postalCode, String type);
+
+    /**
+     * 
+     * @return
+     */
+    Department createDepartment();
 
     /**
      *
@@ -369,8 +413,14 @@ public interface XalFactory {
      * @param type
      * @return
      */
-    public MailStop createMailStop(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> mailStopNames,
+    MailStop createMailStop(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> mailStopNames,
             MailStopNumber mailStopNumber, String type);
+
+    /**
+     * 
+     * @return
+     */
+    MailStop createMailStop();
 
     /**
      * 
@@ -379,7 +429,7 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public MailStopNumber createMailStopNumber(String nameNumberSeparator, GrPostal grPostal, String content);
+    MailStopNumber createMailStopNumber(String nameNumberSeparator, GrPostal grPostal, String content);
 
     /**
      * 
@@ -390,8 +440,14 @@ public interface XalFactory {
      * @param type
      * @return
      */
-    public PostalCode createPostalCode(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> postalCodeNumbers,
+    PostalCode createPostalCode(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> postalCodeNumbers,
             List<PostalCodeNumberExtension> postalCodeNumberExtensions, PostTown postTown, String type);
+
+    /**
+     * 
+     * @return
+     */
+    PostalCode createPostalCode();
 
     /**
      * 
@@ -401,8 +457,14 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public PostalCodeNumberExtension createPostalCodeNumberExtension(String type, String numberExtensionSeparator,
+    PostalCodeNumberExtension createPostalCodeNumberExtension(String type, String numberExtensionSeparator,
             GrPostal grPostal, String content);
+
+    /**
+     * 
+     * @return
+     */
+    PostalCodeNumberExtension createPostalCodeNumberExtension();
 
     /**
      * 
@@ -410,7 +472,7 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public PostTownSuffix createPostTownSuffix(GrPostal grPostal, String content);
+    PostTownSuffix createPostTownSuffix(GrPostal grPostal, String content);
 
     /**
      * 
@@ -420,8 +482,14 @@ public interface XalFactory {
      * @param type
      * @return
      */
-    public PostTown createPostTown(List<GenericTypedGrPostal> addressLines,
+    PostTown createPostTown(List<GenericTypedGrPostal> addressLines,
             List<GenericTypedGrPostal> postTownNames, PostTownSuffix postTownSuffix, String type);
+
+    /**
+     * 
+     * @return
+     */
+    PostTown createPostTown();
 
     /**
      *
@@ -431,7 +499,7 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public LargeMailUserIdentifier createLargeMailUserIdentifier(String type,
+    LargeMailUserIdentifier createLargeMailUserIdentifier(String type,
             String indicator, GrPostal grPostal, String content);
 
     /**
@@ -441,7 +509,7 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public LargeMailUserName createLargeMailUserName(String type, String code, String content);
+    LargeMailUserName createLargeMailUserName(String type, String code, String content);
 
     /**
      * 
@@ -456,7 +524,7 @@ public interface XalFactory {
      * @param type
      * @return
      */
-    public LargeMailUser createLargeMailUser(List<GenericTypedGrPostal> addressLines,
+    LargeMailUser createLargeMailUser(List<GenericTypedGrPostal> addressLines,
             List<LargeMailUserName> largeMailUserNames, LargeMailUserIdentifier largeMailUserIdentifier,
             List<BuildingName> buildingNames, Department department, PostBox postBox,
             Thoroughfare thoroughfare, PostalCode postalCode, String type);
@@ -469,7 +537,7 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public BuildingName createBuildingName(String type, AfterBeforeEnum typeOccurrence,
+    BuildingName createBuildingName(String type, AfterBeforeEnum typeOccurrence,
             GrPostal grPostal, String content);
 
     /**
@@ -478,7 +546,7 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public PostalRouteNumber createPostalRouteNumber(GrPostal grPostal, String content);
+    PostalRouteNumber createPostalRouteNumber(GrPostal grPostal, String content);
 
     /**
      * 
@@ -489,8 +557,15 @@ public interface XalFactory {
      * @return
      * @throws XalException
      */
-    public PostalRoute createPostalRoute(List<GenericTypedGrPostal> addressLines,
-            Object localisation, PostBox postBox, String type) throws XalException;
+    PostalRoute createPostalRoute(List<GenericTypedGrPostal> addressLines,
+            Object localisation, PostBox postBox, String type)
+            throws XalException;
+
+    /**
+     * 
+     * @return
+     */
+    PostalRoute createPostalRoute();
 
     /**
      * 
@@ -504,8 +579,16 @@ public interface XalFactory {
      * @return
      * @throws XalException
      */
-    public PostOffice createPostOffice(List<GenericTypedGrPostal> addressLines, Object localisation,
-            PostalRoute postalRoute, PostBox postBox, PostalCode postalCode, String type, String indicator) throws XalException;
+    PostOffice createPostOffice(List<GenericTypedGrPostal> addressLines, 
+            Object localisation, PostalRoute postalRoute, PostBox postBox,
+            PostalCode postalCode, String type, String indicator)
+            throws XalException;
+
+    /**
+     * 
+     * @return
+     */
+    PostOffice createPostOffice();
 
     /**
      * 
@@ -515,7 +598,7 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public PostOfficeNumber createPostOfficeNumber(String indicator,
+    PostOfficeNumber createPostOfficeNumber(String indicator,
             AfterBeforeEnum indicatorOccurence, GrPostal grPostal, String content);
 
     /**
@@ -525,7 +608,7 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public DependentLocalityNumber createDependentLocalityNumber(
+    DependentLocalityNumber createDependentLocalityNumber(
             AfterBeforeEnum nameNumberOccurence, GrPostal grPostal, String content);
 
     /**
@@ -545,7 +628,7 @@ public interface XalFactory {
      * @return
      * @throws XalException
      */
-    public DependentLocality createDependentLocality(List<GenericTypedGrPostal> addressLines,
+    DependentLocality createDependentLocality(List<GenericTypedGrPostal> addressLines,
             List<GenericTypedGrPostal> dependentLocalityNames,
             DependentLocalityNumber dependentLocalityNumber,
             Object localisation, Thoroughfare thoroughfare, Premise premise,
@@ -571,7 +654,7 @@ public interface XalFactory {
      * @return
      * @throws XalException
      */
-    public Premise createPremise(List<GenericTypedGrPostal> addressLines, List<PremiseName> premiseNames,
+    Premise createPremise(List<GenericTypedGrPostal> addressLines, List<PremiseName> premiseNames,
             Object location,
             List<PremiseNumberPrefix> premiseNumberPrefixes,
             List<PremiseNumberSuffix> premiseNumberSuffixes,
@@ -589,7 +672,7 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public PremiseName createPremiseName(String type, AfterBeforeEnum typeOccurrence,
+    PremiseName createPremiseName(String type, AfterBeforeEnum typeOccurrence,
             GrPostal grPostal, String content);
 
     /**
@@ -598,7 +681,7 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public PremiseLocation createPremiseLocation(GrPostal grPostal, String content);
+    PremiseLocation createPremiseLocation(GrPostal grPostal, String content);
     /**
      *
      * @param type
@@ -607,7 +690,7 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public SubPremiseName createSubPremiseName(String type, AfterBeforeEnum typeOccurrence,
+    SubPremiseName createSubPremiseName(String type, AfterBeforeEnum typeOccurrence,
             GrPostal grPostal, String content);
 
     /**
@@ -616,7 +699,7 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public SubPremiseLocation createSubPremiseLocation(GrPostal grPostal, String content);
+    SubPremiseLocation createSubPremiseLocation(GrPostal grPostal, String content);
 
     /**
      * 
@@ -629,7 +712,7 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public PremiseNumber createPremiseNumber(SingleRangeEnum numberType, String type, String indicator,
+    PremiseNumber createPremiseNumber(SingleRangeEnum numberType, String type, String indicator,
             AfterBeforeEnum indicatorOccurrence, AfterBeforeEnum numberTypeOccurrence,
             GrPostal grPostal, String content);
 
@@ -645,7 +728,7 @@ public interface XalFactory {
      * @param numberRangeOccurrence
      * @return
      */
-    public PremiseNumberRange createPremiseNumberRange(PremiseNumberRangeFrom premiseNumberRangeFrom,
+    PremiseNumberRange createPremiseNumberRange(PremiseNumberRangeFrom premiseNumberRangeFrom,
             PremiseNumberRangeTo premiseNumberRangeTo, String rangeType,
             String indicator, String separator, String type,
             AfterBeforeEnum indicatorOccurrence, AfterBeforeTypeNameEnum numberRangeOccurrence);
@@ -658,7 +741,7 @@ public interface XalFactory {
      * @param premiseNumberSuffixes
      * @return
      */
-    public PremiseNumberRangeFrom createPremiseNumberRangeFrom(List<GenericTypedGrPostal> addressLines,
+    PremiseNumberRangeFrom createPremiseNumberRangeFrom(List<GenericTypedGrPostal> addressLines,
             List<PremiseNumberPrefix> premiseNumberPrefixes,
             List<PremiseNumber> premiseNumbers,
             List<PremiseNumberSuffix> premiseNumberSuffixes);
@@ -671,7 +754,7 @@ public interface XalFactory {
      * @param premiseNumberSuffixes
      * @return
      */
-    public PremiseNumberRangeTo createPremiseNumberRangeTo(List<GenericTypedGrPostal> addressLines,
+    PremiseNumberRangeTo createPremiseNumberRangeTo(List<GenericTypedGrPostal> addressLines,
             List<PremiseNumberPrefix> premiseNumberPrefixes,
             List<PremiseNumber> premiseNumbers,
             List<PremiseNumberSuffix> premiseNumberSuffixes);
@@ -684,7 +767,7 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public PremiseNumberPrefix createPremiseNumberPrefix(String numberPrefixSeparator,
+    PremiseNumberPrefix createPremiseNumberPrefix(String numberPrefixSeparator,
             String type, GrPostal grPostal, String content);
 
     /**
@@ -695,10 +778,10 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public PremiseNumberSuffix createPremiseNumberSuffix(String numberSuffixSeparator,
+    PremiseNumberSuffix createPremiseNumberSuffix(String numberSuffixSeparator,
             String type, GrPostal grPostal, String content);
 
-        /**
+    /**
      *
      * @param numberPrefixSeparator
      * @param type
@@ -706,7 +789,7 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public SubPremiseNumberPrefix createSubPremiseNumberPrefix(String numberPrefixSeparator,
+    SubPremiseNumberPrefix createSubPremiseNumberPrefix(String numberPrefixSeparator,
             String type, GrPostal grPostal, String content);
 
     /**
@@ -717,7 +800,7 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public SubPremiseNumberSuffix createSubPremiseNumberSuffix(String numberSuffixSeparator,
+    SubPremiseNumberSuffix createSubPremiseNumberSuffix(String numberSuffixSeparator,
             String type, GrPostal grPostal, String content);
 
     /**
@@ -731,7 +814,7 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public SubPremiseNumber createSubPremiseNumber(String indicator, AfterBeforeEnum indicatorOccurrence,
+    SubPremiseNumber createSubPremiseNumber(String indicator, AfterBeforeEnum indicatorOccurrence,
             AfterBeforeEnum numberTypeOccurrence, String premiseNumberSeparator,
             String type, GrPostal grPostal, String content);
 
@@ -751,7 +834,7 @@ public interface XalFactory {
      * @return
      * @throws XalException
      */
-    public SubPremise createSubPremise(List<GenericTypedGrPostal> addressLines,
+    SubPremise createSubPremise(List<GenericTypedGrPostal> addressLines,
             List<SubPremiseName> subPremiseNames, Object location,
             List<SubPremiseNumberPrefix> subPremiseNumberPrefixes,
             List<SubPremiseNumberSuffix> subPremiseNumberSuffixes,
@@ -779,7 +862,7 @@ public interface XalFactory {
      * @return
      * @throws XalException
      */
-    public Thoroughfare createThoroughfare(List<GenericTypedGrPostal> addressLines, List<Object> thoroughfareNumbers,
+    Thoroughfare createThoroughfare(List<GenericTypedGrPostal> addressLines, List<Object> thoroughfareNumbers,
             List<ThoroughfareNumberPrefix> thoroughfareNumberPrefixes,
             List<ThoroughfareNumberSuffix> thoroughfareNumberSuffixes,
             GenericTypedGrPostal thoroughfarePreDirection,
@@ -805,7 +888,7 @@ public interface XalFactory {
      * @param numberRangeOccurrence
      * @return
      */
-    public ThoroughfareNumberRange createThoroughfareNumberRange(List<GenericTypedGrPostal> addressLines,
+    ThoroughfareNumberRange createThoroughfareNumberRange(List<GenericTypedGrPostal> addressLines,
             ThoroughfareNumberFrom thoroughfareNumberFrom,
             ThoroughfareNumberTo thoroughfareNumberTo,
             OddEvenEnum rangeType, String indicator, String separator, String type,
@@ -822,7 +905,7 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public ThoroughfareNumber createThoroughfareNumber(SingleRangeEnum numberType,
+    ThoroughfareNumber createThoroughfareNumber(SingleRangeEnum numberType,
             String type, String indicator, AfterBeforeEnum indicatorOccurence,
             AfterBeforeTypeNameEnum numberOccurrence, GrPostal grPostal, String content);
 
@@ -833,7 +916,7 @@ public interface XalFactory {
      * @return
      * @throws XalException
      */
-    public ThoroughfareNumberFrom createThoroughfareNumberFrom(List<Object> content, GrPostal grPostal) throws XalException;
+    ThoroughfareNumberFrom createThoroughfareNumberFrom(List<Object> content, GrPostal grPostal) throws XalException;
 
     /**
      * 
@@ -842,7 +925,7 @@ public interface XalFactory {
      * @return
      * @throws XalException
      */
-    public ThoroughfareNumberTo createThoroughfareNumberTo(List<Object> content, GrPostal grPostal) throws XalException;
+    ThoroughfareNumberTo createThoroughfareNumberTo(List<Object> content, GrPostal grPostal) throws XalException;
 
     /**
      * 
@@ -852,7 +935,7 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public ThoroughfareNumberSuffix createThoroughfareNumberSuffix(String numberSuffixSeparator,
+    ThoroughfareNumberSuffix createThoroughfareNumberSuffix(String numberSuffixSeparator,
             String type, GrPostal grPostal, String content);
 
     /**
@@ -863,7 +946,7 @@ public interface XalFactory {
      * @param content
      * @return
      */
-    public ThoroughfareNumberPrefix createThoroughfareNumberPrefix(String numberPrefixSeparator,
+    ThoroughfareNumberPrefix createThoroughfareNumberPrefix(String numberPrefixSeparator,
         String type, GrPostal grPostal, String content);
 
     /**
@@ -877,7 +960,7 @@ public interface XalFactory {
      * @param type
      * @return
      */
-    public DependentThoroughfare createDependentThoroughfare(List<GenericTypedGrPostal> addressLines,
+    DependentThoroughfare createDependentThoroughfare(List<GenericTypedGrPostal> addressLines,
             GenericTypedGrPostal thoroughfarePreDirection, GenericTypedGrPostal thoroughfareLeadingType,
             List<GenericTypedGrPostal> thoroughfareNames, GenericTypedGrPostal thoroughfareTrailingType,
             GenericTypedGrPostal thoroughfarePostDirection, String type);

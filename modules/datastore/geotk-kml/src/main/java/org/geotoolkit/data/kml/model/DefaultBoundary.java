@@ -25,7 +25,7 @@ import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
  */
 public class DefaultBoundary implements Boundary {
 
-    private Extensions extensions = new Extensions();
+    private final Extensions extensions = new Extensions();
     private LinearRing linearRing;
 
     /**

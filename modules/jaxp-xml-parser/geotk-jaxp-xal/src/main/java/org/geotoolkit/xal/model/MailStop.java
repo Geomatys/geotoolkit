@@ -44,26 +44,50 @@ public interface MailStop {
      * 
      * @return
      */
-    public List<GenericTypedGrPostal> getAddressLines();
+    List<GenericTypedGrPostal> getAddressLines();
 
     /**
      * <p>Name of the the Mail Stop. eg. MSP, MS, etc.</p>
      *
      * @return
      */
-    public List<GenericTypedGrPostal> getMailStopNames();
+    List<GenericTypedGrPostal> getMailStopNames();
 
     /**
      * <p>Number of the Mail stop. eg. 123 in MS 123.</p>
      * 
      * @return
      */
-    public MailStopNumber getMailStopNumber();
+    MailStopNumber getMailStopNumber();
 
     /**
      *
      * @return
      */
-    public String getType();
+    String getType();
+
+    /**
+     *
+     * @param addressLines
+     */
+    void setAddressLines(List<GenericTypedGrPostal> addressLines);
+
+    /**
+     *
+     * @param mailStopNames
+     */
+    void setMailStopNames(List<GenericTypedGrPostal> mailStopNames);
+
+    /**
+     *
+     * @param mailStopNumber
+     */
+    void setMailStopNumber(MailStopNumber mailStopNumber);
+
+    /**
+     * 
+     * @param type
+     */
+    void setType(String type);
 
 }

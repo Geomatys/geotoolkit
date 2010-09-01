@@ -125,7 +125,7 @@ public class DefaultTrack extends DefaultAbstractGeometry implements Track {
      */
     @Override
     public void setWhens(List<Calendar> whens) {
-        this.whens = whens;
+        this.whens = (whens == null) ? EMPTY_LIST : whens;
     }
 
     /**
@@ -143,7 +143,7 @@ public class DefaultTrack extends DefaultAbstractGeometry implements Track {
      */
     @Override
     public void setAngles(List<Angles> anglesList) {
-        this.anglesList = anglesList;
+        this.anglesList = (anglesList == null) ? EMPTY_LIST : anglesList;
     }
 
     /**

@@ -55,7 +55,7 @@ public class DefaultStyleMap extends DefaultAbstractStyleSelector implements Sty
         super(objectSimpleExtensions, idAttributes,
                 abstractStyleSelectorSimpleExtensions,
                 abstractStyleSelectorObjectExtensions);
-        this.pairs = pairs;
+        this.pairs = (pairs == null) ? EMPTY_LIST : pairs;
         if (styleMapSimpleExtensions != null) {
             this.extensions().simples(Extensions.Names.STYLE_MAP).addAll(styleMapSimpleExtensions);
         }
@@ -79,6 +79,6 @@ public class DefaultStyleMap extends DefaultAbstractStyleSelector implements Sty
      */
     @Override
     public void setPairs(List<Pair> pairs) {
-        this.pairs = pairs;
+        this.pairs = (pairs == null) ? EMPTY_LIST : pairs;
     }
 }

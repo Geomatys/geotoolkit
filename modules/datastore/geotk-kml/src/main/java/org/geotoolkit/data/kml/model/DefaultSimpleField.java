@@ -118,6 +118,6 @@ public class DefaultSimpleField implements SimpleField {
      */
     @Override
     public void setSimpleFieldExtensions(List<Object> simpleFieldExtensions) {
-        this.simpleFieldExtensions = simpleFieldExtensions;
+        this.simpleFieldExtensions = (simpleFieldExtensions == null) ? EMPTY_LIST : simpleFieldExtensions;
     }
 }

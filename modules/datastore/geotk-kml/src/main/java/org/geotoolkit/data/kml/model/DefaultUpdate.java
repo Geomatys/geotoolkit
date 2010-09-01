@@ -103,7 +103,7 @@ public class DefaultUpdate implements Update {
      */
     @Override
     public void setUpdates(List<Object> updates) {
-        this.updates = updates;
+        this.updates = (updates == null) ? EMPTY_LIST : updates;
     }
 
     /**
@@ -112,7 +112,7 @@ public class DefaultUpdate implements Update {
      */
     @Override
     public void setUpdateOpExtensions(List<Object> updateOpEXtensions) {
-        this.updateOpExtensions = updateOpEXtensions;
+        this.updateOpExtensions = (updateOpExtensions == null) ? EMPTY_LIST : updateOpExtensions;
     }
 
     /**
@@ -121,7 +121,7 @@ public class DefaultUpdate implements Update {
      */
     @Override
     public void setUpdateExtensions(List<Object> updateExtensions) {
-        this.updateExtensions = updateExtensions;
+        this.updateExtensions = (updateExtensions == null) ? EMPTY_LIST : updateExtensions;
     }
 
 }

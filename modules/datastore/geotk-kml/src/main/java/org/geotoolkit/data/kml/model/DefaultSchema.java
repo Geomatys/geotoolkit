@@ -95,7 +95,7 @@ public class DefaultSchema implements Schema {
      */
     @Override
     public void setSimpleFields(List<SimpleField> simpleFields) {
-        this.simpleFields = simpleFields;
+        this.simpleFields = (simpleFields == null) ? EMPTY_LIST : simpleFields;
     }
 
     /**
@@ -122,6 +122,6 @@ public class DefaultSchema implements Schema {
      */
     @Override
     public void setSchemaExtensions(List<Object> schemaExtensions) {
-        this.schemaExtensions = schemaExtensions;
+        this.schemaExtensions = (schemaExtensions == null) ? EMPTY_LIST : schemaExtensions;
     }
 }

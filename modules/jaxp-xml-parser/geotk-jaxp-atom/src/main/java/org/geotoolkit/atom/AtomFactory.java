@@ -37,38 +37,38 @@ public interface AtomFactory {
      * @param length
      * @return
      */
-    public AtomLink createAtomLink(String href, String rel, String type,
+    AtomLink createAtomLink(String href, String rel, String type,
             String hreflang, String title, String length);
 
     /**
      *
      * @return
      */
-    public AtomLink createAtomLink();
+    AtomLink createAtomLink();
 
     /**
      *
      * @param params
      * @return
      */
-    public AtomPersonConstruct createAtomPersonConstruct(List<Object> params);
+    AtomPersonConstruct createAtomPersonConstruct(List<Object> params);
 
     /**
      *
      * @return
      */
-    public AtomPersonConstruct createAtomPersonConstruct();
+    AtomPersonConstruct createAtomPersonConstruct();
 
     /**
      *
      * @param address
      * @return
      */
-    public AtomEmail createAtomEmail(String address);
+    AtomEmail createAtomEmail(String address);
 
     /**
      *
      * @return
      */
-    public AtomEmail createAtomEmail();
+    AtomEmail createAtomEmail();
 }

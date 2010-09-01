@@ -22,9 +22,11 @@ package org.geotoolkit.xal.model;
  */
 public class DefaultPostBoxNumberPrefix implements PostBoxNumberPrefix {
 
-    private final String content;
-    private final String numberPrefixSeparator;
-    private final GrPostal grPostal;
+    private String content;
+    private String numberPrefixSeparator;
+    private GrPostal grPostal;
+
+    public DefaultPostBoxNumberPrefix(){}
 
     /**
      * 
@@ -58,5 +60,32 @@ public class DefaultPostBoxNumberPrefix implements PostBoxNumberPrefix {
      */
     @Override
     public GrPostal getGrPostal() {return this.grPostal;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setNumberPrefixSeparator(String numberPrefixSeparator) {
+        this.numberPrefixSeparator = numberPrefixSeparator;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setGrPostal(GrPostal grPostal) {
+        this.grPostal = grPostal;
+    }
 
 }

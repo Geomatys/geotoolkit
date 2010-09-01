@@ -107,7 +107,7 @@ public class DefaultData extends DefaultAbstractObject implements Data {
      */
     @Override
     public void setDataExtensions(List<Object> dataExtensions) {
-        this.dataExtensions = dataExtensions;
+        this.dataExtensions = (dataExtensions == null) ? EMPTY_LIST : dataExtensions;
     }
 
     /**

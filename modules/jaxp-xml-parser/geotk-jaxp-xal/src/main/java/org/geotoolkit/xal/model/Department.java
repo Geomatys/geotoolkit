@@ -50,32 +50,62 @@ public interface Department {
      * 
      * @return
      */
-    public List<GenericTypedGrPostal> getAddressLines();
+    List<GenericTypedGrPostal> getAddressLines();
 
     /**
      * <p>Specification of the name of a department.</p>
      *
      * @return
      */
-    public List<GenericTypedGrPostal> getDepartmentNames();
+    List<GenericTypedGrPostal> getDepartmentNames();
 
     /**
      * <p>A MailStop is where the the mail is delivered to within a premise/subpremise/firm or a facility.</p>
      * 
      * @return
      */
-    public MailStop getMailStop();
+    MailStop getMailStop();
 
     /**
      *
      * @return
      */
-    public PostalCode getPostalCode();
+    PostalCode getPostalCode();
 
     /**
      * <p>School in Physics School, Division in Radiology division of school of physics.</p>
      *
      * @return
      */
-    public String getType();
+    String getType();
+
+    /**
+     *
+     * @param addressLines
+     */
+    void setAddressLines(List<GenericTypedGrPostal> addressLines);
+
+    /**
+     *
+     * @param departmentNames
+     */
+    void setDepartmentNames(List<GenericTypedGrPostal> departmentNames);
+
+    /**
+     *
+     * @param mailStop
+     */
+    void setMailStop(MailStop mailStop);
+
+    /**
+     *
+     * @param postalCode
+     */
+    void setPostalCode(PostalCode postalCode);
+
+    /**
+     * 
+     * @param type
+     */
+    void setType(String type);
 }

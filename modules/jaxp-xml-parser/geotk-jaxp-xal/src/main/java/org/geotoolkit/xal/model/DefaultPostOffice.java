@@ -17,6 +17,7 @@
 package org.geotoolkit.xal.model;
 
 import java.util.List;
+import static java.util.Collections.*;
 
 /**
  *
@@ -24,14 +25,19 @@ import java.util.List;
  */
 public class DefaultPostOffice implements PostOffice {
 
-    private final List<GenericTypedGrPostal> addressLines;
+    private List<GenericTypedGrPostal> addressLines;
     private List<GenericTypedGrPostal> postOfficeNames;
     private PostOfficeNumber postOfficeNumber;
-    private final PostalRoute postalRoute;
-    private final PostBox postBox;
-    private final PostalCode postalCode;
-    private final String type;
-    private final String indicator;
+    private PostalRoute postalRoute;
+    private PostBox postBox;
+    private PostalCode postalCode;
+    private String type;
+    private String indicator;
+
+    public DefaultPostOffice(){
+        this.addressLines = EMPTY_LIST;
+        this.postOfficeNames = EMPTY_LIST;
+    }
 
     /**
      *
@@ -121,5 +127,77 @@ public class DefaultPostOffice implements PostOffice {
      */
     @Override
     public String getIndicator() {return this.indicator;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAddressLines(List<GenericTypedGrPostal> addressLines) {
+        this.addressLines = addressLines;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostOfficeNames(List<GenericTypedGrPostal> postOfficeNames) {
+        this.postOfficeNames = postOfficeNames;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostOfficeNumber(PostOfficeNumber postOfficeNumber) {
+        this.postOfficeNumber = postOfficeNumber;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostalRoute(PostalRoute postalRoute) {
+        this.postalRoute = postalRoute;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostBox(PostBox postBox) {
+        this.postBox = postBox;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostalCode(PostalCode postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setIndicator(String indicator) {
+        this.indicator = indicator;
+    }
 
 }
