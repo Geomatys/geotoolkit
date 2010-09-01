@@ -1327,6 +1327,12 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
                 regionToRead.width  /= subsampling.width;
                 regionToRead.height /= subsampling.height;
                 if (regionToRead.isEmpty()) {
+                    /*
+                     * Should never happen if the TileManager worked perfectly well. But in practice,
+                     * different implementations may be of unequal quality. In many cases, one of the
+                     * above assertions will fail before we reach this point. This condition avoid an
+                     * "empty region" exception in ImageReader when assertions are disabled.
+                     */
                     continue;
                 }
                 subsampling.width  = xSubsampling / subsampling.width;

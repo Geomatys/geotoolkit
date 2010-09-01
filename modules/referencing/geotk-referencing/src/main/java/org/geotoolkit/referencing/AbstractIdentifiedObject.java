@@ -1119,8 +1119,8 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      * {@linkplain #getIdentifiers identifiers} and {@linkplain #getRemarks remarks}
      * are not taken in account. In other words, two identified objects will return
      * the same hash value if they are equal in the sense of <code>{@linkplain
-     * #equals(AbstractIdentifiedObject,boolean) equals}(AbstractIdentifiedObject,
-     * <strong>false</strong>)</code>.
+     * #equals(AbstractIdentifiedObject,ComparisonMode) equals}(AbstractIdentifiedObject,
+     * ComparisonMode.<strong>IGNORE_METADATA</strong>)</code>.
      *
      * @return The hash code value. This value doesn't need to be the same
      *         in past or future versions of this class.

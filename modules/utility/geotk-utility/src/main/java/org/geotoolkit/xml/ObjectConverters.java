@@ -165,9 +165,9 @@ public class ObjectConverters {
 
     /**
      * Converts the given string to a URI. The default implementation first escapes the characters
-     * that the {@link URI(String)} constructor would not accept (for example replacing space by
-     * {@code %20}), then perform the following work (omitting the check for null value and the
-     * call to {@link #exceptionOccured exceptionOccured} in case of error):
+     * that the {@link URI#URI(String) URI(String)} constructor would not accept (for example
+     * replacing space by {@code %20}), then perform the following work (omitting the check for
+     * null value and the call to {@link #exceptionOccured exceptionOccured} in case of error):
      *
      * {@preformat java
      *     return new URI(escapedValue);

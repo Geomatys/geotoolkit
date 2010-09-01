@@ -79,10 +79,13 @@ public abstract class TileManager implements Serializable {
     /**
      * If this tile manager has been created by reading a "{@code TileManager.serialized}"
      * file or by scanning a directory, that file or directory. Otherwise {@code null}.
+     * <p>
+     * This field is not serialized because it is set by {@link TileManagerFactory} on
+     * deserialization, and the user may have moved the {@code "TileManager.serialized"} file.
      *
      * @since 3.15
      */
-    private File sourceFile;
+    private transient File sourceFile;
 
     /**
      * Creates a tile manager.

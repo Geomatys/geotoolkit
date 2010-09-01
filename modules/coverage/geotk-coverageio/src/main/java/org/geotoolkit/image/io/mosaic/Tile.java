@@ -463,7 +463,7 @@ public class Tile implements Comparable<Tile>, Serializable {
 
     /**
      * Returns {@code true} if we recommend to ignore the given provider. This method returns
-     * {@code true} if the given provider is an instance of {@link ImageReaderAdapter.Spi},
+     * {@code true} if the given provider is an instance of {@link org.geotoolkit.image.io.ImageReaderAdapter.Spi},
      * or other providers which may be added in the future. Those providers are wrapper around
      * "native" providers, adding support for {@link org.geotoolkit.image.io.metadata.SpatialMetadata}.
      * Because {@code Tile} do not use those metadata, the overhead of using those wrappers is
@@ -903,6 +903,16 @@ public class Tile implements Comparable<Tile>, Serializable {
      * This transform is derived from the value given to the constructor, but may not be
      * identical since it may have been {@linkplain AffineTransform#translate translated}
      * in order to get a uniform grid geometry for every tiles in a {@link TileManager}.
+     * <p>
+     * <b>Tip:</b> The <a href="http://en.wikipedia.org/wiki/World_file">World File</a> coefficients
+     * of this tile (i.e. the <cite>grid to CRS</cite> transform that we would have if the pixel in
+     * the upper-left corner always had indices (0,0)) can be computed as below:
+     *
+     * {@preformat java
+     *     Point location = tile.getLocation();
+     *     AffineTransform gridToCRS = new AffineTransform(tile.getGridToCRS());
+     *     gridToCRS.translate(location.x, location.y);
+     * }
      *
      * @return The "<cite>grid to real world</cite>" transform mapping pixel
      *         {@linkplain PixelOrientation#UPPER_LEFT upper left} corner,
@@ -911,7 +921,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      *         Object, int, Rectangle, AffineTransform) created without location} and not yet
      *         processed by {@link TileManagerFactory}.
      *
-     * @see TileManager#getGridGeometry
+     * @see TileManager#getGridGeometry()
      */
     public synchronized AffineTransform getGridToCRS() throws IllegalStateException {
         checkGeometryValidity();

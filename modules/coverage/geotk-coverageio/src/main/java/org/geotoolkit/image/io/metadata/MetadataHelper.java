@@ -57,6 +57,7 @@ import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 
 /**
@@ -789,7 +790,7 @@ public class MetadataHelper implements Localized {
      * @return The adjusted value, or the given value unchanged if no adjustment were found.
      *
      * @see XMath#roundIfAlmostInteger(double, int)
-     * @see org.geotoolkit.referencing.operation.matrix.XAffineTransform#round(AffineTransform, double)
+     * @see XAffineTransform#roundIfAlmostInteger(AffineTransform, double)
      */
     public double adjustForRoundingError(final double value) {
         final double c1 = value * 360;
