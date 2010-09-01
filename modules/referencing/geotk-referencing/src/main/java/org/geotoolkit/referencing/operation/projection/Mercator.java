@@ -362,6 +362,14 @@ public class Mercator extends UnitaryProjection {
          * {@inheritDoc}
          */
         @Override
+        public ParameterDescriptorGroup getParameterDescriptors() {
+            return pseudo ? PseudoMercator.PARAMETERS : super.getParameterDescriptors();
+        }
+
+        /**
+         * {@inheritDoc}
+         */
+        @Override
         protected void transform(final double[] srcPts, final int srcOff,
                                  final double[] dstPts, final int dstOff)
                 throws ProjectionException

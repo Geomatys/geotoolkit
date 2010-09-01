@@ -422,7 +422,7 @@ search: for (final Iterator<GeneralParameterValue> targetIter=target.iterator();
              * in addition of the method name declared by the conversion (the check above).
              */
             final ParameterDescriptorGroup sourceDsc = source.getTransformDescriptor();
-            final ParameterDescriptorGroup targetDsc = source.getTransformDescriptor();
+            final ParameterDescriptorGroup targetDsc = target.getTransformDescriptor();
             if (sourceDsc==null || targetDsc==null || !nameMatches(sourceDsc, targetDsc)) {
                 return null;
             }

@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.referencing.operation;
 
+import java.awt.geom.Point2D;
+
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CompoundCRS;
@@ -27,6 +29,7 @@ import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
 import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.MathTransform1D;
+import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.referencing.operation.Projection;
@@ -35,6 +38,7 @@ import org.opengis.referencing.operation.Transformation;
 import org.geotoolkit.test.crs.WKT;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingTestCase;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.crs.DefaultDerivedCRS;
@@ -72,7 +76,7 @@ import static org.junit.Assume.*;
  * code below, causing transformation checks to fail as well.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.15
  *
  * @since 2.1
  */
@@ -782,5 +786,28 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
                    "to a single affine transform.", transform instanceof LinearTransform);
         assertTrue("The operation should be a simple axis change, not a complex" +
                    "chain of ConcatenatedOperations.", op instanceof Conversion);
+    }
+
+    /**
+     * Tests the conversion from Mercator projection to the Google projection. The referencing
+     * module should detects that the conversion is something more complex that an identity
+     * transform.
+     *
+     * @throws Exception Should never happen.
+     *
+     * @since 3.15
+     */
+    @Test
+    public void testMercatorToGoogle() throws Exception {
+        assumeTrue(ReferencingTestCase.isEpsgFactoryAvailable());
+        final CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:3395");
+        final CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:3857");
+        final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
+        final MathTransform2D tr = (MathTransform2D) op.getMathTransform();
+        assertFalse("Mercator to Google should not be an identity transform.", tr.isIdentity());
+        final Point2D sourcePt = new Point2D.Double(334000, 4840000); // Approximatively 40°N 3°W
+        final Point2D targetPt = tr.transform(sourcePt, null);
+        assertEquals("Easting should be unchanged", sourcePt.getX(), targetPt.getX(), 0);
+        assertEquals("Expected 27 km shift", 27476, targetPt.getY() - sourcePt.getY(), 1);
     }
 }

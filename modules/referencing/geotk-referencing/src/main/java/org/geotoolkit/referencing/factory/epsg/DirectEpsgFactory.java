@@ -895,8 +895,6 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * @param  oldValue The object previously constructed, or {@code null} if none.
      * @param  code The EPSG code (for formatting error message).
      * @throws FactoryException if a duplication has been detected.
-     *
-     * @todo Use generic type when we will be allowed to compile for J2SE 1.5.
      */
     private static <T> T ensureSingleton(final T newValue, final T oldValue, final String code)
             throws FactoryException
@@ -1942,7 +1940,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                         result.close(); // Must be close before createGeographicCRS
                         result = null;
                         final GeographicCRS baseCRS = buffered.createGeographicCRS(geoCode);
-                        datum = baseCRS.getDatum(); // TODO: remove cast with J2SE 1.5.
+                        datum = baseCRS.getDatum();
                     }
                     final Map<String,Object> properties = createProperties(
                             "[Coordinate Reference System]", name, epsg, area, scope, remarks);

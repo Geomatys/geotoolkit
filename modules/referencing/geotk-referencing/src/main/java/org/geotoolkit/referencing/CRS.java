@@ -1807,7 +1807,6 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
             }
             if (targetPt == null) {
                 try {
-                    // TODO: remove the cast when we will be allowed to compile for J2SE 1.5.
                     mt = mt.inverse();
                 } catch (NoninvertibleTransformException exception) {
                     unexpectedException("transform", exception);
