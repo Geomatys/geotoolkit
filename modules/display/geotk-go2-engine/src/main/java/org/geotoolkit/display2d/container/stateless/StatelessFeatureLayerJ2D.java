@@ -111,7 +111,7 @@ import static org.geotoolkit.display2d.GO2Utilities.*;
  */
 public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
-    private Query currentQuery = null;
+    protected Query currentQuery = null;
 
     public StatelessFeatureLayerJ2D(ReferencedCanvas2D canvas, FeatureMapLayer layer){
         super(canvas, layer);

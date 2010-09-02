@@ -144,7 +144,8 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         updateCache(context);
 
         final CanvasMonitor monitor = context.getMonitor();
-        final Query query = prepareQuery(context, layer, rules);
+        currentQuery = prepareQuery(context, layer, rules);
+        final Query query = currentQuery;
 
         final Name[] copy = query.getPropertyNames();
         if(!Arrays.deepEquals(copy, cachedAttributs)){
