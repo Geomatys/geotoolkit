@@ -324,11 +324,6 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
      */
     @Override
     public int hashCode() {
-        int code = super.hashCode();
-        // TODO: We should use Arrays.deepHashCode instead in J2SE 1.5.
-        for (int i=0; i<parameters.length; i++) {
-            code = code*37 + parameters[i].hashCode();
-        }
-        return code;
+        return super.hashCode() ^ Arrays.hashCode(parameters);
     }
 }

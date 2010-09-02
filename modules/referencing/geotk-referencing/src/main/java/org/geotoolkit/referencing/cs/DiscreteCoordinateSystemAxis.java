@@ -51,8 +51,8 @@ public interface DiscreteCoordinateSystemAxis {
      * an instance of {@link Number} or {@link java.util.Date}.
      *
      * @param  index The index at which to return the ordinate value.
-     * @return The ordinate value at the given index as a {@link Number}, {@link Date} or
-     *         {@link String}.
+     * @return The ordinate value at the given index as a {@link Number},
+     *         {@link java.util.Date} or {@link String}.
      * @throws IndexOutOfBoundsException If the given index is outside the
      *         [0 &hellip; {@linkplain #length() length}-1] range.
      */

@@ -169,16 +169,10 @@ public class GeneralGridCoordinates implements GridCoordinates, Cloneable, Seria
 
     /**
      * Returns a hash code value for this object.
-     *
-     * @todo Use {@link Arrays#hashCode(int[])} when we will be allowed to compile for J2SE 1.5.
      */
     @Override
     public int hashCode() {
-        int code = (int) serialVersionUID;
-        for (int i=0; i<coordinates.length; i++) {
-            code = code * 37 + coordinates[i];
-        }
-        return code;
+        return Arrays.hashCode(coordinates) ^ (int) serialVersionUID;
     }
 
     /**

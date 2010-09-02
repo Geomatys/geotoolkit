@@ -202,8 +202,8 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
      * Returns a hash value for this CRS. {@linkplain #getName Name}, {@linkplain #getIdentifiers
      * identifiers} and {@linkplain #getRemarks remarks} are not taken in account. In other words,
      * two CRS objects will return the same hash value if they are equal in the sense of
-     * <code>{@link #equals(AbstractIdentifiedObject,boolean) equals}(AbstractIdentifiedObject,
-     * <strong>false</strong>)</code>.
+     * <code>{@linkplain #equals(AbstractIdentifiedObject,ComparisonMode)
+     * equals}(AbstractIdentifiedObject, ComparisonMode.<strong>IGNORE_METADATA</strong>)</code>.
      *
      * @return The hash code value. This value doesn't need to be the same
      *         in past or future versions of this class.

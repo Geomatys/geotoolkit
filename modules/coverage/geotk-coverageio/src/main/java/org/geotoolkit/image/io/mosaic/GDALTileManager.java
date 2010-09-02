@@ -375,9 +375,13 @@ final class GDALTileManager extends TileManager implements Comparator<Rectangle>
                     }
                 }
                 /*
-                 * Add the tile that we just found and examine the next array.
+                 * Add the tile that we just found and examine the next array. We test again for
+                 * intersection because some overviews may cover a smaller region than the one
+                 * stored in the tileRegions array.
                  */
-                result.add(tile);
+                if (tile.getAbsoluteRegion().intersects(region)) {
+                    result.add(tile);
+                }
                 startAt[i] = j+1;
                 break;
             }

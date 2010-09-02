@@ -26,10 +26,9 @@ import org.geotoolkit.factory.Hints;
 
 
 /**
- * Same tests than {@link CoordinateOperationFactoryTest}, but the EPSG factory disabled.
- * Consequently this class usually tests {@link DefaultCoordinateOperationFactory}, while
- * the superclass tests whetever {@link CoordinateOperationFactory} implementation is found
- * on the classpath.
+ * Same tests than {@link CoordinateOperationFactoryTest}, but with the EPSG factory disabled.
+ * Consequently this class tests {@link DefaultCoordinateOperationFactory}, while the superclass
+ * tests whatever {@link CoordinateOperationFactory} implementation is found on the classpath.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.07
