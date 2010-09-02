@@ -310,7 +310,7 @@ public class Mercator extends UnitaryProjection {
      *
      * @author Martin Desruisseaux (MPO, IRD, Geomatys)
      * @author Rueben Schulz (UBC)
-     * @version 3.03
+     * @version 3.15
      *
      * @since 2.1
      * @module
@@ -386,6 +386,39 @@ public class Mercator extends UnitaryProjection {
             assert pseudo || checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff] = x;
             dstPts[dstOff + 1] = y;
+        }
+
+        /**
+         * {@inheritDoc}
+         *
+         * {@note This method must be overriden because the <code>Mercator</code> class
+         *        overrides the <code>UnitaryProjection</code> implementation.}
+         */
+        @Override
+        public void transform(final double[] srcPts, int srcOff,
+                              final double[] dstPts, int dstOff, int numPts)
+                throws TransformException
+        {
+            if (srcPts != dstPts || srcOff != dstOff || rollLongitude()) {
+                super.transform(srcPts, srcOff, dstPts, dstOff, numPts);
+                return;
+            }
+            if (verifyCoordinateRanges()) {
+                verifyGeographicRanges(srcPts, srcOff, numPts);
+            }
+            dstOff--;
+            while (--numPts >= 0) {
+                double y = dstPts[dstOff += 2]; // Same as srcPts[srcOff...].
+                final double a = abs(y);
+                if (a < PI/2) {
+                    y = log(tan(PI/4 + 0.5*y));
+                } else {
+                    y = copySign(a <= (PI/2 + ANGLE_TOLERANCE) ? POSITIVE_INFINITY : NaN, y);
+                }
+                dstPts[dstOff] = y;
+            }
+            // Invoking Assertions.checkReciprocal(...) here would be
+            // useless since it works only for non-overlapping arrays.
         }
 
         /**
