@@ -111,6 +111,8 @@ import static org.geotoolkit.display2d.GO2Utilities.*;
  */
 public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
+    private Query currentQuery = null;
+
     public StatelessFeatureLayerJ2D(ReferencedCanvas2D canvas, FeatureMapLayer layer){
         super(canvas, layer);
     }
@@ -217,7 +219,8 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
     protected void paintVectorLayer(final CachedRule[] rules, final RenderingContext2D context) {
 
         final CanvasMonitor monitor = context.getMonitor();
-        final Query query = prepareQuery(context, layer, rules);
+        currentQuery = prepareQuery(context, layer, rules);
+        final Query query = currentQuery;
 
         if(monitor.stopRequested()) return;
 
@@ -949,174 +952,10 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         return qb.buildQuery();
     }
 
-    protected static Query idQuery(RenderingContext2D renderingContext, FeatureMapLayer layer, CachedRule[] rules, Filter ids){
+    protected final Query idQuery(RenderingContext2D renderingContext, FeatureMapLayer layer, CachedRule[] rules, Filter ids){
 
-        final FeatureCollection<? extends Feature> fs            = layer.getCollection();
-        final FeatureType schema                                 = fs.getFeatureType();
-        final GeometryDescriptor geomDesc                        = schema.getGeometryDescriptor();
-        final CoordinateReferenceSystem layerCRS                 = schema.getCoordinateReferenceSystem();
-        final String geomAttName                                 = (geomDesc!=null)? geomDesc.getLocalName() : null;
-        final RenderingHints hints                               = renderingContext.getRenderingHints();
-
-        Filter filter;
-
-        //concatenate geographique filter with data filter if there is one
-        if(layer.getQuery() != null && layer.getQuery().getFilter() != null){
-            filter = FILTER_FACTORY.and(ids,layer.getQuery().getFilter());
-        }else{
-            filter = ids;
-        }
-
-
-        //concatenate with temporal range if needed ----------------------------
-        final Filter temporalFilter;
-        final Date[] temporal = renderingContext.getTemporalRange().clone();
-        final Expression[] layerTemporalRange = layer.getTemporalRange().clone();
-
-        if(temporal[0] == null){
-            temporal[0] = new Date(Long.MIN_VALUE);
-        }
-        if(temporal[1] == null){
-            temporal[1] = new Date(Long.MAX_VALUE);
-        }
-
-        if(layerTemporalRange[0] != null && layerTemporalRange[1] != null){
-            temporalFilter = FILTER_FACTORY.and(
-                    FILTER_FACTORY.lessOrEqual(layerTemporalRange[0], FILTER_FACTORY.literal(temporal[1])),
-                    FILTER_FACTORY.greaterOrEqual(layerTemporalRange[1], FILTER_FACTORY.literal(temporal[0])));
-        }else if(layerTemporalRange[0] != null){
-            temporalFilter = FILTER_FACTORY.and(
-                    FILTER_FACTORY.lessOrEqual(layerTemporalRange[0], FILTER_FACTORY.literal(temporal[1])),
-                    FILTER_FACTORY.greaterOrEqual(layerTemporalRange[0], FILTER_FACTORY.literal(temporal[0])));
-        }else if(layerTemporalRange[1] != null){
-            temporalFilter = FILTER_FACTORY.and(
-                    FILTER_FACTORY.lessOrEqual(layerTemporalRange[1], FILTER_FACTORY.literal(temporal[1])),
-                    FILTER_FACTORY.greaterOrEqual(layerTemporalRange[1], FILTER_FACTORY.literal(temporal[0])));
-        }else{
-            temporalFilter = Filter.INCLUDE;
-        }
-
-        if(temporalFilter != Filter.INCLUDE){
-            filter = FILTER_FACTORY.and(filter,temporalFilter);
-        }
-
-        //concatenate with elevation range if needed ---------------------------
-        final Filter verticalFilter;
-        final Double[] vertical = renderingContext.getElevationRange().clone();
-        final Expression[] layerVerticalRange = layer.getElevationRange().clone();
-
-        if(vertical[0] == null){
-            vertical[0] = Double.NEGATIVE_INFINITY;
-        }
-        if(vertical[1] == null){
-            vertical[1] = Double.POSITIVE_INFINITY;
-        }
-
-        if(layerVerticalRange[0] != null && layerVerticalRange[1] != null){
-            verticalFilter = FILTER_FACTORY.and(
-                    FILTER_FACTORY.lessOrEqual(layerVerticalRange[0], FILTER_FACTORY.literal(vertical[1])),
-                    FILTER_FACTORY.greaterOrEqual(layerVerticalRange[1], FILTER_FACTORY.literal(vertical[0])));
-        }else if(layerVerticalRange[0] != null){
-            verticalFilter = FILTER_FACTORY.and(
-                    FILTER_FACTORY.lessOrEqual(layerVerticalRange[0], FILTER_FACTORY.literal(vertical[1])),
-                    FILTER_FACTORY.greaterOrEqual(layerVerticalRange[0], FILTER_FACTORY.literal(vertical[0])));
-        }else if(layerVerticalRange[1] != null){
-            verticalFilter = FILTER_FACTORY.and(
-                    FILTER_FACTORY.lessOrEqual(layerVerticalRange[1], FILTER_FACTORY.literal(vertical[1])),
-                    FILTER_FACTORY.greaterOrEqual(layerVerticalRange[1], FILTER_FACTORY.literal(vertical[0])));
-        }else{
-            verticalFilter = Filter.INCLUDE;
-        }
-
-        if(verticalFilter != Filter.INCLUDE){
-            filter = FILTER_FACTORY.and(filter,verticalFilter);
-        }
-
-        final Set<String> copy = new HashSet<String>();
-        for(CachedRule r : rules){
-            for(CachedSymbolizer c : r.symbolizers()){
-                c.getRequieredAttributsName(copy);
-            }
-        }
-        if(geomAttName != null){
-            copy.add(geomAttName);
-        }
-        final String[] atts = copy.toArray(new String[copy.size()]);
-
-        //check that properties names does not hold sub properties values, if one is found
-        //then we reduce it to the first parent property.
-        for(int i=0; i<atts.length; i++){
-            String attName = atts[i];
-            int index = attName.indexOf('/');
-            if(index >=0){
-                //remove all xpath filtering and indexing
-                int n = attName.indexOf('[', index+1);
-                while(n > 0){
-                    int d = attName.indexOf(']', n);
-                    if(d>0){
-                        attName = attName.substring(index, n)+attName.substring(d+1);
-                    }else{
-                        break;
-                    }
-                    n = attName.indexOf('[', index+1);
-                }
-
-                //looks like we have a path
-                int nextOcc = attName.indexOf('/', index+1);
-                int startBracket = attName.indexOf('{', index+1);
-                int endBracket = attName.indexOf('}', index+1);
-                if(nextOcc> startBracket && nextOcc<endBracket){
-                    //in a qname, ignore this slash
-                    nextOcc = attName.indexOf('/', endBracket+1);
-                }
-
-                if(endBracket > index){
-                    //this is a path, reduce it
-                    atts[i] = attName.substring(index+1, nextOcc);
-                }
-            }
-        }
-
-        //optimize the filter---------------------------------------------------
-        filter = FilterUtilities.prepare(filter,Feature.class);
-
-        final Hints queryHints = new Hints();
-        final QueryBuilder qb = new QueryBuilder();
-        qb.setTypeName(schema.getName());
-        qb.setFilter(filter);
-        qb.setProperties(atts);
-
-        //add resampling -------------------------------------------------------
-        Boolean resample = (hints == null) ? null : (Boolean) hints.get(GO2Hints.KEY_GENERALIZE);
-        if(!Boolean.FALSE.equals(resample)){
-            //we only disable resampling if it is explictly specified
-            final double[] res = renderingContext.getResolution(layerCRS);
-
-            //adjust with the generalization factor
-            final Number n =  (hints==null) ? null : (Number)hints.get(GO2Hints.KEY_GENERALIZE_FACTOR);
-            final double factor;
-            if(n != null){
-                factor = n.doubleValue();
-            }else{
-                factor = GO2Hints.GENERALIZE_FACTOR_DEFAULT.doubleValue();
-            }
-            res[0] *= factor;
-            res[1] *= factor;
-            qb.setResolution(renderingContext.getResolution(layerCRS));
-        }
-
-        //add ignore flag ------------------------------------------------------
-        if(!GO2Utilities.visibleMargin(rules, 1.01f, renderingContext)){
-            //style does not expend itself further than the feature geometry
-            //that mean geometries smaller than a pixel will not be renderer are barely visible
-            queryHints.put(HintsPending.KEY_IGNORE_SMALL_FEATURES, renderingContext.getResolution(layerCRS));
-        }
-
-        //add reprojection -----------------------------------------------------
-        qb.setCRS(renderingContext.getObjectiveCRS2D());
-
-        //set the acumulated hints
-        qb.setHints(queryHints);
+        QueryBuilder qb = new QueryBuilder(currentQuery);
+        qb.setFilter(ids);
         return qb.buildQuery();
     }
 
