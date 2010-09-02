@@ -373,7 +373,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
 
     private IndexedShapefileAttributeReader getAttributesReader(List<? extends PropertyDescriptor> properties, 
             Filter filter, boolean read3D, double[] resample) throws DataStoreException{
-        
+
 
         CloseableCollection<ShpData> goodRecs = null;
         if (filter instanceof Id && shpFiles.isLocal() && shpFiles.exists(FIX)) {
@@ -424,7 +424,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         }
 
         return new IndexedShapefileAttributeReader(properties, openShapeReader(read3D,resample), dbfR,
-                goodRecs, ((goodRecs!=null)?goodRecs.iterator():null));
+                goodRecs, ((goodRecs!=null)?goodRecs.iterator():null),resample);
     }
 
 
