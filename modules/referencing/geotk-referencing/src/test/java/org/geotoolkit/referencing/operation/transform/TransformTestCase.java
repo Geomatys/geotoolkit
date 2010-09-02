@@ -375,6 +375,50 @@ public abstract class TransformTestCase extends org.opengis.test.referencing.Tra
     }
 
     /**
+     * Transforms the given coordinates and verifies that the result is equals (within a positive
+     * delta) to the expected ones. If the difference between an expected and actual ordinate value
+     * is greater than the {@linkplain #tolerance(double) tolerance} threshold, then the assertion
+     * fails.
+     * <p>
+     * If {@link #isInverseTransformSupported} is {@code true}, then this method will also
+     * transform the expected coordinate points using the {@linkplain MathTransform#inverse
+     * inverse transform} and compare with the source coordinates.
+     *
+     * @param  coordinates The coordinate points to transform.
+     * @param  expected The expect result of the transformation, or
+     *         {@code null} if {@code coordinates} is expected to be null.
+     * @throws TransformException if the transformation failed.
+     *
+     * @since 3.15
+     */
+    @Override
+    protected final void verifyTransform(final double[] coordinates, final double[] expected)
+            throws TransformException
+    {
+        super.verifyTransform(coordinates, expected);
+        /*
+         * In addition to the GeoAPI "verifyTransform" check, check also for consistency.
+         * A previous version of Geotk had a bug with the Google projection which was
+         * unnoticed because of lack of this consistency check.
+         */
+        final float[] copy = new float[coordinates.length];
+        for (int i=0; i<copy.length; i++) {
+            copy[i] = (float) coordinates[i];
+        }
+        final float[] result = verifyConsistency(copy);
+        /*
+         * The comparison below needs a higher tolerance threshold, because we converted the source
+         * ordinates to floating points which induce a lost of precision. The multiplication factor
+         * used here has been determined empirically. The value is quite high, but this is only an
+         * oportunist check anyway. The "real" test is the one performed by 'verifyConsistency'.
+         */
+        final double tol = Math.max(tolerance * 1000, 1);
+        for (int i=0; i<expected.length; i++) {
+            assertEquals(expected[i], result[i], tol);
+        }
+    }
+
+    /**
      * Computes the derivative at the given point, and compares the matrix values with
      * estimations computed from the four corners of a square around the given point.
      * The transform is assumed two-dimensional.
