@@ -31,6 +31,7 @@ import org.geotoolkit.util.NumberRange;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
+import org.geotoolkit.util.converter.Classes;
 import org.opengis.sld.Constraint;
 import org.opengis.sld.FeatureTypeConstraint;
 import org.opengis.sld.SLDVisitor;
@@ -319,7 +320,10 @@ class DefaultMutableNamedLayer implements MutableNamedLayer{
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
-        builder.append("[MutableNamedLayer : ");
+        builder.append("NamedLayer : ");
+        builder.append(Classes.getShortClassName(this));
+        builder.append(" [");
+
         if(name != null){
             builder.append(" Name=");
             builder.append(name.toString());
@@ -330,7 +334,14 @@ class DefaultMutableNamedLayer implements MutableNamedLayer{
         builder.append(constraints.toString());
         builder.append(" StylesSize=");
         builder.append(styles.size());
-        builder.append(']');
+        builder.append("]\n");
+
+        for(MutableLayerStyle style : styles){
+            String sub = "\u2514\u2500\u2500" + style.toString(); //move text to the right
+            sub = sub.replaceAll("\n", "\n\u00A0\u00A0\u00A0"); //move text to the right
+            builder.append(sub);
+        }
+
         return builder.toString();
     }
     

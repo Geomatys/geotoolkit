@@ -134,9 +134,12 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
         final int x = (int) (bounds.getMinX() - margin);
         final int y = (int) (bounds.getMinY() - margin);
 
-        g2d.setComposite( symbol.getJ2DFillComposite(feature) );
-        g2d.setPaint( symbol.getJ2DFillPaint(feature, x, y,coeff, hints) );
-        g2d.fill(shape);
+        if(symbol.isFillVisible(feature)){
+            g2d.setComposite( symbol.getJ2DFillComposite(feature) );
+            g2d.setPaint( symbol.getJ2DFillPaint(feature, x, y,coeff, hints) );
+            g2d.fill(shape);
+        }
+        
         if(symbol.isStrokeVisible(feature)){
             final CachedStroke cachedStroke = symbol.getCachedStroke();
         if(cachedStroke instanceof CachedStrokeSimple){

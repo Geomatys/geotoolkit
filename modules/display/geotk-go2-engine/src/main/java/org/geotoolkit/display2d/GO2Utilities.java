@@ -398,6 +398,9 @@ public final class GO2Utilities {
      * @param target : Graphics2D
      */
     public static void renderFill(final Shape shape, final Fill fill, final Graphics2D target){
+        if(fill == null){
+            return;
+        }
         final Expression expColor = fill.getColor();
         final Expression expOpa = fill.getOpacity();
 

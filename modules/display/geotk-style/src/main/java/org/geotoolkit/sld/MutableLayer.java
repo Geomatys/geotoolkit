@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sld;
 
+import java.util.List;
 import org.opengis.sld.Layer;
 import org.opengis.style.Description;
 
@@ -41,6 +42,8 @@ public interface MutableLayer extends Layer{
      * @param description : new description
      */
     void setDescription(Description description);
+
+    List styles();
     
     //--------------------------------------------------------------------------
     // listeners management ----------------------------------------------------

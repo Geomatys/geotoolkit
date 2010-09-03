@@ -17,6 +17,7 @@
 package org.geotoolkit.style;
 
 
+import org.geotoolkit.util.converter.Classes;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.util.Utilities;
@@ -110,11 +111,11 @@ public class DefaultPointSymbolizer extends AbstractSymbolizer implements PointS
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("[Point Symbolizer : Graphic=");
-        if(graphic != null){
-            builder.append(graphic.toString());
-        }
+        final StringBuilder builder = new StringBuilder();
+        builder.append("Point Symbolizer : ");
+        builder.append(Classes.getShortClassName(this));
+        builder.append(" [");
+
         if(uom != null){
             builder.append(" Unit=");
             builder.append(uom.toString());
@@ -124,6 +125,14 @@ public class DefaultPointSymbolizer extends AbstractSymbolizer implements PointS
             builder.append(geom.toString());
         }
         builder.append(']');
+        
+        if(graphic != null){
+            builder.append('\n');
+            String sub = "\u2514\u2500\u2500" + graphic.toString(); //move text to the right
+            sub = sub.replaceAll("\n", "\n\u00A0\u00A0\u00A0"); //move text to the right
+            builder.append(sub);
+        }
+
         return builder.toString();
     }
 }

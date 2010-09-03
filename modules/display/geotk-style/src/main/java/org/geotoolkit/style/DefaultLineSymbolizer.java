@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.style;
 
+import org.geotoolkit.util.converter.Classes;
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
 
@@ -127,11 +128,11 @@ public class DefaultLineSymbolizer extends AbstractSymbolizer implements LineSym
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("[Line Symbolizer : Stroke=");
-        if(stroke != null){
-            builder.append(stroke.toString());
-        }
+        final StringBuilder builder = new StringBuilder();
+        builder.append("Line Symbolizer : ");
+        builder.append(Classes.getShortClassName(this));
+        builder.append(" [");
+
         builder.append(" Offset=");
         builder.append(offset.toString());
         if(uom != null){
@@ -143,6 +144,14 @@ public class DefaultLineSymbolizer extends AbstractSymbolizer implements LineSym
             builder.append(geom.toString());
         }
         builder.append(']');
+
+        if(stroke != null){
+            builder.append('\n');
+            String sub = "\u2514\u2500\u2500" + stroke.toString(); //move text to the right
+            sub = sub.replaceAll("\n", "\n\u00A0\u00A0\u00A0"); //move text to the right
+            builder.append(sub);
+        }
+
         return builder.toString();
     }
 }
