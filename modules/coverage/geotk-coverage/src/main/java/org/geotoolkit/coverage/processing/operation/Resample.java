@@ -110,6 +110,13 @@ import org.geotoolkit.lang.Immutable;
  *     <td align="center">N/A</td>
  *     <td align="center">N/A</td>
  *   </tr>
+ *   <tr>
+ *     <td>{@code "Background"}</td>
+ *     <td>{@code double[]}</td>
+ *     <td>(automatic)</td>
+ *     <td align="center">N/A</td>
+ *     <td align="center">N/A</td>
+ *   </tr>
  * </table>
  *
  * {@section Geotoolkit.org extension}
@@ -120,9 +127,14 @@ import org.geotoolkit.lang.Immutable;
  * {@link org.geotoolkit.factory.Hints#COORDINATE_OPERATION_FACTORY} key. Rendering
  * hints can be supplied to {@link org.geotoolkit.coverage.processing.DefaultCoverageProcessor}
  * at construction time.
+ * <p>
+ * Geotk adds a background parameter which is not part of OGC specification. This parameter
+ * specifies the color to use for pixels in the destination image that don't map to a pixel
+ * in the source image. If this parameter is not specified, then it is inferred from the
+ * "no data" category in the source coverage.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.16
  *
  * @see org.geotoolkit.coverage.processing.Operations#resample
  * @see WarpDescriptor
@@ -180,11 +192,27 @@ public class Resample extends Operation2D {
                 false);                             // Parameter is optional
 
     /**
+     * The parameter descriptor for the background values.
+     *
+     * @since 3.16
+     */
+    public static final ParameterDescriptor<double[]> BACKGROUND =
+            new DefaultParameterDescriptor<double[]>(Citations.GEOTOOLKIT,
+                "Background",                       // Parameter name
+                double[].class,                     // Value class (mandatory)
+                null,                               // Array of valid values
+                null,                               // Default value
+                null,                               // Minimal value
+                null,                               // Maximal value
+                null,                               // Unit of measure
+                false);                             // Parameter is optional
+
+    /**
      * Constructs a {@code "Resample"} operation.
      */
     public Resample() {
         super(new DefaultParameterDescriptorGroup(Citations.OGC, "Resample",
-                SOURCE_0, INTERPOLATION_TYPE, COORDINATE_REFERENCE_SYSTEM, GRID_GEOMETRY
+                SOURCE_0, INTERPOLATION_TYPE, COORDINATE_REFERENCE_SYSTEM, GRID_GEOMETRY, BACKGROUND
         ));
     }
 
@@ -206,6 +234,7 @@ public class Resample extends Operation2D {
     @Override
     protected Coverage doOperation(final ParameterValueGroup parameters, final Hints hints) {
         final GridCoverage2D source = (GridCoverage2D) parameters.parameter("Source").getValue();
+        final double[] background = (double[]) parameters.parameter("Background").getValue();
         final Interpolation interpolation = ImageUtilities.toInterpolation(
                 parameters.parameter("InterpolationType").getValue());
         CoordinateReferenceSystem targetCRS = (CoordinateReferenceSystem)
@@ -217,7 +246,7 @@ public class Resample extends Operation2D {
                 (GridGeometry) parameters.parameter("GridGeometry").getValue());
         final GridCoverage2D target;
         try {
-            target = Resampler2D.reproject(source, targetCRS, targetGG, interpolation, hints);
+            target = Resampler2D.reproject(source, targetCRS, targetGG, interpolation, background, hints);
         } catch (FactoryException exception) {
             throw new CannotReprojectException(Errors.format(
                     Errors.Keys.CANT_REPROJECT_$1, source.getName()), exception);

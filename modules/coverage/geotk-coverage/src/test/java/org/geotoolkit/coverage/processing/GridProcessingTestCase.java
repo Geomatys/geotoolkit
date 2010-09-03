@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.processing;
 
 import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
+import java.util.logging.Level;
 import javax.media.jai.RenderedOp;
 
 import org.opengis.parameter.ParameterValueGroup;
@@ -123,7 +124,7 @@ public abstract class GridProcessingTestCase extends GridCoverageTestCase {
         String operation = null;
         if (image instanceof RenderedOp) {
             operation = ((RenderedOp) image).getOperationName();
-            AbstractCoverageProcessor.LOGGER.fine("Applied \"" + operation + "\" JAI operation.");
+            AbstractCoverageProcessor.LOGGER.log(Level.FINE, "Applied \"{0}\" JAI operation.", operation);
         }
         coverage = coverage.view(ViewType.PACKED);
         if (show) {

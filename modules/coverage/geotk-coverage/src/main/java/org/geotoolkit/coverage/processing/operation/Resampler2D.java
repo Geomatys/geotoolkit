@@ -72,7 +72,6 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.geotoolkit.referencing.operation.transform.IdentityTransform;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.referencing.operation.transform.WarpFactory;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
@@ -85,8 +84,8 @@ import org.geotoolkit.internal.coverage.CoverageUtilities;
  * separated class for two purpose: avoid loading this code before needed and provide some
  * way to check if a grid coverages is a result of a resample operation.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.16
  *
  * @since 1.2
  * @module
@@ -180,29 +179,24 @@ final class Resampler2D extends GridCoverage2D {
      * grid geometry is supplied, only its {@linkplain GridGeometry2D#getRange grid envelope}
      * and {@linkplain GridGeometry2D#getGridToCRS grid to CRS} transform are taken in account.
      *
-     * @param sourceCoverage
-     *          The source grid coverage.
-     * @param targetCRS
-     *          Coordinate reference system for the new grid coverage, or {@code null}.
-     * @param targetGG
-     *          The target grid geometry, or {@code null} for default.
-     * @param interpolation
-     *          The interpolation to use, or {@code null} if none.
+     * @param sourceCoverage The source grid coverage.
+     * @param targetCRS      Coordinate reference system for the new grid coverage, or {@code null}.
+     * @param targetGG       The target grid geometry, or {@code null} for default.
+     * @param background     The background values, or {@code null} for default.
+     * @param interpolation  The interpolation to use, or {@code null} if none.
      * @param hints
      *          The rendering hints. This is usually provided by {@link AbstractCoverageProcessor}.
      *          This method will looks for {@link Hints#COORDINATE_OPERATION_FACTORY} and
      *          {@link Hints#JAI_INSTANCE} keys.
-     * @return
-     *          The new grid coverage, or {@code sourceCoverage} if no resampling was needed.
-     * @throws FactoryException
-     *          if a transformation step can't be created.
-     * @throws TransformException
-     *          if a transformation failed.
+     * @return  The new grid coverage, or {@code sourceCoverage} if no resampling was needed.
+     * @throws  FactoryException If a transformation step can't be created.
+     * @throws TransformException If a transformation failed.
      */
     public static GridCoverage2D reproject(GridCoverage2D            sourceCoverage,
                                            CoordinateReferenceSystem targetCRS,
                                            GridGeometry2D            targetGG,
                                            final Interpolation       interpolation,
+                                           double[]                  background,
                                            final Hints               hints)
             throws FactoryException, TransformException
     {
@@ -466,7 +460,9 @@ final class Resampler2D extends GridCoverage2D {
          * desired target grid envelope. NOT specifying border extender will allows "Affine"
          * to shrink the target image bounds to the range containing computed values.
          */
-        final double[] background = CoverageUtilities.getBackgroundValues(sourceCoverage);
+        if (background == null) {
+            background = CoverageUtilities.getBackgroundValues(sourceCoverage);
+        }
         if (background != null && background.length != 0) {
             if (!automaticGR) {
                 final BorderExtender borderExtender;
@@ -597,7 +593,7 @@ final class Resampler2D extends GridCoverage2D {
                         target = targetGG.reduce(target);
                         if (!(new GeneralEnvelope(source).contains(target, true))) {
                             if (interpolation != null && !(interpolation instanceof InterpolationNearest)) {
-                                return reproject(sourceCoverage, targetCRS, targetGG, null, hints);
+                                return reproject(sourceCoverage, targetCRS, targetGG, null, background, hints);
                             } else {
                                 // If we were already using nearest-neighbor interpolation, force
                                 // usage of WarpAdapter2D instead of WarpAffine. The price will be
