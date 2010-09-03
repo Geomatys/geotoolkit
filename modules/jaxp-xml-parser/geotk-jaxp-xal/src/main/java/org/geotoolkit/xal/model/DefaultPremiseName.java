@@ -22,8 +22,10 @@ package org.geotoolkit.xal.model;
  */
 public class DefaultPremiseName extends DefaultGenericTypedGrPostal implements PremiseName {
 
-    private final AfterBeforeEnum typeOccurrence;
+    private AfterBeforeEnum typeOccurrence;
 
+    public DefaultPremiseName(){}
+    
     /**
      *
      * @param type
@@ -43,6 +45,15 @@ public class DefaultPremiseName extends DefaultGenericTypedGrPostal implements P
      */
     @Override
     public AfterBeforeEnum getTypeOccurrence() {return this.typeOccurrence;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setTypeOccurrence(AfterBeforeEnum typeOccurrence) {
+        this.typeOccurrence = typeOccurrence;
+    }
 
 
 }

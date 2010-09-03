@@ -40,5 +40,11 @@ public interface LargeMailUserIdentifier extends GenericTypedGrPostal {
      * 
      * @return
      */
-    public String getIndicator();
+    String getIndicator();
+
+    /**
+     * 
+     * @param indicator
+     */
+    void setIndicator(String indicator);
 }

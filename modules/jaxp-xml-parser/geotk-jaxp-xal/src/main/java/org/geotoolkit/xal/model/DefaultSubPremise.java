@@ -25,37 +25,64 @@ import static java.util.Collections.*;
  */
 public class DefaultSubPremise implements SubPremise {
 
-    private final List<GenericTypedGrPostal> addressLines;
-    private final List<SubPremiseName> subPremiseNames;
+    private List<GenericTypedGrPostal> addressLines;
+    private List<SubPremiseName> subPremiseNames;
     private SubPremiseLocation subPremiseLocation;
     private List<SubPremiseNumber> subPremiseNumbers;
-    private final List<SubPremiseNumberPrefix> subPremiseNumberPrefixes;
-    private final List<SubPremiseNumberSuffix> subPremiseNumberSuffixes;
-    private final List<BuildingName> buildingNames;
-    private final Firm firm;
-    private final MailStop mailStop;
-    private final PostalCode postalCode;
-    private final SubPremise subPremise;
-    private final String type;
+    private List<SubPremiseNumberPrefix> subPremiseNumberPrefixes;
+    private List<SubPremiseNumberSuffix> subPremiseNumberSuffixes;
+    private List<BuildingName> buildingNames;
+    private Firm firm;
+    private MailStop mailStop;
+    private PostalCode postalCode;
+    private SubPremise subPremise;
+    private String type;
 
+    public DefaultSubPremise() {
+        this.addressLines = EMPTY_LIST;
+        this.subPremiseNames = EMPTY_LIST;
+        this.subPremiseNumbers = EMPTY_LIST;
+        this.subPremiseNumberPrefixes = EMPTY_LIST;
+        this.subPremiseNumberSuffixes = EMPTY_LIST;
+        this.buildingNames = EMPTY_LIST;
+    }
+
+    /**
+     *
+     * @param addressLines
+     * @param subPremiseNames
+     * @param location
+     * @param subPremiseNumberPrefixes
+     * @param subPremiseNumberSuffixes
+     * @param buildingNames
+     * @param firm
+     * @param mailStop
+     * @param postalCode
+     * @param subPremise
+     * @param type
+     * @throws XalException
+     */
     public DefaultSubPremise(List<GenericTypedGrPostal> addressLines,
             List<SubPremiseName> subPremiseNames, Object location,
             List<SubPremiseNumberPrefix> subPremiseNumberPrefixes,
-            List<SubPremiseNumberSuffix> subPremiseNumberSuffixes, 
+            List<SubPremiseNumberSuffix> subPremiseNumberSuffixes,
             List<BuildingName> buildingNames, Firm firm, MailStop mailStop,
-            PostalCode postalCode, SubPremise subPremise, String type) throws XalException{
+            PostalCode postalCode, SubPremise subPremise, String type) throws XalException {
         this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
         this.subPremiseNames = (subPremiseNames == null) ? EMPTY_LIST : subPremiseNames;
-        if (location instanceof SubPremiseLocation){
+        if (location instanceof SubPremiseLocation) {
             this.subPremiseLocation = (SubPremiseLocation) location;
-        } else if (location instanceof List){
+            this.subPremiseNumbers = EMPTY_LIST;
+        } else if (location instanceof List) {
             try {
                 this.subPremiseNumbers = (List<SubPremiseNumber>) location;
-            } catch (ClassCastException e){
-                throw new XalException("This kind of location ("+location.getClass()+") is not allowed here : "+this.getClass());
+            } catch (ClassCastException e) {
+                throw new XalException("This kind of location (" + location.getClass() + ") is not allowed here : " + this.getClass());
             }
-        } else if (location != null){
-            throw new XalException("This kind of location ("+location.getClass()+") is not allowed here : "+this.getClass());
+        } else if (location != null) {
+            throw new XalException("This kind of location (" + location.getClass() + ") is not allowed here : " + this.getClass());
+        } else {
+            this.subPremiseNumbers = EMPTY_LIST;
         }
         this.subPremiseNumberPrefixes = (subPremiseNumberPrefixes == null) ? EMPTY_LIST : subPremiseNumberPrefixes;
         this.subPremiseNumberSuffixes = (subPremiseNumberSuffixes == null) ? EMPTY_LIST : subPremiseNumberSuffixes;
@@ -67,40 +94,215 @@ public class DefaultSubPremise implements SubPremise {
         this.type = type;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
-    public List<GenericTypedGrPostal> getAddressLines() {return this.addressLines;}
+    public List<GenericTypedGrPostal> getAddressLines() {
+        return this.addressLines;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public List<SubPremiseName> getSubPremiseNames() {
+        return this.subPremiseNames;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public SubPremiseLocation getSubPremiseLocation() {
+        return this.subPremiseLocation;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public List<SubPremiseNumber> getSubPremiseNumbers() {
+        return this.subPremiseNumbers;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public List<SubPremiseNumberPrefix> getSubPremiseNumberPrefixes() {
+        return this.subPremiseNumberPrefixes;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public List<SubPremiseNumberSuffix> getSubPremiseNumberSuffixes() {
+        return this.subPremiseNumberSuffixes;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public List<BuildingName> getBuildingNames() {
+        return this.buildingNames;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public Firm getFirm() {
+        return this.firm;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public MailStop getMailStop() {
+        return this.mailStop;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PostalCode getPostalCode() {
+        return this.postalCode;
+    }
 
     @Override
-    public List<SubPremiseName> getSubPremiseNames() {return this.subPremiseNames;}
+    public SubPremise getSubPremise() {
+        return this.subPremise;
+    }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
-    public SubPremiseLocation getSubPremiseLocation() {return this.subPremiseLocation;}
+    public String getType() {
+        return this.type;
+    }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
-    public List<SubPremiseNumber> getSubPremiseNumbers() {return this.subPremiseNumbers;}
+    public void setAddressLines(List<GenericTypedGrPostal> addressLines) {
+        this.addressLines = addressLines;
+    }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
-    public List<SubPremiseNumberPrefix> getSubPremiseNumberPrefixes() {return this.subPremiseNumberPrefixes;}
+    public void setSubPremiseNames(List<SubPremiseName> subPremiseNames) {
+        this.subPremiseNames = subPremiseNames;
+    }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
-    public List<SubPremiseNumberSuffix> getSubPremiseNumberSuffixes() {return this.subPremiseNumberSuffixes;}
+    public void setSubPremiseLocation(SubPremiseLocation subPremiseLocation) {
+        this.subPremiseLocation = subPremiseLocation;
+    }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
-    public List<BuildingName> getBuildingNames() {return this.buildingNames;}
+    public void setSubPremiseNumbers(List<SubPremiseNumber> subPremiseNumbers) {
+        this.subPremiseNumbers = subPremiseNumbers;
+    }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
-    public Firm getFirm() {return this.firm;}
+    public void setSubPremiseNumberPrefixes(List<SubPremiseNumberPrefix> subPremiseNumberPrefixes) {
+        this.subPremiseNumberPrefixes = subPremiseNumberPrefixes;
+    }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
-    public MailStop getMailStop() {return this.mailStop;}
+    public void setSubPremiseNumberSuffixes(List<SubPremiseNumberSuffix> subPremiseNumberSuffixes) {
+        this.subPremiseNumberSuffixes = subPremiseNumberSuffixes;
+    }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
-    public PostalCode getPostalCode() {return this.postalCode;}
+    public void setBuildingNames(List<BuildingName> buildingNames) {
+        this.buildingNames = buildingNames;
+    }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
-    public SubPremise getSubPremise() {return this.subPremise;}
+    public void setFirm(Firm firm) {
+        this.firm = firm;
+    }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
-    public String getType() {return this.type;}
+    public void setMailStop(MailStop mailStop) {
+        this.mailStop = mailStop;
+    }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostalCode(PostalCode postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setSubPremise(SubPremise subPremise) {
+        this.subPremise = subPremise;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setType(String type) {
+        this.type = type;
+    }
 }

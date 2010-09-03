@@ -22,7 +22,9 @@ package org.geotoolkit.xal.model;
  */
 public class DefaultBuildingName extends DefaultGenericTypedGrPostal implements BuildingName {
 
-    private final AfterBeforeEnum typeOccurrence;
+    private AfterBeforeEnum typeOccurrence;
+
+    public DefaultBuildingName(){}
 
     /**
      *
@@ -43,5 +45,14 @@ public class DefaultBuildingName extends DefaultGenericTypedGrPostal implements 
      */
     @Override
     public AfterBeforeEnum getTypeOccurrence() {return this.typeOccurrence;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setTypeOccurrence(AfterBeforeEnum typeOccurrence) {
+        this.typeOccurrence = typeOccurrence;
+    }
 
 }

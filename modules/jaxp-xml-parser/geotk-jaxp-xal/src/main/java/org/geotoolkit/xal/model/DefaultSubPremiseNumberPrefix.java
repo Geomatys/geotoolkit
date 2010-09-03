@@ -20,10 +20,22 @@ package org.geotoolkit.xal.model;
  *
  * @author Samuel Andrés
  */
-public class DefaultSubPremiseNumberPrefix extends DefaultGenericTypedGrPostal implements SubPremiseNumberPrefix {
+public class DefaultSubPremiseNumberPrefix 
+        extends DefaultGenericTypedGrPostal
+        implements SubPremiseNumberPrefix {
 
-    private final String numberPrefixSeparator;
+    private String numberPrefixSeparator;
 
+    public DefaultSubPremiseNumberPrefix(){
+    }
+    
+    /**
+     *
+     * @param numberPrefixSeparator
+     * @param type
+     * @param grPostal
+     * @param content
+     */
     public DefaultSubPremiseNumberPrefix(String numberPrefixSeparator,
             String type, GrPostal grPostal, String content){
         super(type, grPostal, content);
@@ -36,5 +48,14 @@ public class DefaultSubPremiseNumberPrefix extends DefaultGenericTypedGrPostal i
      */
     @Override
     public String getNumberPrefixSeparator() {return this.numberPrefixSeparator;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setNumberPrefixSeparator(String numberPrefixSeparator) {
+        this.numberPrefixSeparator = numberPrefixSeparator;
+    }
 
 }

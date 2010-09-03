@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xAL xmlns="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0">
+<AddressDetails>
+<AdministrativeArea>
+<SubAdministrativeArea>
+<Locality Type="SAALocality">
+<PostOffice Type="postOfficeType" Indicator="postOfficeIndicator">
+</PostOffice>
+</Locality>
+</SubAdministrativeArea>
+<Locality Type="AALocality">
+<PostalRoute>
+<PostalRouteNumber Code="postalRouteCode">postal route number</PostalRouteNumber>
+</PostalRoute>
+</Locality>
+</AdministrativeArea>
+</AddressDetails>
+</xAL>

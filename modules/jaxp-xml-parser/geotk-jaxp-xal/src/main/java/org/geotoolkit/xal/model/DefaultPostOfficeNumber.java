@@ -22,10 +22,12 @@ package org.geotoolkit.xal.model;
  */
 public class DefaultPostOfficeNumber implements PostOfficeNumber {
 
-    private final String indicator;
-    private final AfterBeforeEnum indicatorOccurence;
-    private final GrPostal grPostal;
-    private final String content;
+    private String indicator;
+    private AfterBeforeEnum indicatorOccurrence;
+    private GrPostal grPostal;
+    private String content;
+
+    public DefaultPostOfficeNumber(){}
 
     /**
      * 
@@ -37,7 +39,7 @@ public class DefaultPostOfficeNumber implements PostOfficeNumber {
     public DefaultPostOfficeNumber(String indicator,
             AfterBeforeEnum indicatorOccurence, GrPostal grPostal, String content){
         this.indicator = indicator;
-        this.indicatorOccurence = indicatorOccurence;
+        this.indicatorOccurrence = indicatorOccurence;
         this.grPostal = grPostal;
         this.content = content;
     }
@@ -61,7 +63,7 @@ public class DefaultPostOfficeNumber implements PostOfficeNumber {
      * @{@inheritDoc }
      */
     @Override
-    public AfterBeforeEnum getIndicatorOccurrence() {return this.indicatorOccurence;}
+    public AfterBeforeEnum getIndicatorOccurrence() {return this.indicatorOccurrence;}
 
     /**
      *
@@ -69,5 +71,41 @@ public class DefaultPostOfficeNumber implements PostOfficeNumber {
      */
     @Override
     public GrPostal getGrPostal() {return this.grPostal;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setIndicator(String indicator) {
+        this.indicator = indicator;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setIndicatorOccurrence(AfterBeforeEnum indicatorOccurrence) {
+        this.indicatorOccurrence = indicatorOccurrence;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setGrPostal(GrPostal grPostal) {
+        this.grPostal = grPostal;
+    }
 
 }

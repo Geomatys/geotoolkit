@@ -25,21 +25,26 @@ import static java.util.Collections.*;
  */
 public class DefaultDependentLocality implements DependentLocality {
 
-    private final List<GenericTypedGrPostal> addressLines;
-    private final List<GenericTypedGrPostal> dependentLocalityNames;
-    private final DependentLocalityNumber dependentLocalityNumber;
+    private List<GenericTypedGrPostal> addressLines;
+    private List<GenericTypedGrPostal> dependentLocalityNames;
+    private DependentLocalityNumber dependentLocalityNumber;
     private PostBox postBox;
     private LargeMailUser largeMailUser;
     private PostOffice postOffice;
     private PostalRoute postalRoute;
-    private final Thoroughfare thoroughfare;
-    private final Premise premise;
-    private final DependentLocality dependentLocality;
-    private final PostalCode postalCode;
-    private final String type;
-    private final String usageType;
-    private final String connector;
-    private final String indicator;
+    private Thoroughfare thoroughfare;
+    private Premise premise;
+    private DependentLocality dependentLocality;
+    private PostalCode postalCode;
+    private String type;
+    private String usageType;
+    private String connector;
+    private String indicator;
+
+    public DefaultDependentLocality(){
+        this.addressLines = EMPTY_LIST;
+        this.dependentLocalityNames = EMPTY_LIST;
+    }
 
     /**
      *
@@ -191,5 +196,140 @@ public class DefaultDependentLocality implements DependentLocality {
      */
     @Override
     public String getIndicator() {return this.indicator;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAddressLines(List<GenericTypedGrPostal> addressLines) {
+        this.addressLines = addressLines;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setDependentLocalityNames(List<GenericTypedGrPostal> dependentLocalityNames) {
+        this.dependentLocalityNames = dependentLocalityNames;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setDependentLocalityNumber(DependentLocalityNumber dependentLocalityNumber) {
+        this.dependentLocalityNumber = dependentLocalityNumber;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostBox(PostBox postBox) {
+        this.postBox = postBox;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setLargeMailUser(LargeMailUser largeMailUser) {
+        this.largeMailUser = largeMailUser;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostOffice(PostOffice postOffice) {
+        this.postOffice = postOffice;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostalRoute(PostalRoute postalRoute) {
+        this.postalRoute = postalRoute;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setThoroughfare(Thoroughfare thoroughfare) {
+        this.thoroughfare = thoroughfare;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPremise(Premise premise) {
+        this.premise = premise;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setDependentLocality(DependentLocality dependentLocality) {
+        this.dependentLocality = dependentLocality;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostalCode(PostalCode postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setUsageType(String usageType) {
+        this.usageType = usageType;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setConnector(String connector) {
+        this.connector = connector;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setIndicator(String indicator) {
+        this.indicator = indicator;
+    }
 
 }

@@ -61,25 +61,25 @@ public interface SubPremise {
      * 
      * @return
      */
-    public List<GenericTypedGrPostal> getAddressLines();
+    List<GenericTypedGrPostal> getAddressLines();
 
     /**
      * <p>Name of the SubPremise.</p>
      * @return
      */
-    public List<SubPremiseName> getSubPremiseNames();
+    List<SubPremiseName> getSubPremiseNames();
 
     /*
      * === CHOICE: ===
      */
 
-    public SubPremiseLocation getSubPremiseLocation();
+    SubPremiseLocation getSubPremiseLocation();
 
     /**
      * 
      * @return
      */
-    public List<SubPremiseNumber> getSubPremiseNumbers();
+    List<SubPremiseNumber> getSubPremiseNumbers();
 
     /*
      * === END OF CHOICE ===
@@ -90,21 +90,21 @@ public interface SubPremise {
      *
      * @return
      */
-    public List<SubPremiseNumberPrefix> getSubPremiseNumberPrefixes();
+    List<SubPremiseNumberPrefix> getSubPremiseNumberPrefixes();
 
     /**
      * <p>Suffix of the sub premise number. eg. A in 12A.</p>
      *
      * @return
      */
-    public List<SubPremiseNumberSuffix> getSubPremiseNumberSuffixes();
+    List<SubPremiseNumberSuffix> getSubPremiseNumberSuffixes();
 
     /**
      * <p>Name of the building.</p>
      *
      * @return
      */
-    public List<BuildingName> getBuildingNames();
+    List<BuildingName> getBuildingNames();
 
     /**
      * <p>Specification of a firm, company, organization, etc.
@@ -114,20 +114,20 @@ public interface SubPremise {
      *
      * @return
      */
-    public Firm getFirm();
+    Firm getFirm();
 
     /**
      * <p>A MailStop is where the the mail is delivered to within a premise/subpremise/firm or a facility.</p>
      *
      * @return
      */
-    public MailStop getMailStop();
+    MailStop getMailStop();
 
     /**
      *
      * @return
      */
-    public PostalCode getPostalCode();
+    PostalCode getPostalCode();
 
     /**
      * <p>Specification of a single sub-premise.
@@ -140,11 +140,91 @@ public interface SubPremise {
      *
      * @return
      */
-    public SubPremise getSubPremise();
+    SubPremise getSubPremise();
 
     /**
      * 
      * @return
      */
-    public String getType();
+    String getType();
+
+    /**
+     *
+     * @param addressLines
+     */
+    void setAddressLines(List<GenericTypedGrPostal> addressLines);
+
+    /**
+     *
+     * @param premiseNames
+     */
+    void setSubPremiseNames(List<SubPremiseName> subPremiseNames);
+
+    /*
+     * === CHOICE: ===
+     */
+
+    /**
+     *
+     * @param subPremiseLocation
+     */
+    void setSubPremiseLocation(SubPremiseLocation subPremiseLocation);
+
+    /**
+     *
+     * @param subPremiseNumbers
+     */
+    void setSubPremiseNumbers(List<SubPremiseNumber> subPremiseNumbers);
+
+    /*
+     * === END OF CHOICE ===
+     */
+
+    /**
+     *
+     * @param subPremiseNumberPrefixes
+     */
+    void setSubPremiseNumberPrefixes(List<SubPremiseNumberPrefix> subPremiseNumberPrefixes);
+
+    /**
+     *
+     * @param subPremiseNumberSuffixes
+     */
+    void setSubPremiseNumberSuffixes(List<SubPremiseNumberSuffix> subPremiseNumberSuffixes);
+
+    /**
+     *
+     * @param buildingNames
+     */
+    void setBuildingNames(List<BuildingName> buildingNames);
+
+    /**
+     *
+     * @param firm
+     */
+    void setFirm(Firm firm);
+
+    /**
+     *
+     * @param mailStop
+     */
+    void setMailStop(MailStop mailStop);
+
+    /**
+     *
+     * @param postalCode
+     */
+    void setPostalCode(PostalCode postalCode);
+
+    /**
+     *
+     * @param subPremise
+     */
+    void setSubPremise(SubPremise subPremise);
+
+    /**
+     * 
+     * @param type
+     */
+    void setType(String type);
 }

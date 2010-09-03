@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xAL xmlns="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0">
+<AddressDetails>
+<Locality Type="localityType" UsageType="localityUsageType" Indicator="localityIndicator">
+<AddressLine>locality address 1</AddressLine>
+<AddressLine>locality address 2</AddressLine>
+<LocalityName Type="localityNameType" Code="localityNameCode">locality name</LocalityName>
+<LargeMailUser Type="largeMailUserType">
+<AddressLine>lmu line 1</AddressLine>
+<LargeMailUserName Type="lmunType" Code="lmunCode">large mail user name</LargeMailUserName>
+<LargeMailUserIdentifier Type="lmuiType" Indicator="lmuiIndicator" Code="lmuiCode">lmu identifier</LargeMailUserIdentifier>
+<BuildingName Type="BNType" TypeOccurrence="Before" Code="BNCode">Building name content</BuildingName>
+<Department Type="largeMailUserDepartment"></Department>
+<PostBox Type="largeMailUserPostBox">
+<PostBoxNumber Code="lmu">post box number</PostBoxNumber>
+</PostBox>
+<Thoroughfare Type="largeMailUserThoroughfare"></Thoroughfare>
+<PostalCode Type="largeMailUserPostalCode"></PostalCode>
+</LargeMailUser>
+<Thoroughfare Type="localityThoroughfare">
+</Thoroughfare>
+<Premise Type="localityPremise">
+</Premise>
+<DependentLocality Type="dlType" UsageType="dlUsageType" Connector="dlConnector" Indicator="dlIndicator">
+<AddressLine>dependent locality address</AddressLine>
+<DependentLocalityName Type="dlnType" Code="dlnCode">dependent locality name</DependentLocalityName>
+<DependentLocalityNumber NameNumberOccurrence="After" Code="code">dependent locality number</DependentLocalityNumber>
+<PostBox Type="dlPostBox">
+<PostBoxNumber Code="dl">postBoxNumber</PostBoxNumber>
+</PostBox>
+<Thoroughfare Type="dlThoroughfare"></Thoroughfare>
+<Premise Type="DLPremise"></Premise>
+<DependentLocality Type="subDL">
+<LargeMailUser Type="subDL-largeMailUser"></LargeMailUser>
+<DependentLocality Type="subsubDL">
+<PostOffice Type="subsubDL-postOffice"></PostOffice>
+<DependentLocality Type="subsubsubDL">
+<PostalRoute Type="subsubsubDL-postalRoute">
+<PostalRouteNumber Code="prn">postal route number</PostalRouteNumber>
+</PostalRoute>
+</DependentLocality>
+</DependentLocality>
+</DependentLocality>
+<PostalCode Type="dlPostalCode"></PostalCode>
+</DependentLocality>
+<PostalCode Type="localityPostalCode">
+</PostalCode>
+</Locality>
+</AddressDetails>
+</xAL>
+

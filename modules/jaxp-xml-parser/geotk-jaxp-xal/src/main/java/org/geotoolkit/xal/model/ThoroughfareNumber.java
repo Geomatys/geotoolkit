@@ -47,7 +47,7 @@ public interface ThoroughfareNumber extends GenericTypedGrPostal {
      *
      * @return
      */
-    public SingleRangeEnum getNumberType();
+    SingleRangeEnum getNumberType();
 
 
     /**
@@ -55,18 +55,41 @@ public interface ThoroughfareNumber extends GenericTypedGrPostal {
      *
      * @return
      */
-    public String getIndicator();
+    String getIndicator();
 
     /**
      *
      * @return
      */
-    public AfterBeforeEnum getIndicatorOccurence();
+    AfterBeforeEnum getIndicatorOccurence();
 
     /**
      *
      * @return
      */
-    public AfterBeforeTypeNameEnum getNumberOccurence();
+    AfterBeforeTypeNameEnum getNumberOccurence();
 
+    /**
+     * 
+     * @param numberType
+     */
+    void setNumberType(SingleRangeEnum numberType);
+
+    /**
+     *
+     * @param indicator
+     */
+    void setIndicator(String indicator);
+
+    /**
+     *
+     * @param indicatorOccurrence
+     */
+    void setIndicatorOccurrence(AfterBeforeEnum indicatorOccurrence);
+
+    /**
+     * 
+     * @param numberOccurrence
+     */
+    void setNumberOccurrence(AfterBeforeTypeNameEnum numberOccurrence);
 }

@@ -31,12 +31,19 @@ package org.geotoolkit.xal.model;
  *
  * @author Samuel Andrés
  */
-public interface SubPremiseNumberPrefix extends GenericTypedGrPostal {
+public interface SubPremiseNumberPrefix
+        extends GenericTypedGrPostal {
 
     /**
      * <p>A-12 where 12 is number and A is prefix and "-" is the separator</p>
      * 
      * @return
      */
-    public String getNumberPrefixSeparator();
+    String getNumberPrefixSeparator();
+
+    /**
+     * 
+     * @param numberPrefixSeparator
+     */
+    void setNumberPrefixSeparator(String numberPrefixSeparator);
 }

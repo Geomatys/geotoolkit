@@ -54,7 +54,7 @@ public interface DependentThoroughfare {
      *
      * @return
      */
-    public List<GenericTypedGrPostal> getAddressLines();
+    List<GenericTypedGrPostal> getAddressLines();
 
     /**
      * <p>North Baker Street, where North is the pre-direction.
@@ -62,7 +62,7 @@ public interface DependentThoroughfare {
      *
      * @return
      */
-    public GenericTypedGrPostal getThoroughfarePreDirection();
+    GenericTypedGrPostal getThoroughfarePreDirection();
 
     /**
      *
@@ -72,7 +72,7 @@ public interface DependentThoroughfare {
      * 
      * @return
      */
-    public GenericTypedGrPostal getThoroughfareLeadingType();
+    GenericTypedGrPostal getThoroughfareLeadingType();
 
     /**
      * <p>Specification of the name of a Thoroughfare (also dependant street name):
@@ -80,7 +80,7 @@ public interface DependentThoroughfare {
      *
      * @return
      */
-    public List<GenericTypedGrPostal> getThoroughfareNames();
+    List<GenericTypedGrPostal> getThoroughfareNames();
 
     /**
      * <p>Appears after the thoroughfare name.
@@ -88,7 +88,7 @@ public interface DependentThoroughfare {
      *
      * @return
      */
-    public GenericTypedGrPostal getThoroughfareTrailingType();
+    GenericTypedGrPostal getThoroughfareTrailingType();
 
     /**
      * <p>221-bis Baker Street North, where North is the post-direction.
@@ -96,11 +96,53 @@ public interface DependentThoroughfare {
      * 
      * @return
      */
-    public GenericTypedGrPostal getThoroughfarePostDirection();
+    GenericTypedGrPostal getThoroughfarePostDirection();
 
     /**
      *
      * @return
      */
-    public String getType();
+    String getType();
+
+    /**
+     *
+     * @param addressLines
+     */
+    void setAddressLines(List<GenericTypedGrPostal> addressLines);
+
+    /**
+     *
+     * @param thoroughfarePredirection
+     */
+    void setThoroughfarePredirection(GenericTypedGrPostal thoroughfarePreDirection);
+
+    /**
+     *
+     * @param thoroughfareLeadingType
+     */
+    void setThoroughfareLeadingType(GenericTypedGrPostal thoroughfareLeadingType);
+
+    /**
+     *
+     * @param thoroughfareNames
+     */
+    void setThoroughfareNames(List<GenericTypedGrPostal> thoroughfareNames);
+
+    /**
+     *
+     * @param thoroughfareTrailingType
+     */
+    void setThoroughfareTrailingType(GenericTypedGrPostal thoroughfareTrailingType);
+
+    /**
+     * 
+     * @param thoroughfarePostDirection
+     */
+    void setThoroughfarePostDirection(GenericTypedGrPostal thoroughfarePostDirection);
+
+    /**
+     * 
+     * @param type
+     */
+    void setType(String type);
 }

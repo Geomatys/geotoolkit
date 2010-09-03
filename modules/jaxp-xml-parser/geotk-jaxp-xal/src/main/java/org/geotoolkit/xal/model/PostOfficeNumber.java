@@ -39,23 +39,47 @@ public interface PostOfficeNumber {
      *
      * @return
      */
-    public String getContent();
+    String getContent();
 
     /**
      * <p>MS in MS 62, # in MS # 12, etc.</p>
      * @return
      */
-    public String getIndicator();
+    String getIndicator();
 
     /**
      * <p>MS occurs before 62 in MS 62.</p>
      * @return
      */
-    public AfterBeforeEnum getIndicatorOccurrence();
+    AfterBeforeEnum getIndicatorOccurrence();
 
     /**
      * 
      * @return
      */
-    public GrPostal getGrPostal();
+    GrPostal getGrPostal();
+
+    /**
+     *
+     * @param content
+     */
+    void setContent(String content);
+
+    /**
+     *
+     * @param indicator
+     */
+    void setIndicator(String indicator);
+
+    /**
+     *
+     * @param indicatorOccurrence
+     */
+    void setIndicatorOccurrence(AfterBeforeEnum indicatorOccurrence);
+
+    /**
+     * 
+     * @param grPostal
+     */
+    void setGrPostal(GrPostal grPostal);
 }

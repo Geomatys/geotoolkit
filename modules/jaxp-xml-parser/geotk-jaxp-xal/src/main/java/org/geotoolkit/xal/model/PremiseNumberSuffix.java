@@ -35,12 +35,19 @@ package org.geotoolkit.xal.model;
  *
  * @author Samuel Andrés
  */
-public interface PremiseNumberSuffix extends GenericTypedGrPostal {
+public interface PremiseNumberSuffix
+        extends GenericTypedGrPostal {
 
     /**
      * <p>12-A where 12 is number and A is suffix and "-" is the separator.</p>
      * 
      * @return
      */
-    public String getNumberSuffixSeparator();
+    String getNumberSuffixSeparator();
+
+    /**
+     * 
+     * @param numberSuffixSeparator
+     */
+    void setNumberSuffixSeparator(String numberSuffixSeparator);
 }

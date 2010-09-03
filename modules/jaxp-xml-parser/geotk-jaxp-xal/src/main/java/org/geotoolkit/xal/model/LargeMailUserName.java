@@ -36,19 +36,38 @@ public interface LargeMailUserName {
      *
      * @return
      */
-    public String getContent();
+    String getContent();
 
     /**
      * <p>Airport, Hospital, etc.</p>
      *
      * @return
      */
-    public String getType();
+    String getType();
 
     /**
      * 
      * @return
      */
-    public String getCode();
+    String getCode();
+
+    /**
+     *
+     * @param content
+     */
+    void setContent(String content);
+
+    /**
+     *
+     * @param type
+     */
+    void setType(String type);
+
+    /**
+     * 
+     * @param code
+     */
+    void setCode(String code);
+
 
 }

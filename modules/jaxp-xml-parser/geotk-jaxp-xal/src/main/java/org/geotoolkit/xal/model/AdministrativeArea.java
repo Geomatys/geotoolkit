@@ -88,7 +88,7 @@ public interface AdministrativeArea {
      *
      * @param subAdministrativeArea
      */
-    void setSubAdmonistrativeArea(SubAdministrativeArea subAdministrativeArea);
+    void setSubAdministrativeArea(SubAdministrativeArea subAdministrativeArea);
 
     /*
      * === CHOICE: ===

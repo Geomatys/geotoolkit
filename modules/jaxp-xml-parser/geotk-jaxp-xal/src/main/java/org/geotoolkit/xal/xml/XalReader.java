@@ -1571,7 +1571,8 @@ public class XalReader extends StaxStreamReader{
         String type = reader.getAttributeValue(null, ATT_TYPE);
         AfterBeforeEnum indicatorOccurrence = AfterBeforeEnum.transform(reader.getAttributeValue(null, ATT_INDICATOR_OCCURRENCE));
         AfterBeforeTypeNameEnum numberRangeOccurrence = AfterBeforeTypeNameEnum.transform(reader.getAttributeValue(null, ATT_NUMBER_RANGE_OCCURRENCE));
-
+        GrPostal grPostal = this.readGrPostal();
+        
         boucle:
         while (reader.hasNext()) {
 
@@ -1602,7 +1603,7 @@ public class XalReader extends StaxStreamReader{
 
         return XalReader.XAL_FACTORY.createThoroughfareNumberRange(addressLines,
                 thoroughfareNumberFrom, thoroughfareNumberTo, rangeType, indicator,
-                separator, type, indicatorOccurrence, numberRangeOccurrence);
+                separator, type, indicatorOccurrence, numberRangeOccurrence, grPostal);
     }
 
     private ThoroughfareNumberFrom readThoroughfareNumberFrom() throws XMLStreamException, XalException {

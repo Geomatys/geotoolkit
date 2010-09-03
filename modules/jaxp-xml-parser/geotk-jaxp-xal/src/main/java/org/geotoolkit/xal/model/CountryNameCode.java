@@ -38,7 +38,7 @@ public interface CountryNameCode {
      * 
      * @return
      */
-    public String getContent();
+    String getContent();
 
     /**
      * <p>Country code scheme possible values, but not limited to:
@@ -46,12 +46,30 @@ public interface CountryNameCode {
      *
      * @return
      */
-    public String getScheme();
+    String getScheme();
 
     /**
      * 
      * @return
      */
-    public GrPostal getGrPostal();
+    GrPostal getGrPostal();
+
+    /**
+     *
+     * @param content
+     */
+    void setContent(String content);
+
+    /**
+     *
+     * @param scheme
+     */
+    void setScheme(String scheme);
+
+    /**
+     * 
+     * @param grPostal
+     */
+    void setGrPostal(GrPostal grPostal);
 
 }

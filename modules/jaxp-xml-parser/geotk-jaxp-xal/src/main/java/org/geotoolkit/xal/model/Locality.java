@@ -64,13 +64,25 @@ public interface Locality {
      *
      * @return
      */
-    public List<GenericTypedGrPostal> getAddressLines();
+    List<GenericTypedGrPostal> getAddressLines();
+
+    /**
+     *
+     * @param addressLines
+     */
+    void setAddressLines(List<GenericTypedGrPostal> addressLines);
 
     /**
      *
      * @return
      */
-    public List<GenericTypedGrPostal> getLocalityNames();
+    List<GenericTypedGrPostal> getLocalityNames();
+
+    /**
+     *
+     * @param localityNames
+     */
+    void setLocalityNames(List<GenericTypedGrPostal> localityNames);
     
     /*
      * === CHOICE: ===
@@ -80,7 +92,13 @@ public interface Locality {
      *
      * @return
      */
-    public PostBox getPostBox();
+    PostBox getPostBox();
+
+    /**
+     *
+     * @param postBox
+     */
+    void setPostBox(PostBox postBox);
 
     /**
      * <p>Specification of a large mail user address.
@@ -93,20 +111,38 @@ public interface Locality {
      *
      * @return
      */
-    public LargeMailUser getLargeMailUser();
+    LargeMailUser getLargeMailUser();
+
+    /**
+     *
+     * @param largeMailUser
+     */
+    void setLargeMailUser(LargeMailUser largeMailUser);
 
     /**
      *
      * @return
      */
-    public PostOffice getPostOffice();
+    PostOffice getPostOffice();
+
+    /**
+     *
+     * @param postOffice
+     */
+    void setPostOffice(PostOffice postOffice);
 
     /**
      * <p>A Postal van is specific for a route as in Is`rael, Rural route.</p>
      *
      * @return
      */
-    public PostalRoute getPostalRoute();
+    PostalRoute getPostalRoute();
+
+    /**
+     *
+     * @param postalRoute
+     */
+    void setPostalRoute(PostalRoute postalRoute);
     
     /*
      * === END OF CHOICE ===
@@ -116,13 +152,25 @@ public interface Locality {
      *
      * @return
      */
-    public Thoroughfare getThoroughfare();
+    Thoroughfare getThoroughfare();
+
+    /**
+     *
+     * @param thoroughfare
+     */
+    void setThoroughfare(Thoroughfare thoroughfare);
 
     /**
      *
      * @return
      */
-    public Premise getPremise();
+    Premise getPremise();
+
+    /**
+     *
+     * @param premise
+     */
+    void setPremise(Premise premise);
 
     /**
      * <p>Dependent localities are Districts within cities/towns,
@@ -133,13 +181,25 @@ public interface Locality {
      * 
      * @return
      */
-    public DependentLocality getDependentLocality();
+    DependentLocality getDependentLocality();
+
+    /**
+     *
+     * @param dependentLocality
+     */
+    void setDependentLocality(DependentLocality dependentLocality);
 
     /**
      *
      * @return
      */
-    public PostalCode getPostalCode();
+    PostalCode getPostalCode();
+
+    /**
+     *
+     * @param postalCode
+     */
+    void setPostalCode(PostalCode postalCode);
     
     /*
      * === ATTRIBUTES: ===
@@ -150,7 +210,13 @@ public interface Locality {
      * 
      * @return
      */
-    public String getType();
+    String getType();
+
+    /**
+     *
+     * @param type
+     */
+    void setType(String type);
     
     /**
      * <p>Postal or Political - Sometimes locations must be distinguished between 
@@ -158,13 +224,24 @@ public interface Locality {
      * 
      * @return
      */
-    public String getUsageType();
+    String getUsageType();
     
+    /**
+     * 
+     * @param usageType
+     */
+    void setUsageType(String usageType);
+
     /**
      * <p>Erode (Dist) where (Dist) is the Indicator.</p>
      * 
      * @return
      */
-    public String getIndicator();
+    String getIndicator();
 
+    /**
+     * 
+     * @param indicator
+     */
+    void setIndicator(String indicator);
 }

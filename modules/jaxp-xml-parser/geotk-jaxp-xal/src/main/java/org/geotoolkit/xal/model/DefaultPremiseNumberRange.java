@@ -22,14 +22,16 @@ package org.geotoolkit.xal.model;
  */
 public class DefaultPremiseNumberRange implements PremiseNumberRange {
 
-    private final PremiseNumberRangeFrom premiseNumberRangeFrom;
-    private final PremiseNumberRangeTo premiseNumberRangeTo;
-    private final String rangeType;
-    private final String indicator;
-    private final String separator;
-    private final String type;
-    private final AfterBeforeEnum indicatorOccurrence;
-    private final AfterBeforeTypeNameEnum numberRangeOccurrence;
+    private PremiseNumberRangeFrom premiseNumberRangeFrom;
+    private PremiseNumberRangeTo premiseNumberRangeTo;
+    private String rangeType;
+    private String indicator;
+    private String separator;
+    private String type;
+    private AfterBeforeEnum indicatorOccurrence;
+    private AfterBeforeTypeNameEnum numberRangeOccurrence;
+
+    public DefaultPremiseNumberRange(){}
 
     /**
      *
@@ -111,5 +113,77 @@ public class DefaultPremiseNumberRange implements PremiseNumberRange {
      */
     @Override
     public AfterBeforeTypeNameEnum getNumberRangeOccurrence() {return this.numberRangeOccurrence;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPremiseNumberRangeFrom(PremiseNumberRangeFrom premiseNumberRangeFrom) {
+        this.premiseNumberRangeFrom = premiseNumberRangeFrom;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPremiseNumberRangeTo(PremiseNumberRangeTo premiseNumberRangeTo) {
+        this.premiseNumberRangeTo = premiseNumberRangeTo;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setRangeType(String rangeType) {
+        this.rangeType = rangeType;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setIndicator(String indicator) {
+        this.indicator = indicator;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void getSeparator(String separator) {
+        this.separator = separator;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void getType(String type) {
+        this.type = type;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setIndicatorOccurrence(AfterBeforeEnum indicatorOccurrence) {
+        this.indicatorOccurrence = indicatorOccurrence;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setNumberRangeOccurrence(AfterBeforeTypeNameEnum numberRangeOccurrence) {
+        this.numberRangeOccurrence = numberRangeOccurrence;
+    }
 
 }

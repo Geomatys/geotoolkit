@@ -53,53 +53,100 @@ public interface PremiseNumberRange {
      *
      * @return
      */
-    public PremiseNumberRangeFrom getPremiseNumberRangeFrom();
+    PremiseNumberRangeFrom getPremiseNumberRangeFrom();
     
     /**
      * 
      * @return
      */
-    public PremiseNumberRangeTo getPremiseNumberRangeTo();
+    PremiseNumberRangeTo getPremiseNumberRangeTo();
     
     /**
      * <p>Eg. Odd or even number range.</p>
      * 
      * @return
      */
-    public String getRangeType();
+    String getRangeType();
     
     /**
      * <p>Eg. No. in Building No:C1-C5</p>
      * 
      * @return
      */
-    public String getIndicator();
+    String getIndicator();
     
     /**
      * <p>"-" in 12-14  or "Thru" in 12 Thru 14 etc.</p>
      * 
      * @return
      */
-    public String getSeparator();
+    String getSeparator();
     
     /**
      * 
      * @return
      */
-    public String getType();
+    String getType();
     
     /**
      * <p>No.12-14 where "No." is before actual street number.</p>
      * 
      * @return
      */
-    public AfterBeforeEnum getIndicatorOccurrence();
+    AfterBeforeEnum getIndicatorOccurrence();
     
     /**
      * <p>Building 23-25 where the number occurs after building name.</p>
      * 
      * @return
      */
-    public AfterBeforeTypeNameEnum getNumberRangeOccurrence();
+    AfterBeforeTypeNameEnum getNumberRangeOccurrence();
 
+    /**
+     *
+     * @param premiseNumberRangeFrom
+     */
+    void setPremiseNumberRangeFrom(PremiseNumberRangeFrom premiseNumberRangeFrom);
+
+    /**
+     *
+     * @param premiseNumberRangeTo
+     */
+    void setPremiseNumberRangeTo(PremiseNumberRangeTo premiseNumberRangeTo);
+
+    /**
+     *
+     * @param rangeType
+     */
+    void setRangeType(String rangeType);
+
+    /**
+     * 
+     * @param indicator
+     */
+    void setIndicator(String indicator);
+
+    /**
+     *
+     * @param separator
+     */
+    void getSeparator(String separator);
+
+    /**
+     *
+     * @param type
+     */
+    void getType(String type);
+
+    /**
+     *
+     * @param indicatorOccurrence
+     */
+     void setIndicatorOccurrence(AfterBeforeEnum indicatorOccurrence);
+
+    /**
+     *
+     * @param numberRangeOccurrence
+     */
+    void setNumberRangeOccurrence(AfterBeforeTypeNameEnum numberRangeOccurrence);
 }

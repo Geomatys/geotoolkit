@@ -61,20 +61,30 @@ public class DefaultGenericTypedGrPostal implements GenericTypedGrPostal {
     @Override
     public GrPostal getGrPostal() {return this.grPostal;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public void setContent(String content) {
         this.content = content;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public void setType(String type) {
         this.type = type;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public void setGrPostal(GrPostal grPostal) {
         this.grPostal = grPostal;
     }
-
-
 }

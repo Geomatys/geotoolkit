@@ -20,10 +20,22 @@ package org.geotoolkit.xal.model;
  *
  * @author Samuel Andrés
  */
-public class DefaultSubPremiseNumberSuffix extends DefaultGenericTypedGrPostal implements SubPremiseNumberSuffix {
+public class DefaultSubPremiseNumberSuffix 
+        extends DefaultGenericTypedGrPostal
+        implements SubPremiseNumberSuffix {
 
-    private final String numberSuffixSeparator;
+    private String numberSuffixSeparator;
 
+    public DefaultSubPremiseNumberSuffix(){
+    }
+
+    /**
+     *
+     * @param numberSuffixSeparator
+     * @param type
+     * @param grPostal
+     * @param content
+     */
     public DefaultSubPremiseNumberSuffix(String numberSuffixSeparator,
             String type, GrPostal grPostal, String content){
         super(type, grPostal, content);
@@ -36,5 +48,14 @@ public class DefaultSubPremiseNumberSuffix extends DefaultGenericTypedGrPostal i
      */
     @Override
     public String getNumberSuffixSeparator() {return this.numberSuffixSeparator;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setNumberSuffixSeparator(String numberSuffixSeparator) {
+        this.numberSuffixSeparator = numberSuffixSeparator;
+    }
 
 }

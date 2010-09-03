@@ -20,12 +20,17 @@ package org.geotoolkit.xal.model;
  *
  * @author Samuel Andrés
  */
-public class DefaultPremiseNumberSuffix extends DefaultGenericTypedGrPostal implements PremiseNumberSuffix {
+public class DefaultPremiseNumberSuffix
+        extends DefaultGenericTypedGrPostal
+        implements PremiseNumberSuffix {
 
-    private final String numberSuffixSeparator;
+    private String numberSuffixSeparator;
+
+    public DefaultPremiseNumberSuffix() {
+    }
 
     public DefaultPremiseNumberSuffix(String numberSuffixSeparator,
-            String type, GrPostal grPostal, String content){
+            String type, GrPostal grPostal, String content) {
         super(type, grPostal, content);
         this.numberSuffixSeparator = numberSuffixSeparator;
     }
@@ -35,6 +40,16 @@ public class DefaultPremiseNumberSuffix extends DefaultGenericTypedGrPostal impl
      * @{@inheritDoc }
      */
     @Override
-    public String getNumberSuffixSeparator() {return this.numberSuffixSeparator;}
+    public String getNumberSuffixSeparator() {
+        return this.numberSuffixSeparator;
+    }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setNumberSuffixSeparator(String numberSuffixSeparator) {
+        this.numberSuffixSeparator = numberSuffixSeparator;
+    }
 }

@@ -22,9 +22,11 @@ package org.geotoolkit.xal.model;
  */
 public class DefaultCountryNameCode implements CountryNameCode {
 
-    private final String content;
-    private final String scheme;
-    private final GrPostal grPostal;
+    private String content;
+    private String scheme;
+    private GrPostal grPostal;
+
+    public DefaultCountryNameCode(){}
 
     /**
      *
@@ -58,5 +60,32 @@ public class DefaultCountryNameCode implements CountryNameCode {
      */
     @Override
     public GrPostal getGrPostal() {return this.grPostal;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setScheme(String scheme) {
+        this.scheme = scheme;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setGrPostal(GrPostal grPostal) {
+        this.grPostal = grPostal;
+    }
 
 }

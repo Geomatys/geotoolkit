@@ -20,12 +20,17 @@ package org.geotoolkit.xal.model;
  *
  * @author Samuel Andrés
  */
-public class DefaultSubPremiseNumber extends DefaultGenericTypedGrPostal implements SubPremiseNumber {
+public class DefaultSubPremiseNumber 
+        extends DefaultGenericTypedGrPostal
+        implements SubPremiseNumber {
 
-    private final String indicator;
-    private final AfterBeforeEnum indicatorOccurrence;
-    private final AfterBeforeEnum numberTypeOccurrence;
-    private final String premiseNumberSeparator;
+    private String indicator;
+    private AfterBeforeEnum indicatorOccurrence;
+    private AfterBeforeEnum numberTypeOccurrence;
+    private String premiseNumberSeparator;
+
+    public DefaultSubPremiseNumber(){
+    }
 
     /**
      *
@@ -74,4 +79,40 @@ public class DefaultSubPremiseNumber extends DefaultGenericTypedGrPostal impleme
      */
     @Override
     public String getPremiseNumberSeparator() {return this.premiseNumberSeparator;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setIndicator(String indicator) {
+        this.indicator = indicator;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setIndicatorOccurrence(AfterBeforeEnum indicatorOccurrence) {
+        this.indicatorOccurrence = indicatorOccurrence;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setNumberTypeOccurrence(AfterBeforeEnum numberTypeOccurrence) {
+        this.numberTypeOccurrence =numberTypeOccurrence;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPremiseNumberSeparator(String premiseNumberSeparator) {
+        this.premiseNumberSeparator = premiseNumberSeparator;
+    }
 }

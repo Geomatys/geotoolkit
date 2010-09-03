@@ -22,9 +22,11 @@ package org.geotoolkit.xal.model;
  */
 public class DefaultLargeMailUserName implements LargeMailUserName{
 
-    private final String content;
-    private final String type;
-    private final String code;
+    private String content;
+    private String type;
+    private String code;
+
+    public DefaultLargeMailUserName(){}
 
     /**
      * 
@@ -58,5 +60,32 @@ public class DefaultLargeMailUserName implements LargeMailUserName{
      */
     @Override
     public String getCode() {return this.code;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setCode(String code) {
+        this.code = code;
+    }
 
 }

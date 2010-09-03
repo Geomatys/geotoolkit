@@ -82,62 +82,122 @@ public interface Thoroughfare {
      *
      * @return
      */
-    public List<GenericTypedGrPostal> getAddressLines();
+    List<GenericTypedGrPostal> getAddressLines();
+
+    /**
+     *
+     * @param addrressLines
+     */
+    void setAddressLines(List<GenericTypedGrPostal> addressLines);
 
     /**
      *
      * @return
      */
-    public List<Object> getThoroughfareNumbers();
+    List<Object> getThoroughfareNumbers();
+
+    /**
+     *
+     * @param thoroughfareNumbers
+     */
+    void setThoroughfareNumbers(List<Object> thoroughfareNumbers);
 
     /**
      *
      * @return
      */
-    public List<ThoroughfareNumberPrefix> getThoroughfareNumberPrefixes();
+    List<ThoroughfareNumberPrefix> getThoroughfareNumberPrefixes();
+
+    /**
+     *
+     * @param thoroughfareNumberPrefixes
+     */
+    void setThoroughfareNumberPrefixes(List<ThoroughfareNumberPrefix> thoroughfareNumberPrefixes);
 
     /**
      *
      * @return
      */
-    public List<ThoroughfareNumberSuffix> getThoroughfareNumberSuffixes();
+    List<ThoroughfareNumberSuffix> getThoroughfareNumberSuffixes();
+
+    /**
+     * 
+     * @param throughfareNumberSuffixes
+     */
+    void setThoroughfareNumberSuffixes(List<ThoroughfareNumberSuffix> throughfareNumberSuffixes);
 
     /**
      *
      * @return
      */
-    public GenericTypedGrPostal getThoroughfarePreDirection();
+    GenericTypedGrPostal getThoroughfarePreDirection();
+
+    /**
+     *
+     * @param thoroughfarePreDirection
+     */
+    void setThoroughfarePreDirection(GenericTypedGrPostal thoroughfarePreDirection);
 
     /**
      *
      * @return
      */
-    public GenericTypedGrPostal getThoroughfareLeadingType();
+    GenericTypedGrPostal getThoroughfareLeadingType();
+
+    /**
+     *
+     * @param thoroughfareLeadingType
+     */
+    void setThoroughfareLeadingType(GenericTypedGrPostal thoroughfareLeadingType);
 
     /**
      * <p>Specification of the name of a Thoroughfare (also dependant street name): street name, canal name, etc.</p>
      * 
      * @return
      */
-    public List<GenericTypedGrPostal> getThoroughfareNames();
+    List<GenericTypedGrPostal> getThoroughfareNames();
+
+    /**
+     * 
+     * @param thoroughfareNames
+     */
+    void setThoroughfareNames(List<GenericTypedGrPostal> thoroughfareNames);
 
     /**
      *
      * @return
      */
-    public GenericTypedGrPostal getThoroughfareTrailingType();
+    GenericTypedGrPostal getThoroughfareTrailingType();
+
+    /**
+     * 
+     * @param thoroughfareTrailingType
+     */
+    void setThoroughfareTrailingType(GenericTypedGrPostal thoroughfareTrailingType);
 
     /**
      *
      * @return
      */
-    public GenericTypedGrPostal getThoroughfarePostDirection();
+    GenericTypedGrPostal getThoroughfarePostDirection();
+
+    /**
+     *
+     * @param thoroughfarePostDirection
+     */
+    void setThoroughfarePostDirection(GenericTypedGrPostal thoroughfarePostDirection);
 
     /**
      *
      * @return
      */
-    public DependentThoroughfare getDependentThoroughfare();
+    DependentThoroughfare getDependentThoroughfare();
+
+    /**
+     *
+     * @param dependentThoroughfare
+     */
+    void setDependentThoroughfare(DependentThoroughfare dependentThoroughfare);
 
     /**
      * === CHOICE: ===
@@ -147,25 +207,49 @@ public interface Thoroughfare {
      *
      * @return
      */
-    public DependentLocality getDependentLocality();
+    DependentLocality getDependentLocality();
+
+    /**
+     *
+     * @param dependentLocality
+     */
+    void setDependentLocality(DependentLocality dependentLocality);
 
     /**
      *
      * @return
      */
-    public Premise getPremise();
+    Premise getPremise();
+
+    /**
+     *
+     * @param premise
+     */
+    void setPremise(Premise premise);
 
     /**
      *
      * @return
      */
-    public Firm getFirm();
+    Firm getFirm();
+
+    /**
+     *
+     * @param firm
+     */
+    void setFirm(Firm firm);
 
     /**
      * 
      * @return
      */
-    public PostalCode getPostalCode();
+    PostalCode getPostalCode();
+
+    /**
+     *
+     * @param postalCode
+     */
+    void setPostalCode(PostalCode postalCode);
 
     /*
      * === END OF CHOICE ===
@@ -177,34 +261,63 @@ public interface Thoroughfare {
      *
      * @return
      */
-    public String getType();
+    String getType();
+
+    /**
+     *
+     * @param type
+     */
+    void setType(String type);
 
     /**
      * <p>Does this thoroughfare have a a dependent thoroughfare? Corner of street X, etc.</p>
      *
      * @return
      */
-    public DependentThoroughfares getDependentThoroughfares();
+    DependentThoroughfares getDependentThoroughfares();
+
+    /**
+     *
+     * @param dependentThoroughfares
+     */
+    void setDependentThoroughfares(DependentThoroughfares dependentThoroughfares);
 
     /**
      * <p>Corner of, Intersection of.</p>
      *
      * @return
      */
-    public String getDependentThoroughfaresIndicator();
+    String getDependentThoroughfaresIndicator();
+
+    /**
+     *
+     * @param dependentThoroughfaresIndicator
+     */
+    void setDependentThoroughfaresIndicator(String dependentThoroughfaresIndicator);
 
     /**
      * <p>Corner of Street1 AND Street 2 where AND is the Connector.</p>
      *
      * @return
      */
-    public String getDependentThoroughfaresConnector();
+    String getDependentThoroughfaresConnector();
+
+    /**
+     *
+     * @param dependentThoroughfaresConnector
+     */
+    void setDependentThoroughfaresConnector(String dependentThoroughfaresConnector);
 		
     /**
      * <p>TS in GEORGE and ADELAIDE STS, RDS IN A and B RDS, etc. Use only when both the street types are the same.</p>
      * 
      * @return
      */
-    public String getDependentThoroughfaresType();
-			
+    String getDependentThoroughfaresType();
+	
+    /**
+     * 
+     * @param dependentThoroughfaresType
+     */
+    void setDependentThoroughfaresType(String dependentThoroughfaresType);
 }

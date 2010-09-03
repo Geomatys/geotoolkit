@@ -317,6 +317,15 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
+    public CountryNameCode createCountryNameCode() {
+        return new DefaultCountryNameCode();
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
     public AdministrativeArea createAdministrativeArea(List<GenericTypedGrPostal> addressLines, 
             List<GenericTypedGrPostal> administrativeAreaNames, SubAdministrativeArea subAdministrativeArea,
             Object localisation, String type, String usageType, String indicator) throws XalException {
@@ -366,6 +375,15 @@ public class DefaultXalFactory implements XalFactory {
         return new DefaultLocality(addressLines, localityNames,
                 postal, thoroughfare, premise, dependentLocality,
                 postalCode, type, usageType, indicator);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public Locality createLocality() {
+        return new DefaultLocality();
     }
 
     /**
@@ -519,6 +537,15 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
+    public MailStopNumber createMailStopNumber() {
+        return new DefaultMailStopNumber();
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
     public PostalCode createPostalCode(List<GenericTypedGrPostal> addressLines,
             List<GenericTypedGrPostal> postalCodeNumbers, List<PostalCodeNumberExtension> postalCodeNumberExtensions,
             PostTown postTown, String type) {
@@ -590,6 +617,17 @@ public class DefaultXalFactory implements XalFactory {
         return new DefaultLargeMailUserIdentifier(type, indicator, grPostal, content);
     }
 
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public LargeMailUserIdentifier createLargeMailUserIdentifier() {
+        return new DefaultLargeMailUserIdentifier();
+    }
+
+
     /**
      *
      * @{@inheritDoc }
@@ -597,6 +635,15 @@ public class DefaultXalFactory implements XalFactory {
     @Override
     public LargeMailUserName createLargeMailUserName(String type, String code, String content) {
         return new DefaultLargeMailUserName(type, code, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public LargeMailUserName createLargeMailUserName() {
+        return new DefaultLargeMailUserName();
     }
 
     /**
@@ -618,9 +665,27 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
+    public LargeMailUser createLargeMailUser() {
+        return new DefaultLargeMailUser();
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
     public BuildingName createBuildingName(String type, AfterBeforeEnum typeOccurrence,
             GrPostal grPostal, String content) {
         return new DefaultBuildingName(type, typeOccurrence, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public BuildingName createBuildingName() {
+        return new DefaultBuildingName();
     }
 
     /**
@@ -688,9 +753,27 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
+    public PostOfficeNumber createPostOfficeNumber() {
+        return new DefaultPostOfficeNumber();
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
     public DependentLocalityNumber createDependentLocalityNumber(
             AfterBeforeEnum nameNumberOccurence, GrPostal grPostal, String content) {
         return new DefaultDependentLocalityNumber(nameNumberOccurence, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public DependentLocalityNumber createDependentLocalityNumber() {
+        return new DefaultDependentLocalityNumber();
     }
 
     /**
@@ -707,6 +790,15 @@ public class DefaultXalFactory implements XalFactory {
         return new DefaultDependentLocality(addressLines, dependentLocalityNames,
                 dependentLocalityNumber, localisation, thoroughfare, premise,
                 dependentLocality, postalCode, type, usageType, connector, indicator);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public DependentLocality createDependentLocality(){
+        return new DefaultDependentLocality();
     }
 
     /**
@@ -734,8 +826,27 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
-    public PremiseName createPremiseName(String type, AfterBeforeEnum typeOccurrence, GrPostal grPostal, String content) {
+    public Premise createPremise(){
+        return new DefaultPremise();
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PremiseName createPremiseName(String type,
+            AfterBeforeEnum typeOccurrence, GrPostal grPostal, String content) {
         return new DefaultPremiseName(type, typeOccurrence, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PremiseName createPremiseName() {
+        return new DefaultPremiseName();
     }
 
     /**
@@ -752,8 +863,18 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
-    public SubPremiseName createSubPremiseName(String type, AfterBeforeEnum typeOccurrence, GrPostal grPostal, String content) {
+    public SubPremiseName createSubPremiseName(String type,
+            AfterBeforeEnum typeOccurrence, GrPostal grPostal, String content) {
         return new DefaultSubPremiseName(type, typeOccurrence, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public SubPremiseName createSubPremiseName() {
+        return new DefaultSubPremiseName();
     }
 
     /**
@@ -781,6 +902,15 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
+    public PremiseNumber createPremiseNumber(){
+        return new DefaultPremiseNumber();
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
     public PremiseNumberRange createPremiseNumberRange(PremiseNumberRangeFrom premiseNumberRangeFrom,
             PremiseNumberRangeTo premiseNumberRangeTo, String rangeType,
             String indicator, String separator, String type,
@@ -794,11 +924,30 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
+    public PremiseNumberRange createPremiseNumberRange(){
+        return new DefaultPremiseNumberRange();
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
     public PremiseNumberRangeFrom createPremiseNumberRangeFrom(List<GenericTypedGrPostal> addressLines,
             List<PremiseNumberPrefix> premiseNumberPrefixes,
             List<PremiseNumber> premiseNumbers,
             List<PremiseNumberSuffix> premiseNumberSuffixes) {
-        return new DefaultPremiseNumberRangeFrom(addressLines, premiseNumberPrefixes, premiseNumbers, premiseNumberSuffixes);
+        return new DefaultPremiseNumberRangeFrom(addressLines, 
+                premiseNumberPrefixes, premiseNumbers, premiseNumberSuffixes);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PremiseNumberRangeFrom createPremiseNumberRangeFrom() {
+        return new DefaultPremiseNumberRangeFrom();
     }
 
     /**
@@ -810,7 +959,17 @@ public class DefaultXalFactory implements XalFactory {
             List<PremiseNumberPrefix> premiseNumberPrefixes,
             List<PremiseNumber> premiseNumbers,
             List<PremiseNumberSuffix> premiseNumberSuffixes) {
-        return new DefaultPremiseNumberRangeTo(addressLines, premiseNumberPrefixes, premiseNumbers, premiseNumberSuffixes);
+        return new DefaultPremiseNumberRangeTo(addressLines,
+                premiseNumberPrefixes, premiseNumbers, premiseNumberSuffixes);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PremiseNumberRangeTo createPremiseNumberRangeTo() {
+        return new DefaultPremiseNumberRangeTo();
     }
 
     /**
@@ -828,9 +987,27 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
+    public PremiseNumberPrefix createPremiseNumberPrefix() {
+        return new DefaultPremiseNumberPrefix();
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
     public PremiseNumberSuffix createPremiseNumberSuffix(String numberSuffixSeparator,
             String type, GrPostal grPostal, String content) {
         return new DefaultPremiseNumberSuffix(numberSuffixSeparator, type, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public PremiseNumberSuffix createPremiseNumberSuffix() {
+        return new DefaultPremiseNumberSuffix();
     }
 
     /**
@@ -848,9 +1025,27 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
+    public SubPremiseNumberPrefix createSubPremiseNumberPrefix() {
+        return new DefaultSubPremiseNumberPrefix();
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
     public SubPremiseNumberSuffix createSubPremiseNumberSuffix(String numberSuffixSeparator,
             String type, GrPostal grPostal, String content) {
         return new DefaultSubPremiseNumberSuffix(numberSuffixSeparator, type, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public SubPremiseNumberSuffix createSubPremiseNumberSuffix() {
+        return new DefaultSubPremiseNumberSuffix();
     }
 
     /**
@@ -870,6 +1065,15 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
+    public SubPremiseNumber createSubPremiseNumber() {
+        return new DefaultSubPremiseNumber();
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
     public SubPremise createSubPremise(List<GenericTypedGrPostal> addressLines,
             List<SubPremiseName> subPremiseNames, Object location,
             List<SubPremiseNumberPrefix> subPremiseNumberPrefixes,
@@ -879,6 +1083,15 @@ public class DefaultXalFactory implements XalFactory {
         return new DefaultSubPremise(addressLines, subPremiseNames, location,
                 subPremiseNumberPrefixes, subPremiseNumberSuffixes,
                 buildingNames, firm, mailStop, postalCode, subPremise, type);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public SubPremise createSubPremise() {
+        return new DefaultSubPremise();
     }
 
     /**
@@ -909,13 +1122,31 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
+    public Thoroughfare createThoroughfare(){
+        return new DefaultThoroughfare();
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
     public ThoroughfareNumberRange createThoroughfareNumberRange(List<GenericTypedGrPostal> addressLines,
             ThoroughfareNumberFrom thoroughfareNumberFrom, ThoroughfareNumberTo thoroughfareNumberTo,
             OddEvenEnum rangeType, String indicator, String separator, String type,
-            AfterBeforeEnum indicatorOccurrence, AfterBeforeTypeNameEnum numberRangeOccurrence) {
+            AfterBeforeEnum indicatorOccurrence, AfterBeforeTypeNameEnum numberRangeOccurrence, GrPostal grPostal) {
         return new DefaultThoroughfareNumberRange(addressLines, thoroughfareNumberFrom,
                 thoroughfareNumberTo, rangeType, indicator, separator, type,
-                indicatorOccurrence, numberRangeOccurrence);
+                indicatorOccurrence, numberRangeOccurrence, grPostal);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public ThoroughfareNumberRange createThoroughfareNumberRange() {
+        return new DefaultThoroughfareNumberRange();
     }
 
     /**
@@ -928,6 +1159,15 @@ public class DefaultXalFactory implements XalFactory {
             AfterBeforeTypeNameEnum numberOccurrence, GrPostal grPostal, String content) {
         return new DefaultThoroughfareNumber(numberType, type, indicator,
                 indicatorOccurence, numberOccurrence, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public ThoroughfareNumber createThoroughfareNumber() {
+        return new DefaultThoroughfareNumber();
     }
 
     /**
@@ -963,9 +1203,27 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
+    public ThoroughfareNumberSuffix createThoroughfareNumberSuffix(){
+        return new DefaultThoroughfareNumberSuffix();
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
     public ThoroughfareNumberPrefix createThoroughfareNumberPrefix(
             String numberPrefixSeparator, String type, GrPostal grPostal, String content) {
         return new DefaultThoroughfareNumberPrefix(numberPrefixSeparator, type, grPostal, content);
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public ThoroughfareNumberPrefix createThoroughfareNumberPrefix(){
+        return new DefaultThoroughfareNumberPrefix();
     }
 
     /**
@@ -980,5 +1238,15 @@ public class DefaultXalFactory implements XalFactory {
         return new DefaultDependentThoroughfare(addressLines, thoroughfarePreDirection,
                 thoroughfareLeadingType, thoroughfareNames, thoroughfareTrailingType,
                 thoroughfarePostDirection, type);
+    }
+
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public DependentThoroughfare createDependentThoroughfare() {
+        return new DefaultDependentThoroughfare();
     }
 }

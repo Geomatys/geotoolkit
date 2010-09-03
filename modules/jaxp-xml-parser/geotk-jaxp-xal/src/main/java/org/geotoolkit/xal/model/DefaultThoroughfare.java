@@ -25,25 +25,33 @@ import static java.util.Collections.*;
  */
 public class DefaultThoroughfare implements Thoroughfare {
 
-    private final List<GenericTypedGrPostal> addressLines;
-    private final List<Object> thoroughfareNumbers;
-    private final List<ThoroughfareNumberPrefix> thoroughfareNumberPrefixes;
-    private final List<ThoroughfareNumberSuffix> thoroughfareNumberSuffixes;
-    private final GenericTypedGrPostal thoroughfarePreDirection;
-    private final GenericTypedGrPostal thoroughfareLeadingType;
-    private final List<GenericTypedGrPostal> thoroughfareNames;
-    private final GenericTypedGrPostal thoroughfareTrailingType;
-    private final GenericTypedGrPostal thoroughfarePostDirection;
-    private final DependentThoroughfare dependentThoroughfare;
+    private List<GenericTypedGrPostal> addressLines;
+    private List<Object> thoroughfareNumbers;
+    private List<ThoroughfareNumberPrefix> thoroughfareNumberPrefixes;
+    private List<ThoroughfareNumberSuffix> thoroughfareNumberSuffixes;
+    private GenericTypedGrPostal thoroughfarePreDirection;
+    private GenericTypedGrPostal thoroughfareLeadingType;
+    private List<GenericTypedGrPostal> thoroughfareNames;
+    private GenericTypedGrPostal thoroughfareTrailingType;
+    private GenericTypedGrPostal thoroughfarePostDirection;
+    private DependentThoroughfare dependentThoroughfare;
     private DependentLocality dependentLocality;
     private Premise premise;
     private Firm firm;
     private PostalCode postalCode;
-    private final String type;
-    private final DependentThoroughfares dependentThoroughfares;
-    private final String dependentThoroughfaresIndicator;
-    private final String dependentThoroughfaresConnector;
-    private final String dependentThoroughfaresType;
+    private String type;
+    private DependentThoroughfares dependentThoroughfares;
+    private String dependentThoroughfaresIndicator;
+    private String dependentThoroughfaresConnector;
+    private String dependentThoroughfaresType;
+
+    public DefaultThoroughfare(){
+        this.addressLines = EMPTY_LIST;
+        this.thoroughfareNumbers = EMPTY_LIST;
+        this.thoroughfareNumberPrefixes = EMPTY_LIST;
+        this.thoroughfareNumberSuffixes = EMPTY_LIST;
+        this.thoroughfareNames = EMPTY_LIST;
+    }
 
     /**
      *
@@ -251,5 +259,176 @@ public class DefaultThoroughfare implements Thoroughfare {
      */
     @Override
     public String getDependentThoroughfaresType() {return this.dependentThoroughfaresType;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAddressLines(List<GenericTypedGrPostal> addressLines) {
+        this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setThoroughfareNumbers(List<Object> thoroughfareNumbers) {
+        this.thoroughfareNumbers = (thoroughfareNumbers == null) ? EMPTY_LIST : thoroughfareNumbers;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setThoroughfareNumberPrefixes(List<ThoroughfareNumberPrefix> thoroughfareNumberPrefixes) {
+        this.thoroughfareNumberPrefixes = (thoroughfareNumberPrefixes == null) ? EMPTY_LIST : thoroughfareNumberPrefixes;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setThoroughfareNumberSuffixes(List<ThoroughfareNumberSuffix> thoroughfareNumberSuffixes) {
+        this.thoroughfareNumberSuffixes = (thoroughfareNumberSuffixes == null) ? EMPTY_LIST : thoroughfareNumberSuffixes;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setThoroughfarePreDirection(GenericTypedGrPostal thoroughfarePreDirection) {
+        this.thoroughfarePreDirection = thoroughfarePreDirection;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setThoroughfareLeadingType(GenericTypedGrPostal thoroughfareLeadingType) {
+        this.thoroughfareLeadingType = thoroughfareLeadingType;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setThoroughfareNames(List<GenericTypedGrPostal> thoroughfareNames) {
+        this.thoroughfareNames = (thoroughfareNames == null) ? EMPTY_LIST : thoroughfareNames;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setThoroughfareTrailingType(GenericTypedGrPostal thoroughfareTrailingType) {
+        this.thoroughfareTrailingType = thoroughfareTrailingType;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setThoroughfarePostDirection(GenericTypedGrPostal thoroughfarePostDirection) {
+        this.thoroughfarePostDirection = thoroughfarePostDirection;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setDependentThoroughfare(DependentThoroughfare dependentThoroughfare) {
+        this.dependentThoroughfare = dependentThoroughfare;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setDependentLocality(DependentLocality dependentLocality) {
+        this.dependentLocality = dependentLocality;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPremise(Premise premise) {
+        this.premise = premise;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setFirm(Firm firm) {
+        this.firm = firm;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostalCode(PostalCode postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setDependentThoroughfares(DependentThoroughfares dependentThoroughfares) {
+        this.dependentThoroughfares = dependentThoroughfares;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setDependentThoroughfaresIndicator(String dependentThoroughfaresIndicator) {
+        this.dependentThoroughfaresIndicator = dependentThoroughfaresIndicator;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setDependentThoroughfaresConnector(String dependentThoroughfaresConnector) {
+        this.dependentThoroughfaresConnector = dependentThoroughfaresConnector;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setDependentThoroughfaresType(String dependentThoroughfaresType) {
+        this.dependentThoroughfaresType = dependentThoroughfaresType;
+    }
 
 }

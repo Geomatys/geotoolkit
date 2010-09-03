@@ -25,10 +25,17 @@ import static java.util.Collections.*;
  */
 public class DefaultPremiseNumberRangeFrom implements PremiseNumberRangeFrom {
 
-    private final List<GenericTypedGrPostal> addressLines;
-    private final List<PremiseNumberPrefix> premiseNumberPrefixes;
-    private final List<PremiseNumber> premiseNumbers;
-    private final List<PremiseNumberSuffix> premiseNumberSuffixes;
+    private List<GenericTypedGrPostal> addressLines;
+    private List<PremiseNumberPrefix> premiseNumberPrefixes;
+    private List<PremiseNumber> premiseNumbers;
+    private List<PremiseNumberSuffix> premiseNumberSuffixes;
+
+    public DefaultPremiseNumberRangeFrom(){
+        this.addressLines = EMPTY_LIST;
+        this.premiseNumberPrefixes = EMPTY_LIST;
+        this.premiseNumbers = EMPTY_LIST;
+        this.premiseNumberSuffixes = EMPTY_LIST;
+    }
 
     /**
      * 
@@ -74,5 +81,41 @@ public class DefaultPremiseNumberRangeFrom implements PremiseNumberRangeFrom {
      */
     @Override
     public List<PremiseNumberSuffix> getPremiseNumberSuffixes() {return this.premiseNumberSuffixes;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAddressLines(List<GenericTypedGrPostal> addressLines) {
+        this.addressLines = addressLines;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPremiseNumberPrefixes(List<PremiseNumberPrefix> premiseNumberPrefixes) {
+        this.premiseNumberPrefixes = premiseNumberPrefixes;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPremiseNumbers(List<PremiseNumber> premiseNumbers) {
+        this.premiseNumbers = premiseNumbers;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPremiseNumberSuffixes(List<PremiseNumberSuffix> premiseNumberSuffixes) {
+        this.premiseNumberSuffixes = premiseNumberSuffixes;
+    }
 
 }

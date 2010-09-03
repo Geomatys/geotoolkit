@@ -36,18 +36,36 @@ public interface MailStopNumber {
      * 
      * @return
      */
-    public String getContent();
+    String getContent();
 
     /**
      * <p>"-" in MS-123.</p>
      *
      * @return
      */
-    public String getNameNumberSeparator();
+    String getNameNumberSeparator();
 
     /**
      *
      * @return
      */
-    public GrPostal getGrPostal();
+    GrPostal getGrPostal();
+
+    /**
+     *
+     * @param content
+     */
+    void setContent(String content);
+
+    /**
+     *
+     * @param nameNumberSeparator
+     */
+    void setNameNumberSeparator(String nameNumberSeparator);
+
+    /**
+     * 
+     * @param grPostal
+     */
+    void setGrPostal(GrPostal grPostal);
 }

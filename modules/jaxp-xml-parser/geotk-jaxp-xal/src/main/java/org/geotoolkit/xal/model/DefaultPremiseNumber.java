@@ -22,11 +22,13 @@ package org.geotoolkit.xal.model;
  */
 public class DefaultPremiseNumber extends DefaultGenericTypedGrPostal implements PremiseNumber {
 
-    private final SingleRangeEnum numberType;
-    private final String indicator;
-    private final AfterBeforeEnum indicatorOccurrence;
-    private final AfterBeforeEnum numberTypeOccurrence;
+    private SingleRangeEnum numberType;
+    private String indicator;
+    private AfterBeforeEnum indicatorOccurrence;
+    private AfterBeforeEnum numberTypeOccurrence;
 
+    public DefaultPremiseNumber(){}
+    
     /**
      *
      * @param numberType
@@ -74,5 +76,41 @@ public class DefaultPremiseNumber extends DefaultGenericTypedGrPostal implements
      */
     @Override
     public AfterBeforeEnum getNumberTypeOccurrence() {return this.numberTypeOccurrence;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setNumberType(SingleRangeEnum numberType) {
+        this.numberType = numberType;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setIndicator(String indicator) {
+        this.indicator = indicator;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setIndicatorOccurrence(AfterBeforeEnum indicatorOccurrence) {
+        this.indicatorOccurrence = indicatorOccurrence;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setNumberTypeOccurrence(AfterBeforeEnum numberTypeOccurrence) {
+        this.numberTypeOccurrence = numberTypeOccurrence;
+    }
 
 }

@@ -58,56 +58,122 @@ public interface ThoroughfareNumberRange {
      * 
      * @return
      */
-    public List<GenericTypedGrPostal> getAddressLines();
+    List<GenericTypedGrPostal> getAddressLines();
 
     /**
      *
      * @return
      */
-    public ThoroughfareNumberFrom getThoroughfareNumberFrom();
+    ThoroughfareNumberFrom getThoroughfareNumberFrom();
 
     /**
      *
      * @return
      */
-    public ThoroughfareNumberTo getThoroughfareNumberTo();
+    ThoroughfareNumberTo getThoroughfareNumberTo();
 
     /**
      * <p>Thoroughfare number ranges are odd or even.</p>
      * 
      * @return
      */
-    public OddEvenEnum getRangeType();
+    OddEvenEnum getRangeType();
 
     /**
      * <p>"No." No.12-13</p>
      *
      * @return
      */
-    public String getIndicator();
+    String getIndicator();
 
     /**
      * <p>"-" in 12-14  or "Thru" in 12 Thru 14 etc.</p>
      *
      * @return
      */
-    public String getSeparator();
+    String getSeparator();
 
     /**
      *
      * @return
      */
-    public AfterBeforeEnum getIndicatorOccurence();
+    AfterBeforeEnum getIndicatorOccurence();
 
     /**
      * 
      * @return
      */
-    public AfterBeforeTypeNameEnum getNumberRangeOccurence();
+    AfterBeforeTypeNameEnum getNumberRangeOccurence();
 
     /**
      *
      * @return
      */
-    public String getType();
+    String getType();
+
+    /**
+     *
+     * @return
+     */
+    GrPostal getGrPostal();
+
+    /**
+     *
+     * @param addressLines
+     */
+    void setAddressLines(List<GenericTypedGrPostal> addressLines);
+
+    /**
+     *
+     * @param thoroughfareNumberFrom
+     */
+    void setThoroughfareNumberFrom(ThoroughfareNumberFrom thoroughfareNumberFrom);
+
+    /**
+     *
+     * @param thoroughfareNumberTo
+     */
+    void setThoroughfareNumberTo(ThoroughfareNumberTo thoroughfareNumberTo);
+
+    /**
+     *
+     * @param rangeType
+     */
+    void setRangeType(OddEvenEnum rangeType);
+
+    /**
+     *
+     * @param indicator
+     */
+    void setIndicator(String indicator);
+
+    /**
+     *
+     * @param separator
+     */
+    void setSeparator(String separator);
+
+    /**
+     *
+     * @param indicatorOccurrence
+     */
+    void setIndicatorOccurrence(AfterBeforeEnum indicatorOccurrence);
+
+    /**
+     *
+     * @param numberRangeOccurrence
+     */
+    void setNumberRangeOccurrence(AfterBeforeTypeNameEnum numberRangeOccurrence);
+
+    /**
+     *
+     * @param type
+     */
+    void setType(String type);
+
+    /**
+     * 
+     * @param grPostal
+     */
+    void setGrPostal(GrPostal grPostal);
 }

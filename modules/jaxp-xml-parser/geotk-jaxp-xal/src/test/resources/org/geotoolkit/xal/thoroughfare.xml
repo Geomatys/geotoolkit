@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xAL xmlns="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0">
+<AddressDetails>
+<Thoroughfare Type="thoroughfareType" DependentThoroughfares="Yes" DependentThoroughfaresIndicator="DTIndicator" DependentThoroughfaresConnector="DTConnector" DependentThoroughfaresType="DTType">
+<AddressLine>thoroughfare address</AddressLine>
+<ThoroughfareNumber NumberType="Single" Type="numberType" Indicator="numberIndicator" IndicatorOccurrence="After" NumberOccurrence="BeforeName" Code="numberCode">number content</ThoroughfareNumber>
+<ThoroughfareNumberRange RangeType="Odd" Indicator="ind" Separator="sep" IndicatorOccurrence="Before" NumberRangeOccurrence="AfterName" Type="type" Code="code">
+<AddressLine>thoroughfare number range address</AddressLine>
+<ThoroughfareNumberFrom Code="TNF">
+<AddressLine>thoroughfare number from address</AddressLine>Bonjour<ThoroughfareNumberPrefix Type="TNP1">tnp 1</ThoroughfareNumberPrefix>
+<ThoroughfareNumber Type="TN1">tn 1</ThoroughfareNumber>
+<ThoroughfareNumberSuffix Type="TNS1">tns 1</ThoroughfareNumberSuffix>
+</ThoroughfareNumberFrom>
+<ThoroughfareNumberTo Code="TNT">
+<AddressLine>thoroughfare number to address</AddressLine>Au revoir<ThoroughfareNumberPrefix Type="TNP2">tnp 2</ThoroughfareNumberPrefix>
+<ThoroughfareNumber Type="TN2">tn2</ThoroughfareNumber>
+<ThoroughfareNumberSuffix Type="TNS2">tns 2</ThoroughfareNumberSuffix>
+</ThoroughfareNumberTo>
+</ThoroughfareNumberRange>
+<ThoroughfareNumberPrefix NumberPrefixSeparator="sep" Type="type" Code="code">prefix content</ThoroughfareNumberPrefix>
+<ThoroughfareNumberSuffix NumberSuffixSeparator="sep" Type="type" Code="code">suffix content</ThoroughfareNumberSuffix>
+<ThoroughfarePreDirection Type="preDirectionType" Code="preDirectionCode">pre direction content</ThoroughfarePreDirection>
+<ThoroughfareLeadingType Type="leadingType" Code="leadingCode">leading content</ThoroughfareLeadingType>
+<ThoroughfareName Type="nameType" Code="nameCode">thoroughfare name</ThoroughfareName>
+<ThoroughfareTrailingType Type="trailingType" Code="trailingCode">trailing content</ThoroughfareTrailingType>
+<ThoroughfarePostDirection Type="postDirectionType" Code="postDirectionCode">post direction content</ThoroughfarePostDirection>
+<DependentThoroughfare Type="DTT">
+<AddressLine>dependentThoroughfare address</AddressLine>
+<ThoroughfarePreDirection Type="type1"></ThoroughfarePreDirection>
+<ThoroughfareLeadingType Type="type2"></ThoroughfareLeadingType>
+<ThoroughfareName Type="type3"></ThoroughfareName>
+<ThoroughfareTrailingType Type="type4"></ThoroughfareTrailingType>
+<ThoroughfarePostDirection Type="type5"></ThoroughfarePostDirection>
+</DependentThoroughfare>
+<Firm Type="firm">
+</Firm>
+</Thoroughfare>
+</AddressDetails>
+</xAL>

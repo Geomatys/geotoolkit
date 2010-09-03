@@ -25,14 +25,18 @@ import static java.util.Collections.*;
  */
 public class DefaultDependentThoroughfare implements DependentThoroughfare {
 
-    private final List<GenericTypedGrPostal> addressLines;
-    private final GenericTypedGrPostal thoroughfarePreDirection;
-    private final GenericTypedGrPostal thoroughfareLeadingType;
-    private final List<GenericTypedGrPostal> thoroughfareNames;
-    private final GenericTypedGrPostal thoroughfareTrailingType;
-    private final GenericTypedGrPostal thoroughfarePostDirection;
-    private final String type;
+    private List<GenericTypedGrPostal> addressLines;
+    private GenericTypedGrPostal thoroughfarePreDirection;
+    private GenericTypedGrPostal thoroughfareLeadingType;
+    private List<GenericTypedGrPostal> thoroughfareNames;
+    private GenericTypedGrPostal thoroughfareTrailingType;
+    private GenericTypedGrPostal thoroughfarePostDirection;
+    private String type;
 
+    public DefaultDependentThoroughfare(){
+        this.addressLines = EMPTY_LIST;
+        this.thoroughfareNames = EMPTY_LIST;
+    }
     /**
      *
      * @param addressLines
@@ -104,5 +108,64 @@ public class DefaultDependentThoroughfare implements DependentThoroughfare {
      */
     @Override
     public String getType() {return this.type;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAddressLines(List<GenericTypedGrPostal> addressLines) {
+        this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setThoroughfarePredirection(GenericTypedGrPostal thoroughfarePreDirection) {
+        this.thoroughfarePreDirection = thoroughfarePreDirection;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setThoroughfareLeadingType(GenericTypedGrPostal thoroughfareLeadingType) {
+        this.thoroughfareLeadingType = thoroughfareLeadingType;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setThoroughfareNames(List<GenericTypedGrPostal> thoroughfareNames) {
+        this.thoroughfareNames = (thoroughfareNames == null) ? EMPTY_LIST : thoroughfareNames;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setThoroughfareTrailingType(GenericTypedGrPostal thoroughfareTrailingType) {
+        this.thoroughfareTrailingType = thoroughfareTrailingType;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setThoroughfarePostDirection(GenericTypedGrPostal thoroughfarePostDirection) {
+        this.thoroughfarePostDirection = thoroughfarePostDirection;
+    }
+
+    @Override
+    public void setType(String type) {
+        this.type = type;
+    }
 
 }

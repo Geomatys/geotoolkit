@@ -79,13 +79,25 @@ public interface Premise {
      *
      * @return
      */
-    public List<GenericTypedGrPostal> getAddressLines();
+    List<GenericTypedGrPostal> getAddressLines();
+
+    /**
+     *
+     * @param addressLines
+     */
+    void setAddressLines(List<GenericTypedGrPostal> addressLines);
 
     /**
      *
      * @return
      */
-    public List<PremiseName> getPremiseNames();
+    List<PremiseName> getPremiseNames();
+
+    /**
+     *
+     * @param premiseNames
+     */
+    void setPremiseNames(List<PremiseName> premiseNames);
 
     /*
      * === CHOIX: ===
@@ -95,19 +107,37 @@ public interface Premise {
      *
      * @return
      */
-    public PremiseLocation getPremiseLocation();
+    PremiseLocation getPremiseLocation();
+
+    /**
+     *
+     * @param premiseLocation
+     */
+    void setPremiseLocation(PremiseLocation premiseLocation);
 
     /**
      *
      * @return
      */
-    public List<PremiseNumber> getPremiseNumbers();
+    List<PremiseNumber> getPremiseNumbers();
+
+    /**
+     *
+     * @param premiseNumbers
+     */
+    void setPremiseNumbers(List<PremiseNumber> premiseNumbers);
 
     /**
      *
      * @return
      */
-    public PremiseNumberRange getPremiseNumberRange();
+    PremiseNumberRange getPremiseNumberRange();
+
+    /**
+     *
+     * @param premiseNumberRange
+     */
+    void setPremiseNumberRange(PremiseNumberRange premiseNumberRange);
 
     /*
      * === END OF CHOICE ===
@@ -117,20 +147,38 @@ public interface Premise {
      *
      * @return
      */
-    public List<PremiseNumberPrefix> getPremiseNumberPrefix();
+    List<PremiseNumberPrefix> getPremiseNumberPrefixes();
+
+    /**
+     *
+     * @param premiseNumberPrefixes
+     */
+    void setPremiseNumberPrefixes(List<PremiseNumberPrefix> premiseNumberPrefixes);
 
     /**
      *
      * @return
      */
-    public List<PremiseNumberSuffix> getPremiseNumberSuffix();
+    List<PremiseNumberSuffix> getPremiseNumberSuffixes();
+
+    /**
+     *
+     * @param premiseNumberSuffixes
+     */
+    void setPremiseNumberSuffixes(List<PremiseNumberSuffix> premiseNumberSuffixes);
     
     /**
      * <p>Specification of the name of a building.</p>
      * 
      * @return
      */
-    public List<BuildingName> getBuildingNames();
+    List<BuildingName> getBuildingNames();
+
+    /**
+     * 
+     * @param buildingNames
+     */
+    void setBuildingNames(List<BuildingName> buildingNames);
 
     /*
      * === CHOICE : ===
@@ -143,7 +191,13 @@ public interface Premise {
      *
      * @return
      */
-    public List<SubPremise> getSubPremises();
+    List<SubPremise> getSubPremises();
+
+    /**
+     *
+     * @param subPremises
+     */
+    void setSubPremises(List<SubPremise> subPremises);
 
     /**
      * <p>Specification of a firm, company, organization, etc.
@@ -153,7 +207,13 @@ public interface Premise {
      *
      * @return
      */
-    public Firm getFirm();
+    Firm getFirm();
+
+    /**
+     *
+     * @param firm
+     */
+    void setFirm(Firm firm);
 
     /*
      * === END OF CHOICE ===
@@ -164,19 +224,37 @@ public interface Premise {
      *
      * @return
      */
-    public MailStop getMailStop();
+    MailStop getMailStop();
+
+    /**
+     *
+     * @param mailStop
+     */
+    void setMailStop(MailStop mailStop);
 
     /**
      *
      * @return
      */
-    public PostalCode getPostalCode();
+    PostalCode getPostalCode();
+
+    /**
+     *
+     * @param postalCode
+     */
+    void setPostalCode(PostalCode postalCode);
 
     /**
      *
      * @return
      */
-    public Premise getPremise();
+    Premise getPremise();
+
+    /**
+     *
+     * @param premise
+     */
+    void setPremise(Premise premise);
 
     /*
      * === ATTRIBUTES ===
@@ -187,21 +265,39 @@ public interface Premise {
      *
      * @return
      */
-    public String getType();
+    String getType();
+
+    /**
+     *
+     * @param type
+     */
+    void setType(String type);
 
     /**
      * <p>STREET, PREMISE, SUBPREMISE, PARK, FARM, etc.</p>
      *
      * @return
      */
-    public String getPremiseDependency();
+    String getPremiseDependency();
+
+    /**
+     *
+     * @param premiseDependency
+     */
+    void setPremiseDependency(String premiseDependency);
 
     /**
      * <p>NEAR, ADJACENT TO, etc.</p>
      *
      * @return
      */
-    public String getPremiseDependencyType();
+    String getPremiseDependencyType();
+
+    /**
+     *
+     * @param premiseDpendencyType
+     */
+    void setPremiseDependencyType(String premiseDependencyType);
 
     /**
      * <p>DES, DE, LA, LA, DU in RUE DU BOIS.
@@ -210,5 +306,11 @@ public interface Premise {
      *
      * @return
      */
-    public String getPremiseThoroughfareConnector();
+    String getPremiseThoroughfareConnector();
+
+    /**
+     * 
+     * @param premiseThoroughfarConnctor
+     */
+    void setPremiseThoroughfareConnector(String premiseThoroughfareConnector);
 }

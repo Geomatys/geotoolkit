@@ -157,7 +157,7 @@ public class DefaultAdministrativeArea implements AdministrativeArea{
      * @{@inheritDoc }
      */
     @Override
-    public void setSubAdmonistrativeArea(SubAdministrativeArea subAdministrativeArea) {
+    public void setSubAdministrativeArea(SubAdministrativeArea subAdministrativeArea) {
         this.subAdministrativeArea = subAdministrativeArea;
     }
 

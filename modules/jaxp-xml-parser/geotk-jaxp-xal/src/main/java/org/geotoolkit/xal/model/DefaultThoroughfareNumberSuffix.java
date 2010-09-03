@@ -22,7 +22,9 @@ package org.geotoolkit.xal.model;
  */
 public class DefaultThoroughfareNumberSuffix extends DefaultGenericTypedGrPostal implements ThoroughfareNumberSuffix {
 
-    private final String numberSuffixSeparator;
+    private String numberSuffixSeparator;
+
+    public DefaultThoroughfareNumberSuffix(){}
 
     /**
      * 
@@ -33,6 +35,7 @@ public class DefaultThoroughfareNumberSuffix extends DefaultGenericTypedGrPostal
      */
     public DefaultThoroughfareNumberSuffix(String numberSuffixSeparator,
             String type, GrPostal grPostal, String content){
+        super(type, grPostal, content);
         this.numberSuffixSeparator = numberSuffixSeparator;
     }
 
@@ -42,6 +45,15 @@ public class DefaultThoroughfareNumberSuffix extends DefaultGenericTypedGrPostal
      */
     @Override
     public String getNumberSuffixSeparator() {return this.numberSuffixSeparator;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setNumberSuffixSeparator(String numberSuffixSeparator) {
+        this.numberSuffixSeparator = numberSuffixSeparator;
+    }
 
 
 }

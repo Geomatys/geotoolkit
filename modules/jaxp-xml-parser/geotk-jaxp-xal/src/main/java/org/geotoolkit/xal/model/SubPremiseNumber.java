@@ -54,27 +54,51 @@ public interface SubPremiseNumber extends GenericTypedGrPostal {
      * 
      * @return
      */
-    public String getIndicator();
+    String getIndicator();
 
     /**
      * <p>"No." occurs before 1 in No.1, or TH occurs after 12 in 12TH.</p>
      *
      * @return
      */
-    public AfterBeforeEnum getIndicatorOccurrence();
+    AfterBeforeEnum getIndicatorOccurrence();
 
     /**
      * <p>12TH occurs "before" FLOOR (a type of subpremise) in 12TH FLOOR.</p>
      *
      * @return
      */
-    public AfterBeforeEnum getNumberTypeOccurrence();
+    AfterBeforeEnum getNumberTypeOccurrence();
 
     /**
      * <p>"/" in 12/14 Archer Street where 12 is sub-premise number and 14 is premise number.</p>
      * 
      * @return
      */
-    public String getPremiseNumberSeparator();
+    String getPremiseNumberSeparator();
+
+    /**
+     *
+     * @param indicator
+     */
+    void setIndicator(String indicator);
+
+    /**
+     *
+     * @param indicatorOccurrence
+     */
+    void setIndicatorOccurrence(AfterBeforeEnum indicatorOccurrence);
+
+    /**
+     *
+     * @param numberTypeOccurrence
+     */
+    void setNumberTypeOccurrence(AfterBeforeEnum numberTypeOccurrence);
+
+    /**
+     * 
+     * @param premiseNumberSeparator
+     */
+    void setPremiseNumberSeparator(String premiseNumberSeparator);
 
 }

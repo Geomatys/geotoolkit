@@ -22,9 +22,11 @@ package org.geotoolkit.xal.model;
  */
 public class DefaultDependentLocalityNumber implements DependentLocalityNumber{
 
-    private final AfterBeforeEnum nameNumberOccurence;
-    private final GrPostal grPostal;
-    private final String content;
+    private AfterBeforeEnum nameNumberOccurence;
+    private GrPostal grPostal;
+    private String content;
+
+    public DefaultDependentLocalityNumber(){}
 
     /**
      *
@@ -59,4 +61,31 @@ public class DefaultDependentLocalityNumber implements DependentLocalityNumber{
      */
     @Override
     public GrPostal getGrPostal() {return this.grPostal;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setNameNumberOccurrence(AfterBeforeEnum nameNumberOccurrence) {
+        this.nameNumberOccurence = nameNumberOccurrence;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setGrPostal(GrPostal grPostal) {
+        this.grPostal = grPostal;
+    }
 }

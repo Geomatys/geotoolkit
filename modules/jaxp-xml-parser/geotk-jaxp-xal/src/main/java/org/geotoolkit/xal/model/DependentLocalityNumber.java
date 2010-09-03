@@ -41,18 +41,36 @@ public interface DependentLocalityNumber {
      * 
      * @return
      */
-    public String getContent();
+    String getContent();
 
     /**
      * <p>Eg. SECTOR occurs before 5 in SECTOR 5.</p>
      *
      * @return
      */
-    public AfterBeforeEnum getNameNumberOccurrence();
+    AfterBeforeEnum getNameNumberOccurrence();
 
     /**
      * 
      * @return
      */
-    public GrPostal getGrPostal();
+    GrPostal getGrPostal();
+
+    /**
+     *
+     * @param content
+     */
+    void setContent(String content);
+
+    /**
+     *
+     * @param nameNumberOccurrence
+     */
+    void setNameNumberOccurrence(AfterBeforeEnum nameNumberOccurrence);
+
+    /**
+     * 
+     * @param grPostal
+     */
+    void setGrPostal(GrPostal grPostal);
 }

@@ -22,10 +22,12 @@ package org.geotoolkit.xal.model;
  */
 public class DefaultMailStopNumber implements MailStopNumber {
 
-    private final String content;
-    private final String nameNumberSeparator;
-    private final GrPostal grPostal;
+    private String content;
+    private String nameNumberSeparator;
+    private GrPostal grPostal;
 
+    public DefaultMailStopNumber(){}
+    
     /**
      *
      * @param content
@@ -59,5 +61,31 @@ public class DefaultMailStopNumber implements MailStopNumber {
     @Override
     public GrPostal getGrPostal() {return this.grPostal;}
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setNameNumberSeparator(String nameNumberSeparator) {
+        this.nameNumberSeparator = nameNumberSeparator;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setGrPostal(GrPostal grPostal) {
+        this.grPostal = grPostal;
+    }
 
 }

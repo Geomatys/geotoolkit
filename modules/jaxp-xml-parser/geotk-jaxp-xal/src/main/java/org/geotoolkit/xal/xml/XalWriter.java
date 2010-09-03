@@ -1124,10 +1124,10 @@ public class XalWriter extends StaxStreamWriter {
         if (premise.getPremiseNumberRange() != null) {
             this.writePremiseNumberRange(premise.getPremiseNumberRange());
         }
-        for (PremiseNumberPrefix premiseNumberPrefix : premise.getPremiseNumberPrefix()) {
+        for (PremiseNumberPrefix premiseNumberPrefix : premise.getPremiseNumberPrefixes()) {
             this.writePremiseNumberPrefix(premiseNumberPrefix);
         }
-        for (PremiseNumberSuffix premiseNumberSuffix : premise.getPremiseNumberSuffix()) {
+        for (PremiseNumberSuffix premiseNumberSuffix : premise.getPremiseNumberSuffixes()) {
             this.writePremiseNumberSuffix(premiseNumberSuffix);
         }
         for (BuildingName buildingName : premise.getBuildingNames()) {
@@ -1284,7 +1284,7 @@ public class XalWriter extends StaxStreamWriter {
     }
 
     private void writePremiseNumberSuffix(PremiseNumberSuffix premiseNumberSuffix) throws XMLStreamException {
-        writer.writeStartElement(URI_XAL, TAG_PREMISE_NUMBER_PREFIX);
+        writer.writeStartElement(URI_XAL, TAG_PREMISE_NUMBER_SUFFIX);
         if (premiseNumberSuffix.getNumberSuffixSeparator() != null) {
             writer.writeAttribute(ATT_NUMBER_SUFFIX_SEPARATOR, premiseNumberSuffix.getNumberSuffixSeparator());
         }
@@ -1318,7 +1318,7 @@ public class XalWriter extends StaxStreamWriter {
     }
 
     private void writeSubPremiseNumberSuffix(SubPremiseNumberSuffix subPremiseNumberSuffix) throws XMLStreamException {
-        writer.writeStartElement(URI_XAL, TAG_SUB_PREMISE_NUMBER_PREFIX);
+        writer.writeStartElement(URI_XAL, TAG_SUB_PREMISE_NUMBER_SUFFIX);
         if (subPremiseNumberSuffix.getNumberSuffixSeparator() != null) {
             writer.writeAttribute(ATT_NUMBER_SUFFIX_SEPARATOR, subPremiseNumberSuffix.getNumberSuffixSeparator());
         }
@@ -1492,6 +1492,9 @@ public class XalWriter extends StaxStreamWriter {
         if (thoroughfareNumberRange.getType() != null) {
             writer.writeAttribute(ATT_TYPE, thoroughfareNumberRange.getType());
         }
+        if (thoroughfareNumberRange.getGrPostal() != null) {
+            this.writeGrPostal(thoroughfareNumberRange.getGrPostal());
+        }
         for (GenericTypedGrPostal addressLine : thoroughfareNumberRange.getAddressLines()) {
             this.writeAddressLine(addressLine);
         }
@@ -1505,7 +1508,7 @@ public class XalWriter extends StaxStreamWriter {
     }
 
     private void writeThoroughfareNumberSuffix(ThoroughfareNumberSuffix suffix) throws XMLStreamException {
-        writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_NUMBER_PREFIX);
+        writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_NUMBER_SUFFIX);
         if (suffix.getNumberSuffixSeparator() != null) {
             writer.writeAttribute(ATT_NUMBER_SUFFIX_SEPARATOR, suffix.getNumberSuffixSeparator());
         }

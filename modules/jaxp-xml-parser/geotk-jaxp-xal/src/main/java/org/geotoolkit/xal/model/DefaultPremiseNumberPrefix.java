@@ -20,10 +20,14 @@ package org.geotoolkit.xal.model;
  *
  * @author Samuel Andrés
  */
-public class DefaultPremiseNumberPrefix extends DefaultGenericTypedGrPostal implements PremiseNumberPrefix {
+public class DefaultPremiseNumberPrefix 
+        extends DefaultGenericTypedGrPostal
+        implements PremiseNumberPrefix {
 
-    private final String numberPrefixSeparator;
+    private String numberPrefixSeparator;
 
+    public DefaultPremiseNumberPrefix(){}
+    
     public DefaultPremiseNumberPrefix(String numberPrefixSeparator,
             String type, GrPostal grPostal, String content){
         super(type, grPostal, content);
@@ -36,5 +40,14 @@ public class DefaultPremiseNumberPrefix extends DefaultGenericTypedGrPostal impl
      */
     @Override
     public String getNumberPrefixSeparator() {return this.numberPrefixSeparator;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setNumberPrefixSeparator(String numberPrefixSeparator) {
+        this.numberPrefixSeparator = numberPrefixSeparator;
+    }
 
 }

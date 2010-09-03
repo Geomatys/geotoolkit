@@ -41,5 +41,11 @@ public interface ThoroughfareNumberPrefix extends GenericTypedGrPostal {
      * 
      * @return
      */
-    public String getNumberPrefixSeparator();
+    String getNumberPrefixSeparator();
+
+    /**
+     * 
+     * @param numberPrefixSeparator
+     */
+    void setNumberPrefixSeparator(String numberPrefixSeparator);
 }

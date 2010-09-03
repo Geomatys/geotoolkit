@@ -50,14 +50,26 @@ public interface LargeMailUser {
      *
      * @return
      */
-    public List<GenericTypedGrPostal> getAddressLines();
+    List<GenericTypedGrPostal> getAddressLines();
+
+    /**
+     *
+     * @param addressLines
+     */
+    void setAddressLines(List<GenericTypedGrPostal> addressLines);
 
     /**
      * <p>Name of the large mail user. eg. Smith Ford International airport.</p>
      *
      * @return
      */
-    public List<LargeMailUserName> getLargeMailUserNames();
+    List<LargeMailUserName> getLargeMailUserNames();
+
+    /**
+     *
+     * @param largeMailUserNames
+     */
+    void setLargeMailUserNames(List<LargeMailUserName> largeMailUserNames);
 
     /**
      * <p>Specification of the identification number of a large mail user.
@@ -65,41 +77,83 @@ public interface LargeMailUser {
      *
      * @return
      */
-    public LargeMailUserIdentifier getLargeMailUserIdentifier();
+    LargeMailUserIdentifier getLargeMailUserIdentifier();
+
+    /**
+     *
+     * @param largeMailUserIdentifier
+     */
+    void setLargeMailUserIdentifier(LargeMailUserIdentifier largeMailUserIdentifier);
 
     /**
      *
      * @return
      */
-    public List<BuildingName> getBuildingNames();
+    List<BuildingName> getBuildingNames();
+
+    /**
+     *
+     * @param buildingNames
+     */
+    void setBuildingNames(List<BuildingName> buildingNames);
 
     /**
      *
      * @return
      */
-    public Department getDepartment();
+    Department getDepartment();
+
+    /**
+     *
+     * @param department
+     */
+    void setDepartment(Department department);
 
     /**
      *
      * @return
      */
-    public PostBox getPostBox();
+    PostBox getPostBox();
+
+    /**
+     *
+     * @param postBox
+     */
+    void setPostBox(PostBox postBox);
 
     /**
      *
      * @return
      */
-    public Thoroughfare getThoroughfare();
+    Thoroughfare getThoroughfare();
+
+    /**
+     *
+     * @param thoroughfare
+     */
+    void setThoroughfare(Thoroughfare thoroughfare);
 
     /**
      *
      * @return
      */
-    public PostalCode getPostalCode();
+    PostalCode getPostalCode();
+
+    /**
+     * 
+     * @param postalCode
+     */
+    void setPostalCode(PostalCode postalCode);
 
     /**
      * 
      * @return
      */
-    public String getType();
+    String getType();
+
+    /**
+     *
+     * @param type
+     */
+    void setType(String type);
 }

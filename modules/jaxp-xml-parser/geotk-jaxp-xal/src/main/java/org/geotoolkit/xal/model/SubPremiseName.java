@@ -38,5 +38,11 @@ public interface SubPremiseName extends GenericTypedGrPostal {
      * 
      * @return
      */
-    public AfterBeforeEnum getTypeOccurrence();
+    AfterBeforeEnum getTypeOccurrence();
+
+    /**
+     * 
+     * @param typeOccurrence
+     */
+    void setTypeOccurrence(AfterBeforeEnum typeOccurrence);
 }

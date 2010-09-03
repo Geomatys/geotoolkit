@@ -48,6 +48,12 @@ public interface PremiseName extends GenericTypedGrPostal {
      * 
      * @return
      */
-    public AfterBeforeEnum getTypeOccurrence();
+    AfterBeforeEnum getTypeOccurrence();
+
+    /**
+     * 
+     * @param typeOccurrence
+     */
+    void setTypeOccurrence(AfterBeforeEnum typeOccurrence);
 
 }

@@ -20,13 +20,17 @@ package org.geotoolkit.xal.model;
  *
  * @author Samuel Andrés
  */
-public class DefaultThoroughfareNumber extends DefaultGenericTypedGrPostal implements ThoroughfareNumber {
+public class DefaultThoroughfareNumber 
+        extends DefaultGenericTypedGrPostal
+        implements ThoroughfareNumber {
 
-    private final SingleRangeEnum numberType;
-    private final String indicator;
-    private final AfterBeforeEnum indicatorOccurence;
-    private final AfterBeforeTypeNameEnum numberOccurrence;
+    private SingleRangeEnum numberType;
+    private String indicator;
+    private AfterBeforeEnum indicatorOccurrence;
+    private AfterBeforeTypeNameEnum numberOccurrence;
 
+    public DefaultThoroughfareNumber(){}
+    
     /**
      *
      * @param numberType
@@ -42,7 +46,7 @@ public class DefaultThoroughfareNumber extends DefaultGenericTypedGrPostal imple
         super(type, grPostal, content);
         this.numberType = numberType;
         this.indicator = indicator;
-        this.indicatorOccurence = indicatorOccurence;
+        this.indicatorOccurrence = indicatorOccurence;
         this.numberOccurrence = numberOccurrence;
     }
 
@@ -65,7 +69,7 @@ public class DefaultThoroughfareNumber extends DefaultGenericTypedGrPostal imple
      * @{@inheritDoc }
      */
     @Override
-    public AfterBeforeEnum getIndicatorOccurence() {return this.indicatorOccurence;}
+    public AfterBeforeEnum getIndicatorOccurence() {return this.indicatorOccurrence;}
 
     /**
      *
@@ -73,5 +77,41 @@ public class DefaultThoroughfareNumber extends DefaultGenericTypedGrPostal imple
      */
     @Override
     public AfterBeforeTypeNameEnum getNumberOccurence() {return this.numberOccurrence;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setNumberType(SingleRangeEnum numberType) {
+        this.numberType = numberType;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setIndicator(String indicator) {
+        this.indicator = indicator;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setIndicatorOccurrence(AfterBeforeEnum indicatorOccurrence) {
+        this.indicatorOccurrence = indicatorOccurrence;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setNumberOccurrence(AfterBeforeTypeNameEnum numberOccurrence) {
+        this.numberOccurrence = numberOccurrence;
+    }
 
 }

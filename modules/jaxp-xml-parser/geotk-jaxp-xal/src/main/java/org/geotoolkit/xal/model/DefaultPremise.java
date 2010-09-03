@@ -25,23 +25,33 @@ import static java.util.Collections.*;
  */
 public class DefaultPremise implements Premise{
 
-    private final List<GenericTypedGrPostal> addressLines;
-    private final List<PremiseName> premiseNames;
+    private List<GenericTypedGrPostal> addressLines;
+    private List<PremiseName> premiseNames;
     private PremiseLocation premiseLocation;
     private List<PremiseNumber> premiseNumbers;
     private PremiseNumberRange premiseNumberRange;
-    private final List<PremiseNumberPrefix> premiseNumberPrefixes;
-    private final List<PremiseNumberSuffix> premiseNumberSuffixes;
-    private final List<BuildingName> buildingNames;
+    private List<PremiseNumberPrefix> premiseNumberPrefixes;
+    private List<PremiseNumberSuffix> premiseNumberSuffixes;
+    private List<BuildingName> buildingNames;
     private List<SubPremise> subPremises;
     private Firm firm;
-    private final MailStop mailStop;
-    private final PostalCode postalCode;
-    private final Premise premise;
-    private final String type;
-    private final String premiseDependency;
-    private final String premiseDependencyType;
-    private final String premiseThoroughfareConnector;
+    private MailStop mailStop;
+    private PostalCode postalCode;
+    private Premise premise;
+    private String type;
+    private String premiseDependency;
+    private String premiseDependencyType;
+    private String premiseThoroughfareConnector;
+
+    public DefaultPremise(){
+        this.addressLines = EMPTY_LIST;
+        this.premiseNames = EMPTY_LIST;
+        this.premiseNumbers = EMPTY_LIST;
+        this.premiseNumberPrefixes = EMPTY_LIST;
+        this.premiseNumberSuffixes = EMPTY_LIST;
+        this.buildingNames = EMPTY_LIST;
+        this.subPremises =  EMPTY_LIST;
+    }
 
     /**
      * 
@@ -74,6 +84,7 @@ public class DefaultPremise implements Premise{
         this.premiseNames = (premiseNames == null) ? EMPTY_LIST : premiseNames;
         if (location instanceof PremiseLocation){
             premiseLocation = (PremiseLocation) location;
+            premiseNumbers = EMPTY_LIST;
         } else if (location instanceof List){
             try {
                 premiseNumbers = (List<PremiseNumber>) location;
@@ -82,8 +93,11 @@ public class DefaultPremise implements Premise{
             }
         } else if (location instanceof PremiseNumberRange){
             premiseNumberRange = (PremiseNumberRange) location;
+            premiseNumbers = EMPTY_LIST;
         } else if (location != null){
             throw new XalException("This kind of location ("+location.getClass()+") is not allowed here : "+this.getClass());
+        } else {
+            premiseNumbers = EMPTY_LIST;
         }
         this.premiseNumberPrefixes = (premiseNumberPrefixes == null) ? EMPTY_LIST : premiseNumberPrefixes;
         this.premiseNumberSuffixes = (premiseNumberSuffixes == null) ? EMPTY_LIST : premiseNumberSuffixes;
@@ -96,8 +110,11 @@ public class DefaultPremise implements Premise{
             }
         } else if (sub instanceof Firm){
             firm =  (Firm) sub;
+            subPremises = EMPTY_LIST;
         } else if (sub != null){
             throw new XalException("This kind of class ("+sub.getClass()+") is not allowed here : "+this.getClass());
+        } else {
+            subPremises = EMPTY_LIST;
         }
         this.mailStop = mailStop;
         this.postalCode = postalCode;
@@ -148,14 +165,14 @@ public class DefaultPremise implements Premise{
      * @{@inheritDoc }
      */
     @Override
-    public List<PremiseNumberPrefix> getPremiseNumberPrefix() {return this.premiseNumberPrefixes;}
+    public List<PremiseNumberPrefix> getPremiseNumberPrefixes() {return this.premiseNumberPrefixes;}
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<PremiseNumberSuffix> getPremiseNumberSuffix() {return this.premiseNumberSuffixes;}
+    public List<PremiseNumberSuffix> getPremiseNumberSuffixes() {return this.premiseNumberSuffixes;}
 
     /**
      *
@@ -226,5 +243,158 @@ public class DefaultPremise implements Premise{
      */
     @Override
     public String getPremiseThoroughfareConnector() {return this.premiseThoroughfareConnector;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setAddressLines(List<GenericTypedGrPostal> addressLines) {
+        this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPremiseNames(List<PremiseName> premiseNames) {
+        this.premiseNames = (premiseNames == null) ? EMPTY_LIST : premiseNames;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPremiseLocation(PremiseLocation premiseLocation) {
+        this.premiseLocation = premiseLocation;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPremiseNumbers(List<PremiseNumber> premiseNumbers) {
+        this.premiseNumbers = (premiseNumbers == null) ? EMPTY_LIST : premiseNumbers;
+    }
+    
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPremiseNumberRange(PremiseNumberRange premiseNumberRange) {
+        this.premiseNumberRange = premiseNumberRange;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPremiseNumberPrefixes(List<PremiseNumberPrefix> premiseNumberPrefixes) {
+        this.premiseNumberPrefixes = premiseNumberPrefixes;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPremiseNumberSuffixes(List<PremiseNumberSuffix> premiseNumberSuffixes) {
+        this.premiseNumberSuffixes = premiseNumberSuffixes;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setBuildingNames(List<BuildingName> buildingNames) {
+        this.buildingNames = buildingNames;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setSubPremises(List<SubPremise> subPremises) {
+        this.subPremises = subPremises;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setFirm(Firm firm) {
+        this.firm = firm;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setMailStop(MailStop mailStop) {
+        this.mailStop = mailStop;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPostalCode(PostalCode postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPremise(Premise premise) {
+        this.premise = premise;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPremiseDependency(String premiseDependency) {
+        this.premiseDependency = premiseDependency;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPremiseDependencyType(String premiseDependencyType) {
+        this.premiseDependencyType = premiseDependencyType;
+    }
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setPremiseThoroughfareConnector(String premiseThoroughfareConnector) {
+        this.premiseThoroughfareConnector = premiseThoroughfareConnector;
+    }
 
 }

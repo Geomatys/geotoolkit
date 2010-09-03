@@ -22,7 +22,9 @@ package org.geotoolkit.xal.model;
  */
 public class DefaultLargeMailUserIdentifier extends DefaultGenericTypedGrPostal implements LargeMailUserIdentifier {
 
-    private final String indicator;
+    private String indicator;
+
+    public DefaultLargeMailUserIdentifier(){}
 
     /**
      *
@@ -43,5 +45,14 @@ public class DefaultLargeMailUserIdentifier extends DefaultGenericTypedGrPostal 
      */
     @Override
     public String getIndicator() {return this.indicator;}
+
+    /**
+     *
+     * @{@inheritDoc }
+     */
+    @Override
+    public void setIndicator(String indicator) {
+        this.indicator = indicator;
+    }
 
 }

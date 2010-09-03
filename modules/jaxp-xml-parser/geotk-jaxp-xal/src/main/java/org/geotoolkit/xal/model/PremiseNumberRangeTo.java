@@ -42,23 +42,47 @@ public interface PremiseNumberRangeTo {
      *
      * @return
      */
-    public List<GenericTypedGrPostal> getAddressLines();
+    List<GenericTypedGrPostal> getAddressLines();
 
     /**
      *
      * @return
      */
-    public List<PremiseNumberPrefix> getPremiseNumberPrefixes();
+    List<PremiseNumberPrefix> getPremiseNumberPrefixes();
 
     /**
      *
      * @return
      */
-    public List<PremiseNumber> getPremiseNumbers();
+    List<PremiseNumber> getPremiseNumbers();
 
     /**
      * 
      * @return
      */
-    public List<PremiseNumberSuffix> getPremiseNumberSuffixes();
+    List<PremiseNumberSuffix> getPremiseNumberSuffixes();
+
+    /**
+     *
+     * @param addressLines
+     */
+    void setAddressLines(List<GenericTypedGrPostal> addressLines);
+
+    /**
+     *
+     * @param premiseNumberPrefixes
+     */
+    void setPremiseNumberPrefixes(List<PremiseNumberPrefix> premiseNumberPrefixes);
+
+    /**
+     *
+     * @param premiseNumbers
+     */
+    void setPremiseNumbers(List<PremiseNumber> premiseNumbers);
+
+    /**
+     * 
+     * @param premiseNumberSuffixes
+     */
+    void setPremiseNumberSuffixes(List<PremiseNumberSuffix> premiseNumberSuffixes);
 }

@@ -132,7 +132,7 @@ public final class XalConstants {
     public static final String ATT_NUMBER_EXTENSION_SEPARATOR = "NumberExtensionSeparator";
     public static final String ATT_NUMBER_OCCURRENCE = "NumberOccurrence";
     public static final String ATT_NUMBER_PREFIX_SEPARATOR = "NumberPrefixSeparator";
-    public static final String ATT_NUMBER_RANGE_OCCURRENCE = "NumberRangeOccurence";
+    public static final String ATT_NUMBER_RANGE_OCCURRENCE = "NumberRangeOccurrence";
     public static final String ATT_NUMBER_SUFFIX_SEPARATOR = "NumberSuffixSeparator";
     public static final String ATT_NUMBER_TYPE = "NumberType";
     public static final String ATT_NUMBER_TYPE_OCCURRENCE = "NumberTypeOccurrence";

@@ -38,5 +38,11 @@ public interface SubPremiseNumberSuffix extends GenericTypedGrPostal {
      *
      * @return
      */
-    public String getNumberSuffixSeparator();
+    String getNumberSuffixSeparator();
+
+    /**
+     * 
+     * @param numberSuffixSeparator
+     */
+    void setNumberSuffixSeparator(String numberSuffixSeparator);
 }

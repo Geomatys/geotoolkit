@@ -55,25 +55,49 @@ public interface PremiseNumber extends GenericTypedGrPostal{
      *
      * @return
      */
-    public SingleRangeEnum getNumberType();
+    SingleRangeEnum getNumberType();
 
     /**
      * <p>No. in House No.12, # in #12, etc.</p>
      *
      * @return
      */
-    public String getIndicator();
+    String getIndicator();
 
     /**
      * <p>No. occurs before 12 No.12</p>
      *
      * @return
      */
-    public AfterBeforeEnum getIndicatorOccurrence();
+    AfterBeforeEnum getIndicatorOccurrence();
 
     /**
      * <p>12 in BUILDING 12 occurs "after" premise type BUILDING.</p>
      * @return
      */
-    public AfterBeforeEnum getNumberTypeOccurrence();
+    AfterBeforeEnum getNumberTypeOccurrence();
+
+    /**
+     *
+     * @param numberType
+     */
+    void setNumberType(SingleRangeEnum numberType);
+
+    /**
+     *
+     * @param indicator
+     */
+    void setIndicator(String indicator);
+
+    /**
+     *
+     * @param setIndicatorOccurrence
+     */
+    void setIndicatorOccurrence(AfterBeforeEnum indicatorOccurrence);
+
+    /**
+     * 
+     * @param numberTypeOccurrence
+     */
+    void setNumberTypeOccurrence(AfterBeforeEnum numberTypeOccurrence);
 }
