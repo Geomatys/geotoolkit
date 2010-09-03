@@ -240,10 +240,19 @@ public class WarpFactory {
          * The (m₃ - m₁) value is the maximal difference to be accepted
          * in the coefficients of the derivative matrix to be compared.
          */
-        final Dimension depth = depth(transform, point,
-                    (4 * tolerance) / Math.max(xmax - xmin, ymax - ymin),
-                    xmin, xmax, ymin, ymax,
-                    upperLeft, upperRight, lowerLeft, lowerRight);
+        final Dimension depth;
+        try {
+            depth = depth(transform, point,
+                        (4 * tolerance) / Math.max(xmax - xmin, ymax - ymin),
+                        xmin, xmax, ymin, ymax,
+                        upperLeft, upperRight, lowerLeft, lowerRight);
+        } catch (ArithmeticException e) {
+            /*
+             * The method does not converge.
+             */
+            Logging.recoverableException(WarpFactory.class, "create", e);
+            return create(name, transform);
+        }
         if (depth.width == 0 && depth.height == 0) {
             /*
              * The transform is approximatively affine. Compute the matrix coefficients using
@@ -332,16 +341,18 @@ public class WarpFactory {
      * @param lowerLeft  The transform derivative at {@code (xmin,ymin)}.
      * @param lowerRight The transform derivative at {@code (xmax,ymin)}.
      * @return The number of subdivision along each axes.
+     * @throws TransformException If a derivative can not be computed.
+     * @throws ArithmeticException If this method does not converge.
      */
     private static Dimension depth(final MathTransform2D transform, final Point2D.Double point, double tolerance,
             final double xmin,      final double xmax,
             final double ymin,      final double ymax,
             final Matrix upperLeft, final Matrix upperRight,
             final Matrix lowerLeft, final Matrix lowerRight)
-            throws TransformException
+            throws TransformException, ArithmeticException
     {
         if (!(xmax - xmin >= MIN_SIZE) || !(ymax - ymin >= MIN_SIZE)) { // Use ! for catching NaN.
-            throw new TransformException(Errors.format(Errors.Keys.NO_CONVERGENCE));
+            throw new ArithmeticException(Errors.format(Errors.Keys.NO_CONVERGENCE));
         }
         /*
          * All derivatives will be compared to the derivative at (centerX, centerY).
