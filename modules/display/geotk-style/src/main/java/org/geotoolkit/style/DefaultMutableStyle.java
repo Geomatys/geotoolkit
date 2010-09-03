@@ -27,9 +27,11 @@ import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
+import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.type.Name;
 import org.opengis.style.Description;
+import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.SemanticType;
 import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
@@ -251,7 +253,21 @@ public class DefaultMutableStyle implements MutableStyle{
      */
     @Override
     public String toString() {
-        return Trees.toString(StyleUtilities.asTreeNode(this));
+        final StringBuilder builder = new StringBuilder();
+        builder.append("Style : ");
+        builder.append(Classes.getShortClassName(this));
+        builder.append(" [");
+        builder.append(description);
+        builder.append(" ]");
+
+        for(FeatureTypeStyle ft : fts){
+            builder.append('\n');
+            String sub = "\u2514\u2500\u2500" + ft.toString(); //move text to the right
+            sub = sub.replaceAll("\n", "\n\u00A0\u00A0\u00A0"); //move text to the right
+            builder.append(sub);
+        }
+
+        return builder.toString();
     }
     
     //--------------------------------------------------------------------------

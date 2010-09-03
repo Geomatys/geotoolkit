@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.style;
 
+import org.geotoolkit.util.converter.Classes;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.util.Utilities;
@@ -50,7 +51,7 @@ public class DefaultPolygonSymbolizer extends AbstractSymbolizer implements Poly
      * Create a default immutable polygon symbolizer.
      * 
      * @param stroke : can be null
-     * @param fill : if null will be replaced by default value.
+     * @param fill : can be null.
      * @param disp : if null will be replaced by default value.
      * @param offset : if null or Expression.NIL will be replaced by default value.
      * @param uom : if null will be replaced by default value.
@@ -62,7 +63,7 @@ public class DefaultPolygonSymbolizer extends AbstractSymbolizer implements Poly
             Expression offset, Unit uom, String geom, String name, Description desc){
         super(uom,geom,name,desc);
         this.stroke = stroke;
-        this.fill = (fill == null) ? DEFAULT_FILL : fill;
+        this.fill = fill;
         this.disp = (disp == null) ? DEFAULT_DISPLACEMENT : disp;
         this.offset = (offset == null) ? DEFAULT_POLYGON_OFFSET : offset;
     }
@@ -123,7 +124,7 @@ public class DefaultPolygonSymbolizer extends AbstractSymbolizer implements Poly
 
         DefaultPolygonSymbolizer other = (DefaultPolygonSymbolizer) obj;
 
-        return this.fill.equals(other.fill)
+        return Utilities.equals(this.fill, other.fill)
                 && this.disp.equals(other.disp)
                 && this.desc.equals(other.desc)
                 && this.offset.equals(other.offset)
@@ -139,11 +140,12 @@ public class DefaultPolygonSymbolizer extends AbstractSymbolizer implements Poly
      */
     @Override
     public int hashCode() {
-        int hash = fill.hashCode();
+        int hash = 0;
         hash *= disp.hashCode();
         hash *= offset.hashCode();
         hash *= uom.hashCode();
         hash *= desc.hashCode();
+        if(fill != null) hash *= fill.hashCode();
         if(stroke != null) hash *= stroke.hashCode();
         if(geom != null) hash *= geom.hashCode();
         if(name != null) hash *= name.hashCode();
@@ -156,12 +158,10 @@ public class DefaultPolygonSymbolizer extends AbstractSymbolizer implements Poly
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("[Polygon Symbolizer : Fill=");
-        builder.append(fill);
-        if(stroke != null){
-            builder.append(" Stroke=");
-            builder.append(stroke);
-        }
+        builder.append("Polygon Symbolizer : ");
+        builder.append(Classes.getShortClassName(this));
+        builder.append(" [");
+
         builder.append(" Offset=");
         builder.append(offset);
         builder.append(" Disp=");
@@ -174,6 +174,21 @@ public class DefaultPolygonSymbolizer extends AbstractSymbolizer implements Poly
             builder.append(geom);
         }
         builder.append(']');
+
+        if(fill != null){
+            builder.append('\n');
+            String sub = "\u2514\u2500\u2500" + fill.toString(); //move text to the right
+            sub = sub.replaceAll("\n", "\n\u00A0\u00A0\u00A0"); //move text to the right
+            builder.append(sub);
+        }
+
+        if(stroke != null){
+            builder.append('\n');
+            String sub = "\u2514\u2500\u2500" + stroke.toString(); //move text to the right
+            sub = sub.replaceAll("\n", "\n\u00A0\u00A0\u00A0"); //move text to the right
+            builder.append(sub);
+        }
+
         return builder.toString();
     }
 }

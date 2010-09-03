@@ -26,6 +26,7 @@ import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
+import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.filter.Filter;
 import org.opengis.metadata.citation.OnlineResource;
@@ -328,7 +329,21 @@ public class DefaultMutableRule implements MutableRule{
      */
     @Override
     public String toString() {
-        return Trees.toString(StyleUtilities.asTreeNode(this));
+        final StringBuilder builder = new StringBuilder();
+        builder.append("Rule : ");
+        builder.append(Classes.getShortClassName(this));
+        builder.append(" [");
+        builder.append(desc);
+        builder.append("]");
+
+        for(Symbolizer symbol : symbols){
+            builder.append('\n');
+            String sub = "\u2514\u2500\u2500" + symbol.toString(); //move text to the right
+            sub = sub.replaceAll("\n", "\n\u00A0\u00A0\u00A0"); //move text to the right
+            builder.append(sub);
+        }
+
+        return builder.toString();
     }
     
     //--------------------------------------------------------------------------

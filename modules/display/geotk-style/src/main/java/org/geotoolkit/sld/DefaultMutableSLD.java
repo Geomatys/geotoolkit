@@ -28,6 +28,7 @@ import org.geotoolkit.util.NumberRange;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
+import org.geotoolkit.util.converter.Classes;
 import org.opengis.sld.Constraint;
 import org.opengis.sld.SLDLibrary;
 import org.opengis.sld.SLDVisitor;
@@ -391,7 +392,9 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("[MutableSLD : ");
+        builder.append("SLD : ");
+        builder.append(Classes.getShortClassName(this));
+        builder.append(" [");
         if(name != null){
             builder.append(" Name=");
             builder.append(name);
@@ -406,7 +409,14 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
         builder.append(layers.size());
         builder.append(" LibrarySize=");
         builder.append(libraries.size());
-        builder.append(']');
+        builder.append("]\n");
+
+        for(MutableLayer layer : layers){
+            String sub = "\u2514\u2500\u2500" + layer.toString(); //move text to the right
+            sub = sub.replaceAll("\n", "\n\u00A0\u00A0\u00A0"); //move text to the right
+            builder.append(sub);
+        }
+
         return builder.toString();
     }
     

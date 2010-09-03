@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.style;
 
+import org.geotoolkit.util.converter.Classes;
 import javax.measure.unit.Unit;
 
 import org.opengis.filter.expression.Expression;
@@ -212,9 +213,12 @@ public class DefaultRasterSymbolizer extends AbstractSymbolizer implements Raste
      */
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder();
-        builder.append("[RasterSymbolizer : Opacity=");
-        builder.append(opacity);
+        final StringBuilder builder = new StringBuilder();
+        builder.append("Raster Symbolizer : ");
+        builder.append(Classes.getShortClassName(this));
+        builder.append(" [");
+        builder.append("Opacity=");
+        builder.append(opacity.toString());
         if(selection != null){
             builder.append(" Channels=");
             builder.append(selection);

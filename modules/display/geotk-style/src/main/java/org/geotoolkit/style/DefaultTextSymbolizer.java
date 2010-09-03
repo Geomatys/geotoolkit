@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.style;
 
+import org.geotoolkit.util.converter.Classes;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.util.Utilities;
@@ -221,11 +222,17 @@ public class DefaultTextSymbolizer implements TextSymbolizer{
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder();
-        builder.append("[TextSymbolizer : ");
-        builder.append(" Label=").append(label);
-        builder.append(" Font=").append(font);
-        builder.append(" Halo=").append(halo);
-        builder.append(" Placement=").append(placement);
+        builder.append("TextSymbolizer : ");
+        builder.append(Classes.getShortClassName(this));
+        builder.append(" [");
+        builder.append("Label=");
+        builder.append(label.toString());
+        builder.append(" Font=");
+        builder.append(font.toString());
+        builder.append(" Halo=");
+        builder.append(halo.toString());
+        builder.append(" Placement=");
+        builder.append(placement.toString());
         builder.append(']');
         return builder.toString();
     }
