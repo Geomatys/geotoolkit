@@ -433,7 +433,7 @@ public class RawImageReader extends SpatialImageReader {
 
     /**
      * Service provider interface (SPI) for {@code RawImageReader}s. This SPI provides
-     * necessary implementation for creating default {@link RawImageReader}.
+     * necessary implementation for creating default {@link RawImageReader} instances.
      * <p>
      * The default constructor initializes the fields to the values listed below.
      * Users wanting different values should create a subclass of {@code Spi} and
@@ -460,7 +460,7 @@ public class RawImageReader extends SpatialImageReader {
      */
     public static class Spi extends SpatialImageReader.Spi implements SystemOverride {
         /**
-         * Default list of file's extensions.
+         * Default list of file extensions.
          */
         private static final String[] SUFFIXES = new String[] {"raw"};
 

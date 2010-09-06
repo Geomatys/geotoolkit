@@ -119,7 +119,7 @@ import static org.geotoolkit.image.io.SampleConversionType.*;
  * example of code using some of the services provided by this class.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.11
+ * @version 3.16
  *
  * @see SpatialImageWriter
  *
@@ -145,9 +145,8 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
     }
 
     /**
-     * Sets the input source to use. If this image reader is an instance of
-     * {@link StreamImageReader} or {@link ImageReaderAdapter}, then their
-     * {@code close()} method is invoked before to set the new input.
+     * Sets the input source to use. This method invokes {@link #close()}
+     * before to set the new input.
      *
      * @param input           The input object to use for future decoding.
      * @param seekForwardOnly If {@code true}, images and metadata may only be read
@@ -171,6 +170,8 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * Ensures that the specified image index is inside the expected range.
      * The expected range is {@link #minIndex minIndex} inclusive (initially 0)
      * to <code>{@link #getNumImages getNumImages}(false)</code> exclusive.
+     * If {@code getNumImages(false)} returned -1, then this method does not
+     * check the upper bound.
      *
      * @param  imageIndex Index to check for validity.
      * @throws IndexOutOfBoundsException if the specified index is outside the expected range.
@@ -220,10 +221,10 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * Returns the number of images available from the current input source.
      * The default implementation returns 1.
      *
-     * @param  allowSearch If true, the number of images will be returned
+     * @param  allowSearch If {@code true}, the number of images will be returned
      *         even if a search is required.
      * @return The number of images, or -1 if {@code allowSearch}
-     *         is false and a search would be required.
+     *         is {@code false} and a search would be required.
      *
      * @throws IllegalStateException if the {@linkplain #input input} source has not been set.
      * @throws IOException if an error occurs reading the information from the input source.
@@ -1231,14 +1232,12 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * Invoked when a new input is set or when the reader is disposed. The default implementation
      * clears the internal cache. Sub-classes can override this method if they have more resources
      * to dispose, but should always invoke {@code super.close()}.
-     * <p>
-     * This method is overridden and given {@code protected} access by {@link StreamImageReader}
-     * and {@link ImageReaderAdapter}. It is called "{@code close}" in order to match the
-     * purpose which appear in the public API of those classes.
      *
-     * @throws IOException If an error occurred while closing a stream (applicable to subclasses only).
+     * @throws IOException If an error occurred while closing a stream.
+     *
+     * @since 3.16
      */
-    void close() throws IOException {
+    protected void close() throws IOException {
         metadata = null;
     }
 

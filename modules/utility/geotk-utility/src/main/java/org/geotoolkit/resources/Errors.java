@@ -1282,6 +1282,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int UNSUPPORTED_FILE_TYPE_$1 = 242;
 
         /**
+         * Unsupported image type.
+         */
+        public static final int UNSUPPORTED_IMAGE_TYPE = 253;
+
+        /**
          * Unsupported operation: {0}
          */
         public static final int UNSUPPORTED_OPERATION_$1 = 243;

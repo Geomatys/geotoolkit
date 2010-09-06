@@ -74,7 +74,7 @@ public final class ImageUtilities {
      * are smaller or equals than this size, then the image will be retiled. That is done because
      * there are many formats that use stripes as an alternative to tiles, an example is TIFF. A
      * stripe can be a performance issue, users can have stripes as large as 20000 columns x 8
-     * rows. If we just want to see a chunk of 512x512, this is a lot of uneeded data to load.
+     * rows. If we just want to see a chunk of 512x512, this is a lot of unneeded data to load.
      */
     private static final int STRIPE_SIZE = 64;
 
@@ -442,7 +442,7 @@ public final class ImageUtilities {
      * @return {@code true} if the given type is one of floating point types.
      */
     public static boolean isFloatType(final int type) {
-        return type == TYPE_FLOAT || type == TYPE_DOUBLE;
+        return (type == TYPE_FLOAT) || (type == TYPE_DOUBLE);
     }
 
     /**
@@ -641,7 +641,9 @@ public final class ImageUtilities {
 
     /**
      * Replaces the color model in the given image by the given one.
-     * The sample values are transfered with no change.
+     * The sample values are transfered with no change. This method
+     * is <strong>not</strong> suitable for anything that change the
+     * pixel layout, the number of bands, etc.
      *
      * @param  image The image in which to change the color model.
      * @param  cm The new color model.
