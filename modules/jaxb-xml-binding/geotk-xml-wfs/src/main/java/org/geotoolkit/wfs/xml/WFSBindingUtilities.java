@@ -23,7 +23,7 @@ import java.io.Reader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Level;
-import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLEventReader;
@@ -32,6 +32,7 @@ import javax.xml.transform.Source;
 
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wfs.xml.v110.WFSCapabilitiesType;
+import org.geotoolkit.xml.MarshallerPool;
 
 import org.opengis.metadata.citation.OnlineResource;
 
@@ -46,28 +47,27 @@ import org.xml.sax.InputSource;
 public class WFSBindingUtilities {
 
 
-    private static final JAXBContext jaxbContext110;
-
-    static{
-        JAXBContext temp = null;
-        try{
-            temp = JAXBContext.newInstance(org.geotoolkit.wfs.xml.v110.WFSCapabilitiesType.class);
-        }catch(JAXBException ex){
-            ex.printStackTrace();
-        }
-        jaxbContext110 = temp;
-
-    }
-
      public static WFSCapabilitiesType unmarshall(Object source, WFSVersion version) throws JAXBException{
 
-         final Unmarshaller unMarshaller;
-         switch(version){
-             case v110 : unMarshaller = jaxbContext110.createUnmarshaller(); break;
-             default: throw new IllegalArgumentException("unknonwed version");
+         final MarshallerPool pool = WFSMarshallerPool.getInstance();
+         Unmarshaller unMarshaller = null;
+         try {
+             switch(version){
+                 case v110 : break;
+                 default: throw new IllegalArgumentException("unknonwed version");
+             }
+             unMarshaller = pool.acquireUnmarshaller();
+             final Object unmarshalled = unmarshall(source, unMarshaller);
+             if (unmarshalled instanceof JAXBElement) {
+                 return (WFSCapabilitiesType) ((JAXBElement)unmarshalled).getValue();
+             } else {
+                return (WFSCapabilitiesType) unmarshalled;
+             }
+         } finally {
+             if (unMarshaller != null) {
+                 pool.release(unMarshaller);
+             }
          }
-
-        return (WFSCapabilitiesType) unmarshall(source, unMarshaller);
      }
 
      private static final Object unmarshall(final Object source, final Unmarshaller unMarshaller)

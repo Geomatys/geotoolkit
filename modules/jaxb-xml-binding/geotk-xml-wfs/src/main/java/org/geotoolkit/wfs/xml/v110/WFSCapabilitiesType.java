@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v110.FilterCapabilities;
 import org.geotoolkit.ows.xml.v100.CapabilitiesBaseType;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wfs.xml.WFSResponse;
 
 
@@ -183,4 +184,51 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
         this.filterCapabilities = value;
     }
 
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof WFSCapabilitiesType && super.equals(object)) {
+            final WFSCapabilitiesType that = (WFSCapabilitiesType) object;
+
+            return Utilities.equals(this.featureTypeList,           that.featureTypeList)           &&
+                   Utilities.equals(this.filterCapabilities,        that.filterCapabilities)        &&
+                   Utilities.equals(this.servesGMLObjectTypeList,   that.servesGMLObjectTypeList)   &&
+                   Utilities.equals(this.supportsGMLObjectTypeList, that.supportsGMLObjectTypeList);
+            }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + (this.featureTypeList != null ? this.featureTypeList.hashCode() : 0);
+        hash = 23 * hash + (this.servesGMLObjectTypeList != null ? this.servesGMLObjectTypeList.hashCode() : 0);
+        hash = 23 * hash + (this.supportsGMLObjectTypeList != null ? this.supportsGMLObjectTypeList.hashCode() : 0);
+        hash = 23 * hash + (this.filterCapabilities != null ? this.filterCapabilities.hashCode() : 0);
+        return hash;
+    }
+
+    /**
+     * Retourne une representation de l'objet.
+     */
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder(super.toString());
+        if(featureTypeList != null) {
+            s.append("featureTypeList:").append(featureTypeList).append('\n');
+        }
+        if (servesGMLObjectTypeList != null)
+            s.append("servesGMLObjectTypeList:").append(servesGMLObjectTypeList).append('\n');
+        if (supportsGMLObjectTypeList != null)
+            s.append("supportsGMLObjectTypeList:").append(supportsGMLObjectTypeList).append('\n');
+        if (filterCapabilities != null)
+            s.append("filterCapabilities:").append(filterCapabilities).append('\n');
+        return s.toString();
+    }
 }

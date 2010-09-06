@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -155,4 +156,48 @@ public class MetadataURLType {
         this.format = value;
     }
 
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof MetadataURLType) {
+            final MetadataURLType that = (MetadataURLType) object;
+
+            return Utilities.equals(this.format,  that.format) &&
+                   Utilities.equals(this.type,    that.type)   &&
+                   Utilities.equals(this.value,   that.value);
+            }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + (this.value != null ? this.value.hashCode() : 0);
+        hash = 29 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 29 * hash + (this.format != null ? this.format.hashCode() : 0);
+        return hash;
+    }
+
+
+    /**
+     * Retourne une representation de l'objet.
+     */
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[metadataURLType]");
+        if(format != null) {
+            s.append("format:").append(format).append('\n');
+        }
+        if (type != null)
+            s.append("type:").append(type).append('\n');
+        if (value != null)
+            s.append("value:").append(value).append('\n');
+        return s.toString();
+    }
 }

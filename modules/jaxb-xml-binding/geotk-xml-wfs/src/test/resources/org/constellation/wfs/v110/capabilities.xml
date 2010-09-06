@@ -97,8 +97,10 @@
             <wfs:Name>utds:Building</wfs:Name>
             <wfs:Title></wfs:Title>
             <wfs:DefaultSRS>urn:ogc:def:crs:EPSG::4979</wfs:DefaultSRS>
-            <wfs:OtherSRS>urn:ogc:def:crs,crs:EPSG::32615,crs:EPSG::5773</wfs:OtherSRS>
-            <ows:WGS84BoundingBox>
+            <wfs:OtherSRS>urn:ogc:def:crs</wfs:OtherSRS>
+            <wfs:OtherSRS>crs:EPSG::32615</wfs:OtherSRS>
+            <wfs:OtherSRS>crs:EPSG::5773</wfs:OtherSRS>
+            <ows:WGS84BoundingBox dimensions="2">
                 <ows:LowerCorner>29.8 -90.1</ows:LowerCorner>
                 <ows:UpperCorner>30 -89.9</ows:UpperCorner>
             </ows:WGS84BoundingBox>
@@ -107,8 +109,10 @@
             <wfs:Name>utds:AircraftTransportationComplex</wfs:Name>
             <wfs:Title></wfs:Title>
             <wfs:DefaultSRS>urn:ogc:def:crs:EPSG::4979</wfs:DefaultSRS>
-            <wfs:OtherSRS>urn:ogc:def:crs,crs:EPSG::32615,crs:EPSG::5773</wfs:OtherSRS>
-            <ows:WGS84BoundingBox>
+            <wfs:OtherSRS>urn:ogc:def:crs</wfs:OtherSRS>
+            <wfs:OtherSRS>crs:EPSG::32615</wfs:OtherSRS>
+            <wfs:OtherSRS>crs:EPSG::5773</wfs:OtherSRS>
+            <ows:WGS84BoundingBox dimensions="2">
                 <ows:LowerCorner>29.8 -90.1</ows:LowerCorner>
                 <ows:UpperCorner>30 -89.9</ows:UpperCorner>
             </ows:WGS84BoundingBox>
@@ -117,8 +121,10 @@
             <wfs:Name>utds:Fence</wfs:Name>
             <wfs:Title></wfs:Title>
             <wfs:DefaultSRS>urn:ogc:def:crs:EPSG::4979</wfs:DefaultSRS>
-            <wfs:OtherSRS>urn:ogc:def:crs,crs:EPSG::32615,crs:EPSG::5773</wfs:OtherSRS>
-            <ows:WGS84BoundingBox>
+            <wfs:OtherSRS>urn:ogc:def:crs</wfs:OtherSRS>
+            <wfs:OtherSRS>crs:EPSG::32615</wfs:OtherSRS>
+            <wfs:OtherSRS>crs:EPSG::5773</wfs:OtherSRS>
+            <ows:WGS84BoundingBox dimensions="2">
                 <ows:LowerCorner>29.8 -90.1</ows:LowerCorner>
                 <ows:UpperCorner>30 -89.9</ows:UpperCorner>
             </ows:WGS84BoundingBox>

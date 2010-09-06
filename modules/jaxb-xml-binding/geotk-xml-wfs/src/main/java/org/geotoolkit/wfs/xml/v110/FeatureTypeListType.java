@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -108,4 +109,42 @@ public class FeatureTypeListType {
         this.featureType = featureType;
     }
 
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof FeatureTypeListType) {
+            final FeatureTypeListType that = (FeatureTypeListType) object;
+
+            return Utilities.equals(this.featureType, that.featureType) &&
+                   Utilities.equals(this.operations,  that.operations);
+            }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 79 * hash + (this.operations != null ? this.operations.hashCode() : 0);
+        hash = 79 * hash + (this.featureType != null ? this.featureType.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[FeatureTypeListType]\n");
+        if(featureType != null) {
+            s.append("featureType:\n");
+            for (FeatureTypeType feat : featureType) {
+                s.append(feat).append('\n');
+            }
+        }
+        if (operations != null)
+            s.append("operations:").append(operations).append('\n');
+        return s.toString();
+    }
 }

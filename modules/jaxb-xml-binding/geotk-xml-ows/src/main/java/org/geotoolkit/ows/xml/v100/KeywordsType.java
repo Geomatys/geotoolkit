@@ -133,4 +133,19 @@ public class KeywordsType implements AbstractKeywords {
         hash = 97 * hash + (this.type != null ? this.type.hashCode() : 0);
         return hash;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[KeywordsType]\n");
+        if(type != null) {
+            s.append("type:").append(type).append('\n');
+        }
+        if (keyword != null) {
+            s.append("keyword:").append('\n');
+            for (String k : keyword) {
+                s.append(k).append('\n');
+            }
+        }
+        return s.toString();
+    }
 }
