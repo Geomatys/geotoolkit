@@ -485,12 +485,6 @@ public class RawTiffImageReader extends SpatialImageReader {
                         position += entrySize;
                     }
                     /*
-                     * Opportunist reading of the next IFD offset, since we are there.
-                     */
-                    if (countIFD >= 0) {
-                        nextImageFileDirectory();
-                    }
-                    /*
                      * Complete the arrays that needs further processing.
                      */
                     readDeferredArrays(deferred.toArray(new long[deferred.size()][]));
