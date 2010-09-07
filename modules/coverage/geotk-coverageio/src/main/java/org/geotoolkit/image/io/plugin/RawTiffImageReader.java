@@ -130,25 +130,26 @@ public class RawTiffImageReader extends SpatialImageReader {
 
     /**
      * Types supported by this reader. The type is the short at offset 2 in the directory entry.
-     * Types in the range 1 to 5 (inclusive) are unsigned.
      */
     private static final short
             TYPE_BYTE  =  6, TYPE_UBYTE  =  1,
             TYPE_SHORT =  8, TYPE_USHORT =  3,
-            TYPE_INT   =  9, TYPE_UINT   =  4,
+            TYPE_INT   =  9, TYPE_UINT   =  4, TYPE_IFD  = 13, // IFD is like UINT.
+            TYPE_LONG  = 17, TYPE_ULONG  = 16, TYPE_IFD8 = 18, // IFD is like ULONG.
             TYPE_FLOAT = 11, TYPE_DOUBLE = 12;
 
     /**
-     * The size of each type, or 0 if unknown.
+     * The size of each type in bytes, or 0 if unknown.
      */
-    private static final int[] TYPE_SIZE = new int[13];
+    private static final int[] TYPE_SIZE = new int[19];
     static {
         final int[] size = TYPE_SIZE;
-        size[TYPE_BYTE]  = size[TYPE_UBYTE]  =    Byte.SIZE / Byte.SIZE;
-        size[TYPE_SHORT] = size[TYPE_USHORT] =   Short.SIZE / Byte.SIZE;
-        size[TYPE_INT]   = size[TYPE_UINT]   = Integer.SIZE / Byte.SIZE;
-        size[TYPE_FLOAT]                     =   Float.SIZE / Byte.SIZE;
-        size[TYPE_DOUBLE]                    =  Double.SIZE / Byte.SIZE;
+        size[TYPE_BYTE]  = size[TYPE_UBYTE]                   =    Byte.SIZE / Byte.SIZE;
+        size[TYPE_SHORT] = size[TYPE_USHORT]                  =   Short.SIZE / Byte.SIZE;
+        size[TYPE_INT]   = size[TYPE_UINT]  = size[TYPE_IFD]  = Integer.SIZE / Byte.SIZE;
+        size[TYPE_LONG]  = size[TYPE_ULONG] = size[TYPE_IFD8] =    Long.SIZE / Byte.SIZE;
+        size[TYPE_FLOAT]                                      =   Float.SIZE / Byte.SIZE;
+        size[TYPE_DOUBLE]                                     =  Double.SIZE / Byte.SIZE;
     }
 
     /**
@@ -589,18 +590,27 @@ public class RawTiffImageReader extends SpatialImageReader {
      * Reads one value of the given type from the given buffer.
      * This method assumes that the type is valid.
      *
-     * @param  type   The data type.
-     * @param  buffer The buffer from which to read the value.
+     * @param  type The data type.
      * @return The value.
      */
-    private static long read(final short type, final ByteBuffer buffer) {
+    private long read(final short type) throws IIOException {
         switch (type) {
             case TYPE_BYTE:   return buffer.get();
             case TYPE_UBYTE:  return buffer.get() & 0xFFL;
             case TYPE_SHORT:  return buffer.getShort();
             case TYPE_USHORT: return buffer.getShort() & 0xFFFFL;
             case TYPE_INT:    return buffer.getInt();
+            case TYPE_IFD:
             case TYPE_UINT:   return buffer.getInt() & 0xFFFFFFFFL;
+            case TYPE_LONG:   return buffer.getLong();
+            case TYPE_IFD8:
+            case TYPE_ULONG: {
+                final long value = buffer.getLong();
+                if (value < 0) {
+                    throw new UnsupportedImageFormatException(error(Errors.Keys.UNSUPPORTED_DATA_TYPE));
+                }
+                return value;
+            }
             default: throw new AssertionError(type);
         }
     }
@@ -650,13 +660,13 @@ public class RawTiffImageReader extends SpatialImageReader {
             throw new IIOException(error(Errors.Keys.FILE_HAS_TOO_MANY_DATA));
         }
         final int dataSize, intSize = isBigTIFF ? SIZE_BIG_INT : SIZE_INT;
-        if (type < 0 || type >= TYPE_FLOAT || (dataSize = TYPE_SIZE[type]) == 0) {
+        if (type < 0 || type == TYPE_FLOAT || type == TYPE_DOUBLE || (dataSize = TYPE_SIZE[type]) == 0) {
             throw new IIOException(error(Errors.Keys.BAD_PARAMETER_TYPE_$2, name, type));
         }
         final long[] values = new long[(int) count];
         if (values.length * dataSize <= intSize) {
             for (int i=0; i<values.length; i++) {
-                values[i] = read(type, buffer);
+                values[i] = read(type);
             }
         } else {
             values[0] = readInt();
@@ -688,7 +698,7 @@ public class RawTiffImageReader extends SpatialImageReader {
                 n = Math.min(n, buffer.remaining() / dataSize);
                 position += n * dataSize;
                 while (--n >= 0) {
-                    array[i++] = read(type, buffer);
+                    array[i++] = read(type);
                 }
             }
         }
