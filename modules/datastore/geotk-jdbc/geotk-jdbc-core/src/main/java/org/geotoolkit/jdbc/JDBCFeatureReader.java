@@ -172,6 +172,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
             ff = dataStore.getFeatureFactory();
         }
         builder = new SimpleFeatureBuilder(featureType, ff);
+        builder.setValidating(false);
 
         // find the primary key
         this.pkey = pkey;

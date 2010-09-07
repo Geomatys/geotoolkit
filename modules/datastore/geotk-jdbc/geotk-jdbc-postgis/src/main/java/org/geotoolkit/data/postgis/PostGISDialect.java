@@ -89,6 +89,10 @@ public class PostGISDialect extends AbstractSQLDialect {
     private static final int COLUMN_NAME = 4;
     private static final int TYPE_NAME = 6;
 
+    private final ThreadLocal<WKBAttributeIO> wkbReader = new ThreadLocal<WKBAttributeIO>();
+    private boolean looseBBOXEnabled = false;
+    private boolean estimatedExtentsEnabled = false;
+
     public PostGISDialect(final JDBCDataStore dataStore) {
         super(dataStore);
         //register the base mapping
@@ -106,11 +110,7 @@ public class PostGISDialect extends AbstractSQLDialect {
         sqlTypeToSqlTypeNameOverrides.put(Types.BOOLEAN, "BOOL");
 
     }
-
-    boolean looseBBOXEnabled = false;
-
-    boolean estimatedExtentsEnabled = false;
-
+  
     public boolean isLooseBBOXEnabled(){
         return looseBBOXEnabled;
     }
@@ -131,8 +131,6 @@ public class PostGISDialect extends AbstractSQLDialect {
         // others?
         return true;
     }
-
-    ThreadLocal<WKBAttributeIO> wkbReader = new ThreadLocal<WKBAttributeIO>();
 
     @Override
     public Geometry decodeGeometryValue(final GeometryDescriptor descriptor, final ResultSet rs,
@@ -167,26 +165,26 @@ public class PostGISDialect extends AbstractSQLDialect {
         final int dimensions = (crs == null) ? 2 : crs.getCoordinateSystem().getDimension();
         sql.append("encode(");
         if (dimensions > 2) {
-            sql.append("asEWKB(");
+            sql.append("ST_AsEWKB(");
             encodeColumnName(gatt.getLocalName(), sql);
         } else {
-            sql.append("asBinary(");
-            sql.append("force_2d(");
+            sql.append("ST_AsBinary(");
             encodeColumnName(gatt.getLocalName(), sql);
-            sql.append(")");
         }
-        sql.append(",'XDR'),'base64')");
+        sql.append("),'base64')");
     }
 
     @Override
     public void encodeGeometryEnvelope(final String tableName, final String geometryColumn,
             final StringBuilder sql){
         if (estimatedExtentsEnabled) {
-            sql.append("estimated_extent(");
-            sql.append("'" + tableName + "','" + geometryColumn + "'))));");
+            sql.append("ST_Estimated_Extent('");
+            sql.append(tableName).append("','");
+            sql.append(geometryColumn).append("'))));");
         } else {
-            sql.append("AsText(force_2d(Envelope(");
-            sql.append("Extent(\"" + geometryColumn + "\"))))");
+            sql.append("ST_AsText(ST_Force_2D(Envelope(ST_Extent(\"");
+            sql.append(geometryColumn);
+            sql.append("\"::geometry))))");
         }
     }
 
@@ -243,33 +241,6 @@ public class PostGISDialect extends AbstractSQLDialect {
             dataStore.closeSafe(result);
             dataStore.closeSafe(statement);
         }
-
-        // TODO: add the support code needed to infer from the first geometry
-        // if (gType == null) {
-        // // no geometry_columns entry, try grabbing a feature
-        // StringBuilder sql = new StringBuilder();
-        // sql.append("SELECT encode(AsBinary(force_2d(\"");
-        // sql.append(columnName);
-        // sql.append("\"), 'XDR'),'base64') FROM \"");
-        // sql.append(schemaName);
-        // sql.append("\".\"");
-        // sql.append(tableName);
-        // sql.append("\" LIMIT 1");
-        // result = statement.executeQuery(sql.toString());
-        // if (result.next()) {
-        // AttributeIO attrIO = getGeometryAttributeIO(null, null);
-        // Object object = attrIO.read(result, 1);
-        // if (object instanceof Geometry) {
-        // Geometry geom = (Geometry) object;
-        // geometryType = geom.getGeometryType().toUpperCase();
-        // type = geom.getClass();
-        // srid = geom.getSRID(); // will return 0 unless we support
-        // // EWKB
-        // }
-        // }
-        // result.close();
-        // }
-        // statement.close();
 
         // decode the type into
         Class geometryClass = (Class) TYPE_TO_CLASS_MAP.get(gType);
