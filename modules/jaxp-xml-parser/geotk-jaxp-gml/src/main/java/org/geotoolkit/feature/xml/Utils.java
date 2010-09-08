@@ -152,6 +152,8 @@ public class Utils {
                 return MultiPolygon.class;
             } else if ("MultiSurfacePropertyType".equals(name.getLocalPart())) {
                 return MultiPolygon.class;
+            } else if ("MultiPolygonPropertyType".equals(name.getLocalPart())) {
+                return MultiPolygon.class;
             } else if ("Polygon".equals(name.getLocalPart())) {
                 return Polygon.class;
             } else if ("Ring".equals(name.getLocalPart())) {
