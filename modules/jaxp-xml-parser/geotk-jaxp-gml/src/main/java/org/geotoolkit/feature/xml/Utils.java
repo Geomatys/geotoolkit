@@ -150,6 +150,8 @@ public class Utils {
                 return Envelope.class;
             } else if ("PolyHedralSurface".equals(name.getLocalPart())) {
                 return MultiPolygon.class;
+            } else if ("MultiSurfacePropertyType".equals(name.getLocalPart())) {
+                return MultiPolygon.class;
             } else if ("Polygon".equals(name.getLocalPart())) {
                 return Polygon.class;
             } else if ("Ring".equals(name.getLocalPart())) {
