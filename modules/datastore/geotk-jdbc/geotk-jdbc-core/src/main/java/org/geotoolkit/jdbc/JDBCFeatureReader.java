@@ -53,12 +53,11 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
-import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.identity.Identifier;
 
 import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import org.opengis.filter.identity.Identifier;
 
 
 /**
@@ -80,99 +79,101 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     /**
      * the datastore
      */
-    protected DefaultJDBCDataStore dataStore;
+    protected DefaultJDBCDataStore dataStore; //can be set to null when reader is closed.
     /**
      * schema of features
      */
-    protected SimpleFeatureType featureType;
+    protected final SimpleFeatureType featureType;
     /**
      * geometry factory used to create geometry objects
      */
-    protected GeometryFactory geometryFactory;
+    protected final GeometryFactory geometryFactory;
     /**
      * hints
      */
-    protected Hints hints;
+    protected final Hints hints;
+    /**
+     * feature builder
+     */
+    protected final SimpleFeatureBuilder builder;
+    /**
+     * The primary key
+     */
+    protected final PrimaryKey pkey;
+    /**
+     * statement,result set that is being worked from.
+     */
+    protected final Statement st;
+    protected final ResultSet rs;
+    protected Connection cx;
     /**
      * flag indicating if the iterator has another feature
      */
     protected Boolean next;
-    /**
-     * feature builder
-     */
-    protected SimpleFeatureBuilder builder;
-    /**
-     * The primary key
-     */
-    protected PrimaryKey pkey;
 
-    /**
-     * statement,result set that is being worked from.
-     */
-    protected Statement st;
-    protected ResultSet rs;
-    protected Connection cx;
-    protected String[] columnNames;
 
     public JDBCFeatureReader(final String sql, final Connection cx, final JDBCDataStore store, 
             final Name groupName, final SimpleFeatureType featureType, final PrimaryKey pkey, final Hints hints )
             throws SQLException, IOException, DataStoreException{
-        init( store, groupName, featureType, pkey, hints );
-
-        //create the result set
-        this.cx = cx;
-        st = cx.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
-        st.setFetchSize(store.getFetchSize());
-        rs = st.executeQuery(sql);
+        this(sql,cx,null, store, featureType, pkey, hints );
     }
 
     public JDBCFeatureReader(final PreparedStatement st, final Connection cx, final JDBCDataStore store, 
             final Name groupName, final SimpleFeatureType featureType, final PrimaryKey pkey, final Hints hints)
             throws SQLException, IOException, DataStoreException{
+        this(null,cx,st,store, featureType, pkey, hints );
+    }
 
-        init( store, groupName, featureType, pkey, hints );
+    private JDBCFeatureReader(final String sql, final Connection cx, final PreparedStatement st,
+            final JDBCDataStore store, final SimpleFeatureType featureType,
+            final PrimaryKey pkey, final Hints hints)
+            throws SQLException, IOException, DataStoreException{
 
         //create the result set
         this.cx = cx;
-        this.st = st;
-        rs = st.executeQuery();
-    }
-
-    protected void init(final JDBCDataStore store, final Name typeName, final SimpleFeatureType featureType, final PrimaryKey pkey,
-                        final Hints chints) throws IOException, DataStoreException{
+        if(sql == null){
+            this.st = st;
+            this.rs = st.executeQuery();
+        }else{
+            this.st = cx.createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY);
+            this.st.setFetchSize(store.getFetchSize());
+            this.rs = this.st.executeQuery(sql);
+        }
+        
         // init the tracer if we need to debug a connection leak
         assert(creationStack = new IllegalStateException().fillInStackTrace()) != null;
 
         // init base fields
         this.dataStore = (DefaultJDBCDataStore) store;
         this.featureType = featureType;
-        this.hints = (chints == null) ? new Hints() : chints;
+        this.hints = (hints == null) ? new Hints() : hints;
 
         //grab a geometry factory... check for a special hint
-        geometryFactory = (GeometryFactory) hints.get(HintsPending.JTS_GEOMETRY_FACTORY);
-        if (geometryFactory == null) {
+        GeometryFactory gf = (GeometryFactory) this.hints.get(HintsPending.JTS_GEOMETRY_FACTORY);
+        if (gf == null) {
             // look for a coordinate sequence factory
             final CoordinateSequenceFactory csFactory =
-                (CoordinateSequenceFactory) hints.get(HintsPending.JTS_COORDINATE_SEQUENCE_FACTORY);
+                (CoordinateSequenceFactory) this.hints.get(HintsPending.JTS_COORDINATE_SEQUENCE_FACTORY);
 
             if (csFactory != null) {
-                geometryFactory = new GeometryFactory(csFactory);
+                gf = new GeometryFactory(csFactory);
             }
         }
 
-        if (geometryFactory == null) {
+        if (gf == null) {
             // fall back on one privided by datastore
-            geometryFactory = dataStore.getGeometryFactory();
+            gf = dataStore.getGeometryFactory();
         }
+        this.geometryFactory = gf;
 
         // create a feature builder using the factory hinted or the one coming
         // from the datastore
-        FeatureFactory ff = (FeatureFactory) hints.get(HintsPending.FEATURE_FACTORY);
+        FeatureFactory ff = (FeatureFactory) this.hints.get(HintsPending.FEATURE_FACTORY);
         if (ff == null) {
             ff = dataStore.getFeatureFactory();
         }
-        builder = new SimpleFeatureBuilder(featureType, ff);
-        builder.setValidating(false);
+        this.builder = new SimpleFeatureBuilder(featureType, ff);
+        this.builder.setValidating(false);
 
         // find the primary key
         this.pkey = pkey;
@@ -216,7 +217,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     }
 
     protected void ensureOpen() throws DataStoreRuntimeException {
-        if ( rs == null ) {
+        if ( dataStore == null ) {
             throw new DataStoreRuntimeException( "reader already closed" );
         }
     }
@@ -232,7 +233,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
             try {
                 cx = st.getConnection();
             }catch (SQLException e) {
-                throw (DataStoreRuntimeException) new DataStoreRuntimeException().initCause(e);
+                throw new DataStoreRuntimeException(e);
             }
 
             // figure out the fid
@@ -315,9 +316,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     public void close() throws DataStoreRuntimeException {
         if( dataStore != null ) {
             //clean up
-            dataStore.closeSafe(rs);
-            dataStore.closeSafe(st);
-            dataStore.closeSafe(cx);
+            dataStore.closeSafe(cx,st,rs);
         }else {
             //means we are already closed... should we throw an exception?
         }
@@ -331,19 +330,13 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
      */
     protected void cleanup() {
         //throw away state
-        rs = null;
-        st = null;
-        dataStore = null;
-        featureType = null;
-        geometryFactory = null;
-        hints = null;
+        dataStore = null; //we set it to null to now when the reader has been closed
         next = null;
-        builder = null;
-        creationStack = null;
     }
 
     @Override
     protected void finalize() throws Throwable {
+        super.finalize();
         if (dataStore != null) {
             LOGGER.warning(
                 "UNCLOSED ITERATOR : There is code leaving JDBC feature reader/writer open, " +
@@ -364,7 +357,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
     /**
      * Feature wrapper around a result set.
      */
-    protected class ResultSetFeature extends AbstractSimpleFeature {
+    protected final class ResultSetFeature extends AbstractSimpleFeature {
         /**
          * result set
          */
@@ -404,7 +397,6 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
             //get the primary key
             key = dataStore.getPrimaryKey(featureType.getName());
             final int count = md.getColumnCount();
-            columnNames = new String[count];
 
             //set up values
             dirty = new boolean[count];
@@ -544,7 +536,6 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
         public void close() {
             rs = null;
             cx = null;
-            columnNames=null;
         }
 
         @Override
