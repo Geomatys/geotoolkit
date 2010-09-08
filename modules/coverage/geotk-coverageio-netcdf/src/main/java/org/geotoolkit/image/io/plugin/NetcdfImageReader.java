@@ -61,6 +61,7 @@ import ucar.nc2.NetcdfFile;
 import org.geotoolkit.image.io.Protocol;
 import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.image.io.FileImageReader;
+import org.geotoolkit.image.io.DimensionIdentification;
 import org.geotoolkit.image.io.MultidimensionalImageStore;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.SampleConverter;
@@ -204,6 +205,32 @@ public class NetcdfImageReader extends FileImageReader implements
      */
     public NetcdfImageReader(final Spi spi) {
         super(spi);
+    }
+
+    /**
+     * Returns the dimension assigned to the given API. If a dimension has been previously created
+     * for the given API, it is returned. Otherwise a new dimension is created and returned.
+     *
+     * @param  api The API for which to return a dimension.
+     * @return The dimension assigned to the given API.
+     */
+    @Override
+    public DimensionIdentification getDimensionForAPI(final DimensionSlice.API api) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * Returns the API assigned to the given dimension identifiers. If more than one dimension
+     * is found for the given identifiers, then a {@linkplain SpatialImageReader#warningOccurred
+     * warning is emitted} and this method returns the first dimension matching the given
+     * identifiers. If no dimension is found, {@code null} is returned.
+     *
+     * @param  identifiers The identifiers of the dimension to query.
+     * @return The API assigned to the given dimension, or {@link DimensionSlice.API#NONE} if none.
+     */
+    @Override
+    public DimensionSlice.API getAPIForDimension(Object... identifiers) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**

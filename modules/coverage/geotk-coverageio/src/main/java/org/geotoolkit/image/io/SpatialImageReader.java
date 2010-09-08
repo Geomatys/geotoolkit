@@ -257,6 +257,8 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * @return The number of dimension for the image at the given index.
      * @throws IOException if an error occurs reading the information from the input source.
      *
+     * @see MultidimensionalImageStore
+     *
      * @since 2.5
      */
     public int getDimension(final int imageIndex) throws IOException {

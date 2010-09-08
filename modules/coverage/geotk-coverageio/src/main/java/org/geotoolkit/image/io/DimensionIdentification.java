@@ -29,9 +29,12 @@ import org.opengis.referencing.cs.AxisDirection;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.IndexedResourceBundle;
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.internal.image.io.Warnings;
+
+import static org.geotoolkit.image.io.DimensionSlice.API;
 
 
 /**
@@ -41,26 +44,30 @@ import org.geotoolkit.internal.image.io.Warnings;
  *
  * <ul>
  *   <li><p>As a zero-based index using an {@link Integer}. This is the most straightforward approach
- *     when the set of dimensions is known. For example if the dimensions are known to be
- *     (<var>x</var>, <var>y</var>, <var>z</var>, <var>t</var>), then the <var>t</var> dimension
- *     is at index 3.</p></li>
+ *     when the set of dimensions is known.</p>
+ *
+ *     <blockquote><font size="-1"><b>Example:</b> If the dimensions are known to be (<var>x</var>,
+ *     <var>y</var>, <var>z</var>, <var>t</var>), then the <var>t</var> dimension can be identified
+ *     by the index 3.</font></blockquote></li>
  *
  *   <li><p>As a dimension name using a {@link String}. This is a better approach than indexes when
- *     each dimension has a known name, but the list of available dimensions and their order may vary.
- *     For example if the list of dimensions can be either ({@code "longitude"}, {@code "latitude"},
- *     {@code "depth"}, {@code "time"}) or ({@code "longitude"}, {@code "latitude"}, {@code "time"}),
- *     then the index of the time dimension can be either 2 or 3. It is better to identify the time
- *     dimension by its {@code "time"} name, which is insensitive to position, wheter the depth
- *     dimension exists or not.</p></li>
+ *     dimensions have known names, because it is insensitive to dimension order and whatever other
+ *     dimensions exist or not.</p>
+ *
+ *     <blockquote><font size="-1"><b>Example:</b> If the list of dimensions can be either
+ *     ({@code "longitude"}, {@code "latitude"}, {@code "depth"}, {@code "time"}) or
+ *     ({@code "latitude"}, {@code "longitude"}, {@code "time"}), then the index of the time
+ *     dimension can be either 3 or 2. It is better to identify the time dimension by its
+ *     name: {@code "time"}.</font></blockquote></li>
  *
  *   <li><p>As a direction using an {@link AxisDirection}. This provides similar benefit to using
- *     a named dimension, but can work without knowledge of the actual name or can be used with
- *     file formats that don't support named dimensions.</p></li>
+ *     a named dimension, but can work without knowledge of the actual name. It can also be used
+ *     with file formats that don't support named dimensions.</p></li>
  * </ul>
  *
  * More than one identifier can be used in order to increase the chance of finding the dimension.
- * For example in order to fetch the <var>z</var> dimension, it may be necessary to specify both
- * the {@code "height"} and {@code "depth"} names. In case of ambiguity, a
+ * For example in order to fetch the <var>z</var> dimension, it may be necessary to specify two
+ * names: {@code "height"} and {@code "depth"}. In case of ambiguity, a
  * {@linkplain SpatialImageReader#warningOccurred warning will be emitted} to any registered
  * listeners at image reading or writing time.
  * <p>
@@ -69,6 +76,8 @@ import org.geotoolkit.internal.image.io.Warnings;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.15
  *
+ * @see MultidimensionalImageStore
+ *
  * @since 3.15
  * @module
  */
@@ -76,18 +85,42 @@ public class DimensionIdentification implements WarningProducer {
     /**
      * The collection that created this object.
      */
-    final DimensionSlices<DimensionIdentification> owner;
+    final DimensionSet owner;
 
     /**
-     * Creates a new {@code DimensionIdentification} instance. It is caller responsibility
-     * to ensure that the type of the collection element is the type of the class being
-     * instantiated.
+     * Creates a new {@code DimensionIdentification} instance for the given API. This
+     * constructor is protected for subclasses usage only. The public API for fetching
+     * new instances is the {@link DimensionSet#getOrCreate(DimensionSlice.API)} method.
      *
-     * @param owner The collection that created this object.
+     * @param  owner The collection that created this object.
+     * @param  api The API to assign to this dimension.
+     * @throws IllegalArgumentException If an other dimension is already assigned to the given API.
      */
-    @SuppressWarnings({"unchecked","rawtypes"})
-    DimensionIdentification(final DimensionSlices<? extends DimensionIdentification> owner) {
-        this.owner = (DimensionSlices) owner;
+    protected DimensionIdentification(final DimensionSet owner, final API api)
+            throws IllegalArgumentException
+    {
+        if (owner == null) {
+            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "owner"));
+        }
+        this.owner = owner;
+        if (!api.equals(API.NONE)) {
+            final int ordinal = api.ordinal();
+            if (owner.apiMapping[ordinal] != null) {
+                throw new IllegalArgumentException(getErrorResources()
+                        .getString(Errors.Keys.VALUE_ALREADY_DEFINED_$1, api));
+            }
+            owner.apiMapping[ordinal] = this;
+        }
+    }
+
+    /**
+     * Creates a new instance which is not assigned to any API.
+     * This constructor is for {@link DimensionSlice} creation.
+     *
+     * @param  owner The collection that created this object.
+     */
+    DimensionIdentification(final DimensionSet owner) {
+        this.owner = owner;
     }
 
     /**
@@ -221,16 +254,25 @@ public class DimensionIdentification implements WarningProducer {
      * @param identifiers The identifiers to remove.
      */
     public void removeDimensionId(final Object... identifiers) {
-        final Map<Object,DimensionIdentification> identifiersMap = owner.identifiersMap;
-        if (identifiersMap != null) {
-            for (final Object identifier : identifiers) {
-                final DimensionIdentification old = identifiersMap.remove(identifier);
-                if (old != null && !equals(old)) {
-                    identifiersMap.put(identifier, old); // Restore the previous state.
-                }
+        owner.removeDimensionId(this, identifiers);
+    }
+
+    /**
+     * Returns all identifiers for this dimension. The array returned by this method contains
+     * the arguments given to any {@code addDimensionId(...)} method call on this instance.
+     *
+     * @return All identifiers for this dimension.
+     */
+    public Object[] getDimensionIds() {
+        final Map<Object,DimensionIdentification> identifiersMap = owner.identifiersMap();
+        final Object[] identifiers = new Object[identifiersMap.size()];
+        int count = 0;
+        for (final Map.Entry<Object,DimensionIdentification> entry : identifiersMap.entrySet()) {
+            if (equals(entry.getValue())) {
+                identifiers[count++] = entry.getKey();
             }
         }
-        owner.refresh();
+        return XArrays.resize(identifiers, count);
     }
 
     /**
@@ -270,7 +312,7 @@ public class DimensionIdentification implements WarningProducer {
          * index is found in the process, it will be returned immediately.
          */
         Set<Object> identifiers = null;
-        for (final Map.Entry<Object,DimensionIdentification> entry : owner.identifiersMap.entrySet()) {
+        for (final Map.Entry<Object,DimensionIdentification> entry : owner.identifiersMap().entrySet()) {
             if (equals(entry.getValue())) {
                 final Object key = entry.getKey();
                 if (key instanceof Integer) {
@@ -311,7 +353,7 @@ public class DimensionIdentification implements WarningProducer {
                 }
                 position++;
             }
-            final Integer dimension = DimensionSlices.first(found, this, DimensionSlice.class, "findDimensionIndex");
+            final Integer dimension = DimensionSet.first(found, this, DimensionIdentification.class, "findDimensionIndex");
             if (dimension != null) {
                 return dimension;
             }
@@ -335,7 +377,7 @@ public class DimensionIdentification implements WarningProducer {
      */
     @Override
     public boolean warningOccurred(final LogRecord record) {
-        return Warnings.log(owner.parameters, record);
+        return Warnings.log(this, record);
     }
 
     /**
@@ -356,7 +398,7 @@ public class DimensionIdentification implements WarningProducer {
     final StringBuilder toStringBuilder() {
         final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(this)).append("[id={");
         boolean addSeparator = false;
-        for (final Map.Entry<Object,DimensionIdentification> entry : owner.identifiersMap.entrySet()) {
+        for (final Map.Entry<Object,DimensionIdentification> entry : owner.identifiersMap().entrySet()) {
             if (entry.getValue() == this) {
                 Object key = entry.getKey();
                 final boolean addQuotes = (key instanceof CharSequence);

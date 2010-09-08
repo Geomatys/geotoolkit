@@ -17,19 +17,94 @@
  */
 package org.geotoolkit.image.io;
 
+import javax.imageio.IIOParam;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 
 
 /**
  * Interface for {@link ImageReader} and {@link ImageWriter} implementations handling data
- * which can have more than two dimensions.
+ * which can have more than two dimensions. The supplemental dimensions can be accessed as
+ * bands, as image index or using the Geotk-specific {@link DimensionSlice} API.
+ *
+ * {@section Assigning a third dimension to bands}
+ * Whatever a third dimension is assigned to bands or not is plugin-specific. Plugins that have
+ * no concept of bands (like NetCDF which has the concept of <var>n</var>-dimensional data cube
+ * instead) can do that. For example in a dataset having (<var>x</var>, <var>y</var>, <var>z</var>,
+ * <var>t</var>) dimensions, it may be useful to handle the <var>z</var> dimension as bands. After
+ * the method calls below, users can select one or many elevation indices through the standard
+ * {@link IIOParam#setSourceBands(int[])} API. Compared to the {@link DimensionSlice} API, it
+ * allows loading more than one slice in one read operation.
+ *
+ * {@preformat java
+ *     MultidimensionalImageStore reader = ...;
+ *     DimensionIdentification bandsDimension = reader.getDimensionForAPI(DimensionSlice.API.BANDS);
+ *     bandsDimension.addDimensionId(2); // 0-based index of the third dimension.
+ * }
+ *
+ * When a dimension is assigned to bands as in the above example, implementations of
+ * {@link ImageReader#getDefaultReadParam()} and {@link ImageWriter#getDefaultWriteParam()}
+ * shall initialize the {@linkplain IIOParam#sourceBands} array to {@code {0}} (meaning to
+ * fetch only the first band by default), which is desired since the number of bands in NetCDF
+ * files is typically large and those bands are not color components. This is different than
+ * the usual {@code IIOParam} behavior which is to initialize source bands to {@code null}
+ * (meaning to fetch all bands).
+ *
+ * {@note The rule described above is not a special case. It is a natural consequence of
+ *        the fact that the default index of <strong>every</strong> dimension slice in 0.}
+ *
+ * After the <var>z</var> dimension in the above example has been assigned to the bands API,
+ * the bands can be used as below:
+ * <p>
+ * <ul>
+ *   <li>The (<var>x</var>,<var>y</var>) plane at <var>z</var><sub>{@code sourceBands[0]}</sub> is stored in band 0.</li>
+ *   <li>The (<var>x</var>,<var>y</var>) plane at <var>z</var><sub>{@code sourceBands[1]}</sub> is stored in band 1.</li>
+ *   <li><i>etc.</i></li>
+ * </ul>
+ *
+ * {@section Implementations}
+ * {@code ImageReader} and {@code ImageWriter} implementors can determine which (if any) dimension
+ * index has been assigned to the bands API by using the code below:
+ *
+ * {@preformat java
+ *     DimensionSet dimensions = ...; // Typically an ImageReader/Writer field.
+ *     DimensionIdentification bandsDimension = dimensions.get(DimensionSlice.API.BANDS);
+ *     if (bandsDimension != null) {
+ *         Collection<?> propertiesOfAxes = ...; // This is plugin-specific.
+ *         int index = bandsDimension.findDimensionIndex(propertiesOfAxes);
+ *         if (index >= 0) {
+ *             // We have found the dimension index of bands.
+ *         }
+ *     }
+ * }
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.15
+ *
+ * @see DimensionSlice
+ * @see SpatialImageReader#getDimension(int)
  *
  * @since 3.15
  * @module
  */
 public interface MultidimensionalImageStore {
+    /**
+     * Returns the dimension assigned to the given API. If a dimension has been previously created
+     * for the given API, it is returned. Otherwise a new dimension is created and returned.
+     *
+     * @param  api The API for which to return a dimension.
+     * @return The dimension assigned to the given API.
+     */
+    DimensionIdentification getDimensionForAPI(DimensionSlice.API api);
+
+    /**
+     * Returns the API assigned to the given dimension identifiers. If more than one dimension
+     * is found for the given identifiers, then a {@linkplain SpatialImageReader#warningOccurred
+     * warning is emitted} and this method returns the first dimension matching the given
+     * identifiers. If no dimension is found, {@code null} is returned.
+     *
+     * @param  identifiers The identifiers of the dimension to query.
+     * @return The API assigned to the given dimension, or {@link DimensionSlice.API#NONE} if none.
+     */
+    DimensionSlice.API getAPIForDimension(Object... identifiers);
 }
