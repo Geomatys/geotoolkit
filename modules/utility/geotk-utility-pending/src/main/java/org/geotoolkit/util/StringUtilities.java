@@ -19,7 +19,10 @@ package org.geotoolkit.util;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,6 +36,11 @@ import java.util.regex.Pattern;
  * @since 3.07
  */
 public final class StringUtilities {
+
+    public static final String TREE_BLANK = "\u00A0\u00A0\u00A0\u00A0";
+    public static final String TREE_LINE  = "\u00A0\u00A0\u2502\u00A0";
+    public static final String TREE_CROSS = "\u00A0\u00A0\u251C\u2500";
+    public static final String TREE_END   = "\u00A0\u00A0\u2514\u2500";
 
     private static final int[] EMPTY_INT_ARRAY = new int[0];
     
@@ -427,4 +435,36 @@ public final class StringUtilities {
         result.append(firstToUpper(code));
         return result.toString();
     }
+
+    public static String toStringTree(Object ... objects){
+        return toStringTree(Arrays.asList(objects));
+    }
+
+    public static String toStringTree(Collection<?> objects){
+        final StringBuilder sb = new StringBuilder();
+
+        final int size = objects.size();
+
+        final Iterator ite = objects.iterator();
+        int i=1;
+        while(ite.hasNext()){
+            String sub = ite.next().toString();
+
+            if(i==size){
+                sb.append(TREE_END);
+                //move text to the right
+                sub = sub.replaceAll("\n", "\n"+TREE_BLANK);
+                sb.append(sub);
+            }else{
+                sb.append(TREE_CROSS);
+                //move text to the right
+                sub = sub.replaceAll("\n", "\n"+TREE_LINE);
+                sb.append(sub);
+                sb.append('\n');
+            }
+            i++;
+        }
+        return sb.toString();
+    }
+
 }

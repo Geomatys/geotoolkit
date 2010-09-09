@@ -29,6 +29,7 @@ import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.StyleListener;
 import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.Utilities;
 
 import org.geotoolkit.util.collection.NotifiedCheckedList;
@@ -396,12 +397,11 @@ class DefaultMutableUserLayer implements MutableUserLayer{
         }
         builder.append(" StyleSize=");
         builder.append(styles.size());
-        builder.append("]\n");
+        builder.append(']');
 
-        for(MutableStyle style : styles){
-            String sub = "\u2514\u2500\u2500" + style.toString(); //move text to the right
-            sub = sub.replaceAll("\n", "\n\u00A0\u00A0\u00A0"); //move text to the right
-            builder.append(sub);
+        if(!styles.isEmpty()){
+            builder.append('\n');
+            builder.append(StringUtilities.toStringTree(styles));
         }
 
         return builder.toString();
