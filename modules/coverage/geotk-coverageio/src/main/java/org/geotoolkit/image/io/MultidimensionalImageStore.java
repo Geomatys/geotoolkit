@@ -44,7 +44,7 @@ import javax.imageio.ImageWriter;
  *
  * When a dimension is assigned to bands as in the above example, implementations of
  * {@link ImageReader#getDefaultReadParam()} and {@link ImageWriter#getDefaultWriteParam()}
- * shall initialize the {@linkplain IIOParam#sourceBands} array to {@code {0}} (meaning to
+ * shall initialize the {@link IIOParam#sourceBands} array to {@code {0}} (meaning to
  * fetch only the first band by default), which is desired since the number of bands in NetCDF
  * files is typically large and those bands are not color components. This is different than
  * the usual {@code IIOParam} behavior which is to initialize source bands to {@code null}

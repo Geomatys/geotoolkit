@@ -924,7 +924,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
      * @param  value The object for which to get an estimation of its cost.
      * @return The estimated cost of the given object.
      *
-     * @see java.lang.instrument.Instrumentation#getObjectSize
+     * @see java.lang.instrument.Instrumentation#getObjectSize(Object)
      */
     protected int cost(final V value) {
         return 1;

@@ -67,9 +67,8 @@ import static org.geotoolkit.image.io.DimensionSlice.API;
  *
  * More than one identifier can be used in order to increase the chance of finding the dimension.
  * For example in order to fetch the <var>z</var> dimension, it may be necessary to specify two
- * names: {@code "height"} and {@code "depth"}. In case of ambiguity, a
- * {@linkplain SpatialImageReader#warningOccurred warning will be emitted} to any registered
- * listeners at image reading or writing time.
+ * names: {@code "height"} and {@code "depth"}. In case of ambiguity, a {@linkplain #warningOccurred
+ * warning will be emitted} to any registered listeners at image reading or writing time.
  * <p>
  * See the {@link DimensionSlice} javadoc for usage examples.
  *

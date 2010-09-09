@@ -45,7 +45,7 @@ import static org.geotoolkit.image.io.DimensionSlice.API;
  * to be accessed directly by users.
  * <p>
  * {@code DimensionSet} is not modifiable through the {@link Set} interface, since it doesn't
- * support the {@link Map#add add} method. However new elements can be created by calls to the
+ * support the {@link Set#add add} method. However new elements can be created by calls to the
  * {@link #getOrCreate(DimensionSlice.API)} method.
  *
  * @author Martin Desruisseaux (Geomatys)
