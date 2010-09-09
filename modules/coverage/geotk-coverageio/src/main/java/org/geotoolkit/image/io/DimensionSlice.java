@@ -279,13 +279,24 @@ public class DimensionSlice extends DimensionIdentification {
      */
     @Deprecated
     public final API getAPI() {
-        final DimensionIdentification[] apiMapping = owner.apiMapping;
+        final DimensionIdentification[] apiMapping = owner.apiMapping(false);
         if (apiMapping != null) {
             for (int i=apiMapping.length; --i>=0;) {
                 if (apiMapping[i] == this) {
                     return API.VALIDS[i];
                 }
             }
+        }
+        // Note: code below needs to stay, maybe in a private method.
+        final IIOParam param = getParameters();
+        Object candidate = null;
+        if (param instanceof SpatialImageReadParam) {
+            candidate = ((SpatialImageReadParam) param).reader;
+        } else if (param instanceof SpatialImageWriteParam) {
+            candidate = ((SpatialImageWriteParam) param).writer;
+        }
+        if (candidate instanceof MultidimensionalImageStore) {
+            return ((MultidimensionalImageStore) candidate).getAPIForDimension(getDimensionIds());
         }
         return API.NONE;
     }
@@ -313,10 +324,7 @@ public class DimensionSlice extends DimensionIdentification {
         final API api = getAPI();
         if (!newAPI.equals(api)) { // We want a NullPointerException if newAPI is null.
             final int index = getSliceIndex(api);
-            DimensionIdentification[] apiMapping = owner.apiMapping;
-            if (apiMapping == null) {
-                owner.apiMapping = apiMapping = new DimensionSlice[API.VALIDS.length];
-            }
+            final DimensionIdentification[] apiMapping = owner.apiMapping(true);
             for (int i=apiMapping.length; --i>=0;) {
                 if (apiMapping[i] == this) {
                     apiMapping[i] = null;

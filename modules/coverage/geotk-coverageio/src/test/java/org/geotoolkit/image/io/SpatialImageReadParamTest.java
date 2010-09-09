@@ -17,12 +17,16 @@
  */
 package org.geotoolkit.image.io;
 
-import java.awt.Point;
+import java.util.Set;
 import java.util.List;
 import java.util.Arrays;
-import java.util.Set;
+import java.awt.Point;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageReadParam;
 
 import org.junit.*;
+
+import org.geotoolkit.image.io.DimensionSlice.API;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.test.Commons.*;
@@ -30,10 +34,10 @@ import static org.geotoolkit.image.io.DimensionSlice.API.*;
 
 
 /**
- * Tests {@link SpatialImageReadParam}.
+ * Tests {@link SpatialImageReadParam}. This class tests also (indirectly) {@link DimensionSet}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.15
  *
  * @since 3.08
  */
@@ -55,6 +59,35 @@ public final class SpatialImageReadParamTest {
      */
     @Test
     public void testAssignBands() {
+        final Reader reader = new Reader();
+        assertTrue (reader.getAPIForDimensions().isEmpty());
+        assertFalse(reader.getAPIForDimensions().contains(BANDS));
+        SpatialImageReadParam param = reader.getDefaultReadParam();
+        assertNull(param.getSourceBands());
+        /*
+         * Assign the API to bands, and check again newly-created parameters.
+         */
+        reader.getDimensionForAPI(BANDS).addDimensionId("depth");
+        assertTrue(reader.getAPIForDimensions().contains(BANDS));
+        param = reader.getDefaultReadParam();
+        assertArrayEquals(new int[1], param.getSourceBands());
+        /*
+         * When a dimension is assigned to bands, the slice index
+         * shall be the first band.
+         */
+        param.setSourceBands(new int[] {8, 4, 2});
+        final DimensionSlice bandsSlice = param.newDimensionSlice();
+        assertEquals(0, bandsSlice.getSliceIndex());
+        bandsSlice.addDimensionId("depth");
+        assertEquals(8, bandsSlice.getSliceIndex());
+    }
+
+    /**
+     * @deprecated To remove after we removed deprecated API.
+     */
+    @Test
+    @Deprecated
+    public void testLegacyAssignBands() {
         final SpatialImageReadParam param = new SpatialImageReadParam(null);
         assertNull(param.getDimensionSliceForAPI(BANDS));
         assertNull(param.getSourceBands());
@@ -164,5 +197,47 @@ public final class SpatialImageReadParamTest {
             "  ├─ DimensionSlice[id={“time”}, sliceIndex=20]\n" +
             "  ├─ DimensionSlice[id={“longitude”}, sliceIndex=100, API=COLUMNS]\n" +
             "  └─ DimensionSlice[id={“latitude”}, sliceIndex=200, API=ROWS]"), param.toString());
+    }
+
+    /**
+     * A dummy implementation of {@link SpatialImageReader} which implements the
+     * {@link MultidimensionalImageStore} interface.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.15
+     *
+     * @since 3.15
+     */
+    private static final class Reader extends SpatialImageReader implements MultidimensionalImageStore {
+        private final DimensionSet dimensions;
+
+        public Reader() {
+            super(null);
+            dimensions = new DimensionSet(this);
+        }
+
+        @Override public DimensionIdentification getDimensionForAPI(API api) {
+            return dimensions.getOrCreate(api);
+        }
+
+        @Override public API getAPIForDimension(Object... identifiers) {
+            return dimensions.getAPI(identifiers);
+        }
+
+        @Override public Set<API> getAPIForDimensions() {
+            return dimensions.getAPIs();
+        }
+
+        @Override public int getWidth(int imageIndex) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override public int getHeight(int imageIndex) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override public BufferedImage read(int imageIndex, ImageReadParam param) {
+            throw new UnsupportedOperationException();
+        }
     }
 }

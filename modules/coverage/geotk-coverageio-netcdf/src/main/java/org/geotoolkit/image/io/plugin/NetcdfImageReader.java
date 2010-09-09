@@ -61,6 +61,7 @@ import ucar.nc2.NetcdfFile;
 import org.geotoolkit.image.io.Protocol;
 import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.image.io.FileImageReader;
+import org.geotoolkit.image.io.DimensionSet;
 import org.geotoolkit.image.io.DimensionIdentification;
 import org.geotoolkit.image.io.MultidimensionalImageStore;
 import org.geotoolkit.image.io.NamedImageStore;
@@ -142,6 +143,11 @@ public class NetcdfImageReader extends FileImageReader implements
     private static final int Y_DIMENSION = 2;
 
     /**
+     * The API to use for selecting dimensions above the two standard (column, row) dimensions.
+     */
+    private final DimensionSet dimensionsForAPI;
+
+    /**
      * The dimension <strong>relative to the rank</strong> in {@link #variable} to use for the
      * bands. This value is computed by {@link #initZDimension} from the user-supplied parameters.
      * <p>
@@ -149,7 +155,7 @@ public class NetcdfImageReader extends FileImageReader implements
      * <ul>
      *   <li>0 if not yet computed.</li>
      *   <li>Any negative value if we have determined that there is no dimension for bands.
-     *       This is a sentinal value for avoiding to compute it again.</li>
+     *       This is a sentinel value for avoiding to compute it again.</li>
      * </ul>
      */
     private int zDimension;
@@ -205,32 +211,38 @@ public class NetcdfImageReader extends FileImageReader implements
      */
     public NetcdfImageReader(final Spi spi) {
         super(spi);
+        dimensionsForAPI = new DimensionSet(this);
     }
 
     /**
-     * Returns the dimension assigned to the given API. If a dimension has been previously created
-     * for the given API, it is returned. Otherwise a new dimension is created and returned.
+     * Returns the dimension assigned to the given API. The NetCDF reader supports usage of the
+     * {@link DimensionSlice.API#BANDS BANDS} and {@link DimensionSlice.API#IMAGES IMAGES} API.
      *
-     * @param  api The API for which to return a dimension.
-     * @return The dimension assigned to the given API.
+     * @since 3.15
      */
     @Override
     public DimensionIdentification getDimensionForAPI(final DimensionSlice.API api) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return dimensionsForAPI.getOrCreate(api);
     }
 
     /**
-     * Returns the API assigned to the given dimension identifiers. If more than one dimension
-     * is found for the given identifiers, then a {@linkplain #warningOccurred warning is emitted}
-     * and this method returns the first dimension matching the given identifiers. If no dimension
-     * is found, {@code null} is returned.
+     * Returns the API assigned to the given dimension identifiers, or {@code null} if none.
      *
-     * @param  identifiers The identifiers of the dimension to query.
-     * @return The API assigned to the given dimension, or {@link DimensionSlice.API#NONE} if none.
+     * @since 3.15
      */
     @Override
     public DimensionSlice.API getAPIForDimension(Object... identifiers) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return dimensionsForAPI.getAPI(identifiers);
+    }
+
+    /**
+     * Returns the set of APIs for which at least one dimension has identifiers.
+     *
+     * @since 3.15
+     */
+    @Override
+    public Set<DimensionSlice.API> getAPIForDimensions() {
+        return dimensionsForAPI.getAPIs();
     }
 
     /**

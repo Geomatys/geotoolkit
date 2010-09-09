@@ -104,11 +104,12 @@ public class DimensionIdentification implements WarningProducer {
         this.owner = owner;
         if (!api.equals(API.NONE)) {
             final int ordinal = api.ordinal();
-            if (owner.apiMapping[ordinal] != null) {
+            final DimensionIdentification[] apiMapping = owner.apiMapping(true);
+            if (apiMapping[ordinal] != null) {
                 throw new IllegalArgumentException(getErrorResources()
                         .getString(Errors.Keys.VALUE_ALREADY_DEFINED_$1, api));
             }
-            owner.apiMapping[ordinal] = this;
+            apiMapping[ordinal] = this;
         }
     }
 
@@ -272,6 +273,20 @@ public class DimensionIdentification implements WarningProducer {
             }
         }
         return XArrays.resize(identifiers, count);
+    }
+
+    /**
+     * Returns {@code true} if this dimension contains at least one identifier. Invoking
+     * this method is equivalent to the code below, but is potentially more efficient:
+     *
+     * {@preformat java
+     *     boolean hasDimensionIds = (getDimensionIds().length != 0);
+     * }
+     *
+     * @return {@code true} if this dimension contains at least one identifier.
+     */
+    public boolean hasDimensionIds() {
+        return owner.identifiersMap().values().contains(this);
     }
 
     /**

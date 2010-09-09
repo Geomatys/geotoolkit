@@ -136,10 +136,12 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
     private Set<SampleConversionType> allowedConversions;
 
     /**
-     * The image reader which created the parameters, or {@code null} if unknown.
-     * This is used for emitting warnings.
+     * The image reader for which this {@code SpatialImageReadParam} instance
+     * has been created, or {@code null} if unknown.
+     *
+     * @since 3.15
      */
-    private final ImageReader reader;
+    protected final ImageReader reader;
 
     /**
      * Creates a new, initially empty, set of parameters.
@@ -148,6 +150,15 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      */
     public SpatialImageReadParam(final ImageReader reader) {
         this.reader = reader;
+        /*
+         * If the bands API is used for selecting slices in a extra dimension, set
+         * the default slice index to zero (see MultidimensionalImageStore javadoc).
+         */
+        if (reader instanceof MultidimensionalImageStore && ((MultidimensionalImageStore) reader)
+                .getAPIForDimensions().contains(DimensionSlice.API.BANDS))
+        {
+            sourceBands = new int[1];
+        }
     }
 
     /**

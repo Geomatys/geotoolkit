@@ -29,17 +29,19 @@ import org.geotoolkit.internal.image.io.Warnings;
  * This is a place-holder for future developments.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.15
  *
  * @since 3.08
  * @module
  */
 public class SpatialImageWriteParam extends ImageWriteParam implements WarningProducer {
     /**
-     * The image writer which created the parameters, or {@code null} if unknown.
-     * This is used for emitting warnings.
+     * The image writer for which this {@code SpatialImageWriteParam} instance
+     * has been created, or {@code null} if unknown.
+     *
+     * @since 3.15
      */
-    private final ImageWriter writer;
+    protected final ImageWriter writer;
 
     /**
      * Creates a new, initially empty, set of parameters.
@@ -49,6 +51,15 @@ public class SpatialImageWriteParam extends ImageWriteParam implements WarningPr
     public SpatialImageWriteParam(final ImageWriter writer) {
         super((writer != null) ? writer.getLocale() : null);
         this.writer = writer;
+        /*
+         * If the bands API is used for selecting slices in a extra dimension, set
+         * the default slice index to zero (see MultidimensionalImageStore javadoc).
+         */
+        if (writer instanceof MultidimensionalImageStore && ((MultidimensionalImageStore) writer)
+                .getAPIForDimensions().contains(DimensionSlice.API.BANDS))
+        {
+            sourceBands = new int[1];
+        }
     }
 
     /**

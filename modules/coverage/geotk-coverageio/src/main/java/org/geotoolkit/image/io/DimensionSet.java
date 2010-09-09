@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.AbstractSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.NoSuchElementException;
 import java.util.Locale;
 import java.util.logging.LogRecord;
 import javax.imageio.IIOParam;
@@ -42,8 +43,44 @@ import static org.geotoolkit.image.io.DimensionSlice.API;
  * The set of {@link DimensionIdentification} instances managed by a given
  * {@link MultidimensionalImageStore} instance. This class is provided for
  * {@code MultidimensionalImageStore} implementations and usually don't need
- * to be accessed directly by users.
- * <p>
+ * to be accessed directly by users. The code snippet below gives an example
+ * of implementation using a {@code DimensionSet}:
+ *
+ * {@preformat java
+ *     public class MyReader extends SpatialImageReader implements MultidimensionalImageStore {
+ *         private final DimensionSet dimensionsForAPI;
+ *
+ *         public SpatialImageReader(Spi provider) {
+ *             super(provider);
+ *             dimensionsForAPI = new DimensionSet(this);
+ *         }
+ *
+ *         public DimensionIdentification getDimensionForAPI(DimensionSlice.API api) {
+ *             return dimensionsForAPI.getOrCreate(api);
+ *         }
+ *
+ *         public DimensionSlice.API getAPIForDimension(Object... identifiers) {
+ *             return dimensionsForAPI.getAPI(identifiers);
+ *         }
+ *
+ *         public Set<DimensionSlice.API> getAPIForDimensions() {
+ *             return dimensionsForAPI.getAPIs();
+ *         }
+ *
+ *         public BufferedImage read(int imageIndex, ImageReadParam param) {
+ *             DimensionIdentification bandsDimension = dimensionsForAPI.get(DimensionSlice.API.BANDS);
+ *             if (bandsDimension != null) {
+ *                 Collection<?> propertiesOfAxes = ...; // This is plugin-specific.
+ *                 int index = bandsDimension.findDimensionIndex(propertiesOfAxes);
+ *                 if (index >= 0) {
+ *                     // We have found the dimension index of bands.
+ *                 }
+ *             }
+ *             // Continue the process of reading the image...
+ *         }
+ *     }
+ * }
+ *
  * {@code DimensionSet} is not modifiable through the {@link Set} interface, since it doesn't
  * support the {@link Set#add add} method. However new elements can be created by calls to the
  * {@link #getOrCreate(DimensionSlice.API)} method.
@@ -75,10 +112,10 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
 
     /**
      * For <var>n</var>-dimensional images, the standard Java API to use for setting the index.
-     * Will be created only when first needed. The length of this array shall be equals to the
-     * length of the {@link DimensionSlice.API#VALIDS} array.
+     * Will be created only when first needed. The length of its internal array shall be equals
+     * to the length of the {@link DimensionSlice.API#VALIDS} array.
      */
-    DimensionIdentification[] apiMapping;
+    APIs apiMapping;
 
     /**
      * The dimensions set, or {@code null} if not yet computed.
@@ -187,7 +224,7 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
             throw new NullArgumentException(Warnings.message(this, Errors.Keys.NULL_ARGUMENT_$1, "api"));
         }
         if (!api.equals(API.NONE) && apiMapping != null) {
-            return apiMapping[api.ordinal()];
+            return apiMapping.dimensions[api.ordinal()];
         }
         return null;
     }
@@ -212,9 +249,9 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
 
     /**
      * Returns the API assigned to the given dimension identifiers. If more than one dimension
-     * is found for the given identifiers, then a {@linkplain SpatialImageReader#warningOccurred
-     * warning is emitted} and this method returns the first dimension matching the given
-     * identifiers. If no dimension is found, {@code null} is returned.
+     * is found for the given identifiers, then a {@linkplain #warningOccurred warning is emitted}
+     * and this method returns the first dimension matching the given identifiers. If no dimension
+     * is found, {@code null} is returned.
      *
      * @param  identifiers The identifiers of the dimension to query.
      * @return The API assigned to the given dimension, or {@link API#NONE} if none.
@@ -223,8 +260,9 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
         if (apiMapping != null) {
             final DimensionIdentification dimension = find(DimensionSet.class, "getAPI", identifiers);
             if (dimension != null) {
-                for (int i=apiMapping.length; --i>=0;) {
-                    if (apiMapping[i] == dimension) {
+                final DimensionIdentification[] dimensions = apiMapping.dimensions;
+                for (int i=dimensions.length; --i>=0;) {
+                    if (dimensions[i] == dimension) {
                         return API.VALIDS[i];
                     }
                 }
@@ -234,9 +272,119 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
     }
 
     /**
+     * Returns the set of APIs for which at least one dimension has identifiers. This
+     * is typically an empty set until the following code is invoked at least once:
+     *
+     * {@preformat java
+     *     getOrCreate(...).addDimensionId(...);
+     * }
+     *
+     * @return The API for which at least one dimension has identifiers.
+     */
+    public Set<API> getAPIs() {
+        if (apiMapping == null) {
+            apiMapping = new APIs();
+        }
+        return apiMapping;
+    }
+
+    /**
+     * Returns the dimension mapped to Image I/O API, or {@code null} if none.
+     */
+    final DimensionIdentification[] apiMapping(final boolean create) {
+        if (apiMapping == null) {
+            if (!create) {
+                return null;
+            }
+            apiMapping = new APIs();
+        }
+        return apiMapping.dimensions;
+    }
+
+    /**
+     * The set of API for which at least one dimension has been assigned an identifier.
+     */
+    private static final class APIs extends AbstractSet<API> {
+        /** The standard Java API to use for setting the index. */
+        final DimensionIdentification[] dimensions;
+
+        /** Creates a new initially empty set. */
+        APIs() {
+            dimensions = new DimensionIdentification[DimensionSlice.API.VALIDS.length];
+        }
+
+        /** Returns the number of elements in this set. */
+        @Override public int size() {
+            int count = 0;
+            for (final Iterator<API> it=iterator(); it.hasNext();) {
+                count++;
+            }
+            return count;
+        }
+
+        /** Returns an iterator over the elements. */
+        @Override public Iterator<API> iterator() {
+            return new Iter(dimensions);
+        }
+    }
+
+    /**
+     * The iterator over {@link APIs} elements.
+     */
+    private static final class Iter implements Iterator<API> {
+        /** A direct reference to the {@link APIs#apiMapping} array. */
+        private final DimensionIdentification[] dimensions;
+
+        /** Index of the next element to scan. */
+        private int index;
+
+        /** The next element to return, or {@code null} if none. */
+        private API next;
+
+        /** Creates a new iterator. */
+        Iter(final DimensionIdentification[] apiMapping) {
+            this.dimensions = apiMapping;
+            search();
+        }
+
+        /** Searches for the next element. */
+        private void search() {
+            while (index < dimensions.length) {
+                final int i = index++;
+                final DimensionIdentification dimension = dimensions[i];
+                if (dimension != null && dimension.hasDimensionIds()) {
+                    next = DimensionSlice.API.VALIDS[i];
+                    return; // Found the next element.
+                }
+            }
+            next = null; // No next element found.
+        }
+
+        /** Returns {@code true} if there is more elements to iterator. */
+        @Override public boolean hasNext() {
+            return (next != null);
+        }
+
+        /** Returns the next element in this iteration. */
+        @Override public API next() {
+            final API element = next;
+            if (element == null) {
+                throw new NoSuchElementException();
+            }
+            search();
+            return element;
+        }
+
+        /** Unsupported since the set is not modifiable. */
+        @Override public void remove() {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    /**
      * Returns the locale used for formatting error messages, or {@code null} if none.
      * The default implementation delegates to the store given at construction time,
-     * it it implements the {@link Localized} interface.
+     * if it implements the {@link Localized} interface.
      */
     @Override
     public Locale getLocale() {
