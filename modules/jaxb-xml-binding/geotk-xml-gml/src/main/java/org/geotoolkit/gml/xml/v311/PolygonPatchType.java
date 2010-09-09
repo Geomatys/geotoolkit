@@ -28,7 +28,9 @@ import org.geotoolkit.util.Utilities;
 
 
 /**
- * A PolygonPatch is a surface patch that is defined by a set of boundary curves and an underlying surface to which these curves adhere. The curves are coplanar and the polygon uses planar interpolation in its interior. Implements GM_Polygon of ISO 19107.
+ * A PolygonPatch is a surface patch that is defined by a set of boundary curves and an underlying surface to which these curves adhere.
+ * The curves are coplanar and the polygon uses planar interpolation in its interior.
+ * Implements GM_Polygon of ISO 19107.
  * 
  * <p>Java class for PolygonPatchType complex type.
  * 
