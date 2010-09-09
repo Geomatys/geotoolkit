@@ -62,7 +62,7 @@ final class TextRecordList {
     private final double[] max;
 
     /**
-     * The number of points in the axis represented by the given column. The sentinal value 0
+     * The number of points in the axis represented by the given column. The sentinel value 0
      * means that the number of points for an individual column has not yet been computed.
      * This information is typically computed only for {@link #xColumn} and {@link #yColumn}.
      */

@@ -47,7 +47,7 @@ import org.geotoolkit.lang.Immutable;
 @Immutable
 final class FactoryMethod {
     /**
-     * A dummy {@code FactoryMethod} used by {@link MetadataFactory} as a sentinal
+     * A dummy {@code FactoryMethod} used by {@link MetadataFactory} as a sentinel
      * values when we have determined that there is no factory method available.
      */
     static final FactoryMethod NULL = new FactoryMethod(null, null);

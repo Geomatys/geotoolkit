@@ -69,7 +69,7 @@ public class DefaultNameSpace implements NameSpace, Serializable {
 
     /**
      * The parent namespace, or {@code null} if the parent is the unique {@code GLOBAL} instance.
-     * We don't use direct reference to {@code GLOBAL} because {@code null} is used as a sentinal
+     * We don't use direct reference to {@code GLOBAL} because {@code null} is used as a sentinel
      * value for stopping iterative searches (using GLOBAL would have higher risk of never-ending
      * loops in case of bug), and in order to reduce the stream size during serialization.
      */

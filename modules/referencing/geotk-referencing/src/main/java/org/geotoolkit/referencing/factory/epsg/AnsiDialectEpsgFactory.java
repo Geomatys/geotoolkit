@@ -48,7 +48,7 @@ import org.geotoolkit.lang.ThreadSafe;
 @ThreadSafe(concurrent = false)
 public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
     /**
-     * Table names using as "sentinal value" for detecting the presence of an EPSG database.
+     * Table names using as "sentinel value" for detecting the presence of an EPSG database.
      * This array lists different possible names for the same table. The first entry must be
      * the MS-Access name. Other names may be in any order. They will be tried in reverse order.
      */
@@ -163,7 +163,7 @@ public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
 
     /**
      * Returns {@code true} if the EPSG database seems to exists. This method
-     * looks for the sentinal table documented in the {@link #autoconfig} method.
+     * looks for the sentinel table documented in the {@link #autoconfig} method.
      */
     static boolean exists(final DatabaseMetaData metadata, final String schema) throws SQLException {
         final ResultSet result = metadata.getTables(null, schema, null, new String[] {"TABLE"});
