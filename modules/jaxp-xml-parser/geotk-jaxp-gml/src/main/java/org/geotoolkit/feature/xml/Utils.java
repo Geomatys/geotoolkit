@@ -136,23 +136,28 @@ public class Utils {
             // GML geometry types
             } else if ("GeometryPropertyType".equals(name.getLocalPart())) {
                 return Geometry.class;
-            } else if ("MultiPoint".equals(name.getLocalPart())) {
+            } else if ("MultiPoint".equals(name.getLocalPart()) || "MultiPointPropertyType".equals(name.getLocalPart())) {
                 return MultiPoint.class;
-            } else if ("Point".equals(name.getLocalPart())) {
+            } else if ("Point".equals(name.getLocalPart()) || "PointPropertyType".equals(name.getLocalPart())) {
                 return Point.class;
-            } else if ("Curve".equals(name.getLocalPart())) {
+            } else if ("Curve".equals(name.getLocalPart()) || "CurvePropertyType".equals(name.getLocalPart())) {
                 return LineString.class;
-            } else if ("MultiGeometry".equals(name.getLocalPart())) {
+            } else if ("MultiGeometry".equals(name.getLocalPart()) || "MultiGeometryPropertyType".equals(name.getLocalPart())) {
                 return GeometryCollection.class;
-            } else if ("CompositeCurve".equals(name.getLocalPart())) {
+            } else if ("CompositeCurve".equals(name.getLocalPart()) || "CompositeCurvePropertyType".equals(name.getLocalPart())) {
                 return MultiLineString.class;
-            } else if ("Envelope".equals(name.getLocalPart())) {
+            } else if ("Envelope".equals(name.getLocalPart()) || "EnvelopePropertyType".equals(name.getLocalPart())) {
                 return Envelope.class;
-            } else if ("PolyHedralSurface".equals(name.getLocalPart())) {
+            } else if ("PolyHedralSurface".equals(name.getLocalPart()) || "PolyHedralSurfacePropertyType".equals(name.getLocalPart())) {
                 return MultiPolygon.class;
-            } else if ("Polygon".equals(name.getLocalPart())) {
+            } else if ("MultiSurfacePropertyType".equals(name.getLocalPart())) {
+                return MultiPolygon.class;
+            } else if ("MultiPolygonPropertyType".equals(name.getLocalPart())) {
+                return MultiPolygon.class;
+            } else if ("Polygon".equals(name.getLocalPart()) || "PolygonPropertyType".equals(name.getLocalPart())) {
                 return Polygon.class;
-            } else if ("Ring".equals(name.getLocalPart())) {
+            } else if ("Ring".equals(name.getLocalPart()) || "RingPropertyType".equals(name.getLocalPart()) || 
+                       "LinearRing".equals(name.getLocalPart()) || "LinearRingPropertyType".equals(name.getLocalPart())) {
                 return LinearRing.class;
 
             } else {

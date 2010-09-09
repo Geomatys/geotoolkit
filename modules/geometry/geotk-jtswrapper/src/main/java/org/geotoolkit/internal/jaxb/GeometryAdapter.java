@@ -6,10 +6,10 @@ import org.opengis.geometry.Geometry;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSEnvelope;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiCurve;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPoint;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPolygon;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPrimitive;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiSurface;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex.JTSCompositeCurve;
@@ -48,6 +48,9 @@ public class GeometryAdapter<T> extends XmlAdapter<GeometryAdapter, Geometry> {
 
     @XmlElementRef(name="MultiCurve", namespace = "http://www.opengis.net/gml")
     private JAXBElement<JTSMultiCurve> multiCurve;
+
+    @XmlElementRef(name="MultiPolygon", namespace = "http://www.opengis.net/gml")
+    private JAXBElement<JTSMultiPolygon> multiPolygon;
 
     @XmlElementRef(name="CompositeCurve", namespace = "http://www.opengis.net/gml")
     private JAXBElement<JTSCompositeCurve> compositeCurve;
@@ -91,6 +94,8 @@ public class GeometryAdapter<T> extends XmlAdapter<GeometryAdapter, Geometry> {
             this.polygon = FACTORY.createJTSPolygon((JTSPolygon) geom);
         } else if (geom instanceof JTSMultiPrimitive) {
             this.multiPrimitive = FACTORY.createJTSMultiGeometry((JTSMultiPrimitive) geom);
+        } else if (geom instanceof JTSMultiPolygon) {
+            this.multiPolygon = FACTORY.createJTSMultiPolygon((JTSMultiPolygon) geom);
         } else if (geom instanceof JTSRing) {
             this.ring = FACTORY.createJTSRing((JTSRing) geom);
         } else if (geom != null) {
@@ -121,6 +126,11 @@ public class GeometryAdapter<T> extends XmlAdapter<GeometryAdapter, Geometry> {
 
         } else if (v != null && v.multiCurve != null) {
             return (Geometry) v.multiCurve.getValue();
+
+        } else if (v != null && v.multiPolygon != null) {
+            JTSMultiPolygon m = (JTSMultiPolygon) v.multiPolygon.getValue();
+            m.applyCRSOnchild();
+            return m;
 
         } else if (v != null && v.envelope != null) {
             return (Geometry) v.envelope.getValue();
@@ -189,13 +199,16 @@ public class GeometryAdapter<T> extends XmlAdapter<GeometryAdapter, Geometry> {
             sb.append(polygon.getValue());
 
         } else if (polyhedralSurface != null) {
-            sb.append("polyHeadralSurface=>").append(polyhedralSurface.getValue());
+            sb.append("polyHedralSurface=>").append(polyhedralSurface.getValue());
 
         } else if (ring != null) {
             sb.append(ring.getValue());
         
         } else if (multiPrimitive != null) {
             sb.append(multiPrimitive.getValue());
+
+        } else if (multiPolygon != null) {
+            sb.append(multiPolygon.getValue());
         }
         return sb.toString();
     }

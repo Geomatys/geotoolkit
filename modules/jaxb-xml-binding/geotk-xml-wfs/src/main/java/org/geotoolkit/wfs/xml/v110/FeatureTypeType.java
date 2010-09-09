@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
 import org.geotoolkit.ows.xml.v100.KeywordsType;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -336,6 +337,94 @@ public class FeatureTypeType {
         return this.metadataURL;
     }
 
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof FeatureTypeType) {
+            final FeatureTypeType that = (FeatureTypeType) object;
+
+            return Utilities.equals(this._abstract, that._abstract) &&
+                   Utilities.equals(this.defaultSRS, that.defaultSRS) &&
+                   Utilities.equals(this.keywords, that.keywords) &&
+                   Utilities.equals(this.metadataURL, that.metadataURL) &&
+                   Utilities.equals(this.name, that.name) &&
+                   Utilities.equals(this.operations, that.operations) &&
+                   Utilities.equals(this.otherSRS, that.otherSRS) &&
+                   Utilities.equals(this.outputFormats, that.outputFormats) &&
+                   Utilities.equals(this.title, that.title) &&
+                   Utilities.equals(this.wgs84BoundingBox, that.wgs84BoundingBox) &&
+                   Utilities.equals(this.noSRS,  that.noSRS);
+            }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 79 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 79 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 79 * hash + (this._abstract != null ? this._abstract.hashCode() : 0);
+        hash = 79 * hash + (this.keywords != null ? this.keywords.hashCode() : 0);
+        hash = 79 * hash + (this.defaultSRS != null ? this.defaultSRS.hashCode() : 0);
+        hash = 79 * hash + (this.otherSRS != null ? this.otherSRS.hashCode() : 0);
+        hash = 79 * hash + (this.noSRS != null ? this.noSRS.hashCode() : 0);
+        hash = 79 * hash + (this.operations != null ? this.operations.hashCode() : 0);
+        hash = 79 * hash + (this.outputFormats != null ? this.outputFormats.hashCode() : 0);
+        hash = 79 * hash + (this.wgs84BoundingBox != null ? this.wgs84BoundingBox.hashCode() : 0);
+        hash = 79 * hash + (this.metadataURL != null ? this.metadataURL.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[featureTypeType]\n");
+        if(name != null) {
+            s.append("name:").append(name).append('\n');
+        }
+        if (title != null)
+            s.append("title:").append(title).append('\n');
+        if (_abstract != null)
+            s.append("_abstract:").append(_abstract).append('\n');
+        if (defaultSRS != null)
+            s.append("defaultSRS:").append(defaultSRS).append('\n');
+        if (keywords != null) {
+            s.append("keywords:").append('\n');
+            for (KeywordsType k : keywords) {
+                s.append(k).append('\n');
+            }
+        }
+       if (metadataURL != null) {
+            s.append("metadataURL:").append('\n');
+            for (MetadataURLType k : metadataURL) {
+                s.append(k).append('\n');
+            }
+        }
+        if (otherSRS != null) {
+            s.append("otherSRS:").append('\n');
+            for (String k : otherSRS) {
+                s.append(k).append('\n');
+            }
+        }
+        if (wgs84BoundingBox != null) {
+            s.append("wgs84BoundingBox:").append('\n');
+            for (WGS84BoundingBoxType k : wgs84BoundingBox) {
+                s.append(k).append('\n');
+            }
+        }
+        if (noSRS != null)
+            s.append("noSRS:").append(noSRS).append('\n');
+         if (operations != null)
+            s.append("operations:").append(operations).append('\n');
+         if (outputFormats != null)
+            s.append("outputFormats:").append(outputFormats).append('\n');
+        return s.toString();
+    }
 
     /**
      * <p>Java class for anonymous complex type.

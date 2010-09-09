@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -61,6 +62,42 @@ public class OutputFormatListType {
             format = new ArrayList<String>();
         }
         return this.format;
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof OutputFormatListType) {
+            final OutputFormatListType that = (OutputFormatListType) object;
+
+            return Utilities.equals(this.format, that.format);
+            }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 53 * hash + (this.format != null ? this.format.hashCode() : 0);
+        return hash;
+    }
+
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[OutputFormatListType]\n");
+        if(format != null) {
+            s.append("format:\n");
+            for (String op : format) {
+                s.append(op).append('\n');
+            }
+        }
+        return s.toString();
     }
 
 }

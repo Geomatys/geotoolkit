@@ -26,7 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * A Polygon is a special surface that is defined by a single surface patch. The boundary of this patch is coplanar and the polygon uses planar interpolation in its interior. It is backwards compatible with the Polygon of GML 2, GM_Polygon of ISO 19107 is implemented by PolygonPatch.
+ * A Polygon is a special surface that is defined by a single surface patch. 
+ * The boundary of this patch is coplanar and the polygon uses planar interpolation in its interior.
+ * It is backwards compatible with the Polygon of GML 2, GM_Polygon of ISO 19107 is implemented by PolygonPatch.
  * 
  * <p>Java class for PolygonType complex type.
  * 

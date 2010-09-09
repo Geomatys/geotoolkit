@@ -444,7 +444,11 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         @Override
         public boolean accept(File dir, String name) {
             File f = new File(dir, name);
-            return (name.startsWith(prefix + "index-") && f.isDirectory());
+            if (!prefix.isEmpty() && prefix.equals("all")) {
+                return (name.indexOf("index-") != 0 && f.isDirectory());
+            } else {
+                return (name.startsWith(prefix + "index-") && f.isDirectory());
+            }
         }
     }
 }

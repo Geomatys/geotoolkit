@@ -10,6 +10,7 @@ import javax.xml.namespace.QName;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSEnvelope;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiCurve;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPoint;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPolygon;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPrimitive;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiSurface;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex.JTSCompositeCurve;
@@ -38,6 +39,7 @@ public class ObjectFactory {
     private static final QName MULTI_POINT_QNAME        = new QName("http://www.opengis.net/gml", "MultiPoint");
     private static final QName MULTI_CURVE_QNAME        = new QName("http://www.opengis.net/gml", "MultiCurve");
     private static final QName MULTI_SURFACE_QNAME      = new QName("http://www.opengis.net/gml", "MultiSurface");
+    private static final QName MULTI_POLYGON_QNAME        = new QName("http://www.opengis.net/gml", "MultiPolygon");
     private static final QName COMPOSITE_CURVE_QNAME    = new QName("http://www.opengis.net/gml", "CompositeCurve");
     private static final QName POLYHEDRAL_SURFACE_QNAME = new QName("http://www.opengis.net/gml", "PolyhedralSurface");
     private static final QName POLYGON_QNAME            = new QName("http://www.opengis.net/gml", "Polygon");
@@ -73,6 +75,10 @@ public class ObjectFactory {
 
     public JTSPolygon createJTSPolygon() {
         return new JTSPolygon();
+    }
+
+    public JTSMultiPolygon createJTSMultiPolygon() {
+        return new JTSMultiPolygon();
     }
 
     public PolygonType createPolygonType() {
@@ -136,6 +142,11 @@ public class ObjectFactory {
         return new JAXBElement<JTSMultiCurve>(MULTI_CURVE_QNAME, JTSMultiCurve.class, null, value);
     }
 
+    @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiPolygon")
+    public JAXBElement<JTSMultiPolygon> createJTSMultiPolygon(JTSMultiPolygon value) {
+        return new JAXBElement<JTSMultiPolygon>(MULTI_POLYGON_QNAME, JTSMultiPolygon.class, null, value);
+    }
+
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiGeometry")
     public JAXBElement<JTSMultiPrimitive> createJTSMultiGeometry(JTSMultiPrimitive value) {
         return new JAXBElement<JTSMultiPrimitive>(MULTI_GEOMETRY_QNAME, JTSMultiPrimitive.class, null, value);
@@ -185,6 +196,9 @@ public class ObjectFactory {
 
         } else if (value instanceof JTSMultiPrimitive) {
             return createJTSMultiGeometry((JTSMultiPrimitive) value);
+
+        } else if (value instanceof JTSMultiPolygon) {
+            return createJTSMultiPolygon((JTSMultiPolygon) value);
 
         } else if (value instanceof JTSPolygon) {
             return createJTSPolygon((JTSPolygon) value);

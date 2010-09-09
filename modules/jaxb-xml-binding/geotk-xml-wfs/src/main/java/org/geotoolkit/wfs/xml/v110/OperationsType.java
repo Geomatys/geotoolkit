@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -61,6 +62,41 @@ public class OperationsType {
             operation = new ArrayList<OperationType>();
         }
         return this.operation;
+    }
+
+    /**
+     * Verify if this entry is identical to specified object.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof OperationsType) {
+            final OperationsType that = (OperationsType) object;
+
+            return Utilities.equals(this.operation, that.operation);
+            }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 61 * hash + (this.operation != null ? this.operation.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder s = new StringBuilder("[OperationsType]\n");
+        if(operation != null) {
+            s.append("operation:\n");
+            for (OperationType op : operation) {
+                s.append(op).append('\n');
+            }
+        }
+        return s.toString();
     }
 
 }

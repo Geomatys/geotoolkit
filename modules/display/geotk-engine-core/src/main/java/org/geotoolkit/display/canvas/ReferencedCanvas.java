@@ -63,6 +63,7 @@ import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.referencing.operation.transform.IdentityTransform;
 import org.geotoolkit.display.primitive.AbstractReferencedGraphic;
+import org.geotoolkit.referencing.crs.DefaultDerivedCRS;
 import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
 
 
@@ -490,9 +491,9 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
             mt               = crsFactories.getMathTransformFactory().createAffineTransform(identity);
             deviceProperties = AbstractIdentifiedObject.getProperties(deviceCS, null);
             conversion       = new DefiningConversion(deviceProperties, affineMethod, mt);
-            deviceCRS        = crsFactories.getCRSFactory().createDerivedCRS(
-                                   deviceProperties, displayCRS, conversion, deviceCS);
-            // TODO: above call is heavy; maybe we should use direct instantiation.
+            deviceCRS        = new DefaultDerivedCRS(deviceProperties, conversion, displayCRS, mt, deviceCS);
+            // Note: the above call does not use MathTransformFactory, because it is invoked often
+            // and the call to WeakHashSet.unique(...) in DefaultMathTransformFactory is costly.
         } catch (FactoryException exception) {
             /*
              * Should never happen, because the CRS that we tried to create is somewhat basic

@@ -29,8 +29,8 @@ import static org.geotoolkit.temporal.object.TemporalConstants.*;
 
 
 /**
- * 
- * 
+ * Not thread safe.
+ *
  * @author Guilhem Legal
  * @author Mehdi Sidhoum
  */
@@ -56,42 +56,14 @@ public class PeriodUtilities {
      */
     public String getDatesRespresentation(SortedSet<Date> dates) {
         if (dates.comparator() != null) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Dates should be sorted naturaly without any custom comparator.");
         }
-        
-        final StringBuffer response = new StringBuffer();
-       /* Iterator<Date> it = dates.iterator();
-        if (!it.hasNext()) {
-            return "";
-        }
-        Date first = it.next();
-        Date previous = first;
-        long previousGap = 0;
-        long gap;
-        while (it.hasNext()) {
-            Date next = it.next();
-            gap = next.getTime() - previous.getTime();
-            if (gap == 0) {
-                continue;
-            }
-            if (gap < 0) {
-                throw new IllegalArgumentException();
-            }
-            if (previousGap == 0) {
-                previousGap = gap;
-            } else if (previousGap != gap) {
-                response.append(getPeriodDescription(first, previous, gap));
-                first = previous;
-            }
-            previous = next;
-        }
-        response.append(getPeriodDescription(first, previous, gap));*/
-            
-        
 
         if (dates.isEmpty()) {
             return "";
         }
+
+        final StringBuffer response = new StringBuffer();        
         
         Date first          = dates.first();
         Date previousDate   = first;
@@ -118,7 +90,7 @@ public class PeriodUtilities {
                         nbDataInGap = 1;
                     }
                 }
-                first       = previousDate;
+                first = previousDate;
 
             } else {
                 nbDataInGap++;
@@ -166,27 +138,27 @@ public class PeriodUtilities {
         //we look if the gap is more than one year (31536000000 ms)
         long temp = gap / YEAR_MS;
         if (temp > 1) {
-            response.append(temp).append("Y");
+            response.append(temp).append('Y');
             gap -= temp * YEAR_MS;
         }
 
         //we look if the gap is more than one month (2628000000 ms)
         temp = gap / MONTH_MS;
         if (temp >= 1) {
-            response.append(temp).append("M");
+            response.append(temp).append('M');
             gap -= temp * MONTH_MS;
         }
         //we look if the gap is more than one week (604800000 ms)
         temp = gap / WEEK_MS;
         if (temp >= 1) {
-            response.append(temp).append("W");
+            response.append(temp).append('W');
             gap -= temp * WEEK_MS;
         }
 
         //we look if the gap is more than one day (86400000 ms)
         temp = gap / DAY_MS;
         if (temp >= 1) {
-            response.append(temp).append("D");
+            response.append(temp).append('D');
             gap -= temp * DAY_MS;
         }
 
@@ -198,21 +170,21 @@ public class PeriodUtilities {
         //we look if the gap is more than one hour (3600000 ms)
         temp = gap / HOUR_MS;
         if (temp >= 1) {
-            response.append(temp).append("H");
+            response.append(temp).append('H');
             gap -= temp * HOUR_MS;
         }
 
         //we look if the gap is more than one min (60000 ms)
         temp = gap / MINUTE_MS;
         if (temp >= 1) {
-            response.append(temp).append("M");
+            response.append(temp).append('M');
             gap -= temp * MINUTE_MS;
         }
 
         //we look if the gap is more than one week (1000 ms)
         temp = gap / SECOND_MS;
         if (temp >= 1) {
-            response.append(temp).append("S");
+            response.append(temp).append('S');
             gap -= temp * SECOND_MS;
         }
         if (gap != 0) {
@@ -235,20 +207,22 @@ public class PeriodUtilities {
         while (tokens.hasMoreTokens()) {
             String dates = tokens.nextToken().trim();
 
-            if (dates.indexOf('/') == -1) {
-                response.add(dateFormat.parse(dates));
+            int slash = dates.indexOf('/');
 
+            if (slash == -1) {
+                response.add(dateFormat.parse(dates));
             } else {
 
                 //we get the begin position
-                final String begin = dates.substring(0, dates.indexOf('/'));
+                final String begin = dates.substring(0, slash);
                 final Date first = dateFormat.parse(begin);
-                dates = dates.substring(dates.indexOf('/') + 1);
+                dates = dates.substring(slash+1);
 
                 //we get the end position
-                final String end = dates.substring(0, dates.indexOf('/'));
+                slash = dates.indexOf('/');
+                final String end = dates.substring(0, slash);
                 final Date last = dateFormat.parse(end);
-                dates = dates.substring(dates.indexOf('/') + 1);
+                dates = dates.substring(slash+1);
 
                 //then we get the period Description
                 final long gap = getTimeFromPeriodDescription(dates);

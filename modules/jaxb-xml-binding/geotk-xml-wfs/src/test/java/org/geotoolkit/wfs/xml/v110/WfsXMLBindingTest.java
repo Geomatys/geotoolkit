@@ -34,7 +34,9 @@ import org.geotoolkit.ogc.xml.v110.PropertyIsLikeType;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
 
 //Junit dependencies
+import org.geotoolkit.wfs.xml.WFSBindingUtilities;
 import org.geotoolkit.wfs.xml.WFSMarshallerPool;
+import org.geotoolkit.wfs.xml.WFSVersion;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -86,10 +88,28 @@ public class WfsXMLBindingTest {
         WGS84BoundingBoxType bbox = new WGS84BoundingBoxType(29.8, -90.1, 30, -89.9);
         FeatureTypeType ft1 = new FeatureTypeType(new QName("http://www.opengis.net/ows-6/utds/0.3", "Building", "utds"), "", "urn:ogc:def:crs:EPSG::4979", otherSRS, Arrays.asList(bbox));
         featList.add(ft1);
+
+        FeatureTypeType ft2 = new FeatureTypeType(new QName("http://www.opengis.net/ows-6/utds/0.3", "AircraftTransportationComplex", "utds"), "", "urn:ogc:def:crs:EPSG::4979", otherSRS, Arrays.asList(bbox));
+        featList.add(ft2);
+
+        FeatureTypeType ft3 = new FeatureTypeType(new QName("http://www.opengis.net/ows-6/utds/0.3", "Fence", "utds"), "", "urn:ogc:def:crs:EPSG::4979", otherSRS, Arrays.asList(bbox));
+        featList.add(ft3);
+
         FeatureTypeListType featureList = new FeatureTypeListType(null, featList);
         expResult.setFeatureTypeList(featureList);
 
-        //assertEquals(expectedResult, result);
+        assertEquals(expResult.getFeatureTypeList().getFeatureType(), result.getFeatureTypeList().getFeatureType());
+        assertEquals(expResult.getFeatureTypeList(), result.getFeatureTypeList());
+        /*assertEquals(expResult.getOperationsMetadata(), result.getOperationsMetadata());
+        assertEquals(expResult.getFilterCapabilities(), result.getFilterCapabilities());
+        assertEquals(expResult, result);*/
+
+        // TEST with WFSBindingUtilities
+
+        is = WfsXMLBindingTest.class.getResourceAsStream("/org/constellation/wfs/v110/capabilities.xml");
+        result = WFSBindingUtilities.unmarshall(is, WFSVersion.v110);
+        assertEquals(expResult.getFeatureTypeList().getFeatureType(), result.getFeatureTypeList().getFeatureType());
+        assertEquals(expResult.getFeatureTypeList(), result.getFeatureTypeList());
 
     }
 

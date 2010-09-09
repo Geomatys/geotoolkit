@@ -37,6 +37,7 @@ import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSEnvelope;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiCurve;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPoint;
+import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPolygon;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiPrimitive;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.complex.JTSCompositeCurve;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSLineString;
@@ -1616,6 +1617,214 @@ public class JTSGeometryBindingTest {
         PolygonType temp = (PolygonType) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
 
         JTSPolygon result  = temp.getJTSPolygon();
+        assertEquals(expResult, result);
+    }
+
+   /**
+     * Test Ring Unmarshalling.
+     *
+     * @throws java.lang.Exception
+     */
+   @Test
+    public void MultiPolygonMarshalingTest() throws Exception {
+
+        CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572");
+        assertTrue(crs != null);
+
+        // EXTERIOR
+        JTSRing exterior1    = new JTSRing(crs);
+
+        JTSCurve c1 = new JTSCurve(crs);
+        JTSLineString c1l1 = new JTSLineString();
+        DirectPosition c1l1p1 = new GeneralDirectPosition(crs);
+        c1l1p1.setOrdinate(0, 401500);
+        c1l1p1.setOrdinate(1, 3334500);
+        DirectPosition c1l1p2 = new GeneralDirectPosition(crs);
+        c1l1p2.setOrdinate(0, 401700);
+        c1l1p2.setOrdinate(1, 3334850);
+        DirectPosition c1l1p3 = new GeneralDirectPosition(crs);
+        c1l1p3.setOrdinate(0, 402200);
+        c1l1p3.setOrdinate(1, 3335200);
+
+        DirectPosition c1l2p1 = new GeneralDirectPosition(crs);
+        c1l2p1.setOrdinate(0, 402320);
+        c1l2p1.setOrdinate(1, 3334850);
+        DirectPosition c1l2p2 = new GeneralDirectPosition(crs);
+        c1l2p2.setOrdinate(0, 402200);
+        c1l2p2.setOrdinate(1, 3335200);
+
+        c1l1.getControlPoints().add(c1l1p1);
+        c1l1.getControlPoints().add(c1l1p2);
+        c1l1.getControlPoints().add(c1l1p3);
+        c1l1.getControlPoints().add(c1l2p1);
+        c1l1.getControlPoints().add(c1l2p2);
+
+        c1.getSegments().add(c1l1);
+
+        exterior1.getElements().add(c1);
+
+        // INTERIOR
+        Ring[] interiors1 = new Ring[1];
+
+        JTSRing interior1 = new JTSRing(crs);
+
+        JTSCurve c2 = new JTSCurve(crs);
+        JTSLineString c2l1 = new JTSLineString();
+        DirectPosition c2l1p1 = new GeneralDirectPosition(crs);
+        c2l1p1.setOrdinate(0, 401500);
+        c2l1p1.setOrdinate(1, 3334500);
+        DirectPosition c2l1p2 = new GeneralDirectPosition(crs);
+        c2l1p2.setOrdinate(0, 401700);
+        c2l1p2.setOrdinate(1, 3334850);
+        DirectPosition c2l1p3 = new GeneralDirectPosition(crs);
+        c2l1p3.setOrdinate(0, 402200);
+        c2l1p3.setOrdinate(1, 3335200);
+
+        c2l1.getControlPoints().add(c2l1p1);
+        c2l1.getControlPoints().add(c2l1p2);
+        c2l1.getControlPoints().add(c2l1p3);
+
+        c2.getSegments().add(c2l1);
+
+        interior1.getElements().add(c2);
+
+        interiors1[0] = interior1;
+
+        JTSSurfaceBoundary bound1 = new JTSSurfaceBoundary(crs, exterior1, interiors1);
+        JTSPolygon polygon = new JTSPolygon(bound1);
+
+        JTSMultiPolygon multiPolygon = new JTSMultiPolygon(crs);
+        multiPolygon.getElements().add(polygon);
+
+        StringWriter sw = new StringWriter();
+        m.marshal(factory.createJTSMultiPolygon(multiPolygon), sw);
+        String result = removeXmlns(sw.toString());
+
+        String expResult =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                               + '\n'  +
+        "<gml:MultiPolygon srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\" >"                                               + '\n'  +
+        "    <gml:polygonMember>"                                               + '\n'  +
+        "        <gml:Polygon srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"                               + '\n'  +
+        "            <gml:exterior>"                                                                                          + '\n'  +
+        "                <gml:LinearRing>"                                                                   + '\n'  +
+        "                    <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0 402320.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
+        "                </gml:LinearRing>"                                                                                         + '\n'  +
+        "            </gml:exterior>"                                                                                         + '\n'  +
+        "            <gml:interior>"                                                                                          + '\n'  +
+        "                <gml:LinearRing>"                                                                   + '\n'  +
+        "                    <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
+        "                </gml:LinearRing>"                                                                                         + '\n'  +
+        "            </gml:interior>"                                                                                         + '\n'  +
+        "        </gml:Polygon>"                                                                                              + '\n' +
+        "    </gml:polygonMember>"                                               + '\n'  +
+        "</gml:MultiPolygon>\n";
+
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test Ring Unmarshalling.
+     *
+     * @throws java.lang.Exception
+     */
+   @Test
+    public void MultiPolygonUnmarshalingTest() throws Exception {
+
+        CoordinateReferenceSystem crs = CRS.decode("urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572");
+        assertTrue(crs != null);
+
+        // EXTERIOR
+        JTSRing exterior1    = new JTSRing(crs);
+
+        JTSCurve c1 = new JTSCurve(crs);
+        JTSLineString c1l1 = new JTSLineString(crs);
+        DirectPosition c1l1p1 = new GeneralDirectPosition(crs);
+        c1l1p1.setOrdinate(0, 401500);
+        c1l1p1.setOrdinate(1, 3334500);
+        DirectPosition c1l1p2 = new GeneralDirectPosition(crs);
+        c1l1p2.setOrdinate(0, 401700);
+        c1l1p2.setOrdinate(1, 3334850);
+        DirectPosition c1l1p3 = new GeneralDirectPosition(crs);
+        c1l1p3.setOrdinate(0, 402200);
+        c1l1p3.setOrdinate(1, 3335200);
+
+        c1l1.getControlPoints().add(c1l1p1);
+        c1l1.getControlPoints().add(c1l1p2);
+        c1l1.getControlPoints().add(c1l1p3);
+
+
+
+        DirectPosition c1l2p1 = new GeneralDirectPosition(crs);
+        c1l2p1.setOrdinate(0, 402320);
+        c1l2p1.setOrdinate(1, 3334850);
+        DirectPosition c1l2p2 = new GeneralDirectPosition(crs);
+        c1l2p2.setOrdinate(0, 402200);
+        c1l2p2.setOrdinate(1, 3335200);
+
+        c1l1.getControlPoints().add(c1l2p1);
+        c1l1.getControlPoints().add(c1l2p2);
+
+        c1.getSegments().add(c1l1);
+
+        exterior1.getElements().add(c1);
+
+        // INTERIOR
+        Ring[] interiors1 = new Ring[1];
+
+        JTSRing interior1 = new JTSRing(crs);
+
+        JTSCurve c2 = new JTSCurve(crs);
+        JTSLineString c2l1 = new JTSLineString(crs);
+        DirectPosition c2l1p1 = new GeneralDirectPosition(crs);
+        c2l1p1.setOrdinate(0, 401500);
+        c2l1p1.setOrdinate(1, 3334500);
+        DirectPosition c2l1p2 = new GeneralDirectPosition(crs);
+        c2l1p2.setOrdinate(0, 401700);
+        c2l1p2.setOrdinate(1, 3334850);
+        DirectPosition c2l1p3 = new GeneralDirectPosition(crs);
+        c2l1p3.setOrdinate(0, 402200);
+        c2l1p3.setOrdinate(1, 3335200);
+
+        c2l1.getControlPoints().add(c2l1p1);
+        c2l1.getControlPoints().add(c2l1p2);
+        c2l1.getControlPoints().add(c2l1p3);
+
+        c2.getSegments().add(c2l1);
+
+        interior1.getElements().add(c2);
+
+        interiors1[0] = interior1;
+
+        JTSSurfaceBoundary bound1 = new JTSSurfaceBoundary(crs, exterior1, interiors1);
+        JTSPolygon expPoly = new JTSPolygon(bound1);
+
+        JTSMultiPolygon expResult = new JTSMultiPolygon(crs);
+        expResult.getElements().add(expPoly);
+
+        String xml =
+         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                               + '\n'  +
+        "<gml:MultiPolygon xmlns:gml=\"http://www.opengis.net/gml\" srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"                                               + '\n'  +
+        "    <gml:polygonMember>"                                               + '\n'  +
+        "        <gml:Polygon srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":27572\">"                               + '\n'  +
+        "            <gml:exterior>"                                                                                          + '\n'  +
+        "                <gml:LinearRing>"                                                                   + '\n'  +
+        "                    <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0 402320.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
+        "                </gml:LinearRing>"                                                                                         + '\n'  +
+        "            </gml:exterior>"                                                                                         + '\n'  +
+        "            <gml:interior>"                                                                                          + '\n'  +
+        "                <gml:LinearRing>"                                                                   + '\n'  +
+        "                    <gml:posList>401500.0 3334500.0 401700.0 3334850.0 402200.0 3335200.0</gml:posList>" + '\n'  +
+        "                </gml:LinearRing>"                                                                                         + '\n'  +
+        "            </gml:interior>"                                                                                         + '\n'  +
+        "        </gml:Polygon>"                                                                                              + '\n' +
+        "    </gml:polygonMember>"                                               + '\n'  +
+        "</gml:MultiPolygon>\n";
+
+
+        JTSMultiPolygon result = (JTSMultiPolygon) ((JAXBElement)un.unmarshal(new StringReader(xml))).getValue();
+
+        result.applyCRSOnchild();
+        
         assertEquals(expResult, result);
     }
 

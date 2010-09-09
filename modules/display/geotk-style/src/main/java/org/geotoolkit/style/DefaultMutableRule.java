@@ -24,6 +24,7 @@ import javax.swing.event.EventListenerList;
 import org.geotoolkit.gui.swing.tree.Trees;
 
 import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.geotoolkit.util.converter.Classes;
@@ -334,13 +335,11 @@ public class DefaultMutableRule implements MutableRule{
         builder.append(Classes.getShortClassName(this));
         builder.append(" [");
         builder.append(desc);
-        builder.append("]");
+        builder.append(']');
 
-        for(Symbolizer symbol : symbols){
+        if(!symbols.isEmpty()){
             builder.append('\n');
-            String sub = "\u2514\u2500\u2500" + symbol.toString(); //move text to the right
-            sub = sub.replaceAll("\n", "\n\u00A0\u00A0\u00A0"); //move text to the right
-            builder.append(sub);
+            builder.append(StringUtilities.toStringTree(symbols));
         }
 
         return builder.toString();

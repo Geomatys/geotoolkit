@@ -171,7 +171,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                     fid = reader.getAttributeValue(0);
                 }
 
-                if (name.getLocalPart().equals("featureMember")) {
+                if (name.getLocalPart().equals("featureMember") || name.getLocalPart().equals("featureMembers")) {
                     continue;
 
                 } else if (name.getLocalPart().equals("boundedBy")) {

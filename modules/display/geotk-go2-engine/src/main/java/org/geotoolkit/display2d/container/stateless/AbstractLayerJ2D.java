@@ -30,6 +30,7 @@ import javax.media.jai.TileRecycler;
 
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
@@ -91,10 +92,10 @@ public abstract class AbstractLayerJ2D<T extends MapLayer> extends AbstractGraph
             if (useLayerEnv) {
                 setEnvelope(layer.getBounds());
             } else {
-                Envelope env = CRS.getEnvelope(canvas.getObjectiveCRS());
-                if(env != null){
-                    setEnvelope(env);
-                }
+                GeneralEnvelope env = new GeneralEnvelope(canvas.getObjectiveCRS());
+                env.setRange(0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+                env.setRange(1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+                setEnvelope(env);
                 //todo we do not use the layer envelope since it can be reallllly long to calculate
                 //for exemple for postgrid coverage not yet loaded or huge vector bases like Open Street Map
                 //setEnvelope(layer.getBounds());

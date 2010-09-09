@@ -25,6 +25,7 @@ import javax.swing.event.EventListenerList;
 
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.geotoolkit.util.converter.Classes;
@@ -258,13 +259,11 @@ public class DefaultMutableStyle implements MutableStyle{
         builder.append(Classes.getShortClassName(this));
         builder.append(" [");
         builder.append(description);
-        builder.append(" ]");
+        builder.append(']');
 
-        for(FeatureTypeStyle ft : fts){
+        if(!fts.isEmpty()){
             builder.append('\n');
-            String sub = "\u2514\u2500\u2500" + ft.toString(); //move text to the right
-            sub = sub.replaceAll("\n", "\n\u00A0\u00A0\u00A0"); //move text to the right
-            builder.append(sub);
+            builder.append(StringUtilities.toStringTree(fts));
         }
 
         return builder.toString();
