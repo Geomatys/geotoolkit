@@ -35,6 +35,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
@@ -98,6 +99,47 @@ public class Utils {
         return qname;
     }
 
+    private static final Map<String, Class> CLASS_BINDING = new HashMap<String, Class>();
+    static {
+        CLASS_BINDING.put("long",     Long.class);
+        CLASS_BINDING.put("integer",  Integer.class);
+        CLASS_BINDING.put("int",      int.class);
+        CLASS_BINDING.put("QName",    QName.class);
+        CLASS_BINDING.put("anyURI",   URI.class);
+        CLASS_BINDING.put("byte",     Byte.class);
+        CLASS_BINDING.put("string",   String.class);
+        CLASS_BINDING.put("decimal",  BigDecimal.class);
+        CLASS_BINDING.put("short",    Short.class);
+        CLASS_BINDING.put("boolean",  Boolean.class);
+        CLASS_BINDING.put("dateTime", Timestamp.class);
+        CLASS_BINDING.put("date",     Date.class);
+        CLASS_BINDING.put("double",   Double.class);
+
+        // GML geometry types
+        CLASS_BINDING.put("GeometryPropertyType",          Geometry.class);
+        CLASS_BINDING.put("MultiPoint",                    MultiPoint.class);
+        CLASS_BINDING.put("MultiPointPropertyType",        MultiPoint.class);
+        CLASS_BINDING.put("Point",                         Point.class);
+        CLASS_BINDING.put("PointPropertyType",             Point.class);
+        CLASS_BINDING.put("Curve",                         LineString.class);
+        CLASS_BINDING.put("CurvePropertyType",             LineString.class);
+        CLASS_BINDING.put("MultiGeometry",                 GeometryCollection.class);
+        CLASS_BINDING.put("MultiGeometryPropertyType",     GeometryCollection.class);
+        CLASS_BINDING.put("CompositeCurve",                MultiLineString.class);
+        CLASS_BINDING.put("CompositeCurvePropertyType",    MultiLineString.class);
+        CLASS_BINDING.put("Envelope",                      Envelope.class);
+        CLASS_BINDING.put("EnvelopePropertyType",          Envelope.class);
+        CLASS_BINDING.put("PolyHedralSurface",             MultiPolygon.class);
+        CLASS_BINDING.put("PolyHedralSurfacePropertyType", MultiPolygon.class);
+        CLASS_BINDING.put("MultiSurfacePropertyType",      MultiPolygon.class);
+        CLASS_BINDING.put("MultiPolygonPropertyType",      MultiPolygon.class);
+        CLASS_BINDING.put("Polygon",                       Polygon.class);
+        CLASS_BINDING.put("PolygonPropertyType",           Polygon.class);
+        CLASS_BINDING.put("Ring",                          LinearRing.class);
+        CLASS_BINDING.put("RingPropertyType",              LinearRing.class);
+        CLASS_BINDING.put("LinearRing",                    LinearRing.class);
+        CLASS_BINDING.put("LinearRingPropertyType",        LinearRing.class);
+    }
     /**
      * Return a primitive Class from the specified XML QName (extracted from an xsd file).
      *
@@ -106,67 +148,50 @@ public class Utils {
      */
     public static Class getTypeFromQName(QName name) {
         if (name != null) {
-            if ("long".equals(name.getLocalPart())) {
-                return Long.class;
-            } else if ("integer".equals(name.getLocalPart())) {
-                return Integer.class;
-            } else if ("int".equals(name.getLocalPart())) {
-                return int.class;
-            } else if ("QName".equals(name.getLocalPart())) {
-                return QName.class;
-            } else if ("anyURI".equals(name.getLocalPart())) {
-                return URI.class;
-            } else if ("byte".equals(name.getLocalPart())) {
-                return Byte.class;
-            } else if ("string".equals(name.getLocalPart())) {
-                return String.class;
-            } else if ("decimal".equals(name.getLocalPart())) {
-                return BigDecimal.class;
-            } else if ("short".equals(name.getLocalPart())) {
-                return Short.class;
-            } else if ("boolean".equals(name.getLocalPart())) {
-                return Boolean.class;
-            } else if ("dateTime".equals(name.getLocalPart())) {
-                return Timestamp.class;
-            } else if ("date".equals(name.getLocalPart())) {
-                return Date.class;
-            } else if ("double".equals(name.getLocalPart())) {
-                return Double.class;
-
-            // GML geometry types
-            } else if ("GeometryPropertyType".equals(name.getLocalPart())) {
-                return Geometry.class;
-            } else if ("MultiPoint".equals(name.getLocalPart()) || "MultiPointPropertyType".equals(name.getLocalPart())) {
-                return MultiPoint.class;
-            } else if ("Point".equals(name.getLocalPart()) || "PointPropertyType".equals(name.getLocalPart())) {
-                return Point.class;
-            } else if ("Curve".equals(name.getLocalPart()) || "CurvePropertyType".equals(name.getLocalPart())) {
-                return LineString.class;
-            } else if ("MultiGeometry".equals(name.getLocalPart()) || "MultiGeometryPropertyType".equals(name.getLocalPart())) {
-                return GeometryCollection.class;
-            } else if ("CompositeCurve".equals(name.getLocalPart()) || "CompositeCurvePropertyType".equals(name.getLocalPart())) {
-                return MultiLineString.class;
-            } else if ("Envelope".equals(name.getLocalPart()) || "EnvelopePropertyType".equals(name.getLocalPart())) {
-                return Envelope.class;
-            } else if ("PolyHedralSurface".equals(name.getLocalPart()) || "PolyHedralSurfacePropertyType".equals(name.getLocalPart())) {
-                return MultiPolygon.class;
-            } else if ("MultiSurfacePropertyType".equals(name.getLocalPart())) {
-                return MultiPolygon.class;
-            } else if ("MultiPolygonPropertyType".equals(name.getLocalPart())) {
-                return MultiPolygon.class;
-            } else if ("Polygon".equals(name.getLocalPart()) || "PolygonPropertyType".equals(name.getLocalPart())) {
-                return Polygon.class;
-            } else if ("Ring".equals(name.getLocalPart()) || "RingPropertyType".equals(name.getLocalPart()) || 
-                       "LinearRing".equals(name.getLocalPart()) || "LinearRingPropertyType".equals(name.getLocalPart())) {
-                return LinearRing.class;
-
-            } else {
+            final Class result = CLASS_BINDING.get(name.getLocalPart());
+            if (result == null) {
                 throw new IllegalArgumentException("unexpected type:" + name);
             }
+            return result;
         }
         return null;
     }
 
+    private static final Map<Class, QName> NAME_BINDING = new HashMap<Class, QName>();
+    static {
+       
+        // Special case when we get a List or Map we return String => TODO
+        NAME_BINDING.put(List.class,          new QName("http://www.w3.org/2001/XMLSchema", "string"));
+        NAME_BINDING.put(Map.class,           new QName("http://www.w3.org/2001/XMLSchema", "string"));
+        NAME_BINDING.put(String.class,        new QName("http://www.w3.org/2001/XMLSchema", "string"));
+        NAME_BINDING.put(Long.class,          new QName("http://www.w3.org/2001/XMLSchema", "long"));
+        NAME_BINDING.put(Integer.class,       new QName("http://www.w3.org/2001/XMLSchema", "integer"));
+        NAME_BINDING.put(Double.class,        new QName("http://www.w3.org/2001/XMLSchema", "double"));
+        NAME_BINDING.put(Date.class,          new QName("http://www.w3.org/2001/XMLSchema", "date"));
+        NAME_BINDING.put(java.sql.Date.class, new QName("http://www.w3.org/2001/XMLSchema", "date"));
+        NAME_BINDING.put(Timestamp.class,     new QName("http://www.w3.org/2001/XMLSchema", "dateTime"));
+        NAME_BINDING.put(Boolean.class,       new QName("http://www.w3.org/2001/XMLSchema", "boolean"));
+        NAME_BINDING.put(BigDecimal.class,    new QName("http://www.w3.org/2001/XMLSchema", "decimal"));
+        NAME_BINDING.put(Short.class,         new QName("http://www.w3.org/2001/XMLSchema", "short"));
+        NAME_BINDING.put(int.class,           new QName("http://www.w3.org/2001/XMLSchema", "int"));
+        NAME_BINDING.put(QName.class,         new QName("http://www.w3.org/2001/XMLSchema", "QName"));
+        NAME_BINDING.put(URI.class,           new QName("http://www.w3.org/2001/XMLSchema", "anyURI"));
+        NAME_BINDING.put(Byte.class,          new QName("http://www.w3.org/2001/XMLSchema", "byte"));
+
+    }
+    private static final Map<Class, QName> GEOMETRY_NAME_BINDING = new HashMap<Class, QName>();
+    static {
+       
+        GEOMETRY_NAME_BINDING.put(MultiPoint.class,         new QName("http://www.opengis.net/gml", "MultiPoint"));
+        GEOMETRY_NAME_BINDING.put(Point.class,              new QName("http://www.opengis.net/gml", "Point"));
+        GEOMETRY_NAME_BINDING.put(LineString.class,         new QName("http://www.opengis.net/gml", "Curve"));
+        GEOMETRY_NAME_BINDING.put(GeometryCollection.class, new QName("http://www.opengis.net/gml", "MultiGeometry"));
+        GEOMETRY_NAME_BINDING.put(MultiLineString.class,    new QName("http://www.opengis.net/gml", "CompositeCurve"));
+        GEOMETRY_NAME_BINDING.put(Envelope.class,           new QName("http://www.opengis.net/gml", "Envelope"));
+        GEOMETRY_NAME_BINDING.put(MultiPolygon.class,       new QName("http://www.opengis.net/gml", "MultiGeometry"));
+        GEOMETRY_NAME_BINDING.put(Polygon.class,            new QName("http://www.opengis.net/gml", "Polygon"));
+        GEOMETRY_NAME_BINDING.put(LinearRing.class,         new QName("http://www.opengis.net/gml", "Ring"));
+    }
     /**
      * Return a QName intended to be used in a xsd XML file fro mthe specified class.
      *
@@ -175,66 +200,19 @@ public class Utils {
      */
     public static QName getQNameFromType(Class binding) {
         if (binding != null) {
-
-            // Special case when we get a List or Map we return String => TODO
-            if (List.class.equals(binding) || Map.class.equals(binding)) {
-                return new QName("http://www.w3.org/2001/XMLSchema", "string");
-            } else if (Long.class.equals(binding)) {
-                return new QName("http://www.w3.org/2001/XMLSchema", "long");
-            } else if (Integer.class.equals(binding)) {
-                return new QName("http://www.w3.org/2001/XMLSchema", "integer");
-            } else if (String.class.equals(binding)) {
-                return new QName("http://www.w3.org/2001/XMLSchema", "string");
-            } else if (Double.class.equals(binding)) {
-                return new QName("http://www.w3.org/2001/XMLSchema", "double");
-            } else if (Date.class.equals(binding)) {
-                return new QName("http://www.w3.org/2001/XMLSchema", "date");
-            } else if (java.sql.Date.class.equals(binding)) {
-                return new QName("http://www.w3.org/2001/XMLSchema", "date");
-            } else if (Timestamp.class.equals(binding)) {
-                return new QName("http://www.w3.org/2001/XMLSchema", "dateTime");
-            } else if (Boolean.class.equals(binding)) {
-                return new QName("http://www.w3.org/2001/XMLSchema", "boolean");
-            } else if (BigDecimal.class.equals(binding)) {
-                return new QName("http://www.w3.org/2001/XMLSchema", "decimal");
-            } else if (Short.class.equals(binding)) {
-                return new QName("http://www.w3.org/2001/XMLSchema", "short");
-            } else if (int.class.equals(binding)) {
-                return new QName("http://www.w3.org/2001/XMLSchema", "int");
-            } else if (QName.class.equals(binding)) {
-                return new QName("http://www.w3.org/2001/XMLSchema", "QName");
-            } else if (URI.class.equals(binding)) {
-                return new QName("http://www.w3.org/2001/XMLSchema", "anyURI");
-            } else if (Byte.class.equals(binding)) {
-                return new QName("http://www.w3.org/2001/XMLSchema", "byte");
-
-
-            } else if (Geometry.class.isAssignableFrom(binding)) {
-
-                if (MultiPoint.class.equals(binding)) {
-                    return new QName("http://www.opengis.net/gml", "MultiPoint");
-                } else if (Point.class.equals(binding)) {
-                    return new QName("http://www.opengis.net/gml", "Point");
-                } else if (LineString.class.equals(binding)) {
-                    return new QName("http://www.opengis.net/gml", "Curve");
-                } else if (GeometryCollection.class.equals(binding)) {
-                    return new QName("http://www.opengis.net/gml", "MultiGeometry");
-                } else if (MultiLineString.class.equals(binding)) {
-                    return new QName("http://www.opengis.net/gml", "CompositeCurve");
-                } else if (Envelope.class.equals(binding)) {
-                    return new QName("http://www.opengis.net/gml", "Envelope");
-                } else if (MultiPolygon.class.equals(binding)) {
-                    return new QName("http://www.opengis.net/gml", "MultiGeometry");
-                } else if (Polygon.class.equals(binding)) {
-                    return new QName("http://www.opengis.net/gml", "Polygon");
-                } else if (LinearRing.class.equals(binding)) {
-                    return new QName("http://www.opengis.net/gml", "Ring");
-                } else {
+            final QName result;
+             if (Geometry.class.isAssignableFrom(binding)) {
+                result = GEOMETRY_NAME_BINDING.get(binding);
+                if (result == null) {
                     return new QName("http://www.opengis.net/gml", "GeometryPropertyType");
                 }
             } else {
+                result = NAME_BINDING.get(binding);
+            }
+            if (result == null) {
                 throw new IllegalArgumentException("unexpected type:" + binding);
             }
+            return result;
         }
         return null;
     }
