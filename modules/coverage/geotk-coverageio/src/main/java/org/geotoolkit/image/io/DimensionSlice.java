@@ -153,6 +153,10 @@ public class DimensionSlice extends DimensionIdentification {
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.08
      *
+     * @see DimensionSlice
+     * @see MultidimensionalImageStore
+     * @see IllegalImageDimensionException
+     *
      * @since 3.08
      * @module
      */

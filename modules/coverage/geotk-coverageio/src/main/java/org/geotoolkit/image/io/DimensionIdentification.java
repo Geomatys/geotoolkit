@@ -76,6 +76,7 @@ import static org.geotoolkit.image.io.DimensionSlice.API;
  * @version 3.15
  *
  * @see MultidimensionalImageStore
+ * @see IllegalImageDimensionException
  *
  * @since 3.15
  * @module

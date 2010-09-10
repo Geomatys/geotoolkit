@@ -46,7 +46,8 @@ import javax.imageio.ImageWriter;
  *     BufferedImage salinity    = imageReader.read(1);
  * }
  *
- * If no image exist for a given name, then an {@link ImageNameNotFoundException} will be thrown.
+ * If no image exist for a given name, then an {@link ImageNameNotFoundException} will be thrown
+ * at reading time.
  *
  * {@section Alternative usage: names for bands}
  * In some cases, it is convenient to use the variable names for band indices rather than image
@@ -122,8 +123,8 @@ public interface NamedImageStore {
      *
      * @param  imageIndex Index of the image for which to get the band names, or
      *         {@link #ALL_IMAGES} for all of them.
-     * @return The variable names of the bands for the given image, or {@code null} if the bands
-     *         are unnamed.
+     * @return The variable names of the bands for the given image, or {@code null}
+     *         if the bands for the given image are unnamed.
      * @throws IOException if the image stream can not be read.
      *
      * @since 3.11

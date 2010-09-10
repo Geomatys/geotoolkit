@@ -88,6 +88,9 @@ import static org.geotoolkit.image.io.DimensionSlice.API;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.15
  *
+ * @see MultidimensionalImageStore
+ * @see DimensionIdentification
+ *
  * @since 3.15 (derived from 3.08)
  * @module
  */
