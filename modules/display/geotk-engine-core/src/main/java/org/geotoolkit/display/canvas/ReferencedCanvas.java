@@ -56,7 +56,6 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
-import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.DefiningConversion;
@@ -479,16 +478,14 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
     public synchronized CoordinateReferenceSystem getDeviceCRS() {
         final DerivedCRS displayCRS = (DerivedCRS) getDisplayCRS();
         if (deviceCRS == null) try {
-            final ReferencingFactoryContainer crsFactories;
             final CoordinateSystem deviceCS;
             final Conversion conversion;
             final Matrix identity;
             final MathTransform mt;
 
-            crsFactories     = getFactoryGroup();
             deviceCS         = displayCRS.getCoordinateSystem();
             identity         = MatrixFactory.create(deviceCS.getDimension()+1);
-            mt               = crsFactories.getMathTransformFactory().createAffineTransform(identity);
+            mt               = getFactoryGroup().getMathTransformFactory().createAffineTransform(identity);
             deviceProperties = AbstractIdentifiedObject.getProperties(deviceCS, null);
             conversion       = new DefiningConversion(deviceProperties, affineMethod, mt);
             deviceCRS        = new DefaultDerivedCRS(deviceProperties, conversion, displayCRS, mt, deviceCS);
@@ -556,7 +553,7 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
      * @return {@code crs}, or a new one if the CRS was not derived from the expected base CRS.
      * @throws FactoryException if the CRS can't be created.
      */
-    private final DerivedCRS validateBaseCRS(DerivedCRS crs, final CoordinateReferenceSystem baseCRS)
+    private DerivedCRS validateBaseCRS(DerivedCRS crs, final CoordinateReferenceSystem baseCRS)
             throws FactoryException {
         if (crs.getBaseCRS() != baseCRS) {
             final CoordinateOperationFactory factory = getCoordinateOperationFactory();
@@ -623,12 +620,11 @@ public abstract class ReferencedCanvas extends AbstractCanvas {
             crs = (DerivedCRS) getDisplayCRS();
             properties = displayProperties;
         }
-        final ReferencingFactoryContainer crsFactories = getFactoryGroup();
-        final MathTransform mt = crsFactories.getMathTransformFactory().createAffineTransform(transform);
+        final MathTransform mt = getFactoryGroup().getMathTransformFactory().createAffineTransform(transform);
         final Conversion conversion = new DefiningConversion(properties, affineMethod, mt);
-        crs = crsFactories.getCRSFactory().createDerivedCRS(properties,
-                crs.getBaseCRS(), conversion, crs.getCoordinateSystem());
-        // TODO: above call is heavy; maybe we should use direct instantiation.
+        crs = new DefaultDerivedCRS(properties, conversion, crs.getBaseCRS(), mt, crs.getCoordinateSystem());
+        // Note: the above call does not use MathTransformFactory, because it is invoked often
+        // and the call to WeakHashSet.unique(...) in DefaultMathTransformFactory is costly.
         return crs;
     }
 

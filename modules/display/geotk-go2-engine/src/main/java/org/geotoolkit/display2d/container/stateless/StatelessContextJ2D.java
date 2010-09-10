@@ -20,7 +20,6 @@ package org.geotoolkit.display2d.container.stateless;
 import org.geotoolkit.display2d.container.statefull.StatefullCoverageLayerJ2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import java.beans.PropertyChangeEvent;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,18 +34,17 @@ import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.ContextListener;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.DynamicMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.CollectionChangeEvent;
 
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.display.primitive.Graphic;
-import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -121,15 +119,15 @@ public class StatelessContextJ2D extends AbstractGraphicJ2D{
 
 
         try {
-            Envelope env = CRS.getEnvelope(canvas.getObjectiveCRS());
-            if(env != null){
-                setEnvelope(env);
-            }
+            final GeneralEnvelope env = new GeneralEnvelope(canvas.getObjectiveCRS());
+            env.setRange(0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+            env.setRange(1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+            setEnvelope(env);
             //todo we do not use the context envelope since it can be reallllly long to calculate
             //for exemple for postgrid coverage not yet loaded or huge vector bases like Open Street Map
             //setEnvelope(context.getBounds());
         } catch (TransformException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
+            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
         }
         parseContext(this.context);
         this.context.addContextListener(contextListener);

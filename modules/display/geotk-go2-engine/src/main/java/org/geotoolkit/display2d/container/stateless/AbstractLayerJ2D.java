@@ -33,9 +33,7 @@ import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.CRS;
 
-import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -92,7 +90,7 @@ public abstract class AbstractLayerJ2D<T extends MapLayer> extends AbstractGraph
             if (useLayerEnv) {
                 setEnvelope(layer.getBounds());
             } else {
-                GeneralEnvelope env = new GeneralEnvelope(canvas.getObjectiveCRS());
+                final GeneralEnvelope env = new GeneralEnvelope(canvas.getObjectiveCRS());
                 env.setRange(0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
                 env.setRange(1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
                 setEnvelope(env);
