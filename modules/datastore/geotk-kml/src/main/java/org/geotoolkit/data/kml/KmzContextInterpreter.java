@@ -86,17 +86,16 @@ public class KmzContextInterpreter {
             new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
     private static final File FILES_DIR = new File("/tmp/files");
     private static final KmlFactory KML_FACTORY = DefaultKmlFactory.getInstance();
-//    private static Style DEFAULT_STYLE;
     private static AtomicInteger increment = new AtomicInteger();
     private static final List<Entry<Rule, URI>> IDENTIFICATORS_MAP = new ArrayList<Entry<Rule, URI>>();
- //   private static final List<Entry<String, String>> FEATURE_NAMES = new ArrayList<Entry<String, String>>();
 
     public KmzContextInterpreter() {
         FILES_DIR.mkdir();
         FILES_DIR.deleteOnExit();
     }
 
-    public void writeKmz(MapContext context, File kmzOutput) throws Exception {
+    public void writeKmz(MapContext context, File kmzOutput)
+            throws Exception {
 
         final Kml kml = KML_FACTORY.createKml();
         final Feature folder = KML_FACTORY.createFolder();
@@ -132,19 +131,51 @@ public class KmzContextInterpreter {
         FileUtilities.zip(kmzOutput, ZipOutputStream.DEFLATED, 9, null, FILES_DIR, docKml);
     }
 
+    /**
+     * <p>Retrieves a style identificator.</p>
+     *
+     * @return
+     */
     private String getIdentificator() {
         return "id" + increment.incrementAndGet();
     }
 
-    private Feature writeStyle(MutableStyle style, Feature container) throws URISyntaxException {
-        List<MutableFeatureTypeStyle> featureTypeStyles = style.featureTypeStyles();
+    //--------------------------------------------------------------------------
+    // STYLES CONVERSION METHODS
+    //--------------------------------------------------------------------------
+
+    /**
+     * <p>This method writes KML styles elements mapping a layer style.</p>
+     *
+     * <p style="color: red; font-weight: bold; font-style: italic;">BE CAREFUL :
+     * SLD Styles reference thei associated features BUT KML specification is different
+     * because each feature references its own style.</p>
+     *
+     * @param style
+     * @param container
+     * @return
+     * @throws URISyntaxException
+     */
+    private Feature writeStyle(MutableStyle style, Feature container) 
+            throws URISyntaxException {
+
+        final List<MutableFeatureTypeStyle> featureTypeStyles = style.featureTypeStyles();
         for (int i = 0, num = featureTypeStyles.size(); i < num; i++) {
             container = this.writeFeatureTypeStyle(featureTypeStyles.get(i), container);
         }
         return container;
     }
 
-    private Feature writeFeatureTypeStyle(MutableFeatureTypeStyle featureTypeStyle, Feature container)
+    /**
+     * <p>This method writes a feature type style.</p>
+     *
+     * @param featureTypeStyle
+     * @param container
+     * @return
+     * @throws URISyntaxException
+     */
+    private Feature writeFeatureTypeStyle(
+            MutableFeatureTypeStyle featureTypeStyle, Feature container)
             throws URISyntaxException {
 
         final Collection<Property> containerProperties = container.getProperties();
@@ -156,10 +187,16 @@ public class KmzContextInterpreter {
                     this.writeRule(rules.get(i)),
                     KmlModelConstants.ATT_STYLE_SELECTOR, null));
         }
-        //System.out.println("IDS : "+featureTypeStyle.getFeatureInstanceIDs());
         return container;
     }
 
+    /**
+     * <p>This method retrieves a KML StyleSelector element mapping SLD Rule.</p>
+     *
+     * @param rule
+     * @return
+     * @throws URISyntaxException
+     */
     private AbstractStyleSelector writeRule(MutableRule rule)
             throws URISyntaxException {
 
@@ -169,25 +206,38 @@ public class KmzContextInterpreter {
         for (int i = 0, num = symbolizers.size(); i < num; i++) {
             this.writeSymbolizer(symbolizers.get(i), styleSelector);
         }
-        //System.out.println("FILTER : " + rule.getFilter());
 
-        // Link rule filter with Style URI
-        String id = this.getIdentificator();
+        // Links rule filter with Style URI
+        final String id = this.getIdentificator();
         styleSelector.setIdAttributes(KML_FACTORY.createIdAttributes(id, null));
         IDENTIFICATORS_MAP.add(new SimpleEntry<Rule, URI>(rule, new URI("#"+id)));
         return styleSelector;
     }
 
-    private AbstractStyleSelector writeSymbolizer(Symbolizer symbolizer, Style styleSelector) {
+    /**
+     * <p>This method writes KML color styles mapping SLD Symbolizers.</p>
+     *
+     * <p>Color styles are writtent into KML Style selector.</p>
+     *
+     * @param symbolizer
+     * @param styleSelector
+     * @return
+     */
+    private AbstractStyleSelector writeSymbolizer(
+            Symbolizer symbolizer, Style styleSelector) {
+
         if (symbolizer instanceof ExtensionSymbolizer) {
         }
 
         // LineSymbolizer mapping
         else if (symbolizer instanceof LineSymbolizer) {
-            LineSymbolizer lineSymbolizer = (LineSymbolizer) symbolizer;
-            LineStyle lineStyle = (LineStyle) ((styleSelector.getLineStyle() == null) ? KML_FACTORY.createLineStyle() : styleSelector.getLineStyle());
-            lineStyle.setWidth((Double) this.writeExpression(lineSymbolizer.getStroke().getWidth(), Double.class, null));
-            lineStyle.setColor((Color) this.writeExpression(lineSymbolizer.getStroke().getColor(), Color.class, null));
+            final LineSymbolizer lineSymbolizer = (LineSymbolizer) symbolizer;
+            final LineStyle lineStyle = (LineStyle) ((styleSelector.getLineStyle() == null)
+                    ? KML_FACTORY.createLineStyle() : styleSelector.getLineStyle());
+            lineStyle.setWidth((Double) this.writeExpression(
+                    lineSymbolizer.getStroke().getWidth(), Double.class, null));
+            lineStyle.setColor((Color) this.writeExpression(
+                    lineSymbolizer.getStroke().getColor(), Color.class, null));
             styleSelector.setLineStyle(lineStyle);
         }
 
@@ -201,15 +251,16 @@ public class KmzContextInterpreter {
 
         // PolygonSymbolizer mapping
         else if (symbolizer instanceof PolygonSymbolizer) {
-            PolygonSymbolizer polygonSymbolizer = (PolygonSymbolizer) symbolizer;
-            PolyStyle polyStyle = KML_FACTORY.createPolyStyle();
+            final PolygonSymbolizer polygonSymbolizer = (PolygonSymbolizer) symbolizer;
+            final PolyStyle polyStyle = KML_FACTORY.createPolyStyle();
 
             // Fill
             if(polygonSymbolizer.getFill() == null){
                 polyStyle.setFill(false);
             } else {
                 polyStyle.setFill(true);
-                polyStyle.setColor((Color) this.writeExpression(polygonSymbolizer.getFill().getColor(), Color.class, null));
+                polyStyle.setColor((Color) this.writeExpression(
+                        polygonSymbolizer.getFill().getColor(), Color.class, null));
             }
 
             // Outline
@@ -217,35 +268,60 @@ public class KmzContextInterpreter {
                 polyStyle.setOutline(false);
             } else if(styleSelector.getLineStyle() == null) {
                 polyStyle.setOutline(true);
-                LineStyle lineStyle = KML_FACTORY.createLineStyle();
-                lineStyle.setColor((Color) this.writeExpression(polygonSymbolizer.getStroke().getColor(), Color.class, null));
-                lineStyle.setWidth((Double) this.writeExpression(polygonSymbolizer.getStroke().getWidth(), Double.class, null));
+                final LineStyle lineStyle = KML_FACTORY.createLineStyle();
+                lineStyle.setColor((Color) this.writeExpression(
+                        polygonSymbolizer.getStroke().getColor(), Color.class, null));
+                lineStyle.setWidth((Double) this.writeExpression(
+                        polygonSymbolizer.getStroke().getWidth(), Double.class, null));
                 styleSelector.setLineStyle(lineStyle);
             }
             styleSelector.setPolyStyle(polyStyle);
         } else if (symbolizer instanceof RasterSymbolizer) {
         } else if (symbolizer instanceof TextSymbolizer) {
-            TextSymbolizer textSymbolizer = (TextSymbolizer) symbolizer;
-            LabelStyle labelStyle = KML_FACTORY.createLabelStyle();
+            final TextSymbolizer textSymbolizer = (TextSymbolizer) symbolizer;
+            final LabelStyle labelStyle = KML_FACTORY.createLabelStyle();
             if(textSymbolizer.getFont() != null){
                 textSymbolizer.getFont().getSize();
             }
             if(textSymbolizer.getFill() != null){
-                labelStyle.setColor((Color) this.writeExpression(textSymbolizer.getFill().getColor(), Color.class, null));
+                labelStyle.setColor((Color) this.writeExpression(
+                        textSymbolizer.getFill().getColor(), Color.class, null));
             }
             styleSelector.setLabelStyle(labelStyle);
         }
         return styleSelector;
     }
 
+    /**
+     * <p>Writes a static expression.</p>
+     *
+     * @param expression
+     * @param type
+     * @param object
+     * @return
+     */
     private Object writeExpression(Expression expression, Class type, Object object) {
+
         if (GO2Utilities.isStatic(Expression.NIL)) {
             return expression.evaluate(object, type);
         }
         return null;
     }
 
-    private Feature writeFeatureMapLayer(FeatureMapLayer featureMapLayer) throws URISyntaxException {
+    //--------------------------------------------------------------------------
+    // FEATURES TRANSFORMATIONS
+    //--------------------------------------------------------------------------
+
+    /**
+     * <p>This method transforms a FeatureMapLAyer in KML Folder.</p>
+     *
+     * @param featureMapLayer
+     * @return
+     * @throws URISyntaxException
+     */
+    private Feature writeFeatureMapLayer(FeatureMapLayer featureMapLayer) 
+            throws URISyntaxException {
+
         final Feature folder = KML_FACTORY.createFolder();
         final Collection<Property> folderProperties = folder.getProperties();
         for (final Feature f : featureMapLayer.getCollection()) {
@@ -257,6 +333,14 @@ public class KmzContextInterpreter {
         return folder;
     }
 
+    /**
+     * <p>This method transforms a feature into KML feature (Placemak if original
+     * features contents a geometry, or Folder otherwise).</p>
+     *
+     * @param feature
+     * @return
+     * @throws URISyntaxException
+     */
     private Feature writeFeature(Feature feature)
             throws URISyntaxException {
 
@@ -287,7 +371,7 @@ public class KmzContextInterpreter {
 
         // Search feature style URI
         for(Entry<Rule, URI> e : IDENTIFICATORS_MAP){
-            Rule rule = e.getKey();
+            final Rule rule = e.getKey();
             if(rule.getFilter().evaluate(feature)){
                 kmlFeatureProperties.add(
                     FF.createAttribute(
@@ -295,7 +379,7 @@ public class KmzContextInterpreter {
                     KmlModelConstants.ATT_STYLE_URL, null));
                 for(Symbolizer s : rule.symbolizers()){
                     if(s instanceof TextSymbolizer){
-                        TextSymbolizer t = (TextSymbolizer) s;
+                        final TextSymbolizer t = (TextSymbolizer) s;
                         if(t.getLabel() != null){
                             kmlFeatureProperties.add(
                                     FF.createAttribute(
@@ -310,7 +394,14 @@ public class KmzContextInterpreter {
         return kmlFeature;
     }
 
+    /**
+     * <p>This method transforms a JTS Geometry into KML Geometry.</p>
+     *
+     * @param geometry
+     * @return
+     */
     private AbstractGeometry writeGeometry(Geometry geometry) {
+        
         final AbstractGeometry resultat;
         if (geometry instanceof GeometryCollection) {
             final List<AbstractGeometry> liste = new ArrayList<AbstractGeometry>();
@@ -323,10 +414,10 @@ public class KmzContextInterpreter {
             resultat = KML_FACTORY.createMultiGeometry();
             ((org.geotoolkit.data.kml.model.MultiGeometry) resultat).setGeometries(liste);
         } else if (geometry instanceof Polygon) {
-            Polygon polygon = (Polygon) geometry;
-            Boundary extB = KML_FACTORY.createBoundary(
+            final Polygon polygon = (Polygon) geometry;
+            final Boundary extB = KML_FACTORY.createBoundary(
                     (org.geotoolkit.data.kml.model.LinearRing) writeGeometry(polygon.getExteriorRing()), null, null);
-            List<Boundary> intB = new ArrayList<Boundary>();
+            final List<Boundary> intB = new ArrayList<Boundary>();
             for (int i = 0, num = polygon.getNumInteriorRing(); i < num; i++) {
                 intB.add(KML_FACTORY.createBoundary((org.geotoolkit.data.kml.model.LinearRing) this.writeGeometry(polygon.getInteriorRingN(i)), null, null));
             }
@@ -343,36 +434,52 @@ public class KmzContextInterpreter {
         return resultat;
     }
 
-    private Feature writeCoverageMapLayer(CoverageMapLayer coverageMapLayer) throws Exception {
-        Feature groundOverlay = KML_FACTORY.createGroundOverlay();
-        Collection<Property> groundOverlayProperties = groundOverlay.getProperties();
-        CoordinateReferenceSystem targetCrs = DefaultGeographicCRS.WGS84;
+    /**
+     * <p>This method transforms a CoverageMapLayer into KML GroundOverlay.</p>
+     *
+     * @param coverageMapLayer
+     * @return
+     * @throws Exception
+     */
+    private Feature writeCoverageMapLayer(CoverageMapLayer coverageMapLayer) 
+            throws Exception {
 
-        GridCoverage2D coverage = (GridCoverage2D) coverageMapLayer.getCoverageReader().read(0, null);
+        final Feature groundOverlay = KML_FACTORY.createGroundOverlay();
+        final Collection<Property> groundOverlayProperties = groundOverlay.getProperties();
+        final CoordinateReferenceSystem targetCrs = DefaultGeographicCRS.WGS84;
+
+        final GridCoverage2D coverage =
+                (GridCoverage2D) coverageMapLayer.getCoverageReader().read(0, null);
         //coverage.show();
 
-        GridCoverage2D targetCoverage = (GridCoverage2D) Operations.DEFAULT.resample(coverage, targetCrs);
+        final GridCoverage2D targetCoverage =
+                (GridCoverage2D) Operations.DEFAULT.resample(coverage, targetCrs);
         //targetCoverage.show();
 
         // Creating image file and Writting referenced image into.
-        File img = new File(FILES_DIR, targetCoverage.getName().toString());
+        final File img = new File(FILES_DIR, targetCoverage.getName().toString());
         img.deleteOnExit();
         ImageIO.write(targetCoverage.getRenderedImage(), "png", img);
 
-        Icon image = KML_FACTORY.createIcon(KML_FACTORY.createLink());
+        final Icon image = KML_FACTORY.createIcon(KML_FACTORY.createLink());
         image.setHref(FILES_DIR.getName() + File.separator + targetCoverage.getName());
-        groundOverlayProperties.add(FF.createAttribute(targetCoverage.getName().toString(), KmlModelConstants.ATT_NAME, null));
-        groundOverlayProperties.add(FF.createAttribute(image, KmlModelConstants.ATT_OVERLAY_ICON, null));
-        groundOverlay.getProperty(KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE.getName()).setValue(1.0);
-        groundOverlay.getProperty(KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE_MODE.getName()).setValue(EnumAltitudeMode.CLAMP_TO_GROUND);
+        groundOverlayProperties.add(FF.createAttribute(
+                targetCoverage.getName().toString(), KmlModelConstants.ATT_NAME, null));
+        groundOverlayProperties.add(FF.createAttribute(
+                image, KmlModelConstants.ATT_OVERLAY_ICON, null));
+        groundOverlay.getProperty(KmlModelConstants.
+                ATT_GROUND_OVERLAY_ALTITUDE.getName()).setValue(1.0);
+        groundOverlay.getProperty(KmlModelConstants.
+                ATT_GROUND_OVERLAY_ALTITUDE_MODE.getName()).setValue(EnumAltitudeMode.CLAMP_TO_GROUND);
 
-        LatLonBox latLonBox = KML_FACTORY.createLatLonBox();
+        final LatLonBox latLonBox = KML_FACTORY.createLatLonBox();
         latLonBox.setNorth(targetCoverage.getEnvelope2D().getMaxY());
         latLonBox.setSouth(targetCoverage.getEnvelope2D().getMinY());
         latLonBox.setEast(targetCoverage.getEnvelope2D().getMaxX());
         latLonBox.setWest(targetCoverage.getEnvelope2D().getMinX());
 
-        groundOverlayProperties.add(FF.createAttribute(latLonBox, KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX, null));
+        groundOverlayProperties.add(FF.createAttribute(
+                latLonBox, KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX, null));
 
         return groundOverlay;
     }

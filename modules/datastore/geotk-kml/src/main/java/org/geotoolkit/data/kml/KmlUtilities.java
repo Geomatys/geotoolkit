@@ -102,22 +102,12 @@ public class KmlUtilities {
      * @return
      */
     public static String toKmlColor(final Color color) {
-//        if(true){
-//            int argb = color.getRGB();
-//            StringBuffer sb = new StringBuffer(Integer.toHexString(argb));
-//            sb = sb.reverse();
-//            while(sb.length()<8){
-//                sb.append('0');
-//            }
-//            sb.insert(0, sb, 7, 8);
-//            sb.setLength(8);
-//            return sb.toString();
-//        }
-        String r = Integer.toHexString(color.getRed());
-        String g = Integer.toHexString(color.getGreen());
-        String b = Integer.toHexString(color.getBlue());
-        String a = Integer.toHexString(color.getAlpha());
-        StringBuilder sb = new StringBuilder();
+        final String r = Integer.toHexString(color.getRed());
+        final String g = Integer.toHexString(color.getGreen());
+        final String b = Integer.toHexString(color.getBlue());
+        final String a = Integer.toHexString(color.getAlpha());
+        final StringBuilder sb = new StringBuilder();
+
         if(a.length() == 1){
             sb.append('0');
         }
@@ -134,6 +124,7 @@ public class KmlUtilities {
             sb.append('0');
         }
         sb.append(r);
+        
         return sb.toString();
     }
 
@@ -265,6 +256,7 @@ public class KmlUtilities {
      * @return
      */
     public static StringBuilder toString(Coordinate coordinate) {
+
         final StringBuilder sb = new StringBuilder();
         sb.append(coordinate.x);
         sb.append(',');
@@ -283,6 +275,7 @@ public class KmlUtilities {
      * @return
      */
     public static String toString(CoordinateSequence coordinates){
+
         final StringBuilder sb = new StringBuilder();
 
         for(int i=0, n=coordinates.size(); i<n; i++){
@@ -300,6 +293,7 @@ public class KmlUtilities {
      * @return
      */
     public static Coordinate toCoordinate(String coordinates){
+
         final String[] coordinatesList = coordinates.split(",");
         final Coordinate c = new Coordinate();
 
@@ -320,12 +314,12 @@ public class KmlUtilities {
      * @param seconds
      * @param milli
      * @param forceTime
+     * @param time
      * @return
      */
-    public static StringBuilder getXMLFormatedTime(
-            int hours, int minutes, int seconds, int milli, boolean forceTime){
+    public static StringBuilder appendXMLFormatedTime(
+            int hours, int minutes, int seconds, int milli, boolean forceTime, StringBuilder time){
 
-        final StringBuilder time = new StringBuilder();
         if(!(hours == 0 && minutes == 0 && seconds == 0 && milli == 0) || forceTime){
             time.append('T');
             if(hours < 10) {
@@ -357,11 +351,12 @@ public class KmlUtilities {
      * <p>Retrieves XML formated timezone.</p>
      *
      * @param zoneOffset
+     * @param timeZone
      * @return
      */
-    public static StringBuilder getXMLFormatedTimeZone(int zoneOffset) {
+    public static StringBuilder appendXMLFormatedTimeZone(
+            int zoneOffset, StringBuilder timeZone) {
 
-        final StringBuilder timeZone = new StringBuilder();
         int minutesOffset = zoneOffset / (60 * 1000);
         final int hoursOffset = Math.abs(minutesOffset / 60);
         minutesOffset = (minutesOffset % 60)*60;
@@ -392,10 +387,12 @@ public class KmlUtilities {
      * @param month
      * @param day
      * @param forceDay
+     * @param date
      * @return
      */
-    public static StringBuilder getXMLFormatedDate(int year, int month, int day, boolean forceDay){
-        final StringBuilder date = new StringBuilder();
+    public static StringBuilder appendXMLFormatedDate(
+            int year, int month, int day, boolean forceDay, StringBuilder date){
+        
         date.append(year);
         if (day > 1 || forceDay){
             date.append('-');
@@ -423,31 +420,32 @@ public class KmlUtilities {
      * @return
      */
     public static String getXMLFormatedCalendar(Calendar calendar, boolean forceDateTime){
-        final StringBuilder date, time;
 
+        StringBuilder date = null;
         final int day = calendar.get(Calendar.DAY_OF_MONTH);
         final int month = calendar.get(Calendar.MONTH)+1;
         final int year;
+
         if(calendar.get(Calendar.ERA) == GregorianCalendar.BC){
             year = -calendar.get(Calendar.YEAR);
         } else {
             year = calendar.get(Calendar.YEAR);
         }
 
-        time = getXMLFormatedTime(calendar.get(
+        date = appendXMLFormatedDate(year, month, day, forceDateTime, new StringBuilder());
+        
+        date = appendXMLFormatedTime(calendar.get(
                 Calendar.HOUR_OF_DAY),
                 calendar.get(Calendar.MINUTE),
                 calendar.get(Calendar.SECOND),
                 calendar.get(Calendar.MILLISECOND),
-                forceDateTime);
+                forceDateTime, date);
 
         if(calendar.getTimeZone() != null){
-            time.append(getXMLFormatedTimeZone(calendar.get(Calendar.ZONE_OFFSET)));
+            date = appendXMLFormatedTimeZone(calendar.get(Calendar.ZONE_OFFSET), date);
         }
 
-        date = getXMLFormatedDate(year, month, day, forceDateTime);
-        
-        return date.append(time).toString();
+        return date.toString();
     }
 
     /**
@@ -459,4 +457,5 @@ public class KmlUtilities {
         return !Double.isInfinite(d) && !Double.isNaN(d);
     }
 
+    private KmlUtilities(){}
 }
