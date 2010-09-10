@@ -35,6 +35,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
 import javax.media.jai.JAI;
 import javax.media.jai.Warp;
+import javax.media.jai.PlanarImage;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.Interpolation;
 import javax.media.jai.RenderedImageAdapter;
@@ -435,6 +436,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
             throw new CoverageStoreException(formatErrorMessage(e), e);
         }
         MathTransform2D destToExtractedGrid = null;
+        PlanarImage toDispose = null;
         if (param != null) {
             destToExtractedGrid = geodeticToPixelCoordinates(gridGeometry, param, imageParam);
             imageParam.setSourceBands(param.getSourceBands());
@@ -523,7 +525,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                 if (backgroundValues == null) {
                     backgroundValues = CoverageUtilities.getBackgroundValues(coverage);
                 }
-                image = WarpDescriptor.create(image, warp,
+                image = toDispose = WarpDescriptor.create(image, warp,
                         Interpolation.getInstance(Interpolation.INTERP_NEAREST),
                         backgroundValues, hints);
                 imageParam.setSourceRegion(null);
@@ -566,6 +568,9 @@ public class ImageCoverageWriter extends GridCoverageWriter {
             }
             ImageCoverageStore.logOperation(this, ImageCoverageWriter.class, output, 0,
                     coverage, size, crs, destToExtractedGrid, fullTime);
+        }
+        if (toDispose != null) {
+            toDispose.dispose();
         }
     }
 
