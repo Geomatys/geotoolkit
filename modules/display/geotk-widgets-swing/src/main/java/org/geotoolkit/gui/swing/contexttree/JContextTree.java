@@ -165,7 +165,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
             return;
         }
 
-        List<MapLayer> reversed = new ArrayList<MapLayer>(context.layers());
+        final List<MapLayer> reversed = new ArrayList<MapLayer>(context.layers());
         Collections.reverse(reversed);
 
         for (MapLayer layer : reversed) {
@@ -179,19 +179,19 @@ public class JContextTree extends JScrollPane implements ContextListener {
     }
 
     private void updateLayer(MapLayer layer) {
-        DefaultMutableTreeNode node = createNode(layer);
+        final DefaultMutableTreeNode node = createNode(layer);
 
         for (int i = 0; i < root.getChildCount(); i++) {
-            DefaultMutableTreeNode candidate = (DefaultMutableTreeNode) root.getChildAt(i);
+            final DefaultMutableTreeNode candidate = (DefaultMutableTreeNode) root.getChildAt(i);
             if(candidate.getUserObject().equals(layer)){
                 if(!tree.isEditing() || tree.stopEditing()){
-                    TreePath selectedPath = tree.getSelectionPath();
-                    TreePath candidatePath = new TreePath(model.getPathToRoot(candidate));
-                    boolean expanded = tree.isExpanded(candidatePath);
-                    boolean selected = candidatePath.equals(selectedPath);
+                    final TreePath selectedPath = tree.getSelectionPath();
+                    final TreePath candidatePath = new TreePath(model.getPathToRoot(candidate));
+                    final boolean expanded = tree.isExpanded(candidatePath);
+                    final boolean selected = candidatePath.equals(selectedPath);
                     model.removeNodeFromParent(candidate);
                     model.insertNodeInto(node, root, i);
-                    TreePath newPath = new TreePath(model.getPathToRoot(node));
+                    final TreePath newPath = new TreePath(model.getPathToRoot(node));
 
                     if(expanded){
                         tree.expandPath(newPath);
@@ -224,7 +224,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
 
     private DefaultMutableTreeNode createNode(MapLayer layer){
 
-        DefaultMutableTreeNode layerNode = new DefaultMutableTreeNode(layer);
+        final DefaultMutableTreeNode layerNode = new DefaultMutableTreeNode(layer);
 
         if(layer instanceof DynamicMapLayer){
             //this kind of layer have there own style systems we rely on it
@@ -242,7 +242,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
             if(ftss.size() == 1){
                 for(FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
                     for(Rule rule : fts.rules()){
-                        DefaultMutableTreeNode ruleNode = new DefaultMutableTreeNode(rule);
+                        final DefaultMutableTreeNode ruleNode = new DefaultMutableTreeNode(rule);
                         layerNode.add(ruleNode);
                     }
                 }
@@ -266,7 +266,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
         if(row == -1){
             //more intensive search, row selectable area might be small
             for(int i=0,n=tree.getRowCount();i<n;i++){
-                Rectangle rect = tree.getRowBounds(i);
+                final Rectangle rect = tree.getRowBounds(i);
                 if(p.y> rect.y && p.y< rect.y+rect.height){
                     row = i;
                     break;
@@ -290,7 +290,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
 
             @Override
             public void mouseMoved(MouseEvent e) {
-                Point p = e.getPoint();
+                final Point p = e.getPoint();
 
                 if (p == null) {
                     return;
@@ -298,8 +298,8 @@ public class JContextTree extends JScrollPane implements ContextListener {
 
                 int row = getRowAt(p);
 
-                TreePath overPath = tree.getPathForRow(row);
-                TreePath editPath = tree.getEditingPath();
+                final TreePath overPath = tree.getPathForRow(row);
+                final TreePath editPath = tree.getEditingPath();
 
                 if(tree.isEditing()){
                     tree.stopEditing();
@@ -344,8 +344,8 @@ public class JContextTree extends JScrollPane implements ContextListener {
 
                         //propagate event to undereath component
 
-                        Point componentPoint = SwingUtilities.convertPoint(tree, new Point(releaseEvent.getX(), releaseEvent.getY()), editor.panel);
-                        Component destination = SwingUtilities.getDeepestComponentAt(editor.panel, componentPoint.x, componentPoint.y);
+                        final Point componentPoint = SwingUtilities.convertPoint(tree, new Point(releaseEvent.getX(), releaseEvent.getY()), editor.panel);
+                        final Component destination = SwingUtilities.getDeepestComponentAt(editor.panel, componentPoint.x, componentPoint.y);
                         if (destination != null && pressedEvent != null) {
                             destination.dispatchEvent(SwingUtilities.convertMouseEvent(tree, pressedEvent, destination));
                             destination.dispatchEvent(SwingUtilities.convertMouseEvent(tree, releaseEvent, destination));
@@ -365,6 +365,14 @@ public class JContextTree extends JScrollPane implements ContextListener {
         });
     }
 
+    private static String label(Description desc){
+        if(desc != null && desc.getTitle() != null){
+            return desc.getTitle().toString();
+        }else{
+            return "";
+        }
+    }
+
     ////////////////////////////////////////////////////////////////////////////
     //Layer listener ///////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
@@ -379,7 +387,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
             updateContent();
 
         }else{
-            MapLayer layer = event.getItems().iterator().next();
+            final MapLayer layer = event.getItems().iterator().next();
             updateLayer(layer);
         }
     }
@@ -445,9 +453,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
             });
 
             panel.setOpaque(false);
-
             opacity.setPreferredSize(new Dimension(60, 22));
-
         }
 
         @Override
@@ -477,10 +483,10 @@ public class JContextTree extends JScrollPane implements ContextListener {
                 gc.gridx = 0;
 
                 if(edition){
-                    this.field.setText(context.getDescription().getTitle().toString());
+                    this.field.setText(label(context.getDescription()));
                     panel.add(field,gc);
                 }else{
-                    this.label.setText(context.getDescription().getTitle().toString());
+                    this.label.setText(label(context.getDescription()));
                     panel.add(label,gc);
                 }
 
@@ -503,10 +509,10 @@ public class JContextTree extends JScrollPane implements ContextListener {
                 gc.weighty = 1;
                 gc.gridx = 3;
                 if(edition){
-                    this.field.setText(layer.getDescription().getTitle().toString());
+                    this.field.setText(label(layer.getDescription()));
                     panel.add(field,gc);
                 }else{
-                    this.label.setText(layer.getDescription().getTitle().toString());
+                    this.label.setText(label(layer.getDescription()));
                     panel.add(label,gc);
                 }
 
@@ -522,7 +528,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
                 gc.weightx = 1;
                 gc.weighty = 1;
                 gc.gridx = 1;
-                this.label.setText(fts.getDescription().getTitle().toString());
+                this.label.setText(label(fts.getDescription()));
                 panel.add(label,gc);
             }else if(obj instanceof Rule){
                 final Rule rule = (Rule) obj;
@@ -539,7 +545,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
                     }
                 }
 
-                Dimension dim = DefaultGlyphService.glyphPreferredSize(rule, null, layer);
+                final Dimension dim = DefaultGlyphService.glyphPreferredSize(rule, null, layer);
                 final BufferedImage img = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
                 DefaultGlyphService.render(rule, new Rectangle(dim), img.createGraphics(),layer);
 
@@ -552,12 +558,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
                 gc.weightx = 1;
                 gc.weighty = 1;
                 gc.gridx = 1;
-                Description desc = rule.getDescription();
-                if(desc != null && desc.getTitle() != null){
-                    this.label.setText(desc.getTitle().toString());
-                }else{
-                    this.label.setText("");
-                }
+                this.label.setText(label(rule.getDescription()));
                 panel.add(label,gc);
             } else if(obj instanceof Image){
                 final Image img = (Image) obj;
@@ -579,13 +580,13 @@ public class JContextTree extends JScrollPane implements ContextListener {
         @Override
         public Object getCellEditorValue() {
             if (value instanceof MapContext) {
-                MapContext context = (MapContext) value;
-                Description old = context.getDescription();
+                final MapContext context = (MapContext) value;
+                final Description old = context.getDescription();
                 context.setDescription(SF.description(new SimpleInternationalString(field.getText()), old.getAbstract()));
 
             } else if (value instanceof MapLayer) {
-                MapLayer layer = (MapLayer) value;
-                Description old = layer.getDescription();
+                final MapLayer layer = (MapLayer) value;
+                final Description old = layer.getDescription();
                 layer.setDescription(SF.description(new SimpleInternationalString(field.getText()), old.getAbstract()));
                 layer.setSelectable(selectCheck.isSelected());
                 layer.setVisible(visibleCheck.isSelected());
@@ -598,9 +599,9 @@ public class JContextTree extends JScrollPane implements ContextListener {
 
         @Override
         public boolean isCellEditable(EventObject anEvent) {
-            TreePath path = tree.getSelectionPath();
+            final TreePath path = tree.getSelectionPath();
             if(path != null){
-                Object obj = ((DefaultMutableTreeNode)path.getLastPathComponent()).getUserObject();
+                final Object obj = ((DefaultMutableTreeNode)path.getLastPathComponent()).getUserObject();
                 return obj instanceof MapContext || obj instanceof MapLayer;
             }
             return false;
@@ -638,9 +639,9 @@ public class JContextTree extends JScrollPane implements ContextListener {
 
         @Override
         protected Transferable createTransferable(JComponent c) {
-            JTree tree = (JTree) c;
-            TreePath path = tree.getSelectionPath();
-            DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
+            final JTree tree = (JTree) c;
+            final TreePath path = tree.getSelectionPath();
+            final DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
 
             if (node != null && node.getUserObject() instanceof MapLayer) {
                 return new LaterTransferable((MapLayer) node.getUserObject());
@@ -662,7 +663,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
                 return false;
             }
 
-            JTree.DropLocation dropLocation = (JTree.DropLocation) support.getDropLocation();
+            final JTree.DropLocation dropLocation = (JTree.DropLocation) support.getDropLocation();
             return dropLocation.getPath() != null;
         }
 
@@ -672,9 +673,9 @@ public class JContextTree extends JScrollPane implements ContextListener {
                 return false;
             }
 
-            JTree.DropLocation dropLocation = (JTree.DropLocation) support.getDropLocation();
-            TreePath path = dropLocation.getPath();
-            Transferable transferable = support.getTransferable();
+            final JTree.DropLocation dropLocation = (JTree.DropLocation) support.getDropLocation();
+            final TreePath path = dropLocation.getPath();
+            final Transferable transferable = support.getTransferable();
 
             MapLayer transferedLayer;
             try {
@@ -685,7 +686,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
                 return false;
             }
 
-            DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+            final DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) path.getLastPathComponent();
             Object parent = parentNode.getUserObject();
 
             while( !(parent instanceof MapContext) && !(parent instanceof MapLayer)){
@@ -694,19 +695,19 @@ public class JContextTree extends JScrollPane implements ContextListener {
 
 
             if(parent instanceof MapContext){
-                MapContext context = (MapContext) parent;
+                final MapContext context = (MapContext) parent;
                 context.layers().remove(transferedLayer);
                 context.layers().add(transferedLayer);
             }else if(parent instanceof MapLayer){
 
-                MapContext context = getContext();
-                MapLayer layer = (MapLayer) parent;
+                final MapContext context = getContext();
+                final MapLayer layer = (MapLayer) parent;
 
                 if(layer == transferedLayer){
                     return true;
                 }
 
-                int index = context.layers().indexOf(layer);
+                final int index = context.layers().indexOf(layer);
                 context.layers().remove(transferedLayer);
                 context.layers().add(index,transferedLayer);
 
