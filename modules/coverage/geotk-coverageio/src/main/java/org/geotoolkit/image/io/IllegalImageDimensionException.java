@@ -30,14 +30,15 @@ import javax.imageio.IIOException;
  *     reader.getDimensionForAPI(DimensionSlice.API.BANDS).addDimensionId(...)
  * }
  *
- * has been invoked, and the identifiers given to the {@code addDimensionId(...)} method map
- * to a dimension that can not be sliced through the {@link javax.imageio.IIOParam#sourceBands}
- * attribute.
+ * has been invoked, and the identifiers given to the {@code addDimensionId(...)} method map to a
+ * dimension that can not be sliced through the {@linkplain javax.imageio.IIOParam#setSourceBands
+ * source bands} attribute.
  * <p>
  * The restrictions are plugins-specific, but a typical restriction is that the
  * subregion to fetch along dimensions 0 and 1 can only be specified through the
  * {@link DimensionSlice.API#COLUMNS COLUMNS} and {@link DimensionSlice.API#ROWS ROWS}
- * API respectively, using the standard {@link javax.imageio.IIOParam#sourceRegion} attribute.
+ * API respectively, using the standard {@linkplain javax.imageio.IIOParam#setSourceRegion
+ * source region} attribute.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.15

@@ -64,20 +64,12 @@ import javax.imageio.ImageWriter;
  * Named bands, if any, have precedence over named images. By default there is no named band.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.11
  *
  * @since 3.08
  * @module
  */
 public interface NamedImageStore {
-    /**
-     * A special image index meaning "every images". This index can be given to the
-     * {@link #getBandNames(int)} and {@link #setBandNames(int, String[])} methods.
-     *
-     * @since 3.15
-     */
-    int ALL_IMAGES = -1;
-
     /**
      * Returns the names associated to all image indices. The first name is assigned to the
      * image at index 0, the second name to image at index 1, <i>etc</i>. In other words a
@@ -121,8 +113,7 @@ public interface NamedImageStore {
      * Returns the names of the bands for the given image, or {@code null} if none.
      * By default, this method returns {@code null} for every image index.
      *
-     * @param  imageIndex Index of the image for which to get the band names, or
-     *         {@link #ALL_IMAGES} for all of them.
+     * @param  imageIndex Index of the image for which to get the band names.
      * @return The variable names of the bands for the given image, or {@code null}
      *         if the bands for the given image are unnamed.
      * @throws IOException if the image stream can not be read.
@@ -135,8 +126,7 @@ public interface NamedImageStore {
      * Sets the names of the bands for the given image, or {@code null} for removing any naming.
      * See the class-javadoc for a usage example.
      *
-     * @param  imageIndex Index of the image for which to set the band names,
-     *         or {@link #ALL_IMAGES} for applying the band names to all images.
+     * @param  imageIndex Index of the image for which to set the band names.
      * @param  bandNames The variable names of the bands for the given image,
      *         or {@code null} for removing any naming.
      * @throws IOException If the given names can not be assigned to this image reader or

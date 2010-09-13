@@ -189,7 +189,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
                 final NamedImageStore named = (NamedImageStore) imageReader;
                 try {
                     named.setImageNames(entry.getIdentifier().filename);
-                    named.setBandNames(NamedImageStore.ALL_IMAGES, bandNames);
+                    named.setBandNames(0, bandNames);
                 } catch (IOException ex) {
                     throw new CoverageStoreException(ex);
                 }

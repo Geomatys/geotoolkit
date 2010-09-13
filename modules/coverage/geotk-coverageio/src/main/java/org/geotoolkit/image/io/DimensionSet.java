@@ -146,6 +146,18 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
     }
 
     /**
+     * Clears any setting in this object. After this method call, the state of this
+     * object is than same than after construction.
+     */
+    @Override
+    public void clear() {
+        if (identifiersMap != null) {
+            identifiersMap.clear();
+        }
+        dimensions = null;
+    }
+
+    /**
      * Returns the identifiers assigned to {@link DimensionIdentification} instances.
      * This map should be considered read-only; callers are not allowed to change anything.
      * <p>
@@ -323,6 +335,17 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
                 count++;
             }
             return count;
+        }
+
+        /** Checks if this set contains the given API. */
+        @Override public boolean contains(final Object api) {
+            if (api instanceof DimensionSlice.API) {
+                final DimensionIdentification dimension = dimensions[((DimensionSlice.API) api).ordinal()];
+                if (dimension != null) {
+                    return dimension.hasDimensionIds();
+                }
+            }
+            return false;
         }
 
         /** Returns an iterator over the elements. */

@@ -25,8 +25,21 @@ import javax.imageio.ImageWriter;
 
 /**
  * Interface for {@link ImageReader} and {@link ImageWriter} implementations handling data
- * which can have more than two dimensions. The supplemental dimensions can be accessed as
- * bands, as image index or using the Geotk-specific {@link DimensionSlice} API.
+ * which can have more than two dimensions. The standard Java Image I/O API is designed for
+ * two-dimensional data. The Geotk library can gives access to supplemental dimensions in
+ * two different ways:
+ *
+ * <ul>
+ *   <li><p>Using many {@link DimensionSlice} objects (one for each dimension) associated
+ *       to a single {@link SpatialImageReadParam} object controlling the reading process.
+ *       This approach is similar in spirit to the WCS 2.0 specification, but requires
+ *       knowledge of Geotk API.</p></li>
+ *
+ *   <li><p>Using the standard Java Image I/O API for <cite>bands</cite> and <cite>image
+ *       index</cite>. An advantage of this approach is to work with libraries having no
+ *       knowledge of the Geotk-specific {@code DimensionSlice} class. This is the approach
+ *       enabled by this {@code MultidimensionalImageStore} interface.</p></li>
+ * </ul>
  *
  * {@section Assigning a third dimension to bands}
  * Whatever a third dimension is assigned to bands or not is plugin-specific. Plugins that have

@@ -124,8 +124,9 @@ import javax.imageio.ImageWriteParam;
  */
 public class DimensionSlice extends DimensionIdentification {
     /**
-     * The standard Java API used for selecting the slice to read or write.
-     * The selection can be performed in 3 or 4 dimensions by:
+     * The standard Java API used for selecting the slice to read or write in a particular
+     * dimension. The region to read or write in a hyper-cube can be specified in up to 4
+     * dimensions in the following ways:
      *
      * <ul>
      *   <li><p>When reading:</p></li>
