@@ -333,7 +333,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         final RenderingContext2D context2D = (RenderingContext2D) context;
 
         CoordinateReferenceSystem queryCrs = context.getObjectiveCRS2D();
-        Envelope env = context2D.getCanvasObjectiveBounds2D();
+        Envelope env = context2D.getCanvasObjectiveBounds();
         //check if we must make the  coverage reprojection ourself--------------
         if (useLocalReprojection) {
             try {
