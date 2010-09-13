@@ -79,6 +79,20 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
         }
     };
 
+    private final ChangeListener spinnerListener = new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent ce) {
+                if(map == null) return;
+
+                Double vh = (Double) modelHaut.getValue();
+                Double vb = (Double) modelBas.getValue();
+                if(vh.isInfinite()) vh = null;
+                if(vb.isInfinite()) vb = null;
+
+                map.getCanvas().getController().setElevationRange(vb, vh, SI.METRE);
+            }
+        };
+
     private volatile Map2D map = null;
 
     public JMapElevationLine(){
@@ -102,22 +116,8 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
         final JSpinner haut = new JSpinner(modelHaut);
         final JSpinner bas = new JSpinner(modelBas);
 
-        ChangeListener lst = new ChangeListener() {
-            @Override
-            public void stateChanged(ChangeEvent ce) {
-                if(map == null) return;
-
-                Double vh = (Double) modelHaut.getValue();
-                Double vb = (Double) modelBas.getValue();
-                if(vh.isInfinite()) vh = null;
-                if(vb.isInfinite()) vb = null;
-                
-                map.getCanvas().getController().setElevationRange(vb, vh, SI.METRE);
-            }
-        };
-
-        modelBas.addChangeListener(lst);
-        modelHaut.addChangeListener(lst);
+        modelBas.addChangeListener(spinnerListener);
+        modelHaut.addChangeListener(spinnerListener);
 
         final JPanel minPan = new JPanel(new BorderLayout());
         minPan.add(BorderLayout.WEST, new JLabel("min"));
@@ -322,6 +322,21 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
         addBand(band);
     }
     
+    /**
+     * Disable spinner the time to update there values, otherwise
+     * the listener will cause the canvas to be repainted.
+     */
+    private synchronized void updateSpiners(double min, double max){
+        modelBas.removeChangeListener(spinnerListener);
+        modelHaut.removeChangeListener(spinnerListener);
+
+        modelBas.setValue(min);
+        modelHaut.setValue(max);
+
+        modelBas.addChangeListener(spinnerListener);
+        modelHaut.addChangeListener(spinnerListener);
+    }
+
     public Map2D getMap() {
         return map;
     }
@@ -441,23 +456,18 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
             Double[] range = map.getCanvas().getController().getElevationRange();
 
             if(range == null){
-                modelBas.setValue(Double.NEGATIVE_INFINITY);
-                modelHaut.setValue(Double.POSITIVE_INFINITY);
+                range[0] = Double.NEGATIVE_INFINITY;
+                range[1] = Double.POSITIVE_INFINITY;
             }else{
-                if(range[0] != null){
-                    modelBas.setValue(range[0]);
-                }else{
-                    modelBas.setValue(Double.NEGATIVE_INFINITY);
+                if(range[0] == null){
+                    range[0] = Double.NEGATIVE_INFINITY;
                 }
-
-                if(range[1] != null){
-                    modelHaut.setValue(range[1]);
-                }else{
-                    modelHaut.setValue(Double.POSITIVE_INFINITY);
+                if(range[1] == null){
+                    range[1] = Double.POSITIVE_INFINITY;
                 }
-                
             }
 
+            updateSpiners(range[0], range[1]);
             repaint();
         }
     }
