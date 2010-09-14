@@ -43,7 +43,7 @@ import javax.xml.bind.annotation.XmlType;
     "styleURL"
 })
 @XmlRootElement(name = "Style")
-public class Style {
+public class Style implements org.geotoolkit.wms.xml.Style {
 
     @XmlElement(name = "Name", required = true)
     private String name;
@@ -85,6 +85,7 @@ public class Style {
      * Gets the value of the name property.
      * 
      */
+    @Override
     public String getName() {
         return name;
     }
@@ -92,6 +93,7 @@ public class Style {
     /**
      * Gets the value of the title property.
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -100,6 +102,7 @@ public class Style {
      * Gets the value of the abstract property.
      * 
      */
+    @Override
     public String getAbstract() {
         return _abstract;
     }
@@ -126,4 +129,10 @@ public class Style {
     public StyleURL getStyleURL() {
         return styleURL;
     }
+
+    @Override
+    public String toString() {
+        return getName() +" : "+ getTitle() +", "+ getAbstract();
+    }
+
 }

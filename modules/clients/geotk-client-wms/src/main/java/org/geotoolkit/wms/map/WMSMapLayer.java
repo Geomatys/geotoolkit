@@ -27,8 +27,10 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
 
@@ -60,14 +62,13 @@ import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WebMapServer;
 import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractLayer;
-import org.geotoolkit.wms.xml.v111.Layer;
+import org.geotoolkit.wms.xml.Style;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
@@ -692,6 +693,14 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             return layer.getEnvelope();
         }
         return null;
+    }
+
+    public List<? extends Style> findStyleCandidates(){
+        final AbstractLayer layer = server.getCapabilities().getLayerFromName(layers[0]);
+         if(layer != null){
+            return layer.getStyle();
+        }
+        return Collections.emptyList();
     }
 
 }

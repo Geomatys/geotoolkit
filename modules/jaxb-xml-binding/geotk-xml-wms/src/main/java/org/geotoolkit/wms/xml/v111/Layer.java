@@ -372,6 +372,7 @@ public class Layer extends AbstractLayer {
     /**
      * Gets the value of the style property.
      */
+    @Override
     public List<Style> getStyle() {
         return Collections.unmodifiableList(style);
     }

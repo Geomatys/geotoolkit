@@ -73,4 +73,6 @@ public abstract class AbstractLayer {
 
     public abstract Envelope getEnvelope();
 
+    public abstract List<? extends Style> getStyle();
+
 }
