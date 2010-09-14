@@ -127,6 +127,8 @@ public class Utils {
         CLASS_BINDING.put("MultiGeometryPropertyType",     GeometryCollection.class);
         CLASS_BINDING.put("CompositeCurve",                MultiLineString.class);
         CLASS_BINDING.put("CompositeCurvePropertyType",    MultiLineString.class);
+        CLASS_BINDING.put("MultiLineStringPropertyType",   MultiLineString.class);
+        CLASS_BINDING.put("MultiLineString",               MultiLineString.class);
         CLASS_BINDING.put("Envelope",                      Envelope.class);
         CLASS_BINDING.put("EnvelopePropertyType",          Envelope.class);
         CLASS_BINDING.put("PolyHedralSurface",             MultiPolygon.class);
