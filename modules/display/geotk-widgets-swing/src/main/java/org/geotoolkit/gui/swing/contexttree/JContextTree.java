@@ -19,8 +19,7 @@ package org.geotoolkit.gui.swing.contexttree;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
+import java.awt.FlowLayout;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -62,8 +61,6 @@ import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
-import org.jdesktop.swingx.JXTree;
-
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
@@ -94,7 +91,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
     private final List<TreePopupItem> controls = new ArrayList<TreePopupItem>();
     private final DefaultMutableTreeNode root = new DefaultMutableTreeNode(null);
     private final DefaultTreeModel model = new DefaultTreeModel(root);
-    private final JXTree tree = new JXTree(model);
+    private final JTree tree = new JTree(model);
     private final TreePopup popup = new TreePopup(this);
     private MapContext context = null;
 
@@ -172,8 +169,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
             root.add(createNode(layer));
         }
         model.reload();
-
-        tree.expandAll();
+        
         tree.revalidate();
         tree.repaint();
     }
@@ -398,27 +394,27 @@ public class JContextTree extends JScrollPane implements ContextListener {
 
     private class ContextCellRenderer extends DefaultTreeCellRenderer implements TreeCellEditor {
 
-        private final JPanel panel = new JPanel(new GridBagLayout());
-        private final GridBagConstraints gc = new GridBagConstraints();
+        private final JPanel panel;
         private final JLabel icon = new JLabel();
         private final JOpacitySlider opacity = new JOpacitySlider();
         private final JCheckBox visibleCheck = new VisibleCheck();
         private final JCheckBox selectCheck = new SelectionCheck();
         private final JLabel label = new JLabel(" "){
-
             @Override
             public Dimension getPreferredSize() {
                 final Dimension dim = super.getPreferredSize();
                 dim.height += 2;
                 return dim;
             }
-
         };
         private final JTextField field = new JTextField();
 
         private Object value = null;
 
         public ContextCellRenderer() {
+            final FlowLayout layout = new FlowLayout(FlowLayout.LEFT,1,0);
+            panel = new JPanel(layout);
+
             field.setOpaque(false);
             field.setPreferredSize(new Dimension(140,label.getPreferredSize().height));
 
@@ -454,6 +450,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
 
             panel.setOpaque(false);
             opacity.setPreferredSize(new Dimension(60, 22));
+            opacity.setSize(new Dimension(60, 22));
         }
 
         @Override
@@ -474,62 +471,42 @@ public class JContextTree extends JScrollPane implements ContextListener {
             this.label.setIcon(null);
 
             panel.removeAll();
+            panel.revalidate();
+            panel.repaint();
 
             if (obj instanceof MapContext) {
                 final MapContext context = (MapContext) obj;
-
-                gc.weightx = 1;
-                gc.weighty = 1;
-                gc.gridx = 0;
-
                 if(edition){
                     this.field.setText(label(context.getDescription()));
-                    panel.add(field,gc);
+                    panel.add(field);
                 }else{
                     this.label.setText(label(context.getDescription()));
-                    panel.add(label,gc);
+                    panel.add(label);
                 }
 
             } else if (obj instanceof MapLayer) {
                 final MapLayer layer = (MapLayer) obj;
 
-                gc.weightx = 0;
-                gc.weighty = 1;
-                gc.gridx = 0;
                 opacity.setOpacity(layer.getOpacity());
                 panel.add(opacity);
-                gc.gridx = 1;
                 this.visibleCheck.setSelected(layer.isVisible());
-                panel.add(visibleCheck,gc);
-                gc.gridx = 2;
+                panel.add(visibleCheck);
                 this.selectCheck.setSelected(layer.isSelectable());
-                panel.add(selectCheck,gc);
-
-                gc.weightx = 1;
-                gc.weighty = 1;
-                gc.gridx = 3;
+                panel.add(selectCheck);
                 if(edition){
                     this.field.setText(label(layer.getDescription()));
-                    panel.add(field,gc);
+                    panel.add(field);
                 }else{
                     this.label.setText(label(layer.getDescription()));
-                    panel.add(label,gc);
+                    panel.add(label);
                 }
 
             } else if(obj instanceof FeatureTypeStyle){
                 final FeatureTypeStyle fts = (FeatureTypeStyle) obj;
-
-                gc.weightx = 0;
-                gc.weighty = 1;
-                gc.gridx = 0;
                 this.icon.setIcon(ICON_FTS);
-                panel.add(icon,gc);
-
-                gc.weightx = 1;
-                gc.weighty = 1;
-                gc.gridx = 1;
+                panel.add(icon);
                 this.label.setText(label(fts.getDescription()));
-                panel.add(label,gc);
+                panel.add(label);
             }else if(obj instanceof Rule){
                 final Rule rule = (Rule) obj;
 
@@ -549,31 +526,22 @@ public class JContextTree extends JScrollPane implements ContextListener {
                 final BufferedImage img = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
                 DefaultGlyphService.render(rule, new Rectangle(dim), img.createGraphics(),layer);
 
-                gc.weightx = 0;
-                gc.weighty = 1;
-                gc.gridx = 0;
                 this.icon.setIcon(new ImageIcon(img));
-                panel.add(icon,gc);
+                panel.add(icon);
 
-                gc.weightx = 1;
-                gc.weighty = 1;
-                gc.gridx = 1;
                 this.label.setText(label(rule.getDescription()));
-                panel.add(label,gc);
+                panel.add(label);
             } else if(obj instanceof Image){
                 final Image img = (Image) obj;
                 this.label.setText("");
                 this.label.setIcon(new ImageIcon(img));
-                gc.weightx = 1;
-                gc.weighty = 1;
-                panel.add(label,gc);
+                panel.add(label);
             } else {
-                gc.weightx = 1;
-                gc.weighty = 1;
                 this.label.setText("-");
-                panel.add(label,gc);
+                panel.add(label);
             }
             panel.revalidate();
+            panel.repaint();
             return panel;
         }
 
