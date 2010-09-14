@@ -83,7 +83,7 @@ public class LineStyleTest {
     }
 
     @Test
-    public void lineStyleReadTest() throws IOException, XMLStreamException, URISyntaxException {
+    public void lineStyleReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));

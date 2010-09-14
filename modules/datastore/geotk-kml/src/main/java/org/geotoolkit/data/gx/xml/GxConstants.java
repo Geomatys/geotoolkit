@@ -34,6 +34,7 @@ public class GxConstants {
     public static final String PREFIX_KML = "kml";
     public static final String PREFIX_XSI = "xsi";
 
+    // TAGS
     public static final String TAG_ALTITUDE_MODE = "altitudeMode";
     public static final String TAG_ANGLES = "angles";
     public static final String TAG_COORD = "coord";
@@ -63,7 +64,6 @@ public class GxConstants {
     /*
      * DEFAULT VALUES
      */
-
     public static final AltitudeMode DEF_ALTITUDE_MODE = KmlConstants.DEF_ALTITUDE_MODE;
     public static final boolean DEF_BALLOON_VISIBILITY = true;
     public static final double DEF_DURATION = 0.0;
@@ -71,4 +71,5 @@ public class GxConstants {
     public static final EnumFlyToMode DEF_FLY_TO_MODE = EnumFlyToMode.BOUNCE;
     public static final EnumPlayMode DEF_PLAY_MODE = EnumPlayMode.PAUSE;
 
+    private GxConstants(){}
 }

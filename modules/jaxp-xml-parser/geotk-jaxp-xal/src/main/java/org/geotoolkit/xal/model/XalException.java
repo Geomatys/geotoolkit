@@ -41,7 +41,4 @@ public class XalException extends Exception{
     public String getMessage(){
         return this.message;
     }
-
-
-
 }

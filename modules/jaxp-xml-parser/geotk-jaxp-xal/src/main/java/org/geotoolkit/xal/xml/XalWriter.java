@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.xal.xml;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.geotoolkit.xal.model.AddressDetails;
@@ -107,8 +105,8 @@ public class XalWriter extends StaxStreamWriter {
      *
      * @param xal The Xal object to write.
      */
-    public void write(Xal xal) {
-        try {
+    public void write(Xal xal) 
+            throws XMLStreamException, XalException {
 
             // FACULTATIF : INDENTATION DE LA SORTIE
             //streamWriter = new IndentingXMLStreamWriter(streamWriter);
@@ -126,12 +124,6 @@ public class XalWriter extends StaxStreamWriter {
             writer.writeEndElement();
             writer.writeEndDocument();
             writer.flush();
-
-        } catch (XalException ex) {
-            Logger.getLogger(XalWriter.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (XMLStreamException ex) {
-            Logger.getLogger(XalWriter.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 
     /**
@@ -139,7 +131,9 @@ public class XalWriter extends StaxStreamWriter {
      * @param xal The Xal object to write.
      * @throws XMLStreamException
      */
-    private void writeXal(Xal xal) throws XMLStreamException, XalException {
+    private void writeXal(Xal xal) 
+            throws XMLStreamException, XalException {
+
         if (xal.getVersion() != null) {
             writer.writeAttribute(ATT_VERSION, xal.getVersion());
         }
@@ -153,7 +147,9 @@ public class XalWriter extends StaxStreamWriter {
      * @param addressDetails
      * @throws XMLStreamException
      */
-    public void writeAddressDetails(AddressDetails addressDetails) throws XMLStreamException, XalException {
+    public void writeAddressDetails(AddressDetails addressDetails) 
+            throws XMLStreamException, XalException {
+
         writer.writeStartElement(URI_XAL, TAG_ADDRESS_DETAILS);
         if (addressDetails.getAddressType() != null) {
             writer.writeAttribute(ATT_ADDRESS_TYPE, addressDetails.getAddressType());
@@ -202,7 +198,14 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writePostalServiceElements(PostalServiceElements postalServiceElements) throws XMLStreamException {
+    /**
+     *
+     * @param postalServiceElements
+     * @throws XMLStreamException
+     */
+    private void writePostalServiceElements(PostalServiceElements postalServiceElements) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_POSTAL_SERVICE_ELEMENTS);
         if (postalServiceElements.getType() != null) {
             writer.writeAttribute(ATT_TYPE, postalServiceElements.getType());
@@ -240,61 +243,126 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeAddress(GenericTypedGrPostal address) throws XMLStreamException {
+    /**
+     *
+     * @param address
+     * @throws XMLStreamException
+     */
+    private void writeAddress(GenericTypedGrPostal address) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_ADDRESS);
         this.writeGenericTypedGrPostal(address);
         writer.writeEndElement();
     }
 
-    private void writeSupplementaryPostalServiceData(GenericTypedGrPostal data) throws XMLStreamException {
+    /**
+     *
+     * @param data
+     * @throws XMLStreamException
+     */
+    private void writeSupplementaryPostalServiceData(GenericTypedGrPostal data) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_SUPPLEMENTARY_POSTAL_SERVICE_DATA);
         this.writeGenericTypedGrPostal(data);
         writer.writeEndElement();
     }
 
-    private void writeAddressLongitude(GenericTypedGrPostal address) throws XMLStreamException {
+    /**
+     *
+     * @param address
+     * @throws XMLStreamException
+     */
+    private void writeAddressLongitude(GenericTypedGrPostal address) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_ADDRESS_LONGITUDE);
         this.writeGenericTypedGrPostal(address);
         writer.writeEndElement();
     }
 
-    private void writeAddressLongitudeDirection(GenericTypedGrPostal address) throws XMLStreamException {
+    /**
+     *
+     * @param address
+     * @throws XMLStreamException
+     */
+    private void writeAddressLongitudeDirection(GenericTypedGrPostal address) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_ADDRESS_LONGITUDE_DIRECTION);
         this.writeGenericTypedGrPostal(address);
         writer.writeEndElement();
     }
 
-    private void writeAddressLatitude(GenericTypedGrPostal address) throws XMLStreamException {
+    private void writeAddressLatitude(GenericTypedGrPostal address) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_ADDRESS_LATITUDE);
         this.writeGenericTypedGrPostal(address);
         writer.writeEndElement();
     }
 
-    private void writeAddressLatitudeDirection(GenericTypedGrPostal address) throws XMLStreamException {
+    /**
+     *
+     * @param address
+     * @throws XMLStreamException
+     */
+    private void writeAddressLatitudeDirection(GenericTypedGrPostal address) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_ADDRESS_LATITUDE_DIRECTION);
         this.writeGenericTypedGrPostal(address);
         writer.writeEndElement();
     }
 
-    private void writeBarcode(GenericTypedGrPostal barcode) throws XMLStreamException {
+    /**
+     *
+     * @param barcode
+     * @throws XMLStreamException
+     */
+    private void writeBarcode(GenericTypedGrPostal barcode) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_BARCODE);
         this.writeGenericTypedGrPostal(barcode);
         writer.writeEndElement();
     }
 
-    private void writeEndorsementLineCode(GenericTypedGrPostal lineCode) throws XMLStreamException {
+    /**
+     *
+     * @param lineCode
+     * @throws XMLStreamException
+     */
+    private void writeEndorsementLineCode(GenericTypedGrPostal lineCode) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_ENDORSEMENT_LINE_CODE);
         this.writeGenericTypedGrPostal(lineCode);
         writer.writeEndElement();
     }
 
-    private void writeKeyLineCode(GenericTypedGrPostal lineCode) throws XMLStreamException {
+    /**
+     *
+     * @param lineCode
+     * @throws XMLStreamException
+     */
+    private void writeKeyLineCode(GenericTypedGrPostal lineCode) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_KEY_LINE_CODE);
         this.writeGenericTypedGrPostal(lineCode);
         writer.writeEndElement();
     }
 
-    private void writeAddressLines(AddressLines addressLines) throws XMLStreamException {
+    /**
+     *
+     * @param addressLines
+     * @throws XMLStreamException
+     */
+    private void writeAddressLines(AddressLines addressLines) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_ADDRESS_LINES);
         for (GenericTypedGrPostal addressLine : addressLines.getAddressLines()) {
             this.writeAddressLine(addressLine);
@@ -302,25 +370,54 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeAddressLine(GenericTypedGrPostal addressline) throws XMLStreamException {
+    /**
+     *
+     * @param addressline
+     * @throws XMLStreamException
+     */
+    private void writeAddressLine(GenericTypedGrPostal addressline) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_ADDRESS_LINE);
         this.writeGenericTypedGrPostal(addressline);
         writer.writeEndElement();
     }
 
-    private void writeAdministrativeAreaName(GenericTypedGrPostal name) throws XMLStreamException {
+    /**
+     *
+     * @param name
+     * @throws XMLStreamException
+     */
+    private void writeAdministrativeAreaName(GenericTypedGrPostal name) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_ADMINISTRATIVE_AREA_NAME);
         this.writeGenericTypedGrPostal(name);
         writer.writeEndElement();
     }
 
-    private void writeSubAdministrativeAreaName(GenericTypedGrPostal name) throws XMLStreamException {
+    /**
+     *
+     * @param name
+     * @throws XMLStreamException
+     */
+    private void writeSubAdministrativeAreaName(GenericTypedGrPostal name) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_SUB_ADMINISTRATIVE_AREA_NAME);
         this.writeGenericTypedGrPostal(name);
         writer.writeEndElement();
     }
 
-    private void writeCountry(Country country) throws XMLStreamException, XalException {
+    /**
+     *
+     * @param country
+     * @throws XMLStreamException
+     * @throws XalException
+     */
+    private void writeCountry(Country country) 
+            throws XMLStreamException, XalException {
+
         writer.writeStartElement(URI_XAL, TAG_COUNTRY);
         for (GenericTypedGrPostal addressLine : country.getAddressLines()) {
             this.writeAddressLine(addressLine);
@@ -343,97 +440,209 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeCountryName(GenericTypedGrPostal countryName) throws XMLStreamException {
+    /**
+     *
+     * @param countryName
+     * @throws XMLStreamException
+     */
+    private void writeCountryName(GenericTypedGrPostal countryName) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_COUNTRY_NAME);
         this.writeGenericTypedGrPostal(countryName);
         writer.writeEndElement();
     }
 
-    private void writeFirmName(GenericTypedGrPostal firmName) throws XMLStreamException {
+    /**
+     *
+     * @param firmName
+     * @throws XMLStreamException
+     */
+    private void writeFirmName(GenericTypedGrPostal firmName) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_FIRM_NAME);
         this.writeGenericTypedGrPostal(firmName);
         writer.writeEndElement();
     }
 
-    private void writeDepartmentName(GenericTypedGrPostal departmentName) throws XMLStreamException {
+    /**
+     *
+     * @param departmentName
+     * @throws XMLStreamException
+     */
+    private void writeDepartmentName(GenericTypedGrPostal departmentName)
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_DEPARTMENT_NAME);
         this.writeGenericTypedGrPostal(departmentName);
         writer.writeEndElement();
     }
 
-    private void writeMailStopName(GenericTypedGrPostal mailStopName) throws XMLStreamException {
+    /**
+     *
+     * @param mailStopName
+     * @throws XMLStreamException
+     */
+    private void writeMailStopName(GenericTypedGrPostal mailStopName) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_MAIL_STOP_NAME);
         this.writeGenericTypedGrPostal(mailStopName);
         writer.writeEndElement();
     }
 
-    private void writePostalCodeNumber(GenericTypedGrPostal postalCodeNumber) throws XMLStreamException {
+    /**
+     *
+     * @param postalCodeNumber
+     * @throws XMLStreamException
+     */
+    private void writePostalCodeNumber(GenericTypedGrPostal postalCodeNumber) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_POSTAL_CODE_NUMBER);
         this.writeGenericTypedGrPostal(postalCodeNumber);
         writer.writeEndElement();
     }
 
-    private void writeLocalityName(GenericTypedGrPostal localityName) throws XMLStreamException {
+    /**
+     *
+     * @param localityName
+     * @throws XMLStreamException
+     */
+    private void writeLocalityName(GenericTypedGrPostal localityName) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_LOCALITY_NAME);
         this.writeGenericTypedGrPostal(localityName);
         writer.writeEndElement();
     }
 
-    private void writeDependentLocalityName(GenericTypedGrPostal dependentLocalityName) throws XMLStreamException {
+    /**
+     *
+     * @param dependentLocalityName
+     * @throws XMLStreamException
+     */
+    private void writeDependentLocalityName(GenericTypedGrPostal dependentLocalityName) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_DEPENDENT_LOCALITY_NAME);
         this.writeGenericTypedGrPostal(dependentLocalityName);
         writer.writeEndElement();
     }
 
-    private void writeTownName(GenericTypedGrPostal postTownName) throws XMLStreamException {
+    /**
+     *
+     * @param postTownName
+     * @throws XMLStreamException
+     */
+    private void writeTownName(GenericTypedGrPostal postTownName) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_POST_TOWN_NAME);
         this.writeGenericTypedGrPostal(postTownName);
         writer.writeEndElement();
     }
 
-    private void writePostalRouteName(GenericTypedGrPostal postalRouteName) throws XMLStreamException {
+    /**
+     *
+     * @param postalRouteName
+     * @throws XMLStreamException
+     */
+    private void writePostalRouteName(GenericTypedGrPostal postalRouteName) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_POSTAL_ROUTE_NAME);
         this.writeGenericTypedGrPostal(postalRouteName);
         writer.writeEndElement();
     }
 
-    private void writePostOfficeName(GenericTypedGrPostal postOfficeName) throws XMLStreamException {
+    /**
+     *
+     * @param postOfficeName
+     * @throws XMLStreamException
+     */
+    private void writePostOfficeName(GenericTypedGrPostal postOfficeName) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_POST_OFFICE_NAME);
         this.writeGenericTypedGrPostal(postOfficeName);
         writer.writeEndElement();
     }
 
-    private void writeThoroughfarePostDirection(GenericTypedGrPostal thoroughfarePostDirection) throws XMLStreamException {
+    /**
+     *
+     * @param thoroughfarePostDirection
+     * @throws XMLStreamException
+     */
+    private void writeThoroughfarePostDirection(GenericTypedGrPostal thoroughfarePostDirection) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_POST_DIRECTION);
         this.writeGenericTypedGrPostal(thoroughfarePostDirection);
         writer.writeEndElement();
     }
 
-    private void writeThoroughfarePreDirection(GenericTypedGrPostal thoroughfarePreDirection) throws XMLStreamException {
+    /**
+     *
+     * @param thoroughfarePreDirection
+     * @throws XMLStreamException
+     */
+    private void writeThoroughfarePreDirection(GenericTypedGrPostal thoroughfarePreDirection) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_PRE_DIRECTION);
         this.writeGenericTypedGrPostal(thoroughfarePreDirection);
         writer.writeEndElement();
     }
 
-    private void writeThoroughfareName(GenericTypedGrPostal name) throws XMLStreamException {
+    /**
+     *
+     * @param name
+     * @throws XMLStreamException
+     */
+    private void writeThoroughfareName(GenericTypedGrPostal name) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_NAME);
         this.writeGenericTypedGrPostal(name);
         writer.writeEndElement();
     }
 
-    private void writeThoroughfareTrailingType(GenericTypedGrPostal thoroughfareTrailingType) throws XMLStreamException {
+    /**
+     *
+     * @param thoroughfareTrailingType
+     * @throws XMLStreamException
+     */
+    private void writeThoroughfareTrailingType(GenericTypedGrPostal thoroughfareTrailingType) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_TRAILING_TYPE);
         this.writeGenericTypedGrPostal(thoroughfareTrailingType);
         writer.writeEndElement();
     }
 
-    private void writeThoroughfareLeadingType(GenericTypedGrPostal thoroughfareLeadingType) throws XMLStreamException {
+    /**
+     *
+     * @param thoroughfareLeadingType
+     * @throws XMLStreamException
+     */
+    private void writeThoroughfareLeadingType(GenericTypedGrPostal thoroughfareLeadingType) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_LEADING_TYPE);
         this.writeGenericTypedGrPostal(thoroughfareLeadingType);
         writer.writeEndElement();
     }
 
-    private void writeCountryNameCode(CountryNameCode countryNameCode) throws XMLStreamException {
+    /**
+     *
+     * @param countryNameCode
+     * @throws XMLStreamException
+     */
+    private void writeCountryNameCode(CountryNameCode countryNameCode) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_COUNTRY_NAME_CODE);
         if (countryNameCode.getScheme() != null) {
             writer.writeAttribute(ATT_SCHEME, countryNameCode.getScheme());
@@ -447,7 +656,15 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeAdministrativeArea(AdministrativeArea administrativeArea) throws XMLStreamException, XalException {
+    /**
+     *
+     * @param administrativeArea
+     * @throws XMLStreamException
+     * @throws XalException
+     */
+    private void writeAdministrativeArea(AdministrativeArea administrativeArea) 
+            throws XMLStreamException, XalException {
+
         writer.writeStartElement(URI_XAL, TAG_ADMINISTRATIVE_AREA);
         if (administrativeArea.getType() != null) {
             writer.writeAttribute(ATT_TYPE, administrativeArea.getType());
@@ -477,7 +694,15 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeDependentLocality(DependentLocality dependentLocality) throws XMLStreamException, XalException {
+    /**
+     *
+     * @param dependentLocality
+     * @throws XMLStreamException
+     * @throws XalException
+     */
+    private void writeDependentLocality(DependentLocality dependentLocality) 
+            throws XMLStreamException, XalException {
+
         writer.writeStartElement(URI_XAL, TAG_DEPENDENT_LOCALITY);
         if (dependentLocality.getType() != null) {
             writer.writeAttribute(ATT_TYPE, dependentLocality.getType());
@@ -527,7 +752,15 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeLocality(Locality locality) throws XMLStreamException, XalException {
+    /**
+     *
+     * @param locality
+     * @throws XMLStreamException
+     * @throws XalException
+     */
+    private void writeLocality(Locality locality) 
+            throws XMLStreamException, XalException {
+
         writer.writeStartElement(URI_XAL, TAG_LOCALITY);
         if (locality.getType() != null) {
             writer.writeAttribute(ATT_TYPE, locality.getType());
@@ -571,7 +804,14 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeGenericTypedGrPostal(GenericTypedGrPostal generic) throws XMLStreamException {
+    /**
+     *
+     * @param generic
+     * @throws XMLStreamException
+     */
+    private void writeGenericTypedGrPostal(GenericTypedGrPostal generic) 
+            throws XMLStreamException {
+
         if (generic.getType() != null) {
             writer.writeAttribute(ATT_TYPE, generic.getType());
         }
@@ -583,7 +823,14 @@ public class XalWriter extends StaxStreamWriter {
         }
     }
 
-    private void writeSortingCode(SortingCode sortingCode) throws XMLStreamException {
+    /**
+     *
+     * @param sortingCode
+     * @throws XMLStreamException
+     */
+    private void writeSortingCode(SortingCode sortingCode) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_SORTING_CODE);
         if (sortingCode.getType() != null) {
             writer.writeAttribute(ATT_TYPE, sortingCode.getType());
@@ -594,7 +841,14 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeAddressIdentifier(AddressIdentifier identifier) throws XMLStreamException {
+    /**
+     *
+     * @param identifier
+     * @throws XMLStreamException
+     */
+    private void writeAddressIdentifier(AddressIdentifier identifier) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_ADDRESS_IDENTIFIER);
         if (identifier.getIdentifierType() != null) {
             writer.writeAttribute(ATT_IDENTIFIER_TYPE, identifier.getIdentifierType());
@@ -611,13 +865,28 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeGrPostal(GrPostal grPostal) throws XMLStreamException {
+    /**
+     *
+     * @param grPostal
+     * @throws XMLStreamException
+     */
+    private void writeGrPostal(GrPostal grPostal) 
+            throws XMLStreamException {
+
         if (grPostal.getCode() != null) {
             writer.writeAttribute(ATT_CODE, grPostal.getCode());
         }
     }
 
-    private void writeSubAdministrativeArea(SubAdministrativeArea subAdministrativeArea) throws XMLStreamException, XalException {
+    /**
+     *
+     * @param subAdministrativeArea
+     * @throws XMLStreamException
+     * @throws XalException
+     */
+    private void writeSubAdministrativeArea(SubAdministrativeArea subAdministrativeArea) 
+            throws XMLStreamException, XalException {
+
         writer.writeStartElement(URI_XAL, TAG_SUB_ADMINISTRATIVE_AREA);
         if (subAdministrativeArea.getType() != null) {
             writer.writeAttribute(ATT_TYPE, subAdministrativeArea.getType());
@@ -644,7 +913,14 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writePostBox(PostBox postBox) throws XMLStreamException {
+    /**
+     *
+     * @param postBox
+     * @throws XMLStreamException
+     */
+    private void writePostBox(PostBox postBox) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_POST_BOX);
         if (postBox.getType() != null) {
             writer.writeAttribute(ATT_TYPE, postBox.getType());
@@ -677,7 +953,14 @@ public class XalWriter extends StaxStreamWriter {
 
     }
 
-    private void writePostBoxNumber(PostBoxNumber postBoxNumber) throws XMLStreamException {
+    /**
+     *
+     * @param postBoxNumber
+     * @throws XMLStreamException
+     */
+    private void writePostBoxNumber(PostBoxNumber postBoxNumber) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_POST_BOX_NUMBER);
         if (postBoxNumber.getGrPostal() != null) {
             this.writeGrPostal(postBoxNumber.getGrPostal());
@@ -688,13 +971,21 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writePostBoxNumberPrefix(PostBoxNumberPrefix postBoxNumberPrefix) throws XMLStreamException {
+    /**
+     *
+     * @param postBoxNumberPrefix
+     * @throws XMLStreamException
+     */
+    private void writePostBoxNumberPrefix(PostBoxNumberPrefix postBoxNumberPrefix) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_POST_BOX_NUMBER_PREFIX);
         if (postBoxNumberPrefix.getGrPostal() != null) {
             this.writeGrPostal(postBoxNumberPrefix.getGrPostal());
         }
         if (postBoxNumberPrefix.getNumberPrefixSeparator() != null) {
-            writer.writeAttribute(ATT_NUMBER_PREFIX_SEPARATOR, postBoxNumberPrefix.getNumberPrefixSeparator());
+            writer.writeAttribute(ATT_NUMBER_PREFIX_SEPARATOR,
+                    postBoxNumberPrefix.getNumberPrefixSeparator());
         }
         if (postBoxNumberPrefix.getContent() != null) {
             writer.writeCharacters(postBoxNumberPrefix.getContent());
@@ -702,13 +993,21 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writePostBoxNumberSuffix(PostBoxNumberSuffix postBoxNumberSuffix) throws XMLStreamException {
+    /**
+     *
+     * @param postBoxNumberSuffix
+     * @throws XMLStreamException
+     */
+    private void writePostBoxNumberSuffix(PostBoxNumberSuffix postBoxNumberSuffix) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_POST_BOX_NUMBER_SUFFIX);
         if (postBoxNumberSuffix.getGrPostal() != null) {
             this.writeGrPostal(postBoxNumberSuffix.getGrPostal());
         }
         if (postBoxNumberSuffix.getNumberSuffixSeparator() != null) {
-            writer.writeAttribute(ATT_NUMBER_SUFFIX_SEPARATOR, postBoxNumberSuffix.getNumberSuffixSeparator());
+            writer.writeAttribute(ATT_NUMBER_SUFFIX_SEPARATOR,
+                    postBoxNumberSuffix.getNumberSuffixSeparator());
         }
         if (postBoxNumberSuffix.getContent() != null) {
             writer.writeCharacters(postBoxNumberSuffix.getContent());
@@ -716,10 +1015,18 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writePostBoxNumberExtension(PostBoxNumberExtension postBoxNumberExtension) throws XMLStreamException {
+    /**
+     *
+     * @param postBoxNumberExtension
+     * @throws XMLStreamException
+     */
+    private void writePostBoxNumberExtension(PostBoxNumberExtension postBoxNumberExtension) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_POST_BOX_NUMBER_EXTENSION);
         if (postBoxNumberExtension.getNumberExtensionSeparator() != null) {
-            writer.writeAttribute(ATT_NUMBER_EXTENSION_SEPARATOR, postBoxNumberExtension.getNumberExtensionSeparator());
+            writer.writeAttribute(ATT_NUMBER_EXTENSION_SEPARATOR,
+                    postBoxNumberExtension.getNumberExtensionSeparator());
         }
         if (postBoxNumberExtension.getContent() != null) {
             writer.writeCharacters(postBoxNumberExtension.getContent());
@@ -727,7 +1034,14 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeFirm(Firm firm) throws XMLStreamException {
+    /**
+     *
+     * @param firm
+     * @throws XMLStreamException
+     */
+    private void writeFirm(Firm firm) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_FIRM);
         if (firm.getType() != null) {
             writer.writeAttribute(ATT_TYPE, firm.getType());
@@ -750,7 +1064,14 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeDepartment(Department department) throws XMLStreamException {
+    /**
+     *
+     * @param department
+     * @throws XMLStreamException
+     */
+    private void writeDepartment(Department department) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_DEPARTMENT);
         if (department.getType() != null) {
             writer.writeAttribute(ATT_TYPE, department.getType());
@@ -770,7 +1091,14 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeMailStop(MailStop mailStop) throws XMLStreamException {
+    /**
+     *
+     * @param mailStop
+     * @throws XMLStreamException
+     */
+    private void writeMailStop(MailStop mailStop) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_MAIL_STOP);
         if (mailStop.getType() != null) {
             writer.writeAttribute(ATT_TYPE, mailStop.getType());
@@ -787,10 +1115,18 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeMailStopNumber(MailStopNumber mailStopNumber) throws XMLStreamException {
+    /**
+     *
+     * @param mailStopNumber
+     * @throws XMLStreamException
+     */
+    private void writeMailStopNumber(MailStopNumber mailStopNumber) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_MAIL_STOP_NUMBER);
         if (mailStopNumber.getNameNumberSeparator() != null) {
-            writer.writeAttribute(ATT_NAME_NUMBER_SEPARATOR, mailStopNumber.getNameNumberSeparator());
+            writer.writeAttribute(ATT_NAME_NUMBER_SEPARATOR,
+                    mailStopNumber.getNameNumberSeparator());
         }
         if (mailStopNumber.getGrPostal() != null) {
             this.writeGrPostal(mailStopNumber.getGrPostal());
@@ -801,7 +1137,14 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writePostOffice(PostOffice postOffice) throws XMLStreamException {
+    /**
+     *
+     * @param postOffice
+     * @throws XMLStreamException
+     */
+    private void writePostOffice(PostOffice postOffice) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_POST_OFFICE);
 
         if (postOffice.getType() != null) {
@@ -832,7 +1175,14 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writePostalCode(PostalCode postalCode) throws XMLStreamException {
+    /**
+     *
+     * @param postalCode
+     * @throws XMLStreamException
+     */
+    private void writePostalCode(PostalCode postalCode) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_POSTAL_CODE);
         if (postalCode.getType() != null) {
             writer.writeAttribute(ATT_TYPE, postalCode.getType());
@@ -852,13 +1202,21 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writePostalCodeNumberExtension(PostalCodeNumberExtension postalCodeNumberExtension) throws XMLStreamException {
+    /**
+     *
+     * @param postalCodeNumberExtension
+     * @throws XMLStreamException
+     */
+    private void writePostalCodeNumberExtension(PostalCodeNumberExtension postalCodeNumberExtension) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_POSTAL_CODE_NUMBER_EXTENSION);
         if (postalCodeNumberExtension.getType() != null) {
             writer.writeAttribute(ATT_TYPE, postalCodeNumberExtension.getType());
         }
         if (postalCodeNumberExtension.getNumberExtensionSeparator() != null) {
-            writer.writeAttribute(ATT_NUMBER_EXTENSION_SEPARATOR, postalCodeNumberExtension.getNumberExtensionSeparator());
+            writer.writeAttribute(ATT_NUMBER_EXTENSION_SEPARATOR,
+                    postalCodeNumberExtension.getNumberExtensionSeparator());
         }
         if (postalCodeNumberExtension.getGrPostal() != null) {
             this.writeGrPostal(postalCodeNumberExtension.getGrPostal());
@@ -869,7 +1227,14 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writePostTown(PostTown postTown) throws XMLStreamException {
+    /**
+     *
+     * @param postTown
+     * @throws XMLStreamException
+     */
+    private void writePostTown(PostTown postTown) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_POST_TOWN);
         if (postTown.getType() != null) {
             writer.writeAttribute(ATT_TYPE, postTown.getType());
@@ -886,7 +1251,14 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeTownSuffix(PostTownSuffix postTownSuffix) throws XMLStreamException {
+    /**
+     *
+     * @param postTownSuffix
+     * @throws XMLStreamException
+     */
+    private void writeTownSuffix(PostTownSuffix postTownSuffix) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_POST_TOWN_SUFFIX);
         if (postTownSuffix.getGrPostal() != null) {
             this.writeGrPostal(postTownSuffix.getGrPostal());
@@ -897,7 +1269,15 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeLargeMailUser(LargeMailUser largeMailUser) throws XMLStreamException, XalException {
+    /**
+     *
+     * @param largeMailUser
+     * @throws XMLStreamException
+     * @throws XalException
+     */
+    private void writeLargeMailUser(LargeMailUser largeMailUser) 
+            throws XMLStreamException, XalException {
+
         writer.writeStartElement(URI_XAL, TAG_LARGE_MAIL_USER);
         if (largeMailUser.getType() != null) {
             writer.writeAttribute(ATT_TYPE, largeMailUser.getType());
@@ -929,7 +1309,14 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeLargeMailUserName(LargeMailUserName largeMailUserName) throws XMLStreamException {
+    /**
+     *
+     * @param largeMailUserName
+     * @throws XMLStreamException
+     */
+    private void writeLargeMailUserName(LargeMailUserName largeMailUserName) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_LARGE_MAIL_USER_NAME);
         if (largeMailUserName.getType() != null) {
             writer.writeAttribute(ATT_TYPE, largeMailUserName.getType());
@@ -943,7 +1330,14 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeLargeMailUserIdentifier(LargeMailUserIdentifier largeMailUserIdentifier) throws XMLStreamException {
+    /**
+     *
+     * @param largeMailUserIdentifier
+     * @throws XMLStreamException
+     */
+    private void writeLargeMailUserIdentifier(LargeMailUserIdentifier largeMailUserIdentifier) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_LARGE_MAIL_USER_IDENTIFIER);
         if (largeMailUserIdentifier.getType() != null) {
             writer.writeAttribute(ATT_TYPE, largeMailUserIdentifier.getType());
@@ -960,13 +1354,21 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeBuildingName(BuildingName buildingName) throws XMLStreamException {
+    /**
+     *
+     * @param buildingName
+     * @throws XMLStreamException
+     */
+    private void writeBuildingName(BuildingName buildingName) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_BUILDING_NAME);
         if (buildingName.getType() != null) {
             writer.writeAttribute(ATT_TYPE, buildingName.getType());
         }
         if (buildingName.getTypeOccurrence() != null) {
-            writer.writeAttribute(ATT_TYPE_OCCURRENCE, buildingName.getTypeOccurrence().getAfterBeforeEnum());
+            writer.writeAttribute(ATT_TYPE_OCCURRENCE,
+                    buildingName.getTypeOccurrence().getAfterBeforeEnum());
         }
         if (buildingName.getGrPostal() != null) {
             this.writeGrPostal(buildingName.getGrPostal());
@@ -977,13 +1379,21 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writePremiseName(PremiseName premiseName) throws XMLStreamException {
+    /**
+     *
+     * @param premiseName
+     * @throws XMLStreamException
+     */
+    private void writePremiseName(PremiseName premiseName) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_PREMISE_NAME);
         if (premiseName.getType() != null) {
             writer.writeAttribute(ATT_TYPE, premiseName.getType());
         }
         if (premiseName.getTypeOccurrence() != null) {
-            writer.writeAttribute(ATT_TYPE_OCCURRENCE, premiseName.getTypeOccurrence().getAfterBeforeEnum());
+            writer.writeAttribute(ATT_TYPE_OCCURRENCE,
+                    premiseName.getTypeOccurrence().getAfterBeforeEnum());
         }
         if (premiseName.getGrPostal() != null) {
             this.writeGrPostal(premiseName.getGrPostal());
@@ -994,7 +1404,14 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writePremiseLocation(PremiseLocation premiseLocation) throws XMLStreamException {
+    /**
+     *
+     * @param premiseLocation
+     * @throws XMLStreamException
+     */
+    private void writePremiseLocation(PremiseLocation premiseLocation) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_PREMISE_LOCATION);
         if (premiseLocation.getGrPostal() != null) {
             this.writeGrPostal(premiseLocation.getGrPostal());
@@ -1005,13 +1422,21 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeSubPremiseName(SubPremiseName subPremiseName) throws XMLStreamException {
+    /**
+     *
+     * @param subPremiseName
+     * @throws XMLStreamException
+     */
+    private void writeSubPremiseName(SubPremiseName subPremiseName) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_SUB_PREMISE_NAME);
         if (subPremiseName.getType() != null) {
             writer.writeAttribute(ATT_TYPE, subPremiseName.getType());
         }
         if (subPremiseName.getTypeOccurrence() != null) {
-            writer.writeAttribute(ATT_TYPE_OCCURRENCE, subPremiseName.getTypeOccurrence().getAfterBeforeEnum());
+            writer.writeAttribute(ATT_TYPE_OCCURRENCE,
+                    subPremiseName.getTypeOccurrence().getAfterBeforeEnum());
         }
         if (subPremiseName.getGrPostal() != null) {
             this.writeGrPostal(subPremiseName.getGrPostal());
@@ -1022,7 +1447,14 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeSubPremiseLocation(SubPremiseLocation subPremiseLocation) throws XMLStreamException {
+    /**
+     *
+     * @param subPremiseLocation
+     * @throws XMLStreamException
+     */
+    private void writeSubPremiseLocation(SubPremiseLocation subPremiseLocation) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_SUB_PREMISE_LOCATION);
         if (subPremiseLocation.getGrPostal() != null) {
             this.writeGrPostal(subPremiseLocation.getGrPostal());
@@ -1033,7 +1465,14 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writePostalRoute(PostalRoute postalRoute) throws XMLStreamException {
+    /**
+     *
+     * @param postalRoute
+     * @throws XMLStreamException
+     */
+    private void writePostalRoute(PostalRoute postalRoute) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_POSTAL_ROUTE);
         if (postalRoute.getType() != null) {
             writer.writeAttribute(ATT_TYPE, postalRoute.getType());
@@ -1053,7 +1492,14 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writePostalRouteNumber(PostalRouteNumber postalRouteNumber) throws XMLStreamException {
+    /**
+     *
+     * @param postalRouteNumber
+     * @throws XMLStreamException
+     */
+    private void writePostalRouteNumber(PostalRouteNumber postalRouteNumber) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_POSTAL_ROUTE_NUMBER);
         if (postalRouteNumber.getGrPostal() != null) {
             this.writeGrPostal(postalRouteNumber.getGrPostal());
@@ -1064,13 +1510,21 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writePostOfficeNumber(PostOfficeNumber postOfficeNumber) throws XMLStreamException {
+    /**
+     *
+     * @param postOfficeNumber
+     * @throws XMLStreamException
+     */
+    private void writePostOfficeNumber(PostOfficeNumber postOfficeNumber) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_POST_OFFICE_NUMBER);
         if (postOfficeNumber.getIndicator() != null) {
             writer.writeAttribute(ATT_INDICATOR, postOfficeNumber.getIndicator());
         }
         if (postOfficeNumber.getIndicatorOccurrence() != null) {
-            writer.writeAttribute(ATT_INDICATOR_OCCURRENCE, postOfficeNumber.getIndicatorOccurrence().getAfterBeforeEnum());
+            writer.writeAttribute(ATT_INDICATOR_OCCURRENCE,
+                    postOfficeNumber.getIndicatorOccurrence().getAfterBeforeEnum());
         }
         if (postOfficeNumber.getGrPostal() != null) {
             this.writeGrPostal(postOfficeNumber.getGrPostal());
@@ -1081,10 +1535,18 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeDependentLocalityNumber(DependentLocalityNumber dependentLocalityNumber) throws XMLStreamException {
+    /**
+     *
+     * @param dependentLocalityNumber
+     * @throws XMLStreamException
+     */
+    private void writeDependentLocalityNumber(DependentLocalityNumber dependentLocalityNumber) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_DEPENDENT_LOCALITY_NUMBER);
         if (dependentLocalityNumber.getNameNumberOccurrence() != null) {
-            writer.writeAttribute(ATT_NAME_NUMBER_OCCURRENCE, dependentLocalityNumber.getNameNumberOccurrence().getAfterBeforeEnum());
+            writer.writeAttribute(ATT_NAME_NUMBER_OCCURRENCE,
+                    dependentLocalityNumber.getNameNumberOccurrence().getAfterBeforeEnum());
         }
         if (dependentLocalityNumber.getGrPostal() != null) {
             this.writeGrPostal(dependentLocalityNumber.getGrPostal());
@@ -1095,7 +1557,14 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writePremise(Premise premise) throws XMLStreamException {
+    /**
+     *
+     * @param premise
+     * @throws XMLStreamException
+     */
+    private void writePremise(Premise premise) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_PREMISE);
         if (premise.getType() != null) {
             writer.writeAttribute(ATT_TYPE, premise.getType());
@@ -1107,7 +1576,8 @@ public class XalWriter extends StaxStreamWriter {
             writer.writeAttribute(ATT_PREMISE_DEPENDENCY_TYPE, premise.getPremiseDependencyType());
         }
         if (premise.getPremiseThoroughfareConnector() != null) {
-            writer.writeAttribute(ATT_PREMISE_THOROUGHFARE_CONNECTOR, premise.getPremiseThoroughfareConnector());
+            writer.writeAttribute(ATT_PREMISE_THOROUGHFARE_CONNECTOR,
+                    premise.getPremiseThoroughfareConnector());
         }
         for (GenericTypedGrPostal addressLine : premise.getAddressLines()) {
             this.writeAddressLine(addressLine);
@@ -1151,7 +1621,14 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writePremiseNumber(PremiseNumber premiseNumber) throws XMLStreamException {
+    /**
+     *
+     * @param premiseNumber
+     * @throws XMLStreamException
+     */
+    private void writePremiseNumber(PremiseNumber premiseNumber) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_PREMISE_NUMBER);
         if (premiseNumber.getNumberType() != null) {
             writer.writeAttribute(ATT_NUMBER_TYPE, premiseNumber.getNumberType().getSingleRange());
@@ -1177,7 +1654,14 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeSubPremiseNumber(SubPremiseNumber subPremiseNumber) throws XMLStreamException {
+    /**
+     *
+     * @param subPremiseNumber
+     * @throws XMLStreamException
+     */
+    private void writeSubPremiseNumber(SubPremiseNumber subPremiseNumber) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_SUB_PREMISE_NUMBER);
         if (subPremiseNumber.getIndicator() != null) {
             writer.writeAttribute(ATT_INDICATOR, subPremiseNumber.getIndicator());
@@ -1203,7 +1687,14 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writePremiseNumberRange(PremiseNumberRange premiseNumberRange) throws XMLStreamException {
+    /**
+     *
+     * @param premiseNumberRange
+     * @throws XMLStreamException
+     */
+    private void writePremiseNumberRange(PremiseNumberRange premiseNumberRange) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_PREMISE_NUMBER_RANGE);
         if (premiseNumberRange.getRangeType() != null) {
             writer.writeAttribute(ATT_RANGE_TYPE, premiseNumberRange.getRangeType());
@@ -1218,10 +1709,12 @@ public class XalWriter extends StaxStreamWriter {
             writer.writeAttribute(ATT_TYPE, premiseNumberRange.getType());
         }
         if (premiseNumberRange.getIndicatorOccurrence() != null) {
-            writer.writeAttribute(ATT_INDICATOR_OCCURRENCE, premiseNumberRange.getIndicatorOccurrence().getAfterBeforeEnum());
+            writer.writeAttribute(ATT_INDICATOR_OCCURRENCE,
+                    premiseNumberRange.getIndicatorOccurrence().getAfterBeforeEnum());
         }
         if (premiseNumberRange.getNumberRangeOccurrence() != null) {
-            writer.writeAttribute(ATT_NUMBER_RANGE_OCCURRENCE, premiseNumberRange.getNumberRangeOccurrence().getAfterBeforeTypeEnum());
+            writer.writeAttribute(ATT_NUMBER_RANGE_OCCURRENCE,
+                    premiseNumberRange.getNumberRangeOccurrence().getAfterBeforeTypeEnum());
         }
         if (premiseNumberRange.getPremiseNumberRangeFrom() != null) {
             this.writePremiseNumberRangeFrom(premiseNumberRange.getPremiseNumberRangeFrom());
@@ -1232,7 +1725,14 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writePremiseNumberRangeFrom(PremiseNumberRangeFrom premiseNumberRangeFrom) throws XMLStreamException {
+    /**
+     *
+     * @param premiseNumberRangeFrom
+     * @throws XMLStreamException
+     */
+    private void writePremiseNumberRangeFrom(PremiseNumberRangeFrom premiseNumberRangeFrom) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_PREMISE_NUMBER_RANGE_FROM);
         for (GenericTypedGrPostal addressLine : premiseNumberRangeFrom.getAddressLines()) {
             this.writeAddressLine(addressLine);
@@ -1249,7 +1749,14 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writePremiseNumberRangeTo(PremiseNumberRangeTo premiseNumberRangeTo) throws XMLStreamException {
+    /**
+     *
+     * @param premiseNumberRangeTo
+     * @throws XMLStreamException
+     */
+    private void writePremiseNumberRangeTo(PremiseNumberRangeTo premiseNumberRangeTo) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_PREMISE_NUMBER_RANGE_TO);
         for (GenericTypedGrPostal addressLine : premiseNumberRangeTo.getAddressLines()) {
             this.writeAddressLine(addressLine);
@@ -1266,10 +1773,18 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writePremiseNumberPrefix(PremiseNumberPrefix premiseNumberPrefix) throws XMLStreamException {
+    /**
+     *
+     * @param premiseNumberPrefix
+     * @throws XMLStreamException
+     */
+    private void writePremiseNumberPrefix(PremiseNumberPrefix premiseNumberPrefix) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_PREMISE_NUMBER_PREFIX);
         if (premiseNumberPrefix.getNumberPrefixSeparator() != null) {
-            writer.writeAttribute(ATT_NUMBER_PREFIX_SEPARATOR, premiseNumberPrefix.getNumberPrefixSeparator());
+            writer.writeAttribute(ATT_NUMBER_PREFIX_SEPARATOR,
+                    premiseNumberPrefix.getNumberPrefixSeparator());
         }
         if (premiseNumberPrefix.getType() != null) {
             writer.writeAttribute(ATT_TYPE, premiseNumberPrefix.getType());
@@ -1283,10 +1798,18 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writePremiseNumberSuffix(PremiseNumberSuffix premiseNumberSuffix) throws XMLStreamException {
+    /**
+     *
+     * @param premiseNumberSuffix
+     * @throws XMLStreamException
+     */
+    private void writePremiseNumberSuffix(PremiseNumberSuffix premiseNumberSuffix) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_PREMISE_NUMBER_SUFFIX);
         if (premiseNumberSuffix.getNumberSuffixSeparator() != null) {
-            writer.writeAttribute(ATT_NUMBER_SUFFIX_SEPARATOR, premiseNumberSuffix.getNumberSuffixSeparator());
+            writer.writeAttribute(ATT_NUMBER_SUFFIX_SEPARATOR,
+                    premiseNumberSuffix.getNumberSuffixSeparator());
         }
         if (premiseNumberSuffix.getType() != null) {
             writer.writeAttribute(ATT_TYPE, premiseNumberSuffix.getType());
@@ -1300,10 +1823,18 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeSubPremiseNumberPrefix(SubPremiseNumberPrefix subPremiseNumberPrefix) throws XMLStreamException {
+    /**
+     *
+     * @param subPremiseNumberPrefix
+     * @throws XMLStreamException
+     */
+    private void writeSubPremiseNumberPrefix(SubPremiseNumberPrefix subPremiseNumberPrefix) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_SUB_PREMISE_NUMBER_PREFIX);
         if (subPremiseNumberPrefix.getNumberPrefixSeparator() != null) {
-            writer.writeAttribute(ATT_NUMBER_PREFIX_SEPARATOR, subPremiseNumberPrefix.getNumberPrefixSeparator());
+            writer.writeAttribute(ATT_NUMBER_PREFIX_SEPARATOR,
+                    subPremiseNumberPrefix.getNumberPrefixSeparator());
         }
         if (subPremiseNumberPrefix.getType() != null) {
             writer.writeAttribute(ATT_TYPE, subPremiseNumberPrefix.getType());
@@ -1317,10 +1848,18 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeSubPremiseNumberSuffix(SubPremiseNumberSuffix subPremiseNumberSuffix) throws XMLStreamException {
+    /**
+     *
+     * @param subPremiseNumberSuffix
+     * @throws XMLStreamException
+     */
+    private void writeSubPremiseNumberSuffix(SubPremiseNumberSuffix subPremiseNumberSuffix) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_SUB_PREMISE_NUMBER_SUFFIX);
         if (subPremiseNumberSuffix.getNumberSuffixSeparator() != null) {
-            writer.writeAttribute(ATT_NUMBER_SUFFIX_SEPARATOR, subPremiseNumberSuffix.getNumberSuffixSeparator());
+            writer.writeAttribute(ATT_NUMBER_SUFFIX_SEPARATOR,
+                    subPremiseNumberSuffix.getNumberSuffixSeparator());
         }
         if (subPremiseNumberSuffix.getType() != null) {
             writer.writeAttribute(ATT_TYPE, subPremiseNumberSuffix.getType());
@@ -1334,7 +1873,14 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeSubPremise(SubPremise subPremise) throws XMLStreamException {
+    /**
+     *
+     * @param subPremise
+     * @throws XMLStreamException
+     */
+    private void writeSubPremise(SubPremise subPremise) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_SUB_PREMISE);
         if (subPremise.getType() != null) {
             writer.writeAttribute(ATT_TYPE, subPremise.getType());
@@ -1373,25 +1919,36 @@ public class XalWriter extends StaxStreamWriter {
             this.writeSubPremise(subPremise.getSubPremise());
         }
         writer.writeEndElement();
-
     }
 
-    private void writeThoroughfare(Thoroughfare thoroughfare) throws XMLStreamException, XalException {
+    /**
+     *
+     * @param thoroughfare
+     * @throws XMLStreamException
+     * @throws XalException
+     */
+    private void writeThoroughfare(Thoroughfare thoroughfare) 
+            throws XMLStreamException, XalException {
+
         writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE);
         if (thoroughfare.getType() != null) {
             writer.writeAttribute(ATT_TYPE, thoroughfare.getType());
         }
         if (thoroughfare.getDependentThoroughfares() != null) {
-            writer.writeAttribute(ATT_DEPENDENT_THOROUGHFARES, thoroughfare.getDependentThoroughfares().getDependentThoroughfares());
+            writer.writeAttribute(ATT_DEPENDENT_THOROUGHFARES,
+                    thoroughfare.getDependentThoroughfares().getDependentThoroughfares());
         }
         if (thoroughfare.getDependentThoroughfaresIndicator() != null) {
-            writer.writeAttribute(ATT_DEPENDENT_THOROUGHFARES_INDICATOR, thoroughfare.getDependentThoroughfaresIndicator());
+            writer.writeAttribute(ATT_DEPENDENT_THOROUGHFARES_INDICATOR,
+                    thoroughfare.getDependentThoroughfaresIndicator());
         }
         if (thoroughfare.getDependentThoroughfaresConnector() != null) {
-            writer.writeAttribute(ATT_DEPENDENT_THOROUGHFARES_CONNECTOR, thoroughfare.getDependentThoroughfaresConnector());
+            writer.writeAttribute(ATT_DEPENDENT_THOROUGHFARES_CONNECTOR,
+                    thoroughfare.getDependentThoroughfaresConnector());
         }
         if (thoroughfare.getDependentThoroughfaresType() != null) {
-            writer.writeAttribute(ATT_DEPENDENT_THOROUGHFARES_TYPE, thoroughfare.getDependentThoroughfaresType());
+            writer.writeAttribute(ATT_DEPENDENT_THOROUGHFARES_TYPE,
+                    thoroughfare.getDependentThoroughfaresType());
         }
         for (GenericTypedGrPostal addressLine : thoroughfare.getAddressLines()) {
             this.writeAddressLine(addressLine);
@@ -1446,10 +2003,18 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeThoroughfareNumber(ThoroughfareNumber thoroughfareNumber) throws XMLStreamException {
+    /**
+     *
+     * @param thoroughfareNumber
+     * @throws XMLStreamException
+     */
+    private void writeThoroughfareNumber(ThoroughfareNumber thoroughfareNumber) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_NUMBER);
         if (thoroughfareNumber.getNumberType() != null) {
-            writer.writeAttribute(ATT_NUMBER_TYPE, thoroughfareNumber.getNumberType().getSingleRange());
+            writer.writeAttribute(ATT_NUMBER_TYPE,
+                    thoroughfareNumber.getNumberType().getSingleRange());
         }
         if (thoroughfareNumber.getType() != null) {
             writer.writeAttribute(ATT_TYPE, thoroughfareNumber.getType());
@@ -1458,10 +2023,12 @@ public class XalWriter extends StaxStreamWriter {
             writer.writeAttribute(ATT_INDICATOR, thoroughfareNumber.getIndicator());
         }
         if (thoroughfareNumber.getIndicatorOccurence() != null) {
-            writer.writeAttribute(ATT_INDICATOR_OCCURRENCE, thoroughfareNumber.getIndicatorOccurence().getAfterBeforeEnum());
+            writer.writeAttribute(ATT_INDICATOR_OCCURRENCE,
+                    thoroughfareNumber.getIndicatorOccurence().getAfterBeforeEnum());
         }
         if (thoroughfareNumber.getNumberOccurence() != null) {
-            writer.writeAttribute(ATT_NUMBER_OCCURRENCE, thoroughfareNumber.getNumberOccurence().getAfterBeforeTypeEnum());
+            writer.writeAttribute(ATT_NUMBER_OCCURRENCE,
+                    thoroughfareNumber.getNumberOccurence().getAfterBeforeTypeEnum());
         }
         if (thoroughfareNumber.getGrPostal() != null) {
             this.writeGrPostal(thoroughfareNumber.getGrPostal());
@@ -1472,10 +2039,19 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeThoroughfareNumberRange(ThoroughfareNumberRange thoroughfareNumberRange) throws XMLStreamException, XalException {
+    /**
+     *
+     * @param thoroughfareNumberRange
+     * @throws XMLStreamException
+     * @throws XalException
+     */
+    private void writeThoroughfareNumberRange(ThoroughfareNumberRange thoroughfareNumberRange) 
+            throws XMLStreamException, XalException {
+
         writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_NUMBER_RANGE);
         if (thoroughfareNumberRange.getRangeType() != null) {
-            writer.writeAttribute(ATT_RANGE_TYPE, thoroughfareNumberRange.getRangeType().getOddEven());
+            writer.writeAttribute(ATT_RANGE_TYPE,
+                    thoroughfareNumberRange.getRangeType().getOddEven());
         }
         if (thoroughfareNumberRange.getIndicator() != null) {
             writer.writeAttribute(ATT_INDICATOR, thoroughfareNumberRange.getIndicator());
@@ -1484,10 +2060,12 @@ public class XalWriter extends StaxStreamWriter {
             writer.writeAttribute(ATT_SEPARATOR, thoroughfareNumberRange.getSeparator());
         }
         if (thoroughfareNumberRange.getIndicatorOccurence() != null) {
-            writer.writeAttribute(ATT_INDICATOR_OCCURRENCE, thoroughfareNumberRange.getIndicatorOccurence().getAfterBeforeEnum());
+            writer.writeAttribute(ATT_INDICATOR_OCCURRENCE,
+                    thoroughfareNumberRange.getIndicatorOccurence().getAfterBeforeEnum());
         }
         if (thoroughfareNumberRange.getNumberRangeOccurence() != null) {
-            writer.writeAttribute(ATT_NUMBER_RANGE_OCCURRENCE, thoroughfareNumberRange.getNumberRangeOccurence().getAfterBeforeTypeEnum());
+            writer.writeAttribute(ATT_NUMBER_RANGE_OCCURRENCE,
+                    thoroughfareNumberRange.getNumberRangeOccurence().getAfterBeforeTypeEnum());
         }
         if (thoroughfareNumberRange.getType() != null) {
             writer.writeAttribute(ATT_TYPE, thoroughfareNumberRange.getType());
@@ -1507,10 +2085,18 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeThoroughfareNumberSuffix(ThoroughfareNumberSuffix suffix) throws XMLStreamException {
+    /**
+     *
+     * @param suffix
+     * @throws XMLStreamException
+     */
+    private void writeThoroughfareNumberSuffix(ThoroughfareNumberSuffix suffix) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_NUMBER_SUFFIX);
         if (suffix.getNumberSuffixSeparator() != null) {
-            writer.writeAttribute(ATT_NUMBER_SUFFIX_SEPARATOR, suffix.getNumberSuffixSeparator());
+            writer.writeAttribute(ATT_NUMBER_SUFFIX_SEPARATOR,
+                    suffix.getNumberSuffixSeparator());
         }
         if (suffix.getType() != null) {
             writer.writeAttribute(ATT_TYPE, suffix.getType());
@@ -1524,10 +2110,18 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeThoroughfareNumberPrefix(ThoroughfareNumberPrefix prefix) throws XMLStreamException {
+    /**
+     *
+     * @param prefix
+     * @throws XMLStreamException
+     */
+    private void writeThoroughfareNumberPrefix(ThoroughfareNumberPrefix prefix) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_NUMBER_PREFIX);
         if (prefix.getNumberPrefixSeparator() != null) {
-            writer.writeAttribute(ATT_NUMBER_PREFIX_SEPARATOR, prefix.getNumberPrefixSeparator());
+            writer.writeAttribute(ATT_NUMBER_PREFIX_SEPARATOR,
+                    prefix.getNumberPrefixSeparator());
         }
         if (prefix.getType() != null) {
             writer.writeAttribute(ATT_TYPE, prefix.getType());
@@ -1541,7 +2135,15 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeThoroughfareNumberFrom(ThoroughfareNumberFrom thoroughfareNumberFrom) throws XMLStreamException, XalException {
+    /**
+     *
+     * @param thoroughfareNumberFrom
+     * @throws XMLStreamException
+     * @throws XalException
+     */
+    private void writeThoroughfareNumberFrom(ThoroughfareNumberFrom thoroughfareNumberFrom) 
+            throws XMLStreamException, XalException {
+
         writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_NUMBER_FROM);
         if (thoroughfareNumberFrom.getGrPostal() != null) {
             this.writeGrPostal(thoroughfareNumberFrom.getGrPostal());
@@ -1564,7 +2166,15 @@ public class XalWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeThoroughfareNumberTo(ThoroughfareNumberTo thoroughfareNumberTo) throws XMLStreamException, XalException {
+    /**
+     *
+     * @param thoroughfareNumberTo
+     * @throws XMLStreamException
+     * @throws XalException
+     */
+    private void writeThoroughfareNumberTo(ThoroughfareNumberTo thoroughfareNumberTo) 
+            throws XMLStreamException, XalException {
+
         writer.writeStartElement(URI_XAL, TAG_THOROUGHFARE_NUMBER_TO);
         if (thoroughfareNumberTo.getGrPostal() != null) {
             this.writeGrPostal(thoroughfareNumberTo.getGrPostal());
@@ -1581,13 +2191,21 @@ public class XalWriter extends StaxStreamWriter {
             } else if (object instanceof String) {
                 writer.writeCharacters((String) object);
             } else {
-                throw new XalException("Invalid content for " + ThoroughfareNumberTo.class.toString());
+                throw new XalException("Invalid content for " +
+                        ThoroughfareNumberTo.class.toString());
             }
         }
         writer.writeEndElement();
     }
 
-    private void writeDependentThoroughfare(DependentThoroughfare thoroughfare) throws XMLStreamException {
+    /**
+     * 
+     * @param thoroughfare
+     * @throws XMLStreamException
+     */
+    private void writeDependentThoroughfare(DependentThoroughfare thoroughfare) 
+            throws XMLStreamException {
+        
         writer.writeStartElement(URI_XAL, TAG_DEPENDENT_THOROUGHFARE);
         if (thoroughfare.getType() != null) {
             writer.writeAttribute(ATT_TYPE, thoroughfare.getType());

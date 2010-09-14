@@ -54,11 +54,11 @@ public interface MultiTrack extends AbstractGeometry {
      *
      * @return
      */
-    public List<Track> getTracks();
+    List<Track> getTracks();
 
     /**
      * 
      * @param tracks
      */
-    public void setTracks(List<Track> tracks);
+    void setTracks(List<Track> tracks);
 }

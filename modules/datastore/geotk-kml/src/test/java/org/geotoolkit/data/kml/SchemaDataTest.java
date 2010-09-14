@@ -82,7 +82,7 @@ public class SchemaDataTest {
     }
 
     @Test
-    public void schemaDataReadTest() throws IOException, XMLStreamException {
+    public void schemaDataReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));

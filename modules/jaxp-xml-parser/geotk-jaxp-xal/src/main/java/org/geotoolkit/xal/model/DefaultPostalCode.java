@@ -34,7 +34,7 @@ public class DefaultPostalCode implements PostalCode {
     /**
      * 
      */
-    public DefaultPostalCode(){
+    public DefaultPostalCode() {
         this.addressLines = EMPTY_LIST;
         this.postalCodeNumbers = EMPTY_LIST;
         this.postalCodeNumberExtensions = EMPTY_LIST;
@@ -48,8 +48,10 @@ public class DefaultPostalCode implements PostalCode {
      * @param postTown
      * @param type
      */
-    public DefaultPostalCode(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> postalCodeNumbers,
-            List<PostalCodeNumberExtension> postalCodeNumberExtensions, PostTown postTown, String type){
+    public DefaultPostalCode(List<GenericTypedGrPostal> addressLines,
+            List<GenericTypedGrPostal> postalCodeNumbers,
+            List<PostalCodeNumberExtension> postalCodeNumberExtensions,
+            PostTown postTown, String type) {
         this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
         this.postalCodeNumbers = (postalCodeNumbers == null) ? EMPTY_LIST : postalCodeNumbers;
         this.postalCodeNumberExtensions = (postalCodeNumberExtensions == null) ? EMPTY_LIST : postalCodeNumberExtensions;
@@ -62,35 +64,45 @@ public class DefaultPostalCode implements PostalCode {
      * @{@inheritDoc }
      */
     @Override
-    public List<GenericTypedGrPostal> getAddressLines() {return this.addressLines;}
+    public List<GenericTypedGrPostal> getAddressLines() {
+        return this.addressLines;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<GenericTypedGrPostal> getPostalCodeNumbers() {return this.postalCodeNumbers;}
+    public List<GenericTypedGrPostal> getPostalCodeNumbers() {
+        return this.postalCodeNumbers;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<PostalCodeNumberExtension> getPostalCodeNumberExtensions() {return this.postalCodeNumberExtensions;}
+    public List<PostalCodeNumberExtension> getPostalCodeNumberExtensions() {
+        return this.postalCodeNumberExtensions;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public PostTown getPostTown() {return this.postTown;}
+    public PostTown getPostTown() {
+        return this.postTown;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public String getType() {return this.type;}
+    public String getType() {
+        return this.type;
+    }
 
     /**
      *
@@ -136,5 +148,4 @@ public class DefaultPostalCode implements PostalCode {
     public void setType(String type) {
         this.type = type;
     }
-
 }

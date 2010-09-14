@@ -129,7 +129,8 @@ public class KmlWriter extends StaxStreamWriter {
     private final List<StaxStreamWriter> extensionWriters = new ArrayList<StaxStreamWriter>();
     private final List<StaxStreamWriter> dataWriters = new ArrayList<StaxStreamWriter>();
 
-    public KmlWriter(){}
+    public KmlWriter() {
+    }
 
     /**
      * <p>Set output. This method doesn't indicate kml uri version whose detection
@@ -141,7 +142,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws IOException
      */
     @Override
-    public void setOutput(Object output) throws XMLStreamException, IOException{
+    public void setOutput(Object output) throws XMLStreamException, IOException {
         super.setOutput(output);
         XAL_WRITER.setOutput(writer);
         ATOM_WRITER.setOutput(writer);
@@ -158,12 +159,13 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws KmlException
      */
     public void setOutput(Object output, String KmlVersionUri)
-            throws XMLStreamException, IOException, KmlException{
+            throws XMLStreamException, IOException, KmlException {
         this.setOutput(output);
-        if (URI_KML_2_2.equals(KmlVersionUri) || URI_KML_2_1.equals(KmlVersionUri))
+        if (URI_KML_2_2.equals(KmlVersionUri) || URI_KML_2_1.equals(KmlVersionUri)) {
             URI_KML = KmlVersionUri;
-        else
+        } else {
             throw new KmlException("Bad Kml version Uri. This reader supports 2.1 and 2.2 versions.");
+        }
     }
 
     /**
@@ -176,22 +178,33 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      */
     public void addExtensionWriter(String uri, StaxStreamWriter writer)
-            throws KmlException, IOException, XMLStreamException{
-        if(writer instanceof KmlExtensionWriter){
+            throws KmlException, IOException, XMLStreamException {
+        if (writer instanceof KmlExtensionWriter) {
             this.extensionWriters.add(writer);
             writer.setOutput(this.writer);
         } else {
-            throw new KmlException("Extension writer must implements "+KmlExtensionWriter.class.getName()+" interface.");
+            throw new KmlException("Extension writer must implements "
+                    + KmlExtensionWriter.class.getName() + " interface.");
         }
     }
 
+    /**
+     * <p>This method adds a customized writeds for data containers</p>
+     *
+     * @param uri
+     * @param writer
+     * @throws KmlException
+     * @throws IOException
+     * @throws XMLStreamException
+     */
     public void addDataWriter(String uri, StaxStreamWriter writer)
-            throws KmlException, IOException, XMLStreamException{
-        if(writer instanceof KmlExtensionWriter){
+            throws KmlException, IOException, XMLStreamException {
+        if (writer instanceof KmlExtensionWriter) {
             this.dataWriters.add(writer);
             writer.setOutput(this.writer);
         } else {
-            throw new KmlException("Extension writer must implements "+KmlExtensionWriter.class.getName()+" interface.");
+            throw new KmlException("Extension writer must implements "
+                    + KmlExtensionWriter.class.getName() + " interface.");
         }
     }
 
@@ -200,45 +213,28 @@ public class KmlWriter extends StaxStreamWriter {
      *
      * @param kml The Kml object to write.
      */
-    public void write(Kml kml) {
-        try {
+    public void write(Kml kml)
+            throws XMLStreamException, KmlException {
 
-            // FACULTATIF : INDENTATION DE LA SORTIE
-            //streamWriter = new IndentingXMLStreamWriter(streamWriter);
+        // FACULTATIF : INDENTATION DE LA SORTIE
+        //streamWriter = new IndentingXMLStreamWriter(streamWriter);
 
-            writer.writeStartDocument("UTF-8", "1.0");
-            URI_KML = kml.getVersion();
-            writer.setDefaultNamespace(URI_KML);
-            writer.writeStartElement(URI_KML,TAG_KML);
-            //writer.writeDefaultNamespace(URI_KML);
+        writer.writeStartDocument("UTF-8", "1.0");
+        URI_KML = kml.getVersion();
+        writer.setDefaultNamespace(URI_KML);
+        writer.writeStartElement(URI_KML, TAG_KML);
+        //writer.writeDefaultNamespace(URI_KML);
 
-            if(URI_KML.equals(URI_KML_2_2)){
-                // Atom and xAL default values.
-//                writer.writeNamespace(PREFIX_ATOM, URI_ATOM);
-//                writer.writeNamespace(PREFIX_XAL, URI_XAL);
-//                writer.setPrefix(PREFIX_XAL, URI_XAL);
-//                writer.setPrefix(PREFIX_ATOM, URI_ATOM);
-
-                for (String uri : kml.getExtensionsUris().keySet()){
-                    writer.writeNamespace(kml.getExtensionsUris().get(uri), uri);
-                    writer.setPrefix(kml.getExtensionsUris().get(uri), uri);
-                }
+        if (URI_KML.equals(URI_KML_2_2)) {
+            for (String uri : kml.getExtensionsUris().keySet()) {
+                writer.writeNamespace(kml.getExtensionsUris().get(uri), uri);
+                writer.setPrefix(kml.getExtensionsUris().get(uri), uri);
             }
-//            writer.writeNamespace(PREFIX_XSI, URI_XSI);
-//            writer.writeAttribute(URI_XSI,
-//                    "schemaLocation",
-//                    URI_KML+" C:/Users/w7mainuser/Documents/OGC_SCHEMAS/sld/1.1.0/StyledLayerDescriptor.xsd");
-//            writer.writeAttribute("version", "0");
-            this.writeKml(kml);
-            writer.writeEndElement();
-            writer.writeEndDocument();
-            writer.flush();
-
-        } catch (KmlException ex) {
-            Logger.getLogger(KmlWriter.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (XMLStreamException ex) {
-            Logger.getLogger(KmlWriter.class.getName()).log(Level.SEVERE, null, ex);
         }
+        this.writeKml(kml);
+        writer.writeEndElement();
+        writer.writeEndDocument();
+        writer.flush();
     }
 
     /**
@@ -246,16 +242,17 @@ public class KmlWriter extends StaxStreamWriter {
      * @param kml The Kml object to write.
      * @throws XMLStreamException
      */
-    private void writeKml(Kml kml) throws XMLStreamException, KmlException{
-        if (kml.getNetworkLinkControl() != null){
+    private void writeKml(Kml kml)
+            throws XMLStreamException, KmlException {
+
+        if (kml.getNetworkLinkControl() != null) {
             this.writeNetworkLinkControl(kml.getNetworkLinkControl());
         }
-        if (kml.getAbstractFeature() != null){
+        if (kml.getAbstractFeature() != null) {
             this.writeAbstractFeature(kml.getAbstractFeature());
         }
         this.writeStandardExtensionLevel(
-                kml.extensions(),
-                Names.KML);
+                kml.extensions(), Names.KML);
     }
 
     /**
@@ -263,43 +260,44 @@ public class KmlWriter extends StaxStreamWriter {
      * @param networkLinkControl
      * @throws XMLStreamException
      */
-    private void writeNetworkLinkControl(NetworkLinkControl networkLinkControl) throws XMLStreamException, KmlException{
+    private void writeNetworkLinkControl(NetworkLinkControl networkLinkControl)
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_KML, TAG_NETWORK_LINK_CONTROL);
-        if (KmlUtilities.isFiniteNumber(networkLinkControl.getMinRefreshPeriod())){
+        if (KmlUtilities.isFiniteNumber(networkLinkControl.getMinRefreshPeriod())) {
             this.writeMinRefreshPeriod(networkLinkControl.getMinRefreshPeriod());
         }
         if (KmlUtilities.isFiniteNumber(networkLinkControl.getMaxSessionLength())
-                && checkVersionSimple(URI_KML_2_2)){
+                && checkVersionSimple(URI_KML_2_2)) {
             this.writeMaxSessionLength(networkLinkControl.getMaxSessionLength());
         }
-        if (networkLinkControl.getCookie() != null){
+        if (networkLinkControl.getCookie() != null) {
             this.writeCookie(networkLinkControl.getCookie());
         }
-        if (networkLinkControl.getMessage() != null){
+        if (networkLinkControl.getMessage() != null) {
             this.writeMessage(networkLinkControl.getMessage());
         }
-        if (networkLinkControl.getLinkName() != null){
+        if (networkLinkControl.getLinkName() != null) {
             this.writeLinkName(networkLinkControl.getLinkName());
         }
-        if (networkLinkControl.getLinkDescription() != null){
+        if (networkLinkControl.getLinkDescription() != null) {
             this.writeLinkDescription(networkLinkControl.getLinkDescription());
         }
-        if (networkLinkControl.getLinkSnippet() != null){
+        if (networkLinkControl.getLinkSnippet() != null) {
             this.writeLinkSnippet(networkLinkControl.getLinkSnippet());
         }
-        if (networkLinkControl.getExpires() != null){
+        if (networkLinkControl.getExpires() != null) {
             this.writeExpires(networkLinkControl.getExpires());
         }
-        if (networkLinkControl.getUpdate() != null){
+        if (networkLinkControl.getUpdate() != null) {
             this.writeUpdate(networkLinkControl.getUpdate());
         }
-        if (networkLinkControl.getView() != null){
+        if (networkLinkControl.getView() != null) {
             this.writeAbstractView(networkLinkControl.getView());
         }
         this.writeStandardExtensionLevel(
-                networkLinkControl.extensions(),
-                Names.NETWORK_LINK_CONTROL);
-        
+                networkLinkControl.extensions(), Names.NETWORK_LINK_CONTROL);
+
         writer.writeEndElement();
     }
 
@@ -308,23 +306,26 @@ public class KmlWriter extends StaxStreamWriter {
      * @param update
      * @throws XMLStreamException
      */
-    public void writeUpdate(Update update) throws XMLStreamException, KmlException{
+    public void writeUpdate(Update update)
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_KML, TAG_UPDATE);
-        if(update.getTargetHref() != null){
+        if (update.getTargetHref() != null) {
             this.writeTargetHref(update.getTargetHref());
         }
-        for (Object object : update.getUpdates()){
-            if(object instanceof Create)
+        for (Object object : update.getUpdates()) {
+            if (object instanceof Create) {
                 this.writeCreate((Create) object);
-            else if (object instanceof Delete)
+            } else if (object instanceof Delete) {
                 this.writeDelete((Delete) object);
-            else if (object instanceof Change)
+            } else if (object instanceof Change) {
                 this.writeChange((Change) object);
-            else if (object instanceof Feature){
+            } else if (object instanceof Feature) {
                 checkVersion(URI_KML_2_1);
                 this.writeReplace((Feature) object);
             } else {
-                throw new KmlException(object.getClass().getCanonicalName()+ " instance is not allowed here");
+                throw new KmlException(object.getClass().getCanonicalName()
+                        + " instance is not allowed here");
             }
         }
         writer.writeEndElement();
@@ -337,7 +338,9 @@ public class KmlWriter extends StaxStreamWriter {
      * @deprecated
      */
     @Deprecated
-    private void writeReplace(Feature replace) throws XMLStreamException, KmlException{
+    private void writeReplace(Feature replace)
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_KML, TAG_REPLACE);
         this.writeAbstractFeature(replace);
         writer.writeEndElement();
@@ -348,9 +351,11 @@ public class KmlWriter extends StaxStreamWriter {
      * @param create
      * @throws XMLStreamException
      */
-    private void writeCreate(Create create) throws XMLStreamException, KmlException{
+    private void writeCreate(Create create)
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_KML, TAG_CREATE);
-        for (Feature container : create.getContainers()){
+        for (Feature container : create.getContainers()) {
             this.writeAbstractContainer(container);
         }
         writer.writeEndElement();
@@ -361,9 +366,11 @@ public class KmlWriter extends StaxStreamWriter {
      * @param delete
      * @throws XMLStreamException
      */
-    private void writeDelete(Delete delete) throws XMLStreamException, KmlException{
+    private void writeDelete(Delete delete)
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_KML, TAG_DELETE);
-        for (Feature feature : delete.getFeatures()){
+        for (Feature feature : delete.getFeatures()) {
             this.writeAbstractFeature(feature);
         }
         writer.writeEndElement();
@@ -374,9 +381,11 @@ public class KmlWriter extends StaxStreamWriter {
      * @param change
      * @throws XMLStreamException
      */
-    private void writeChange(Change change) throws XMLStreamException, KmlException{
+    private void writeChange(Change change)
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_KML, TAG_CHANGE);
-        for (Object object : change.getObjects()){
+        for (Object object : change.getObjects()) {
             this.writeAbstractObject(object);
         }
         writer.writeEndElement();
@@ -387,48 +396,50 @@ public class KmlWriter extends StaxStreamWriter {
      * @param object
      * @throws XMLStreamException
      */
-    private void writeAbstractObject(Object object) throws XMLStreamException, KmlException{
-        if (object instanceof Region){
+    private void writeAbstractObject(Object object)
+            throws XMLStreamException, KmlException {
+
+        if (object instanceof Region) {
             this.writeRegion((Region) object);
-        } else if (object instanceof Lod){
-           this.writeLod((Lod) object);
-        } else if (object instanceof Link){
+        } else if (object instanceof Lod) {
+            this.writeLod((Lod) object);
+        } else if (object instanceof Link) {
             this.writeLink((Link) object);
-        } else if (object instanceof Icon){
+        } else if (object instanceof Icon) {
             this.writeIcon((Icon) object);
-        } else if (object instanceof Location){
+        } else if (object instanceof Location) {
             this.writeLocation((Location) object);
-        } else if (object instanceof Orientation){
+        } else if (object instanceof Orientation) {
             this.writeOrientation((Orientation) object);
-        } else if (object instanceof ResourceMap){
+        } else if (object instanceof ResourceMap) {
             this.writeResourceMap((ResourceMap) object);
-        } else if (object instanceof SchemaData){
+        } else if (object instanceof SchemaData) {
             this.writeSchemaData((SchemaData) object);
-        } else if (object instanceof Scale){
-           this.writeScale((Scale) object);
-        } else if (object instanceof Alias){
+        } else if (object instanceof Scale) {
+            this.writeScale((Scale) object);
+        } else if (object instanceof Alias) {
             this.writeAlias((Alias) object);
-        } else if (object instanceof ViewVolume){
+        } else if (object instanceof ViewVolume) {
             this.writeViewVolume((ViewVolume) object);
-        } else if (object instanceof ImagePyramid){
+        } else if (object instanceof ImagePyramid) {
             this.writeImagePyramid((ImagePyramid) object);
-        } else if (object instanceof Pair){
+        } else if (object instanceof Pair) {
             this.writePair((Pair) object);
-        } else if (object instanceof ItemIcon){
+        } else if (object instanceof ItemIcon) {
             this.writeItemIcon((ItemIcon) object);
-        } else if (object instanceof Feature){
+        } else if (object instanceof Feature) {
             this.writeAbstractFeature((Feature) object);
-        } else if (object instanceof AbstractGeometry){
+        } else if (object instanceof AbstractGeometry) {
             this.writeAbstractGeometry((AbstractGeometry) object);
-        } else if (object instanceof AbstractStyleSelector){
+        } else if (object instanceof AbstractStyleSelector) {
             this.writeAbstractStyleSelector((AbstractStyleSelector) object);
-        } else if (object instanceof AbstractSubStyle){
+        } else if (object instanceof AbstractSubStyle) {
             this.writeAbstractSubStyle((AbstractSubStyle) object);
-        } else if (object instanceof AbstractView){
+        } else if (object instanceof AbstractView) {
             this.writeAbstractView((AbstractView) object);
-        } else if (object instanceof AbstractTimePrimitive){
+        } else if (object instanceof AbstractTimePrimitive) {
             this.writeAbstractTimePrimitive((AbstractTimePrimitive) object);
-        } else if (object instanceof AbstractLatLonBox){
+        } else if (object instanceof AbstractLatLonBox) {
             this.writeAbstractLatLonBox((AbstractLatLonBox) object);
         }
     }
@@ -438,10 +449,12 @@ public class KmlWriter extends StaxStreamWriter {
      * @param abstractLatLonBox
      * @throws XMLStreamException
      */
-    private void writeAbstractLatLonBox(AbstractLatLonBox abstractLatLonBox) throws XMLStreamException, KmlException{
-        if(abstractLatLonBox instanceof LatLonAltBox){
+    private void writeAbstractLatLonBox(AbstractLatLonBox abstractLatLonBox)
+            throws XMLStreamException, KmlException {
+
+        if (abstractLatLonBox instanceof LatLonAltBox) {
             this.writeLatLonAltBox((LatLonAltBox) abstractLatLonBox);
-        } else if (abstractLatLonBox instanceof LatLonBox){
+        } else if (abstractLatLonBox instanceof LatLonBox) {
             this.writeLatLonBox((LatLonBox) abstractLatLonBox);
         }
     }
@@ -452,14 +465,14 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeAbstractSubStyle(AbstractSubStyle subStyle) 
-            throws XMLStreamException, KmlException{
+    private void writeAbstractSubStyle(AbstractSubStyle subStyle)
+            throws XMLStreamException, KmlException {
 
-        if (subStyle instanceof BalloonStyle){
+        if (subStyle instanceof BalloonStyle) {
             this.writeBalloonStyle((BalloonStyle) subStyle);
-        } else if (subStyle instanceof ListStyle){
+        } else if (subStyle instanceof ListStyle) {
             this.writeListStyle((ListStyle) subStyle);
-        } else if (subStyle instanceof AbstractColorStyle){
+        } else if (subStyle instanceof AbstractColorStyle) {
             this.writeAbstractColorStyle((AbstractColorStyle) subStyle);
         }
     }
@@ -470,16 +483,16 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeAbstractColorStyle(AbstractColorStyle colorStyle) 
-            throws XMLStreamException, KmlException{
+    private void writeAbstractColorStyle(AbstractColorStyle colorStyle)
+            throws XMLStreamException, KmlException {
 
-        if (colorStyle instanceof IconStyle){
+        if (colorStyle instanceof IconStyle) {
             this.writeIconStyle((IconStyle) colorStyle);
-        } else if (colorStyle instanceof LabelStyle){
+        } else if (colorStyle instanceof LabelStyle) {
             this.writeLabelStyle((LabelStyle) colorStyle);
-        } else if (colorStyle instanceof PolyStyle){
+        } else if (colorStyle instanceof PolyStyle) {
             this.writePolyStyle((PolyStyle) colorStyle);
-        } else if (colorStyle instanceof LineStyle){
+        } else if (colorStyle instanceof LineStyle) {
             this.writeLineStyle((LineStyle) colorStyle);
         }
     }
@@ -492,10 +505,10 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    public void writeCommonAbstractObject(AbstractObject abstractObject) 
-            throws XMLStreamException, KmlException{
+    public void writeCommonAbstractObject(AbstractObject abstractObject)
+            throws XMLStreamException, KmlException {
 
-        if (abstractObject.getIdAttributes() != null){
+        if (abstractObject.getIdAttributes() != null) {
             this.writeIdAttributes(abstractObject.getIdAttributes());
         }
         this.writeSimpleExtensionsScheduler(Names.OBJECT,
@@ -508,11 +521,13 @@ public class KmlWriter extends StaxStreamWriter {
      * @param idAttributes The IdAttributes to write.
      * @throws XMLStreamException
      */
-    private void writeIdAttributes(IdAttributes idAttributes) throws XMLStreamException{
-        if(idAttributes.getId() != null){
+    private void writeIdAttributes(IdAttributes idAttributes)
+            throws XMLStreamException {
+
+        if (idAttributes.getId() != null) {
             writer.writeAttribute(ATT_ID, idAttributes.getId());
         }
-        if(idAttributes.getTargetId() != null){
+        if (idAttributes.getTargetId() != null) {
             writer.writeAttribute(ATT_TARGET_ID, idAttributes.getTargetId());
         }
     }
@@ -522,18 +537,22 @@ public class KmlWriter extends StaxStreamWriter {
      * @param abstractFeature The AbstractFeature to write.
      * @throws XMLStreamException
      */
-    private void writeAbstractFeature(Feature abstractFeature) throws XMLStreamException, KmlException{
-        if (FeatureTypeUtilities.isDecendedFrom(abstractFeature.getType(), KmlModelConstants.TYPE_CONTAINER)){
+    private void writeAbstractFeature(Feature abstractFeature)
+            throws XMLStreamException, KmlException {
+
+        if (FeatureTypeUtilities.isDecendedFrom(
+                abstractFeature.getType(), KmlModelConstants.TYPE_CONTAINER)) {
             this.writeAbstractContainer(abstractFeature);
-        } else if (abstractFeature.getType().equals(KmlModelConstants.TYPE_NETWORK_LINK)){
+        } else if (abstractFeature.getType().equals(KmlModelConstants.TYPE_NETWORK_LINK)) {
             this.writeNetworkLink(abstractFeature);
-        } else if (FeatureTypeUtilities.isDecendedFrom(abstractFeature.getType(), KmlModelConstants.TYPE_OVERLAY)){
+        } else if (FeatureTypeUtilities.isDecendedFrom(
+                abstractFeature.getType(), KmlModelConstants.TYPE_OVERLAY)) {
             this.writeAbstractOverlay(abstractFeature);
-        } else if (abstractFeature.getType().equals(KmlModelConstants.TYPE_PLACEMARK)){
+        } else if (abstractFeature.getType().equals(KmlModelConstants.TYPE_PLACEMARK)) {
             this.writePlacemark(abstractFeature);
         } else { //FEATURE EXTENSIONS SUBSTITUTION
-            for(StaxStreamWriter candidate : this.extensionWriters){
-                if(((KmlExtensionWriter) candidate).canHandleComplex(URI_KML,null, abstractFeature)){
+            for (StaxStreamWriter candidate : this.extensionWriters) {
+                if (((KmlExtensionWriter) candidate).canHandleComplex(URI_KML, null, abstractFeature)) {
                     ((KmlExtensionWriter) candidate).writeComplexExtensionElement(URI_KML, null, abstractFeature);
                 }
             }
@@ -546,23 +565,29 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeNetworkLink(Feature networkLink) 
-            throws XMLStreamException, KmlException{
-        
+    private void writeNetworkLink(Feature networkLink)
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_KML, TAG_NETWORK_LINK);
         this.writeCommonAbstractFeature(networkLink);
-        this.writeRefreshVisibility((Boolean) networkLink.getProperty(KmlModelConstants.ATT_NETWORK_LINK_REFRESH_VISIBILITY.getName()).getValue());
-        this.writeFlyToView((Boolean) networkLink.getProperty(KmlModelConstants.ATT_NETWORK_LINK_FLY_TO_VIEW.getName()).getValue());
+        this.writeRefreshVisibility((Boolean) networkLink.getProperty(
+                KmlModelConstants.ATT_NETWORK_LINK_REFRESH_VISIBILITY.getName()).getValue());
+        this.writeFlyToView((Boolean) networkLink.getProperty(
+                KmlModelConstants.ATT_NETWORK_LINK_FLY_TO_VIEW.getName()).getValue());
 
-        if (networkLink.getProperty(KmlModelConstants.ATT_NETWORK_LINK_LINK.getName()) != null){
-            Object link = networkLink.getProperty(KmlModelConstants.ATT_NETWORK_LINK_LINK.getName()).getValue();
-            if (link instanceof Url)
+        if (networkLink.getProperty(
+                KmlModelConstants.ATT_NETWORK_LINK_LINK.getName()) != null) {
+            Object link = networkLink.getProperty(
+                    KmlModelConstants.ATT_NETWORK_LINK_LINK.getName()).getValue();
+            if (link instanceof Url) {
                 this.writeUrl((Url) link);
-            else if (link instanceof Link)
+            } else if (link instanceof Link) {
                 this.writeLink((Link) link);
+            }
         }
         this.writeStandardExtensionLevel(
-                (Extensions) networkLink.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
+                (Extensions) networkLink.getProperty(
+                KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
                 Names.NETWORK_LINK);
         writer.writeEndElement();
     }
@@ -574,109 +599,128 @@ public class KmlWriter extends StaxStreamWriter {
      * @param abstractFeature The AbstractFeature to write.
      * @throws XMLStreamException
      */
-    public void writeCommonAbstractFeature(Feature abstractFeature) throws XMLStreamException, KmlException{
+    public void writeCommonAbstractFeature(Feature abstractFeature)
+            throws XMLStreamException, KmlException {
+
         Iterator i;
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_ID_ATTRIBUTES.getName()) != null){
-            IdAttributes idAttributes = (IdAttributes) abstractFeature.getProperty(KmlModelConstants.ATT_ID_ATTRIBUTES.getName()).getValue();
-            if(idAttributes != null){
+        if (abstractFeature.getProperty(KmlModelConstants.ATT_ID_ATTRIBUTES.getName()) != null) {
+            IdAttributes idAttributes = (IdAttributes) abstractFeature.getProperty(
+                    KmlModelConstants.ATT_ID_ATTRIBUTES.getName()).getValue();
+            if (idAttributes != null) {
                 this.writeIdAttributes(idAttributes);
             }
         }
 
         this.writeSimpleExtensionsScheduler(Names.OBJECT,
-                ((Extensions) abstractFeature.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName())
-                .getValue()).simples(Names.OBJECT));
+                ((Extensions) abstractFeature.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue()).simples(Names.OBJECT));
 
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_NAME.getName()) != null){
-            String name = (String) abstractFeature.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue();
-            if(name != null){
+        if (abstractFeature.getProperty(KmlModelConstants.ATT_NAME.getName()) != null) {
+            String name = (String) abstractFeature.getProperty(
+                    KmlModelConstants.ATT_NAME.getName()).getValue();
+            if (name != null) {
                 this.writeName(name);
             }
         }
 
-        this.writeVisibility((Boolean) abstractFeature.getProperty(KmlModelConstants.ATT_VISIBILITY.getName()).getValue());
-        this.writeOpen((Boolean) abstractFeature.getProperty(KmlModelConstants.ATT_OPEN.getName()).getValue());
+        this.writeVisibility((Boolean) abstractFeature.getProperty(
+                KmlModelConstants.ATT_VISIBILITY.getName()).getValue());
+        this.writeOpen((Boolean) abstractFeature.getProperty(
+                KmlModelConstants.ATT_OPEN.getName()).getValue());
 
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_AUTHOR.getName()) != null){
-            AtomPersonConstruct author = (AtomPersonConstruct) abstractFeature.getProperty(KmlModelConstants.ATT_AUTHOR.getName()).getValue();
-            if(author != null){
+        if (abstractFeature.getProperty(KmlModelConstants.ATT_AUTHOR.getName()) != null) {
+            AtomPersonConstruct author = (AtomPersonConstruct) abstractFeature.getProperty(
+                    KmlModelConstants.ATT_AUTHOR.getName()).getValue();
+            if (author != null) {
                 this.writeAtomPersonConstruct(author);
             }
         }
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_LINK.getName()) != null){
-            AtomLink atomLink = (AtomLink) abstractFeature.getProperty(KmlModelConstants.ATT_LINK.getName()).getValue();
-            if(atomLink != null){
+        if (abstractFeature.getProperty(KmlModelConstants.ATT_LINK.getName()) != null) {
+            AtomLink atomLink = (AtomLink) abstractFeature.getProperty(
+                    KmlModelConstants.ATT_LINK.getName()).getValue();
+            if (atomLink != null) {
                 this.writeAtomLink(atomLink);
             }
         }
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_ADDRESS.getName()) != null){
-            String address = (String) abstractFeature.getProperty(KmlModelConstants.ATT_ADDRESS.getName()).getValue();
-            if(address != null){
+        if (abstractFeature.getProperty(KmlModelConstants.ATT_ADDRESS.getName()) != null) {
+            String address = (String) abstractFeature.getProperty(
+                    KmlModelConstants.ATT_ADDRESS.getName()).getValue();
+            if (address != null) {
                 this.writeAddress(address);
             }
         }
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_ADDRESS_DETAILS.getName()) != null){
-            AddressDetails addressDetails = (AddressDetails) abstractFeature.getProperty(KmlModelConstants.ATT_ADDRESS_DETAILS.getName()).getValue();
-            if(addressDetails != null){
+        if (abstractFeature.getProperty(KmlModelConstants.ATT_ADDRESS_DETAILS.getName()) != null) {
+            AddressDetails addressDetails = (AddressDetails) abstractFeature.getProperty(
+                    KmlModelConstants.ATT_ADDRESS_DETAILS.getName()).getValue();
+            if (addressDetails != null) {
                 this.writeXalAddresDetails(addressDetails);
             }
         }
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_PHONE_NUMBER.getName()) != null){
-            String phoneNumber = (String) abstractFeature.getProperty(KmlModelConstants.ATT_PHONE_NUMBER.getName()).getValue();
-            if(phoneNumber != null){
+        if (abstractFeature.getProperty(KmlModelConstants.ATT_PHONE_NUMBER.getName()) != null) {
+            String phoneNumber = (String) abstractFeature.getProperty(
+                    KmlModelConstants.ATT_PHONE_NUMBER.getName()).getValue();
+            if (phoneNumber != null) {
                 this.writePhoneNumber(phoneNumber);
             }
         }
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_SNIPPET.getName()) != null){
-            Object snippet = abstractFeature.getProperty(KmlModelConstants.ATT_SNIPPET.getName()).getValue();
-            if(snippet != null){
+        if (abstractFeature.getProperty(KmlModelConstants.ATT_SNIPPET.getName()) != null) {
+            Object snippet = abstractFeature.getProperty(
+                    KmlModelConstants.ATT_SNIPPET.getName()).getValue();
+            if (snippet != null) {
                 this.writeSnippet(snippet);
             }
         }
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_DESCRIPTION.getName()) != null){
-            Object description = abstractFeature.getProperty(KmlModelConstants.ATT_DESCRIPTION.getName()).getValue();
-            if(description != null){
+        if (abstractFeature.getProperty(KmlModelConstants.ATT_DESCRIPTION.getName()) != null) {
+            Object description = abstractFeature.getProperty(
+                    KmlModelConstants.ATT_DESCRIPTION.getName()).getValue();
+            if (description != null) {
                 this.writeDescription(description);
             }
         }
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_VIEW.getName()) != null){
-            AbstractView view = (AbstractView) abstractFeature.getProperty(KmlModelConstants.ATT_VIEW.getName()).getValue();
-            if(view != null){
+        if (abstractFeature.getProperty(KmlModelConstants.ATT_VIEW.getName()) != null) {
+            AbstractView view = (AbstractView) abstractFeature.getProperty(
+                    KmlModelConstants.ATT_VIEW.getName()).getValue();
+            if (view != null) {
                 this.writeAbstractView(view);
             }
         }
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_TIME_PRIMITIVE.getName()) != null){
-            AbstractTimePrimitive timePrimitive = (AbstractTimePrimitive) abstractFeature.getProperty(KmlModelConstants.ATT_TIME_PRIMITIVE.getName()).getValue();
-            if(timePrimitive != null){
+        if (abstractFeature.getProperty(KmlModelConstants.ATT_TIME_PRIMITIVE.getName()) != null) {
+            AbstractTimePrimitive timePrimitive = (AbstractTimePrimitive) abstractFeature.getProperty(
+                    KmlModelConstants.ATT_TIME_PRIMITIVE.getName()).getValue();
+            if (timePrimitive != null) {
                 this.writeAbstractTimePrimitive(timePrimitive);
             }
         }
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()) != null){
-            URI styleUrl = (URI) abstractFeature.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()).getValue();
-            if (styleUrl != null){
+        if (abstractFeature.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()) != null) {
+            URI styleUrl = (URI) abstractFeature.getProperty(
+                    KmlModelConstants.ATT_STYLE_URL.getName()).getValue();
+            if (styleUrl != null) {
                 this.writeStyleUrl(styleUrl);
             }
         }
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_STYLE_SELECTOR.getName()) != null){
+        if (abstractFeature.getProperty(KmlModelConstants.ATT_STYLE_SELECTOR.getName()) != null) {
             i = abstractFeature.getProperties(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).iterator();
-            while(i.hasNext()){
-                this.writeAbstractStyleSelector((AbstractStyleSelector) ((Property) i.next()).getValue());
+            while (i.hasNext()) {
+                this.writeAbstractStyleSelector(
+                        (AbstractStyleSelector) ((Property) i.next()).getValue());
             }
         }
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_REGION.getName()) != null){
-            Region region = (Region) abstractFeature.getProperty(KmlModelConstants.ATT_REGION.getName()).getValue();
-            if(region != null){
+        if (abstractFeature.getProperty(KmlModelConstants.ATT_REGION.getName()) != null) {
+            Region region = (Region) abstractFeature.getProperty(
+                    KmlModelConstants.ATT_REGION.getName()).getValue();
+            if (region != null) {
                 this.writeRegion(region);
             }
         }
-        if (abstractFeature.getProperty(KmlModelConstants.ATT_EXTENDED_DATA.getName()) != null){
-            Object extendedData = abstractFeature.getProperty(KmlModelConstants.ATT_EXTENDED_DATA.getName()).getValue();
-            if(extendedData != null){
+        if (abstractFeature.getProperty(KmlModelConstants.ATT_EXTENDED_DATA.getName()) != null) {
+            Object extendedData = abstractFeature.getProperty(
+                    KmlModelConstants.ATT_EXTENDED_DATA.getName()).getValue();
+            if (extendedData != null) {
                 this.writeExtendedData(extendedData);
             }
         }
         this.writeStandardExtensionLevel(
-                (Extensions) abstractFeature.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
+                (Extensions) abstractFeature.getProperty(
+                KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
                 Names.FEATURE);
     }
 
@@ -686,12 +730,12 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeExtendedData(Object dataContainer) 
-            throws XMLStreamException, KmlException{
+    private void writeExtendedData(Object dataContainer)
+            throws XMLStreamException, KmlException {
 
-        if(dataContainer instanceof ExtendedData){
+        if (dataContainer instanceof ExtendedData) {
             this.writeExtendedData((ExtendedData) dataContainer);
-        } else if (dataContainer instanceof Metadata){
+        } else if (dataContainer instanceof Metadata) {
             this.writeMetaData((Metadata) dataContainer);
         }
     }
@@ -703,17 +747,16 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws KmlException
      */
     public void writeExtendedData(ExtendedData extendedData)
-            throws XMLStreamException, KmlException{
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_EXTENDED_DATA);
-        for (Data data : extendedData.getDatas()){
+        for (Data data : extendedData.getDatas()) {
             this.writeData(data);
         }
-        for (SchemaData schemaData : extendedData.getSchemaData()){
+        for (SchemaData schemaData : extendedData.getSchemaData()) {
             this.writeSchemaData(schemaData);
         }
-        if (extendedData.getAnyOtherElements() != null){
-
+        if (extendedData.getAnyOtherElements() != null) {
             this.writeDataScheduler(extendedData.getAnyOtherElements());
         }
         writer.writeEndElement();
@@ -727,8 +770,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @deprecated
      */
     @Deprecated
-    private void writeMetaData(Metadata metadata) 
-            throws XMLStreamException, KmlException{
+    private void writeMetaData(Metadata metadata)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_META_DATA);
         this.writeDataScheduler(metadata.getContent());
@@ -741,13 +784,13 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeSchemaData(SchemaData schemaData) 
-            throws XMLStreamException, KmlException{
+    private void writeSchemaData(SchemaData schemaData)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_SCHEMA_DATA);
         writer.writeAttribute(ATT_SCHEMA_URL, schemaData.getSchemaURL().toString());
         this.writeCommonAbstractObject(schemaData);
-        for (SimpleData simpleData : schemaData.getSimpleDatas()){
+        for (SimpleData simpleData : schemaData.getSimpleDatas()) {
             this.writeSimpleData(simpleData);
         }
         writer.writeEndElement();
@@ -758,7 +801,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param simpleData
      * @throws XMLStreamException
      */
-    private void writeSimpleData(SimpleData simpleData) throws XMLStreamException{
+    private void writeSimpleData(SimpleData simpleData) throws XMLStreamException {
         writer.writeStartElement(URI_KML, TAG_SIMPLE_DATA);
         writer.writeAttribute(ATT_NAME, simpleData.getName());
         writer.writeCharacters(simpleData.getContent());
@@ -771,20 +814,19 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeData(Data data) 
-            throws XMLStreamException, KmlException{
+    private void writeData(Data data)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_DATA);
         writer.writeAttribute(ATT_NAME, data.getName());
         this.writeCommonAbstractObject(data);
-        if (data.getDisplayName() != null){
+        if (data.getDisplayName() != null) {
             this.writeDisplayName(data.getDisplayName());
         }
-        if (data.getValue() != null){
+        if (data.getValue() != null) {
             this.writeValue(data.getValue());
         }
-        if (data.getDataExtensions() != null){
-
+        if (data.getDataExtensions() != null) {
         }
         writer.writeEndElement();
     }
@@ -795,15 +837,15 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeRegion(Region region) 
-            throws XMLStreamException, KmlException{
-        
-        writer.writeStartElement(URI_KML,TAG_REGION);
+    private void writeRegion(Region region)
+            throws XMLStreamException, KmlException {
+
+        writer.writeStartElement(URI_KML, TAG_REGION);
         this.writeCommonAbstractObject(region);
-        if(region.getLatLonAltBox() != null){
+        if (region.getLatLonAltBox() != null) {
             this.writeLatLonAltBox(region.getLatLonAltBox());
         }
-        if(region.getLod() != null){
+        if (region.getLod() != null) {
             this.writeLod(region.getLod());
         }
         this.writeStandardExtensionLevel(
@@ -817,21 +859,21 @@ public class KmlWriter extends StaxStreamWriter {
      * @param lod
      * @throws XMLStreamException
      */
-    private void writeLod(Lod lod) 
-            throws XMLStreamException, KmlException{
-        
-        writer.writeStartElement(URI_KML,TAG_LOD);
+    private void writeLod(Lod lod)
+            throws XMLStreamException, KmlException {
+
+        writer.writeStartElement(URI_KML, TAG_LOD);
         this.writeCommonAbstractObject(lod);
-        if (KmlUtilities.isFiniteNumber(lod.getMinLodPixels())){
+        if (KmlUtilities.isFiniteNumber(lod.getMinLodPixels())) {
             this.writeMinLodPixels(lod.getMinLodPixels());
         }
-        if (KmlUtilities.isFiniteNumber(lod.getMaxLodPixels())){
+        if (KmlUtilities.isFiniteNumber(lod.getMaxLodPixels())) {
             this.writeMaxLodPixels(lod.getMaxLodPixels());
         }
-        if (KmlUtilities.isFiniteNumber(lod.getMinFadeExtent())){
+        if (KmlUtilities.isFiniteNumber(lod.getMinFadeExtent())) {
             this.writeMinFadeExtent(lod.getMinFadeExtent());
         }
-        if (KmlUtilities.isFiniteNumber(lod.getMaxFadeExtent())){
+        if (KmlUtilities.isFiniteNumber(lod.getMaxFadeExtent())) {
             this.writeMaxFadeExtent(lod.getMaxFadeExtent());
         }
         this.writeStandardExtensionLevel(
@@ -845,16 +887,18 @@ public class KmlWriter extends StaxStreamWriter {
      * @param latLonAltBox
      * @throws XMLStreamException
      */
-    private void writeLatLonAltBox(LatLonAltBox latLonAltBox) throws XMLStreamException, KmlException{
+    private void writeLatLonAltBox(LatLonAltBox latLonAltBox)
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_KML, TAG_LAT_LON_ALT_BOX);
         this.writeCommonAbstractLatLonBox(latLonAltBox);
-        if (KmlUtilities.isFiniteNumber(latLonAltBox.getMinAltitude())){
+        if (KmlUtilities.isFiniteNumber(latLonAltBox.getMinAltitude())) {
             this.writeMinAltitude(latLonAltBox.getMinAltitude());
         }
-        if (KmlUtilities.isFiniteNumber(latLonAltBox.getMaxAltitude())){
+        if (KmlUtilities.isFiniteNumber(latLonAltBox.getMaxAltitude())) {
             this.writeMaxAltitude(latLonAltBox.getMaxAltitude());
         }
-        if (latLonAltBox.getAltitudeMode() != null){
+        if (latLonAltBox.getAltitudeMode() != null) {
             this.writeAltitudeMode(latLonAltBox.getAltitudeMode());
         }
         this.writeStandardExtensionLevel(
@@ -863,11 +907,15 @@ public class KmlWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeAtomPersonConstruct(AtomPersonConstruct person) throws XMLStreamException{
+    private void writeAtomPersonConstruct(AtomPersonConstruct person)
+            throws XMLStreamException {
+
         ATOM_WRITER.writeAuthor(person);
     }
 
-    private void writeAtomLink(AtomLink link) throws XMLStreamException{
+    private void writeAtomLink(AtomLink link)
+            throws XMLStreamException {
+
         ATOM_WRITER.writeLink(link);
     }
 
@@ -875,7 +923,9 @@ public class KmlWriter extends StaxStreamWriter {
      *
      * @param details
      */
-    private void writeXalAddresDetails(AddressDetails details) throws XMLStreamException{
+    private void writeXalAddresDetails(AddressDetails details)
+            throws XMLStreamException {
+
         XAL_WRITER.setWriter(writer);
         try {
             XAL_WRITER.writeAddressDetails(details);
@@ -891,12 +941,12 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeAbstractTimePrimitive(AbstractTimePrimitive abstractTimePrimitive) 
-            throws XMLStreamException, KmlException{
+    private void writeAbstractTimePrimitive(AbstractTimePrimitive abstractTimePrimitive)
+            throws XMLStreamException, KmlException {
 
-        if (abstractTimePrimitive instanceof TimeSpan){
+        if (abstractTimePrimitive instanceof TimeSpan) {
             this.writeTimeSpan((TimeSpan) abstractTimePrimitive);
-        } else if (abstractTimePrimitive instanceof TimeStamp){
+        } else if (abstractTimePrimitive instanceof TimeStamp) {
             this.writeTimeStamp((TimeStamp) abstractTimePrimitive);
         }
     }
@@ -907,15 +957,15 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeTimeSpan(TimeSpan timeSpan) 
-            throws XMLStreamException, KmlException{
-        
+    private void writeTimeSpan(TimeSpan timeSpan)
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_KML, TAG_TIME_SPAN);
         this.writeCommonAbstractTimePrimitive(timeSpan);
-        if (timeSpan.getBegin() != null){
+        if (timeSpan.getBegin() != null) {
             this.writeBegin(timeSpan.getBegin());
         }
-        if (timeSpan.getEnd() != null){
+        if (timeSpan.getEnd() != null) {
             this.writeEnd(timeSpan.getEnd());
         }
         this.writeStandardExtensionLevel(
@@ -930,12 +980,12 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeTimeStamp(TimeStamp timeStamp) 
-            throws XMLStreamException, KmlException{
+    private void writeTimeStamp(TimeStamp timeStamp)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_TIME_STAMP);
         this.writeCommonAbstractTimePrimitive(timeStamp);
-        if (timeStamp.getWhen() != null){
+        if (timeStamp.getWhen() != null) {
             this.writeWhen(timeStamp.getWhen());
         }
         this.writeStandardExtensionLevel(
@@ -949,11 +999,13 @@ public class KmlWriter extends StaxStreamWriter {
      * @param abstractView The AbstractView to write.
      * @throws XMLStreamException
      */
-    public void writeAbstractView(AbstractView abstractView) throws XMLStreamException, KmlException{
-        if (abstractView instanceof LookAt){
-            this.writeLookAt((LookAt)abstractView);
-        } else if (abstractView instanceof Camera){
-            this.writeCamera((Camera)abstractView);
+    public void writeAbstractView(AbstractView abstractView)
+            throws XMLStreamException, KmlException {
+
+        if (abstractView instanceof LookAt) {
+            this.writeLookAt((LookAt) abstractView);
+        } else if (abstractView instanceof Camera) {
+            this.writeCamera((Camera) abstractView);
         }
     }
 
@@ -962,28 +1014,30 @@ public class KmlWriter extends StaxStreamWriter {
      * @param lookAt
      * @throws XMLStreamException
      */
-    private void writeLookAt(LookAt lookAt) throws XMLStreamException, KmlException{
+    private void writeLookAt(LookAt lookAt)
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_KML, TAG_LOOK_AT);
         this.writeCommonAbstractView(lookAt);
-        if (KmlUtilities.isFiniteNumber(lookAt.getLongitude())){
+        if (KmlUtilities.isFiniteNumber(lookAt.getLongitude())) {
             this.writeLongitude(lookAt.getLongitude());
         }
-        if (KmlUtilities.isFiniteNumber(lookAt.getLatitude())){
+        if (KmlUtilities.isFiniteNumber(lookAt.getLatitude())) {
             this.writeLatitude(lookAt.getLatitude());
         }
-        if (KmlUtilities.isFiniteNumber(lookAt.getAltitude())){
+        if (KmlUtilities.isFiniteNumber(lookAt.getAltitude())) {
             this.writeAltitude(lookAt.getAltitude());
         }
-        if (KmlUtilities.isFiniteNumber(lookAt.getHeading())){
+        if (KmlUtilities.isFiniteNumber(lookAt.getHeading())) {
             this.writeHeading(lookAt.getHeading());
         }
-        if (KmlUtilities.isFiniteNumber(lookAt.getTilt())){
+        if (KmlUtilities.isFiniteNumber(lookAt.getTilt())) {
             this.writeTilt(lookAt.getTilt());
         }
-        if (KmlUtilities.isFiniteNumber(lookAt.getRange())){
+        if (KmlUtilities.isFiniteNumber(lookAt.getRange())) {
             this.writeRange(lookAt.getRange());
         }
-        if (lookAt.getAltitudeMode() != null){
+        if (lookAt.getAltitudeMode() != null) {
             this.writeAltitudeMode(lookAt.getAltitudeMode());
         }
         this.writeStandardExtensionLevel(
@@ -992,28 +1046,30 @@ public class KmlWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-    private void writeCamera(Camera camera) throws XMLStreamException, KmlException{
+    private void writeCamera(Camera camera)
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_KML, TAG_CAMERA);
         this.writeCommonAbstractView(camera);
-        if (KmlUtilities.isFiniteNumber(camera.getLongitude())){
+        if (KmlUtilities.isFiniteNumber(camera.getLongitude())) {
             this.writeLongitude(camera.getLongitude());
         }
-        if (KmlUtilities.isFiniteNumber(camera.getLatitude())){
+        if (KmlUtilities.isFiniteNumber(camera.getLatitude())) {
             this.writeLatitude(camera.getLatitude());
         }
-        if (KmlUtilities.isFiniteNumber(camera.getAltitude())){
+        if (KmlUtilities.isFiniteNumber(camera.getAltitude())) {
             this.writeAltitude(camera.getAltitude());
         }
-        if (KmlUtilities.isFiniteNumber(camera.getHeading())){
+        if (KmlUtilities.isFiniteNumber(camera.getHeading())) {
             this.writeHeading(camera.getHeading());
         }
-        if (KmlUtilities.isFiniteNumber(camera.getTilt())){
+        if (KmlUtilities.isFiniteNumber(camera.getTilt())) {
             this.writeTilt(camera.getTilt());
         }
-        if (KmlUtilities.isFiniteNumber(camera.getRoll())){
+        if (KmlUtilities.isFiniteNumber(camera.getRoll())) {
             this.writeRoll(camera.getRoll());
         }
-        if (camera.getAltitudeMode() != null){
+        if (camera.getAltitudeMode() != null) {
             this.writeAltitudeMode(camera.getAltitudeMode());
         }
         this.writeStandardExtensionLevel(
@@ -1029,7 +1085,9 @@ public class KmlWriter extends StaxStreamWriter {
      * @param abstractView The AbstractView to write.
      * @throws XMLStreamException
      */
-    private void writeCommonAbstractView(AbstractView abstractView) throws XMLStreamException, KmlException{
+    private void writeCommonAbstractView(AbstractView abstractView)
+            throws XMLStreamException, KmlException {
+
         this.writeCommonAbstractObject(abstractView);
         this.writeStandardExtensionLevel(
                 abstractView.extensions(),
@@ -1043,8 +1101,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param abstractTimePrimitive The AbstractTimePrimitive to write.
      * @throws XMLStreamException
      */
-    public void writeCommonAbstractTimePrimitive(AbstractTimePrimitive abstractTimePrimitive) 
-            throws XMLStreamException, KmlException{
+    public void writeCommonAbstractTimePrimitive(AbstractTimePrimitive abstractTimePrimitive)
+            throws XMLStreamException, KmlException {
 
         this.writeCommonAbstractObject(abstractTimePrimitive);
         this.writeStandardExtensionLevel(
@@ -1059,12 +1117,12 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws KmlException
      */
     private void writeAbstractStyleSelector(AbstractStyleSelector abstractStyleSelector)
-            throws XMLStreamException, KmlException{
-        
-        if (abstractStyleSelector instanceof Style){
-            this.writeStyle((Style)abstractStyleSelector);
-        } else if (abstractStyleSelector instanceof StyleMap){
-            this.writeStyleMap((StyleMap)abstractStyleSelector);
+            throws XMLStreamException, KmlException {
+
+        if (abstractStyleSelector instanceof Style) {
+            this.writeStyle((Style) abstractStyleSelector);
+        } else if (abstractStyleSelector instanceof StyleMap) {
+            this.writeStyleMap((StyleMap) abstractStyleSelector);
         }
     }
 
@@ -1076,8 +1134,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeCommonAbstractStyleSelector(AbstractStyleSelector abstractStyleSelector) 
-            throws XMLStreamException, KmlException{
+    private void writeCommonAbstractStyleSelector(AbstractStyleSelector abstractStyleSelector)
+            throws XMLStreamException, KmlException {
 
         this.writeCommonAbstractObject(abstractStyleSelector);
         this.writeStandardExtensionLevel(
@@ -1091,12 +1149,12 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeStyleMap(StyleMap styleMap) 
-            throws XMLStreamException, KmlException{
+    private void writeStyleMap(StyleMap styleMap)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_STYLE_MAP);
         this.writeCommonAbstractStyleSelector(styleMap);
-        for(Pair pair : styleMap.getPairs()){
+        for (Pair pair : styleMap.getPairs()) {
             this.writePair(pair);
         }
         this.writeStandardExtensionLevel(
@@ -1110,16 +1168,18 @@ public class KmlWriter extends StaxStreamWriter {
      * @param pair
      * @throws XMLStreamException
      */
-    private void writePair(Pair pair) throws XMLStreamException, KmlException{
+    private void writePair(Pair pair)
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_KML, TAG_PAIR);
         this.writeCommonAbstractObject(pair);
-        if (pair.getKey() != null){
+        if (pair.getKey() != null) {
             this.writeKey(pair.getKey());
         }
-        if (pair.getStyleUrl() != null){
+        if (pair.getStyleUrl() != null) {
             this.writeStyleUrl(pair.getStyleUrl());
         }
-        if (pair.getAbstractStyleSelector() != null){
+        if (pair.getAbstractStyleSelector() != null) {
             checkVersion(URI_KML_2_2);
             this.writeAbstractStyleSelector(pair.getAbstractStyleSelector());
         }
@@ -1135,27 +1195,27 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeStyle(Style style) 
-            throws XMLStreamException, KmlException{
+    private void writeStyle(Style style)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_STYLE);
         this.writeCommonAbstractStyleSelector(style);
-        if (style.getIconStyle() != null){
+        if (style.getIconStyle() != null) {
             this.writeIconStyle(style.getIconStyle());
         }
-        if (style.getLabelStyle() != null){
+        if (style.getLabelStyle() != null) {
             this.writeLabelStyle(style.getLabelStyle());
         }
-        if (style.getLineStyle() != null){
+        if (style.getLineStyle() != null) {
             this.writeLineStyle(style.getLineStyle());
         }
-        if (style.getPolyStyle() != null){
+        if (style.getPolyStyle() != null) {
             this.writePolyStyle(style.getPolyStyle());
         }
-        if (style.getBalloonStyle() != null){
+        if (style.getBalloonStyle() != null) {
             this.writeBalloonStyle(style.getBalloonStyle());
         }
-        if (style.getListStyle() != null){
+        if (style.getListStyle() != null) {
             this.writeListStyle(style.getListStyle());
         }
         this.writeStandardExtensionLevel(
@@ -1170,21 +1230,21 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeIconStyle(IconStyle iconStyle) 
-            throws XMLStreamException, KmlException{
+    private void writeIconStyle(IconStyle iconStyle)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_ICON_STYLE);
         this.writeCommonAbstractColorStyle(iconStyle);
-        if (KmlUtilities.isFiniteNumber(iconStyle.getScale())){
+        if (KmlUtilities.isFiniteNumber(iconStyle.getScale())) {
             this.writeScale(iconStyle.getScale());
         }
-        if (KmlUtilities.isFiniteNumber(iconStyle.getHeading())){
+        if (KmlUtilities.isFiniteNumber(iconStyle.getHeading())) {
             this.writeHeading(iconStyle.getHeading());
         }
-        if (iconStyle.getIcon() != null){
+        if (iconStyle.getIcon() != null) {
             this.writeIcon(iconStyle.getIcon());
         }
-        if (iconStyle.getHotSpot() != null){
+        if (iconStyle.getHotSpot() != null) {
             this.writeHotSpot(iconStyle.getHotSpot());
         }
         this.writeStandardExtensionLevel(
@@ -1199,12 +1259,12 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeLabelStyle(LabelStyle labelStyle) 
-            throws XMLStreamException, KmlException{
+    private void writeLabelStyle(LabelStyle labelStyle)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_LABEL_STYLE);
         this.writeCommonAbstractColorStyle(labelStyle);
-        if (KmlUtilities.isFiniteNumber(labelStyle.getScale())){
+        if (KmlUtilities.isFiniteNumber(labelStyle.getScale())) {
             this.writeScale(labelStyle.getScale());
         }
         this.writeStandardExtensionLevel(
@@ -1219,12 +1279,12 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeLineStyle(LineStyle lineStyle) 
-            throws XMLStreamException, KmlException{
+    private void writeLineStyle(LineStyle lineStyle)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_LINE_STYLE);
         this.writeCommonAbstractColorStyle(lineStyle);
-        if (KmlUtilities.isFiniteNumber(lineStyle.getWidth())){
+        if (KmlUtilities.isFiniteNumber(lineStyle.getWidth())) {
             this.writeWidth(lineStyle.getWidth());
         }
         this.writeStandardExtensionLevel(
@@ -1239,8 +1299,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writePolyStyle(PolyStyle polyStyle) 
-            throws XMLStreamException, KmlException{
+    private void writePolyStyle(PolyStyle polyStyle)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_POLY_STYLE);
         this.writeCommonAbstractColorStyle(polyStyle);
@@ -1258,22 +1318,22 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeBalloonStyle(BalloonStyle balloonStyle) 
-            throws XMLStreamException, KmlException{
+    private void writeBalloonStyle(BalloonStyle balloonStyle)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_BALLOON_STYLE);
         this.writeCommonAbstractSubStyle(balloonStyle);
-        if (balloonStyle.getBgColor() != null){
+        if (balloonStyle.getBgColor() != null) {
             this.writeBgColor(balloonStyle.getBgColor());
         }
-        if (balloonStyle.getTextColor() != null){
+        if (balloonStyle.getTextColor() != null) {
             this.writeTextColor(balloonStyle.getTextColor());
         }
-        if (balloonStyle.getText() != null){
+        if (balloonStyle.getText() != null) {
             this.writeText(balloonStyle.getText());
         }
         if (balloonStyle.getDisplayMode() != null
-                && checkVersionSimple(URI_KML_2_2)){
+                && checkVersionSimple(URI_KML_2_2)) {
             this.writeDisplayMode(balloonStyle.getDisplayMode());
         }
         this.writeStandardExtensionLevel(
@@ -1288,22 +1348,22 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeListStyle(ListStyle listStyle) 
-            throws XMLStreamException, KmlException{
-        
+    private void writeListStyle(ListStyle listStyle)
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_KML, TAG_LIST_STYLE);
         this.writeCommonAbstractSubStyle(listStyle);
-        if (listStyle.getListItem() != null){
+        if (listStyle.getListItem() != null) {
             this.writeListItem(listStyle.getListItem());
         }
-        if (listStyle.getBgColor() != null){
+        if (listStyle.getBgColor() != null) {
             this.writeBgColor(listStyle.getBgColor());
         }
-        for(ItemIcon itemIcon : listStyle.getItemIcons()){
+        for (ItemIcon itemIcon : listStyle.getItemIcons()) {
             this.writeItemIcon(itemIcon);
         }
         if (KmlUtilities.isFiniteNumber(listStyle.getMaxSnippetLines())
-                && checkVersionSimple(URI_KML_2_2)){
+                && checkVersionSimple(URI_KML_2_2)) {
             this.writeMaxSnippetLines(listStyle.getMaxSnippetLines());
         }
         this.writeStandardExtensionLevel(
@@ -1318,15 +1378,15 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeItemIcon(ItemIcon itemIcon) 
-            throws XMLStreamException, KmlException{
-        
+    private void writeItemIcon(ItemIcon itemIcon)
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_KML, TAG_ITEM_ICON);
         this.writeCommonAbstractObject(itemIcon);
-        if (itemIcon.getStates() != null){
+        if (itemIcon.getStates() != null) {
             this.writeStates(itemIcon.getStates());
         }
-        if (itemIcon.getHref() != null){
+        if (itemIcon.getHref() != null) {
             this.writeHref(itemIcon.getHref());
         }
         this.writeStandardExtensionLevel(
@@ -1340,16 +1400,18 @@ public class KmlWriter extends StaxStreamWriter {
      * @param itemIconStates
      * @throws XMLStreamException
      */
-    private void writeStates(List<ItemIconState> itemIconStates) throws XMLStreamException{
+    private void writeStates(List<ItemIconState> itemIconStates)
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_KML, TAG_STATE);
         int i = 0;
         int size = itemIconStates.size();
-        for(ItemIconState itemIconState : itemIconStates){
+        for (ItemIconState itemIconState : itemIconStates) {
             i++;
-            if(i == size){
+            if (i == size) {
                 writer.writeCharacters(itemIconState.getItemIconState());
             } else {
-                writer.writeCharacters(itemIconState.getItemIconState()+" ");
+                writer.writeCharacters(itemIconState.getItemIconState() + " ");
             }
         }
         writer.writeEndElement();
@@ -1362,18 +1424,18 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeIcon(BasicLink icon) 
-            throws XMLStreamException, KmlException{
+    private void writeIcon(BasicLink icon)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_ICON);
-        if (icon.getIdAttributes() != null){
+        if (icon.getIdAttributes() != null) {
             this.writeIdAttributes(icon.getIdAttributes());
         }
 
         this.writeSimpleExtensionsScheduler(Names.OBJECT,
                 icon.extensions().simples(Names.OBJECT));
 
-        if (icon.getHref() != null){
+        if (icon.getHref() != null) {
             this.writeHref(icon.getHref());
         }
 
@@ -1390,8 +1452,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeIcon(Icon icon) 
-            throws XMLStreamException, KmlException{
+    private void writeIcon(Icon icon)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_ICON);
         this.writeLink_structure(icon);
@@ -1404,9 +1466,9 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeLink(Link link) 
-            throws XMLStreamException, KmlException{
-        
+    private void writeLink(Link link)
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_KML, TAG_LINK);
         this.writeLink_structure(link);
         writer.writeEndElement();
@@ -1420,9 +1482,9 @@ public class KmlWriter extends StaxStreamWriter {
      * @deprecated
      */
     @Deprecated
-    private void writeUrl(Url url) 
-            throws XMLStreamException, KmlException{
-        
+    private void writeUrl(Url url)
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_KML, TAG_URL);
         this.writeLink_structure(url);
         writer.writeEndElement();
@@ -1435,12 +1497,12 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeLink_structure(Link link) 
-            throws XMLStreamException, KmlException{
+    private void writeLink_structure(Link link)
+            throws XMLStreamException, KmlException {
 
         this.writeCommonAbstractObject(link);
 
-        if (link.getHref() != null){
+        if (link.getHref() != null) {
             this.writeHref(link.getHref());
         }
 
@@ -1448,28 +1510,28 @@ public class KmlWriter extends StaxStreamWriter {
                 link.extensions(),
                 Names.BASIC_LINK);
 
-        if (link.getRefreshMode() != null){
+        if (link.getRefreshMode() != null) {
             this.writeRefreshMode(link.getRefreshMode());
         }
-        if (KmlUtilities.isFiniteNumber(link.getRefreshInterval())){
+        if (KmlUtilities.isFiniteNumber(link.getRefreshInterval())) {
             this.writeRefreshInterval(link.getRefreshInterval());
         }
-        if (link.getViewRefreshMode() != null){
+        if (link.getViewRefreshMode() != null) {
             this.writeViewRefreshMode(link.getViewRefreshMode());
         }
-        if (KmlUtilities.isFiniteNumber(link.getViewRefreshTime())){
+        if (KmlUtilities.isFiniteNumber(link.getViewRefreshTime())) {
             this.writeViewRefreshTime(link.getViewRefreshTime());
         }
-        if (KmlUtilities.isFiniteNumber(link.getViewBoundScale())){
+        if (KmlUtilities.isFiniteNumber(link.getViewBoundScale())) {
             this.writeViewBoundScale(link.getViewBoundScale());
         }
-        if (link.getViewFormat() != null){
+        if (link.getViewFormat() != null) {
             this.writeViewFormat(link.getViewFormat());
         }
-        if (link.getHttpQuery() != null){
+        if (link.getHttpQuery() != null) {
             this.writeHttpQuery(link.getHttpQuery());
         }
-        
+
         this.writeStandardExtensionLevel(
                 link.extensions(),
                 Names.LINK);
@@ -1483,14 +1545,14 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeCommonAbstractColorStyle(AbstractColorStyle abstractColorStyle) 
-            throws XMLStreamException, KmlException{
-        
+    private void writeCommonAbstractColorStyle(AbstractColorStyle abstractColorStyle)
+            throws XMLStreamException, KmlException {
+
         this.writeCommonAbstractSubStyle(abstractColorStyle);
-        if (abstractColorStyle.getColor() != null){
+        if (abstractColorStyle.getColor() != null) {
             this.writeColor(abstractColorStyle.getColor());
         }
-        if (abstractColorStyle.getColorMode() != null){
+        if (abstractColorStyle.getColorMode() != null) {
             this.writeColorMode(abstractColorStyle.getColorMode());
         }
 
@@ -1507,8 +1569,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeCommonAbstractSubStyle(AbstractSubStyle abstractSubStyle) 
-            throws XMLStreamException, KmlException{
+    private void writeCommonAbstractSubStyle(AbstractSubStyle abstractSubStyle)
+            throws XMLStreamException, KmlException {
 
         this.writeCommonAbstractObject(abstractSubStyle);
         this.writeStandardExtensionLevel(
@@ -1521,17 +1583,21 @@ public class KmlWriter extends StaxStreamWriter {
      * @param placemark
      * @throws XMLStreamException
      */
-    private void writePlacemark(Feature placemark) throws XMLStreamException, KmlException{
+    private void writePlacemark(Feature placemark)
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_KML, TAG_PLACEMARK);
         this.writeCommonAbstractFeature(placemark);
-        if (placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()) != null){
-            AbstractGeometry geometry = (AbstractGeometry) placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
-            if(geometry != null){
+        if (placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()) != null) {
+            AbstractGeometry geometry = (AbstractGeometry) placemark.getProperty(
+                    KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue();
+            if (geometry != null) {
                 this.writeAbstractGeometry(geometry);
             }
         }
         this.writeStandardExtensionLevel(
-                (Extensions) placemark.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
+                (Extensions) placemark.getProperty(
+                KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
                 Names.PLACEMARK);
         writer.writeEndElement();
     }
@@ -1541,10 +1607,12 @@ public class KmlWriter extends StaxStreamWriter {
      * @param abstractContainer The AbstractContainer to write
      * @throws XMLStreamException
      */
-    private void writeAbstractContainer(Feature abstractContainer) throws XMLStreamException, KmlException{
-        if (abstractContainer.getType().equals(KmlModelConstants.TYPE_FOLDER)){
+    private void writeAbstractContainer(Feature abstractContainer)
+            throws XMLStreamException, KmlException {
+
+        if (abstractContainer.getType().equals(KmlModelConstants.TYPE_FOLDER)) {
             this.writeFolder(abstractContainer);
-        } else if (abstractContainer.getType().equals(KmlModelConstants.TYPE_DOCUMENT)){
+        } else if (abstractContainer.getType().equals(KmlModelConstants.TYPE_DOCUMENT)) {
             this.writeDocument(abstractContainer);
         }
     }
@@ -1554,12 +1622,14 @@ public class KmlWriter extends StaxStreamWriter {
      * @param abstractOverlay The AbstractOverlay to write.
      * @throws XMLStreamException
      */
-    private void writeAbstractOverlay(Feature abstractOverlay) throws XMLStreamException, KmlException{
-        if (abstractOverlay.getType().equals(KmlModelConstants.TYPE_GROUND_OVERLAY)){
+    private void writeAbstractOverlay(Feature abstractOverlay)
+            throws XMLStreamException, KmlException {
+
+        if (abstractOverlay.getType().equals(KmlModelConstants.TYPE_GROUND_OVERLAY)) {
             this.writeGroundOverlay(abstractOverlay);
-        } else if (abstractOverlay.getType().equals(KmlModelConstants.TYPE_SCREEN_OVERLAY)){
+        } else if (abstractOverlay.getType().equals(KmlModelConstants.TYPE_SCREEN_OVERLAY)) {
             this.writeScreenOverlay(abstractOverlay);
-        } else if (abstractOverlay.getType().equals(KmlModelConstants.TYPE_PHOTO_OVERLAY)){
+        } else if (abstractOverlay.getType().equals(KmlModelConstants.TYPE_PHOTO_OVERLAY)) {
             this.writePhotoOverlay(abstractOverlay);
         }
     }
@@ -1570,41 +1640,49 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writePhotoOverlay(Feature photoOverlay) throws XMLStreamException, KmlException{
+    private void writePhotoOverlay(Feature photoOverlay)
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_KML, TAG_PHOTO_OVERLAY);
         this.writeCommonAbstractOverlay(photoOverlay);
-        if (photoOverlay.getProperty(KmlModelConstants.ATT_PHOTO_OVERLAY_ROTATION.getName()) != null){
-            Double rotation = (Double) photoOverlay.getProperty(KmlModelConstants.ATT_PHOTO_OVERLAY_ROTATION.getName()).getValue();
-            if(rotation != null){
+        if (photoOverlay.getProperty(KmlModelConstants.ATT_PHOTO_OVERLAY_ROTATION.getName()) != null) {
+            Double rotation = (Double) photoOverlay.getProperty(
+                    KmlModelConstants.ATT_PHOTO_OVERLAY_ROTATION.getName()).getValue();
+            if (rotation != null) {
                 this.writeRotation(rotation);
             }
         }
-        if (photoOverlay.getProperty(KmlModelConstants.ATT_PHOTO_OVERLAY_VIEW_VOLUME.getName()) != null){
-            ViewVolume viewVolume = (ViewVolume) photoOverlay.getProperty(KmlModelConstants.ATT_PHOTO_OVERLAY_VIEW_VOLUME.getName()).getValue();
-            if(viewVolume != null){
+        if (photoOverlay.getProperty(KmlModelConstants.ATT_PHOTO_OVERLAY_VIEW_VOLUME.getName()) != null) {
+            ViewVolume viewVolume = (ViewVolume) photoOverlay.getProperty(
+                    KmlModelConstants.ATT_PHOTO_OVERLAY_VIEW_VOLUME.getName()).getValue();
+            if (viewVolume != null) {
                 this.writeViewVolume(viewVolume);
             }
         }
-        if (photoOverlay.getProperty(KmlModelConstants.ATT_PHOTO_OVERLAY_IMAGE_PYRAMID.getName()) != null){
-            ImagePyramid imagePyramid = (ImagePyramid) photoOverlay.getProperty(KmlModelConstants.ATT_PHOTO_OVERLAY_IMAGE_PYRAMID.getName()).getValue();
-            if(imagePyramid != null){
+        if (photoOverlay.getProperty(KmlModelConstants.ATT_PHOTO_OVERLAY_IMAGE_PYRAMID.getName()) != null) {
+            ImagePyramid imagePyramid = (ImagePyramid) photoOverlay.getProperty(
+                    KmlModelConstants.ATT_PHOTO_OVERLAY_IMAGE_PYRAMID.getName()).getValue();
+            if (imagePyramid != null) {
                 this.writeImagePyramid(imagePyramid);
             }
         }
-        if (photoOverlay.getProperty(KmlModelConstants.ATT_PHOTO_OVERLAY_POINT.getName()) != null){
-            Point point = (Point) photoOverlay.getProperty(KmlModelConstants.ATT_PHOTO_OVERLAY_POINT.getName()).getValue();
-            if(point != null){
+        if (photoOverlay.getProperty(KmlModelConstants.ATT_PHOTO_OVERLAY_POINT.getName()) != null) {
+            Point point = (Point) photoOverlay.getProperty(
+                    KmlModelConstants.ATT_PHOTO_OVERLAY_POINT.getName()).getValue();
+            if (point != null) {
                 this.writePoint(point);
             }
         }
-        if (photoOverlay.getProperty(KmlModelConstants.ATT_PHOTO_OVERLAY_SHAPE.getName()) != null){
-            Shape shape = (Shape) photoOverlay.getProperty(KmlModelConstants.ATT_PHOTO_OVERLAY_SHAPE.getName()).getValue();
-            if(shape != null){
+        if (photoOverlay.getProperty(KmlModelConstants.ATT_PHOTO_OVERLAY_SHAPE.getName()) != null) {
+            Shape shape = (Shape) photoOverlay.getProperty(
+                    KmlModelConstants.ATT_PHOTO_OVERLAY_SHAPE.getName()).getValue();
+            if (shape != null) {
                 this.writeShape(shape);
             }
         }
         this.writeStandardExtensionLevel(
-                (Extensions) photoOverlay.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
+                (Extensions) photoOverlay.getProperty(
+                KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
                 Names.PHOTO_OVERLAY);
         writer.writeEndElement();
     }
@@ -1614,21 +1692,21 @@ public class KmlWriter extends StaxStreamWriter {
      * @param imagePyramid
      * @throws XMLStreamException
      */
-    private void writeImagePyramid(ImagePyramid imagePyramid) 
-            throws XMLStreamException, KmlException{
+    private void writeImagePyramid(ImagePyramid imagePyramid)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_IMAGE_PYRAMID);
         this.writeCommonAbstractObject(imagePyramid);
-        if (KmlUtilities.isFiniteNumber(imagePyramid.getTitleSize())){
+        if (KmlUtilities.isFiniteNumber(imagePyramid.getTitleSize())) {
             this.writeTitleSize(imagePyramid.getTitleSize());
         }
-        if (KmlUtilities.isFiniteNumber(imagePyramid.getMaxWidth())){
+        if (KmlUtilities.isFiniteNumber(imagePyramid.getMaxWidth())) {
             this.writeMaxWidth(imagePyramid.getMaxWidth());
         }
-        if (KmlUtilities.isFiniteNumber(imagePyramid.getMaxHeight())){
+        if (KmlUtilities.isFiniteNumber(imagePyramid.getMaxHeight())) {
             this.writeMaxHeight(imagePyramid.getMaxHeight());
         }
-        if (imagePyramid.getGridOrigin() != null){
+        if (imagePyramid.getGridOrigin() != null) {
             this.writeGridOrigin(imagePyramid.getGridOrigin());
         }
         this.writeStandardExtensionLevel(
@@ -1636,30 +1714,30 @@ public class KmlWriter extends StaxStreamWriter {
                 Names.IMAGE_PYRAMID);
         writer.writeEndElement();
     }
-    
+
     /**
      *
      * @param viewVolume
      * @throws XMLStreamException
      */
-    private void writeViewVolume(ViewVolume viewVolume) 
-            throws XMLStreamException, KmlException{
+    private void writeViewVolume(ViewVolume viewVolume)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_VIEW_VOLUME);
         this.writeCommonAbstractObject(viewVolume);
-        if (KmlUtilities.isFiniteNumber(viewVolume.getLeftFov())){
+        if (KmlUtilities.isFiniteNumber(viewVolume.getLeftFov())) {
             this.writeLeftFov(viewVolume.getLeftFov());
         }
-        if (KmlUtilities.isFiniteNumber(viewVolume.getRightFov())){
+        if (KmlUtilities.isFiniteNumber(viewVolume.getRightFov())) {
             this.writeRightFov(viewVolume.getRightFov());
         }
-        if (KmlUtilities.isFiniteNumber(viewVolume.getBottomFov())){
+        if (KmlUtilities.isFiniteNumber(viewVolume.getBottomFov())) {
             this.writeBottomFov(viewVolume.getBottomFov());
         }
-        if (KmlUtilities.isFiniteNumber(viewVolume.getTopFov())){
+        if (KmlUtilities.isFiniteNumber(viewVolume.getTopFov())) {
             this.writeTopFov(viewVolume.getTopFov());
         }
-        if (KmlUtilities.isFiniteNumber(viewVolume.getNear())){
+        if (KmlUtilities.isFiniteNumber(viewVolume.getNear())) {
             this.writeNear(viewVolume.getNear());
         }
         this.writeStandardExtensionLevel(
@@ -1674,47 +1752,52 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeScreenOverlay(Feature screenOverlay) 
-            throws XMLStreamException, KmlException{
+    private void writeScreenOverlay(Feature screenOverlay)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_SCREEN_OVERLAY);
         this.writeCommonAbstractOverlay(screenOverlay);
-        if (screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_OVERLAYXY.getName()) != null){
-            Vec2 overlayXY = (Vec2) screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_OVERLAYXY.getName()).getValue();
-            if(overlayXY != null){
+        if (screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_OVERLAYXY.getName()) != null) {
+            Vec2 overlayXY = (Vec2) screenOverlay.getProperty(
+                    KmlModelConstants.ATT_SCREEN_OVERLAY_OVERLAYXY.getName()).getValue();
+            if (overlayXY != null) {
                 this.writeOverlayXY(overlayXY);
             }
         }
-        if (screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_SCREENXY.getName()) != null){
-            Vec2 screenXY = (Vec2) screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_SCREENXY.getName()).getValue();
-            if(screenXY != null){
+        if (screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_SCREENXY.getName()) != null) {
+            Vec2 screenXY = (Vec2) screenOverlay.getProperty(
+                    KmlModelConstants.ATT_SCREEN_OVERLAY_SCREENXY.getName()).getValue();
+            if (screenXY != null) {
                 this.writeScreenXY(screenXY);
             }
         }
-        if (screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATIONXY.getName()) != null){
-            Vec2 rotationXY = (Vec2) screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATIONXY.getName()).getValue();
-            if(rotationXY != null){
+        if (screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATIONXY.getName()) != null) {
+            Vec2 rotationXY = (Vec2) screenOverlay.getProperty(
+                    KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATIONXY.getName()).getValue();
+            if (rotationXY != null) {
                 this.writeRotationXY(rotationXY);
             }
         }
-        if (screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_SIZE.getName()) != null){
-            Vec2 size = (Vec2) screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_SIZE.getName()).getValue();
-            if(size != null){
+        if (screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_SIZE.getName()) != null) {
+            Vec2 size = (Vec2) screenOverlay.getProperty(
+                    KmlModelConstants.ATT_SCREEN_OVERLAY_SIZE.getName()).getValue();
+            if (size != null) {
                 this.writeSize(size);
             }
         }
-        if (screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATION.getName()) != null){
-            Double rotation = (Double) screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATION.getName()).getValue();
-            if(rotation != null){
+        if (screenOverlay.getProperty(KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATION.getName()) != null) {
+            Double rotation = (Double) screenOverlay.getProperty(
+                    KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATION.getName()).getValue();
+            if (rotation != null) {
                 this.writeRotation(rotation);
             }
         }
         this.writeStandardExtensionLevel(
-                (Extensions) screenOverlay.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
+                (Extensions) screenOverlay.getProperty(
+                KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
                 Names.SCREEN_OVERLAY);
         writer.writeEndElement();
     }
-
 
     /**
      * 
@@ -1722,24 +1805,29 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeGroundOverlay(Feature groundOverlay) throws XMLStreamException, KmlException{
+    private void writeGroundOverlay(Feature groundOverlay)
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_KML, TAG_GROUND_OVERLAY);
         this.writeCommonAbstractOverlay(groundOverlay);
-        if (groundOverlay.getProperty(KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE.getName()) != null){
-            Double altitude = (Double) groundOverlay.getProperty(KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE.getName()).getValue();
-            if(altitude != null){
+        if (groundOverlay.getProperty(KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE.getName()) != null) {
+            Double altitude = (Double) groundOverlay.getProperty(
+                    KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE.getName()).getValue();
+            if (altitude != null) {
                 this.writeAltitude(altitude);
             }
         }
-        if (groundOverlay.getProperty(KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE_MODE.getName()) != null){
-            AltitudeMode altitudeMode = (AltitudeMode) groundOverlay.getProperty(KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE_MODE.getName()).getValue();
-            if(altitudeMode != null){
+        if (groundOverlay.getProperty(KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE_MODE.getName()) != null) {
+            AltitudeMode altitudeMode = (AltitudeMode) groundOverlay.getProperty(
+                    KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE_MODE.getName()).getValue();
+            if (altitudeMode != null) {
                 this.writeAltitudeMode(altitudeMode);
             }
         }
-        if (groundOverlay.getProperty(KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX.getName()) != null){
-            LatLonBox latLonBox = (LatLonBox) groundOverlay.getProperty(KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX.getName()).getValue();
-            if(latLonBox != null){
+        if (groundOverlay.getProperty(KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX.getName()) != null) {
+            LatLonBox latLonBox = (LatLonBox) groundOverlay.getProperty(
+                    KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX.getName()).getValue();
+            if (latLonBox != null) {
                 this.writeLatLonBox(latLonBox);
             }
         }
@@ -1755,12 +1843,12 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeLatLonBox(LatLonBox latLonBox) 
-            throws XMLStreamException, KmlException{
+    private void writeLatLonBox(LatLonBox latLonBox)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_LAT_LON_BOX);
         this.writeCommonAbstractLatLonBox(latLonBox);
-        if (KmlUtilities.isFiniteNumber(latLonBox.getRotation())){
+        if (KmlUtilities.isFiniteNumber(latLonBox.getRotation())) {
             this.writeRotation(latLonBox.getRotation());
         }
         this.writeStandardExtensionLevel(
@@ -1777,49 +1865,55 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeCommonAbstractLatLonBox(AbstractLatLonBox abstractLatLonBox) 
-            throws XMLStreamException, KmlException{
+    private void writeCommonAbstractLatLonBox(AbstractLatLonBox abstractLatLonBox)
+            throws XMLStreamException, KmlException {
 
         this.writeCommonAbstractObject(abstractLatLonBox);
-        if (KmlUtilities.isFiniteNumber(abstractLatLonBox.getNorth())){
+        if (KmlUtilities.isFiniteNumber(abstractLatLonBox.getNorth())) {
             this.writeNorth(abstractLatLonBox.getNorth());
         }
-        if (KmlUtilities.isFiniteNumber(abstractLatLonBox.getSouth())){
+        if (KmlUtilities.isFiniteNumber(abstractLatLonBox.getSouth())) {
             this.writeSouth(abstractLatLonBox.getSouth());
         }
-        if (KmlUtilities.isFiniteNumber(abstractLatLonBox.getEast())){
+        if (KmlUtilities.isFiniteNumber(abstractLatLonBox.getEast())) {
             this.writeEast(abstractLatLonBox.getEast());
         }
-        if (KmlUtilities.isFiniteNumber(abstractLatLonBox.getWest())){
+        if (KmlUtilities.isFiniteNumber(abstractLatLonBox.getWest())) {
             this.writeWest(abstractLatLonBox.getWest());
         }
         this.writeStandardExtensionLevel(
                 abstractLatLonBox.extensions(),
                 Names.ABSTRACT_LAT_LON_BOX);
     }
-    
-    private void writeCommonAbstractOverlay(Feature abstractOverlay) throws XMLStreamException, KmlException{
+
+    private void writeCommonAbstractOverlay(Feature abstractOverlay)
+            throws XMLStreamException, KmlException {
+
         this.writeCommonAbstractFeature(abstractOverlay);
-        if (abstractOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_COLOR.getName()) != null){
-            Color color = (Color) abstractOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_COLOR.getName()).getValue();
-            if(color != null){
+        if (abstractOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_COLOR.getName()) != null) {
+            Color color = (Color) abstractOverlay.getProperty(
+                    KmlModelConstants.ATT_OVERLAY_COLOR.getName()).getValue();
+            if (color != null) {
                 this.writeColor(color);
             }
         }
-        if (abstractOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_DRAW_ORDER.getName()) != null){
-            Integer drawOrder = (Integer) abstractOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_DRAW_ORDER.getName()).getValue();
-            if(drawOrder != null){
+        if (abstractOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_DRAW_ORDER.getName()) != null) {
+            Integer drawOrder = (Integer) abstractOverlay.getProperty(
+                    KmlModelConstants.ATT_OVERLAY_DRAW_ORDER.getName()).getValue();
+            if (drawOrder != null) {
                 this.writeDrawOrder(drawOrder);
             }
         }
-        if (abstractOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_ICON.getName()) != null){
-            Icon icon = (Icon) abstractOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_ICON.getName()).getValue();
-            if(icon != null){
+        if (abstractOverlay.getProperty(KmlModelConstants.ATT_OVERLAY_ICON.getName()) != null) {
+            Icon icon = (Icon) abstractOverlay.getProperty(
+                    KmlModelConstants.ATT_OVERLAY_ICON.getName()).getValue();
+            if (icon != null) {
                 this.writeIcon(icon);
             }
         }
         this.writeStandardExtensionLevel(
-                (Extensions) abstractOverlay.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
+                (Extensions) abstractOverlay.getProperty(
+                KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
                 Names.OVERLAY);
     }
 
@@ -1830,10 +1924,12 @@ public class KmlWriter extends StaxStreamWriter {
      * @param abstractContainer The AbstractContainer to write.
      * @throws XMLStreamException
      */
-    private void writeCommonAbstractContainer(Feature abstractContainer) throws XMLStreamException, KmlException{
+    private void writeCommonAbstractContainer(Feature abstractContainer)
+            throws XMLStreamException, KmlException {
+
         this.writeCommonAbstractFeature(abstractContainer);
-        this.writeStandardExtensionLevel(
-                (Extensions) abstractContainer.getProperty(KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
+        this.writeStandardExtensionLevel((Extensions) abstractContainer.getProperty(
+                KmlModelConstants.ATT_EXTENSIONS.getName()).getValue(),
                 Names.CONTAINER);
     }
 
@@ -1842,13 +1938,15 @@ public class KmlWriter extends StaxStreamWriter {
      * @param folder
      * @throws XMLStreamException
      */
-    private void writeFolder(Feature folder) throws XMLStreamException, KmlException{
+    private void writeFolder(Feature folder)
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_KML, TAG_FOLDER);
         Iterator i;
         this.writeCommonAbstractContainer(folder);
-        if(folder.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()) != null){
+        if (folder.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()) != null) {
             i = folder.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()).iterator();
-            while(i.hasNext()){
+            while (i.hasNext()) {
                 this.writeAbstractFeature((Feature) ((Property) i.next()).getValue());
             }
         }
@@ -1863,20 +1961,22 @@ public class KmlWriter extends StaxStreamWriter {
      * @param document
      * @throws XMLStreamException
      */
-    private void writeDocument(Feature document) throws XMLStreamException, KmlException{
+    private void writeDocument(Feature document)
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_KML, TAG_DOCUMENT);
         Iterator i;
         this.writeCommonAbstractContainer(document);
-        if(document.getProperties(KmlModelConstants.ATT_DOCUMENT_SCHEMAS.getName()) != null){
+        if (document.getProperties(KmlModelConstants.ATT_DOCUMENT_SCHEMAS.getName()) != null) {
             i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_SCHEMAS.getName()).iterator();
-            while(i.hasNext()){
+            while (i.hasNext()) {
                 checkVersion(URI_KML_2_2);
                 this.writeSchema((Schema) ((Property) i.next()).getValue());
             }
         }
-        if(document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()) != null){
+        if (document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()) != null) {
             i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
-            while(i.hasNext()){
+            while (i.hasNext()) {
                 this.writeAbstractFeature((Feature) ((Property) i.next()).getValue());
             }
         }
@@ -1891,15 +1991,17 @@ public class KmlWriter extends StaxStreamWriter {
      * @param schema
      * @throws XMLStreamException
      */
-    private void writeSchema(Schema schema) throws XMLStreamException{
+    private void writeSchema(Schema schema)
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_KML, TAG_SCHEMA);
-        if (schema.getName() != null){
+        if (schema.getName() != null) {
             writer.writeAttribute(ATT_NAME, schema.getName());
         }
-        if (schema.getId() != null){
+        if (schema.getId() != null) {
             writer.writeAttribute(ATT_ID, schema.getId());
         }
-        for (SimpleField sf : schema.getSimpleFields()){
+        for (SimpleField sf : schema.getSimpleFields()) {
             this.writeSimpleField(sf);
         }
         writer.writeEndElement();
@@ -1910,15 +2012,17 @@ public class KmlWriter extends StaxStreamWriter {
      * @param simpleField
      * @throws XMLStreamException
      */
-    private void writeSimpleField(SimpleField simpleField) throws XMLStreamException{
+    private void writeSimpleField(SimpleField simpleField)
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_KML, TAG_SIMPLE_FIELD);
-        if (simpleField.getType() != null){
+        if (simpleField.getType() != null) {
             writer.writeAttribute(ATT_TYPE, simpleField.getType());
         }
-        if (simpleField.getName() != null){
+        if (simpleField.getName() != null) {
             writer.writeAttribute(ATT_NAME, simpleField.getName());
         }
-        if (simpleField.getDisplayName() != null){
+        if (simpleField.getDisplayName() != null) {
             this.writeDisplayName(simpleField.getDisplayName());
         }
         writer.writeEndElement();
@@ -1929,22 +2033,24 @@ public class KmlWriter extends StaxStreamWriter {
      * @param abstractGeometry
      * @throws XMLStreamException
      */
-    private void writeAbstractGeometry(AbstractGeometry abstractGeometry) throws XMLStreamException, KmlException{
-        if (abstractGeometry instanceof MultiGeometry){
+    private void writeAbstractGeometry(AbstractGeometry abstractGeometry)
+            throws XMLStreamException, KmlException {
+
+        if (abstractGeometry instanceof MultiGeometry) {
             this.writeMultiGeometry((MultiGeometry) abstractGeometry);
-        } else if (abstractGeometry instanceof LineString){
+        } else if (abstractGeometry instanceof LineString) {
             this.writeLineString((LineString) abstractGeometry);
-        } else if (abstractGeometry instanceof Polygon){
+        } else if (abstractGeometry instanceof Polygon) {
             this.writePolygon((Polygon) abstractGeometry);
-        } else if (abstractGeometry instanceof Point){
+        } else if (abstractGeometry instanceof Point) {
             this.writePoint((Point) abstractGeometry);
-        } else if (abstractGeometry instanceof LinearRing){
+        } else if (abstractGeometry instanceof LinearRing) {
             this.writeLinearRing((LinearRing) abstractGeometry);
-        } else if (abstractGeometry instanceof Model){
+        } else if (abstractGeometry instanceof Model) {
             this.writeModel((Model) abstractGeometry);
         } else {
-            for(StaxStreamWriter candidate : this.extensionWriters){
-                if(((KmlExtensionWriter) candidate).canHandleComplex(URI_KML, null, abstractGeometry)){
+            for (StaxStreamWriter candidate : this.extensionWriters) {
+                if (((KmlExtensionWriter) candidate).canHandleComplex(URI_KML, null, abstractGeometry)) {
                     ((KmlExtensionWriter) candidate).writeComplexExtensionElement(URI_KML, null, abstractGeometry);
                 }
             }
@@ -1960,7 +2066,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws KmlException
      */
     public void writeCommonAbstractGeometry(AbstractGeometry abstractGeometry)
-            throws XMLStreamException, KmlException{
+            throws XMLStreamException, KmlException {
 
         this.writeCommonAbstractObject(abstractGeometry);
         this.writeStandardExtensionLevel(
@@ -1975,26 +2081,26 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws KmlException
      */
     public void writeModel(Model model)
-            throws XMLStreamException, KmlException{
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_MODEL);
         this.writeCommonAbstractGeometry(model);
-        if (model.getAltitudeMode() != null){
+        if (model.getAltitudeMode() != null) {
             this.writeAltitudeMode(model.getAltitudeMode());
         }
-        if (model.getLocation() != null){
+        if (model.getLocation() != null) {
             this.writeLocation(model.getLocation());
         }
-        if (model.getOrientation() != null){
+        if (model.getOrientation() != null) {
             this.writeOrientation(model.getOrientation());
         }
-        if (model.getScale() != null){
+        if (model.getScale() != null) {
             this.writeScale(model.getScale());
         }
-        if (model.getLink() != null){
+        if (model.getLink() != null) {
             this.writeLink(model.getLink());
         }
-        if (model.getRessourceMap() != null){
+        if (model.getRessourceMap() != null) {
             checkVersion(URI_KML_2_2);
             this.writeResourceMap(model.getRessourceMap());
         }
@@ -2010,18 +2116,18 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeLocation(Location location) 
-            throws XMLStreamException, KmlException{
+    private void writeLocation(Location location)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_LOCATION);
         this.writeCommonAbstractObject(location);
-        if (KmlUtilities.isFiniteNumber(location.getLongitude())){
+        if (KmlUtilities.isFiniteNumber(location.getLongitude())) {
             this.writeLongitude(location.getLongitude());
         }
-        if (KmlUtilities.isFiniteNumber(location.getLatitude())){
+        if (KmlUtilities.isFiniteNumber(location.getLatitude())) {
             this.writeLatitude(location.getLatitude());
         }
-        if (KmlUtilities.isFiniteNumber(location.getAltitude())){
+        if (KmlUtilities.isFiniteNumber(location.getAltitude())) {
             this.writeAltitude(location.getAltitude());
         }
         this.writeStandardExtensionLevel(
@@ -2036,18 +2142,18 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeOrientation(Orientation orientation) 
-            throws XMLStreamException, KmlException{
+    private void writeOrientation(Orientation orientation)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_ORIENTATION);
         this.writeCommonAbstractObject(orientation);
-        if (KmlUtilities.isFiniteNumber(orientation.getHeading())){
+        if (KmlUtilities.isFiniteNumber(orientation.getHeading())) {
             this.writeHeading(orientation.getHeading());
         }
-        if (KmlUtilities.isFiniteNumber(orientation.getTilt())){
+        if (KmlUtilities.isFiniteNumber(orientation.getTilt())) {
             this.writeTilt(orientation.getTilt());
         }
-        if (KmlUtilities.isFiniteNumber(orientation.getRoll())){
+        if (KmlUtilities.isFiniteNumber(orientation.getRoll())) {
             this.writeRoll(orientation.getRoll());
         }
         this.writeStandardExtensionLevel(
@@ -2062,17 +2168,17 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeScale(Scale scale) 
-            throws XMLStreamException, KmlException{
+    private void writeScale(Scale scale)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_SCALE_BIG);
-        if (KmlUtilities.isFiniteNumber(scale.getX())){
+        if (KmlUtilities.isFiniteNumber(scale.getX())) {
             this.writeX(scale.getX());
         }
-        if (KmlUtilities.isFiniteNumber(scale.getY())){
+        if (KmlUtilities.isFiniteNumber(scale.getY())) {
             this.writeY(scale.getY());
         }
-        if (KmlUtilities.isFiniteNumber(scale.getZ())){
+        if (KmlUtilities.isFiniteNumber(scale.getZ())) {
             this.writeZ(scale.getZ());
         }
         this.writeStandardExtensionLevel(
@@ -2087,12 +2193,12 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeResourceMap(ResourceMap resourceMap) 
-            throws XMLStreamException, KmlException{
+    private void writeResourceMap(ResourceMap resourceMap)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_RESOURCE_MAP);
         this.writeCommonAbstractObject(resourceMap);
-        for (Alias alias : resourceMap.getAliases()){
+        for (Alias alias : resourceMap.getAliases()) {
             this.writeAlias(alias);
         }
         this.writeStandardExtensionLevel(
@@ -2107,15 +2213,15 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeAlias(Alias alias) 
-            throws XMLStreamException, KmlException{
+    private void writeAlias(Alias alias)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_ALIAS);
         this.writeCommonAbstractObject(alias);
-        if (alias.getTargetHref() != null){
+        if (alias.getTargetHref() != null) {
             this.writeTargetHref(alias.getTargetHref());
         }
-        if (alias.getSourceHref() != null){
+        if (alias.getSourceHref() != null) {
             this.writeSourceHref(alias.getSourceHref());
         }
         this.writeStandardExtensionLevel(
@@ -2130,20 +2236,20 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writePolygon(Polygon polygon) 
-            throws XMLStreamException, KmlException{
+    private void writePolygon(Polygon polygon)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_POLYGON);
         this.writeCommonAbstractGeometry(polygon);
         this.writeExtrude(polygon.getExtrude());
         this.writeTessellate(polygon.getTessellate());
-        if (polygon.getAltitudeMode() != null){
+        if (polygon.getAltitudeMode() != null) {
             this.writeAltitudeMode(polygon.getAltitudeMode());
         }
-        if (polygon.getOuterBoundary() != null){
+        if (polygon.getOuterBoundary() != null) {
             this.writeOuterBoundary(polygon.getOuterBoundary());
         }
-        for(Boundary innerBoundary : polygon.getInnerBoundaries()){
+        for (Boundary innerBoundary : polygon.getInnerBoundaries()) {
             this.writeInnerBoundary(innerBoundary);
         }
         this.writeStandardExtensionLevel(
@@ -2159,7 +2265,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws KmlException
      */
     private void writeOuterBoundary(Boundary boundary)
-            throws XMLStreamException, KmlException{
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_OUTER_BOUNDARY_IS);
         this.writeBoundary(boundary);
@@ -2173,7 +2279,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws KmlException
      */
     private void writeInnerBoundary(Boundary boundary)
-            throws XMLStreamException, KmlException{
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_INNER_BOUNDARY_IS);
         this.writeBoundary(boundary);
@@ -2186,10 +2292,10 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeBoundary(Boundary boundary) 
-            throws XMLStreamException, KmlException{
+    private void writeBoundary(Boundary boundary)
+            throws XMLStreamException, KmlException {
 
-        if (boundary.getLinearRing() != null){
+        if (boundary.getLinearRing() != null) {
             this.writeLinearRing(boundary.getLinearRing());
         }
         this.writeStandardExtensionLevel(
@@ -2203,14 +2309,14 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeLineString(LineString lineString) 
-            throws XMLStreamException, KmlException{
+    private void writeLineString(LineString lineString)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_LINE_STRING);
         this.writeCommonAbstractGeometry(lineString);
         this.writeExtrude(lineString.getExtrude());
         this.writeTessellate(lineString.getTessellate());
-        if (lineString.getAltitudeMode() != null){
+        if (lineString.getAltitudeMode() != null) {
             this.writeAltitudeMode(lineString.getAltitudeMode());
         }
 
@@ -2228,14 +2334,14 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeLinearRing(LinearRing linearRing) 
-            throws XMLStreamException, KmlException{
+    private void writeLinearRing(LinearRing linearRing)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_LINEAR_RING);
         this.writeCommonAbstractGeometry(linearRing);
         this.writeExtrude(linearRing.getExtrude());
         this.writeTessellate(linearRing.getTessellate());
-        if (linearRing.getAltitudeMode() != null){
+        if (linearRing.getAltitudeMode() != null) {
             this.writeAltitudeMode(linearRing.getAltitudeMode());
         }
         this.writeCoordinates(linearRing.getCoordinateSequence());
@@ -2252,10 +2358,10 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws KmlException
      */
     private void writeMultiGeometry(MultiGeometry multiGeometry)
-            throws XMLStreamException, KmlException{
+            throws XMLStreamException, KmlException {
         writer.writeStartElement(URI_KML, TAG_MULTI_GEOMETRY);
         this.writeCommonAbstractGeometry(multiGeometry);
-        for (AbstractGeometry abstractGeometry : multiGeometry.getGeometries()){
+        for (AbstractGeometry abstractGeometry : multiGeometry.getGeometries()) {
             this.writeAbstractGeometry(abstractGeometry);
         }
         this.writeStandardExtensionLevel(
@@ -2264,21 +2370,20 @@ public class KmlWriter extends StaxStreamWriter {
         writer.writeEndElement();
     }
 
-
     /**
      *
      * @{@inheritDoc }
      */
-    private void writePoint(Point point) 
-            throws XMLStreamException, KmlException{
+    private void writePoint(Point point)
+            throws XMLStreamException, KmlException {
 
         writer.writeStartElement(URI_KML, TAG_POINT);
         this.writeCommonAbstractGeometry(point);
         this.writeExtrude(point.getExtrude());
-        if (point.getAltitudeMode() != null){
+        if (point.getAltitudeMode() != null) {
             this.writeAltitudeMode(point.getAltitudeMode());
         }
-        if (point.getCoordinateSequence() != null){
+        if (point.getCoordinateSequence() != null) {
             this.writeCoordinates(point.getCoordinateSequence());
         }
         this.writeStandardExtensionLevel(
@@ -2293,7 +2398,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      */
     public void writeCoordinates(CoordinateSequence coordinates)
-            throws XMLStreamException{
+            throws XMLStreamException {
 
         writer.writeStartElement(URI_KML, TAG_COORDINATES);
         writer.writeCharacters(KmlUtilities.toString(coordinates));
@@ -2305,12 +2410,12 @@ public class KmlWriter extends StaxStreamWriter {
      * @param extrude
      * @throws XMLStreamException
      */
-    private void writeExtrude(boolean extrude) 
-            throws XMLStreamException{
+    private void writeExtrude(boolean extrude)
+            throws XMLStreamException {
 
-        if (DEF_EXTRUDE != extrude){
+        if (DEF_EXTRUDE != extrude) {
             writer.writeStartElement(URI_KML, TAG_EXTRUDE);
-            if(extrude){
+            if (extrude) {
                 writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
             } else {
                 writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
@@ -2324,13 +2429,13 @@ public class KmlWriter extends StaxStreamWriter {
      * @param visibility
      * @throws XMLStreamException
      */
-    private void writeVisibility(Boolean v) 
-            throws XMLStreamException{
+    private void writeVisibility(Boolean v)
+            throws XMLStreamException {
 
         boolean visibility = v.booleanValue();
-        if (DEF_VISIBILITY != visibility){
+        if (DEF_VISIBILITY != visibility) {
             writer.writeStartElement(URI_KML, TAG_VISIBILITY);
-            if(visibility){
+            if (visibility) {
                 writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
             } else {
                 writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
@@ -2344,13 +2449,13 @@ public class KmlWriter extends StaxStreamWriter {
      * @param open
      * @throws XMLStreamException
      */
-    private void writeOpen(Boolean o) 
-            throws XMLStreamException{
+    private void writeOpen(Boolean o)
+            throws XMLStreamException {
 
         boolean open = o.booleanValue();
-        if (DEF_OPEN != open){
+        if (DEF_OPEN != open) {
             writer.writeStartElement(URI_KML, TAG_OPEN);
-            if(open){
+            if (open) {
                 writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
             } else {
                 writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
@@ -2364,12 +2469,12 @@ public class KmlWriter extends StaxStreamWriter {
      * @param fill
      * @throws XMLStreamException
      */
-    private void writeFill(boolean fill) 
-            throws XMLStreamException{
-        
-        if (DEF_FILL != fill){
+    private void writeFill(boolean fill)
+            throws XMLStreamException {
+
+        if (DEF_FILL != fill) {
             writer.writeStartElement(URI_KML, TAG_FILL);
-            if(fill){
+            if (fill) {
                 writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
             } else {
                 writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
@@ -2383,10 +2488,10 @@ public class KmlWriter extends StaxStreamWriter {
      * @param outline
      * @throws XMLStreamException
      */
-    private void writeOutline(boolean outline) throws XMLStreamException{
-        if (DEF_OUTLINE != outline){
+    private void writeOutline(boolean outline) throws XMLStreamException {
+        if (DEF_OUTLINE != outline) {
             writer.writeStartElement(URI_KML, TAG_OUTLINE);
-            if(outline){
+            if (outline) {
                 writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
             } else {
                 writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
@@ -2400,10 +2505,10 @@ public class KmlWriter extends StaxStreamWriter {
      * @param tessellate
      * @throws XMLStreamException
      */
-    private void writeTessellate(boolean tessellate) throws XMLStreamException{
-        if (DEF_TESSELLATE != tessellate){
+    private void writeTessellate(boolean tessellate) throws XMLStreamException {
+        if (DEF_TESSELLATE != tessellate) {
             writer.writeStartElement(URI_KML, TAG_TESSELLATE);
-            if(tessellate){
+            if (tessellate) {
                 writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
             } else {
                 writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
@@ -2417,11 +2522,11 @@ public class KmlWriter extends StaxStreamWriter {
      * @param refreshVisibility
      * @throws XMLStreamException
      */
-    private void writeRefreshVisibility(Boolean rv) throws XMLStreamException{
+    private void writeRefreshVisibility(Boolean rv) throws XMLStreamException {
         boolean refreshVisibility = rv.booleanValue();
-        if (DEF_REFRESH_VISIBILITY != refreshVisibility){
+        if (DEF_REFRESH_VISIBILITY != refreshVisibility) {
             writer.writeStartElement(URI_KML, TAG_REFRESH_VISIBILITY);
-            if(refreshVisibility){
+            if (refreshVisibility) {
                 writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
             } else {
                 writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
@@ -2435,11 +2540,11 @@ public class KmlWriter extends StaxStreamWriter {
      * @param flyToView
      * @throws XMLStreamException
      */
-    private void writeFlyToView(Boolean ftv) throws XMLStreamException{
+    private void writeFlyToView(Boolean ftv) throws XMLStreamException {
         boolean flyToView = ftv.booleanValue();
-        if (DEF_FLY_TO_VIEW != flyToView){
+        if (DEF_FLY_TO_VIEW != flyToView) {
             writer.writeStartElement(URI_KML, TAG_FLY_TO_VIEW);
-            if(flyToView){
+            if (flyToView) {
                 writer.writeCharacters(SimpleTypeContainer.BOOLEAN_TRUE);
             } else {
                 writer.writeCharacters(SimpleTypeContainer.BOOLEAN_FALSE);
@@ -2453,7 +2558,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param address
      * @throws XMLStreamException
      */
-    private void writeAddress(String address) throws XMLStreamException{
+    private void writeAddress(String address) throws XMLStreamException {
         writer.writeStartElement(URI_KML, TAG_ADDRESS);
         writer.writeCharacters(address);
         writer.writeEndElement();
@@ -2464,16 +2569,16 @@ public class KmlWriter extends StaxStreamWriter {
      * @param snippet
      * @throws XMLStreamException
      */
-    private void writeSnippet(Object snippet) throws XMLStreamException{
-        if(snippet instanceof String || snippet instanceof Cdata){
+    private void writeSnippet(Object snippet) throws XMLStreamException {
+        if (snippet instanceof String || snippet instanceof Cdata) {
             writer.writeStartElement(URI_KML, TAG_SNIPPET);
             this.writeCharacterContent(snippet);
-        }
-        else if (snippet instanceof Snippet){
+        } else if (snippet instanceof Snippet) {
             Snippet s = (Snippet) snippet;
             writer.writeStartElement(URI_KML, TAG_SNIPPET_BIG);
-            if(DEF_MAX_SNIPPET_LINES_ATT != s.getMaxLines())
+            if (DEF_MAX_SNIPPET_LINES_ATT != s.getMaxLines()) {
                 writer.writeAttribute(ATT_MAX_LINES, String.valueOf(s.getMaxLines()));
+            }
             this.writeCharacterContent(s.getContent());
         }
         writer.writeEndElement();
@@ -2484,7 +2589,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param phoneNumber
      * @throws XMLStreamException
      */
-    private void writePhoneNumber(String phoneNumber) throws XMLStreamException{
+    private void writePhoneNumber(String phoneNumber) throws XMLStreamException {
         writer.writeStartElement(URI_KML, TAG_PHONE_NUMBER);
         writer.writeCharacters(phoneNumber);
         writer.writeEndElement();
@@ -2495,7 +2600,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param name
      * @throws XMLStreamException
      */
-    private void writeName(String name) throws XMLStreamException{
+    private void writeName(String name) throws XMLStreamException {
         writer.writeStartElement(URI_KML, TAG_NAME);
         writer.writeCharacters(name);
         writer.writeEndElement();
@@ -2506,7 +2611,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param description
      * @throws XMLStreamException
      */
-    private void writeDescription(Object description) throws XMLStreamException{
+    private void writeDescription(Object description) throws XMLStreamException {
         writer.writeStartElement(URI_KML, TAG_DESCRIPTION);
         this.writeCharacterContent(description);
         writer.writeEndElement();
@@ -2517,7 +2622,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param href
      * @throws XMLStreamException
      */
-    public void writeHref(String href) throws XMLStreamException{
+    public void writeHref(String href) throws XMLStreamException {
         writer.writeStartElement(URI_KML, TAG_HREF);
         writer.writeCharacters(href);
         writer.writeEndElement();
@@ -2528,7 +2633,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param text
      * @throws XMLStreamException
      */
-    private void writeText(Object text) throws XMLStreamException{
+    private void writeText(Object text) throws XMLStreamException {
         writer.writeStartElement(URI_KML, TAG_TEXT);
         this.writeCharacterContent(text);
         writer.writeEndElement();
@@ -2539,7 +2644,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param uri
      * @throws XMLStreamException
      */
-    private void writeStyleUrl(URI uri) throws XMLStreamException{
+    private void writeStyleUrl(URI uri) throws XMLStreamException {
         writer.writeStartElement(URI_KML, TAG_STYLE_URL);
         writer.writeCharacters(uri.toString());
         writer.writeEndElement();
@@ -2627,7 +2732,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param calendar
      * @throws XMLStreamException
      */
-    private void writeCalendar(Calendar calendar) throws XMLStreamException{
+    private void writeCalendar(Calendar calendar) throws XMLStreamException {
         writer.writeCharacters(KmlUtilities.getXMLFormatedCalendar(calendar, true));
     }
 
@@ -2652,7 +2757,6 @@ public class KmlWriter extends StaxStreamWriter {
         writer.writeCharacters(value);
         writer.writeEndElement();
     }
-
 
     /**
      * 
@@ -2716,8 +2820,9 @@ public class KmlWriter extends StaxStreamWriter {
      */
     private void writeLinkSnippet(Snippet linkSnippet) throws XMLStreamException {
         writer.writeStartElement(URI_KML, TAG_LINK_SNIPPET);
-        if(DEF_MAX_SNIPPET_LINES_ATT != linkSnippet.getMaxLines())
+        if (DEF_MAX_SNIPPET_LINES_ATT != linkSnippet.getMaxLines()) {
             writer.writeAttribute(ATT_MAX_LINES, String.valueOf(linkSnippet.getMaxLines()));
+        }
         this.writeCharacterContent(linkSnippet.getContent());
         writer.writeEndElement();
     }
@@ -2727,8 +2832,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param color
      * @throws XMLStreamException
      */
-    private void writeColor(Color color) throws XMLStreamException{
-        if (DEF_COLOR != color){
+    private void writeColor(Color color) throws XMLStreamException {
+        if (DEF_COLOR != color) {
             writer.writeStartElement(URI_KML, TAG_COLOR);
             writer.writeCharacters(KmlUtilities.toKmlColor(color));
             writer.writeEndElement();
@@ -2740,8 +2845,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param color
      * @throws XMLStreamException
      */
-    private void writeBgColor(Color color) throws XMLStreamException{
-        if (DEF_BG_COLOR != color){
+    private void writeBgColor(Color color) throws XMLStreamException {
+        if (DEF_BG_COLOR != color) {
             writer.writeStartElement(URI_KML, TAG_BG_COLOR);
             writer.writeCharacters(KmlUtilities.toKmlColor(color));
             writer.writeEndElement();
@@ -2753,8 +2858,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param color
      * @throws XMLStreamException
      */
-    private void writeTextColor(Color color) throws XMLStreamException{
-        if(DEF_TEXT_COLOR != color){
+    private void writeTextColor(Color color) throws XMLStreamException {
+        if (DEF_TEXT_COLOR != color) {
             writer.writeStartElement(URI_KML, TAG_TEXT_COLOR);
             writer.writeCharacters(KmlUtilities.toKmlColor(color));
             writer.writeEndElement();
@@ -2766,8 +2871,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param colorMode
      * @throws XMLStreamException
      */
-    private void writeColorMode(ColorMode colorMode) throws XMLStreamException{
-        if(DEF_COLOR_MODE != colorMode){
+    private void writeColorMode(ColorMode colorMode) throws XMLStreamException {
+        if (DEF_COLOR_MODE != colorMode) {
             writer.writeStartElement(URI_KML, TAG_COLOR_MODE);
             writer.writeCharacters(colorMode.getColorMode());
             writer.writeEndElement();
@@ -2779,15 +2884,15 @@ public class KmlWriter extends StaxStreamWriter {
      * @param altitudeMode
      * @throws XMLStreamException
      */
-    public void writeAltitudeMode(AltitudeMode altitudeMode) throws XMLStreamException, KmlException{
-        if(DEF_ALTITUDE_MODE != altitudeMode){
-            if (altitudeMode instanceof org.geotoolkit.data.kml.model.EnumAltitudeMode){
+    public void writeAltitudeMode(AltitudeMode altitudeMode) throws XMLStreamException, KmlException {
+        if (DEF_ALTITUDE_MODE != altitudeMode) {
+            if (altitudeMode instanceof org.geotoolkit.data.kml.model.EnumAltitudeMode) {
                 writer.writeStartElement(URI_KML, TAG_ALTITUDE_MODE);
                 writer.writeCharacters(altitudeMode.getAltitudeMode());
                 writer.writeEndElement();
             } else {
-                for(StaxStreamWriter candidate : this.extensionWriters){
-                    if(((KmlExtensionWriter) candidate).canHandleComplex(URI_KML, null, altitudeMode)){
+                for (StaxStreamWriter candidate : this.extensionWriters) {
+                    if (((KmlExtensionWriter) candidate).canHandleComplex(URI_KML, null, altitudeMode)) {
                         ((KmlExtensionWriter) candidate).writeComplexExtensionElement(URI_KML, null, altitudeMode);
                     }
                 }
@@ -2800,8 +2905,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param displayMode
      * @throws XMLStreamException
      */
-    private void writeDisplayMode(DisplayMode displayMode) throws XMLStreamException{
-        if (DEF_DISPLAY_MODE != displayMode){
+    private void writeDisplayMode(DisplayMode displayMode) throws XMLStreamException {
+        if (DEF_DISPLAY_MODE != displayMode) {
             writer.writeStartElement(URI_KML, TAG_ALTITUDE_MODE);
             writer.writeCharacters(displayMode.getDisplayMode());
             writer.writeEndElement();
@@ -2813,8 +2918,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param styleState
      * @throws XMLStreamException
      */
-    private void writeKey(StyleState styleState) throws XMLStreamException{
-        if (DEF_STYLE_STATE != styleState){
+    private void writeKey(StyleState styleState) throws XMLStreamException {
+        if (DEF_STYLE_STATE != styleState) {
             writer.writeStartElement(URI_KML, TAG_KEY);
             writer.writeCharacters(styleState.getStyleState());
             writer.writeEndElement();
@@ -2827,7 +2932,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      */
     private void writeRefreshMode(RefreshMode refreshMode) throws XMLStreamException {
-        if (DEF_REFRESH_MODE != refreshMode){
+        if (DEF_REFRESH_MODE != refreshMode) {
             writer.writeStartElement(URI_KML, TAG_REFRESH_MODE);
             writer.writeCharacters(refreshMode.getRefreshMode());
             writer.writeEndElement();
@@ -2840,7 +2945,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      */
     private void writeViewRefreshMode(ViewRefreshMode viewRefreshMode) throws XMLStreamException {
-        if (DEF_VIEW_REFRESH_MODE != viewRefreshMode){
+        if (DEF_VIEW_REFRESH_MODE != viewRefreshMode) {
             writer.writeStartElement(URI_KML, TAG_VIEW_REFRESH_MODE);
             writer.writeCharacters(viewRefreshMode.getViewRefreshMode());
             writer.writeEndElement();
@@ -2852,8 +2957,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param listItem
      * @throws XMLStreamException
      */
-    private void writeListItem(ListItem listItem) throws XMLStreamException{
-        if (DEF_LIST_ITEM != listItem){
+    private void writeListItem(ListItem listItem) throws XMLStreamException {
+        if (DEF_LIST_ITEM != listItem) {
             writer.writeStartElement(URI_KML, TAG_LIST_ITEM);
             writer.writeCharacters(listItem.getItem());
             writer.writeEndElement();
@@ -2865,8 +2970,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param shape
      * @throws XMLStreamException
      */
-    private void writeShape(Shape shape) throws XMLStreamException{
-        if (DEF_SHAPE != shape){
+    private void writeShape(Shape shape) throws XMLStreamException {
+        if (DEF_SHAPE != shape) {
             writer.writeStartElement(URI_KML, TAG_SHAPE);
             writer.writeCharacters(shape.getShape());
             writer.writeEndElement();
@@ -2878,8 +2983,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param gridOrigin
      * @throws XMLStreamException
      */
-    private void writeGridOrigin(GridOrigin gridOrigin) throws XMLStreamException{
-        if (DEF_GRID_ORIGIN != gridOrigin){
+    private void writeGridOrigin(GridOrigin gridOrigin) throws XMLStreamException {
+        if (DEF_GRID_ORIGIN != gridOrigin) {
             writer.writeStartElement(URI_KML, TAG_GRID_ORIGIN);
             writer.writeCharacters(gridOrigin.getGridOrigin());
             writer.writeEndElement();
@@ -2891,8 +2996,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param scale
      * @throws XMLStreamException
      */
-    private void writeScale(double scale) throws XMLStreamException{
-        if(DEF_SCALE != scale){
+    private void writeScale(double scale) throws XMLStreamException {
+        if (DEF_SCALE != scale) {
             writer.writeStartElement(URI_KML, TAG_SCALE);
             writer.writeCharacters(Double.toString(scale));
             writer.writeEndElement();
@@ -2904,8 +3009,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param width
      * @throws XMLStreamException
      */
-    private void writeWidth(double width) throws XMLStreamException{
-        if(DEF_WIDTH != width){
+    private void writeWidth(double width) throws XMLStreamException {
+        if (DEF_WIDTH != width) {
             writer.writeStartElement(URI_KML, TAG_WIDTH);
             writer.writeCharacters(Double.toString(width));
             writer.writeEndElement();
@@ -2917,8 +3022,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param altitude
      * @throws XMLStreamException
      */
-    private void writeAltitude(double altitude) throws XMLStreamException{
-        if (DEF_ALTITUDE != altitude){
+    private void writeAltitude(double altitude) throws XMLStreamException {
+        if (DEF_ALTITUDE != altitude) {
             writer.writeStartElement(URI_KML, TAG_ALTITUDE);
             writer.writeCharacters(Double.toString(altitude));
             writer.writeEndElement();
@@ -2930,8 +3035,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param range
      * @throws XMLStreamException
      */
-    private void writeRange(double range) throws XMLStreamException{
-        if (DEF_RANGE != range){
+    private void writeRange(double range) throws XMLStreamException {
+        if (DEF_RANGE != range) {
             writer.writeStartElement(URI_KML, TAG_RANGE);
             writer.writeCharacters(Double.toString(range));
             writer.writeEndElement();
@@ -2943,8 +3048,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param drawOrder
      * @throws XMLStreamException
      */
-    private void writeDrawOrder(int drawOrder) throws XMLStreamException{
-        if (DEF_DRAW_ORDER != drawOrder){
+    private void writeDrawOrder(int drawOrder) throws XMLStreamException {
+        if (DEF_DRAW_ORDER != drawOrder) {
             writer.writeStartElement(URI_KML, TAG_DRAW_ORDER);
             writer.writeCharacters(Integer.toString(drawOrder));
             writer.writeEndElement();
@@ -2956,8 +3061,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param x
      * @throws XMLStreamException
      */
-    private void writeX(double x) throws XMLStreamException{
-        if (DEF_X != x){
+    private void writeX(double x) throws XMLStreamException {
+        if (DEF_X != x) {
             writer.writeStartElement(URI_KML, TAG_X);
             writer.writeCharacters(Double.toString(x));
             writer.writeEndElement();
@@ -2969,8 +3074,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param y
      * @throws XMLStreamException
      */
-    private void writeY(double y) throws XMLStreamException{
-        if (DEF_Y != y){
+    private void writeY(double y) throws XMLStreamException {
+        if (DEF_Y != y) {
             writer.writeStartElement(URI_KML, TAG_Y);
             writer.writeCharacters(Double.toString(y));
             writer.writeEndElement();
@@ -2982,8 +3087,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param z
      * @throws XMLStreamException
      */
-    private void writeZ(double z) throws XMLStreamException{
-        if (DEF_Z != z){
+    private void writeZ(double z) throws XMLStreamException {
+        if (DEF_Z != z) {
             writer.writeStartElement(URI_KML, TAG_Z);
             writer.writeCharacters(Double.toString(z));
             writer.writeEndElement();
@@ -2995,8 +3100,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param minAltitude
      * @throws XMLStreamException
      */
-    private void writeMinAltitude(double minAltitude) throws XMLStreamException{
-        if(DEF_MIN_ALTITUDE != minAltitude){
+    private void writeMinAltitude(double minAltitude) throws XMLStreamException {
+        if (DEF_MIN_ALTITUDE != minAltitude) {
             writer.writeStartElement(URI_KML, TAG_MIN_ALTITUDE);
             writer.writeCharacters(Double.toString(minAltitude));
             writer.writeEndElement();
@@ -3008,8 +3113,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param maxAltitude
      * @throws XMLStreamException
      */
-    private void writeMaxAltitude(double maxAltitude) throws XMLStreamException{
-        if (DEF_MAX_ALTITUDE != maxAltitude){
+    private void writeMaxAltitude(double maxAltitude) throws XMLStreamException {
+        if (DEF_MAX_ALTITUDE != maxAltitude) {
             writer.writeStartElement(URI_KML, TAG_MAX_ALTITUDE);
             writer.writeCharacters(Double.toString(maxAltitude));
             writer.writeEndElement();
@@ -3021,8 +3126,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param pixels
      * @throws XMLStreamException
      */
-    private void writeMinLodPixels(double pixels) throws XMLStreamException{
-        if (DEF_MIN_LOD_PIXELS != pixels){
+    private void writeMinLodPixels(double pixels) throws XMLStreamException {
+        if (DEF_MIN_LOD_PIXELS != pixels) {
             writer.writeStartElement(URI_KML, TAG_MIN_LOD_PIXELS);
             writer.writeCharacters(Double.toString(pixels));
             writer.writeEndElement();
@@ -3034,8 +3139,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param pixels
      * @throws XMLStreamException
      */
-    private void writeMaxLodPixels(double pixels) throws XMLStreamException{
-        if (DEF_MAX_LOD_PIXELS != pixels){
+    private void writeMaxLodPixels(double pixels) throws XMLStreamException {
+        if (DEF_MAX_LOD_PIXELS != pixels) {
             writer.writeStartElement(URI_KML, TAG_MAX_LOD_PIXELS);
             writer.writeCharacters(Double.toString(pixels));
             writer.writeEndElement();
@@ -3047,8 +3152,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param fadeExtent
      * @throws XMLStreamException
      */
-    private void writeMinFadeExtent(double fadeExtent) throws XMLStreamException{
-        if (DEF_MIN_FADE_EXTENT != fadeExtent){
+    private void writeMinFadeExtent(double fadeExtent) throws XMLStreamException {
+        if (DEF_MIN_FADE_EXTENT != fadeExtent) {
             writer.writeStartElement(URI_KML, TAG_MIN_FADE_EXTENT);
             writer.writeCharacters(Double.toString(fadeExtent));
             writer.writeEndElement();
@@ -3060,8 +3165,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param fadeExtent
      * @throws XMLStreamException
      */
-    private void writeMaxFadeExtent(double fadeExtent) throws XMLStreamException{
-        if (DEF_MAX_FADE_EXTENT != fadeExtent){
+    private void writeMaxFadeExtent(double fadeExtent) throws XMLStreamException {
+        if (DEF_MAX_FADE_EXTENT != fadeExtent) {
             writer.writeStartElement(URI_KML, TAG_MAX_FADE_EXTENT);
             writer.writeCharacters(Double.toString(fadeExtent));
             writer.writeEndElement();
@@ -3075,7 +3180,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      */
     private void writeRefreshInterval(double refreshInterval) throws XMLStreamException {
-        if(DEF_REFRESH_INTERVAL != refreshInterval){
+        if (DEF_REFRESH_INTERVAL != refreshInterval) {
             writer.writeStartElement(URI_KML, TAG_REFRESH_INTERVAL);
             writer.writeCharacters(Double.toString(refreshInterval));
             writer.writeEndElement();
@@ -3088,7 +3193,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      */
     private void writeViewRefreshTime(double viewRefreshTime) throws XMLStreamException {
-        if(DEF_VIEW_REFRESH_TIME != viewRefreshTime){
+        if (DEF_VIEW_REFRESH_TIME != viewRefreshTime) {
             writer.writeStartElement(URI_KML, TAG_VIEW_REFRESH_TIME);
             writer.writeCharacters(Double.toString(viewRefreshTime));
             writer.writeEndElement();
@@ -3101,7 +3206,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      */
     private void writeViewBoundScale(double viewBoundScale) throws XMLStreamException {
-        if (DEF_VIEW_BOUND_SCALE != viewBoundScale){
+        if (DEF_VIEW_BOUND_SCALE != viewBoundScale) {
             writer.writeStartElement(URI_KML, TAG_VIEW_BOUND_SCALE);
             writer.writeCharacters(Double.toString(viewBoundScale));
             writer.writeEndElement();
@@ -3114,7 +3219,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      */
     private void writeNear(double near) throws XMLStreamException {
-        if (DEF_NEAR != near){
+        if (DEF_NEAR != near) {
             writer.writeStartElement(URI_KML, TAG_NEAR);
             writer.writeCharacters(Double.toString(near));
             writer.writeEndElement();
@@ -3127,7 +3232,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      */
     private void writeMinRefreshPeriod(double minRefreshPeriod) throws XMLStreamException {
-        if (DEF_MIN_REFRESH_PERIOD != minRefreshPeriod){
+        if (DEF_MIN_REFRESH_PERIOD != minRefreshPeriod) {
             writer.writeStartElement(URI_KML, TAG_MIN_REFRESH_PERIOD);
             writer.writeCharacters(Double.toString(minRefreshPeriod));
             writer.writeEndElement();
@@ -3140,7 +3245,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      */
     private void writeMaxSessionLength(double maxSessionLength) throws XMLStreamException {
-        if (DEF_MAX_SESSION_LENGTH != maxSessionLength){
+        if (DEF_MAX_SESSION_LENGTH != maxSessionLength) {
             writer.writeStartElement(URI_KML, TAG_MAX_SESSION_LENGTH);
             writer.writeCharacters(Double.toString(maxSessionLength));
             writer.writeEndElement();
@@ -3152,8 +3257,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param titleSize
      * @throws XMLStreamException
      */
-    private void writeTitleSize(int titleSize) throws XMLStreamException{
-        if (DEF_TITLE_SIZE != titleSize){
+    private void writeTitleSize(int titleSize) throws XMLStreamException {
+        if (DEF_TITLE_SIZE != titleSize) {
             writer.writeStartElement(URI_KML, TAG_TITLE_SIZE);
             writer.writeCharacters(Integer.toString(titleSize));
             writer.writeEndElement();
@@ -3165,8 +3270,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param maxWidth
      * @throws XMLStreamException
      */
-    private void writeMaxWidth(int maxWidth) throws XMLStreamException{
-        if (DEF_MAX_WIDTH != maxWidth){
+    private void writeMaxWidth(int maxWidth) throws XMLStreamException {
+        if (DEF_MAX_WIDTH != maxWidth) {
             writer.writeStartElement(URI_KML, TAG_MAX_WIDTH);
             writer.writeCharacters(Integer.toString(maxWidth));
             writer.writeEndElement();
@@ -3178,8 +3283,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param maxHeight
      * @throws XMLStreamException
      */
-    private void writeMaxHeight(int maxHeight) throws XMLStreamException{
-        if (DEF_MAX_HEIGHT != maxHeight){
+    private void writeMaxHeight(int maxHeight) throws XMLStreamException {
+        if (DEF_MAX_HEIGHT != maxHeight) {
             writer.writeStartElement(URI_KML, TAG_MAX_HEIGHT);
             writer.writeCharacters(Integer.toString(maxHeight));
             writer.writeEndElement();
@@ -3191,8 +3296,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param msl
      * @throws XMLStreamException
      */
-    private void writeMaxSnippetLines(int msl) throws XMLStreamException{
-        if (DEF_MAX_SNIPPET_LINES != msl){
+    private void writeMaxSnippetLines(int msl) throws XMLStreamException {
+        if (DEF_MAX_SNIPPET_LINES != msl) {
             writer.writeStartElement(URI_KML, TAG_MAX_SNIPPET_LINES);
             writer.writeCharacters(Integer.toString(msl));
             writer.writeEndElement();
@@ -3204,8 +3309,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param heading
      * @throws XMLStreamException
      */
-    private void writeHeading(double heading) throws XMLStreamException{
-        if (DEF_HEADING != heading){
+    private void writeHeading(double heading) throws XMLStreamException {
+        if (DEF_HEADING != heading) {
             writer.writeStartElement(URI_KML, TAG_HEADING);
             writer.writeCharacters(Double.toString(heading));
             writer.writeEndElement();
@@ -3217,8 +3322,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param bottomFov
      * @throws XMLStreamException
      */
-    private void writeBottomFov(double bottomFov) throws XMLStreamException{
-        if (DEF_BOTTOM_FOV != bottomFov){
+    private void writeBottomFov(double bottomFov) throws XMLStreamException {
+        if (DEF_BOTTOM_FOV != bottomFov) {
             writer.writeStartElement(URI_KML, TAG_BOTTOM_FOV);
             writer.writeCharacters(Double.toString(bottomFov));
             writer.writeEndElement();
@@ -3230,8 +3335,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param topFov
      * @throws XMLStreamException
      */
-    private void writeTopFov(double topFov) throws XMLStreamException{
-        if (DEF_TOP_FOV != topFov){
+    private void writeTopFov(double topFov) throws XMLStreamException {
+        if (DEF_TOP_FOV != topFov) {
             writer.writeStartElement(URI_KML, TAG_TOP_FOV);
             writer.writeCharacters(Double.toString(topFov));
             writer.writeEndElement();
@@ -3243,8 +3348,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param leftFov
      * @throws XMLStreamException
      */
-    private void writeLeftFov(double leftFov) throws XMLStreamException{
-        if (DEF_LEFT_FOV != leftFov){
+    private void writeLeftFov(double leftFov) throws XMLStreamException {
+        if (DEF_LEFT_FOV != leftFov) {
             writer.writeStartElement(URI_KML, TAG_LEFT_FOV);
             writer.writeCharacters(Double.toString(leftFov));
             writer.writeEndElement();
@@ -3256,8 +3361,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param rightFov
      * @throws XMLStreamException
      */
-    private void writeRightFov(double rightFov) throws XMLStreamException{
-        if (DEF_RIGHT_FOV != rightFov){
+    private void writeRightFov(double rightFov) throws XMLStreamException {
+        if (DEF_RIGHT_FOV != rightFov) {
             writer.writeStartElement(URI_KML, TAG_RIGHT_FOV);
             writer.writeCharacters(Double.toString(rightFov));
             writer.writeEndElement();
@@ -3269,8 +3374,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param longitude
      * @throws XMLStreamException
      */
-    private void writeLongitude(double longitude) throws XMLStreamException{
-        if (DEF_LONGITUDE != longitude){
+    private void writeLongitude(double longitude) throws XMLStreamException {
+        if (DEF_LONGITUDE != longitude) {
             writer.writeStartElement(URI_KML, TAG_LONGITUDE);
             writer.writeCharacters(Double.toString(longitude));
             writer.writeEndElement();
@@ -3282,8 +3387,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param latitude The latitude cookie.
      * @throws XMLStreamException
      */
-    private void writeLatitude(double latitude) throws XMLStreamException{
-        if (DEF_LATITUDE != latitude){
+    private void writeLatitude(double latitude) throws XMLStreamException {
+        if (DEF_LATITUDE != latitude) {
             writer.writeStartElement(URI_KML, TAG_LATITUDE);
             writer.writeCharacters(Double.toString(latitude));
             writer.writeEndElement();
@@ -3295,8 +3400,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param tilt
      * @throws XMLStreamException
      */
-    private void writeTilt(double tilt) throws XMLStreamException{
-        if (DEF_TILT != tilt){
+    private void writeTilt(double tilt) throws XMLStreamException {
+        if (DEF_TILT != tilt) {
             writer.writeStartElement(URI_KML, TAG_TILT);
             writer.writeCharacters(Double.toString(KmlUtilities.checkAnglePos180(tilt)));
             writer.writeEndElement();
@@ -3308,8 +3413,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param rotation
      * @throws XMLStreamException
      */
-    private void writeRotation(double rotation) throws XMLStreamException{
-        if (DEF_ROTATION != rotation){
+    private void writeRotation(double rotation) throws XMLStreamException {
+        if (DEF_ROTATION != rotation) {
             writer.writeStartElement(URI_KML, TAG_ROTATION);
             writer.writeCharacters(Double.toString(rotation));
             writer.writeEndElement();
@@ -3321,8 +3426,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param north
      * @throws XMLStreamException
      */
-    private void writeNorth(double north) throws XMLStreamException{
-        if (DEF_NORTH != north){
+    private void writeNorth(double north) throws XMLStreamException {
+        if (DEF_NORTH != north) {
             writer.writeStartElement(URI_KML, TAG_NORTH);
             writer.writeCharacters(Double.toString(north));
             writer.writeEndElement();
@@ -3334,8 +3439,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param south
      * @throws XMLStreamException
      */
-    private void writeSouth(double south) throws XMLStreamException{
-        if (DEF_SOUTH != south){
+    private void writeSouth(double south) throws XMLStreamException {
+        if (DEF_SOUTH != south) {
             writer.writeStartElement(URI_KML, TAG_SOUTH);
             writer.writeCharacters(Double.toString(south));
             writer.writeEndElement();
@@ -3347,8 +3452,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param east
      * @throws XMLStreamException
      */
-    private void writeEast(double east) throws XMLStreamException{
-        if (DEF_EAST != east){
+    private void writeEast(double east) throws XMLStreamException {
+        if (DEF_EAST != east) {
             writer.writeStartElement(URI_KML, TAG_EAST);
             writer.writeCharacters(Double.toString(east));
             writer.writeEndElement();
@@ -3360,8 +3465,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param west
      * @throws XMLStreamException
      */
-    private void writeWest(double west) throws XMLStreamException{
-        if (DEF_WEST != west){
+    private void writeWest(double west) throws XMLStreamException {
+        if (DEF_WEST != west) {
             writer.writeStartElement(URI_KML, TAG_WEST);
             writer.writeCharacters(Double.toString(west));
             writer.writeEndElement();
@@ -3373,8 +3478,8 @@ public class KmlWriter extends StaxStreamWriter {
      * @param roll
      * @throws XMLStreamException
      */
-    private void writeRoll(double roll) throws XMLStreamException{
-        if(DEF_ROLL != roll){
+    private void writeRoll(double roll) throws XMLStreamException {
+        if (DEF_ROLL != roll) {
             writer.writeStartElement(URI_KML, TAG_ROLL);
             writer.writeCharacters(Double.toString(roll));
             writer.writeEndElement();
@@ -3386,17 +3491,17 @@ public class KmlWriter extends StaxStreamWriter {
      * @param vec2
      * @throws XMLStreamException
      */
-    private void writeVec2(Vec2 vec2) throws XMLStreamException{
-        if (KmlUtilities.isFiniteNumber(vec2.getX()) && DEF_VEC2_X != vec2.getX()){
+    private void writeVec2(Vec2 vec2) throws XMLStreamException {
+        if (KmlUtilities.isFiniteNumber(vec2.getX()) && DEF_VEC2_X != vec2.getX()) {
             writer.writeAttribute(ATT_X, Double.toString(vec2.getX()));
         }
-        if (KmlUtilities.isFiniteNumber(vec2.getY()) && DEF_VEC2_Y != vec2.getY()){
+        if (KmlUtilities.isFiniteNumber(vec2.getY()) && DEF_VEC2_Y != vec2.getY()) {
             writer.writeAttribute(ATT_Y, Double.toString(vec2.getY()));
         }
-        if (vec2.getXUnits() != null && !DEF_VEC2_XUNIT.equals(vec2.getXUnits())){
+        if (vec2.getXUnits() != null && !DEF_VEC2_XUNIT.equals(vec2.getXUnits())) {
             writer.writeAttribute(ATT_XUNITS, vec2.getXUnits().getUnit());
         }
-        if (vec2.getYUnits() != null && !DEF_VEC2_YUNIT.equals(vec2.getYUnits())){
+        if (vec2.getYUnits() != null && !DEF_VEC2_YUNIT.equals(vec2.getYUnits())) {
             writer.writeAttribute(ATT_YUNITS, vec2.getYUnits().getUnit());
         }
     }
@@ -3406,7 +3511,7 @@ public class KmlWriter extends StaxStreamWriter {
      * @param hotspot
      * @throws XMLStreamException
      */
-    private void writeHotSpot(Vec2 hotspot) throws XMLStreamException{
+    private void writeHotSpot(Vec2 hotspot) throws XMLStreamException {
         writer.writeStartElement(URI_KML, TAG_HOT_SPOT);
         this.writeVec2(hotspot);
         writer.writeEndElement();
@@ -3471,28 +3576,29 @@ public class KmlWriter extends StaxStreamWriter {
      * @param string
      * @throws XMLStreamException
      */
-    private void writeCharacterContent(Object string) throws XMLStreamException{
-        if(string instanceof Cdata)
+    private void writeCharacterContent(Object string) throws XMLStreamException {
+        if (string instanceof Cdata) {
             writer.writeCData(string.toString());
-        else if (string instanceof String)
+        } else if (string instanceof String) {
             writer.writeCharacters((String) string);
-        else
+        } else {
             throw new IllegalArgumentException("Only String or CDATA argument.");
+        }
     }
-    
-    /*
-     * UTILITARY METHODS
-     */
 
+    /*
+     * ------------------------ UTILITARY METHODS ------------------------------
+     */
     /**
      *
      * @param version
      * @throws KmlException
      */
-    private void checkVersion(String version) throws KmlException{
-            if(URI_KML.equals(version))
-                return;
-        throw new KmlException("Kml writer error : Element not allowed by "+URI_KML+" namespace.");
+    private void checkVersion(String version) throws KmlException {
+        if (URI_KML.equals(version)) {
+            return;
+        }
+        throw new KmlException("Kml writer error : Element not allowed by " + URI_KML + " namespace.");
     }
 
     /**
@@ -3500,39 +3606,65 @@ public class KmlWriter extends StaxStreamWriter {
      * @param version
      * @return
      */
-    private boolean checkVersionSimple(String version){
+    private boolean checkVersionSimple(String version) {
         return URI_KML.equals(version);
     }
 
     /*
-     * WRITING EXTENSIONS METHODS
+     * ------------------- WRITING EXTENSIONS METHODS --------------------------
      */
+    /**
+     * <p>This method writes complex extensions using associated writer.</p>
+     *
+     * @param ext
+     * @param objectExtensions
+     * @throws KmlException
+     * @throws XMLStreamException
+     */
+    private void writeComplexExtensionsScheduler(
+            Extensions.Names ext, List<Object> objectExtensions)
+            throws KmlException, XMLStreamException {
 
-    private void writeComplexExtensionsScheduler(Extensions.Names ext, List<Object> objectExtensions)
-            throws KmlException, XMLStreamException{
-        for(Object object : objectExtensions){
-            for(StaxStreamWriter candidate : this.extensionWriters){
-                if(((KmlExtensionWriter) candidate).canHandleComplex(URI_KML, ext, object)){
+        for (Object object : objectExtensions) {
+            for (StaxStreamWriter candidate : this.extensionWriters) {
+                if (((KmlExtensionWriter) candidate).canHandleComplex(URI_KML, ext, object)) {
                     ((KmlExtensionWriter) candidate).writeComplexExtensionElement(URI_KML, ext, object);
                 }
             }
         }
     }
 
-    private void writeSimpleExtensionsScheduler(Extensions.Names ext, List<SimpleTypeContainer> simpleExtensions)
-            throws KmlException, XMLStreamException{
-        for(SimpleTypeContainer object : simpleExtensions){
-            for(StaxStreamWriter candidate : this.extensionWriters){
-                if(((KmlExtensionWriter) candidate).canHandleSimple(URI_KML, ext, object.getTagName())){
+    /**
+     * <p>This method writes simple extensions using associated writer.</p>
+     *
+     * @param ext
+     * @param simpleExtensions
+     * @throws KmlException
+     * @throws XMLStreamException
+     */
+    private void writeSimpleExtensionsScheduler(
+            Extensions.Names ext, List<SimpleTypeContainer> simpleExtensions)
+            throws KmlException, XMLStreamException {
+
+        for (SimpleTypeContainer object : simpleExtensions) {
+            for (StaxStreamWriter candidate : this.extensionWriters) {
+                if (((KmlExtensionWriter) candidate).canHandleSimple(URI_KML, ext, object.getTagName())) {
                     ((KmlExtensionWriter) candidate).writeSimpleExtensionElement(URI_KML, ext, object);
                 }
             }
         }
     }
 
-
+    /**
+     * <p>This method allows writting extensions at given level.</p>
+     *
+     * @param extensions
+     * @param level
+     * @throws KmlException
+     * @throws XMLStreamException
+     */
     private void writeStandardExtensionLevel(Extensions extensions, Names level)
-            throws KmlException, XMLStreamException{
+            throws KmlException, XMLStreamException {
 
         this.writeComplexExtensionsScheduler(
                 level, extensions.complexes(level));
@@ -3540,17 +3672,24 @@ public class KmlWriter extends StaxStreamWriter {
                 level, extensions.simples(level));
     }
 
-    private void writeDataScheduler(List<Object> objectExtensions)
-            throws KmlException, XMLStreamException{
-        for(Object object : objectExtensions){
-            for(StaxStreamWriter candidate : this.dataWriters){
-                if(((KmlExtensionWriter) candidate).canHandleComplex(URI_KML, null, object)){
+    /**
+     * <p>This method allows writting XML data using associated writer.</p>
+     *
+     * @param data
+     * @throws KmlException
+     * @throws XMLStreamException
+     */
+    private void writeDataScheduler(List<Object> data)
+            throws KmlException, XMLStreamException {
+
+        for (Object object : data) {
+            for (StaxStreamWriter candidate : this.dataWriters) {
+                if (((KmlExtensionWriter) candidate).canHandleComplex(URI_KML, null, object)) {
                     ((KmlExtensionWriter) candidate).writeComplexExtensionElement(URI_KML, null, object);
-                } else if(((KmlExtensionWriter) candidate).canHandleSimple(URI_KML, null, ((SimpleTypeContainer) object).getTagName())){
+                } else if (((KmlExtensionWriter) candidate).canHandleSimple(URI_KML, null, ((SimpleTypeContainer) object).getTagName())) {
                     ((KmlExtensionWriter) candidate).writeSimpleExtensionElement(URI_KML, null, (SimpleTypeContainer) object);
                 }
             }
         }
     }
-
 }

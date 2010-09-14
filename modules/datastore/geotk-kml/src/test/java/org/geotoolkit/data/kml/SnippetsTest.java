@@ -77,7 +77,7 @@ public class SnippetsTest {
     }
 
     @Test
-    public void snippetsReadTest() throws IOException, XMLStreamException {
+    public void snippetsReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));

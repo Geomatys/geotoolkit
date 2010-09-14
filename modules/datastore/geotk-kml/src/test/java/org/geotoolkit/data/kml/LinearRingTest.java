@@ -18,6 +18,7 @@ package org.geotoolkit.data.kml;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
+import java.net.URISyntaxException;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import java.io.File;
 import java.io.IOException;
@@ -79,7 +80,7 @@ public class LinearRingTest {
     }
 
     @Test
-    public void linarRingReadTest() throws IOException, XMLStreamException {
+    public void linarRingReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));

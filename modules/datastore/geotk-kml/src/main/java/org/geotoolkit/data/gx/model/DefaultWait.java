@@ -40,11 +40,19 @@ public class DefaultWait extends DefaultAbstractObject implements Wait {
         this.duration = duration;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public double getDuration() {
         return this.duration;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public void setDuration(double duration) {
         this.duration = duration;

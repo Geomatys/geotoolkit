@@ -45,7 +45,8 @@ public class DefaultMailStop implements MailStop {
      * @param mailStopNumber
      * @param type
      */
-    public DefaultMailStop(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> mailStopNames,
+    public DefaultMailStop(List<GenericTypedGrPostal> addressLines,
+            List<GenericTypedGrPostal> mailStopNames,
             MailStopNumber mailStopNumber, String type){
         this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
         this.mailStopNames = (mailStopNames == null) ? EMPTY_LIST : mailStopNames;

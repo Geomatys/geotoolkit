@@ -18,6 +18,7 @@ package org.geotoolkit.data.kml;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Collection;
@@ -76,7 +77,7 @@ public class TimeSpanTest {
     }
 
     @Test
-    public void timeSpanReadTest() throws IOException, XMLStreamException, ParseException {
+    public void timeSpanReadTest() throws IOException, XMLStreamException, ParseException, KmlException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));

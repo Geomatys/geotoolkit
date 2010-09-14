@@ -83,7 +83,7 @@ public class CreateTest {
     }
 
     @Test
-    public void createReadTest() throws IOException, XMLStreamException {
+    public void createReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));

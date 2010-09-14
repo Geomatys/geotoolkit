@@ -70,6 +70,10 @@ public class DefaultBoundary implements Boundary {
         this.linearRing = linearRing;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Extensions extensions() {
         return this.extensions;

@@ -86,7 +86,7 @@ public class ModelTest {
     }
 
     @Test
-    public void modelReadTest() throws IOException, XMLStreamException, URISyntaxException {
+    public void modelReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));

@@ -77,7 +77,7 @@ public class SchemaTest {
     }
 
     @Test
-    public void schemaReadTest() throws IOException, XMLStreamException {
+    public void schemaReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));

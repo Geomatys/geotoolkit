@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.gx;
 
+import java.net.URISyntaxException;
 import org.geotoolkit.data.kml.*;
 import java.awt.Color;
 import java.io.File;
@@ -83,7 +84,7 @@ public class IconExtTest {
     }
 
     @Test
-    public void iconExtReadTest() throws IOException, XMLStreamException, KmlException {
+    public void iconExtReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         final GxReader gxReader = new GxReader(reader);

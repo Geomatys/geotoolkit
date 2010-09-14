@@ -120,13 +120,6 @@ public class DefaultKml implements Kml {
         this.abstractFeature = feature;
     }
 
-    @Override
-    public String toString() {
-        String resultat = "KML DEFAULT : "
-                + "AbstractFeature : " + this.abstractFeature;
-        return resultat;
-    }
-
     /**
      *
      * @{@inheritDoc }
@@ -161,5 +154,12 @@ public class DefaultKml implements Kml {
     @Override
     public void addExtensionUri(String uri, String prefix){
         this.extensionsUris.put(uri, prefix);
+    }
+
+    @Override
+    public String toString() {
+        String resultat = "KML DEFAULT : "
+                + "AbstractFeature : " + this.abstractFeature;
+        return resultat;
     }
 }

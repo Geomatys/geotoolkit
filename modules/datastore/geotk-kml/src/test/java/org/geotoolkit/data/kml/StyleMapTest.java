@@ -77,7 +77,7 @@ public class StyleMapTest {
     }
 
     @Test
-    public void styleMapReadTest() throws IOException, XMLStreamException, URISyntaxException {
+    public void styleMapReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));

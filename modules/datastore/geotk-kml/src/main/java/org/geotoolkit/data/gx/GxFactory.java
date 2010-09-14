@@ -64,8 +64,8 @@ public interface GxFactory {
 
     /**
      *
-     * @param angles
-     * @return
+     * @param angles heading, tilt and roll values.
+     * @return an Angle object containing heading, tilt and roll.
      */
     Angles createAngles(double... angles);
 

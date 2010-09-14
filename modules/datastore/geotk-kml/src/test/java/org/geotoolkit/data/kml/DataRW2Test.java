@@ -80,7 +80,7 @@ public class DataRW2Test {
     }
 
     @Test
-    public void metadataReadTest() throws IOException, XMLStreamException, KmlException {
+    public void metadataReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
 
         final DataReader dataReader = new DataReader();
         final KmlReader reader = new KmlReader();

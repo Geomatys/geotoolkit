@@ -71,7 +71,7 @@ public class ChangeTest {
     }
 
     @Test
-    public void changeReadTest() throws IOException, XMLStreamException {
+    public void changeReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));

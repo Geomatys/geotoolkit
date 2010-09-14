@@ -222,9 +222,12 @@ public class DefaultGxFactory implements GxFactory {
     @Override
     public Feature createTour() {
         List<Property> properties = new ArrayList<Property>();
-        properties.add(FF.createAttribute(KmlConstants.DEF_VISIBILITY, KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_OPEN, KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(new Extensions(), KmlModelConstants.ATT_EXTENSIONS, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_VISIBILITY,
+                KmlModelConstants.ATT_VISIBILITY, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_OPEN,
+                KmlModelConstants.ATT_OPEN, null));
+        properties.add(FF.createAttribute(new Extensions(),
+                KmlModelConstants.ATT_EXTENSIONS, null));
 
         return FF.createFeature(
                 properties, GxModelConstants.TYPE_TOUR, "Tour");
@@ -262,29 +265,48 @@ public class DefaultGxFactory implements GxFactory {
             extensions.complexes(Extensions.Names.FEATURE).addAll(abstractFeatureObjectExtensions);
         }
 
-        properties.add(FF.createAttribute(idAttributes, KmlModelConstants.ATT_ID_ATTRIBUTES, null));
-        properties.add(FF.createAttribute(name, KmlModelConstants.ATT_NAME, null));
-        properties.add(FF.createAttribute(visibility, KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(open, KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(author, KmlModelConstants.ATT_AUTHOR, null));
-        properties.add(FF.createAttribute(link, KmlModelConstants.ATT_LINK, null));
-        properties.add(FF.createAttribute(address, KmlModelConstants.ATT_ADDRESS, null));
-        properties.add(FF.createAttribute(addressDetails, KmlModelConstants.ATT_ADDRESS_DETAILS, null));
-        properties.add(FF.createAttribute(phoneNumber, KmlModelConstants.ATT_PHONE_NUMBER, null));
-        properties.add(FF.createAttribute(snippet, KmlModelConstants.ATT_SNIPPET, null));
-        properties.add(FF.createAttribute(description, KmlModelConstants.ATT_DESCRIPTION, null));
-        properties.add(FF.createAttribute(view, KmlModelConstants.ATT_VIEW, null));
-        properties.add(FF.createAttribute(timePrimitive, KmlModelConstants.ATT_TIME_PRIMITIVE, null));
-        properties.add(FF.createAttribute(styleUrl, KmlModelConstants.ATT_STYLE_URL, null));
+        properties.add(FF.createAttribute(idAttributes,
+                KmlModelConstants.ATT_ID_ATTRIBUTES, null));
+        properties.add(FF.createAttribute(name,
+                KmlModelConstants.ATT_NAME, null));
+        properties.add(FF.createAttribute(visibility,
+                KmlModelConstants.ATT_VISIBILITY, null));
+        properties.add(FF.createAttribute(open,
+                KmlModelConstants.ATT_OPEN, null));
+        properties.add(FF.createAttribute(author,
+                KmlModelConstants.ATT_AUTHOR, null));
+        properties.add(FF.createAttribute(link,
+                KmlModelConstants.ATT_LINK, null));
+        properties.add(FF.createAttribute(address,
+                KmlModelConstants.ATT_ADDRESS, null));
+        properties.add(FF.createAttribute(addressDetails,
+                KmlModelConstants.ATT_ADDRESS_DETAILS, null));
+        properties.add(FF.createAttribute(phoneNumber,
+                KmlModelConstants.ATT_PHONE_NUMBER, null));
+        properties.add(FF.createAttribute(snippet,
+                KmlModelConstants.ATT_SNIPPET, null));
+        properties.add(FF.createAttribute(description,
+                KmlModelConstants.ATT_DESCRIPTION, null));
+        properties.add(FF.createAttribute(view,
+                KmlModelConstants.ATT_VIEW, null));
+        properties.add(FF.createAttribute(timePrimitive,
+                KmlModelConstants.ATT_TIME_PRIMITIVE, null));
+        properties.add(FF.createAttribute(styleUrl,
+                KmlModelConstants.ATT_STYLE_URL, null));
         for (AbstractStyleSelector ass : styleSelector){
-            properties.add(FF.createAttribute(ass, KmlModelConstants.ATT_STYLE_SELECTOR, null));
+            properties.add(FF.createAttribute(ass,
+                    KmlModelConstants.ATT_STYLE_SELECTOR, null));
         }
-        properties.add(FF.createAttribute(region, KmlModelConstants.ATT_REGION, null));
-        properties.add(FF.createAttribute(extendedData, KmlModelConstants.ATT_EXTENDED_DATA, null));
-        for (PlayList pl : playLists){
-            properties.add(FF.createAttribute(pl, GxModelConstants.ATT_TOUR_PLAY_LIST, null));
+        properties.add(FF.createAttribute(region,
+                KmlModelConstants.ATT_REGION, null));
+        properties.add(FF.createAttribute(extendedData,
+                KmlModelConstants.ATT_EXTENDED_DATA, null));
+        for (PlayList playList : playLists){
+            properties.add(FF.createAttribute(playList,
+                    GxModelConstants.ATT_TOUR_PLAY_LIST, null));
         }
-        properties.add(FF.createAttribute(extensions, KmlModelConstants.ATT_EXTENSIONS, null));
+        properties.add(FF.createAttribute(extensions,
+                KmlModelConstants.ATT_EXTENSIONS, null));
 
         return FF.createFeature(
                 properties, GxModelConstants.TYPE_TOUR, "Tour");
@@ -304,7 +326,8 @@ public class DefaultGxFactory implements GxFactory {
      * @{@inheritDoc }
      */
     @Override
-    public SoundCue createSoundCue(List<SimpleTypeContainer> objectSimpleExtensions, IdAttributes idAttributes, String href) {
+    public SoundCue createSoundCue(List<SimpleTypeContainer> objectSimpleExtensions,
+            IdAttributes idAttributes, String href) {
         return new DefaultSoundCue(objectSimpleExtensions, idAttributes, href);
     }
 

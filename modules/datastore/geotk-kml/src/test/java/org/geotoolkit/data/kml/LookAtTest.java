@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.kml;
 
+import java.net.URISyntaxException;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import java.io.File;
 import java.io.IOException;
@@ -72,7 +73,7 @@ public class LookAtTest {
     }
 
     @Test
-    public void lookAtReadTest() throws IOException, XMLStreamException {
+    public void lookAtReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));

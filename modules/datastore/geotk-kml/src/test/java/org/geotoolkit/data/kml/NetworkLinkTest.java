@@ -18,6 +18,7 @@ package org.geotoolkit.data.kml;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Iterator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
@@ -72,7 +73,7 @@ public class NetworkLinkTest {
     }
 
     @Test
-    public void networkLinkReadTest() throws IOException, XMLStreamException {
+    public void networkLinkReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));

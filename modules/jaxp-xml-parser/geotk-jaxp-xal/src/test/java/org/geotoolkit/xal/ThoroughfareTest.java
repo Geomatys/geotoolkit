@@ -21,6 +21,7 @@ import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.xal.model.Xal;
+import org.geotoolkit.xal.model.XalException;
 import org.geotoolkit.xal.xml.XalReader;
 import org.geotoolkit.xal.xml.XalWriter;
 import org.geotoolkit.xml.DomCompare;
@@ -60,7 +61,7 @@ public class ThoroughfareTest {
 
     @Test
     public void thoroughfareTest()
-                throws IOException, XMLStreamException, ParserConfigurationException, SAXException {
+                throws IOException, XMLStreamException, ParserConfigurationException, SAXException, XalException {
 
         final XalReader reader = new XalReader();
         reader.setInput(new File(pathToTestFile));

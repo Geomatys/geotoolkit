@@ -105,7 +105,6 @@ import org.opengis.util.FactoryException;
  */
 public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
 
-//    private static final GeometryFactory GF = new GeometryFactory();
     private final Kml kml;
     private RenderingContext2D context2d;
     private Map<String, Style> styles = new HashMap<String, Style>();
@@ -178,7 +177,8 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                         (AbstractGeometry) feature.getProperty(
                         KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue(), envelope);
             }
-        } else if (FeatureTypeUtilities.isDecendedFrom(featureType, KmlModelConstants.TYPE_CONTAINER)) {
+        }
+        else if (FeatureTypeUtilities.isDecendedFrom(featureType, KmlModelConstants.TYPE_CONTAINER)) {
             Collection<Property> properties = null;
             if (featureType.equals(KmlModelConstants.TYPE_DOCUMENT)) {
                 properties = feature.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName());
@@ -191,7 +191,8 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                     envelope = this.getFeatureEnvelope((Feature) ((Property) i.next()).getValue(), envelope);
                 }
             }
-        } else if (FeatureTypeUtilities.isDecendedFrom(featureType, KmlModelConstants.TYPE_OVERLAY)) {
+        }
+        else if (FeatureTypeUtilities.isDecendedFrom(featureType, KmlModelConstants.TYPE_OVERLAY)) {
             if (featureType.equals(KmlModelConstants.TYPE_GROUND_OVERLAY)) {
                 if (feature.getProperty(KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX.getName()) != null) {
                     final LatLonBox latLonBox = (LatLonBox) feature.getProperty(
@@ -213,7 +214,8 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      * @param geometry
      * @return
      */
-    private JTSEnvelope2D getAbstractGeometryEnvelope(AbstractGeometry geometry, JTSEnvelope2D envelope) {
+    private JTSEnvelope2D getAbstractGeometryEnvelope(
+            AbstractGeometry geometry, JTSEnvelope2D envelope) {
 
         if (geometry instanceof Geometry) {
             envelope.expandToInclude(new JTSEnvelope2D(((Geometry) geometry).getEnvelopeInternal(),
@@ -270,7 +272,8 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             height += img.getHeight(null);
         }
 
-        final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        final BufferedImage image = new BufferedImage(
+                width, height, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D graphic = (Graphics2D) image.getGraphics();
 
         for (Image img : images) {
@@ -290,9 +293,11 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             throws IOException {
 
         Image image = null;
-        if (FeatureTypeUtilities.isDecendedFrom(abstractFeature.getType(), KmlModelConstants.TYPE_CONTAINER)) {
+        if (FeatureTypeUtilities.isDecendedFrom(
+                abstractFeature.getType(), KmlModelConstants.TYPE_CONTAINER)) {
             image = this.legendAbstractContainer(abstractFeature);
-        } else if (FeatureTypeUtilities.isDecendedFrom(abstractFeature.getType(), KmlModelConstants.TYPE_OVERLAY)) {
+        } else if (FeatureTypeUtilities.isDecendedFrom(
+                abstractFeature.getType(), KmlModelConstants.TYPE_OVERLAY)) {
             image = this.legendAbstractOverlay(abstractFeature);
         } else if (abstractFeature.getType().equals(KmlModelConstants.TYPE_PLACEMARK)) {
             image = this.legendPlacemark(abstractFeature);
@@ -1242,7 +1247,13 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         }
     }
 
-    public String retrieveBalloonInformations(String toInspect, Feature informationResource){
+    /**
+     * 
+     * @param toInspect
+     * @param informationResource
+     * @return
+     */
+    private String retrieveBalloonInformations(String toInspect, Feature informationResource){
 
         Property property = informationResource.getProperty(KmlModelConstants.ATT_NAME.getName());
         if(property != null && property.getValue() != null){
@@ -1265,7 +1276,8 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      * @param style
      * @param content
      */
-    private void portrayLabelStyle(double x, double y, Style style, String content, Geometry geom) {
+    private void portrayLabelStyle(double x, double y,
+            Style style, String content, Geometry geom) {
 
         if (content == null) return;
 
@@ -1303,8 +1315,9 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                         new DefaultPointLabelDescriptor(content,
                         new Font(FONT.getName(),
                         FONT.getStyle(), FONT.getSize() * (int) labelStyle.getScale()),
-                        labelStyle.getColor(), 0, null, 0.5f, 0.5f, (float) x * displayFactor, (float) y * displayFactor, 0, context2d.getObjectiveCRS(),
-                        projectedGeometry));
+                        labelStyle.getColor(), 0, null, 0.5f, 0.5f, 
+                        (float) x * displayFactor, (float) y * displayFactor,
+                        0, context2d.getObjectiveCRS(), projectedGeometry));
                 context2d.getLabelRenderer(true).append(labelLayer);
                 //graphic.drawString(content, (int) tab[0], (int) tab[1]);
             }
@@ -1339,7 +1352,8 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             context2d.getMonitor().exceptionOccured(ex, Level.WARNING);
             return;
         }
-        graphic.drawImage(image, (int) tab[0], (int) tab[1] - LEGEND_HEIGHT_INT, LEGEND_WIDTH_INT, LEGEND_HEIGHT_INT, null);
+        graphic.drawImage(image, (int) tab[0], (int) tab[1] - LEGEND_HEIGHT_INT,
+                LEGEND_WIDTH_INT, LEGEND_HEIGHT_INT, null);
     }
 
     /*
@@ -1353,6 +1367,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      * @param abstractStyleSelector
      */
     private void indexAbstractStyleSelector(AbstractStyleSelector abstractStyleSelector) {
+
         if (abstractStyleSelector instanceof Style) {
             this.indexStyle((Style) abstractStyleSelector);
         } else if (abstractStyleSelector instanceof StyleMap) {
@@ -1365,6 +1380,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      * @param style
      */
     private void indexStyle(Style style) {
+
         if (style.getIdAttributes().getId() != null) {
             this.styles.put("#" + style.getIdAttributes().getId(), style);
         }
@@ -1375,6 +1391,7 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      * @param styleMap
      */
     private void indexStyleMap(StyleMap styleMap) {
+
         if (styleMap.getIdAttributes().getId() != null) {
             this.styleMaps.put("#" + styleMap.getIdAttributes().getId(), styleMap);
         }
@@ -1402,11 +1419,14 @@ public class KmlMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                 final StyleMap styleMap = (StyleMap) styleSelector;
                 styleSelector = retrieveStyle(styleMap, StyleState.NORMAL);
             }
-        } else if (feature.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()) != null) {
+        }
+        else if (feature.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()) != null) {
             if (feature.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()).getValue() != null) {
-                styleSelector = this.styles.get(((URI) feature.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()).getValue()).toString());
+                styleSelector = this.styles.get(((URI) feature.getProperty(
+                        KmlModelConstants.ATT_STYLE_URL.getName()).getValue()).toString());
                 if (styleSelector == null) {
-                    final StyleMap styleMap = this.styleMaps.get(((URI) feature.getProperty(KmlModelConstants.ATT_STYLE_URL.getName()).getValue()).toString());
+                    final StyleMap styleMap = this.styleMaps.get(((URI) feature.getProperty(
+                            KmlModelConstants.ATT_STYLE_URL.getName()).getValue()).toString());
                     styleSelector = retrieveStyle(styleMap, StyleState.NORMAL);
                 }
             }

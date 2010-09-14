@@ -151,4 +151,5 @@ public final class XalConstants {
     public static final String ATT_VALID_TO_DATE = "ValidToDate";
     public static final String ATT_VERSION = "Version";
 
+    private XalConstants(){}
 }

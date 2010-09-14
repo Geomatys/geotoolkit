@@ -84,7 +84,7 @@ public class StyleTest {
     }
 
     @Test
-    public void styleReadTest() throws IOException, XMLStreamException, URISyntaxException {
+    public void styleReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));

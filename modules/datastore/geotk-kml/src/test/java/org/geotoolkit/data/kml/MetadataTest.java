@@ -77,7 +77,7 @@ public class MetadataTest {
     }
 
     @Test
-    public void metadataReadTest() throws IOException, XMLStreamException {
+    public void metadataReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));

@@ -38,11 +38,19 @@ public class DefaultLatLonQuad extends DefaultAbstractObject implements LatLonQu
         this.coordinates = coordinates;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public CoordinateSequence getCoordinates() {
         return this.coordinates;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public void setCoordinates(CoordinateSequence coordinates) {
         this.coordinates = coordinates;

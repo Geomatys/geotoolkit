@@ -45,12 +45,12 @@ public interface Xal {
      *
      * @return
      */
-    public List<AddressDetails> getAddressDetails();
+    List<AddressDetails> getAddressDetails();
     
     /**
      * <p>Specific to DTD to specify the version number of DTD.</p>
      * 
      * @return
      */
-    public String getVersion();
+    String getVersion();
 }

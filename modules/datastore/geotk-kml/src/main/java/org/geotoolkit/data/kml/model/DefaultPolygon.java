@@ -179,26 +179,46 @@ public class DefaultPolygon extends com.vividsolutions.jts.geom.Polygon implemen
         this.altitudeMode = altitudeMode;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Extensions extensions() {
         return this.extensions;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public IdAttributes getIdAttributes() {
         return this.idAttributes;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public void setIdAttributes(IdAttributes idAttributes) {
         this.idAttributes = idAttributes;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Boundary getOuterBoundary() {
         return this.outerBoundary;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<Boundary> getInnerBoundaries() {
         return this.innerBoundaries;

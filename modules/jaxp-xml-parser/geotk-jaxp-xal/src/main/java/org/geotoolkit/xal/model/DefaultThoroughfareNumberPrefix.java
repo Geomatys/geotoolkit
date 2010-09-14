@@ -54,6 +54,4 @@ public class DefaultThoroughfareNumberPrefix extends DefaultGenericTypedGrPostal
     public void setNumberPrefixSeparator(String numberPrefixSeparator) {
         this.numberPrefixSeparator = numberPrefixSeparator;
     }
-
-
 }

@@ -37,11 +37,19 @@ public class DefaultSoundCue extends DefaultAbstractObject implements SoundCue {
         this.href = href;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public String getHref() {
         return this.href;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public void setHref(String href) {
         this.href = href;

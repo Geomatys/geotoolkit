@@ -23,7 +23,7 @@ import static java.util.Collections.*;
  *
  * @author Samuel Andrés
  */
-public class DefaultPremise implements Premise{
+public class DefaultPremise implements Premise {
 
     private List<GenericTypedGrPostal> addressLines;
     private List<PremiseName> premiseNames;
@@ -43,14 +43,14 @@ public class DefaultPremise implements Premise{
     private String premiseDependencyType;
     private String premiseThoroughfareConnector;
 
-    public DefaultPremise(){
+    public DefaultPremise() {
         this.addressLines = EMPTY_LIST;
         this.premiseNames = EMPTY_LIST;
         this.premiseNumbers = EMPTY_LIST;
         this.premiseNumberPrefixes = EMPTY_LIST;
         this.premiseNumberSuffixes = EMPTY_LIST;
         this.buildingNames = EMPTY_LIST;
-        this.subPremises =  EMPTY_LIST;
+        this.subPremises = EMPTY_LIST;
     }
 
     /**
@@ -79,40 +79,40 @@ public class DefaultPremise implements Premise{
             Object sub,
             MailStop mailStop, PostalCode postalCode, Premise premise,
             String type, String premiseDependency, String premiseDependencyType,
-            String premiseThoroughfareConnector) throws XalException{
+            String premiseThoroughfareConnector) throws XalException {
         this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
         this.premiseNames = (premiseNames == null) ? EMPTY_LIST : premiseNames;
-        if (location instanceof PremiseLocation){
+        if (location instanceof PremiseLocation) {
             premiseLocation = (PremiseLocation) location;
             premiseNumbers = EMPTY_LIST;
-        } else if (location instanceof List){
+        } else if (location instanceof List) {
             try {
                 premiseNumbers = (List<PremiseNumber>) location;
-            } catch (ClassCastException e){
-                throw new XalException("This kind of location ("+location.getClass()+") is not allowed here : "+this.getClass());
+            } catch (ClassCastException e) {
+                throw new XalException("This kind of location (" + location.getClass() + ") is not allowed here : " + this.getClass());
             }
-        } else if (location instanceof PremiseNumberRange){
+        } else if (location instanceof PremiseNumberRange) {
             premiseNumberRange = (PremiseNumberRange) location;
             premiseNumbers = EMPTY_LIST;
-        } else if (location != null){
-            throw new XalException("This kind of location ("+location.getClass()+") is not allowed here : "+this.getClass());
+        } else if (location != null) {
+            throw new XalException("This kind of location (" + location.getClass() + ") is not allowed here : " + this.getClass());
         } else {
             premiseNumbers = EMPTY_LIST;
         }
         this.premiseNumberPrefixes = (premiseNumberPrefixes == null) ? EMPTY_LIST : premiseNumberPrefixes;
         this.premiseNumberSuffixes = (premiseNumberSuffixes == null) ? EMPTY_LIST : premiseNumberSuffixes;
         this.buildingNames = (buildingNames == null) ? EMPTY_LIST : buildingNames;
-        if (sub instanceof List){
+        if (sub instanceof List) {
             try {
-                subPremises =  (List<SubPremise>) sub;
-            } catch (ClassCastException e){
-                throw new XalException("This kind of class ("+sub.getClass()+") is not allowed here : "+this.getClass());
+                subPremises = (List<SubPremise>) sub;
+            } catch (ClassCastException e) {
+                throw new XalException("This kind of class (" + sub.getClass() + ") is not allowed here : " + this.getClass());
             }
-        } else if (sub instanceof Firm){
-            firm =  (Firm) sub;
+        } else if (sub instanceof Firm) {
+            firm = (Firm) sub;
             subPremises = EMPTY_LIST;
-        } else if (sub != null){
-            throw new XalException("This kind of class ("+sub.getClass()+") is not allowed here : "+this.getClass());
+        } else if (sub != null) {
+            throw new XalException("This kind of class (" + sub.getClass() + ") is not allowed here : " + this.getClass());
         } else {
             subPremises = EMPTY_LIST;
         }
@@ -130,119 +130,153 @@ public class DefaultPremise implements Premise{
      * @{@inheritDoc }
      */
     @Override
-    public List<GenericTypedGrPostal> getAddressLines() {return this.addressLines;}
+    public List<GenericTypedGrPostal> getAddressLines() {
+        return this.addressLines;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<PremiseName> getPremiseNames() {return this.premiseNames;}
+    public List<PremiseName> getPremiseNames() {
+        return this.premiseNames;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public PremiseLocation getPremiseLocation() {return this.premiseLocation;}
+    public PremiseLocation getPremiseLocation() {
+        return this.premiseLocation;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<PremiseNumber> getPremiseNumbers() {return this.premiseNumbers;}
+    public List<PremiseNumber> getPremiseNumbers() {
+        return this.premiseNumbers;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public PremiseNumberRange getPremiseNumberRange() {return this.premiseNumberRange;}
+    public PremiseNumberRange getPremiseNumberRange() {
+        return this.premiseNumberRange;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<PremiseNumberPrefix> getPremiseNumberPrefixes() {return this.premiseNumberPrefixes;}
+    public List<PremiseNumberPrefix> getPremiseNumberPrefixes() {
+        return this.premiseNumberPrefixes;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<PremiseNumberSuffix> getPremiseNumberSuffixes() {return this.premiseNumberSuffixes;}
+    public List<PremiseNumberSuffix> getPremiseNumberSuffixes() {
+        return this.premiseNumberSuffixes;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<BuildingName> getBuildingNames() {return this.buildingNames;}
+    public List<BuildingName> getBuildingNames() {
+        return this.buildingNames;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<SubPremise> getSubPremises() {return this.subPremises;}
+    public List<SubPremise> getSubPremises() {
+        return this.subPremises;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public Firm getFirm() {return this.firm;}
+    public Firm getFirm() {
+        return this.firm;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public MailStop getMailStop() {return this.mailStop;}
+    public MailStop getMailStop() {
+        return this.mailStop;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public PostalCode getPostalCode() {return this.postalCode;}
+    public PostalCode getPostalCode() {
+        return this.postalCode;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public Premise getPremise() {return this.premise;}
+    public Premise getPremise() {
+        return this.premise;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public String getType() {return this.type;}
+    public String getType() {
+        return this.type;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public String getPremiseDependency() {return this.premiseDependency;}
+    public String getPremiseDependency() {
+        return this.premiseDependency;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public String getPremiseDependencyType() {return this.premiseDependencyType;}
+    public String getPremiseDependencyType() {
+        return this.premiseDependencyType;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public String getPremiseThoroughfareConnector() {return this.premiseThoroughfareConnector;}
+    public String getPremiseThoroughfareConnector() {
+        return this.premiseThoroughfareConnector;
+    }
 
     /**
      *
@@ -279,7 +313,7 @@ public class DefaultPremise implements Premise{
     public void setPremiseNumbers(List<PremiseNumber> premiseNumbers) {
         this.premiseNumbers = (premiseNumbers == null) ? EMPTY_LIST : premiseNumbers;
     }
-    
+
     /**
      *
      * @{@inheritDoc }
@@ -396,5 +430,4 @@ public class DefaultPremise implements Premise{
     public void setPremiseThoroughfareConnector(String premiseThoroughfareConnector) {
         this.premiseThoroughfareConnector = premiseThoroughfareConnector;
     }
-
 }

@@ -36,7 +36,8 @@ public class DefaultAddressIdentifier implements AddressIdentifier {
      * @param type
      * @param grPostal
      */
-    public DefaultAddressIdentifier(String content, String identifierType, String type, GrPostal grPostal){
+    public DefaultAddressIdentifier(String content, String identifierType,
+            String type, GrPostal grPostal){
         this.content = content;
         this.identifierType = identifierType;
         this.type = type;

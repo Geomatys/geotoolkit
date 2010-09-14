@@ -48,11 +48,11 @@ public interface ThoroughfareNumberTo {
      *
      * @return
      */
-    public List<Object> getContent();
+    List<Object> getContent();
 
     /**
      * 
      * @return
      */
-    public GrPostal getGrPostal();
+    GrPostal getGrPostal();
 }

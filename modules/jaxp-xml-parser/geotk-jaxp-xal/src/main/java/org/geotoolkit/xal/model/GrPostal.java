@@ -36,5 +36,5 @@ public interface GrPostal {
      * 
      * @return
      */
-    public String getCode();
+    String getCode();
 }

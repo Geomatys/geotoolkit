@@ -25,7 +25,13 @@ import org.geotoolkit.data.gx.model.Angles;
  */
 public class GxUtilities {
 
-    public static Coordinate toCoordinate(String coordinates){
+    /**
+     *
+     * @param coordinates A string of coordinates separeted by spaces.
+     * @return a 2D/3D coordinate object.
+     */
+    public static Coordinate toCoordinate(final String coordinates){
+
         final String[] coordinatesList = coordinates.split(" ");
         final Coordinate c = new Coordinate();
 
@@ -38,7 +44,13 @@ public class GxUtilities {
         return c;
     }
 
-    public static String toString(Coordinate coordinate) {
+    /**
+     *
+     * @param coordinate a 2D/3D coordinate object.
+     * @return a string of coordinates separated by spaces.
+     */
+    public static String toString(final Coordinate coordinate) {
+
         final StringBuilder sb = new StringBuilder();
         sb.append(coordinate.x);
         sb.append(' ');
@@ -50,7 +62,13 @@ public class GxUtilities {
         return sb.toString();
     }
 
-    public static String toString(Angles angles) {
+    /**
+     *
+     * @param angles contains heading, tilt and roll values
+     * @return angles values separated by spaces.
+     */
+    public static String toString(final Angles angles) {
+        
         final StringBuilder sb = new StringBuilder();
         sb.append(angles.getHeading());
         sb.append(' ');

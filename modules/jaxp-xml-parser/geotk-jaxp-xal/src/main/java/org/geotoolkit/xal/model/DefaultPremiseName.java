@@ -54,6 +54,4 @@ public class DefaultPremiseName extends DefaultGenericTypedGrPostal implements P
     public void setTypeOccurrence(AfterBeforeEnum typeOccurrence) {
         this.typeOccurrence = typeOccurrence;
     }
-
-
 }

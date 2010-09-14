@@ -142,7 +142,7 @@ public interface PremiseNumberRange {
      *
      * @param indicatorOccurrence
      */
-     void setIndicatorOccurrence(AfterBeforeEnum indicatorOccurrence);
+    void setIndicatorOccurrence(AfterBeforeEnum indicatorOccurrence);
 
     /**
      *

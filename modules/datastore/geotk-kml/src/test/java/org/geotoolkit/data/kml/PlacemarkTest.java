@@ -20,6 +20,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collection;
 import javax.xml.parsers.ParserConfigurationException;
@@ -79,7 +80,7 @@ public class PlacemarkTest {
     }
 
     @Test
-    public void placemarkReadTest() throws IOException, XMLStreamException {
+    public void placemarkReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));

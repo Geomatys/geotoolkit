@@ -22,9 +22,9 @@ package org.geotoolkit.data.kml.xsd;
  */
 public class DefaultSimpleTypeContainer implements SimpleTypeContainer {
 
-    String nameSpaceUri;
-    String tagName;
-    Object value;
+    private String nameSpaceUri;
+    private String tagName;
+    private Object value;
 
     public DefaultSimpleTypeContainer(String nameSpaceUri, String tagName, Object value) {
         this.nameSpaceUri = nameSpaceUri;

@@ -64,7 +64,6 @@ public class DefaultThoroughfareNumberFrom implements ThoroughfareNumberFrom {
     @Override
     public List<Object> getContent() {return this.content;}
 
-
     /**
      *
      * @{@inheritDoc }

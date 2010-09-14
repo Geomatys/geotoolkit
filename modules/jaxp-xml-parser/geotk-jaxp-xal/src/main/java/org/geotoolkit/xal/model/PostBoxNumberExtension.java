@@ -39,11 +39,11 @@ public interface PostBoxNumberExtension {
      *
      * @return
      */
-    public String getContent();
+    String getContent();
 
     /**
      * <p>"-" is the NumberExtensionSeparator in POBOX:12345-123.</p>
      * @return
      */
-    public String getNumberExtensionSeparator();
+    String getNumberExtensionSeparator();
 }

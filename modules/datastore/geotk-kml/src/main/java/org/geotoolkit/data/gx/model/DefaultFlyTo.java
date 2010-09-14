@@ -48,31 +48,55 @@ public class DefaultFlyTo extends DefaultAbstractObject implements FlyTo {
         this.view = view;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public double getDuration() {
         return this.duration;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public EnumFlyToMode getFlyToMode() {
         return this.flyToMode;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public AbstractView getView() {
         return this.view;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public void setDuration(double duration) {
         this.duration = duration;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public void setFlyToMode(EnumFlyToMode flyToMode) {
         this.flyToMode = flyToMode;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public void setView(AbstractView view) {
         this.view = view;

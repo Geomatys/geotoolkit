@@ -76,7 +76,7 @@ public class ReplaceTest {
     }
 
     @Test
-    public void replaceReadTest() throws IOException, XMLStreamException {
+    public void replaceReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));

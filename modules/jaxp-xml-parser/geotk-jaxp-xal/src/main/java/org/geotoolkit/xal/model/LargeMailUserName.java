@@ -68,6 +68,4 @@ public interface LargeMailUserName {
      * @param code
      */
     void setCode(String code);
-
-
 }

@@ -41,11 +41,19 @@ public class DefaultPlayList extends DefaultAbstractObject implements PlayList {
         this.tourPrimitives = (tourPrimitives == null) ? EMPTY_LIST : tourPrimitives;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public List<AbstractTourPrimitive> getTourPrimitives() {
         return this.tourPrimitives;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public void setTourPrimitives(List<AbstractTourPrimitive> tourPrimitives) {
         this.tourPrimitives = (tourPrimitives == null) ? EMPTY_LIST : tourPrimitives;

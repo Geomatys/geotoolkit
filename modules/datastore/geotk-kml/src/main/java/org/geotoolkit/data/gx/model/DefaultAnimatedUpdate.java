@@ -43,21 +43,37 @@ public class DefaultAnimatedUpdate extends DefaultAbstractObject implements Anim
         this.update = update;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public double getDuration() {
         return this.duration;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public Update getUpdate() {
         return this.update;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public void setDuration(double duration) {
         this.duration = duration;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public void setUpdate(Update update) {
         this.update = update;

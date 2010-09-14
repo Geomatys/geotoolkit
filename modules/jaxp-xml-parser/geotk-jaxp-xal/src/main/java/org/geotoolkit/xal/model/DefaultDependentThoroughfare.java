@@ -163,6 +163,10 @@ public class DefaultDependentThoroughfare implements DependentThoroughfare {
         this.thoroughfarePostDirection = thoroughfarePostDirection;
     }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
     public void setType(String type) {
         this.type = type;

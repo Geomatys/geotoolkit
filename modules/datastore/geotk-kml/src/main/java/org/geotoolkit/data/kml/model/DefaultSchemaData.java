@@ -52,8 +52,10 @@ public class DefaultSchemaData extends DefaultAbstractObject implements SchemaDa
             List<SimpleData> simpleDatas, List<Object> schemaDataExtensions) {
         super(objectSimpleExtensions, idAttributes);
         this.schemaURL = schemaURL;
-        this.simpleDatas = (simpleDatas == null) ? EMPTY_LIST : simpleDatas;
-        this.schemaDataExtensions = (schemaDataExtensions == null) ? EMPTY_LIST : schemaDataExtensions;
+        this.simpleDatas = (simpleDatas == null) ?
+            EMPTY_LIST : simpleDatas;
+        this.schemaDataExtensions = (schemaDataExtensions == null) ?
+            EMPTY_LIST : schemaDataExtensions;
     }
 
     /**
@@ -98,7 +100,8 @@ public class DefaultSchemaData extends DefaultAbstractObject implements SchemaDa
      */
     @Override
     public void setSimpleDatas(List<SimpleData> simpleDatas) {
-        this.simpleDatas = (simpleDatas == null) ? EMPTY_LIST : simpleDatas;
+        this.simpleDatas = (simpleDatas == null) ?
+            EMPTY_LIST : simpleDatas;
     }
 
     /**
@@ -107,6 +110,7 @@ public class DefaultSchemaData extends DefaultAbstractObject implements SchemaDa
      */
     @Override
     public void setSchemaDataExtensions(List<Object> schemaDataExtensions) {
-        this.schemaDataExtensions = (schemaDataExtensions == null) ? EMPTY_LIST : schemaDataExtensions;
+        this.schemaDataExtensions = (schemaDataExtensions == null) ?
+            EMPTY_LIST : schemaDataExtensions;
     }
 }

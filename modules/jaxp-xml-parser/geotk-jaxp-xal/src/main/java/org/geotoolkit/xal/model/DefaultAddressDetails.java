@@ -52,9 +52,11 @@ public class DefaultAddressDetails implements AddressDetails {
      * @param addressDetailsKey
      * @throws XalException
      */
-    public DefaultAddressDetails(PostalServiceElements postalServiceElements, Object localisation,
-            String addressType, String currentStatus, String validFromDate, String validToDate,
-            String usage, GrPostal grPostal, String addressDetailsKey) throws XalException{
+    public DefaultAddressDetails(PostalServiceElements postalServiceElements, 
+            Object localisation, String addressType, String currentStatus,
+            String validFromDate, String validToDate,
+            String usage, GrPostal grPostal, String addressDetailsKey)
+            throws XalException{
         this.postalServiceElements = postalServiceElements;
         if (localisation instanceof GenericTypedGrPostal){
             this.address = (GenericTypedGrPostal) localisation;

@@ -27,6 +27,7 @@ import org.geotoolkit.xal.model.Locality;
 import org.geotoolkit.xal.model.PostBox;
 import org.geotoolkit.xal.model.PostBoxNumber;
 import org.geotoolkit.xal.model.Xal;
+import org.geotoolkit.xal.model.XalException;
 import org.geotoolkit.xal.xml.XalReader;
 import org.geotoolkit.xal.xml.XalWriter;
 import org.geotoolkit.xml.DomCompare;
@@ -67,7 +68,7 @@ public class CountryTest_L {
     }
 
     @Test
-    public void country_LReadTest() throws IOException, XMLStreamException {
+    public void country_LReadTest() throws IOException, XMLStreamException, XalException {
 
         final XalReader reader = new XalReader();
         reader.setInput(new File(pathToTestFile));
@@ -94,7 +95,7 @@ public class CountryTest_L {
     }
 
     @Test
-    public void country_LWriteTest() throws IOException, XMLStreamException, ParserConfigurationException, SAXException{
+    public void country_LWriteTest() throws IOException, XMLStreamException, ParserConfigurationException, SAXException, XalException{
         final XalFactory xalFactory = DefaultXalFactory.getInstance();
 
         final PostBoxNumber postBoxNumber = xalFactory.createPostBoxNumber(xalFactory.createGrPostal("obligatoire"), "PBNcontent");

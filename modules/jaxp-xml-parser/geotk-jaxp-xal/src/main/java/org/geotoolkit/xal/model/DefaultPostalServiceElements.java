@@ -23,7 +23,7 @@ import static java.util.Collections.*;
  *
  * @author Samuel Andrés
  */
-public class DefaultPostalServiceElements implements PostalServiceElements{
+public class DefaultPostalServiceElements implements PostalServiceElements {
 
     private List<AddressIdentifier> addressIdentifiers;
     private GenericTypedGrPostal endorsementLineCode;
@@ -37,15 +37,17 @@ public class DefaultPostalServiceElements implements PostalServiceElements{
     private List<GenericTypedGrPostal> supplementaryPostalServiceData;
     private String type;
 
-    public DefaultPostalServiceElements(){
+    public DefaultPostalServiceElements() {
         this.addressIdentifiers = EMPTY_LIST;
         this.supplementaryPostalServiceData = EMPTY_LIST;
     }
 
-    public DefaultPostalServiceElements(List<AddressIdentifier> addressIdentifiers, GenericTypedGrPostal endorsementLineCode,
-            GenericTypedGrPostal keyLineCode, GenericTypedGrPostal barCode, SortingCode sortingCode, GenericTypedGrPostal addressLatitude,
-            GenericTypedGrPostal addressLatitudeDirection, GenericTypedGrPostal addressLongitude, GenericTypedGrPostal addressLongitudeDirection,
-            List<GenericTypedGrPostal> supplementaryPostalServiceData, String type){
+    public DefaultPostalServiceElements(List<AddressIdentifier> addressIdentifiers,
+            GenericTypedGrPostal endorsementLineCode, GenericTypedGrPostal keyLineCode,
+            GenericTypedGrPostal barCode, SortingCode sortingCode, GenericTypedGrPostal addressLatitude,
+            GenericTypedGrPostal addressLatitudeDirection, GenericTypedGrPostal addressLongitude,
+            GenericTypedGrPostal addressLongitudeDirection,
+            List<GenericTypedGrPostal> supplementaryPostalServiceData, String type) {
         this.addressIdentifiers = (addressIdentifiers == null) ? EMPTY_LIST : addressIdentifiers;
         this.endorsementLineCode = endorsementLineCode;
         this.keyLineCode = keyLineCode;
@@ -55,96 +57,206 @@ public class DefaultPostalServiceElements implements PostalServiceElements{
         this.addressLatitudeDirection = addressLatitudeDirection;
         this.addressLongitude = addressLongitude;
         this.addressLongitudeDirection = addressLongitudeDirection;
-        this.supplementaryPostalServiceData = (supplementaryPostalServiceData == null) ? EMPTY_LIST : supplementaryPostalServiceData;
+        this.supplementaryPostalServiceData = (supplementaryPostalServiceData == null)
+                ? EMPTY_LIST : supplementaryPostalServiceData;
         this.type = type;
     }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
-    public List<AddressIdentifier> getAddressIdentifiers() {return this.addressIdentifiers;}
+    public List<AddressIdentifier> getAddressIdentifiers() {
+        return this.addressIdentifiers;
+    }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
-    public GenericTypedGrPostal getEndorsementLineCode() {return this.endorsementLineCode;}
+    public GenericTypedGrPostal getEndorsementLineCode() {
+        return this.endorsementLineCode;
+    }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
-    public GenericTypedGrPostal getKeyLineCode() {return this.keyLineCode;}
+    public GenericTypedGrPostal getKeyLineCode() {
+        return this.keyLineCode;
+    }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
-    public GenericTypedGrPostal getBarcode() {return this.barCode;}
+    public GenericTypedGrPostal getBarcode() {
+        return this.barCode;
+    }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
-    public SortingCode getSortingCode() {return this.sortingCode;}
+    public SortingCode getSortingCode() {
+        return this.sortingCode;
+    }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
-    public GenericTypedGrPostal getAddressLatitude() {return this.addressLatitude;}
+    public GenericTypedGrPostal getAddressLatitude() {
+        return this.addressLatitude;
+    }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
-    public GenericTypedGrPostal getAddressLatitudeDirection() {return this.addressLatitudeDirection;}
+    public GenericTypedGrPostal getAddressLatitudeDirection() {
+        return this.addressLatitudeDirection;
+    }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
-    public GenericTypedGrPostal getAddressLongitude() {return this.addressLongitude;}
+    public GenericTypedGrPostal getAddressLongitude() {
+        return this.addressLongitude;
+    }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
-    public GenericTypedGrPostal getAddressLongitudeDirection() {return this.addressLongitudeDirection;}
+    public GenericTypedGrPostal getAddressLongitudeDirection() {
+        return this.addressLongitudeDirection;
+    }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
-    public List<GenericTypedGrPostal> getSupplementaryPostalServiceData() {return this.supplementaryPostalServiceData;}
+    public List<GenericTypedGrPostal> getSupplementaryPostalServiceData() {
+        return this.supplementaryPostalServiceData;
+    }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
-    public String getType() {return this.type;}
+    public String getType() {
+        return this.type;
+    }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
     public void setAddressIdentifiers(List<AddressIdentifier> addressIdentifiers) {
         this.addressIdentifiers = addressIdentifiers;
     }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
     public void setEndorsementLineCode(GenericTypedGrPostal endorsementLineCode) {
         this.endorsementLineCode = endorsementLineCode;
     }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
     public void setKeyLineCode(GenericTypedGrPostal keyLineCode) {
         this.keyLineCode = keyLineCode;
     }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
     public void setBarcode(GenericTypedGrPostal barcode) {
         this.barCode = barcode;
     }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
     public void setSortingCode(SortingCode sortingCode) {
         this.sortingCode = sortingCode;
     }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
     public void setAddressLatitude(GenericTypedGrPostal addressLatitude) {
         this.addressLatitude = addressLatitude;
     }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
     public void setAddressLatitudeDirection(GenericTypedGrPostal addressLatitudeDirection) {
         this.addressLatitudeDirection = addressLatitudeDirection;
     }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
     public void setAddressLongitude(GenericTypedGrPostal addressLongitude) {
         this.addressLongitude = addressLongitude;
     }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
     public void setAddressLongitudeDirection(GenericTypedGrPostal addressLongitudeDirection) {
         this.addressLongitudeDirection = addressLongitudeDirection;
     }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
     public void setSupplementaryPostalServiceData(List<GenericTypedGrPostal> supplementaryPostalServiceData) {
         this.supplementaryPostalServiceData = supplementaryPostalServiceData;
     }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
     public void setType(String type) {
         this.type = type;
     }
-
 }

@@ -36,12 +36,12 @@ public interface PostalRouteNumber {
      *
      * @return
      */
-    public String getContent();
+    String getContent();
 
     /**
      * 
      * @return
      */
-    public GrPostal getGrPostal();
+    GrPostal getGrPostal();
 
 }

@@ -85,7 +85,7 @@ public class IconStyleTest {
     }
 
     @Test
-    public void iconStyleReadTest() throws IOException, XMLStreamException, URISyntaxException {
+    public void iconStyleReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));

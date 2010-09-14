@@ -79,7 +79,7 @@ public class DeleteTest {
     }
 
     @Test
-    public void deleteReadTest() throws IOException, XMLStreamException {
+    public void deleteReadTest() throws IOException, XMLStreamException, KmlException, URISyntaxException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));

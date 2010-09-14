@@ -171,10 +171,13 @@ public class DefaultXalFactory implements XalFactory {
      */
     @Override
     public AddressDetails createAddressDetails(PostalServiceElements postalServiceElements,
-            Object localisation, String addressType, String currentStatus, String validFromDate,
-            String validToDate, String usage, GrPostal grPostal, String AddressDetailsKey) throws XalException {
+            Object localisation, String addressType, String currentStatus, 
+            String validFromDate, String validToDate, String usage,
+            GrPostal grPostal, String AddressDetailsKey)
+            throws XalException {
         return new DefaultAddressDetails(postalServiceElements, localisation,
-                addressType, currentStatus, validFromDate, validToDate, usage, grPostal, AddressDetailsKey);
+                addressType, currentStatus, validFromDate, validToDate,
+                usage, grPostal, AddressDetailsKey);
     }
 
     /**
@@ -209,7 +212,8 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
-    public GenericTypedGrPostal createGenericTypedGrPostal(String type, GrPostal grPostal, String Content) {
+    public GenericTypedGrPostal createGenericTypedGrPostal(
+            String type, GrPostal grPostal, String Content) {
         return new DefaultGenericTypedGrPostal(type, grPostal, Content);
     }
 
@@ -237,8 +241,9 @@ public class DefaultXalFactory implements XalFactory {
      */
     @Override
     public PostalServiceElements createPostalServiceElements(List<AddressIdentifier> addressIdentifiers,
-            GenericTypedGrPostal endorsementLineCode, GenericTypedGrPostal keyLineCode, GenericTypedGrPostal barCode,
-            SortingCode sortingCode, GenericTypedGrPostal addressLatitude, GenericTypedGrPostal addressLatitudeDirection,
+            GenericTypedGrPostal endorsementLineCode, GenericTypedGrPostal keyLineCode, 
+            GenericTypedGrPostal barCode, SortingCode sortingCode,
+            GenericTypedGrPostal addressLatitude, GenericTypedGrPostal addressLatitudeDirection,
             GenericTypedGrPostal addressLongitude, GenericTypedGrPostal addressLongitudeDirection,
             List<GenericTypedGrPostal> supplementaryPostalServiceData, String type) {
         return new DefaultPostalServiceElements(addressIdentifiers,endorsementLineCode,
@@ -289,8 +294,10 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
-    public Country createCountry(List<GenericTypedGrPostal> addressLines, List<CountryNameCode> countryNameCodes,
-            List<GenericTypedGrPostal> countryNames, Object localisation) throws XalException {
+    public Country createCountry(List<GenericTypedGrPostal> addressLines,
+            List<CountryNameCode> countryNameCodes,
+            List<GenericTypedGrPostal> countryNames, Object localisation)
+            throws XalException {
         return new DefaultCountry(addressLines, countryNameCodes, countryNames, localisation);
     }
 
@@ -328,7 +335,8 @@ public class DefaultXalFactory implements XalFactory {
     @Override
     public AdministrativeArea createAdministrativeArea(List<GenericTypedGrPostal> addressLines, 
             List<GenericTypedGrPostal> administrativeAreaNames, SubAdministrativeArea subAdministrativeArea,
-            Object localisation, String type, String usageType, String indicator) throws XalException {
+            Object localisation, String type, String usageType, String indicator)
+            throws XalException {
         return new DefaultAdministrativeArea(addressLines, administrativeAreaNames,
                 subAdministrativeArea, localisation, type, usageType, indicator);
     }
@@ -349,8 +357,10 @@ public class DefaultXalFactory implements XalFactory {
     @Override
     public SubAdministrativeArea createSubAdministrativeArea(List<GenericTypedGrPostal> addressLines,
             List<GenericTypedGrPostal> subAdministrativeAreaNames,
-            Object localisation, String type, String usageType, String indicator) throws XalException {
-        return new DefaultSubAdministrativeArea(addressLines, subAdministrativeAreaNames, localisation, type, usageType, indicator);
+            Object localisation, String type, String usageType, String indicator)
+            throws XalException {
+        return new DefaultSubAdministrativeArea(addressLines,
+                subAdministrativeAreaNames, localisation, type, usageType, indicator);
     }
 
     /**
@@ -371,7 +381,8 @@ public class DefaultXalFactory implements XalFactory {
             List<GenericTypedGrPostal> localityNames, Object postal,
             Thoroughfare thoroughfare, Premise premise,
             DependentLocality dependentLocality, PostalCode postalCode,
-            String type, String usageType, String indicator) throws XalException {
+            String type, String usageType, String indicator)
+            throws XalException {
         return new DefaultLocality(addressLines, localityNames,
                 postal, thoroughfare, premise, dependentLocality,
                 postalCode, type, usageType, indicator);
@@ -438,7 +449,8 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
-    public PostBoxNumberExtension createPostBoxNumberExtension(String numberExtensionSeparator, String content) {
+    public PostBoxNumberExtension createPostBoxNumberExtension(
+            String numberExtensionSeparator, String content) {
         return new DefaultPostBoxNumberExtension(numberExtensionSeparator, content);
     }
 
@@ -491,7 +503,8 @@ public class DefaultXalFactory implements XalFactory {
      */
     @Override
     public Department createDepartment(List<GenericTypedGrPostal> addressLines,
-            List<GenericTypedGrPostal> departmentNames, MailStop mailStop, PostalCode postalCode, String type) {
+            List<GenericTypedGrPostal> departmentNames, MailStop mailStop,
+            PostalCode postalCode, String type) {
         return new DefaultDepartment(addressLines, departmentNames, mailStop, postalCode, type);
     }
 
@@ -528,7 +541,8 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
-    public MailStopNumber createMailStopNumber(String nameNumberSeparator, GrPostal grPostal, String content) {
+    public MailStopNumber createMailStopNumber(String nameNumberSeparator,
+            GrPostal grPostal, String content) {
         return new DefaultMailStopNumber(nameNumberSeparator, grPostal, content);
     }
 
@@ -547,9 +561,11 @@ public class DefaultXalFactory implements XalFactory {
      */
     @Override
     public PostalCode createPostalCode(List<GenericTypedGrPostal> addressLines,
-            List<GenericTypedGrPostal> postalCodeNumbers, List<PostalCodeNumberExtension> postalCodeNumberExtensions,
+            List<GenericTypedGrPostal> postalCodeNumbers,
+            List<PostalCodeNumberExtension> postalCodeNumberExtensions,
             PostTown postTown, String type) {
-        return new DefaultPostalCode(addressLines, postalCodeNumbers, postalCodeNumberExtensions, postTown, type);
+        return new DefaultPostalCode(addressLines, postalCodeNumbers,
+                postalCodeNumberExtensions, postTown, type);
     }
 
     /**
@@ -566,8 +582,8 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
-    public PostalCodeNumberExtension createPostalCodeNumberExtension(String type, String numberExtensionSeparator,
-            GrPostal grPostal, String content) {
+    public PostalCodeNumberExtension createPostalCodeNumberExtension(String type, 
+            String numberExtensionSeparator, GrPostal grPostal, String content) {
         return new DefaultPostalCodeNumberExtension(type, numberExtensionSeparator, grPostal, content);
     }
 
@@ -613,7 +629,8 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
-    public LargeMailUserIdentifier createLargeMailUserIdentifier(String type, String indicator, GrPostal grPostal, String content) {
+    public LargeMailUserIdentifier createLargeMailUserIdentifier(
+            String type, String indicator, GrPostal grPostal, String content) {
         return new DefaultLargeMailUserIdentifier(type, indicator, grPostal, content);
     }
 
@@ -704,7 +721,8 @@ public class DefaultXalFactory implements XalFactory {
     @Override
     public PostalRoute createPostalRoute(List<GenericTypedGrPostal> addressLines,
             Object localisation,
-            PostBox postBox, String type) throws XalException {
+            PostBox postBox, String type)
+            throws XalException {
         return new DefaultPostalRoute(addressLines, localisation, postBox, type);
     }
 
@@ -724,7 +742,8 @@ public class DefaultXalFactory implements XalFactory {
     @Override
     public PostOffice createPostOffice(List<GenericTypedGrPostal> addressLines,
             Object localisation, PostalRoute postalRoute, PostBox postBox,
-            PostalCode postalCode, String type, String indicator) throws XalException {
+            PostalCode postalCode, String type, String indicator)
+            throws XalException {
         return new DefaultPostOffice(addressLines, localisation, postalRoute,
                 postBox, postalCode, type, indicator);
     }
@@ -806,15 +825,15 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
-    public Premise createPremise(List<GenericTypedGrPostal> addressLines, List<PremiseName> premiseNames,
-            Object location,
+    public Premise createPremise(List<GenericTypedGrPostal> addressLines,
+            List<PremiseName> premiseNames, Object location,
             List<PremiseNumberPrefix> premiseNumberPrefixes,
             List<PremiseNumberSuffix> premiseNumberSuffixes,
-            List<BuildingName> buildingNames,
-            Object sub,
+            List<BuildingName> buildingNames, Object sub,
             MailStop mailStop, PostalCode postalCode, Premise premise,
             String type, String premiseDependency, String premiseDependencyType,
-            String premiseThoroughfareConnector) throws XalException{
+            String premiseThoroughfareConnector)
+            throws XalException{
         return new DefaultPremise(addressLines, premiseNames, location,
                 premiseNumberPrefixes, premiseNumberSuffixes, buildingNames,
                 sub, mailStop, postalCode, premise,
@@ -891,10 +910,11 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
-    public PremiseNumber createPremiseNumber(SingleRangeEnum numberType, String type, String indicator,
-            AfterBeforeEnum indicatorOccurrence, AfterBeforeEnum numberTypeOccurrence,
-            GrPostal grPostal, String content){
-        return new DefaultPremiseNumber(numberType, type, indicator, indicatorOccurrence, numberTypeOccurrence, grPostal, content);
+    public PremiseNumber createPremiseNumber(SingleRangeEnum numberType, String type, 
+            String indicator, AfterBeforeEnum indicatorOccurrence,
+            AfterBeforeEnum numberTypeOccurrence, GrPostal grPostal, String content){
+        return new DefaultPremiseNumber(numberType, type, indicator,
+                indicatorOccurrence, numberTypeOccurrence, grPostal, content);
     }
 
     /**
@@ -1079,7 +1099,8 @@ public class DefaultXalFactory implements XalFactory {
             List<SubPremiseNumberPrefix> subPremiseNumberPrefixes,
             List<SubPremiseNumberSuffix> subPremiseNumberSuffixes,
             List<BuildingName> buildingNames, Firm firm, MailStop mailStop,
-            PostalCode postalCode, SubPremise subPremise, String type) throws XalException {
+            PostalCode postalCode, SubPremise subPremise, String type)
+            throws XalException {
         return new DefaultSubPremise(addressLines, subPremiseNames, location,
                 subPremiseNumberPrefixes, subPremiseNumberSuffixes,
                 buildingNames, firm, mailStop, postalCode, subPremise, type);
@@ -1107,7 +1128,8 @@ public class DefaultXalFactory implements XalFactory {
             GenericTypedGrPostal thoroughfarPostDirection, DependentThoroughfare dependentThoroughfare,
             Object location, String type, DependentThoroughfares dependentThoroughfares,
             String dependentThoroughfaresIndicator, String dependentThoroughfaresConnector,
-            String dependentThoroughfaresType) throws XalException {
+            String dependentThoroughfaresType)
+            throws XalException {
         return new DefaultThoroughfare(addressLines, thoroughfareNumbers,
                 thoroughfareNumberPrefixes, thoroughfareNumberSuffixes,
                 thoroughfarePreDirection, thoroughfareLeadingType,
@@ -1175,7 +1197,9 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
-    public ThoroughfareNumberFrom createThoroughfareNumberFrom(List<Object> content, GrPostal grPostal) throws XalException {
+    public ThoroughfareNumberFrom createThoroughfareNumberFrom(
+            List<Object> content, GrPostal grPostal)
+            throws XalException {
         return new DefaultThoroughfareNumberFrom(content, grPostal);
     }
 
@@ -1184,7 +1208,8 @@ public class DefaultXalFactory implements XalFactory {
      * @{@inheritDoc }
      */
     @Override
-    public ThoroughfareNumberTo createThoroughfareNumberTo(List<Object> content, GrPostal grPostal) throws XalException {
+    public ThoroughfareNumberTo createThoroughfareNumberTo(List<Object> content, GrPostal grPostal)
+            throws XalException {
         return new DefaultThoroughfareNumberTo(content, grPostal);
     }
 
@@ -1239,7 +1264,6 @@ public class DefaultXalFactory implements XalFactory {
                 thoroughfareLeadingType, thoroughfareNames, thoroughfareTrailingType,
                 thoroughfarePostDirection, type);
     }
-
 
     /**
      *

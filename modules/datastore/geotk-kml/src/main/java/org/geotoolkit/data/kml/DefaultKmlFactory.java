@@ -480,32 +480,52 @@ public class DefaultKmlFactory implements KmlFactory{
             extensions.complexes(Extensions.Names.DOCUMENT).addAll(documentObjectExtensions);
         }
 
-        properties.add(FF.createAttribute(idAttributes, KmlModelConstants.ATT_ID_ATTRIBUTES, null));
-        properties.add(FF.createAttribute(name, KmlModelConstants.ATT_NAME,null));
-        properties.add(FF.createAttribute(visibility, KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(open, KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(author, KmlModelConstants.ATT_AUTHOR, null));
-        properties.add(FF.createAttribute(link, KmlModelConstants.ATT_LINK, null));
-        properties.add(FF.createAttribute(address, KmlModelConstants.ATT_ADDRESS, null));
-        properties.add(FF.createAttribute(addressDetails, KmlModelConstants.ATT_ADDRESS_DETAILS, null));
-        properties.add(FF.createAttribute(phoneNumber, KmlModelConstants.ATT_PHONE_NUMBER, null));
-        properties.add(FF.createAttribute(snippet, KmlModelConstants.ATT_SNIPPET, null));
-        properties.add(FF.createAttribute(description, KmlModelConstants.ATT_DESCRIPTION, null));
-        properties.add(FF.createAttribute(view, KmlModelConstants.ATT_VIEW, null));
-        properties.add(FF.createAttribute(timePrimitive, KmlModelConstants.ATT_TIME_PRIMITIVE, null));
-        properties.add(FF.createAttribute(styleUrl, KmlModelConstants.ATT_STYLE_URL, null));
+        properties.add(FF.createAttribute(idAttributes,
+                KmlModelConstants.ATT_ID_ATTRIBUTES, null));
+        properties.add(FF.createAttribute(name,
+                KmlModelConstants.ATT_NAME,null));
+        properties.add(FF.createAttribute(visibility,
+                KmlModelConstants.ATT_VISIBILITY, null));
+        properties.add(FF.createAttribute(open,
+                KmlModelConstants.ATT_OPEN, null));
+        properties.add(FF.createAttribute(author,
+                KmlModelConstants.ATT_AUTHOR, null));
+        properties.add(FF.createAttribute(link,
+                KmlModelConstants.ATT_LINK, null));
+        properties.add(FF.createAttribute(address,
+                KmlModelConstants.ATT_ADDRESS, null));
+        properties.add(FF.createAttribute(addressDetails,
+                KmlModelConstants.ATT_ADDRESS_DETAILS, null));
+        properties.add(FF.createAttribute(phoneNumber,
+                KmlModelConstants.ATT_PHONE_NUMBER, null));
+        properties.add(FF.createAttribute(snippet,
+                KmlModelConstants.ATT_SNIPPET, null));
+        properties.add(FF.createAttribute(description,
+                KmlModelConstants.ATT_DESCRIPTION, null));
+        properties.add(FF.createAttribute(view,
+                KmlModelConstants.ATT_VIEW, null));
+        properties.add(FF.createAttribute(timePrimitive,
+                KmlModelConstants.ATT_TIME_PRIMITIVE, null));
+        properties.add(FF.createAttribute(styleUrl,
+                KmlModelConstants.ATT_STYLE_URL, null));
         for (AbstractStyleSelector ass : styleSelector) {
-            properties.add(FF.createAttribute(ass, KmlModelConstants.ATT_STYLE_SELECTOR, null));
+            properties.add(FF.createAttribute(ass,
+                    KmlModelConstants.ATT_STYLE_SELECTOR, null));
         }
-        properties.add(FF.createAttribute(region, KmlModelConstants.ATT_REGION, null));
-        properties.add(FF.createAttribute(extendedData, KmlModelConstants.ATT_EXTENDED_DATA, null));
+        properties.add(FF.createAttribute(region,
+                KmlModelConstants.ATT_REGION, null));
+        properties.add(FF.createAttribute(extendedData,
+                KmlModelConstants.ATT_EXTENDED_DATA, null));
         for (Schema schema : schemas) {
-            properties.add(FF.createAttribute(schema, KmlModelConstants.ATT_DOCUMENT_SCHEMAS, null));
+            properties.add(FF.createAttribute(schema,
+                    KmlModelConstants.ATT_DOCUMENT_SCHEMAS, null));
         }
         for (Feature feature : features){
-            properties.add(FF.createAttribute(feature, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+            properties.add(FF.createAttribute(feature,
+                    KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
         }
-        properties.add(FF.createAttribute(extensions, KmlModelConstants.ATT_EXTENSIONS, null));
+        properties.add(FF.createAttribute(extensions,
+                KmlModelConstants.ATT_EXTENSIONS, null));
 
         return FF.createFeature(
                 properties, KmlModelConstants.TYPE_DOCUMENT,"document");
@@ -519,9 +539,12 @@ public class DefaultKmlFactory implements KmlFactory{
     public Feature createDocument() {
         List<Property> properties = new ArrayList<Property>();
 
-        properties.add(FF.createAttribute(KmlConstants.DEF_VISIBILITY, KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_OPEN, KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(new Extensions(), KmlModelConstants.ATT_EXTENSIONS, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_VISIBILITY,
+                KmlModelConstants.ATT_VISIBILITY, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_OPEN,
+                KmlModelConstants.ATT_OPEN, null));
+        properties.add(FF.createAttribute(new Extensions(),
+                KmlModelConstants.ATT_EXTENSIONS, null));
 
         return FF.createFeature(
                 properties, KmlModelConstants.TYPE_DOCUMENT,"document");
@@ -595,29 +618,48 @@ public class DefaultKmlFactory implements KmlFactory{
             extensions.complexes(Extensions.Names.FOLDER).addAll(folderObjectExtensions);
         }
 
-        properties.add(FF.createAttribute(idAttributes, KmlModelConstants.ATT_ID_ATTRIBUTES, null));
-        properties.add(FF.createAttribute(name, KmlModelConstants.ATT_NAME, null));
-        properties.add(FF.createAttribute(visibility, KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(open, KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(author, KmlModelConstants.ATT_AUTHOR, null));
-        properties.add(FF.createAttribute(link, KmlModelConstants.ATT_LINK, null));
-        properties.add(FF.createAttribute(address, KmlModelConstants.ATT_ADDRESS, null));
-        properties.add(FF.createAttribute(addressDetails, KmlModelConstants.ATT_ADDRESS_DETAILS, null));
-        properties.add(FF.createAttribute(phoneNumber, KmlModelConstants.ATT_PHONE_NUMBER, null));
-        properties.add(FF.createAttribute(snippet, KmlModelConstants.ATT_SNIPPET, null));
-        properties.add(FF.createAttribute(description, KmlModelConstants.ATT_DESCRIPTION, null));
-        properties.add(FF.createAttribute(view, KmlModelConstants.ATT_VIEW, null));
-        properties.add(FF.createAttribute(timePrimitive, KmlModelConstants.ATT_TIME_PRIMITIVE, null));
-        properties.add(FF.createAttribute(styleUrl, KmlModelConstants.ATT_STYLE_URL, null));
+        properties.add(FF.createAttribute(idAttributes,
+                KmlModelConstants.ATT_ID_ATTRIBUTES, null));
+        properties.add(FF.createAttribute(name,
+                KmlModelConstants.ATT_NAME, null));
+        properties.add(FF.createAttribute(visibility,
+                KmlModelConstants.ATT_VISIBILITY, null));
+        properties.add(FF.createAttribute(open,
+                KmlModelConstants.ATT_OPEN, null));
+        properties.add(FF.createAttribute(author,
+                KmlModelConstants.ATT_AUTHOR, null));
+        properties.add(FF.createAttribute(link,
+                KmlModelConstants.ATT_LINK, null));
+        properties.add(FF.createAttribute(address,
+                KmlModelConstants.ATT_ADDRESS, null));
+        properties.add(FF.createAttribute(addressDetails,
+                KmlModelConstants.ATT_ADDRESS_DETAILS, null));
+        properties.add(FF.createAttribute(phoneNumber,
+                KmlModelConstants.ATT_PHONE_NUMBER, null));
+        properties.add(FF.createAttribute(snippet,
+                KmlModelConstants.ATT_SNIPPET, null));
+        properties.add(FF.createAttribute(description,
+                KmlModelConstants.ATT_DESCRIPTION, null));
+        properties.add(FF.createAttribute(view,
+                KmlModelConstants.ATT_VIEW, null));
+        properties.add(FF.createAttribute(timePrimitive,
+                KmlModelConstants.ATT_TIME_PRIMITIVE, null));
+        properties.add(FF.createAttribute(styleUrl,
+                KmlModelConstants.ATT_STYLE_URL, null));
         for (AbstractStyleSelector ass : styleSelector){
-            properties.add(FF.createAttribute(ass, KmlModelConstants.ATT_STYLE_SELECTOR, null));
+            properties.add(FF.createAttribute(ass,
+                    KmlModelConstants.ATT_STYLE_SELECTOR, null));
         }
-        properties.add(FF.createAttribute(region, KmlModelConstants.ATT_REGION, null));
-        properties.add(FF.createAttribute(extendedData, KmlModelConstants.ATT_EXTENDED_DATA, null));
+        properties.add(FF.createAttribute(region,
+                KmlModelConstants.ATT_REGION, null));
+        properties.add(FF.createAttribute(extendedData,
+                KmlModelConstants.ATT_EXTENDED_DATA, null));
         for (Feature feature : features){
-            properties.add(FF.createAttribute(feature, KmlModelConstants.ATT_FOLDER_FEATURES, null));
+            properties.add(FF.createAttribute(feature,
+                    KmlModelConstants.ATT_FOLDER_FEATURES, null));
         }
-        properties.add(FF.createAttribute(extensions, KmlModelConstants.ATT_EXTENSIONS, null));
+        properties.add(FF.createAttribute(extensions,
+                KmlModelConstants.ATT_EXTENSIONS, null));
 
         return FF.createFeature(
                 properties, KmlModelConstants.TYPE_FOLDER, "Folder");
@@ -631,9 +673,12 @@ public class DefaultKmlFactory implements KmlFactory{
     public Feature createFolder() {
         List<Property> properties = new ArrayList<Property>();
 
-        properties.add(FF.createAttribute(KmlConstants.DEF_VISIBILITY, KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_OPEN, KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(new Extensions(), KmlModelConstants.ATT_EXTENSIONS, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_VISIBILITY,
+                KmlModelConstants.ATT_VISIBILITY, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_OPEN,
+                KmlModelConstants.ATT_OPEN, null));
+        properties.add(FF.createAttribute(new Extensions(),
+                KmlModelConstants.ATT_EXTENSIONS, null));
 
         return FF.createFeature(
                 properties, KmlModelConstants.TYPE_FOLDER, "Folder");
@@ -689,32 +734,56 @@ public class DefaultKmlFactory implements KmlFactory{
             extensions.complexes(Extensions.Names.GROUND_OVERLAY).addAll(groundOverlayObjectExtensions);
         }
 
-        properties.add(FF.createAttribute(idAttributes, KmlModelConstants.ATT_ID_ATTRIBUTES, null));
-        properties.add(FF.createAttribute(name, KmlModelConstants.ATT_NAME, null));
-        properties.add(FF.createAttribute(visibility, KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(open, KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(author, KmlModelConstants.ATT_AUTHOR, null));
-        properties.add(FF.createAttribute(link, KmlModelConstants.ATT_LINK, null));
-        properties.add(FF.createAttribute(address, KmlModelConstants.ATT_ADDRESS, null));
-        properties.add(FF.createAttribute(addressDetails, KmlModelConstants.ATT_ADDRESS_DETAILS, null));
-        properties.add(FF.createAttribute(phoneNumber, KmlModelConstants.ATT_PHONE_NUMBER, null));
-        properties.add(FF.createAttribute(snippet, KmlModelConstants.ATT_SNIPPET, null));
-        properties.add(FF.createAttribute(description, KmlModelConstants.ATT_DESCRIPTION, null));
-        properties.add(FF.createAttribute(view, KmlModelConstants.ATT_VIEW, null));
-        properties.add(FF.createAttribute(timePrimitive, KmlModelConstants.ATT_TIME_PRIMITIVE, null));
-        properties.add(FF.createAttribute(styleUrl, KmlModelConstants.ATT_STYLE_URL, null));
+        properties.add(FF.createAttribute(idAttributes,
+                KmlModelConstants.ATT_ID_ATTRIBUTES, null));
+        properties.add(FF.createAttribute(name,
+                KmlModelConstants.ATT_NAME, null));
+        properties.add(FF.createAttribute(visibility,
+                KmlModelConstants.ATT_VISIBILITY, null));
+        properties.add(FF.createAttribute(open,
+                KmlModelConstants.ATT_OPEN, null));
+        properties.add(FF.createAttribute(author,
+                KmlModelConstants.ATT_AUTHOR, null));
+        properties.add(FF.createAttribute(link,
+                KmlModelConstants.ATT_LINK, null));
+        properties.add(FF.createAttribute(address,
+                KmlModelConstants.ATT_ADDRESS, null));
+        properties.add(FF.createAttribute(addressDetails,
+                KmlModelConstants.ATT_ADDRESS_DETAILS, null));
+        properties.add(FF.createAttribute(phoneNumber,
+                KmlModelConstants.ATT_PHONE_NUMBER, null));
+        properties.add(FF.createAttribute(snippet,
+                KmlModelConstants.ATT_SNIPPET, null));
+        properties.add(FF.createAttribute(description,
+                KmlModelConstants.ATT_DESCRIPTION, null));
+        properties.add(FF.createAttribute(view,
+                KmlModelConstants.ATT_VIEW, null));
+        properties.add(FF.createAttribute(timePrimitive,
+                KmlModelConstants.ATT_TIME_PRIMITIVE, null));
+        properties.add(FF.createAttribute(styleUrl,
+                KmlModelConstants.ATT_STYLE_URL, null));
         for (AbstractStyleSelector ass : styleSelector){
-            properties.add(FF.createAttribute(ass, KmlModelConstants.ATT_STYLE_SELECTOR, null));
+            properties.add(FF.createAttribute(ass,
+                    KmlModelConstants.ATT_STYLE_SELECTOR, null));
         }
-        properties.add(FF.createAttribute(region, KmlModelConstants.ATT_REGION, null));
-        properties.add(FF.createAttribute(extendedData, KmlModelConstants.ATT_EXTENDED_DATA, null));
-        properties.add(FF.createAttribute(color, KmlModelConstants.ATT_OVERLAY_COLOR, null));
-        properties.add(FF.createAttribute(drawOrder, KmlModelConstants.ATT_OVERLAY_DRAW_ORDER, null));
-        properties.add(FF.createAttribute(icon, KmlModelConstants.ATT_OVERLAY_ICON, null));
-        properties.add(FF.createAttribute(altitude, KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE, null));
-        properties.add(FF.createAttribute(altitudeMode, KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE_MODE, null));
-        properties.add(FF.createAttribute(latLonBox, KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX, null));
-        properties.add(FF.createAttribute(extensions, KmlModelConstants.ATT_EXTENSIONS, null));
+        properties.add(FF.createAttribute(region,
+                KmlModelConstants.ATT_REGION, null));
+        properties.add(FF.createAttribute(extendedData,
+                KmlModelConstants.ATT_EXTENDED_DATA, null));
+        properties.add(FF.createAttribute(color,
+                KmlModelConstants.ATT_OVERLAY_COLOR, null));
+        properties.add(FF.createAttribute(drawOrder,
+                KmlModelConstants.ATT_OVERLAY_DRAW_ORDER, null));
+        properties.add(FF.createAttribute(icon,
+                KmlModelConstants.ATT_OVERLAY_ICON, null));
+        properties.add(FF.createAttribute(altitude,
+                KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE, null));
+        properties.add(FF.createAttribute(altitudeMode,
+                KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE_MODE, null));
+        properties.add(FF.createAttribute(latLonBox,
+                KmlModelConstants.ATT_GROUND_OVERLAY_LAT_LON_BOX, null));
+        properties.add(FF.createAttribute(extensions,
+                KmlModelConstants.ATT_EXTENSIONS, null));
 
         return FF.createFeature(
                 properties, KmlModelConstants.TYPE_GROUND_OVERLAY, "GroundOverlay");
@@ -728,13 +797,20 @@ public class DefaultKmlFactory implements KmlFactory{
     public Feature createGroundOverlay() {
         List<Property> properties = new ArrayList<Property>();
 
-        properties.add(FF.createAttribute(KmlConstants.DEF_VISIBILITY, KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_OPEN, KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_COLOR, KmlModelConstants.ATT_OVERLAY_COLOR, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_DRAW_ORDER, KmlModelConstants.ATT_OVERLAY_DRAW_ORDER, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_ALTITUDE, KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_ALTITUDE_MODE, KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE_MODE, null));
-        properties.add(FF.createAttribute(new Extensions(), KmlModelConstants.ATT_EXTENSIONS, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_VISIBILITY,
+                KmlModelConstants.ATT_VISIBILITY, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_OPEN,
+                KmlModelConstants.ATT_OPEN, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_COLOR,
+                KmlModelConstants.ATT_OVERLAY_COLOR, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_DRAW_ORDER,
+                KmlModelConstants.ATT_OVERLAY_DRAW_ORDER, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_ALTITUDE,
+                KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_ALTITUDE_MODE,
+                KmlModelConstants.ATT_GROUND_OVERLAY_ALTITUDE_MODE, null));
+        properties.add(FF.createAttribute(new Extensions(),
+                KmlModelConstants.ATT_EXTENSIONS, null));
 
         return FF.createFeature(
                 properties, KmlModelConstants.TYPE_GROUND_OVERLAY, "GroundOverlay");
@@ -1285,29 +1361,50 @@ public class DefaultKmlFactory implements KmlFactory{
         if (networkLinkObjectExtensions != null) {
             extensions.complexes(Extensions.Names.NETWORK_LINK).addAll(networkLinkObjectExtensions);
         }
-        properties.add(FF.createAttribute(idAttributes, KmlModelConstants.ATT_ID_ATTRIBUTES, null));
-        properties.add(FF.createAttribute(name, KmlModelConstants.ATT_NAME, null));
-        properties.add(FF.createAttribute(visibility, KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(open, KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(author, KmlModelConstants.ATT_AUTHOR, null));
-        properties.add(FF.createAttribute(link, KmlModelConstants.ATT_LINK, null));
-        properties.add(FF.createAttribute(address, KmlModelConstants.ATT_ADDRESS, null));
-        properties.add(FF.createAttribute(addressDetails, KmlModelConstants.ATT_ADDRESS_DETAILS, null));
-        properties.add(FF.createAttribute(phoneNumber, KmlModelConstants.ATT_PHONE_NUMBER, null));
-        properties.add(FF.createAttribute(snippet, KmlModelConstants.ATT_SNIPPET, null));
-        properties.add(FF.createAttribute(description, KmlModelConstants.ATT_DESCRIPTION, null));
-        properties.add(FF.createAttribute(view, KmlModelConstants.ATT_VIEW, null));
-        properties.add(FF.createAttribute(timePrimitive, KmlModelConstants.ATT_TIME_PRIMITIVE, null));
-        properties.add(FF.createAttribute(styleUrl, KmlModelConstants.ATT_STYLE_URL, null));
+        properties.add(FF.createAttribute(idAttributes,
+                KmlModelConstants.ATT_ID_ATTRIBUTES, null));
+        properties.add(FF.createAttribute(name,
+                KmlModelConstants.ATT_NAME, null));
+        properties.add(FF.createAttribute(visibility,
+                KmlModelConstants.ATT_VISIBILITY, null));
+        properties.add(FF.createAttribute(open,
+                KmlModelConstants.ATT_OPEN, null));
+        properties.add(FF.createAttribute(author,
+                KmlModelConstants.ATT_AUTHOR, null));
+        properties.add(FF.createAttribute(link,
+                KmlModelConstants.ATT_LINK, null));
+        properties.add(FF.createAttribute(address,
+                KmlModelConstants.ATT_ADDRESS, null));
+        properties.add(FF.createAttribute(addressDetails,
+                KmlModelConstants.ATT_ADDRESS_DETAILS, null));
+        properties.add(FF.createAttribute(phoneNumber,
+                KmlModelConstants.ATT_PHONE_NUMBER, null));
+        properties.add(FF.createAttribute(snippet,
+                KmlModelConstants.ATT_SNIPPET, null));
+        properties.add(FF.createAttribute(description,
+                KmlModelConstants.ATT_DESCRIPTION, null));
+        properties.add(FF.createAttribute(view,
+                KmlModelConstants.ATT_VIEW, null));
+        properties.add(FF.createAttribute(timePrimitive,
+                KmlModelConstants.ATT_TIME_PRIMITIVE, null));
+        properties.add(FF.createAttribute(styleUrl,
+                KmlModelConstants.ATT_STYLE_URL, null));
         for (AbstractStyleSelector ass : styleSelector){
-            properties.add(FF.createAttribute(ass, KmlModelConstants.ATT_STYLE_SELECTOR, null));
+            properties.add(FF.createAttribute(ass,
+                    KmlModelConstants.ATT_STYLE_SELECTOR, null));
         }
-        properties.add(FF.createAttribute(region, KmlModelConstants.ATT_REGION, null));
-        properties.add(FF.createAttribute(extendedData, KmlModelConstants.ATT_EXTENDED_DATA, null));
-        properties.add(FF.createAttribute(refreshVisibility, KmlModelConstants.ATT_NETWORK_LINK_REFRESH_VISIBILITY, null));
-        properties.add(FF.createAttribute(flyToView, KmlModelConstants.ATT_NETWORK_LINK_FLY_TO_VIEW, null));
-        properties.add(FF.createAttribute(link, KmlModelConstants.ATT_NETWORK_LINK_LINK, null));
-        properties.add(FF.createAttribute(extensions, KmlModelConstants.ATT_EXTENSIONS, null));
+        properties.add(FF.createAttribute(region,
+                KmlModelConstants.ATT_REGION, null));
+        properties.add(FF.createAttribute(extendedData,
+                KmlModelConstants.ATT_EXTENDED_DATA, null));
+        properties.add(FF.createAttribute(refreshVisibility,
+                KmlModelConstants.ATT_NETWORK_LINK_REFRESH_VISIBILITY, null));
+        properties.add(FF.createAttribute(flyToView,
+                KmlModelConstants.ATT_NETWORK_LINK_FLY_TO_VIEW, null));
+        properties.add(FF.createAttribute(link,
+                KmlModelConstants.ATT_NETWORK_LINK_LINK, null));
+        properties.add(FF.createAttribute(extensions,
+                KmlModelConstants.ATT_EXTENSIONS, null));
 
         return FF.createFeature(
                 properties, KmlModelConstants.TYPE_NETWORK_LINK, "NetworkLink");
@@ -1321,11 +1418,16 @@ public class DefaultKmlFactory implements KmlFactory{
     public Feature createNetworkLink() {
         List<Property> properties = new ArrayList<Property>();
 
-        properties.add(FF.createAttribute(KmlConstants.DEF_VISIBILITY, KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_OPEN, KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_REFRESH_VISIBILITY, KmlModelConstants.ATT_NETWORK_LINK_REFRESH_VISIBILITY, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_FLY_TO_VIEW, KmlModelConstants.ATT_NETWORK_LINK_FLY_TO_VIEW, null));
-        properties.add(FF.createAttribute(new Extensions(), KmlModelConstants.ATT_EXTENSIONS, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_VISIBILITY,
+                KmlModelConstants.ATT_VISIBILITY, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_OPEN,
+                KmlModelConstants.ATT_OPEN, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_REFRESH_VISIBILITY,
+                KmlModelConstants.ATT_NETWORK_LINK_REFRESH_VISIBILITY, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_FLY_TO_VIEW,
+                KmlModelConstants.ATT_NETWORK_LINK_FLY_TO_VIEW, null));
+        properties.add(FF.createAttribute(new Extensions(),
+                KmlModelConstants.ATT_EXTENSIONS, null));
 
         return FF.createFeature(
                 properties, KmlModelConstants.TYPE_NETWORK_LINK, "NetworkLink");
@@ -1455,34 +1557,60 @@ public class DefaultKmlFactory implements KmlFactory{
             extensions.complexes(Extensions.Names.PHOTO_OVERLAY).addAll(photoOverlayObjectExtensions);
         }
 
-        properties.add(FF.createAttribute(idAttributes, KmlModelConstants.ATT_ID_ATTRIBUTES, null));
-        properties.add(FF.createAttribute(name, KmlModelConstants.ATT_NAME, null));
-        properties.add(FF.createAttribute(visibility, KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(open, KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(author, KmlModelConstants.ATT_AUTHOR, null));
-        properties.add(FF.createAttribute(link, KmlModelConstants.ATT_LINK, null));
-        properties.add(FF.createAttribute(address, KmlModelConstants.ATT_ADDRESS, null));
-        properties.add(FF.createAttribute(addressDetails, KmlModelConstants.ATT_ADDRESS_DETAILS, null));
-        properties.add(FF.createAttribute(phoneNumber, KmlModelConstants.ATT_PHONE_NUMBER, null));
-        properties.add(FF.createAttribute(snippet, KmlModelConstants.ATT_SNIPPET, null));
-        properties.add(FF.createAttribute(description, KmlModelConstants.ATT_DESCRIPTION, null));
-        properties.add(FF.createAttribute(view, KmlModelConstants.ATT_VIEW, null));
-        properties.add(FF.createAttribute(timePrimitive, KmlModelConstants.ATT_TIME_PRIMITIVE, null));
-        properties.add(FF.createAttribute(styleUrl, KmlModelConstants.ATT_STYLE_URL, null));
+        properties.add(FF.createAttribute(idAttributes,
+                KmlModelConstants.ATT_ID_ATTRIBUTES, null));
+        properties.add(FF.createAttribute(name,
+                KmlModelConstants.ATT_NAME, null));
+        properties.add(FF.createAttribute(visibility,
+                KmlModelConstants.ATT_VISIBILITY, null));
+        properties.add(FF.createAttribute(open,
+                KmlModelConstants.ATT_OPEN, null));
+        properties.add(FF.createAttribute(author,
+                KmlModelConstants.ATT_AUTHOR, null));
+        properties.add(FF.createAttribute(link,
+                KmlModelConstants.ATT_LINK, null));
+        properties.add(FF.createAttribute(address,
+                KmlModelConstants.ATT_ADDRESS, null));
+        properties.add(FF.createAttribute(addressDetails,
+                KmlModelConstants.ATT_ADDRESS_DETAILS, null));
+        properties.add(FF.createAttribute(phoneNumber,
+                KmlModelConstants.ATT_PHONE_NUMBER, null));
+        properties.add(FF.createAttribute(snippet,
+                KmlModelConstants.ATT_SNIPPET, null));
+        properties.add(FF.createAttribute(description,
+                KmlModelConstants.ATT_DESCRIPTION, null));
+        properties.add(FF.createAttribute(view,
+                KmlModelConstants.ATT_VIEW, null));
+        properties.add(FF.createAttribute(timePrimitive,
+                KmlModelConstants.ATT_TIME_PRIMITIVE, null));
+        properties.add(FF.createAttribute(styleUrl,
+                KmlModelConstants.ATT_STYLE_URL, null));
         for (AbstractStyleSelector ass : styleSelector){
-            properties.add(FF.createAttribute(ass, KmlModelConstants.ATT_STYLE_SELECTOR, null));
+            properties.add(FF.createAttribute(ass,
+                    KmlModelConstants.ATT_STYLE_SELECTOR, null));
         }
-        properties.add(FF.createAttribute(region, KmlModelConstants.ATT_REGION, null));
-        properties.add(FF.createAttribute(extendedData, KmlModelConstants.ATT_EXTENDED_DATA, null));
-        properties.add(FF.createAttribute(color, KmlModelConstants.ATT_OVERLAY_COLOR, null));
-        properties.add(FF.createAttribute(drawOrder, KmlModelConstants.ATT_OVERLAY_DRAW_ORDER, null));
-        properties.add(FF.createAttribute(icon, KmlModelConstants.ATT_OVERLAY_ICON, null));
-        properties.add(FF.createAttribute(rotation, KmlModelConstants.ATT_PHOTO_OVERLAY_ROTATION, null));
-        properties.add(FF.createAttribute(viewVolume, KmlModelConstants.ATT_PHOTO_OVERLAY_VIEW_VOLUME, null));
-        properties.add(FF.createAttribute(imagePyramid, KmlModelConstants.ATT_PHOTO_OVERLAY_IMAGE_PYRAMID, null));
-        properties.add(FF.createAttribute(point, KmlModelConstants.ATT_PHOTO_OVERLAY_POINT, null));
-        properties.add(FF.createAttribute(shape, KmlModelConstants.ATT_PHOTO_OVERLAY_SHAPE, null));
-        properties.add(FF.createAttribute(extensions, KmlModelConstants.ATT_EXTENSIONS, null));
+        properties.add(FF.createAttribute(region,
+                KmlModelConstants.ATT_REGION, null));
+        properties.add(FF.createAttribute(extendedData,
+                KmlModelConstants.ATT_EXTENDED_DATA, null));
+        properties.add(FF.createAttribute(color,
+                KmlModelConstants.ATT_OVERLAY_COLOR, null));
+        properties.add(FF.createAttribute(drawOrder,
+                KmlModelConstants.ATT_OVERLAY_DRAW_ORDER, null));
+        properties.add(FF.createAttribute(icon,
+                KmlModelConstants.ATT_OVERLAY_ICON, null));
+        properties.add(FF.createAttribute(rotation,
+                KmlModelConstants.ATT_PHOTO_OVERLAY_ROTATION, null));
+        properties.add(FF.createAttribute(viewVolume,
+                KmlModelConstants.ATT_PHOTO_OVERLAY_VIEW_VOLUME, null));
+        properties.add(FF.createAttribute(imagePyramid,
+                KmlModelConstants.ATT_PHOTO_OVERLAY_IMAGE_PYRAMID, null));
+        properties.add(FF.createAttribute(point,
+                KmlModelConstants.ATT_PHOTO_OVERLAY_POINT, null));
+        properties.add(FF.createAttribute(shape,
+                KmlModelConstants.ATT_PHOTO_OVERLAY_SHAPE, null));
+        properties.add(FF.createAttribute(extensions,
+                KmlModelConstants.ATT_EXTENSIONS, null));
 
         return FF.createFeature(
                 properties, KmlModelConstants.TYPE_PHOTO_OVERLAY, "PhotoOverlay");
@@ -1496,12 +1624,18 @@ public class DefaultKmlFactory implements KmlFactory{
     public Feature createPhotoOverlay() {
         List<Property> properties = new ArrayList<Property>();
 
-        properties.add(FF.createAttribute(KmlConstants.DEF_VISIBILITY, KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_OPEN, KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_COLOR, KmlModelConstants.ATT_OVERLAY_COLOR, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_DRAW_ORDER, KmlModelConstants.ATT_OVERLAY_DRAW_ORDER, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_ROTATION, KmlModelConstants.ATT_PHOTO_OVERLAY_ROTATION, null));
-        properties.add(FF.createAttribute(new Extensions(), KmlModelConstants.ATT_EXTENSIONS, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_VISIBILITY,
+                KmlModelConstants.ATT_VISIBILITY, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_OPEN,
+                KmlModelConstants.ATT_OPEN, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_COLOR,
+                KmlModelConstants.ATT_OVERLAY_COLOR, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_DRAW_ORDER,
+                KmlModelConstants.ATT_OVERLAY_DRAW_ORDER, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_ROTATION,
+                KmlModelConstants.ATT_PHOTO_OVERLAY_ROTATION, null));
+        properties.add(FF.createAttribute(new Extensions(),
+                KmlModelConstants.ATT_EXTENSIONS, null));
 
         return FF.createFeature(
                 properties, KmlModelConstants.TYPE_PHOTO_OVERLAY, "PhotoOverlay");
@@ -1551,27 +1685,46 @@ public class DefaultKmlFactory implements KmlFactory{
         if (placemarkObjectExtensions != null) {
             extensions.complexes(Extensions.Names.PLACEMARK).addAll(placemarkObjectExtensions);
         }
-        properties.add(FF.createAttribute(idAttributes, KmlModelConstants.ATT_ID_ATTRIBUTES, null));
-        properties.add(FF.createAttribute(name, KmlModelConstants.ATT_NAME, null));
-        properties.add(FF.createAttribute(visibility, KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(open, KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(author, KmlModelConstants.ATT_AUTHOR, null));
-        properties.add(FF.createAttribute(link, KmlModelConstants.ATT_LINK, null));
-        properties.add(FF.createAttribute(address, KmlModelConstants.ATT_ADDRESS, null));
-        properties.add(FF.createAttribute(addressDetails, KmlModelConstants.ATT_ADDRESS_DETAILS, null));
-        properties.add(FF.createAttribute(phoneNumber, KmlModelConstants.ATT_PHONE_NUMBER, null));
-        properties.add(FF.createAttribute(snippet, KmlModelConstants.ATT_SNIPPET, null));
-        properties.add(FF.createAttribute(description, KmlModelConstants.ATT_DESCRIPTION, null));
-        properties.add(FF.createAttribute(view, KmlModelConstants.ATT_VIEW, null));
-        properties.add(FF.createAttribute(timePrimitive, KmlModelConstants.ATT_TIME_PRIMITIVE, null));
-        properties.add(FF.createAttribute(styleUrl, KmlModelConstants.ATT_STYLE_URL, null));
+        properties.add(FF.createAttribute(idAttributes,
+                KmlModelConstants.ATT_ID_ATTRIBUTES, null));
+        properties.add(FF.createAttribute(name,
+                KmlModelConstants.ATT_NAME, null));
+        properties.add(FF.createAttribute(visibility,
+                KmlModelConstants.ATT_VISIBILITY, null));
+        properties.add(FF.createAttribute(open,
+                KmlModelConstants.ATT_OPEN, null));
+        properties.add(FF.createAttribute(author,
+                KmlModelConstants.ATT_AUTHOR, null));
+        properties.add(FF.createAttribute(link,
+                KmlModelConstants.ATT_LINK, null));
+        properties.add(FF.createAttribute(address,
+                KmlModelConstants.ATT_ADDRESS, null));
+        properties.add(FF.createAttribute(addressDetails,
+                KmlModelConstants.ATT_ADDRESS_DETAILS, null));
+        properties.add(FF.createAttribute(phoneNumber,
+                KmlModelConstants.ATT_PHONE_NUMBER, null));
+        properties.add(FF.createAttribute(snippet,
+                KmlModelConstants.ATT_SNIPPET, null));
+        properties.add(FF.createAttribute(description,
+                KmlModelConstants.ATT_DESCRIPTION, null));
+        properties.add(FF.createAttribute(view,
+                KmlModelConstants.ATT_VIEW, null));
+        properties.add(FF.createAttribute(timePrimitive,
+                KmlModelConstants.ATT_TIME_PRIMITIVE, null));
+        properties.add(FF.createAttribute(styleUrl,
+                KmlModelConstants.ATT_STYLE_URL, null));
         for (AbstractStyleSelector ass : styleSelector){
-            properties.add(FF.createAttribute(ass, KmlModelConstants.ATT_STYLE_SELECTOR, null));
+            properties.add(FF.createAttribute(ass,
+                    KmlModelConstants.ATT_STYLE_SELECTOR, null));
         }
-        properties.add(FF.createAttribute(region, KmlModelConstants.ATT_REGION, null));
-        properties.add(FF.createAttribute(extendedData, KmlModelConstants.ATT_EXTENDED_DATA, null));
-        properties.add(FF.createAttribute(abstractGeometry, KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
-        properties.add(FF.createAttribute(extensions, KmlModelConstants.ATT_EXTENSIONS, null));
+        properties.add(FF.createAttribute(region,
+                KmlModelConstants.ATT_REGION, null));
+        properties.add(FF.createAttribute(extendedData,
+                KmlModelConstants.ATT_EXTENDED_DATA, null));
+        properties.add(FF.createAttribute(abstractGeometry,
+                KmlModelConstants.ATT_PLACEMARK_GEOMETRY, null));
+        properties.add(FF.createAttribute(extensions,
+                KmlModelConstants.ATT_EXTENSIONS, null));
 
         return FF.createFeature(
                 properties, KmlModelConstants.TYPE_PLACEMARK, "Placemark");
@@ -1584,9 +1737,12 @@ public class DefaultKmlFactory implements KmlFactory{
     @Override
     public Feature createPlacemark() {
         List<Property> properties = new ArrayList<Property>();
-        properties.add(FF.createAttribute(KmlConstants.DEF_VISIBILITY, KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_OPEN, KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(new Extensions(), KmlModelConstants.ATT_EXTENSIONS, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_VISIBILITY,
+                KmlModelConstants.ATT_VISIBILITY, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_OPEN,
+                KmlModelConstants.ATT_OPEN, null));
+        properties.add(FF.createAttribute(new Extensions(),
+                KmlModelConstants.ATT_EXTENSIONS, null));
 
         return FF.createFeature(
                 properties, KmlModelConstants.TYPE_PLACEMARK, "Placemark");
@@ -1841,34 +1997,60 @@ public class DefaultKmlFactory implements KmlFactory{
             extensions.complexes(Extensions.Names.SCREEN_OVERLAY).addAll(screenOverlayObjectExtensions);
         }
 
-        properties.add(FF.createAttribute(idAttributes, KmlModelConstants.ATT_ID_ATTRIBUTES, null));
-        properties.add(FF.createAttribute(name, KmlModelConstants.ATT_NAME, null));
-        properties.add(FF.createAttribute(visibility, KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(open, KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(author, KmlModelConstants.ATT_AUTHOR, null));
-        properties.add(FF.createAttribute(link, KmlModelConstants.ATT_LINK, null));
-        properties.add(FF.createAttribute(address, KmlModelConstants.ATT_ADDRESS, null));
-        properties.add(FF.createAttribute(addressDetails, KmlModelConstants.ATT_ADDRESS_DETAILS, null));
-        properties.add(FF.createAttribute(phoneNumber, KmlModelConstants.ATT_PHONE_NUMBER, null));
-        properties.add(FF.createAttribute(snippet, KmlModelConstants.ATT_SNIPPET, null));
-        properties.add(FF.createAttribute(description, KmlModelConstants.ATT_DESCRIPTION, null));
-        properties.add(FF.createAttribute(view, KmlModelConstants.ATT_VIEW, null));
-        properties.add(FF.createAttribute(timePrimitive, KmlModelConstants.ATT_TIME_PRIMITIVE, null));
-        properties.add(FF.createAttribute(styleUrl, KmlModelConstants.ATT_STYLE_URL, null));
+        properties.add(FF.createAttribute(idAttributes,
+                KmlModelConstants.ATT_ID_ATTRIBUTES, null));
+        properties.add(FF.createAttribute(name,
+                KmlModelConstants.ATT_NAME, null));
+        properties.add(FF.createAttribute(visibility,
+                KmlModelConstants.ATT_VISIBILITY, null));
+        properties.add(FF.createAttribute(open,
+                KmlModelConstants.ATT_OPEN, null));
+        properties.add(FF.createAttribute(author,
+                KmlModelConstants.ATT_AUTHOR, null));
+        properties.add(FF.createAttribute(link,
+                KmlModelConstants.ATT_LINK, null));
+        properties.add(FF.createAttribute(address,
+                KmlModelConstants.ATT_ADDRESS, null));
+        properties.add(FF.createAttribute(addressDetails,
+                KmlModelConstants.ATT_ADDRESS_DETAILS, null));
+        properties.add(FF.createAttribute(phoneNumber,
+                KmlModelConstants.ATT_PHONE_NUMBER, null));
+        properties.add(FF.createAttribute(snippet,
+                KmlModelConstants.ATT_SNIPPET, null));
+        properties.add(FF.createAttribute(description,
+                KmlModelConstants.ATT_DESCRIPTION, null));
+        properties.add(FF.createAttribute(view,
+                KmlModelConstants.ATT_VIEW, null));
+        properties.add(FF.createAttribute(timePrimitive,
+                KmlModelConstants.ATT_TIME_PRIMITIVE, null));
+        properties.add(FF.createAttribute(styleUrl,
+                KmlModelConstants.ATT_STYLE_URL, null));
         for (AbstractStyleSelector ass : styleSelector){
-            properties.add(FF.createAttribute(ass, KmlModelConstants.ATT_STYLE_SELECTOR, null));
+            properties.add(FF.createAttribute(ass,
+                    KmlModelConstants.ATT_STYLE_SELECTOR, null));
         }
-        properties.add(FF.createAttribute(region, KmlModelConstants.ATT_REGION, null));
-        properties.add(FF.createAttribute(extendedData, KmlModelConstants.ATT_EXTENDED_DATA, null));
-        properties.add(FF.createAttribute(color, KmlModelConstants.ATT_OVERLAY_COLOR, null));
-        properties.add(FF.createAttribute(drawOrder, KmlModelConstants.ATT_OVERLAY_DRAW_ORDER, null));
-        properties.add(FF.createAttribute(icon, KmlModelConstants.ATT_OVERLAY_ICON, null));
-        properties.add(FF.createAttribute(rotation, KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATION, null));
-        properties.add(FF.createAttribute(overlayXY, KmlModelConstants.ATT_SCREEN_OVERLAY_OVERLAYXY, null));
-        properties.add(FF.createAttribute(screenXY, KmlModelConstants.ATT_SCREEN_OVERLAY_SCREENXY, null));
-        properties.add(FF.createAttribute(rotationXY, KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATIONXY, null));
-        properties.add(FF.createAttribute(size, KmlModelConstants.ATT_SCREEN_OVERLAY_SIZE, null));
-        properties.add(FF.createAttribute(extensions, KmlModelConstants.ATT_EXTENSIONS, null));
+        properties.add(FF.createAttribute(region,
+                KmlModelConstants.ATT_REGION, null));
+        properties.add(FF.createAttribute(extendedData,
+                KmlModelConstants.ATT_EXTENDED_DATA, null));
+        properties.add(FF.createAttribute(color,
+                KmlModelConstants.ATT_OVERLAY_COLOR, null));
+        properties.add(FF.createAttribute(drawOrder,
+                KmlModelConstants.ATT_OVERLAY_DRAW_ORDER, null));
+        properties.add(FF.createAttribute(icon,
+                KmlModelConstants.ATT_OVERLAY_ICON, null));
+        properties.add(FF.createAttribute(rotation,
+                KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATION, null));
+        properties.add(FF.createAttribute(overlayXY,
+                KmlModelConstants.ATT_SCREEN_OVERLAY_OVERLAYXY, null));
+        properties.add(FF.createAttribute(screenXY,
+                KmlModelConstants.ATT_SCREEN_OVERLAY_SCREENXY, null));
+        properties.add(FF.createAttribute(rotationXY,
+                KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATIONXY, null));
+        properties.add(FF.createAttribute(size,
+                KmlModelConstants.ATT_SCREEN_OVERLAY_SIZE, null));
+        properties.add(FF.createAttribute(extensions,
+                KmlModelConstants.ATT_EXTENSIONS, null));
 
         return FF.createFeature(
                 properties, KmlModelConstants.TYPE_SCREEN_OVERLAY, "ScreenOverlay");
@@ -1882,12 +2064,18 @@ public class DefaultKmlFactory implements KmlFactory{
     public Feature createScreenOverlay() {
         List<Property> properties = new ArrayList<Property>();
 
-        properties.add(FF.createAttribute(KmlConstants.DEF_VISIBILITY, KmlModelConstants.ATT_VISIBILITY, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_OPEN, KmlModelConstants.ATT_OPEN, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_COLOR, KmlModelConstants.ATT_OVERLAY_COLOR, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_DRAW_ORDER, KmlModelConstants.ATT_OVERLAY_DRAW_ORDER, null));
-        properties.add(FF.createAttribute(KmlConstants.DEF_ROTATION, KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATION, null));
-        properties.add(FF.createAttribute(new Extensions(), KmlModelConstants.ATT_EXTENSIONS, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_VISIBILITY,
+                KmlModelConstants.ATT_VISIBILITY, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_OPEN,
+                KmlModelConstants.ATT_OPEN, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_COLOR,
+                KmlModelConstants.ATT_OVERLAY_COLOR, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_DRAW_ORDER,
+                KmlModelConstants.ATT_OVERLAY_DRAW_ORDER, null));
+        properties.add(FF.createAttribute(KmlConstants.DEF_ROTATION,
+                KmlModelConstants.ATT_SCREEN_OVERLAY_ROTATION, null));
+        properties.add(FF.createAttribute(new Extensions(),
+                KmlModelConstants.ATT_EXTENSIONS, null));
 
         return FF.createFeature(
                 properties, KmlModelConstants.TYPE_SCREEN_OVERLAY, "ScreenOverlay");
@@ -2109,7 +2297,8 @@ public class DefaultKmlFactory implements KmlFactory{
      * @{@inheritDoc }
      */
     @Override
-    public SimpleTypeContainer createSimpleTypeContainer(String namespaceUri, String tagName, Object value) {
+    public SimpleTypeContainer createSimpleTypeContainer(
+            String namespaceUri, String tagName, Object value) {
         return new DefaultSimpleTypeContainer(namespaceUri, tagName, value);
     }
 }

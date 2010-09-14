@@ -23,7 +23,7 @@ import static java.util.Collections.*;
  *
  * @author Samuel Andrés
  */
-public class DefaultAdministrativeArea implements AdministrativeArea{
+public class DefaultAdministrativeArea implements AdministrativeArea {
 
     private List<GenericTypedGrPostal> addressLines;
     private List<GenericTypedGrPostal> administrativeAreaNames;
@@ -35,7 +35,7 @@ public class DefaultAdministrativeArea implements AdministrativeArea{
     private String usageType;
     private String indicator;
 
-    public DefaultAdministrativeArea(){
+    public DefaultAdministrativeArea() {
         this.addressLines = EMPTY_LIST;
         this.administrativeAreaNames = EMPTY_LIST;
     }
@@ -52,18 +52,22 @@ public class DefaultAdministrativeArea implements AdministrativeArea{
      * @throws XalException
      */
     public DefaultAdministrativeArea(List<GenericTypedGrPostal> addressLines,
-            List<GenericTypedGrPostal> administrativeAreaNames, SubAdministrativeArea subAdministrativeArea,
-            Object localisation, String type, String usageType, String indicator) throws XalException{
+            List<GenericTypedGrPostal> administrativeAreaNames,
+            SubAdministrativeArea subAdministrativeArea,
+            Object localisation, String type, 
+            String usageType, String indicator)
+            throws XalException {
         this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
-        this.administrativeAreaNames = (administrativeAreaNames == null) ? EMPTY_LIST : administrativeAreaNames;
+        this.administrativeAreaNames = (administrativeAreaNames == null) ?
+            EMPTY_LIST : administrativeAreaNames;
         this.subAdministrativeArea = subAdministrativeArea;
-        if (localisation instanceof Locality){
+        if (localisation instanceof Locality) {
             this.locality = (Locality) localisation;
-        } else if (localisation instanceof PostOffice){
+        } else if (localisation instanceof PostOffice) {
             this.postOffice = (PostOffice) localisation;
-        } else if (localisation instanceof PostalCode){
+        } else if (localisation instanceof PostalCode) {
             this.postalCode = (PostalCode) localisation;
-        } else if (localisation != null){
+        } else if (localisation != null) {
             throw new XalException("This kind of type is not allowed here.");
         }
         this.type = type;
@@ -76,63 +80,81 @@ public class DefaultAdministrativeArea implements AdministrativeArea{
      * @{@inheritDoc }
      */
     @Override
-    public List<GenericTypedGrPostal> getAddressLines() {return this.addressLines;}
+    public List<GenericTypedGrPostal> getAddressLines() {
+        return this.addressLines;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public List<GenericTypedGrPostal> getAdministrativeAreaNames() {return this.administrativeAreaNames;}
+    public List<GenericTypedGrPostal> getAdministrativeAreaNames() {
+        return this.administrativeAreaNames;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public SubAdministrativeArea getSubAdministrativeArea() {return this.subAdministrativeArea;}
+    public SubAdministrativeArea getSubAdministrativeArea() {
+        return this.subAdministrativeArea;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public Locality getLocality() {return this.locality;}
+    public Locality getLocality() {
+        return this.locality;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public PostOffice getPostOffice() {return this.postOffice;}
+    public PostOffice getPostOffice() {
+        return this.postOffice;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public PostalCode getPostalCode() {return this.postalCode;}
+    public PostalCode getPostalCode() {
+        return this.postalCode;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public String getType() {return this.type;}
+    public String getType() {
+        return this.type;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public String getUsageType() {return this.usageType;}
+    public String getUsageType() {
+        return this.usageType;
+    }
 
     /**
      *
      * @{@inheritDoc }
      */
     @Override
-    public String getIndicator() {return this.indicator;}
+    public String getIndicator() {
+        return this.indicator;
+    }
 
     /**
      *
@@ -214,5 +236,4 @@ public class DefaultAdministrativeArea implements AdministrativeArea{
     public void setIndicator(String Indicator) {
         this.indicator = Indicator;
     }
-
 }

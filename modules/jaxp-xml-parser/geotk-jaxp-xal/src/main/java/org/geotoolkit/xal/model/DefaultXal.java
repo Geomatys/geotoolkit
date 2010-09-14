@@ -33,9 +33,17 @@ public class DefaultXal implements Xal{
         this.version = version;
     }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
     public List<AddressDetails> getAddressDetails() {return this.addressDetails;}
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
     public String getVersion() {return this.version;}
 

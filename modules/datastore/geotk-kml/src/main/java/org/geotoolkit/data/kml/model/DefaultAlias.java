@@ -79,6 +79,7 @@ public class DefaultAlias extends DefaultAbstractObject implements Alias {
     }
 
     /**
+     * 
      * @{@inheritDoc }
      */
     @Override

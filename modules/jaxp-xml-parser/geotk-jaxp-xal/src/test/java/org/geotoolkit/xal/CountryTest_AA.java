@@ -46,6 +46,7 @@ import org.geotoolkit.xal.model.PostalCodeNumberExtension;
 import org.geotoolkit.xal.model.PostalRoute;
 import org.geotoolkit.xal.model.SubAdministrativeArea;
 import org.geotoolkit.xal.model.Xal;
+import org.geotoolkit.xal.model.XalException;
 import org.geotoolkit.xal.xml.XalReader;
 import org.geotoolkit.xal.xml.XalWriter;
 import org.geotoolkit.xml.DomCompare;
@@ -86,7 +87,7 @@ public class CountryTest_AA {
     }
 
     @Test
-    public void country_AAReadTest() throws IOException, XMLStreamException {
+    public void country_AAReadTest() throws IOException, XMLStreamException, XalException {
 
         final XalReader reader = new XalReader();
         reader.setInput(new File(pathToTestFile));
@@ -316,7 +317,7 @@ public class CountryTest_AA {
     }
 
     @Test
-    public void country_AAWriteTest() throws IOException, XMLStreamException, ParserConfigurationException, SAXException{
+    public void country_AAWriteTest() throws IOException, XMLStreamException, ParserConfigurationException, SAXException, XalException{
         final XalFactory xalFactory = DefaultXalFactory.getInstance();
 
         final GenericTypedGrPostal departmentMailStopAddressLine0 = xalFactory.createGenericTypedGrPostal(null, null, "mail stop address line");

@@ -63,8 +63,10 @@ import static java.util.Collections.*;
 public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
 
     private final KmlWriter kmlWriter;
-    public Map<Object, List<Extensions.Names>> complexTable = new HashMap<Object, List<Extensions.Names>>();
-    public Map<String, List<Extensions.Names>> simpleTable = new HashMap<String, List<Extensions.Names>>();
+    public Map<Object, List<Extensions.Names>> complexTable =
+            new HashMap<Object, List<Extensions.Names>>();
+    public Map<String, List<Extensions.Names>> simpleTable =
+            new HashMap<String, List<Extensions.Names>>();
 
     /**
      *
@@ -82,7 +84,9 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      * @{@inheritDoc }
      */
     @Override
-    public void setOutput(Object output) throws XMLStreamException, IOException{
+    public void setOutput(Object output) 
+            throws XMLStreamException, IOException{
+
         super.setOutput(output);
     }
 
@@ -94,6 +98,7 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      */
     public void writeTour(Feature tour)
             throws XMLStreamException, KmlException{
+
         writer.writeStartElement(URI_GX, TAG_TOUR);
         this.kmlWriter.writeCommonAbstractFeature(tour);
         if(tour.getProperties(GxModelConstants.ATT_TOUR_PLAY_LIST.getName()) != null){
@@ -111,7 +116,9 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writePlayList(PlayList playlist) throws XMLStreamException, KmlException{
+    private void writePlayList(PlayList playlist) 
+            throws XMLStreamException, KmlException{
+
         writer.writeStartElement(URI_GX, TAG_PLAYLIST);
         for(AbstractTourPrimitive tourPrimitive : playlist.getTourPrimitives()){
             this.writeAbstractTourPrimitive(tourPrimitive);
@@ -125,7 +132,9 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeAbstractTourPrimitive(AbstractTourPrimitive tourPrimitive) throws XMLStreamException, KmlException{
+    private void writeAbstractTourPrimitive(AbstractTourPrimitive tourPrimitive) 
+            throws XMLStreamException, KmlException{
+
         if(tourPrimitive instanceof FlyTo){
             this.writeFlyTo((FlyTo) tourPrimitive);
         } else if (tourPrimitive instanceof AnimatedUpdate){
@@ -157,7 +166,9 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeFlyTo(FlyTo flyTo) throws XMLStreamException, KmlException {
+    private void writeFlyTo(FlyTo flyTo) 
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_GX, TAG_FLY_TO);
         writeCommonAbstractTourPrimitive(flyTo);
         if(KmlUtilities.isFiniteNumber(flyTo.getDuration())){
@@ -178,7 +189,9 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      * @throws XMLStreamException
      * @throws KmlException
      */
-    private void writeAnimatedUpdate(AnimatedUpdate animatedUpdate) throws XMLStreamException, KmlException {
+    private void writeAnimatedUpdate(AnimatedUpdate animatedUpdate) 
+            throws XMLStreamException, KmlException {
+
         writer.writeStartElement(URI_GX, TAG_ANIMATED_UPDATE);
         writeCommonAbstractTourPrimitive(animatedUpdate);
         if(KmlUtilities.isFiniteNumber(animatedUpdate.getDuration())){
@@ -345,6 +358,7 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      */
     public void writeMultiTrack(MultiTrack multiTrack)
             throws XMLStreamException, KmlException{
+
         writer.writeStartElement(URI_GX, TAG_MULTI_TRACK);
         kmlWriter.writeCommonAbstractGeometry(multiTrack);
         if(multiTrack.getAltitudeMode() != null){
@@ -388,7 +402,9 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      * @param duration
      * @throws XMLStreamException
      */
-    private void writeDuration(double duration) throws XMLStreamException {
+    private void writeDuration(double duration) 
+            throws XMLStreamException {
+
         if (DEF_DURATION != duration){
             writer.writeStartElement(URI_GX, TAG_DURATION);
             this.writer.writeCharacters(Double.toString(duration));
@@ -401,7 +417,9 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      * @param enumFlyToMode
      * @throws XMLStreamException
      */
-    private void writeFlyToMode(EnumFlyToMode enumFlyToMode) throws XMLStreamException {
+    private void writeFlyToMode(EnumFlyToMode enumFlyToMode) 
+            throws XMLStreamException {
+
         if(!DEF_FLY_TO_MODE.equals(enumFlyToMode)){
             writer.writeStartElement(URI_GX, TAG_FLY_TO_MODE);
             this.writer.writeCharacters(enumFlyToMode.getFlyToMode());
@@ -414,7 +432,9 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      * @param playMode
      * @throws XMLStreamException
      */
-    private void writePlayMode(EnumPlayMode playMode) throws XMLStreamException {
+    private void writePlayMode(EnumPlayMode playMode) 
+            throws XMLStreamException {
+
         writer.writeStartElement(URI_GX, TAG_PLAY_MODE);
         this.writer.writeCharacters(playMode.getPlayMode());
         writer.writeEndElement();
@@ -425,7 +445,9 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      * @param altitudeMode
      * @throws XMLStreamException
      */
-    public void writeAltitudeMode(AltitudeMode altitudeMode) throws XMLStreamException{
+    public void writeAltitudeMode(AltitudeMode altitudeMode) 
+            throws XMLStreamException{
+
         if(DEF_ALTITUDE_MODE != altitudeMode){
             writer.writeStartElement(URI_GX, TAG_ALTITUDE_MODE);
             writer.writeCharacters(altitudeMode.getAltitudeMode());
@@ -438,7 +460,9 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      * @param bv
      * @throws XMLStreamException
      */
-    public void writeBalloonVisibility(Boolean bv) throws XMLStreamException{
+    public void writeBalloonVisibility(Boolean bv) 
+            throws XMLStreamException{
+
         if (DEF_BALLOON_VISIBILITY != bv.booleanValue()){
             writer.writeStartElement(URI_GX, TAG_BALLOON_VISIBILITY);
             if(bv){
@@ -455,7 +479,9 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      * @param inter
      * @throws XMLStreamException
      */
-    public void writeInterpolate(Boolean inter) throws XMLStreamException{
+    public void writeInterpolate(Boolean inter) 
+            throws XMLStreamException{
+
         if (DEF_INTERPOLATE != inter.booleanValue()){
             writer.writeStartElement(URI_GX, TAG_INTERPOLATE);
             if(inter){
@@ -472,7 +498,9 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      * @param inter
      * @throws XMLStreamException
      */
-    public void writeX(int abs) throws XMLStreamException{
+    public void writeX(int abs) 
+            throws XMLStreamException{
+
         writer.writeStartElement(URI_GX, TAG_X);
         writer.writeCharacters(String.valueOf(abs));
         writer.writeEndElement();
@@ -483,7 +511,9 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      * @param inter
      * @throws XMLStreamException
      */
-    public void writeY(int abs) throws XMLStreamException{
+    public void writeY(int abs) 
+            throws XMLStreamException{
+
         writer.writeStartElement(URI_GX, TAG_Y);
         writer.writeCharacters(String.valueOf(abs));
         writer.writeEndElement();
@@ -494,7 +524,9 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      * @param inter
      * @throws XMLStreamException
      */
-    public void writeW(int abs) throws XMLStreamException{
+    public void writeW(int abs) 
+            throws XMLStreamException{
+
         writer.writeStartElement(URI_GX, TAG_W);
         writer.writeCharacters(String.valueOf(abs));
         writer.writeEndElement();
@@ -505,7 +537,9 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      * @param inter
      * @throws XMLStreamException
      */
-    public void writeH(int abs) throws XMLStreamException{
+    public void writeH(int abs) 
+            throws XMLStreamException{
+
         writer.writeStartElement(URI_GX, TAG_H);
         writer.writeCharacters(String.valueOf(abs));
         writer.writeEndElement();
@@ -516,7 +550,8 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      * @{@inheritDoc }
      */
     @Override
-    public void writeComplexExtensionElement(String kmlVersionUri, Extensions.Names ext, Object contentsElement)
+    public void writeComplexExtensionElement(String kmlVersionUri,
+            Extensions.Names ext, Object contentsElement)
             throws XMLStreamException, KmlException {
 
         // Feature element
@@ -547,7 +582,8 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      * @{@inheritDoc }
      */
     @Override
-    public void writeSimpleExtensionElement(String kmlVersionUri, Extensions.Names ext, SimpleTypeContainer contentsElement)
+    public void writeSimpleExtensionElement(String kmlVersionUri,
+            Extensions.Names ext, SimpleTypeContainer contentsElement)
             throws XMLStreamException, KmlException {
 
         if(TAG_BALLOON_VISIBILITY.equals(contentsElement.getTagName())){
@@ -568,7 +604,9 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      * @{@inheritDoc }
      */
     @Override
-    public boolean canHandleComplex(String kmlVersionUri, Extensions.Names ext, Object contentObject){
+    public boolean canHandleComplex(String kmlVersionUri, 
+            Extensions.Names ext, Object contentObject){
+
         Boolean reponse = false;
         List<Extensions.Names> liste = null;
         if (contentObject instanceof Feature){
@@ -597,6 +635,7 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
      */
     @Override
     public boolean canHandleSimple(String kmlVersionUri, Names ext, String elementTag) {
+
         List<Names> liste = this.simpleTable.get(elementTag);
         Boolean reponse = false;
         if(liste != null
@@ -607,7 +646,9 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
     }
 
     /**
-     *
+     * <p>This method init Complex table. This table contains mapping between
+     * Gx extensions classes and their extensions names (i.e. : candidate places
+     * in KML file).</p>
      */
     private void initComplexTable(){
         
@@ -631,7 +672,9 @@ public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
     }
 
     /**
-     *
+     * <p>This method init Complex table. This table contains mapping between
+     * Gx extensions simple values and their extensions names (i.e. : candidate
+     * places in KML file).</p>
      */
     private void initSimpleTable(){
         List<Names> balloonVisibilityList = new ArrayList<Names>();

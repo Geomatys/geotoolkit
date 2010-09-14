@@ -38,11 +38,11 @@ public interface PremiseLocation {
      * 
      * @return
      */
-    public String getContent();
+    String getContent();
 
     /**
      *
      * @return
      */
-    public GrPostal getGrPostal();
+    GrPostal getGrPostal();
 }

@@ -41,7 +41,15 @@ import org.geotoolkit.data.kml.model.AbstractObject;
  */
 public interface PlayList extends AbstractObject{
 
+    /**
+     *
+     * @return
+     */
     List<AbstractTourPrimitive> getTourPrimitives();
 
+    /**
+     * 
+     * @param tourPrimitives
+     */
     void setTourPrimitives(List<AbstractTourPrimitive> tourPrimitives);
 }

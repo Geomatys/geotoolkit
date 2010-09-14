@@ -46,7 +46,8 @@ public class DefaultSimpleField implements SimpleField {
         this.displayName = displayName;
         this.type = type;
         this.name = name;
-        this.simpleFieldExtensions = (simpleFieldExtensions == null) ? EMPTY_LIST : simpleFieldExtensions;
+        this.simpleFieldExtensions = (simpleFieldExtensions == null) ?
+            EMPTY_LIST : simpleFieldExtensions;
     }
 
     /**
@@ -118,6 +119,7 @@ public class DefaultSimpleField implements SimpleField {
      */
     @Override
     public void setSimpleFieldExtensions(List<Object> simpleFieldExtensions) {
-        this.simpleFieldExtensions = (simpleFieldExtensions == null) ? EMPTY_LIST : simpleFieldExtensions;
+        this.simpleFieldExtensions = (simpleFieldExtensions == null) ?
+            EMPTY_LIST : simpleFieldExtensions;
     }
 }

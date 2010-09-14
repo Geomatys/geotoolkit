@@ -403,6 +403,7 @@ public class KmzContextInterpreter {
     private AbstractGeometry writeGeometry(Geometry geometry) {
         
         final AbstractGeometry resultat;
+        
         if (geometry instanceof GeometryCollection) {
             final List<AbstractGeometry> liste = new ArrayList<AbstractGeometry>();
             if (geometry instanceof MultiPolygon) {
@@ -415,13 +416,13 @@ public class KmzContextInterpreter {
             ((org.geotoolkit.data.kml.model.MultiGeometry) resultat).setGeometries(liste);
         } else if (geometry instanceof Polygon) {
             final Polygon polygon = (Polygon) geometry;
-            final Boundary extB = KML_FACTORY.createBoundary(
+            final Boundary externBound = KML_FACTORY.createBoundary(
                     (org.geotoolkit.data.kml.model.LinearRing) writeGeometry(polygon.getExteriorRing()), null, null);
-            final List<Boundary> intB = new ArrayList<Boundary>();
+            final List<Boundary> internBounds = new ArrayList<Boundary>();
             for (int i = 0, num = polygon.getNumInteriorRing(); i < num; i++) {
-                intB.add(KML_FACTORY.createBoundary((org.geotoolkit.data.kml.model.LinearRing) this.writeGeometry(polygon.getInteriorRingN(i)), null, null));
+                internBounds.add(KML_FACTORY.createBoundary((org.geotoolkit.data.kml.model.LinearRing) this.writeGeometry(polygon.getInteriorRingN(i)), null, null));
             }
-            resultat = KML_FACTORY.createPolygon(extB, intB);
+            resultat = KML_FACTORY.createPolygon(externBound, internBounds);
         } else if (geometry instanceof LineString) {
             if (geometry instanceof LinearRing) {
                 resultat = KML_FACTORY.createLinearRing(((LinearRing) geometry).getCoordinateSequence());

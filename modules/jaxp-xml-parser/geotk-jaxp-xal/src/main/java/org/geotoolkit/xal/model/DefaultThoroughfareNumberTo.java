@@ -52,7 +52,8 @@ public class DefaultThoroughfareNumberTo implements ThoroughfareNumberTo {
                     && !(object instanceof ThoroughfareNumberPrefix)
                     && !(object instanceof ThoroughfareNumber)
                     && !(object instanceof ThoroughfareNumberSuffix))
-                throw new XalException("This kind of content ("+object.getClass()+") is not allowed here : "+this.getClass());
+                throw new XalException("This kind of content ("+object.getClass()+
+                        ") is not allowed here : "+this.getClass());
         }
         return content;
     }

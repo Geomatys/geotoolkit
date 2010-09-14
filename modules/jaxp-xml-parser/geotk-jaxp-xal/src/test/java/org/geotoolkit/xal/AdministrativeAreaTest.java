@@ -32,6 +32,7 @@ import org.geotoolkit.xal.model.PostalRoute;
 import org.geotoolkit.xal.model.PostalRouteNumber;
 import org.geotoolkit.xal.model.SubAdministrativeArea;
 import org.geotoolkit.xal.model.Xal;
+import org.geotoolkit.xal.model.XalException;
 import org.geotoolkit.xal.xml.XalReader;
 import org.geotoolkit.xal.xml.XalWriter;
 import org.geotoolkit.xml.DomCompare;
@@ -72,7 +73,7 @@ public class AdministrativeAreaTest {
     }
 
     @Test
-    public void administrativeAreaReadTest() throws IOException, XMLStreamException {
+    public void administrativeAreaReadTest() throws IOException, XMLStreamException, XalException {
 
         final XalReader reader = new XalReader();
         reader.setInput(new File(pathToTestFile));
@@ -103,7 +104,7 @@ public class AdministrativeAreaTest {
     }
 
     @Test
-    public void administrativeAreaWriteTest() throws IOException, XMLStreamException, ParserConfigurationException, SAXException{
+    public void administrativeAreaWriteTest() throws IOException, XMLStreamException, ParserConfigurationException, SAXException, XalException{
         final XalFactory xalFactory = DefaultXalFactory.getInstance();
 
         final PostalRouteNumber postalRouteNumber = xalFactory.createPostalRouteNumber(xalFactory.createGrPostal("postalRouteCode"), "postal route number");

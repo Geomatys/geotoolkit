@@ -22,9 +22,9 @@ package org.geotoolkit.data.gx.model;
  */
 public class DefaultAngles implements Angles {
 
-    double heading;
-    double tilt;
-    double roll;
+    private double heading;
+    private double tilt;
+    private double roll;
 
     /**
      *

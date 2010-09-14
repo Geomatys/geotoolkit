@@ -40,11 +40,19 @@ public class DefaultTourControl extends DefaultAbstractObject implements TourCon
         this.playMode = playMode;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public EnumPlayMode getPlayMode() {
         return this.playMode;
     }
 
+    /**
+     *
+     * @{@inheritDoc }
+     */
     @Override
     public void setPlayMode(EnumPlayMode playMode) {
         this.playMode = playMode;

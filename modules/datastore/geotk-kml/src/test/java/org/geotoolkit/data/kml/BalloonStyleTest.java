@@ -85,7 +85,7 @@ public class BalloonStyleTest {
     }
 
     @Test
-    public void balloonStyleReadTest() throws IOException, XMLStreamException, URISyntaxException {
+    public void balloonStyleReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
 
         Iterator i;
 

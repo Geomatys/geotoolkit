@@ -84,7 +84,7 @@ public class ListStyleTest {
     }
 
     @Test
-    public void listStyleReadTest() throws IOException, XMLStreamException, URISyntaxException {
+    public void listStyleReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));

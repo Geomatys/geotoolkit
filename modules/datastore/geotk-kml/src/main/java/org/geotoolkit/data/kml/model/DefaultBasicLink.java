@@ -96,13 +96,6 @@ public class DefaultBasicLink implements BasicLink {
         this.href = href;
     }
 
-    @Override
-    public String toString() {
-        String resultat = "BasicLinkDefault : "
-                + "\n\thref : " + this.href;
-        return resultat;
-    }
-
     /**
      *
      * @{@inheritDoc }
@@ -110,5 +103,12 @@ public class DefaultBasicLink implements BasicLink {
     @Override
     public Extensions extensions() {
         return this.extensions;
+    }
+
+    @Override
+    public String toString() {
+        String resultat = "BasicLinkDefault : "
+                + "\n\thref : " + this.href;
+        return resultat;
     }
 }

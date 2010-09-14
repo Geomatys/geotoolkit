@@ -41,4 +41,6 @@ public class AtomConstants {
     public static final String ATT_HREFLANG = "hreflang";
     public static final String ATT_TITLE = "title";
     public static final String ATT_LENGTH = "length";
+
+    private AtomConstants(){}
 }

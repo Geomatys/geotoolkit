@@ -39,12 +39,12 @@ public interface SortingCode {
      *
      * @return
      */
-    public String getType();
+    String getType();
 
     /**
      * 
      * @return
      */
-    public GrPostal getGrPostal();
+    GrPostal getGrPostal();
 
 }

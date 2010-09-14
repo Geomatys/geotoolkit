@@ -65,12 +65,6 @@ public abstract class DefaultAbstractObject implements AbstractObject {
         this.idAttributes = idAttributes;
     }
 
-    @Override
-    public String toString() {
-        String resultat = "Abstract Object : ";
-        return resultat;
-    }
-
     /**
      *
      * @{@inheritDoc }
@@ -78,5 +72,11 @@ public abstract class DefaultAbstractObject implements AbstractObject {
     @Override
     public Extensions extensions() {
         return extensions;
+    }
+
+    @Override
+    public String toString() {
+        String resultat = "Abstract Object : ";
+        return resultat;
     }
 }

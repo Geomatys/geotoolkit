@@ -433,7 +433,8 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
                     break;
             }
         }
-        return GxReader.GX_FACTORY.createTourControl(objectSimpleExtensions, idAttributes, playMode);
+        return GxReader.GX_FACTORY.createTourControl(
+                objectSimpleExtensions, idAttributes, playMode);
     }
 
     /**
@@ -441,7 +442,9 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
      * @return
      * @throws XMLStreamException
      */
-    private Wait readWait() throws XMLStreamException{
+    private Wait readWait() 
+            throws XMLStreamException{
+
         // AbstractObject
         List<SimpleTypeContainer> objectSimpleExtensions = null;
         IdAttributes idAttributes = kmlReader.readIdAttributes();
@@ -472,7 +475,8 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
                     break;
             }
         }
-        return GxReader.GX_FACTORY.createWait(objectSimpleExtensions, idAttributes, duration);
+        return GxReader.GX_FACTORY.createWait(
+                objectSimpleExtensions, idAttributes, duration);
     }
 
     /**
@@ -513,7 +517,8 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
                     break;
             }
         }
-        return GxReader.GX_FACTORY.createSoundCue(objectSimpleExtensions, idAttributes, href);
+        return GxReader.GX_FACTORY.createSoundCue(
+                objectSimpleExtensions, idAttributes, href);
     }
 
     public LatLonQuad readLatLonQuad() 
@@ -549,7 +554,8 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
                     break;
             }
         }
-        return GxReader.GX_FACTORY.createLatLonQuad(objectSimpleExtensions, idAttributes, coordinates);
+        return GxReader.GX_FACTORY.createLatLonQuad(
+                objectSimpleExtensions, idAttributes, coordinates);
     }
 
     public TimeSpan readTimeSpan() 
@@ -758,7 +764,8 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
      * @return
      * @throws XMLStreamException
      */
-    public Angles readAngles() throws XMLStreamException {
+    public Angles readAngles()
+            throws XMLStreamException {
 
         String[] ch = reader.getElementText().split(" ");
 
@@ -774,7 +781,9 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
      * @return
      * @throws XMLStreamException
      */
-    private Coordinate readCoord() throws XMLStreamException{
+    private Coordinate readCoord() 
+            throws XMLStreamException{
+
         return GX_FACTORY.createCoordinate(reader.getElementText());
     }
 
@@ -783,7 +792,9 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
      * @return
      * @throws XMLStreamException
      */
-    public AltitudeMode readAltitudeMode() throws XMLStreamException{
+    public AltitudeMode readAltitudeMode() 
+            throws XMLStreamException{
+
         return EnumAltitudeMode.transform(reader.getElementText());
     }
 
@@ -792,7 +803,9 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
      * @return
      * @throws XMLStreamException
      */
-    public boolean readBalloonVisibility() throws XMLStreamException {
+    public boolean readBalloonVisibility() 
+            throws XMLStreamException {
+
         return parseBoolean(reader.getElementText());
     }
 
@@ -802,6 +815,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
      * @return
      */
     public boolean isAbstractTourPrimitive(String eName) {
+
         return (TAG_FLY_TO.equals(eName)
                 || TAG_ANIMATED_UPDATE.equals(eName)
                 || TAG_TOUR_CONTROL.equals(eName)
@@ -814,9 +828,14 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
      * IMPLEMENTS KML EXTENSION READER
      */
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
     public boolean canHandleComplexExtension(String containingUri, 
             String containingTag, String contentsUri, String contentsTag) {
+
         try {
             return this.complexTable.get(contentsTag).contains(containingTag);
         } catch (NullPointerException e){
@@ -824,9 +843,14 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
         }
     }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
     public boolean canHandleSimpleExtension(String containingUri,
             String containingTag, String contentsUri, String contentsTag) {
+
         try {
             return this.simpleTable.get(contentsTag).contains(containingTag);
         } catch (NullPointerException e){
@@ -834,12 +858,18 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
         }
     }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
     public Entry<Object, Extensions.Names> readExtensionElement(String containingUri,
             String containingTag, String contentsUri, String contentsTag)
             throws XMLStreamException, KmlException, URISyntaxException {
+
         Object resultat = null;
         Extensions.Names ext = null;
+
         if(GxConstants.TAG_ALTITUDE_MODE.equals(contentsTag)){
             resultat = readAltitudeMode();
         } else if(GxConstants.TAG_BALLOON_VISIBILITY.equals(contentsTag)){
@@ -874,6 +904,10 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
         return new SimpleImmutableEntry<Object, Extensions.Names>(resultat, ext);
     }
 
+    /**
+     * <p>This method init complex table that maps gx:TAGS with candidate
+     * containers tags. Method for complex elements.</p>
+     */
     private void initComplexTable(){
 
         List<String> tourBinding = new ArrayList<String>();
@@ -922,6 +956,10 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
         complexTable.put(GxConstants.TAG_ALTITUDE_MODE, altitudeModeBinding);
     }
 
+    /**
+     * <p>This method init complex table that maps gx:TAGS with candidate
+     * containers tags. Method for simple values.</p>
+     */
     private void initSimpleTable(){
         List<String> balloonVisibilityBinding = new ArrayList<String>();
         balloonVisibilityBinding.add(KmlConstants.TAG_NETWORK_LINK);

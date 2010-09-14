@@ -88,7 +88,7 @@ public class PolyStyleTest {
     }
 
     @Test
-    public void polyStyleReadTest() throws IOException, XMLStreamException, URISyntaxException {
+    public void polyStyleReadTest() throws IOException, XMLStreamException, URISyntaxException, KmlException {
 
         final KmlReader reader = new KmlReader();
         reader.setInput(new File(pathToTestFile));

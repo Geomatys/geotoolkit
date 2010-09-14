@@ -58,10 +58,12 @@ public class DefaultLocality implements Locality {
      * @param indicator
      * @throws XalException
      */
-    public DefaultLocality(List<GenericTypedGrPostal> addressLines, List<GenericTypedGrPostal> localityNames,
-            Object postal,
-            Thoroughfare thoroughfare, Premise premise, DependentLocality dependentLocality, PostalCode postalCode,
-            String type, String usageType, String indicator) throws XalException{
+    public DefaultLocality(List<GenericTypedGrPostal> addressLines, 
+            List<GenericTypedGrPostal> localityNames, Object postal,
+            Thoroughfare thoroughfare, Premise premise,
+            DependentLocality dependentLocality, PostalCode postalCode,
+            String type, String usageType, String indicator)
+            throws XalException{
         this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
         this.localityNames = (localityNames == null) ? EMPTY_LIST : localityNames;
         if (postal instanceof PostBox){

@@ -184,6 +184,10 @@ public class DefaultSubPremise implements SubPremise {
         return this.postalCode;
     }
 
+    /**
+     *
+     * {@inheritDoc }
+     */
     @Override
     public SubPremise getSubPremise() {
         return this.subPremise;
