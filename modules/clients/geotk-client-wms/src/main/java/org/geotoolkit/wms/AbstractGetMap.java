@@ -19,10 +19,14 @@ package org.geotoolkit.wms;
 import java.awt.Dimension;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractRequest;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.Envelope;
@@ -39,6 +43,12 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
  * @module pending
  */
 public abstract class AbstractGetMap extends AbstractRequest implements GetMapRequest{
+
+    private static final SimpleDateFormat ISO_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'");
+    static {
+        ISO_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT+0"));
+    }
+    
     /**
      * Default logger for all GetMap requests.
      */
@@ -280,19 +290,19 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
                         //both null, do nothing
                     }else{
                         //only max limit
-                        map.put("TIME", String.valueOf(maxT));
+                        map.put("TIME", toDateString(maxT));
                     }
                 }else if(Double.isNaN(maxT) || Double.isInfinite(maxT)){
                     if(Double.isNaN(minT) || Double.isInfinite(minT)){
                         //both null, do nothing
                     }else{
                         //only min limit
-                        map.put("TIME", String.valueOf(minT));
+                        map.put("TIME", toDateString(minT));
                     }
                 }else{
                     //both ok, calculate median
                     final double median = (minT+maxT)/2;
-                    map.put("TIME", String.valueOf(median));
+                    map.put("TIME", toDateString(median));
                 }
 
 
@@ -324,4 +334,9 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
             }
         }
     }
+
+    private static String toDateString(double value){
+        return ISO_FORMAT.format(new Date((long)value));
+    }
+
 }

@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wms.xml.v130;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -93,6 +94,7 @@ public class WMSCapabilities extends AbstractWMSCapabilities {
      * Gets the value of the service property.
      * 
      */
+    @Override
     public Service getService() {
         return service;
     }
@@ -108,6 +110,7 @@ public class WMSCapabilities extends AbstractWMSCapabilities {
      * Gets the value of the capability property.
      * 
      */
+    @Override
     public Capability getCapability() {
         return capability;
     }
@@ -124,6 +127,7 @@ public class WMSCapabilities extends AbstractWMSCapabilities {
      * Gets the value of the version property.
      * 
      */
+    @Override
     public String getVersion() {
         if (version == null) {
             return "1.3.0";
@@ -136,6 +140,7 @@ public class WMSCapabilities extends AbstractWMSCapabilities {
      * Gets the value of the updateSequence property.
      * 
      */
+    @Override
     public String getUpdateSequence() {
         return updateSequence;
     }
@@ -144,12 +149,31 @@ public class WMSCapabilities extends AbstractWMSCapabilities {
      * Get a specific layer from the capabilities document.
      * 
      */
+    @Override
     public AbstractLayer getLayerFromName(String name) {
-        for( Layer layer : getCapability().getLayer().getLayer()){
-            if(layer.getName().equals(name)){
-                return (AbstractLayer)layer; 
+        return searchLayerByName(getCapability().getLayer(), name);
+    }
+
+    private static AbstractLayer searchLayerByName(Layer candidate, String name){
+        if(candidate == null){
+            return null;
+        }
+
+        if(name.equals(candidate.getName())){
+            return candidate;
+        }
+
+        //search it's children
+        final List<Layer> layers = candidate.getLayer();
+        if(layers != null){
+            for(Layer layer : layers){
+                final AbstractLayer v = searchLayerByName(layer, name);
+                if(v != null){
+                    return v;
+                }
             }
-        }        
+        }
         return null;
     }
+
 }

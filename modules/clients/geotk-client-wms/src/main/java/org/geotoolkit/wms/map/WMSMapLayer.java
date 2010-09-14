@@ -27,6 +27,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import javax.imageio.ImageIO;
@@ -43,17 +44,21 @@ import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.geometry.Envelope2D;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.AbstractMapLayer;
 import org.geotoolkit.map.DynamicMapLayer;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.temporal.object.FastDateParser;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.wms.GetLegendRequest;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WebMapServer;
+import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractLayer;
 
 import org.opengis.geometry.Envelope;
@@ -61,6 +66,7 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
@@ -150,6 +156,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
     private CRS84Politic crs84Politic = CRS84Politic.STRICT;
     private EPSG4326Politic epsg4326Politic = EPSG4326Politic.STRICT;
     private boolean useLocalReprojection = false;
+    private boolean matchCapabilitiesDates = false;
 
     public WMSMapLayer(final WebMapServer server, final String... layers) {
         super(new DefaultStyleFactory().style());
@@ -198,6 +205,19 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
 
     public boolean isUseLocalReprojection() {
         return useLocalReprojection;
+    }
+
+    /**
+     * Set to true if the time parameter must be adjusted to match the closest
+     * date provided in the layer getCapabilities.
+     * @param matchCapabilitiesDates
+     */
+    public void setMatchCapabilitiesDates(boolean matchCapabilitiesDates) {
+        this.matchCapabilitiesDates = matchCapabilitiesDates;
+    }
+
+    public boolean isMatchCapabilitiesDates() {
+        return matchCapabilitiesDates;
     }
 
     /**
@@ -286,8 +306,8 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             if (CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84)) {
                 switch (crs84Politic) {
                     case CONVERT_TO_EPSG4326:
-                        env = new Envelope2D(env);
-                        ((Envelope2D) env).setCoordinateReferenceSystem(EPSG_4326);
+                        env = new GeneralEnvelope(env);
+                        ((GeneralEnvelope) env).setCoordinateReferenceSystem(EPSG_4326);
                         break;
                 }
             }
@@ -298,9 +318,26 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             if (CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84)) {
                 switch (epsg4326Politic) {
                     case CONVERT_TO_CRS84:
-                        env = new Envelope2D(env);
-                        ((Envelope2D) env).setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
+                        env = new GeneralEnvelope(env);
+                        ((GeneralEnvelope) env).setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
                         break;
+                }
+            }
+        }
+
+        if(matchCapabilitiesDates){
+            final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
+            final int index = CRSUtilities.dimensionColinearWith(crs.getCoordinateSystem(), DefaultCoordinateSystemAxis.TIME);
+            if(index >= 0){
+                System.out.println("here");
+                //there is a temporal axis
+                double median = env.getMedian(index);
+                Long closest = findClosestDate((long)median);
+                if(closest != null){
+                    GeneralEnvelope adjusted = new GeneralEnvelope(env);
+                    adjusted.setRange(index, closest, closest);
+                    env = adjusted;
+                    System.out.println("adjusted : " + new Date(closest));
                 }
             }
         }
@@ -333,7 +370,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         final RenderingContext2D context2D = (RenderingContext2D) context;
 
         CoordinateReferenceSystem queryCrs = context.getObjectiveCRS2D();
-        Envelope env = context2D.getCanvasObjectiveBounds2D();
+        Envelope env = context2D.getCanvasObjectiveBounds();
         //check if we must make the  coverage reprojection ourself--------------
         if (useLocalReprojection) {
             try {
@@ -360,7 +397,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             throw new PortrayalException(ex);
         }
 
-        LOGGER.log(Level.INFO, "[WMSMapLayer] : GETMAP request : {0}", url);
+        LOGGER.log(Level.WARNING, "[WMSMapLayer] : GETMAP request : {0}", url);
 
         final BufferedImage image;
         try {
@@ -592,6 +629,43 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                     }
                 }catch(FactoryException ex){
                     LOGGER.log(Level.FINE, "Could not parse crs code : {0}", str);
+                }
+            }
+        }else{
+            LOGGER.log(Level.WARNING, "Layer : " + layers[0] + " could not be found in the getCapabilities. "
+                    + "This can be caused by an incorrect layer name (check case-sensitivity) or a non-compliant wms serveur.");
+        }
+
+        return null;
+    }
+
+    /**
+     * Search in the getCapabilities the closest date.
+     */
+    private Long findClosestDate(long date) {
+        final AbstractLayer layer = server.getCapabilities().getLayerFromName(layers[0]);
+
+        if(layer != null){
+            for(AbstractDimension dim : layer.getAbstractDimension()){
+                if("time".equalsIgnoreCase(dim.getName())){
+                    //we found the temporal dimension
+                    final FastDateParser parser = new FastDateParser();
+                    final String[] dates = dim.getValue().split(",");
+
+                    final long d = date;
+                    Long closest = null;
+                    for(String str : dates){
+                        str = str.replaceAll("\n", "");
+                        str = str.trim();
+                        long candidate = parser.parseToMillis(str);
+                        if(closest == null){
+                            closest = candidate;
+                        }else if( Math.abs(d-candidate) < Math.abs(d-closest)){
+                            closest = candidate;
+                        }
+                    }
+
+                    return closest;
                 }
             }
         }else{

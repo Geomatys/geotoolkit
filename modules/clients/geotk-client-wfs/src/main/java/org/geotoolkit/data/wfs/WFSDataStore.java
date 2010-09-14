@@ -53,22 +53,20 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureReader;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.ows.xml.v100.WGS84BoundingBoxType;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.wfs.xml.v110.FeatureTypeListType;
 import org.geotoolkit.wfs.xml.v110.FeatureTypeType;
 import org.geotoolkit.wfs.xml.v110.WFSCapabilitiesType;
 
 import org.opengis.feature.Feature;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
@@ -92,12 +90,12 @@ public class WFSDataStore extends AbstractDataStore{
     private final QueryCapabilities queryCapabilities = new DefaultQueryCapabilities(false);
     private final WebFeatureServer server;
     private final List<Name> typeNames = new ArrayList<Name>();
-    private final Map<Name,SimpleFeatureType> types = new HashMap<Name,SimpleFeatureType>();
+    private final Map<Name,FeatureType> types = new HashMap<Name,FeatureType>();
     private final Map<Name,Envelope> bounds = new HashMap<Name, Envelope>();
     private final Map<String,String> prefixes = new HashMap<String, String>();
 
     private Request lastRequest = null;
-    private SoftReference<FeatureCollection<SimpleFeature>> lastCollection = null;
+    private SoftReference<FeatureCollection<Feature>> lastCollection = null;
 
 
     public WFSDataStore(URI serverURI) throws MalformedURLException{
@@ -123,7 +121,7 @@ public class WFSDataStore extends AbstractDataStore{
 
             //extract the feature type -----------------------------------------
             CoordinateReferenceSystem crs;
-            SimpleFeatureType sft;
+            FeatureType sft;
             try {
                 crs = CRS.decode(ftt.getDefaultSRS(),true);
                 sft = requestType(typeName);                
@@ -138,13 +136,14 @@ public class WFSDataStore extends AbstractDataStore{
             final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
             sftb.setName(sft.getName());
 
-            for(AttributeDescriptor desc : sft.getAttributeDescriptors()){
+            for(PropertyDescriptor desc : sft.getDescriptors()){
                 if(desc instanceof GeometryDescriptor){
+                    final GeometryDescriptor geomDesc = (GeometryDescriptor)desc;
                     final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
                     final AttributeTypeBuilder atb = new AttributeTypeBuilder();
-                    atb.copy(desc.getType());
+                    atb.copy(geomDesc.getType());
                     atb.setCRS(crs);
-                    adb.copy(desc);
+                    adb.copy(geomDesc);
                     adb.setType(atb.buildGeometryType());
                     sftb.add(adb.buildDescriptor());
                 }else{
@@ -152,7 +151,7 @@ public class WFSDataStore extends AbstractDataStore{
                 }
             }
             sftb.setDefaultGeometry(sft.getGeometryDescriptor().getLocalName());
-            sft = sftb.buildSimpleFeatureType();
+            sft = sftb.buildFeatureType();
 
             final CoordinateReferenceSystem val = sft.getGeometryDescriptor().getCoordinateReferenceSystem();
             if(val == null){
@@ -165,12 +164,15 @@ public class WFSDataStore extends AbstractDataStore{
             //extract the bounds -----------------------------------------------
             final WGS84BoundingBoxType bbox = ftt.getWGS84BoundingBox().get(0);
             try {
-                crs = CRS.decode(bbox.getCrs(),true);
+                final String crsVal = bbox.getCrs();
+                crs = crsVal != null ? CRS.decode(crsVal) : DefaultGeographicCRS.WGS84;
                 final GeneralEnvelope env = new GeneralEnvelope(crs);
                 final BigInteger dims = bbox.getDimensions();
                 final List<Double> upper = bbox.getUpperCorner();
                 final List<Double> lower = bbox.getLowerCorner();
 
+                //@TODO bbox should be null if there is no bbox in response.
+                if(dims == null)continue;
                 for(int i=0,n=dims.intValue();i<n;i++){
                     env.setRange(i, lower.get(i), upper.get(i));
                 }
@@ -265,13 +267,13 @@ public class WFSDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public FeatureReader<SimpleFeatureType,SimpleFeature> getFeatureReader(Query query) throws DataStoreException {
+    public FeatureReader<FeatureType,Feature> getFeatureReader(Query query) throws DataStoreException {
         final Name name = query.getTypeName();
         //will raise an error if typename in unknowned
-        final SimpleFeatureType sft = (SimpleFeatureType) getFeatureType(name);
+        final FeatureType sft = getFeatureType(name);
 
         final QName q = new QName(name.getNamespaceURI(), name.getLocalPart(), prefixes.get(name.getNamespaceURI()));
-        final FeatureCollection<SimpleFeature> collection;
+        final FeatureCollection<Feature> collection;
         try {
             collection = requestFeature(q, query);
         } catch (IOException ex) {
@@ -380,7 +382,7 @@ public class WFSDataStore extends AbstractDataStore{
     // read & write ////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    private SimpleFeatureType requestType(QName typeName) throws IOException{
+    private FeatureType requestType(QName typeName) throws IOException{
         final DescribeFeatureTypeRequest request = server.createDescribeFeatureType();
         request.setTypeNames(Collections.singletonList(typeName));
 
@@ -388,7 +390,7 @@ public class WFSDataStore extends AbstractDataStore{
             final JAXBFeatureTypeReader reader = new JAXBFeatureTypeReader();
             getLogger().log(Level.INFO, "[WFS Client] request type : " + request.getURL());
             final List<FeatureType> featureTypes = reader.read(request.getURL().openStream());
-            return (SimpleFeatureType) featureTypes.get(0);
+            return featureTypes.get(0);
 
         } catch (MalformedURLException ex) {
             throw new IOException(ex);
@@ -398,10 +400,10 @@ public class WFSDataStore extends AbstractDataStore{
 
     }
 
-    private FeatureCollection<SimpleFeature> requestFeature(QName typeName, Query query) throws IOException {
+    private FeatureCollection<Feature> requestFeature(QName typeName, Query query) throws IOException {
         final Name name = new DefaultName(typeName);
-        SimpleFeatureType sft = types.get(name);
-        sft = (SimpleFeatureType) FeatureTypeUtilities.createSubType(sft, query.getPropertyNames());
+        FeatureType sft = types.get(name);
+        sft = FeatureTypeUtilities.createSubType(sft, query.getPropertyNames());
 
         final GetFeatureRequest request = server.createGetFeature();
         request.setTypeName(typeName);
@@ -424,7 +426,7 @@ public class WFSDataStore extends AbstractDataStore{
         }
 
         if(request.equals(lastRequest) && lastCollection != null){
-            final FeatureCollection<SimpleFeature> col = lastCollection.get();
+            final FeatureCollection<Feature> col = lastCollection.get();
             if(col != null){
                 return col;
             }
@@ -439,21 +441,21 @@ public class WFSDataStore extends AbstractDataStore{
 
             lastRequest = request;
 
-            if(result instanceof SimpleFeature){
-                final SimpleFeature sf = (SimpleFeature) result;
-                final FeatureCollection<SimpleFeature> col = DataUtilities.collection("id", sft);
+            if(result instanceof Feature){
+                final Feature sf = (Feature) result;
+                final FeatureCollection<Feature> col = DataUtilities.collection("id", sft);
                 col.add(sf);
 
-                lastCollection = new SoftReference<FeatureCollection<SimpleFeature>>(col);
+                lastCollection = new SoftReference<FeatureCollection<Feature>>(col);
 
                 return col;
             }else if(result instanceof FeatureCollection){
-                final FeatureCollection<SimpleFeature> col = (FeatureCollection<SimpleFeature>) result;
-                lastCollection = new SoftReference<FeatureCollection<SimpleFeature>>(col);
+                final FeatureCollection<Feature> col = (FeatureCollection<Feature>) result;
+                lastCollection = new SoftReference<FeatureCollection<Feature>>(col);
                 return col;
             }else{
-                final FeatureCollection<SimpleFeature> col = DataUtilities.collection("", sft);
-                lastCollection = new SoftReference<FeatureCollection<SimpleFeature>>(col);
+                final FeatureCollection<Feature> col = DataUtilities.collection("", sft);
+                lastCollection = new SoftReference<FeatureCollection<Feature>>(col);
                 return col;
 //                throw new IOException("unexpected type : " + result);
             }
