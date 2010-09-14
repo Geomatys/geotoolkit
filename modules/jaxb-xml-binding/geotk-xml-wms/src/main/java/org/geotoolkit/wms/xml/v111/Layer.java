@@ -26,9 +26,12 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractGeographicBoundingBox;
 import org.geotoolkit.wms.xml.AbstractLayer;
+import org.opengis.geometry.Envelope;
 
 
 /**
@@ -471,6 +474,15 @@ public class Layer extends AbstractLayer {
     @Override
     public List<String> getCRS() {
         return getSRS();
+    }
+
+    @Override
+    public Envelope getEnvelope() {
+        final AbstractGeographicBoundingBox bbox = getLatLonBoundingBox();
+        if(bbox != null){
+            return new GeneralEnvelope(bbox);
+        }
+        return null;
     }
     
 }

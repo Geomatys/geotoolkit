@@ -60,6 +60,7 @@ import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WebMapServer;
 import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractLayer;
+import org.geotoolkit.wms.xml.v111.Layer;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
@@ -158,6 +159,8 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
     private boolean useLocalReprojection = false;
     private boolean matchCapabilitiesDates = false;
 
+    private Envelope env = null;
+
     public WMSMapLayer(final WebMapServer server, final String... layers) {
         super(new DefaultStyleFactory().style());
         this.server = server;
@@ -225,7 +228,13 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      */
     @Override
     public Envelope getBounds() {
-        return MAXEXTEND_ENV;
+        if(env == null){
+            env = findEnvelope();
+            if(env == null){
+                env = MAXEXTEND_ENV;
+            }
+        }
+        return env;
     }
 
     /**
@@ -673,6 +682,15 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
                     + "This can be caused by an incorrect layer name (check case-sensitivity) or a non-compliant wms serveur.");
         }
 
+        return null;
+    }
+
+    private Envelope findEnvelope(){
+        final AbstractLayer layer = server.getCapabilities().getLayerFromName(layers[0]);
+
+        if(layer != null){
+            return layer.getEnvelope();
+        }
         return null;
     }
 

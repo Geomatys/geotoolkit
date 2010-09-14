@@ -18,6 +18,7 @@ package org.geotoolkit.wms.xml;
 
 import java.util.List;
 import javax.xml.bind.annotation.XmlTransient;
+import org.opengis.geometry.Envelope;
 
 /**
  *
@@ -69,4 +70,7 @@ public abstract class AbstractLayer {
      * Gets the title for this layer.
      */
     public abstract String getTitle();
+
+    public abstract Envelope getEnvelope();
+
 }
