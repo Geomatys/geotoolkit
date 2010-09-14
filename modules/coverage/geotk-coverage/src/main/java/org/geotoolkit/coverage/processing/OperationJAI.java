@@ -220,7 +220,7 @@ public class OperationJAI extends Operation2D {
     /**
      * Ensures that the specified class is assignable to {@link RenderedImage}.
      */
-    private static final void ensureRenderedImage(final Class<?> classe)
+    private static void ensureRenderedImage(final Class<?> classe)
             throws IllegalArgumentException
     {
         if (!RenderedImage.class.isAssignableFrom(classe)) {

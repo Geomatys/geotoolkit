@@ -18,8 +18,14 @@
 package org.geotoolkit.internal.sql.table;
 
 import java.io.File;
-import java.sql.SQLException;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.Properties;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
+import java.sql.SQLException;
 import javax.sql.DataSource;
 import java.lang.reflect.Constructor;
 
@@ -36,11 +42,11 @@ import static org.junit.Assume.*;
 
 
 /**
- * Base classe for every tests requerying a connection to a coverage database.
+ * Base class for every tests requerying a connection to a coverage database.
  * This test requires a connection to a PostgreSQL database.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.15
  *
  * @since 3.09 (derived from Seagis)
  */
@@ -54,6 +60,11 @@ public class CatalogTestBase {
      * The {@code "rootDirectory"} property, or {@code null} if undefined.
      */
     private static String rootDirectory;
+
+    /**
+     * Date parser, created when first needed.
+     */
+    private DateFormat dateFormat;
 
     /**
      * For subclass constructors only.
@@ -125,6 +136,27 @@ public class CatalogTestBase {
         database = null;
         if (db != null) {
             db.reset();
+        }
+    }
+
+    /**
+     * Parses the date for the given string using the {@code "yyyy-MM-dd HH:mm"} pattern
+     * in UTC timezone.
+     *
+     * @param  date The date as a {@link String}.
+     * @return The date as a {@link Date}.
+     *
+     * @since 3.15
+     */
+    protected synchronized final Date date(final String date) {
+        if (dateFormat == null) {
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CANADA);
+            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        }
+        try {
+            return dateFormat.parse(date);
+        } catch (ParseException e) {
+            throw new AssertionError(e);
         }
     }
 

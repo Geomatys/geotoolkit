@@ -46,7 +46,7 @@ import static org.geotoolkit.referencing.CRS.getHorizontalCRS;
  * Tests {@link GridCoverageTable}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.15
  *
  * @since 3.10 (derived from Seagis)
  */
@@ -210,23 +210,59 @@ public final class GridCoverageTableTest extends CatalogTestBase {
 
         GridCoverageEntry entry = table.getEntry();
         assertEquals(Boolean.FALSE, table.getLayerEntry(true).isTiled);
-        assertEquals("Should not have a z index when the z-range is infinite.", 0, entry.getIdentifier().zIndex);
+        assertEquals(1, entry.getIdentifier().imageIndex);
+        assertEquals("Should not have a z index when the requested z range is infinite.",
+                0, entry.getIdentifier().zIndex);
 
         table.envelope.setVerticalRange(0, 0);
         entry = table.getEntry();
+        assertEquals(1, entry.getIdentifier().imageIndex);
         assertEquals(1, entry.getIdentifier().zIndex);
 
         table.envelope.setVerticalRange(2.5, 7.5);
         entry = table.getEntry();
+        assertEquals(1, entry.getIdentifier().imageIndex);
         assertEquals(1, entry.getIdentifier().zIndex);
 
         table.envelope.setVerticalRange(90, 110);
         entry = table.getEntry();
+        assertEquals(1, entry.getIdentifier().imageIndex);
         assertEquals(9, entry.getIdentifier().zIndex);
 
         table.envelope.setVerticalRange(2000, 2000);
         entry = table.getEntry();
+        assertEquals(1,  entry.getIdentifier().imageIndex);
         assertEquals(59, entry.getIdentifier().zIndex);
+
+        table.release();
+    }
+
+    /**
+     * Tests the table for the NetCDF entry with different tile value.
+     *
+     * @throws SQLException If the test can't connect to the database.
+     *
+     * @since 3.15
+     */
+    @Test
+    public void testTRange() throws SQLException {
+        final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
+        table.envelope.clear();
+        table.setLayer(LayerTableTest.GEOSTROPHIC_CURRENT);
+
+        table.envelope.setTimeRange(date("2007-05-22 00:08"), date("2007-05-22 00:22"));
+        assertEquals("The time range should encompass only one entry.", 1, table.getEntries().size());
+        GridCoverageEntry entry = table.getEntry();
+        assertEquals(Boolean.FALSE, table.getLayerEntry(true).isTiled);
+        assertEquals(0, entry.getIdentifier().zIndex);
+        assertEquals(2, entry.getIdentifier().imageIndex);
+
+        table.envelope.setTimeRange(date("2007-05-22 00:24"), date("2007-05-22 00:36"));
+        assertEquals("The time range should encompass only one entry.", 1, table.getEntries().size());
+        entry = table.getEntry();
+        assertEquals(Boolean.FALSE, table.getLayerEntry(true).isTiled);
+        assertEquals(0, entry.getIdentifier().zIndex);
+        assertEquals(3, entry.getIdentifier().imageIndex);
 
         table.release();
     }

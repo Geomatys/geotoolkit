@@ -922,21 +922,22 @@ public class NetcdfImageReader extends FileImageReader implements
             dstBands = null;
         }
         final int rank = variable.getRank();
-        final int bandDimension = findDimensionIndex(DimensionSlice.API.BANDS, rank);
-        boolean hasBandDimension = (bandDimension >= 0 && bandDimension < rank);
+        final int imageDimension = findDimensionIndex(DimensionSlice.API.IMAGES, rank);
+        final int bandDimension;
         /*
          * Gets the number of source bands, in preference order (must be consistent with the
          * getNumBands(int) method): from the explicit list of band names, from the variable
          * dimension at the index identified by DimensionIdentification, or 1. Then check that
          * the number of source and target bands are consistent.
          */
-        int numSrcBands = hasBandDimension ? variable.getDimension(bandDimension).getLength() : 1;
-        String[] srcBandNames = null; // Will be used later if non-null.
+        final int numSrcBands;
         final List<String> bandNames = dimensionManager.getBandNames(variableIndex);
         if (bandNames != null) {
-            numSrcBands  = bandNames.size();
-            srcBandNames = bandNames.toArray(new String[numSrcBands]);
-            hasBandDimension = false;
+            numSrcBands = bandNames.size();
+            bandDimension = -1;
+        } else {
+            bandDimension = findDimensionIndex(DimensionSlice.API.BANDS,  rank);
+            numSrcBands = (bandDimension >= 0) ? variable.getDimension(bandDimension).getLength() : 1;
         }
         final int numDstBands = (dstBands != null) ? dstBands.length :
                                 (srcBands != null) ? srcBands.length : numSrcBands;
@@ -1005,23 +1006,29 @@ public class NetcdfImageReader extends FileImageReader implements
             final int srcBand = (srcBands == null) ? zi : srcBands[zi];
             final int dstBand = (dstBands == null) ? zi : dstBands[zi];
             Variable bandVariable = variable;
-            if (srcBandNames != null) {
-                final String name = srcBandNames[srcBand];
+            if (bandNames != null) {
+                final String name = bandNames.get(srcBand);
                 if (!name.equals(variableName)) {
                     bandVariable = findVariable(name);
                 }
             }
             final Array array;
             try {
-                if (hasBandDimension) {
+                if (bandDimension >= 0) {
                     /*
                      * Update the Section instance with the index of the slice to read. This code
                      * is executed only if the band API is used for one of the variable dimension,
-                     * and the bands are not different variables (i.e. srcBandNames == null). Note
+                     * and the bands are not different variables (i.e. bandNames == null). Note
                      * that there is no need to update 'sections' directly since it wraps directly
                      * the 'ranges' array.
                      */
                     ranges[bandDimension] = new Range(srcBand, srcBand, 1);
+                }
+                if (imageDimension >= 0) {
+                    /*
+                     * Like above, but for image index.
+                     */
+                    ranges[imageDimension] = new Range(imageIndex, imageIndex, 1);
                 }
                 array = bandVariable.read(sections);
             } catch (InvalidRangeException e) {

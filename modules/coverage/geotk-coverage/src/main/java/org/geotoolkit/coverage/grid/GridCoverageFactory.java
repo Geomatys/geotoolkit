@@ -85,7 +85,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * <p>
  * Every {@code create} methods will ultimately delegate their work to a master
  * {@link #create(CharSequence, RenderedImage, GridGeometry2D, GridSampleDimension[],
- * GridCoverage[], Map) create} variant. Developpers can override this method if they
+ * GridCoverage[], Map) create} variant. Developers can override this method if they
  * want to intercept the creation of all {@link GridCoverage2D} objects in this factory.
  *
  * @author Martin Desruisseaux (IRD)
@@ -176,7 +176,7 @@ public class GridCoverageFactory extends Factory {
      * Constructs a grid coverage from an {@linkplain ImageFunction image function}.
      *
      * @param name
-     *          The grid coverage name.
+     *          The grid coverage name, or {@code null} if none.
      * @param function
      *          The image function.
      * @param gridGeometry
@@ -230,7 +230,7 @@ public class GridCoverageFactory extends Factory {
      * A default color palette is built from the minimal and maximal values found in the matrix.
      *
      * @param name
-     *          The grid coverage name.
+     *          The grid coverage name, or {@code null} if none.
      * @param matrix
      *          The matrix data in a {@code [row][column]} layout.
      *          {@linkplain Float#NaN NaN} values are mapped to a transparent color.
@@ -279,7 +279,7 @@ public class GridCoverageFactory extends Factory {
      * maximal values found in the raster.
      *
      * @param name
-     *          The grid coverage name.
+     *          The grid coverage name, or {@code null} if none.
      * @param raster
      *          The data (may be floating point numbers). {@linkplain Float#NaN NaN}
      *          values are mapped to a transparent color.
@@ -303,12 +303,12 @@ public class GridCoverageFactory extends Factory {
      * method.
      *
      * @param name
-     *          The grid coverage name.
+     *          The grid coverage name, or {@code null} if none.
      * @param raster
      *          The data (may be floating point numbers).
      *          {@linkplain Float#NaN NaN} values are mapped to a transparent color.
      * @param envelope
-     *          The grid coverage cordinates and its CRS. This envelope must have at least two
+     *          The grid coverage coordinates and its CRS. This envelope must have at least two
      *          dimensions. The two first dimensions describe the image location along <var>x</var>
      *          and <var>y</var> axis. The other dimensions are optional and may be used to locate
      *          the image on a vertical axis or on the time axis.
@@ -357,7 +357,7 @@ public class GridCoverageFactory extends Factory {
      * "{@linkplain GridGeometry2D#getGridToCRS grid to CRS}" transform.
      *
      * @param name
-     *          The grid coverage name.
+     *          The grid coverage name, or {@code null} if none.
      * @param raster
      *          The data (may be floating point numbers).
      *          {@linkplain Float#NaN NaN} values are mapped to a transparent color.
@@ -417,14 +417,14 @@ public class GridCoverageFactory extends Factory {
      * are optional and may be used to locate the image on a vertical axis or on the time axis.
      *
      * @param name
-     *          The grid coverage name.
+     *          The grid coverage name, or {@code null} if none.
      * @param raster
      *          The raster.
      * @param envelope
-     *          The grid coverage cordinates.
+     *          The grid coverage coordinates.
      * @param bands
      *          Sample dimensions for each image band, or {@code null} for default sample dimensions.
-     *          If non-null, then this array's length must matches the number of bands in {@code image}.
+     *          If non-null, then this array length must matches the number of bands in {@code image}.
      * @return The new grid coverage.
      *
      * @since 2.2
@@ -444,7 +444,7 @@ public class GridCoverageFactory extends Factory {
      * "{@linkplain GridGeometry2D#getGridToCRS grid to CRS}" transform.
      *
      * @param name
-     *          The grid coverage name.
+     *          The grid coverage name, or {@code null} if none.
      * @param raster
      *          The raster.
      * @param crs
@@ -455,7 +455,7 @@ public class GridCoverageFactory extends Factory {
      *          The math transform from grid to coordinate reference system.
      * @param bands
      *          Sample dimensions for each image band, or {@code null} for default sample dimensions.
-     *          If non-null, then this array's length must matches the number of bands in {@code image}.
+     *          If non-null, then this array length must matches the number of bands in {@code image}.
      * @return The new grid coverage.
      *
      * @since 2.2
@@ -481,9 +481,9 @@ public class GridCoverageFactory extends Factory {
      * location along <var>x</var> and <var>y</var> axis. The other dimensions are optional and may
      * be used to locate the image on a vertical axis or on the time axis.
      *
-     * @param name     The grid coverage name.
+     * @param name     The grid coverage name, or {@code null} if none.
      * @param image    The image.
-     * @param envelope The grid coverage cordinates.
+     * @param envelope The grid coverage coordinates.
      * @return The new grid coverage.
      *
      * @since 2.2
@@ -518,17 +518,17 @@ public class GridCoverageFactory extends Factory {
      * transform}.
      *
      * @param name
-     *          The grid coverage name.
+     *          The grid coverage name, or {@code null} if none.
      * @param image
      *          The image.
      * @param envelope
-     *          The grid coverage cordinates. This envelope must have at least two dimensions.
+     *          The grid coverage coordinates. This envelope must have at least two dimensions.
      *          The two first dimensions describe the image location along <var>x</var> and
      *          <var>y</var> axis. The other dimensions are optional and may be used to locate
      *          the image on a vertical axis or on the time axis.
      * @param bands
      *          Sample dimensions for each image band, or {@code null} for default sample dimensions.
-     *          If non-null, then this array's length must matches the number of bands in {@code image}.
+     *          If non-null, then this array length must matches the number of bands in {@code image}.
      * @param sources
      *          The sources for this grid coverage, or {@code null} if none.
      * @param properties
@@ -563,7 +563,7 @@ public class GridCoverageFactory extends Factory {
      * "{@linkplain GridGeometry2D#getGridToCRS grid to CRS}" transform.
      *
      * @param name
-     *          The grid coverage name.
+     *          The grid coverage name, or {@code null} if none.
      * @param image
      *          The image.
      * @param crs
@@ -574,7 +574,7 @@ public class GridCoverageFactory extends Factory {
      *          The math transform from grid to coordinate reference system.
      * @param bands
      *          Sample dimension for each image band, or {@code null} for default sample dimensions.
-     *          If non-null, then this array's length must matches the number of bands in the {@code image}.
+     *          If non-null, then this array length must matches the number of bands in the {@code image}.
      * @param sources
      *          The sources for this grid coverage, or {@code null} if none.
      * @param properties
@@ -602,11 +602,11 @@ public class GridCoverageFactory extends Factory {
      * <p>
      * This is the most general constructor, the one that gives the maximum control
      * on the grid coverage to be created. Every {@code create} methods will ultimately
-     * delegate their work this master method. Developpers can override this method if they
+     * delegate their work this master method. Developers can override this method if they
      * want to intercept the creation of all {@link GridCoverage2D} objects in this factory.
      *
      * @param name
-     *          The grid coverage name.
+     *          The grid coverage name, or {@code null} if none.
      * @param image
      *          The image.
      * @param gridGeometry
@@ -615,7 +615,7 @@ public class GridCoverageFactory extends Factory {
      *          system} and a "{@linkplain GridGeometry2D#getGridToCRS grid to CRS}" transform).
      * @param bands
      *          Sample dimensions for each image band, or {@code null} for default sample dimensions.
-     *          If non-null, then this array's length must matches the number of bands in {@code image}.
+     *          If non-null, then this array length must matches the number of bands in {@code image}.
      * @param sources
      *          The sources for this grid coverage, or {@code null} if none.
      * @param properties

@@ -237,7 +237,6 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
      * @since 3.15
      */
     @Test
-    @Ignore
     public void testReadSliceThroughImageAPI() throws IOException {
         final NetcdfImageReader reader = createImageReader();
         assertEquals("Number of images shall be unchanged.", 2, reader.getNumImages(true));

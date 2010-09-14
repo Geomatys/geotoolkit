@@ -39,6 +39,7 @@ import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.SimpleInternationalString;
 
@@ -95,7 +96,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
      * Creates a set of sample dimensions for the given image. The array length of both
      * arguments must matches the number of bands in the supplied {@code image}.
      *
-     * @param  name  The name for data (e.g. "Elevation").
+     * @param  name  The name for data (e.g. "Elevation"), or {@code null} if none.
      * @param  image The image for which to create a set of sample dimensions.
      * @param  src   User-provided sample dimensions, or {@code null} if none.
      * @param  dst   The array where to put sample dimensions.
@@ -158,7 +159,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
     /**
      * Creates a set of sample dimensions for the given raster.
      *
-     * @param  name The name for data (e.g. "Elevation").
+     * @param  name The name for data (e.g. "Elevation"), or {@code null} if none.
      * @param  raster The raster.
      * @param  min The minimal value for each bands, or {@code null} for computing it automatically.
      * @param  max The maximal value for each bands, or {@code null} for computing it automatically.
@@ -185,7 +186,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
                                         final RenderingHints hints)
     {
         final GridSampleDimension[] dst = new GridSampleDimension[raster.getNumBands()];
-        create(name, (min==null || max==null) ? RectIterFactory.create(raster, null) : null,
+        create(name, (min == null || max == null) ? RectIterFactory.create(raster, null) : null,
                raster.getSampleModel(), min, max, units, colors, dst, hints);
         return dst;
     }
@@ -193,7 +194,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
     /**
      * Creates a set of sample dimensions for the data backing the given iterator.
      *
-     * @param  name The name for data (e.g. "Elevation").
+     * @param  name The name for data (e.g. "Elevation"), or {@code null} if none.
      * @param  iterator The iterator through the raster data, or {@code null}.
      * @param  model The image or raster sample model.
      * @param  min The minimal value, or {@code null} for computing it automatically.
@@ -286,7 +287,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
          * This information is required for determining the range of geophysics
          * values.
          */
-        if (needScaling && (min==null || max==null)) {
+        if (needScaling && (min == null || max == null)) {
             final boolean computeMin;
             final boolean computeMax;
             if (computeMin = (min == null)) {
@@ -305,8 +306,8 @@ final class RenderedSampleDimension extends GridSampleDimension {
                     iterator.startPixels();
                     if (!iterator.finishedPixels()) do {
                         final double z = iterator.getSampleDouble();
-                        if (computeMin && z<min[b]) min[b]=z;
-                        if (computeMax && z>max[b]) max[b]=z;
+                        if (computeMin && z < min[b]) min[b] = z;
+                        if (computeMax && z > max[b]) max[b] = z;
                     } while (!iterator.nextPixelDone());
                 } while (!iterator.nextLineDone());
                 if (computeMin && computeMax) {
@@ -324,18 +325,21 @@ final class RenderedSampleDimension extends GridSampleDimension {
          * if the user plan to have NaN values. Even if the current image doesn't have NaN values,
          * it could have NaN later if the image uses a writable raster.
          */
-        final InternationalString n = SimpleInternationalString.wrap(name);
+        InternationalString n = SimpleInternationalString.wrap(name);
+        if (n == null) {
+            n = Vocabulary.formatInternational(Vocabulary.Keys.UNTITLED);
+        }
         NumberRange<?> sourceRange = TypeMap.getRange(sourceType);
         for (int b=0; b<numBands; b++) {
             final Color[] c = colors!=null ? colors[b] : null;
             if (needScaling) {
                 final NumberRange<Double> range = NumberRange.create(min[b], max[b]);
-                sourceRange = range.castTo((Class) sourceRange.getElementClass());
+                sourceRange = range.castTo(sourceRange.getElementClass());
                 categories[0] = new Category(n, c, targetRange, sourceRange);
             } else {
                 categories[0] = new Category(n, c, targetRange, LinearTransform1D.IDENTITY);
             }
-            dst[b] = new GridSampleDimension(name,categories, units).geophysics(true);
+            dst[b] = new GridSampleDimension(name, categories, units).geophysics(true);
         }
     }
 

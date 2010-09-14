@@ -46,7 +46,7 @@ import static org.junit.Assert.*;
  * to {@link GridCoverageEntry} methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.15
  *
  * @since 3.10 (derived from Seagis)
  */
@@ -269,6 +269,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
     public void testMars2D() throws SQLException, IOException, CoverageStoreException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
         table.envelope.clear();
+        table.envelope.setTimeRange(date("2007-05-22 00:24"), date("2007-05-22 00:36"));
         table.setLayer(LayerTableTest.GEOSTROPHIC_CURRENT);
         final GridCoverageReference entry = table.getEntry();
 
