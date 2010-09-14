@@ -96,7 +96,7 @@ public class Layer extends AbstractLayer {
     @XmlElement(name = "Layer")
     private List<Layer> layer = new ArrayList<Layer>();
     @XmlAttribute
-    private Integer queryable;
+    private String queryable;
     @XmlAttribute
     @XmlSchemaType(name = "nonNegativeInteger")
     private BigInteger cascaded;
@@ -174,7 +174,7 @@ public class Layer extends AbstractLayer {
       * @param version    The version of the wms service.
       */
      public Layer(final String name, final String _abstract, final String keyword, final List<String> crs, 
-             final LatLonBoundingBox latLonBoundingBox, final BoundingBox boundingBox, final Integer queryable,
+             final LatLonBoundingBox latLonBoundingBox, final BoundingBox boundingBox, final String queryable,
              final List<AbstractDimension> dimensions, final List<Style> styles) {
          this.name                    = name;
          this.title                   = name;
@@ -219,7 +219,7 @@ public class Layer extends AbstractLayer {
             final List<BoundingBox> boundingBox, final List<Dimension> dimension, final Attribution attribution,
             final List<AuthorityURL> authorityURL, final List<Identifier> identifier, final List<MetadataURL> metadataURL,
             final List<DataURL> dataURL, final List<FeatureListURL> featureListURL, final List<Style> style, final ScaleHint scaleHint,
-            final Double maxScaleDenominator, final List<Layer> layer, final Integer queryable, final BigInteger cascaded,
+            final Double maxScaleDenominator, final List<Layer> layer, final String queryable, final BigInteger cascaded,
             final Integer opaque, final Integer noSubsets, final BigInteger fixedWidth,  final BigInteger fixedHeight) {
         
         this._abstract               = _abstract;
@@ -392,11 +392,7 @@ public class Layer extends AbstractLayer {
      * Gets the value of the queryable property.
      */
     public boolean isQueryable() {
-        if (queryable == null) {
-            return false;
-        } else {
-            return queryable == 1;
-        }
+        return "1".equals(queryable) || "true".equalsIgnoreCase(queryable);
     }
 
     /**
