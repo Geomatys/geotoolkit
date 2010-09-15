@@ -16,7 +16,12 @@
  */
 package org.geotoolkit.style;
 
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.lang.ref.WeakReference;
+
+import org.geotoolkit.internal.ReferenceQueueConsumer;
+import org.geotoolkit.util.Disposable;
 
 import org.opengis.feature.type.Name;
 import org.opengis.style.SemanticType;
@@ -43,5 +48,61 @@ public interface FeatureTypeStyleListener extends PropertyChangeListener{
      * Called when a change occurs in the living semantic collection.
      */
     void semanticTypeChange(CollectionChangeEvent<SemanticType> event);
-    
+
+    /**
+     * Weak feture type style listener. Use it when you are not
+     * sure that the listener will be correctly removed by your class.
+     */
+    public static final class Weak extends WeakReference<FeatureTypeStyleListener> implements FeatureTypeStyleListener,Disposable{
+
+        private final MutableFeatureTypeStyle source;
+
+        public Weak(MutableFeatureTypeStyle source, FeatureTypeStyleListener ref) {
+            super(ref, ReferenceQueueConsumer.DEFAULT.queue);
+            this.source = source;
+        }
+
+        @Override
+        public void dispose() {
+            source.removeListener(this);
+        }
+
+        @Override
+        public void ruleChange(CollectionChangeEvent<MutableRule> event) {
+            final FeatureTypeStyleListener listener = get();
+            if (listener != null) {
+                listener.ruleChange(event);
+            }
+            //if the listener is null, that means we are in the reference queue and it will be disposed soon.
+        }
+
+        @Override
+        public void featureTypeNameChange(CollectionChangeEvent<Name> event) {
+            final FeatureTypeStyleListener listener = get();
+            if (listener != null) {
+                listener.featureTypeNameChange(event);
+            }
+            //if the listener is null, that means we are in the reference queue and it will be disposed soon.
+        }
+
+        @Override
+        public void semanticTypeChange(CollectionChangeEvent<SemanticType> event) {
+            final FeatureTypeStyleListener listener = get();
+            if (listener != null) {
+                listener.semanticTypeChange(event);
+            }
+            //if the listener is null, that means we are in the reference queue and it will be disposed soon.
+        }
+
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            final FeatureTypeStyleListener listener = get();
+            if (listener != null) {
+                listener.propertyChange(evt);
+            }
+            //if the listener is null, that means we are in the reference queue and it will be disposed soon.
+        }
+
+    }
+
 }
