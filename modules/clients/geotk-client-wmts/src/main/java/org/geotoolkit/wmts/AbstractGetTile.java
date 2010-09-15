@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.wmts;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -214,10 +212,4 @@ public abstract class AbstractGetTile extends AbstractRequest implements GetTile
 
         return super.getURL();
     }
-
-    @Override
-    public InputStream getResponseStream() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }

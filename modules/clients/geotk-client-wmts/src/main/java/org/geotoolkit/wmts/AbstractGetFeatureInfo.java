@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.wmts;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -97,13 +95,4 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetTile implements 
         requestParameters.put("J", String.valueOf(rawIndex));
         return super.getURL();
     }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public InputStream getResponseStream() throws IOException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
 }
