@@ -44,7 +44,6 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.text.cql2.CQL;
 import org.geotoolkit.filter.text.cql2.CQLException;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -52,7 +51,6 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapLayer;
 
 import org.opengis.feature.type.PropertyDescriptor;
-import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 
 /**

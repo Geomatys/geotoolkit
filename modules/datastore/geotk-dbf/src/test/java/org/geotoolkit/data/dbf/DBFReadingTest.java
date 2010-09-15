@@ -28,12 +28,11 @@ import java.util.Set;
 import org.geotoolkit.data.AbstractReadingTests;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -56,7 +55,7 @@ public class DBFReadingTest extends AbstractReadingTests{
         store = new DbaseFileDataStore(file, ns, "dbfstore");
 
         for(Name n : store.getNames()){
-            System.out.println(store.getFeatureType(n));
+            FeatureType ft = store.getFeatureType(n);
         }
 
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();

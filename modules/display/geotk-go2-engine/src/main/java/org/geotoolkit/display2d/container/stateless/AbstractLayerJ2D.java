@@ -19,13 +19,13 @@ package org.geotoolkit.display2d.container.stateless;
 
 import java.beans.PropertyChangeEvent;
 import java.util.EventObject;
+
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.CRS;
-import org.opengis.geometry.Envelope;
+
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -33,32 +33,9 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractLayerJ2D<T extends MapLayer> extends AbstractGraphicJ2D{
+public abstract class AbstractLayerJ2D<T extends MapLayer> extends AbstractGraphicJ2D implements LayerListener{
 
-    private final LayerListener listener = new LayerListener() {
-
-        @Override
-        public void propertyChange(PropertyChangeEvent event) {
-            if(getCanvas().getController().isAutoRepaint()){
-                if(MapLayer.STYLE_PROPERTY.equals(event.getPropertyName())){
-                    //TODO should call a repaint only on this graphic
-                    getCanvas().getController().repaint();
-                    return;
-                }else if(MapLayer.SELECTION_FILTER_PROPERTY.equals(event.getPropertyName())){
-                    //TODO should call a repaint only on this graphic
-                    getCanvas().getController().repaint();
-                }
-            }
-        }
-
-        @Override
-        public void styleChange(MapLayer source, EventObject event) {
-            if(getCanvas().getController().isAutoRepaint()){
-                //TODO should call a repaint only on this graphic
-                getCanvas().getController().repaint();
-            }
-        }
-    };
+    private final LayerListener.Weak weakListener = new LayerListener.Weak(this);
 
     protected final T layer;
 
@@ -72,7 +49,7 @@ public abstract class AbstractLayerJ2D<T extends MapLayer> extends AbstractGraph
         //super(canvas, layer.getBounds().getCoordinateReferenceSystem());
         this.layer = layer;
 
-        layer.addLayerListener(listener);
+        weakListener.registerSource(layer);
 
         try{
             if (useLayerEnv) {
@@ -94,6 +71,36 @@ public abstract class AbstractLayerJ2D<T extends MapLayer> extends AbstractGraph
     @Override
     public T getUserObject() {
         return layer;
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        weakListener.dispose();
+    }
+
+    // layer listener ----------------------------------------------
+
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+        if(getCanvas().getController().isAutoRepaint()){
+            if(MapLayer.STYLE_PROPERTY.equals(event.getPropertyName())){
+                //TODO should call a repaint only on this graphic
+                getCanvas().getController().repaint();
+                return;
+            }else if(MapLayer.SELECTION_FILTER_PROPERTY.equals(event.getPropertyName())){
+                //TODO should call a repaint only on this graphic
+                getCanvas().getController().repaint();
+            }
+        }
+    }
+
+    @Override
+    public void styleChange(MapLayer source, EventObject event) {
+        if(getCanvas().getController().isAutoRepaint()){
+            //TODO should call a repaint only on this graphic
+            getCanvas().getController().repaint();
+        }
     }
 
 }

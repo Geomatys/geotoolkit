@@ -14,17 +14,16 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.style;
+package org.geotoolkit.map;
 
 import java.beans.PropertyChangeEvent;
+import java.util.EventObject;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.geotoolkit.filter.DefaultFilterFactory2;
-import org.opengis.feature.type.Name;
-
-import org.opengis.filter.FilterFactory;
+import org.geotoolkit.style.CollectionChangeEvent;
+import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.MutableStyleFactory;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -32,8 +31,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.opengis.style.SemanticType;
-import org.opengis.style.Symbolizer;
 
 /**
  *
@@ -64,107 +61,68 @@ public class WeakListenerTest {
     }
 
     /**
-     * Test no memory leak in weak style listener
+     * Test no memory leak in weak context listener
      */
     @Test
-    public void testWeakStyleListener() {
+    public void testWeakContextListener() {
         final AtomicInteger count = new AtomicInteger(0);
 
-        final MutableStyle style = SF.style();
-        StyleListener listener = new StyleListener() {
-            @Override
-            public void featureTypeStyleChange(CollectionChangeEvent<MutableFeatureTypeStyle> event) {
-                count.incrementAndGet();
-            }
+        final MapContext context = MapBuilder.createContext();
+        ContextListener listener = new ContextListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 fail("Should never had been called");
+            }
+
+            @Override
+            public void layerChange(CollectionChangeEvent<MapLayer> event) {
+                count.incrementAndGet();
             }
             
         };
 
-        StyleListener.Weak weak = new StyleListener.Weak(listener);
-        weak.registerSource(style);
+        ContextListener.Weak weak = new ContextListener.Weak(listener);
+        weak.registerSource(context);
 
-        style.featureTypeStyles().add(SF.featureTypeStyle());
+        context.layers().add(MapBuilder.createEmptyMapLayer());
         assertEquals(1, count.get());
         listener = null;
         pause();
 
-        style.featureTypeStyles().add(SF.featureTypeStyle());
+        context.layers().add(MapBuilder.createEmptyMapLayer());
         //listener should have desapear now, so the event should not have been send
         assertEquals(1, count.get());
     }
 
     /**
-     * Test no memory leak in weak fts listener
+     * Test no memory leak in weak layer listener
      */
     @Test
-    public void testWeakFTSListener() {
+    public void testWeakLayerListener() {
         final AtomicInteger count = new AtomicInteger(0);
 
-        final MutableFeatureTypeStyle fts = SF.featureTypeStyle();
-        FeatureTypeStyleListener listener = new FeatureTypeStyleListener() {
-            @Override
-            public void ruleChange(CollectionChangeEvent<MutableRule> event) {
-                count.incrementAndGet();
-            }
+        final MapLayer layer = MapBuilder.createEmptyMapLayer();
+        LayerListener listener = new LayerListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
-                fail("Should never had been called");
-            }
-            @Override
-            public void featureTypeNameChange(CollectionChangeEvent<Name> event) {
-                fail("Should never had been called");
-            }
-            @Override
-            public void semanticTypeChange(CollectionChangeEvent<SemanticType> event) {
-                fail("Should never had been called");
-            }
-
-        };
-
-        FeatureTypeStyleListener.Weak weak = new FeatureTypeStyleListener.Weak(listener);
-        weak.registerSource(fts);
-
-        fts.rules().add(SF.rule());
-        assertEquals(1, count.get());
-        listener = null;
-        pause();
-
-        fts.rules().add(SF.rule());
-        //listener should have desapear now, so the event should not have been send
-        assertEquals(1, count.get());
-    }
-
-    /**
-     * Test no memory leak in weak rule listener
-     */
-    @Test
-    public void testWeakRuleListener() {
-        final AtomicInteger count = new AtomicInteger(0);
-
-        final MutableRule rule = SF.rule();
-        RuleListener listener = new RuleListener() {
-            @Override
-            public void symbolizerChange(CollectionChangeEvent<Symbolizer> event) {
                 count.incrementAndGet();
             }
+
             @Override
-            public void propertyChange(PropertyChangeEvent evt) {
+            public void styleChange(MapLayer source, EventObject event) {
                 fail("Should never had been called");
             }
         };
 
-        RuleListener.Weak weak = new RuleListener.Weak(listener);
-        weak.registerSource(rule);
+        LayerListener.Weak weak = new LayerListener.Weak(listener);
+        weak.registerSource(layer);
 
-        rule.symbolizers().add(SF.lineSymbolizer());
+        layer.setStyle(SF.style(SF.lineSymbolizer()));
         assertEquals(1, count.get());
         listener = null;
         pause();
 
-        rule.symbolizers().add(SF.pointSymbolizer());
+        layer.setStyle(SF.style(SF.pointSymbolizer()));
         //listener should have desapear now, so the event should not have been send
         assertEquals(1, count.get());
     }

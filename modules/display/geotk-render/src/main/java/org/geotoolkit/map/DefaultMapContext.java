@@ -50,7 +50,7 @@ import org.opengis.style.Description;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-final class DefaultMapContext implements MapContext {
+final class DefaultMapContext implements MapContext, LayerListener {
 
     private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.map");
 
@@ -61,26 +61,26 @@ final class DefaultMapContext implements MapContext {
         }
 
         protected void notifyAdd(final MapLayer item, final int index) {
-            fireLayerChange(CollectionChangeEvent.ITEM_ADDED, item, NumberRange.create(index, index),null );
-            item.addLayerListener(layerListener);
+            fireLayerChange(CollectionChangeEvent.ITEM_ADDED, item, NumberRange.create(index, index),null);
+            layerListener.registerSource(item);
         }
 
         protected void notifyAdd(final Collection<? extends MapLayer> items, final NumberRange<Integer> range) {
             fireLayerChange(CollectionChangeEvent.ITEM_ADDED, items, range);
             for(final MapLayer layer : items){
-                layer.addLayerListener(layerListener);
+                layerListener.registerSource(layer);
             }
         }
 
         protected void notifyRemove(final MapLayer item, final int index) {
             fireLayerChange(CollectionChangeEvent.ITEM_REMOVED, item, NumberRange.create(index, index),null );
-            item.removeLayerListener(layerListener);
+            layerListener.unregisterSource(item);
         }
 
         protected void notifyRemove(final Collection<? extends MapLayer> items, final NumberRange<Integer> range) {
             fireLayerChange(CollectionChangeEvent.ITEM_REMOVED, items, range );
             for(final MapLayer layer : items){
-                layer.removeLayerListener(layerListener);
+                layerListener.unregisterSource(layer);
             }
         }
 
@@ -162,20 +162,7 @@ final class DefaultMapContext implements MapContext {
 
     };
 
-    private final LayerListener layerListener = new LayerListener() {
-
-        @Override
-        public void propertyChange(PropertyChangeEvent event) {
-            final int number = layers.indexOf((MapLayer)event.getSource());
-            fireLayerChange(CollectionChangeEvent.ITEM_CHANGED, (MapLayer)event.getSource(), NumberRange.create(number,number),event);
-        }
-
-        @Override
-        public void styleChange(MapLayer source, EventObject event) {
-            final int number = layers.indexOf(source);
-            fireLayerChange(CollectionChangeEvent.ITEM_CHANGED, source, NumberRange.create(number,number),event);
-        }
-    };
+    private final LayerListener.Weak layerListener = new LayerListener.Weak(this);
 
     private final Map<String,Object> parameters = new HashMap<String,Object>();
 
@@ -389,6 +376,22 @@ final class DefaultMapContext implements MapContext {
             listener.layerChange(event);
         }
 
+    }
+
+    //--------------------------------------------------------------------------
+    // layer listener ----------------------------------------------------------
+    //--------------------------------------------------------------------------
+
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+        final int number = layers.indexOf((MapLayer)event.getSource());
+        fireLayerChange(CollectionChangeEvent.ITEM_CHANGED, (MapLayer)event.getSource(), NumberRange.create(number,number),event);
+    }
+
+    @Override
+    public void styleChange(MapLayer source, EventObject event) {
+        final int number = layers.indexOf(source);
+        fireLayerChange(CollectionChangeEvent.ITEM_CHANGED, source, NumberRange.create(number,number),event);
     }
 
     /**

@@ -17,24 +17,23 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
-import org.geotoolkit.display2d.container.statefull.StatefullCoverageLayerJ2D;
-import org.geotoolkit.display.canvas.VisitFilter;
 import java.beans.PropertyChangeEvent;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
-import org.geotoolkit.display2d.container.MultiThreadedRendering;
 import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display2d.GO2Hints;
+import org.geotoolkit.display2d.container.MultiThreadedRendering;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
+import org.geotoolkit.display2d.container.statefull.StatefullCoverageLayerJ2D;
 import org.geotoolkit.map.ContextListener;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.DynamicMapLayer;
@@ -43,8 +42,8 @@ import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.CollectionChangeEvent;
-
 import org.geotoolkit.util.logging.Logging;
+
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
@@ -56,57 +55,13 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class StatelessContextJ2D extends AbstractGraphicJ2D{
+public class StatelessContextJ2D extends AbstractGraphicJ2D implements ContextListener{
 
     private static final Logger LOGGER = Logging.getLogger(StatelessContextJ2D.class);
 
     private final Map<MapLayer, GraphicJ2D> layerGraphics = new HashMap<MapLayer, GraphicJ2D>();
     
-    private final ContextListener contextListener = new ContextListener() {
-
-        @Override
-        public void propertyChange(PropertyChangeEvent event) {
-        }
-
-        @Override
-        public void layerChange(CollectionChangeEvent<MapLayer> event) {
-            final int type = event.getType();
-
-            if(CollectionChangeEvent.ITEM_ADDED == type){
-                for(final MapLayer layer : event.getItems()){
-                    parseLayer(layer, context.layers().indexOf(layer));
-                }
-                //change other layers indexes
-                final List<MapLayer> layers = context.layers();
-                for(int i=0,n=layers.size(); i<n; i++){
-                    final MapLayer layer = layers.get(i);
-                    final GraphicJ2D gra = layerGraphics.get(layer);
-                    if(gra != null){
-                        gra.setZOrderHint(i);
-                    }
-                }
-            }else if(CollectionChangeEvent.ITEM_REMOVED == type){
-                for(final MapLayer layer : event.getItems()){
-                    final GraphicJ2D gra = layerGraphics.get(layer);
-                    if(gra != null){
-                        gra.dispose();
-                    }
-                    //remove the graphic
-                    layerGraphics.remove(layer);
-                }
-                //change other layers indexes
-                final List<MapLayer> layers = context.layers();
-                for(int i=0,n=layers.size(); i<n; i++){
-                    final MapLayer layer = layers.get(i);
-                    final GraphicJ2D gra = layerGraphics.get(layer);
-                    if(gra != null){
-                        gra.setZOrderHint(i);
-                    }
-                }
-            }else if(CollectionChangeEvent.ITEM_CHANGED == type){
-            }
-        }
-    };
+    private final ContextListener.Weak contextListener = new ContextListener.Weak(this);
 
     private final MapContext context;
 
@@ -132,7 +87,7 @@ public class StatelessContextJ2D extends AbstractGraphicJ2D{
             LOGGER.log(Level.WARNING, null, ex);
         }
         parseContext(this.context);
-        this.context.addContextListener(contextListener);
+        contextListener.registerSource(context);
     }
    
     public MapContext getContext(){
@@ -142,7 +97,7 @@ public class StatelessContextJ2D extends AbstractGraphicJ2D{
     @Override
     public void dispose() {
         super.dispose();
-        context.removeContextListener(contextListener);
+        contextListener.dispose();
 
         for(GraphicJ2D graphic : layerGraphics.values()){
             graphic.dispose();
@@ -230,6 +185,51 @@ public class StatelessContextJ2D extends AbstractGraphicJ2D{
             }
         }
         return graphics;
+    }
+
+    // context events ---------------------------------------------------------
+
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+    }
+
+    @Override
+    public void layerChange(CollectionChangeEvent<MapLayer> event) {
+        final int type = event.getType();
+
+        if(CollectionChangeEvent.ITEM_ADDED == type){
+            for(final MapLayer layer : event.getItems()){
+                parseLayer(layer, context.layers().indexOf(layer));
+            }
+            //change other layers indexes
+            final List<MapLayer> layers = context.layers();
+            for(int i=0,n=layers.size(); i<n; i++){
+                final MapLayer layer = layers.get(i);
+                final GraphicJ2D gra = layerGraphics.get(layer);
+                if(gra != null){
+                    gra.setZOrderHint(i);
+                }
+            }
+        }else if(CollectionChangeEvent.ITEM_REMOVED == type){
+            for(final MapLayer layer : event.getItems()){
+                final GraphicJ2D gra = layerGraphics.get(layer);
+                if(gra != null){
+                    gra.dispose();
+                }
+                //remove the graphic
+                layerGraphics.remove(layer);
+            }
+            //change other layers indexes
+            final List<MapLayer> layers = context.layers();
+            for(int i=0,n=layers.size(); i<n; i++){
+                final MapLayer layer = layers.get(i);
+                final GraphicJ2D gra = layerGraphics.get(layer);
+                if(gra != null){
+                    gra.setZOrderHint(i);
+                }
+            }
+        }else if(CollectionChangeEvent.ITEM_CHANGED == type){
+        }
     }
 
 }

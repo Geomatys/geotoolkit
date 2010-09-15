@@ -44,7 +44,7 @@ import org.opengis.style.Description;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-class DefaultMutableNamedLayer implements MutableNamedLayer{
+class DefaultMutableNamedLayer implements MutableNamedLayer,StyleListener{
 
     private final List<MutableLayerStyle> styles = new NotifiedCheckedList<MutableLayerStyle>(MutableLayerStyle.class) {
 
@@ -55,28 +55,28 @@ class DefaultMutableNamedLayer implements MutableNamedLayer{
 
             @Override
             protected void notifyAdd(final MutableLayerStyle item, final int index) {
-                item.addListener(styleListener);
+                styleListener.registerSource(item);
                 fireStyleChange(CollectionChangeEvent.ITEM_ADDED, item, NumberRange.create(index, index));
             }
 
             @Override
             protected void notifyAdd(final Collection<? extends MutableLayerStyle> items, final NumberRange<Integer> range) {
                 for(MutableLayerStyle item : items){
-                    item.addListener(styleListener);
+                    styleListener.registerSource(item);
                 }
                 fireStyleChange(CollectionChangeEvent.ITEM_ADDED, items, range);
             }
 
             @Override
             protected void notifyRemove(final MutableLayerStyle item, final int index) {
-                item.removeListener(styleListener);
+                styleListener.unregisterSource(item);
                 fireStyleChange(CollectionChangeEvent.ITEM_REMOVED, item, NumberRange.create(index, index));
             }
             
             @Override
             protected void notifyRemove(final Collection<? extends MutableLayerStyle> items, final NumberRange<Integer> range) {
                 for(final MutableLayerStyle mls : items){
-                    mls.removeListener(styleListener);
+                    styleListener.unregisterSource(mls);
                 }
                 fireStyleChange(CollectionChangeEvent.ITEM_REMOVED, items, range);
             }
@@ -84,18 +84,7 @@ class DefaultMutableNamedLayer implements MutableNamedLayer{
             
         };
         
-    private final StyleListener styleListener = new StyleListener() {
-
-        @Override
-        public void propertyChange(PropertyChangeEvent event) {
-            fireStyleChange(CollectionChangeEvent.ITEM_CHANGED, (MutableLayerStyle)event.getSource(), null, event);
-        }
-        
-        @Override
-        public void featureTypeStyleChange(CollectionChangeEvent<MutableFeatureTypeStyle> event) {
-            fireStyleChange(CollectionChangeEvent.ITEM_CHANGED, (MutableLayerStyle)event.getSource(), null, event);
-        }
-    };
+    private final StyleListener.Weak styleListener = new StyleListener.Weak(null,this);
     
     private final EventListenerList listeners = new EventListenerList();
     
@@ -262,7 +251,21 @@ class DefaultMutableNamedLayer implements MutableNamedLayer{
             listener.constraintChange(newEvent);
         }
     }
-    
+
+    //--------------------------------------------------------------------------
+    // style listener-----------------------------------------------------------
+    //--------------------------------------------------------------------------
+
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+        fireStyleChange(CollectionChangeEvent.ITEM_CHANGED, (MutableLayerStyle)event.getSource(), null, event);
+    }
+    @Override
+    public void featureTypeStyleChange(CollectionChangeEvent<MutableFeatureTypeStyle> event) {
+        fireStyleChange(CollectionChangeEvent.ITEM_CHANGED, (MutableLayerStyle)event.getSource(), null, event);
+    }
+
+
     /**
      * {@inheritDoc }
      */

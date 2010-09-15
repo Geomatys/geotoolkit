@@ -20,6 +20,8 @@ package org.geotoolkit.data;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EventListener;
 import java.util.logging.Level;
 
@@ -55,15 +57,50 @@ public interface StorageListener extends EventListener{
                         + "not remove listener because source object does not have a removeStorageListener method. "
                         + "Source object is : {0}";
 
-        private final Object source;
+        private final Collection<Object> sources = new ArrayList<Object>(1);
+
+        public Weak(StorageListener ref) {
+            this(null,ref);
+        }
 
         public Weak(Object source, StorageListener ref) {
             super(ref, ReferenceQueueConsumer.DEFAULT.queue);
-            this.source = source;
+            registerSource(source);
+        }
+        
+        /**
+         * Register this listener on the given source.
+         */
+        public synchronized void registerSource(Object source){
+            if(source != null){
+                //register in the new source
+                this.sources.add(source);
+                try {
+                    final Method method = source.getClass().getMethod("addStorageListener", StorageListener.class);
+                    method.invoke(source, this);
+                } catch (IllegalAccessException ex) {
+                    DataUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                } catch (IllegalArgumentException ex) {
+                    DataUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                } catch (InvocationTargetException ex) {
+                    DataUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                } catch (NoSuchMethodException ex) {
+                    DataUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                } catch (SecurityException ex) {
+                    DataUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
+                }
+            }
         }
 
-        @Override
-        public void dispose() {
+        /**
+         * Unregister this listener on the given source.
+         */
+        public synchronized void unregisterSource(Object source){
+            sources.remove(source);
+            remove(source);
+        }
+
+        private synchronized void remove(Object source){
             try {
                 final Method method = source.getClass().getMethod("removeStorageListener", StorageListener.class);
                 method.invoke(source, this);
@@ -78,6 +115,14 @@ public interface StorageListener extends EventListener{
             } catch (SecurityException ex) {
                 DataUtilities.LOGGER.log(Level.WARNING, ERROR_MSG, source);
             }
+        }
+
+        @Override
+        public synchronized void dispose() {
+            for(Object source : sources){
+                remove(source);
+            }
+            sources.clear();
         }
 
         @Override

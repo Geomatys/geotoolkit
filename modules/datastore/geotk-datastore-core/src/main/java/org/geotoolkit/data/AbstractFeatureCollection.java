@@ -45,6 +45,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
         implements FeatureCollection<F>, StorageListener{
 
     private final Set<StorageListener> listeners = new HashSet<StorageListener>();
+    private final StorageListener.Weak weakListener = new Weak(this);
 
     protected String id;
     protected final Source source;
@@ -63,9 +64,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
 
         final Collection<Session> sessions = QueryUtilities.getSessions(source, null);
         for (Session s : sessions) {
-            //register a weak listener, to memory leak since we don't know when to remove the listener.
-            //@todo should we have a dispose method on the session ? I dont think so
-            s.addStorageListener(new WeakStorageListener(s, this));
+            weakListener.registerSource(s);
         }
 
     }

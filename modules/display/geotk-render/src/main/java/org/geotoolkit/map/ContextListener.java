@@ -18,8 +18,13 @@
 package org.geotoolkit.map;
 
 import java.beans.PropertyChangeEvent;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.EventListener;
+import org.geotoolkit.internal.ReferenceQueueConsumer;
 import org.geotoolkit.style.CollectionChangeEvent;
+import org.geotoolkit.util.Disposable;
 
 
 /**
@@ -40,5 +45,70 @@ public interface ContextListener extends EventListener {
      * Called when a change occurs in the living layer list.
      */
     void layerChange(CollectionChangeEvent<MapLayer> event);
-    
+
+
+    /**
+     * Weak context listener. Use it when you are not
+     * sure that the listener will be correctly removed by your class.
+     */
+    public static final class Weak extends WeakReference<ContextListener> implements ContextListener,Disposable{
+
+        private final Collection<MapContext> sources = new ArrayList<MapContext>(1);
+
+        public Weak(ContextListener ref) {
+            this(null,ref);
+        }
+
+        public Weak(MapContext source, ContextListener ref) {
+            super(ref, ReferenceQueueConsumer.DEFAULT.queue);
+            registerSource(source);
+        }
+
+        /**
+         * Register this listener on the given source.
+         */
+        public synchronized void registerSource(MapContext source){
+            if(source != null){
+                //register in the new source
+                source.addContextListener(this);
+                this.sources.add(source);
+            }
+        }
+
+        /**
+         * Unregister this listener on the given source.
+         */
+        public synchronized void unregisterSource(MapContext source){
+            sources.remove(source);
+            source.removeContextListener(this);
+        }
+
+        @Override
+        public synchronized void dispose() {
+            for(MapContext source : sources){
+                source.removeContextListener(this);
+            }
+            sources.clear();
+        }
+
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+            final ContextListener listener = get();
+            if (listener != null) {
+                listener.propertyChange(evt);
+            }
+            //if the listener is null, that means we are in the reference queue and it will be disposed soon.
+        }
+
+        @Override
+        public void layerChange(CollectionChangeEvent<MapLayer> event) {
+            final ContextListener listener = get();
+            if (listener != null) {
+                listener.layerChange(event);
+            }
+            //if the listener is null, that means we are in the reference queue and it will be disposed soon.
+        }
+
+    }
+
 }

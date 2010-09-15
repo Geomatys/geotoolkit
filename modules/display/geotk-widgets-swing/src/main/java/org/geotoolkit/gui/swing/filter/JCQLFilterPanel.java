@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -32,10 +31,9 @@ import javax.swing.event.ListSelectionListener;
 import org.geotoolkit.filter.text.cql2.CQL;
 import org.geotoolkit.filter.text.cql2.CQLException;
 import org.geotoolkit.gui.swing.resource.IconBundle;
-
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
-import org.geotoolkit.map.MapLayer;
+
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 

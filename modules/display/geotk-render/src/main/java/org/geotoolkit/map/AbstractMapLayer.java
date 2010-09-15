@@ -30,6 +30,7 @@ import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.StyleListener;
+import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.collection.CheckedArrayList;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
@@ -43,7 +44,7 @@ import org.opengis.style.Description;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractMapLayer implements MapLayer {
+public abstract class AbstractMapLayer implements MapLayer,StyleListener {
 
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.map");
     
@@ -51,19 +52,7 @@ public abstract class AbstractMapLayer implements MapLayer {
     
     private final EventListenerList listeners = new EventListenerList();
 
-    private final StyleListener styleListener = new StyleListener() {
-
-        @Override
-        public void propertyChange(PropertyChangeEvent event) {
-            fireStyleChange(event);
-        }
-
-        @Override
-        public void featureTypeStyleChange(CollectionChangeEvent<MutableFeatureTypeStyle> event) {
-            fireStyleChange(event);
-        }
-        
-    };
+    private final StyleListener.Weak styleListener = new StyleListener.Weak(null,this);
     
     private final Map<String,Object> parameters = new HashMap<String,Object>();
 
@@ -169,7 +158,7 @@ public abstract class AbstractMapLayer implements MapLayer {
     @Override
     public void setStyle(MutableStyle style) {
         if (style == null) {
-            throw new NullPointerException("Style can't be null");
+            throw new NullArgumentException("Style can not be null");
         }
         
         final MutableStyle oldStyle;
@@ -179,19 +168,11 @@ public abstract class AbstractMapLayer implements MapLayer {
                 return;
             }
 
-            synchronized(listeners){
-                if(listeners.getListenerCount() > 0){
-
-                    if(oldStyle != null){
-                        oldStyle.removeListener(styleListener);
-                    }
-                    this.style = style;
-                    this.style.addListener(styleListener);
-                }else{
-                    this.style = style;
-                }
+            if(oldStyle != null){
+                styleListener.unregisterSource(oldStyle);
             }
-
+            this.style = style;
+            styleListener.registerSource(style);
         }
         firePropertyChange(STYLE_PROPERTY, oldStyle, this.style);
     }
@@ -389,14 +370,25 @@ public abstract class AbstractMapLayer implements MapLayer {
             listener.styleChange(this, event);
         }
     }
-    
+
+    //--------------------------------------------------------------------------
+    // style listener-----------------------------------------------------------
+    //--------------------------------------------------------------------------
+
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+        fireStyleChange(event);
+    }
+
+    @Override
+    public void featureTypeStyleChange(CollectionChangeEvent<MutableFeatureTypeStyle> event) {
+        fireStyleChange(event);
+    }
+
     @Override
     public void addLayerListener(LayerListener listener){
 
         synchronized(listeners){
-            if(listeners.getListenerCount() == 0){
-                style.addListener(styleListener);
-            }
             listeners.add(LayerListener.class, listener);
         }
     }
@@ -406,15 +398,12 @@ public abstract class AbstractMapLayer implements MapLayer {
 
         synchronized(listeners){
             listeners.remove(LayerListener.class, listener);
-            if(listeners.getListenerCount() == 0){
-                style.removeListener(styleListener);
-            }
         }
     }
     
     @Override
     public String toString() {
-        StringBuffer buf = new StringBuffer();
+        final StringBuilder buf = new StringBuilder();
         buf.append("AbstractMapLayer[ ");
         buf.append(desc);
         if (visible) {

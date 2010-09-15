@@ -19,6 +19,8 @@ package org.geotoolkit.style;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 import org.geotoolkit.util.Disposable;
@@ -44,16 +46,42 @@ public interface RuleListener extends PropertyChangeListener{
      */
     public static final class Weak extends WeakReference<RuleListener> implements RuleListener,Disposable{
 
-        private final MutableRule source;
+        private final Collection<MutableRule> sources = new ArrayList<MutableRule>(1);
+
+        public Weak(RuleListener ref) {
+            this(null,ref);
+        }
 
         public Weak(MutableRule source, RuleListener ref) {
             super(ref, ReferenceQueueConsumer.DEFAULT.queue);
-            this.source = source;
+            registerSource(source);
+        }
+
+        /**
+         * Register this listener on the given source.
+         */
+        public synchronized void registerSource(MutableRule source){
+            if(source != null){
+                //register in the new source
+                source.addListener(this);
+                this.sources.add(source);
+            }
+        }
+
+        /**
+         * Unregister this listener on the given source.
+         */
+        public synchronized void unregisterSource(MutableRule source){
+            sources.remove(source);
+            source.removeListener(this);
         }
 
         @Override
-        public void dispose() {
-            source.removeListener(this);
+        public synchronized void dispose() {
+            for(MutableRule source : sources){
+                source.removeListener(this);
+            }
+            sources.clear();
         }
 
         @Override

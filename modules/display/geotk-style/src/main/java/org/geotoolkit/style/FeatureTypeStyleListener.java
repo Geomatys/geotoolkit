@@ -19,6 +19,8 @@ package org.geotoolkit.style;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 import org.geotoolkit.util.Disposable;
@@ -55,16 +57,42 @@ public interface FeatureTypeStyleListener extends PropertyChangeListener{
      */
     public static final class Weak extends WeakReference<FeatureTypeStyleListener> implements FeatureTypeStyleListener,Disposable{
 
-        private final MutableFeatureTypeStyle source;
+        private final Collection<MutableFeatureTypeStyle> sources = new ArrayList<MutableFeatureTypeStyle>(1);
+
+        public Weak(FeatureTypeStyleListener ref) {
+            this(null,ref);
+        }
 
         public Weak(MutableFeatureTypeStyle source, FeatureTypeStyleListener ref) {
             super(ref, ReferenceQueueConsumer.DEFAULT.queue);
-            this.source = source;
+            registerSource(source);
+        }
+
+        /**
+         * Register this listener on the given source.
+         */
+        public synchronized void registerSource(MutableFeatureTypeStyle source){
+            if(source != null){
+                //register in the new source
+                source.addListener(this);
+                this.sources.add(source);
+            }
+        }
+
+        /**
+         * Unregister this listener on the given source.
+         */
+        public synchronized void unregisterSource(MutableFeatureTypeStyle source){
+            sources.remove(source);
+            source.removeListener(this);
         }
 
         @Override
-        public void dispose() {
-            source.removeListener(this);
+        public synchronized void dispose() {
+            for(MutableFeatureTypeStyle source : sources){
+                source.removeListener(this);
+            }
+            sources.clear();
         }
 
         @Override
