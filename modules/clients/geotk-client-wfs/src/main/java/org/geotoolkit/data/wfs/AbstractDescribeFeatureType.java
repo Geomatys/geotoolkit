@@ -67,7 +67,7 @@ public abstract class AbstractDescribeFeatureType extends AbstractRequest implem
 
         if(typeNames != null){
             final StringBuilder sbN = new StringBuilder();
-            final StringBuilder sbNS = new StringBuilder("{");
+            final StringBuilder sbNS = new StringBuilder();
             for(QName q : typeNames){
                 sbN.append(q.getPrefix()).append(':').append(q.getLocalPart()).append(',');
                 sbNS.append("xmlns(").append(q.getPrefix()).append('=').append(q.getNamespaceURI()).append(')').append(',');
@@ -80,8 +80,6 @@ public abstract class AbstractDescribeFeatureType extends AbstractRequest implem
             if(sbNS.charAt(sbNS.length()-1) == ','){
                 sbNS.deleteCharAt(sbNS.length()-1);
             }
-
-            sbNS.append("}");
 
             requestParameters.put("TYPENAME",sbN.toString());
             requestParameters.put("NAMESPACE",sbNS.toString());
