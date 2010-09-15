@@ -36,7 +36,6 @@ import java.util.Iterator;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 import javax.imageio.ImageReader;
 
 import org.opengis.util.FactoryException;
@@ -49,7 +48,6 @@ import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.QueryType;
 import org.geotoolkit.internal.sql.table.LocalCache;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
-import org.geotoolkit.internal.sql.table.NoSuchRecordException;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.io.IOUtilities;
 
@@ -109,31 +107,6 @@ final class WritableGridCoverageTable extends GridCoverageTable {
     @Override
     protected WritableGridCoverageTable clone() {
         return new WritableGridCoverageTable(this);
-    }
-
-    /**
-     * Sets the series in which to insert the entries. It should be an existing series in the
-     * currently selected layer.
-     * <p>
-     * This method shall be invoked only when used with {@link WritableGridCoverageTable}.
-     *
-     * @param  identifier The series identifier.
-     * @throws SQLException If the database access failed for an other reason.
-     */
-    final void setSeries(final int identifier) throws SQLException {
-        final LayerEntry layer = getLayerEntry(false);
-        if (layer == null) {
-            final SeriesTable table = getDatabase().getTable(SeriesTable.class);
-            specificSeries = table.getEntry(identifier);
-            table.release();
-            // Do not set the layer since it still null for SeriesEntry created that way.
-        } else {
-            specificSeries = layer.getSeries(identifier);
-            if (specificSeries == null) {
-                throw new NoSuchRecordException(errors().getString(
-                        Errors.Keys.ILLEGAL_ARGUMENT_$2, "identifier", identifier));
-            }
-        }
     }
 
     /**
@@ -340,7 +313,6 @@ final class WritableGridCoverageTable extends GridCoverageTable {
      *
      * @param  includeSubdirectories If {@code true}, then sub-directories will be included
      *         in the scan. New series may be created if subdirectories are found.
-     * @param  policy The action to take for existing entries.
      * @param  listeners The object which hold the {@link CoverageDatabaseListener}s. While this
      *         argument is of kind {@link CoverageDatabase}, only the listeners are of interest
      *         to this method.
@@ -350,21 +322,17 @@ final class WritableGridCoverageTable extends GridCoverageTable {
      * @throws IOException If an I/O operation was required and failed.
      */
     public int updateLayer(final boolean                    includeSubdirectories,
-                           final UpdatePolicy               policy,
                            final CoverageDatabase           listeners,
                            final CoverageDatabaseController controller)
             throws SQLException, IOException, FactoryException, CoverageStoreException
     {
-        final boolean replaceExisting = !UpdatePolicy.SKIP_EXISTING.equals(policy);
         final LayerEntry layer = getLayerEntry(true);
-        Set<GridCoverageReference> coverages = null;
         final Map<Object,SeriesEntry> inputs = new LinkedHashMap<Object,SeriesEntry>();
         for (final SeriesEntry series : layer.getSeries()) {
             /*
              * The inputs map will contains File or URI objects. If the protocol is "file",
-             * we will scan the directory and put File objects in the map. Otherwise and if
-             * the user asked for the replacement of existing file, we just copy the set of
-             * existing URI. Otherwise we do nothing since we can't get the list of new items.
+             * we will scan the directory and put File objects in the map. Otherwise we do
+             * nothing since we can't get the list of new items.
              */
             if (series.protocol.equalsIgnoreCase(SeriesEntry.FILE_PROTOCOL)) {
                 File directory = series.file("*");
@@ -389,15 +357,6 @@ final class WritableGridCoverageTable extends GridCoverageTable {
                 }
                 throw new FileNotFoundException(errors().getString(
                         Errors.Keys.NOT_A_DIRECTORY_$1, directory.getPath()));
-            } else if (replaceExisting) {
-                if (coverages == null) {
-                    coverages = layer.getCoverageReferences(null);
-                }
-                for (final GridCoverageReference coverage : coverages) {
-                    if (series.equals(((GridCoverageEntry) coverage).getIdentifier().series)) {
-                        inputs.put(coverage.getFile(URI.class), series);
-                    }
-                }
             }
         }
         /*
@@ -413,9 +372,7 @@ final class WritableGridCoverageTable extends GridCoverageTable {
         synchronized (lc) {
             transactionBegin(lc);
             try {
-                if (UpdatePolicy.CLEAR_BEFORE_UPDATE.equals(policy)) {
-                    deleteAll();
-                } else for (final Iterator<Map.Entry<Object,SeriesEntry>> it=inputs.entrySet().iterator(); it.hasNext();) {
+                for (final Iterator<Map.Entry<Object,SeriesEntry>> it=inputs.entrySet().iterator(); it.hasNext();) {
                     final Map.Entry<Object,SeriesEntry> entry = it.next();
                     final Object input = IOUtilities.tryToFile(entry.getKey());
                     if (input instanceof File) {
@@ -425,9 +382,7 @@ final class WritableGridCoverageTable extends GridCoverageTable {
                             filename = filename.substring(0, split);
                         }
                         specificSeries = entry.getValue();
-                        if (replaceExisting) {
-                            delete(filename);
-                        } else if (exists(filename)) {
+                        if (exists(filename)) {
                             it.remove();
                         }
                     }
