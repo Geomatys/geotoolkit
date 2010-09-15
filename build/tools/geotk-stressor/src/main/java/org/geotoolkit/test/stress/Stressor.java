@@ -29,6 +29,7 @@ import org.geotoolkit.math.Statistics;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.logging.LogProducer;
 
 
 /**
@@ -39,7 +40,7 @@ import org.geotoolkit.util.logging.Logging;
  *
  * @since 3.14
  */
-public abstract class Stressor extends RequestGenerator implements Callable<Statistics> {
+public abstract class Stressor extends RequestGenerator implements Callable<Statistics>, LogProducer {
     /**
      * The logger to use for reporting information.
      */
@@ -66,10 +67,10 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
     private static final int MAXIMAL_PAUSE = 250;
 
     /**
-     * The time (in milliseconds) when to stop the test.
-     * This is set by {@link StressorGroup} when a stress is started.
+     * The time (in nanoseconds) when to stop the test. This is set by {@link StressorGroup}
+     * when a stress is started, and set to the actual stop time when the stress is finished.
      */
-    protected long stopTime;
+    long stopTime;
 
     /**
      * The name of the thread that executed the task.
@@ -77,9 +78,9 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
     String threadName;
 
     /**
-     * Statistics about elapsed time by "megabyte" (actually "megapixel").
+     * The level to use for logging message.
      */
-    Statistics statsByMpx;
+    private Level logLevel;
 
     /**
      * The image viewer, or {@code null} if none.
@@ -93,6 +94,27 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
      */
     protected Stressor(final GeneralGridGeometry domain) {
         super(domain);
+        logLevel = Level.FINE;
+    }
+
+    /**
+     * Returns the current logging level.
+     */
+    @Override
+    public Level getLogLevel() {
+        return logLevel;
+    }
+
+    /**
+     * Sets the logging level to the given value.
+     * A {@code null} value restores the default level.
+     */
+    @Override
+    public void setLogLevel(Level level) {
+        if (level == null) {
+            level = Level.FINE;
+        }
+        logLevel = level;
     }
 
     /**
@@ -107,14 +129,13 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
     @Override
     public Statistics call() throws Exception {
         final String sourceClassName = getClass().getName();
-
         threadName = Thread.currentThread().getName();
-        statsByMpx = new Statistics();
         final Statistics statistics = new Statistics();
         final StringBuilder buffer = new StringBuilder("Thread ").append(threadName);
         buffer.append(Strings.spaces(THREAD_NAME_FIELD_LENGTH - buffer.length())).append(": ");
         final int bufferBase = buffer.length();
-        while (System.currentTimeMillis() < stopTime) {
+        long nanoTime;
+        while ((nanoTime = System.nanoTime()) < stopTime) {
             /*
              * Execute the method to stress.
              */
@@ -131,16 +152,8 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
             /*
              * Compute statistics about the ellapsed time.
              */
-            long area = 1;
-            final GridEnvelope envelope = geometry.getGridRange();
-            final int dimension = envelope.getDimension();
-            for (int i=0; i<dimension; i++) {
-                area *= envelope.getSpan(i);
-            }
             final double time_ms = time / 1E+6; // To milliseconds.
-            final double time_mb = time_ms / (area / (1024*1024.0));
             statistics.add(time_ms);
-            statsByMpx.add(time_mb);
             /*
              * Format how long it took to execute the request, in milliseconds and in
              * millseconds by megabyte. Note: it should actually be "by megapixel",
@@ -148,12 +161,12 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
              */
             buffer.setLength(bufferBase);
             insertSpaces(bufferBase, buffer.append(Math.round(time_ms)), TIME_FIELD_LENGTH);
-            buffer.append(" ms  ");
-            insertSpaces(buffer.length(), buffer.append(Math.round(time_mb)), TIME_FIELD_LENGTH);
-            buffer.append(" ms/Mb. Size=(");
+            buffer.append(" ms. Size=(");
             /*
              * Format the grid envelope and the geographic bounding box.
              */
+            final GridEnvelope envelope = geometry.getGridRange();
+            final int dimension = envelope.getDimension();
             for (int i=0; i<dimension; i++) {
                 if (i != 0) {
                     buffer.append(" \u00D7"); // Multiplication symbol
@@ -165,7 +178,7 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
             /*
              * Log progress information and wait.
              */
-            final LogRecord record = new LogRecord(Level.INFO, buffer.toString());
+            final LogRecord record = new LogRecord(logLevel, buffer.toString());
             record.setSourceClassName(sourceClassName);
             record.setSourceMethodName("call");
             record.setLoggerName(LOGGER.getName());
@@ -176,6 +189,7 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
                 // Go back to work...
             }
         }
+        stopTime = nanoTime;
         dispose();
         return statistics;
     }

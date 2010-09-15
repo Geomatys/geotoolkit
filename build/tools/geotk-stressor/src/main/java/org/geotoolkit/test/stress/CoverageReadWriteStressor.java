@@ -136,6 +136,16 @@ public class CoverageReadWriteStressor extends Stressor {
     }
 
     /**
+     * Sets the logging level to the given value.
+     */
+    @Override
+    public void setLogLevel(final Level level) {
+        if (reader != null) reader.setLogLevel(level);
+        if (writer != null) writer.setLogLevel(level);
+        super.setLogLevel(level);
+    }
+
+    /**
      * Clips the given geometry. This can be used when the input raster include the poles
      * and the output raster user some CRS like Mercator.
      * <p>
@@ -291,6 +301,7 @@ public class CoverageReadWriteStressor extends Stressor {
             out.reset();
             if (writer == null) {
                 writer = new ImageCoverageWriter();
+                writer.setLogLevel(getLogLevel());
             }
             writer.setOutput(out);
             writer.write(coverage, writeParam);
