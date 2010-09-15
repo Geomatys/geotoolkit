@@ -1156,6 +1156,8 @@ public class XalWriter extends StaxStreamWriter {
         for (GenericTypedGrPostal addressLine : postOffice.getAddressLines()) {
             this.writeAddressLine(addressLine);
         }
+        System.out.println("POST OFFICE : "+postOffice);
+        System.out.println("POST OFFICE NAMES : "+postOffice.getPostOfficeNames().size());
         for (GenericTypedGrPostal postOfficeName : postOffice.getPostOfficeNames()) {
             this.writePostOfficeName(postOfficeName);
         }

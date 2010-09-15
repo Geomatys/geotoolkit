@@ -53,15 +53,16 @@ public class DefaultPostOffice implements PostOffice {
     public DefaultPostOffice(List<GenericTypedGrPostal> addressLines, Object localisation,
             PostalRoute postalRoute, PostBox postBox, PostalCode postalCode, String type, String indicator) throws XalException{
 
-        this.addressLines = addressLines;
+        this.addressLines = (addressLines == null) ? EMPTY_LIST : (List<GenericTypedGrPostal>) addressLines;
         if (localisation instanceof List){
             try{
-                this.postOfficeNames = (List<GenericTypedGrPostal>) localisation;
+                this.postOfficeNames = (localisation == null) ? EMPTY_LIST : (List<GenericTypedGrPostal>) localisation;
             } catch (ClassCastException e){
                 throw new XalException("Cast error. List<GenericTypedGrPostal> requiered.");
             }
         } else if (localisation instanceof PostOfficeNumber){
             this.postOfficeNumber = (PostOfficeNumber) localisation;
+            this.postOfficeNames = EMPTY_LIST;
         } else if (localisation != null) {
             throw new XalException("This kind of localisation is not allowed here."+this.getClass()+localisation);
         }
@@ -134,7 +135,7 @@ public class DefaultPostOffice implements PostOffice {
      */
     @Override
     public void setAddressLines(List<GenericTypedGrPostal> addressLines) {
-        this.addressLines = addressLines;
+        this.addressLines = (addressLines == null) ? EMPTY_LIST : addressLines;
     }
 
     /**
@@ -143,7 +144,7 @@ public class DefaultPostOffice implements PostOffice {
      */
     @Override
     public void setPostOfficeNames(List<GenericTypedGrPostal> postOfficeNames) {
-        this.postOfficeNames = postOfficeNames;
+        this.postOfficeNames = (postOfficeNames == null) ? EMPTY_LIST : postOfficeNames;
     }
 
     /**
