@@ -210,6 +210,10 @@ public class StatelessContextJ2D extends AbstractGraphicJ2D implements ContextLi
                     gra.setZOrderHint(i);
                 }
             }
+            //TODO should call a repaint only on this graphic
+            if(getCanvas().getController().isAutoRepaint()){
+                getCanvas().getController().repaint();
+            }
         }else if(CollectionChangeEvent.ITEM_REMOVED == type){
             for(final MapLayer layer : event.getItems()){
                 final GraphicJ2D gra = layerGraphics.get(layer);
@@ -227,6 +231,10 @@ public class StatelessContextJ2D extends AbstractGraphicJ2D implements ContextLi
                 if(gra != null){
                     gra.setZOrderHint(i);
                 }
+            }
+            //TODO should call a repaint only on this graphic
+            if(getCanvas().getController().isAutoRepaint()){
+                getCanvas().getController().repaint();
             }
         }else if(CollectionChangeEvent.ITEM_CHANGED == type){
         }

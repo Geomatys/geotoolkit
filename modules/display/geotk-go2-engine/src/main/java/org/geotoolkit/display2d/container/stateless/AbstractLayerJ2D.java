@@ -84,11 +84,15 @@ public abstract class AbstractLayerJ2D<T extends MapLayer> extends AbstractGraph
     @Override
     public void propertyChange(PropertyChangeEvent event) {
         if(getCanvas().getController().isAutoRepaint()){
-            if(MapLayer.STYLE_PROPERTY.equals(event.getPropertyName())){
+            final String propName = event.getPropertyName();
+            if(MapLayer.VISIBILITY_PROPERTY.equals(propName)){
                 //TODO should call a repaint only on this graphic
                 getCanvas().getController().repaint();
-                return;
-            }else if(MapLayer.SELECTION_FILTER_PROPERTY.equals(event.getPropertyName())){
+            } else if (layer.isVisible() &&
+               (  MapLayer.STYLE_PROPERTY.equals(propName)
+               || MapLayer.SELECTION_FILTER_PROPERTY.equals(propName)
+               || MapLayer.OPACITY_PROPERTY.equals(propName)
+               || MapLayer.QUERY_PROPERTY.equals(propName) )){
                 //TODO should call a repaint only on this graphic
                 getCanvas().getController().repaint();
             }
@@ -97,7 +101,7 @@ public abstract class AbstractLayerJ2D<T extends MapLayer> extends AbstractGraph
 
     @Override
     public void styleChange(MapLayer source, EventObject event) {
-        if(getCanvas().getController().isAutoRepaint()){
+        if(layer.isVisible() && getCanvas().getController().isAutoRepaint()){
             //TODO should call a repaint only on this graphic
             getCanvas().getController().repaint();
         }
