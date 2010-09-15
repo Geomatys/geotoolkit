@@ -33,6 +33,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
 
 import org.netbeans.api.wizard.WizardDisplayer;
 
@@ -49,13 +50,15 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Wizards;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.logging.Logging;
 
 
 /**
  * The main frame where available wizards are proposed.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.15
  *
  * @since 3.11
  * @module
@@ -230,7 +233,13 @@ public final class Main extends JFrame implements ActionListener {
      * @param args The command line arguments.
      */
     public static void main(final String[] args) {
-        GraphicsUtilities.setLookAndFeel(Main.class, "<init>");
+        if (XArrays.containsIgnoreCase(args, "--nimbus")) try {
+            UIManager.setLookAndFeel("com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel");
+        } catch (Exception e) {
+            Logging.recoverableException(Main.class, "<init>", e);
+        } else {
+            GraphicsUtilities.setLookAndFeel(Main.class, "<init>");
+        }
         final JFrame frame = new Main();
         // The line below should be after the Frame creation.
         // See the javadoc in 'setDefaultCodecPreferences()'.

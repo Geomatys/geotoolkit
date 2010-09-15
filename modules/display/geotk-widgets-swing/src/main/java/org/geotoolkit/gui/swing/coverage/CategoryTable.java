@@ -19,23 +19,20 @@ package org.geotoolkit.gui.swing.coverage;
 
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.event.MouseEvent;
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
 import java.util.ArrayList;
-import java.util.EventObject;
 import java.util.concurrent.Callable;
 import javax.swing.JComboBox;
 import javax.swing.ComboBoxModel;
 import javax.swing.JTable;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.AbstractCellEditor;
 import javax.swing.DefaultCellEditor;
+import javax.swing.JFormattedTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumnModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -96,7 +93,7 @@ import static org.geotoolkit.gui.swing.coverage.CategoryRecord.*;
  * is modified, then the offset and scale factors will be recomputed.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @since 3.13
  * @module
@@ -151,7 +148,7 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
     /**
      * The locale to use for column headers and category descriptions.
      */
-    private final Locale locale;
+    final Locale locale;
 
     /**
      * The column headers.
@@ -407,6 +404,10 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
 
     /**
      * Configures the given model before to allow the edition of a number in a cell.
+     *
+     * {@note This method can configure the spinner for any column, but is currently used only
+     * for the sample values. Spinners were used for the other columns in a older version. The
+     * code has been kept just in case.}
      */
     @SuppressWarnings("fallthrough")
     final void configure(final SpinnerNumberModel model, final int row, final int column) {
@@ -467,15 +468,15 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
      *   <li>{@linkplain JTable#setPreferredSize   Set the table preferred size}.</li>
      * </ul>
      *
-     * @param table The table in which to install the cell renderes and editors.
+     * @param table The table in which to install the cell renderer and editors.
      */
     public void configure(final JTable table) {
-        final NumberEditor numberEditor = new NumberEditor(true);
-        final CellRenderer renderer     = new CellRenderer(locale, numberEditor.getFormat());
+        final NumberEditor numberEditor = new NumberEditor(false);
+        final CellRenderer renderer     = new CellRenderer(numberEditor.getFormat());
         table.setDefaultRenderer(Double.class,               renderer);
         table.setDefaultRenderer(TransferFunctionType.class, renderer);
         table.setDefaultEditor  (TransferFunctionType.class, new FunctionEditor(renderer.functionLabels));
-        table.setDefaultEditor  (Integer.class, new NumberEditor(false));
+        table.setDefaultEditor  (Integer.class, new NumberEditor(true));
         table.setDefaultEditor  (Double.class,  numberEditor);
 
         TableColumn column = table.getColumnModel().getColumn(COLORS);
@@ -541,10 +542,9 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
         /**
          * Creates a new editor for the given locale.
          *
-         * @param locale The locale to use for creating the labels.
          * @param format The format to use for formatting real numbers (not integers).
          */
-        CellRenderer(final Locale locale, final NumberFormat format) {
+        CellRenderer(final NumberFormat format) {
             functionLabels = new String[4];
             functionLabels[NONE]        = Vocabulary.getResources(locale).getString(Vocabulary.Keys.NONE);
             functionLabels[LINEAR]      = "<html><var>y</var> = A + B&middot;<var>x</var></html>";
@@ -670,65 +670,30 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
     }
 
     /**
-     * A cell editor for the numbers in the enclosing {@link CategoryTable}. This editor
-     * uses a {@link JSpinner} for editing the values.
+     * A cell editor for the numbers in the enclosing {@link CategoryTable}. This editor uses
+     * a {@link JSpinner} for sample values, and {@link JFormattedTextField} for other values.
+     *
+     * {@note An older version used a <code>JSpinner</code> for every values, but the spinners have
+     * been replaced by text fields since the spinners were consuming too much space in the table.}
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.13
+     * @version 3.15
      *
      * @since 3.13
      * @module
      */
     @SuppressWarnings("serial")
-    private final class NumberEditor extends AbstractCellEditor implements TableCellEditor, ChangeListener {
-        /**
-         * The component used for editing the value.
-         */
-        private final JSpinner editorComponent;
-
+    private final class NumberEditor extends org.geotoolkit.internal.swing.table.NumberEditor implements ChangeListener {
         /**
          * The row and column currently in process of being edited.
          */
-        private int row, column;
+        private transient int row, column;
 
         /**
-         * {@code true} if this editor is formatting real numbers,
-         * or {@code false} if it is formatting integer numbers.
+         * Creates a new editor.
          */
-        private final boolean realNumbers;
-
-        /**
-         * Creates a new editor for integers if {@code real} is {@code false}, or for
-         * floating points if {@code real} is {@code true}.
-         */
-        NumberEditor(final boolean realNumbers) {
-            this.realNumbers = realNumbers;
-            if (realNumbers) {
-                // This particular constructor call (using Double number) seems to be
-                // required, otherwise fractional step size between 0 and 1 have no effect.
-                editorComponent = new JSpinner(new SpinnerNumberModel(0.0, null, null, 1.0));
-            } else {
-                editorComponent = new JSpinner();
-            }
-        }
-
-        /**
-         * Returns the format used by the spinner.
-         */
-        final NumberFormat getFormat() {
-            return ((JSpinner.NumberEditor) editorComponent.getEditor()).getFormat();
-        }
-
-        /**
-         * Returns {@code true} if the cell is editable as a result of the given event.
-         * If the event is a mouse event, we require a double-click.
-         */
-        @Override
-        public boolean isCellEditable(final EventObject event) {
-            if (event instanceof MouseEvent) {
-                return ((MouseEvent)event).getClickCount() >= 2;
-            }
-            return super.isCellEditable(event);
+        NumberEditor(final boolean sampleValues) {
+            super(locale, sampleValues);
         }
 
         /**
@@ -739,28 +704,22 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
         public Component getTableCellEditorComponent(final JTable table, Object value,
                 final boolean isSelected, final int row, final int column)
         {
-            final SpinnerNumberModel model = (SpinnerNumberModel) editorComponent.getModel();
-            model.removeChangeListener(this);
-            this.row    = row;
-            this.column = column;
-            configure(model, row, column);
-            if (value == null) {
-                value = Double.valueOf(column == SCALE ? 1 : 0);
-            }
-            model.setValue(value);
-            if (realNumbers) {
+            if (editorComponent instanceof JSpinner) {
+                final SpinnerNumberModel model = (SpinnerNumberModel) ((JSpinner) editorComponent).getModel();
+                model.removeChangeListener(this);
+                this.row    = row;
+                this.column = column;
+                configure(model, row, column);
+                if (value == null) {
+                    value = Double.valueOf(column == SCALE ? 1 : 0);
+                }
+                model.setValue(value);
+                model.addChangeListener(this);
+            } else {
+                ((JFormattedTextField) editorComponent).setValue(value);
                 configure(getFormat(), row); // Must be after setValue.
             }
-            model.addChangeListener(this);
             return editorComponent;
-        }
-
-        /**
-         * Returns the edited value.
-         */
-        @Override
-        public Object getCellEditorValue() {
-            return editorComponent.getValue();
         }
 
         /**
