@@ -391,7 +391,7 @@ public abstract class SingletonTable<E extends Entry> extends Table {
     }
 
     /**
-     * Checks if an entry exists for the given name. This method do not attempt to create
+     * Checks if an entry exists for the given name. This method does not attempt to create
      * the entry and doesn't check if the entry is valid.
      *
      * @param  identifier The identifier of the entry to fetch.

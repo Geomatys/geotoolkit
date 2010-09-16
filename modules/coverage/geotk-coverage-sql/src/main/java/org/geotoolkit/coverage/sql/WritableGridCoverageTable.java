@@ -26,30 +26,22 @@ import java.sql.PreparedStatement;
 import java.net.URL;
 import java.net.URI;
 import java.io.File;
-import java.io.FileFilter;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import javax.imageio.ImageReader;
 
 import org.opengis.util.FactoryException;
 
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.collection.BackingStoreException;
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.QueryType;
 import org.geotoolkit.internal.sql.table.LocalCache;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
-import org.geotoolkit.coverage.io.CoverageStoreException;
-import org.geotoolkit.internal.io.IOUtilities;
 
 
 /**
@@ -152,10 +144,9 @@ final class WritableGridCoverageTable extends GridCoverageTable {
         int count = 0;
         final Iterator<?> it = inputs.iterator();
         if (it.hasNext()) {
-            final Object next = it.next();
             boolean success = false;
             final NewGridCoverageIterator iterator = new NewGridCoverageIterator(listeners,
-                    controller, (SpatialDatabase) getDatabase(), null, imageIndex, it, next);
+                    controller, (SpatialDatabase) getDatabase(), imageIndex, it);
             final SeriesEntry oldSeries = specificSeries;
             final LocalCache lc = getLocalCache();
             synchronized (lc) {
@@ -182,11 +173,15 @@ final class WritableGridCoverageTable extends GridCoverageTable {
             throws SQLException, IOException, FactoryException, DatabaseVetoException
     {
         int count = 0;
-        final GridCoverageQuery query     = (GridCoverageQuery) this.query;
-        final Calendar          calendar  = getCalendar(lc);
-        final LocalCache.Stmt   ce        = getStatement(lc, QueryType.INSERT);
-        final PreparedStatement statement = ce.statement;
-        final GridGeometryTable gridTable = getDatabase().getTable(GridGeometryTable.class);
+        final GridCoverageQuery query       = (GridCoverageQuery) this.query;
+        final Database          database    = getDatabase();
+        final Calendar          calendar    = getCalendar(lc);
+        final LocalCache.Stmt   ce          = getStatement(lc, QueryType.INSERT);
+        final PreparedStatement statement   = ce.statement;
+        final GridGeometryTable gridTable   = database.getTable(GridGeometryTable.class);
+        final FormatTable       formatTable = database.getTable(FormatTable.class);
+        final SeriesTable       seriesTable = database.getTable(SeriesTable.class);
+        seriesTable.setLayer(getLayer());
         final int bySeries    = indexOf(query.series);
         final int byFilename  = indexOf(query.filename);
         final int byIndex     = indexOf(query.index);
@@ -216,19 +211,10 @@ final class WritableGridCoverageTable extends GridCoverageTable {
              * may change the values. Then create the series if it does not exists.
              */
             entries.fireCoverageAdding(true, entry);
-            if (entry.series == null) {
-                final Database database = getDatabase();
-                final FormatTable formatTable = database.getTable(FormatTable.class);
-                entry.format = formatTable.findOrCreate(entry.format, entry.bestFormat.imageFormat, entry.sampleDimensions);
-                formatTable.release();
-                final SeriesTable seriesTable = database.getTable(SeriesTable.class);
-                seriesTable.setLayer(getLayer());
-                final String path = (entry.path != null) ? entry.path.getPath() : "";
-                final int id = seriesTable.findOrCreate(path, entry.extension, entry.format);
-                entry.series = seriesTable.getEntry(id);
-                seriesTable.release();
-            }
-            specificSeries = entry.series;
+            entry.format = formatTable.findOrCreate(entry.format, entry.bestFormat.imageFormat, entry.sampleDimensions);
+            final String directory = (entry.path != null) ? entry.path.getPath() : "";
+            final int seriesID = seriesTable.findOrCreate(directory, entry.extension, entry.format);
+            specificSeries = seriesTable.getEntry(seriesID);
             /*
              * Gets the metadata of interest. The metadata should contains at least the image
              * envelope and CRS. If it doesn't, then we will use the table envelope as a fall
@@ -277,6 +263,8 @@ final class WritableGridCoverageTable extends GridCoverageTable {
              */
             entries.fireCoverageAdding(false, entry);
         }
+        seriesTable.release();
+        formatTable.release();
         gridTable.release();
         return count;
     }
@@ -304,144 +292,5 @@ final class WritableGridCoverageTable extends GridCoverageTable {
         tilesTable.setLayer(getLayer());
         tilesTable.specificSeries = specificSeries;
         tilesTable.addEntries(tiles, 0, listeners, controller);
-    }
-
-    /**
-     * Searches for new files in the {@linkplain #getLayer current layer} and {@linkplain #addEntries
-     * adds} them to the database. The {@link #setLayer(Layer) setLayer} method must be invoked prior
-     * this method. This method will process every {@linkplain Series series} for the current layer.
-     *
-     * @param  includeSubdirectories If {@code true}, then sub-directories will be included
-     *         in the scan. New series may be created if subdirectories are found.
-     * @param  listeners The object which hold the {@link CoverageDatabaseListener}s. While this
-     *         argument is of kind {@link CoverageDatabase}, only the listeners are of interest
-     *         to this method.
-     * @param  controller An optional controller to invoke before the listeners, or {@code null}.
-     * @return The number of images inserted.
-     * @throws SQLException If an error occurred while querying the database.
-     * @throws IOException If an I/O operation was required and failed.
-     */
-    public int updateLayer(final boolean                    includeSubdirectories,
-                           final CoverageDatabase           listeners,
-                           final CoverageDatabaseController controller)
-            throws SQLException, IOException, FactoryException, CoverageStoreException
-    {
-        final LayerEntry layer = getLayerEntry(true);
-        final Map<Object,SeriesEntry> inputs = new LinkedHashMap<Object,SeriesEntry>();
-        for (final SeriesEntry series : layer.getSeries()) {
-            /*
-             * The inputs map will contains File or URI objects. If the protocol is "file",
-             * we will scan the directory and put File objects in the map. Otherwise we do
-             * nothing since we can't get the list of new items.
-             */
-            if (series.protocol.equalsIgnoreCase(SeriesEntry.FILE_PROTOCOL)) {
-                File directory = series.file("*");
-                final String filename = directory.getName();
-                final int split = filename.lastIndexOf('*');
-                final String extension = (split >= 0) ? filename.substring(split + 1) : "";
-                final FileFilter filter = new FileFilter() {
-                    @Override public boolean accept(final File file) {
-                        if (file.isDirectory()) {
-                            return includeSubdirectories;
-                        }
-                        return file.getName().endsWith(extension);
-                    }
-                };
-                directory = directory.getParentFile();
-                if (directory != null) {
-                    final File[] list = directory.listFiles(filter);
-                    if (list != null) {
-                        addFiles(inputs, list, filter, series);
-                        continue;
-                    }
-                }
-                throw new FileNotFoundException(errors().getString(
-                        Errors.Keys.NOT_A_DIRECTORY_$1, directory.getPath()));
-            }
-        }
-        /*
-         * We now have a list of every files found in the directories. Now remove the files that
-         * are already present in the database. We perform this removal here instead than during
-         * the directories scan in order to make sure that we don't query the database twice for
-         * the same files (our usage of hash map ensures this condition).
-         */
-        int count = 0;
-        boolean success = false;
-        final SeriesEntry oldSeries = specificSeries;
-        final LocalCache lc = getLocalCache();
-        synchronized (lc) {
-            transactionBegin(lc);
-            try {
-                for (final Iterator<Map.Entry<Object,SeriesEntry>> it=inputs.entrySet().iterator(); it.hasNext();) {
-                    final Map.Entry<Object,SeriesEntry> entry = it.next();
-                    final Object input = IOUtilities.tryToFile(entry.getKey());
-                    if (input instanceof File) {
-                        String filename = ((File) input).getName();
-                        final int split = filename.lastIndexOf('.');
-                        if (split >= 0) {
-                            filename = filename.substring(0, split);
-                        }
-                        specificSeries = entry.getValue();
-                        if (exists(filename)) {
-                            it.remove();
-                        }
-                    }
-                }
-                /*
-                 * Now process to the insertions in the database.
-                 *
-                 * TODO: We need to decide what to do with new series (i.e. when specificSeries == null).
-                 *       In current state of affairs, we will get a NullPointerException.
-                 */
-                Iterator<Map.Entry<Object,SeriesEntry>> it;
-                while ((it = inputs.entrySet().iterator()).hasNext()) {
-                    final Map.Entry<Object,SeriesEntry> entry = it.next();
-                    specificSeries = entry.getValue();
-                    final Object next = entry.getKey();
-                    it.remove();
-                    final int imageIndex = 0; // TODO: Do we have a better value to provide?
-                    final NewGridCoverageIterator iterator = new NewGridCoverageIterator(
-                            listeners, controller, (SpatialDatabase) getDatabase(),
-                            specificSeries, imageIndex, it, next);
-                    count += addEntries(lc, iterator);
-                }
-                success = true; // Must be the very last line in the try block.
-            } finally {
-                specificSeries = oldSeries;
-                transactionEnd(lc, success);
-            }
-        }
-        return count;
-    }
-
-    /**
-     * Adds the {@code toAdd} files or directories to the specified map. This
-     * method invokes itself recursively in order to scan for subdirectories.
-     *
-     * @param  files  The map in which to add the files.
-     * @param  toAdd  The files or directories to add. This list will be sorted in place.
-     * @param  filter The filename filter, or {@code null} for including all files.
-     * @param  series The series to use as value in the map.
-     */
-    private static void addFiles(final Map<Object,SeriesEntry> files, final File[] toAdd,
-                                 final FileFilter filter, final SeriesEntry series)
-    {
-        Arrays.sort(toAdd);
-        for (final File file : toAdd) {
-            final File[] list = file.listFiles(filter);
-            if (list != null) {
-                // If scanning sub-directories, invokes this method recursively but without
-                // assigning series, since we will need to create a new series entry.
-                addFiles(files, list, filter, null);
-            } else {
-                final SeriesEntry old = files.put(file, series);
-                if (old != null) {
-                    // If this filename was already assigned to a series, keep the old entry.
-                    // It is more likely to occurs if we are scanning sub-directories while
-                    // one of those sub-directories is already used by an existing series.
-                    files.put(file, old);
-                }
-            }
-        }
     }
 }

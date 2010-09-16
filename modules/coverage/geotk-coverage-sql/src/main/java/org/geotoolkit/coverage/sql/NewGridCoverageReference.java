@@ -121,13 +121,6 @@ public final class NewGridCoverageReference {
     private final SpatialDatabase database;
 
     /**
-     * The series in which the images will be added, or {@code null} if unknown.
-     * This field may be set explicitly by {@link WritableGridCoverageIterator},
-     * and is read by {@link WritableGridCoverageTable}.
-     */
-    SeriesEntry series;
-
-    /**
      * The path to the coverage file (not including the filename), or {@code null} if the filename
      * has no parent directory.
      * <p>
@@ -767,9 +760,8 @@ fill:   for (int i=0; ;i++) {
             final String label;
             final Object value;
             switch (i) {
-                case 0: label="series"; value=series;    break;
-                case 1: label="format"; value=format;    break;
-                case 2: label="file";   value=getFile(); break;
+                case 0: label="format"; value=format;    break;
+                case 1: label="file";   value=getFile(); break;
                 default: break fill;
             }
             if (value != null) {
