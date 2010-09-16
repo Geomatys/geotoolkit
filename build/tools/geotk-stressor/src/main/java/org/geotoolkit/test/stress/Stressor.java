@@ -131,9 +131,16 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
         final String sourceClassName = getClass().getName();
         threadName = Thread.currentThread().getName();
         final Statistics statistics = new Statistics();
-        final StringBuilder buffer = new StringBuilder("Thread ").append(threadName);
-        buffer.append(Strings.spaces(THREAD_NAME_FIELD_LENGTH - buffer.length())).append(": ");
-        final int bufferBase = buffer.length();
+        final StringBuilder buffer;
+        final int bufferBase;
+        if (LOGGER.isLoggable(logLevel)) {
+            buffer = new StringBuilder("Thread ").append(threadName);
+            buffer.append(Strings.spaces(THREAD_NAME_FIELD_LENGTH - buffer.length())).append(": ");
+            bufferBase = buffer.length();
+        } else {
+            buffer = null;
+            bufferBase = 0;
+        }
         long nanoTime;
         while ((nanoTime = System.nanoTime()) < stopTime) {
             /*
@@ -159,30 +166,32 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
              * millseconds by megabyte. Note: it should actually be "by megapixel",
              * but we assume that few peoples would understand a "Mp" unit...
              */
-            buffer.setLength(bufferBase);
-            insertSpaces(bufferBase, buffer.append(Math.round(time_ms)), TIME_FIELD_LENGTH);
-            buffer.append(" ms. Size=(");
-            /*
-             * Format the grid envelope and the geographic bounding box.
-             */
-            final GridEnvelope envelope = geometry.getGridRange();
-            final int dimension = envelope.getDimension();
-            for (int i=0; i<dimension; i++) {
-                if (i != 0) {
-                    buffer.append(" \u00D7"); // Multiplication symbol
+            if (buffer != null) {
+                buffer.setLength(bufferBase);
+                insertSpaces(bufferBase, buffer.append(Math.round(time_ms)), TIME_FIELD_LENGTH);
+                buffer.append(" ms. Size=(");
+                /*
+                 * Format the grid envelope and the geographic bounding box.
+                 */
+                final GridEnvelope envelope = geometry.getGridRange();
+                final int dimension = envelope.getDimension();
+                for (int i=0; i<dimension; i++) {
+                    if (i != 0) {
+                        buffer.append(" \u00D7"); // Multiplication symbol
+                    }
+                    insertSpaces(buffer.length(), buffer.append(envelope.getSpan(i)), GRID_SIZE_FIELD_LENGTH);
                 }
-                insertSpaces(buffer.length(), buffer.append(envelope.getSpan(i)), GRID_SIZE_FIELD_LENGTH);
+                buffer.append("), scale=").append((float) mean(getScale(geometry)));
+                buffer.append(", ").append(geometry.getEnvelope());
+                /*
+                 * Log progress information and wait.
+                 */
+                final LogRecord record = new LogRecord(logLevel, buffer.toString());
+                record.setSourceClassName(sourceClassName);
+                record.setSourceMethodName("call");
+                record.setLoggerName(LOGGER.getName());
+                LOGGER.log(record);
             }
-            buffer.append("), scale=").append((float) mean(getScale(geometry)));
-            buffer.append(", ").append(geometry.getEnvelope());
-            /*
-             * Log progress information and wait.
-             */
-            final LogRecord record = new LogRecord(logLevel, buffer.toString());
-            record.setSourceClassName(sourceClassName);
-            record.setSourceMethodName("call");
-            record.setLoggerName(LOGGER.getName());
-            LOGGER.log(record);
             try {
                 Thread.sleep(random.nextInt(MAXIMAL_PAUSE) + 1);
             } catch (InterruptedException e) {

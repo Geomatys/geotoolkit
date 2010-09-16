@@ -205,7 +205,7 @@ public class StressorGroup<S extends Stressor> implements Runnable, ThreadFactor
                 responseTime.add(statistics);
                 printer.print(statistics);
                 table.nextColumn();
-                final double th = statistics.count() * 60E+9 / (stressor.stopTime - startTime);
+                final double th = statistics.count() / statistics.sum() * 60000;
                 throughput.add(th);
                 printer.print((float) th);
             }
