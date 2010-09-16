@@ -20,7 +20,9 @@ package org.geotoolkit.util;
 
 import java.awt.image.RenderedImage;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.logging.Logger;
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
@@ -28,6 +30,7 @@ import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
+import org.geotoolkit.image.io.XImageIO;
 
 
 /**
@@ -82,6 +85,7 @@ public class ImageIOUtilities {
     public static ImageWriter getImageWriter(final RenderedImage image, String mime, Object output) throws IOException{
         if(image == null) throw new NullPointerException("Image can not be null");
 
+        int n = 0;
         final Iterator<ImageWriter> writers = ImageIO.getImageWritersByMIMEType(mime);
         while (writers.hasNext()) {
             final ImageWriter writer = writers.next();
@@ -89,9 +93,11 @@ public class ImageIOUtilities {
             if (spi.canEncodeImage(image)) {
                 return writer;
             }
+            n++;
         }
-
-        throw new IOException("Unknowed image type");
+        throw new IOException("Can not write the image for the MIME type : " + mime +
+                ". Found " + n + " writers, but none can encode the image. "
+                + "Available MIME type are " + Arrays.toString(ImageIO.getWriterMIMETypes()));
     }
 
     /**
