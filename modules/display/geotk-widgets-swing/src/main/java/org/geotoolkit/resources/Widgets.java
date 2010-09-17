@@ -136,6 +136,11 @@ public final class Widgets extends IndexedResourceBundle {
         public static final int SELECT_FILE = 12;
 
         /**
+         * Select variables
+         */
+        public static final int SELECT_VARIABLES = 18;
+
+        /**
          * <html><i>from</i> {0}<br><i>to</i> {1}</html>
          */
         public static final int TIME_RANGE_$2 = 5;

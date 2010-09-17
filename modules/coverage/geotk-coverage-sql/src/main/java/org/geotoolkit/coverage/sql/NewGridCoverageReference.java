@@ -144,6 +144,13 @@ public final class NewGridCoverageReference {
     public final String extension;
 
     /**
+     * The zero-based index of the image to be inserted in the database. If there is many
+     * images to insert for many different {@linkplain #dateRanges dates}, then this is
+     * the index of the first image.
+     */
+    final int imageIndex;
+
+    /**
      * The name of the coverage format. It shall be one of the primary key values in the
      * {@code "Formats"} table. Note that this is not necessarily the same name than the
      * {@linkplain ImageReaderSpi#getFormatNames() image format name}.
@@ -295,6 +302,7 @@ public final class NewGridCoverageReference {
             throws SQLException, IOException, FactoryException
     {
         this.database = database;
+        this.imageIndex = imageIndex;
         /*
          * Get the input, which must be an instance of File.
          * Split that input file into the path components.

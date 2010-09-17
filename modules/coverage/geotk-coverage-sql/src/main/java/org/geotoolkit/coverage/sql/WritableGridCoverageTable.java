@@ -29,14 +29,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.Collection;
 import javax.imageio.ImageReader;
 
 import org.opengis.util.FactoryException;
 
 import org.geotoolkit.util.DateRange;
-import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.internal.sql.table.Database;
 import org.geotoolkit.internal.sql.table.QueryType;
@@ -124,9 +122,6 @@ final class WritableGridCoverageTable extends GridCoverageTable {
      * This method will typically not read the full image, but only the required metadata.
      *
      * @param  inputs     The image inputs.
-     * @param  imageIndex The index of the image to insert in the database. This argument is
-     *                    ignored for {@link Tile} inputs, because they provide their own
-     *                    {@link Tile#getImageIndex()} method.
      * @param  listeners  The object which hold the {@link CoverageDatabaseListener}s. While this
      *                    argument is of kind {@link CoverageDatabase}, only the listeners are of
      *                    interest to this method.
@@ -136,17 +131,15 @@ final class WritableGridCoverageTable extends GridCoverageTable {
      * @throws IOException If an I/O operation was required and failed.
      */
     public int addEntries(final Collection<?>              inputs,
-                          final int                        imageIndex,
                           final CoverageDatabase           listeners,
                           final CoverageDatabaseController controller)
             throws SQLException, IOException, FactoryException, DatabaseVetoException
     {
         int count = 0;
-        final Iterator<?> it = inputs.iterator();
-        if (it.hasNext()) {
+        if (!inputs.isEmpty()) {
             boolean success = false;
             final NewGridCoverageIterator iterator = new NewGridCoverageIterator(listeners,
-                    controller, (SpatialDatabase) getDatabase(), imageIndex, it);
+                    controller, (SpatialDatabase) getDatabase(), inputs);
             final SeriesEntry oldSeries = specificSeries;
             final LocalCache lc = getLocalCache();
             synchronized (lc) {
@@ -191,20 +184,8 @@ final class WritableGridCoverageTable extends GridCoverageTable {
         final int byDx = (query.dx != null) ? query.dx.indexOf(QueryType.INSERT) : 0;
         final int byDy = (query.dy != null) ? query.dy.indexOf(QueryType.INSERT) : 0;
         final boolean explicitTranslate = (byDx != 0 && byDy != 0);
-        while (entries.hasNext()) {
-            final NewGridCoverageReference entry;
-            try {
-                entry = entries.next();
-            } catch (BackingStoreException exception) {
-                final Throwable cause = exception.getCause();
-                if (cause instanceof FactoryException) {
-                    throw (FactoryException) cause;
-                }
-                if (cause instanceof IOException) {
-                    throw (IOException) cause;
-                }
-                throw exception.unwrapOrRethrow(SQLException.class);
-            }
+        NewGridCoverageReference entry;
+        while ((entry = entries.next()) != null) {
             /*
              * Notifies the controller (if any), then the listeners (if any) after the
              * NewGridCoverageReference entry has been fully initialized. The controller
@@ -245,15 +226,16 @@ final class WritableGridCoverageTable extends GridCoverageTable {
                 statement.setInt(byDy, translate.y);
             }
             final DateRange[] dateRanges = entry.dateRanges;
+            int imageIndex = entry.imageIndex;
             if (dateRanges == null) {
-                statement.setInt (byIndex,     1);
+                statement.setInt (byIndex,     ++imageIndex);
                 statement.setNull(byStartTime, Types.TIMESTAMP);
                 statement.setNull(byEndTime,   Types.TIMESTAMP);
                 if (updateSingleton(statement)) count++;
-            } else for (int i=0; i<dateRanges.length; i++) {
-                final Date startTime = dateRanges[i].getMinValue();
-                final Date   endTime = dateRanges[i].getMaxValue();
-                statement.setInt      (byIndex,     i + 1);
+            } else for (final DateRange dateRange : dateRanges) {
+                final Date startTime = dateRange.getMinValue();
+                final Date   endTime = dateRange.getMaxValue();
+                statement.setInt      (byIndex,     ++imageIndex);
                 statement.setTimestamp(byStartTime, new Timestamp(startTime.getTime()), calendar);
                 statement.setTimestamp(byEndTime,   new Timestamp(endTime  .getTime()), calendar);
                 if (updateSingleton(statement)) count++;
@@ -291,6 +273,6 @@ final class WritableGridCoverageTable extends GridCoverageTable {
         }
         tilesTable.setLayer(getLayer());
         tilesTable.specificSeries = specificSeries;
-        tilesTable.addEntries(tiles, 0, listeners, controller);
+        tilesTable.addEntries(tiles, listeners, controller);
     }
 }

@@ -20,6 +20,7 @@ package org.geotoolkit.gui.swing.coverage;
 import java.awt.BorderLayout;
 import java.awt.Container;
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.text.ParseException;
@@ -67,7 +68,7 @@ import org.geotoolkit.internal.swing.SwingUtilities;
  * Users can verify and modify those information before they are written in the database.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @since 3.12
  * @module
@@ -240,7 +241,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
 
     /**
      * Invoked when the user selected a format in the {@link JComboBox}, or when the format
-     * changed programatically. If the format changed, get the {@link GridSampleDimension}s
+     * changed programmatically. If the format changed, get the {@link GridSampleDimension}s
      * and updates the field with the new values.
      */
     private void formatSelected() {
@@ -294,9 +295,36 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
     }
 
     /**
+     * Invoked before {@link #coverageAdding} in order to let the user select a variable among
+     * a list of variables found in the file.
+     * <p>
+     * This method needs to be invoked in a thread different than the <cite>Swing</cite> thread.
+     *
+     * @param  images The variables found in the file.
+     * @param  multiSelectionAllowed {@code true} if the {@link JList} shall allow multi-selection.
+     * @return The variables selected by the user.
+     * @throws DatabaseVetoException If the user clicked on the "Cancel" button.
+     *
+     * @since 3.15
+     */
+    @Override
+    public synchronized Collection<String> filterImages(final List<String> images, final boolean multiSelectionAllowed)
+            throws DatabaseVetoException
+    {
+        // TODO: not yet enabled.
+        if (false) SwingUtilities.invokeAndWait(new Runnable() {
+           @Override public void run() {
+               owner.showVariableChooser(images.toArray(new String[images.size()]), multiSelectionAllowed);
+           }
+        });
+        return null;
+    }
+
+    /**
      * Invoked when a new coverage is about to be added. This method set the fields value to
      * the values declared in the given {@code reference} argument, and shows the window.
-     * This method needs to be invoked in a thread different than <cite>Swing</cite>.
+     * <p>
+     * This method needs to be invoked in a thread different than the <cite>Swing</cite> thread.
      *
      * @throws DatabaseVetoException If the user clicked on the "Cancel" button.
      */
@@ -334,7 +362,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
             }
         });
         try {
-            wait();
+            wait(); // Weakup at the end of actionPerformed(boolean) below.
         } catch (InterruptedException e) {
             // This happen if the CoverageList frame has been closed
             // by CoverageList.Listeners.ancestorRemoved(AncestorEvent).

@@ -20,8 +20,10 @@ package org.geotoolkit.coverage.sql;
 import java.io.File;
 import java.awt.Rectangle;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
+import java.util.List;
 import java.util.Set;
 
 import org.geotoolkit.test.Depend;
@@ -137,6 +139,12 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
                 assertNull  (                       reference.verticalValues);
                 assertNull  (                       reference.dateRanges);
             }
+
+            @Override
+            public Collection<String> filterImages(List<String> images, boolean multiSelectionAllowed) throws DatabaseVetoException {
+                fail("Should not need to be invoked when there is exactly one image to insert.");
+                return images;
+            }
         };
         final Set<File> files = Collections.singleton(TestData.file(TextMatrixImageReader.class, "matrix.txt"));
         table.setLayer(TEMPORARY_LAYER);
@@ -147,7 +155,7 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
         final Locale locale = Locale.getDefault();
         try {
             Locale.setDefault(Locale.CANADA);
-            assertEquals(1, table.addEntries(files, 0, database, controller));
+            assertEquals(1, table.addEntries(files, database, controller));
         } finally {
             Locale.setDefault(locale);
         }
@@ -178,6 +186,8 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
 
     /**
      * Tests insertion for NetCDF images with two bands but no elevation.
+     * The variables declared in the files are "h0", "xe", "u" and "v".
+     * This tests will insert the second variable, namely "xe".
      * The same file contains values at many different dates.
      * <p>
      * This test creates a temporary layer and fills it with the same data than
@@ -198,24 +208,34 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
              */
             @Override
             public void coverageAdding(CoverageDatabaseEvent event, NewGridCoverageReference reference) {
-                assertEquals("Iroise",                reference.path.getName());
-                assertEquals("champs.r3_23-05-2007",  reference.filename);
-                assertEquals("nc",                    reference.extension);
-                assertEquals("NetCDF",                reference.format);
-                assertEquals(new Rectangle(273, 423), reference.imageBounds);
-                assertEquals("TODO", 0,               reference.horizontalSRID);
-                assertEquals(0,                       reference.verticalSRID);
-                assertNull  (                         reference.verticalValues);
-                assertNull  ("TODO",                  reference.dateRanges);
+                assertEquals ("Iroise",                reference.path.getName());
+                assertEquals ("champs.r3_23-05-2007",  reference.filename);
+                assertEquals ("nc",                    reference.extension);
+                assertEquals ("NetCDF",                reference.format);
+                assertEquals (new Rectangle(273, 423), reference.imageBounds);
+                assertEquals ("TODO", 0,               reference.horizontalSRID);
+                assertEquals ("Expected no z.", 0,     reference.verticalSRID);
+                assertNull   ("Expected no z.",        reference.verticalValues);
+                assertNotNull("Expected dates",        reference.dateRanges);
 
                 reference.format = "Mars (u,v)";
                 reference.horizontalSRID = 4326; // TODO: need to auto-detect.
+            }
+
+            @Override
+            public Collection<String> filterImages(List<String> images, boolean multiSelectionAllowed) throws DatabaseVetoException {
+                assertTrue("Multi-selection should be allowed for NetCDF files.", multiSelectionAllowed);
+                assertArrayEquals("Expected one image for each variable.", new String[] {
+                    "h0", "xe", "u", "v"
+                }, images.toArray());
+                return Collections.singleton(images.get(1));
             }
         };
         requireImageData();
         final Set<File> files = Collections.singleton(toImageFile(GEOSTROPHIC_CURRENT_FILE));
         table.setLayer(TEMPORARY_LAYER);
-        assertEquals(1, table.addEntries(files, 0, database, controller));
+        assertEquals("Expected the addition of many entries, one for each date.",
+                285, table.addEntries(files, database, controller));
         table.release();
     }
 }

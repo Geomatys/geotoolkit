@@ -29,6 +29,7 @@ import java.util.concurrent.ExecutionException;
 import java.io.File;
 import java.awt.Dimension;
 import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.CardLayout;
 import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
@@ -36,6 +37,7 @@ import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
@@ -78,7 +80,7 @@ import org.jdesktop.swingx.JXBusyLabel;
  * selected file on the right side.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @see CoverageTableModel
  *
@@ -90,12 +92,12 @@ public class CoverageList extends JComponent {
     /**
      * Action commands.
      */
-    private static final String ADD="ADD", REMOVE="REMOVE", REFRESH="REFRESH";
+    private static final String ADD="ADD", REMOVE="REMOVE", REFRESH="REFRESH", OK="OK", CANCEL="CANCEL";
 
     /**
      * Layout parameters for the components put in {@link #selectionPanel}.
      */
-    static final String TABLE="TABLE", FILES="FILES", CONTROLLER="CONTROLLER", BUZY="BUZY";
+    static final String TABLE="TABLE", FILES="FILES", VARIABLES="VARIABLES", CONTROLLER="CONTROLLER", BUZY="BUZY";
 
     /**
      * The name of the panel currently selected in {@link #selectionPanel}.
@@ -112,6 +114,13 @@ public class CoverageList extends JComponent {
      * The file chooser, created only when the user click the "add" button for the first time.
      */
     private ImageFileChooser fileChooser;
+
+    /**
+     * The variable chooser, created only when the user select a file for the first time.
+     *
+     * @since 3.15
+     */
+    private JList variableChooser;
 
     /**
      * The table which list all coverages.
@@ -276,28 +285,28 @@ public class CoverageList extends JComponent {
 
         /**
          * Invoked when one of the buttons ("Remove", "Add", etc.) has been pressed.
-         * This method delegates to the appropriate method in the encloding class.
+         * This method delegates to the appropriate method in the enclosing class.
          *
          * @todo Use switch(String) with Java 7.
          */
         @Override
         public void actionPerformed(final ActionEvent event) {
             final String action = event.getActionCommand();
-            if (ADD.equals(action)) {
-                addNewCoverage(false);
+            if (REFRESH.equals(action)) {
+                refresh();
+            } else if (REMOVE.equals(action)) {
+                removeCoverage();
+            } else if (ADD.equals(action)) {
+                showFileChooser();
+            } else if (ImageFileChooser.CANCEL_SELECTION.equals(action)) {
+                setSelectionPanel(TABLE);
             } else if (ImageFileChooser.APPROVE_SELECTION.equals(action)) {
                 // Must check if the file selection panel is visible, because pressing the 'Enter'
                 // key in the format JComboBox of the NewGridCoverageDetails widget seems to also
                 // fire the event associated with "Ok" button of the JFileChooser.
                 if (FILES.equals(selectionPanelName)) {
-                    addNewCoverage(true);
+                    addNewCoverage();
                 }
-            } else if (REMOVE.equals(action)) {
-                removeCoverage();
-            } else if (ImageFileChooser.CANCEL_SELECTION.equals(action)) {
-                setSelectionPanel(TABLE);
-            } else if (REFRESH.equals(action)) {
-                refresh();
             }
         }
 
@@ -379,11 +388,11 @@ public class CoverageList extends JComponent {
     }
 
     /**
-     * Sets the content of this widget to the list of coverages in the given layer wich
-     * insersect the given envelope. This method combines {@link #setLayer(Layer)} and
+     * Sets the content of this widget to the list of coverages in the given layer which
+     * intersect the given envelope. This method combines {@link #setLayer(Layer)} and
      * {@link #setEnvelope(CoverageEnvelope)} in a single method call.
      * <p>
-     * This method will fetch the list of coverage refererences in a background thread.
+     * This method will fetch the list of coverage references in a background thread.
      *
      * @param layer The layer for which to get the coverage entries, or {@code null} if none.
      * @param envelope The envelope of the coverage entries to list, or {@code null} if unbounded.
@@ -451,7 +460,7 @@ public class CoverageList extends JComponent {
 
     /**
      * Sets the selection panel (the component on the left side of the split panel)
-     * to the table or to the file chooser. The component to be show is controlled
+     * to the table or to the file chooser. The component to be shown is controlled
      * by a {@link CardLayout}.
      *
      * @param name The name of the components to show, either {@link #TABLE}, {@link #FILES}
@@ -472,109 +481,135 @@ public class CoverageList extends JComponent {
     }
 
     /**
-     * Invoked when the user pressed the "Add" button. This method shows a file chooser.
-     * If the user confirms, then the {@link NewGridCoverageDetails} window will be show
-     * for each file to be added in the database.
-     *
-     * @param confirm {@code false} for showing the file chooser and waiting for user input,
-     *        and {@code true} if the user pressed the {@code "Confirm"} button.
+     * Ensures that the file chooser is ready to be shown. If the user confirm
+     * his selection, then {@link #selectVariables()} will be invoked later.
      */
-    final void addNewCoverage(final boolean confirm) {
+    private void showFileChooser() {
         final Layer layer = getLayer();
-        if (layer == null) {
-            // A layer is mandatory.
-            return;
-        }
-        /*
-         * Build the file chooser, if not already built.
-         * Then make sure that the file chooser is visible.
-         */
-        if (fileChooser == null) {
-            final SortedSet<String> formats;
-            final SortedSet<File> directories;
-            try {
-                formats = layer.getImageFormats();
-                directories = layer.getImageDirectories();
-            } catch (CoverageStoreException e) {
-                ExceptionMonitor.show(this, e);
-                return;
-            }
-            fileChooser = new ImageFileChooser(formats.isEmpty() ? "png" : formats.first(), true);
-            fileChooser.setDialogType(ImageFileChooser.OPEN_DIALOG);
-            fileChooser.setPropertiesPane(properties);
-            fileChooser.addActionListener(listeners);
-            if (layer != null) {
+        if (layer != null) {
+            if (fileChooser == null) {
+                final SortedSet<String> formats;
+                final SortedSet<File> directories;
+                try {
+                    formats = layer.getImageFormats();
+                    directories = layer.getImageDirectories();
+                } catch (CoverageStoreException e) {
+                    ExceptionMonitor.show(this, e);
+                    return;
+                }
+                fileChooser = new ImageFileChooser(formats.isEmpty() ? "png" : formats.first(), true);
+                fileChooser.setDialogType(ImageFileChooser.OPEN_DIALOG);
+                fileChooser.setPropertiesPane(properties);
+                fileChooser.addActionListener(listeners);
                 for (final File directory : directories) {
                     if (directory.isDirectory()) {
                         fileChooser.setCurrentDirectory(directory);
                         break;
                     }
                 }
-            }
-            selectionPanel.add(new JXTitledPanel(Widgets.getResources(getLocale())
-                    .getString(Widgets.Keys.SELECT_FILE), fileChooser), FILES);
-            /*
-             * Creates the busy panel.
-             */
-            busyLabel = new JXBusyLabel(new Dimension(60, 60));
-            busyLabel.setHorizontalAlignment(JXBusyLabel.CENTER);
-            selectionPanel.add(busyLabel, BUZY);
-        }
-        if (!confirm) {
-            setSelectionPanel(FILES);
-        } else {
-            setSelectionPanel(BUZY);
-            busyLabel.setBusy(true);
-            /*
-             * If the user confirmed his selection, create the controller (if not already
-             * done), then starts the image addition process in a background thread.
-             */
-            final File[] files = fileChooser.getSelectedFiles();
-            if (files != null && files.length != 0) {
-                if (addController == null) {
-                    CRSAuthorityFactory factory = null;
-                    final CoverageDatabase database = layer.getCoverageDatabase();
-                    if (database != null) try {
-                        factory = database.getCRSAuthorityFactory();
-                    } catch (FactoryException e) {
-                        exceptionOccured(e);
-                    }
-                    if (factory == null) {
-                        factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", null);
-                    }
-                    addController = new NewGridCoverageDetails(this, factory);
-                    selectionPanel.add(addController, CONTROLLER);
-                }
+                selectionPanel.add(new JXTitledPanel(Widgets.getResources(getLocale())
+                        .getString(Widgets.Keys.SELECT_FILE), fileChooser), FILES);
                 /*
-                 * Runs a worker in a background thread for adding the new coverages.
-                 * We don't use the SwingWorker because NewGridCoverageDetails will
-                 * block waiting for user input from the event thread, and it seems
-                 * to prevent other SwingWorkers to work.
+                 * Creates the busy panel.
                  */
-                if (executor == null) {
-                    executor = Executors.newSingleThreadExecutor();
-                }
-                executor.execute(new Runnable() {
-                    @Override public void run() {
-                        try {
-                            layer.addCoverageReferences(Arrays.asList(files), addController);
-                        } catch (DatabaseVetoException e) {
-                            // User cancelled the operation or closed the frame.
-                            // Do not report the exception since it is intentional.
-                        } catch (Exception e) {
-                            exceptionOccured(e);
-                        } finally {
-                            EventQueue.invokeLater(new Runnable() {
-                                @Override public void run() {
-                                    busyLabel.setBusy(false);
-                                    setSelectionPanel(TABLE);
-                                    refresh();
-                                }
-                            });
-                        }
-                    }
-                });
+                busyLabel = new JXBusyLabel(new Dimension(60, 60));
+                busyLabel.setHorizontalAlignment(JXBusyLabel.CENTER);
+                selectionPanel.add(busyLabel, BUZY);
             }
+            setSelectionPanel(FILES);
+        }
+    }
+
+    /**
+     * Invoked when the user confirmed his selection in the file chooser. This method shows
+     * a list of available images in the file. If the user confirms his selection, then the
+     * {@link #addNewCoverage()} method will be invoked later.
+     *
+     * @since 3.15
+     */
+    final void showVariableChooser(final String[] images, final boolean multiSelectionAllowed) {
+        if (variableChooser == null) {
+            variableChooser = new JList();
+            final Vocabulary resources = Vocabulary.getResources(getLocale());
+            final JPanel buttonBar = new JPanel(new GridLayout(1, 2, 6, 0));
+            final JButton ok = new JButton(resources.getString(Vocabulary.Keys.OK));
+            final JButton cancel = new JButton(resources.getString(Vocabulary.Keys.CANCEL));
+            ok.setActionCommand(OK);
+            ok.addActionListener(listeners);
+            cancel.setActionCommand(CANCEL);
+            cancel.addActionListener(listeners);
+            buttonBar.add(ok);
+            buttonBar.add(cancel);
+            final JPanel panel = new JPanel(new BorderLayout());
+            panel.add(variableChooser, BorderLayout.CENTER);
+            panel.add(buttonBar, BorderLayout.AFTER_LAST_LINE);
+            selectionPanel.add(new JXTitledPanel(Widgets.getResources(getLocale())
+                    .getString(Widgets.Keys.SELECT_VARIABLES), variableChooser), VARIABLES);
+        }
+        variableChooser.setListData(images);
+        variableChooser.setSelectionMode(multiSelectionAllowed ?
+                ListSelectionModel.MULTIPLE_INTERVAL_SELECTION :
+                ListSelectionModel.SINGLE_SELECTION);
+        setSelectionPanel(VARIABLES);
+    }
+
+    /**
+     * Invoked when the user confirmed his selection in the list of available variables.
+     * If the user confirms, then the {@link NewGridCoverageDetails} window will be shown
+     * for each file to be added in the database.
+     */
+    private void addNewCoverage() {
+        setSelectionPanel(BUZY);
+        busyLabel.setBusy(true);
+        /*
+         * If the user confirmed his selection, create the controller (if not already
+         * done), then starts the image addition process in a background thread.
+         */
+        final File[] files = fileChooser.getSelectedFiles();
+        if (files != null && files.length != 0) {
+            if (addController == null) {
+                CRSAuthorityFactory factory = null;
+                final CoverageDatabase database = layer.getCoverageDatabase();
+                if (database != null) try {
+                    factory = database.getCRSAuthorityFactory();
+                } catch (FactoryException e) {
+                    exceptionOccured(e);
+                }
+                if (factory == null) {
+                    factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", null);
+                }
+                addController = new NewGridCoverageDetails(this, factory);
+                selectionPanel.add(addController, CONTROLLER);
+            }
+            /*
+             * Runs a worker in a background thread for adding the new coverages.
+             * We don't use the SwingWorker because NewGridCoverageDetails will
+             * block waiting for user input from the event thread, and it seems
+             * to prevent other SwingWorkers to work.
+             */
+            if (executor == null) {
+                executor = Executors.newSingleThreadExecutor();
+            }
+            executor.execute(new Runnable() {
+                @Override public void run() {
+                    try {
+                        layer.addCoverageReferences(Arrays.asList(files), addController);
+                    } catch (DatabaseVetoException e) {
+                        // User cancelled the operation or closed the frame.
+                        // Do not report the exception since it is intentional.
+                    } catch (Exception e) {
+                        exceptionOccured(e);
+                    } finally {
+                        EventQueue.invokeLater(new Runnable() {
+                            @Override public void run() {
+                                busyLabel.setBusy(false);
+                                setSelectionPanel(TABLE);
+                                refresh();
+                            }
+                        });
+                    }
+                }
+            });
         }
     }
 
@@ -584,7 +619,7 @@ public class CoverageList extends JComponent {
      * @todo Current implementation remove only the row from the JTable.
      *       It does not yet update the database.
      */
-    final void removeCoverage() {
+    private void removeCoverage() {
         coverages.remove(table.getSelectedRows());
     }
 

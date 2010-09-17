@@ -903,7 +903,7 @@ final class LayerEntry extends DefaultEntry implements Layer {
         try {
             final WritableGridCoverageTable table = getTableFactory().getTable(WritableGridCoverageTable.class);
             table.setLayerEntry(this);
-            table.addEntries(files, 0, getCoverageDatabase(), controller);
+            table.addEntries(files, getCoverageDatabase(), controller);
             table.release();
         } catch (SQLException exception) { // TODO: multi-catch
             throw new CoverageStoreException(exception);

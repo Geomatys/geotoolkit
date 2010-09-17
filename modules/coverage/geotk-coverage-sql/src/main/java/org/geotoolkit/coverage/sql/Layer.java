@@ -239,6 +239,12 @@ public interface Layer {
      *
      * This method will typically read only the required metadata rather than the full image.
      *
+     * {@section Multi-images files}
+     * If a file contains more than one image, then the images to insert can be selected by
+     * the {@link CoverageDatabaseController#filterImages(List)} method. If no controller has
+     * been supplied, then the default behavior is to insert only the first image on the
+     * assumption that other images are typically error estimations or overviews.
+     *
      * @param  files The image inputs.
      * @param  controller An optional controller to be notified when new references are added.
      *         The controller can modify the values declared in {@link NewGridCoverageReference}

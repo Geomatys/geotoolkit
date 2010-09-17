@@ -26,15 +26,15 @@ import java.util.EventListener;
  * <em>before</em> or <em>after</em> the change, and whatever the change is a <em>add</em> or
  * <em>remove</em> operation, is described by the {@link CoverageDatabaseEvent} argument.
  * <p>
- * This listener is also a {@linkplain CoverageDatabaseController controller}: in some cases
- * like when a coverage is about to be added in the database, implementations can modify the
- * values to be added.
+ * It is possible for this listener to be also a {@linkplain CoverageDatabaseController controller}.
+ * In such cases, when a coverage is about to be {@linkplain Layer#addCoverageReferences added in a
+ * layer}, implementations can modify the values to be added.
  * <p>
  * Listeners can veto the change when they are invoked {@linkplain CoverageDatabaseEvent#isBefore()
  * before} the change.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.15
  *
  * @see CoverageDatabase#addListener(CoverageDatabaseListener)
  * @see CoverageDatabase#removeListener(CoverageDatabaseListener)
@@ -42,7 +42,7 @@ import java.util.EventListener;
  * @since 3.12
  * @module
  */
-public interface CoverageDatabaseListener extends EventListener, CoverageDatabaseController {
+public interface CoverageDatabaseListener extends EventListener {
     /**
      * Invoked before or after a {@linkplain Layer Layer} is added or removed.
      * Implementations can veto the change if this method is invoked
@@ -72,6 +72,6 @@ public interface CoverageDatabaseListener extends EventListener, CoverageDatabas
      *         will be logged at the {@link java.util.logging.Level#WARNING WARNING} level and
      *         otherwise ignored if it is thrown after the change.
      */
-    @Override
     void coverageAdding(CoverageDatabaseEvent event, NewGridCoverageReference reference) throws DatabaseVetoException;
+    // Method signature must be keept compatible with CoverageDatabaseController.coverageAdding.
 }
