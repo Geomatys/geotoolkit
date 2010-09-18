@@ -78,6 +78,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
+import org.geotoolkit.lang.Workaround;
 
 
 /**
@@ -587,6 +588,7 @@ final class Resampler2D extends GridCoverage2D {
                  *       interpolation (which increase the chances to get it down on integers).
                  *       Remove this hack when this JAI bug will be fixed.
                  */
+                @Workaround(library="JAI", version="1.1.3")
                 boolean forceAdapter = false;
                 switch (sourceImage.getSampleModel().getTransferType()) {
                     case DataBuffer.TYPE_DOUBLE:

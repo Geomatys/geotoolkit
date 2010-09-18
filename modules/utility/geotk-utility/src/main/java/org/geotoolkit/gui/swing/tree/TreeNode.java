@@ -18,12 +18,13 @@
 package org.geotoolkit.gui.swing.tree;
 
 import java.util.Enumeration;
+import org.geotoolkit.lang.Workaround;
 
 
 /**
  * Defines the requirements for an object that can be used as a tree node in a
  * {@link javax.swing.JTree}. This interface adds the {@code getUserObject()} to
- * Swing's interface, which seems to have been forgotten in J2SE.
+ * Swing interface, which seems to have been forgotten in J2SE.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.03
@@ -31,6 +32,7 @@ import java.util.Enumeration;
  * @since 2.0
  * @module
  */
+@Workaround(library="JDK", version="1.4")
 public interface TreeNode extends javax.swing.tree.TreeNode {
     /**
      * Returns this node's user object.

@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.gui.swing.tree;
 
+import org.geotoolkit.lang.Workaround;
+
 
 /**
  * Defines the requirements for a tree node object that can change. It may changes by adding or
@@ -33,5 +35,6 @@ package org.geotoolkit.gui.swing.tree;
  * @since 2.0
  * @module
  */
+@Workaround(library="JDK", version="1.4")
 public interface MutableTreeNode extends javax.swing.tree.MutableTreeNode, TreeNode {
 }

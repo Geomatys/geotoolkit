@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.tree;
 
 import java.util.Enumeration;
+import org.geotoolkit.lang.Workaround;
 
 
 /**
@@ -32,6 +33,7 @@ import java.util.Enumeration;
  * @since 2.0
  * @module
  */
+@Workaround(library="JDK", version="1.4")
 public class DefaultMutableTreeNode extends javax.swing.tree.DefaultMutableTreeNode
         implements MutableTreeNode
 {

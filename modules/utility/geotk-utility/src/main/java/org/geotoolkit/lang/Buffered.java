@@ -26,7 +26,7 @@ import java.lang.annotation.RetentionPolicy;
 
 
 /**
- * A marker annotation for factories that are buffering their objects in some way.
+ * Annotates factories that are buffering their objects in some way.
  * This annotation is for documentation purpose only. See "Use" javadoc link for a
  * list of annotated classes.
  *

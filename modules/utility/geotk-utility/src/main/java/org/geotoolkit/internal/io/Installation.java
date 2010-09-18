@@ -26,6 +26,7 @@ import java.util.Properties;
 import java.util.prefs.Preferences;
 
 import org.geotoolkit.internal.OS;
+import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
 
@@ -120,6 +121,7 @@ public enum Installation {
      *
      * @since 3.10
      */
+    @Workaround(library="JDK", version="1.6")
     public static volatile boolean allowSystemPreferences = true;
 
     /**

@@ -35,6 +35,7 @@ import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ImageReaderWriterSpi;
 
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.logging.Logging;
@@ -137,6 +138,7 @@ public final class Registry {
      * @since 2.5
      */
     @Configuration
+    @Workaround(library="JAI", version="1.1.2")
     public synchronized static void setNativeAccelerationAllowed(final String operation,
             final boolean allowed, final JAI jai)
     {
@@ -192,6 +194,7 @@ public final class Registry {
      * @see #setNativeAccelerationAllowed(String, boolean, JAI)
      */
     @Configuration
+    @Workaround(library="JAI", version="1.1.2")
     public static void setNativeAccelerationAllowed(final String operation, final boolean allowed) {
         setNativeAccelerationAllowed(operation, allowed, JAI.getDefaultInstance());
     }

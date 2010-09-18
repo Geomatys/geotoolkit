@@ -29,6 +29,7 @@ import org.jdesktop.swingx.table.TableColumnExt;
 import org.jdesktop.swingx.table.TableColumnModelExt;
 
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.resources.Errors;
 
 
@@ -119,6 +120,7 @@ public final class JTables {
          * then 'visibleColumns', and hidden columns last.
          */
         Arrays.sort(columns, new Comparator<TableColumn>() {
+            @Workaround(library="Swingx", version="1.6")
             @Override public int compare(final TableColumn c1, final TableColumn c2) {
                 if (c1 != c2) {
                     for (int i=0; i<visibleColumns.length; i++) {
