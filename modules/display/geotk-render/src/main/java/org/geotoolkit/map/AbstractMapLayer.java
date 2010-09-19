@@ -46,7 +46,7 @@ import org.opengis.style.Description;
  */
 public abstract class AbstractMapLayer implements MapLayer,StyleListener {
 
-    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.map");
+    protected static final Logger LOGGER = Logging.getLogger(MapLayer.class);
     
     private final List<GraphicBuilder> builders = new CheckedArrayList<GraphicBuilder>(GraphicBuilder.class);
     

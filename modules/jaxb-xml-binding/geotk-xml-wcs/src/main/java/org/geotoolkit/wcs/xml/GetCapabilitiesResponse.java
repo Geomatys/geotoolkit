@@ -16,11 +16,15 @@
  */
 package org.geotoolkit.wcs.xml;
 
+import org.geotoolkit.wcs.xml.v100.ContentMetadata;
+
 /**
  *
  * @author Cédric Briançon
  * @module pending
  */
 public interface GetCapabilitiesResponse extends WCSResponse {
+
+    ContentMetadata getContentMetadata();
 
 }
