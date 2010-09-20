@@ -48,7 +48,7 @@ public class LegendMapper extends JRRendererMapper{
             if(renderedValue instanceof Canvas){
                 Canvas canvas = (Canvas) renderedValue;
                 LegendRenderer renderer = new LegendRenderer();
-                renderer.setCanvas(canvas);
+                renderer.setContext(candidate);
                 return renderer;
             }
         }

@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.display2d.service;
 
+import org.geotoolkit.display2d.canvas.J2DCanvas;
+import java.util.Map.Entry;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -192,9 +194,28 @@ public class DefaultPortrayalService implements PortrayalService{
                 crs,
                 canvasDef.getDimension(),
                 sceneDef.getHints());
+
+        prepareCanvas(canvas, canvasDef, sceneDef, viewDef);
+
+        canvas.getController().repaint();
+        final BufferedImage buffer = canvas.getSnapShot();
+        canvas.dispose();
+
+        return buffer;
+    }
+
+    public static void prepareCanvas(J2DCanvas canvas, CanvasDef canvasDef, SceneDef sceneDef, ViewDef viewDef) throws PortrayalException{
+
+        final Envelope contextEnv = viewDef.getEnvelope();
+        final CoordinateReferenceSystem crs = contextEnv.getCoordinateReferenceSystem();
+
         final ContextContainer2D renderer = new DefaultContextContainer2D(canvas, false);
         canvas.setContainer(renderer);
-        canvas.setBackgroundPainter(new SolidColorPainter(canvasDef.getBackground()));
+
+        final Color bgColor = canvasDef.getBackground();
+        if(bgColor != null){
+            canvas.setBackgroundPainter(new SolidColorPainter(bgColor));
+        }
 
         final CanvasMonitor monitor = viewDef.getMonitor();
         if(monitor != null){
@@ -203,8 +224,8 @@ public class DefaultPortrayalService implements PortrayalService{
 
         final Hints hints = sceneDef.getHints();
         if(hints != null){
-            for(Object key : hints.keySet()){
-                canvas.setRenderingHint((Key)key, hints.get(key));
+            for(Entry<?,?> entry : hints.entrySet()){
+                canvas.setRenderingHint((Key)entry.getKey(), entry.getValue());
             }
         }
 
@@ -234,15 +255,10 @@ public class DefaultPortrayalService implements PortrayalService{
         final List<PortrayalExtension> extensions = sceneDef.extensions();
         if(extensions != null){
             for(final PortrayalExtension extension : extensions){
-                extension.completeCanvas(canvas);
+                if(extension != null) extension.completeCanvas(canvas);
             }
         }
 
-        canvas.getController().repaint();
-        final BufferedImage buffer = canvas.getSnapShot();
-        canvas.dispose();
-
-        return buffer;
     }
 
     ////////////////////////////////////////////////////////////////////////////

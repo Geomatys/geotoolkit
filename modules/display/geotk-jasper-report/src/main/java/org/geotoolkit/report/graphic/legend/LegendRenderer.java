@@ -29,17 +29,13 @@ import java.awt.geom.Rectangle2D;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRRenderable;
 
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 import org.geotoolkit.display2d.ext.DefaultBackgroundTemplate;
 import org.geotoolkit.display2d.ext.legend.DefaultLegendTemplate;
 import org.geotoolkit.display2d.ext.legend.J2DLegendUtilities;
 import org.geotoolkit.display2d.ext.legend.LegendTemplate;
 import org.geotoolkit.map.MapContext;
-
-import org.opengis.display.canvas.Canvas;
 
 /**
  * Jasper Report renderer used to render legend graphic.
@@ -65,13 +61,13 @@ public class LegendRenderer implements JRRenderable{
             new Font("Serial", Font.BOLD, 15));
 
     private final String id = System.currentTimeMillis() + "-" + Math.random();
-    private Canvas canvas = null;
+    private MapContext context;
 
     public LegendRenderer(){
     }
 
-    public void setCanvas(final Canvas canvas){
-        this.canvas = canvas;
+    public void setContext(final MapContext context){
+        this.context = context;
     }
 
     /**
@@ -119,22 +115,16 @@ public class LegendRenderer implements JRRenderable{
      */
     @Override
     public void render(final Graphics2D g, final Rectangle2D rect) throws JRException {
+        if(context == null) return;
+
         final Graphics2D g2d = (Graphics2D) g.create();
         final Rectangle area = rect.getBounds();
-
-        if(!(canvas instanceof ReferencedCanvas2D)) return;
-        final ReferencedCanvas2D c2d = (ReferencedCanvas2D) canvas;
-
-        if(!(c2d.getContainer() instanceof ContextContainer2D)) return;
-        final ContextContainer2D renderer = (ContextContainer2D) c2d.getContainer();
-        final MapContext context = renderer.getContext();
 
         try {
             J2DLegendUtilities.paintLegend(context, g2d, area, template);
         } catch (PortrayalException ex) {
-            ex.printStackTrace();
+            throw new JRException(ex);
         }
-
     }
 
 

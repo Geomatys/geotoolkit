@@ -17,10 +17,13 @@
 package org.geotoolkit.report;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.ServiceLoader;
+import java.util.logging.Logger;
 
-import org.geotoolkit.report.JRMapperFactory;
+import org.geotoolkit.lang.Static;
+import org.geotoolkit.util.logging.Logging;
 
 /**
  * Constants values for reports.
@@ -28,9 +31,23 @@ import org.geotoolkit.report.JRMapperFactory;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class JRMappingUtils {
+@Static
+public final class JRMappingUtils {
+
+    public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.report");
 
     private static final ServiceLoader<JRMapperFactory> FACTORIES = ServiceLoader.load(JRMapperFactory.class);
+    private static final ServiceLoader<JRFieldRenderer> RENDERERS = ServiceLoader.load(JRFieldRenderer.class);
+
+    private JRMappingUtils(){}
+
+    public static Collection<JRFieldRenderer> getFieldRenderers(){
+        final List<JRFieldRenderer> renderers = new ArrayList<JRFieldRenderer>();
+        for(final JRFieldRenderer r : RENDERERS){
+            renderers.add(r);
+        }
+        return renderers;
+    }
 
     public static List<JRMapperFactory> getFactories(Class type){
         final List<JRMapperFactory> factories = new ArrayList<JRMapperFactory>();

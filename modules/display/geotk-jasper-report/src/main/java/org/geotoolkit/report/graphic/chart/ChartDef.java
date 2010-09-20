@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,48 +14,29 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.report.graphic.northarrow;
 
-import java.awt.Dimension;
+package org.geotoolkit.report.graphic.chart;
+
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
-
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRRenderable;
-
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
-import org.geotoolkit.display.exception.PortrayalException;
-
-import org.geotoolkit.display2d.ext.northarrow.DefaultNorthArrowTemplate;
-import org.geotoolkit.display2d.ext.northarrow.J2DNorthArrowUtilities;
-import org.geotoolkit.display2d.ext.northarrow.NorthArrowTemplate;
-import org.opengis.display.canvas.Canvas;
+import org.jfree.chart.JFreeChart;
 
 /**
- * Jasper Report renderer used to render north arrow graphic.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class NorthArrowRenderer implements JRRenderable{
+public class ChartDef implements JRRenderable{
 
-    private NorthArrowTemplate template = null;
 
     private final String id = System.currentTimeMillis() + "-" + Math.random();
-    private double rotation = 0;
+    private final JFreeChart chart;
 
-    public NorthArrowRenderer(){
-
-        template = new DefaultNorthArrowTemplate(null,
-                NorthArrowRenderer.class.getResource("/org/geotoolkit/report/boussole.svg"), new Dimension(100, 100));
-        
-
-    }
-
-    public void setRotation(double rotation){
-        this.rotation = rotation;
+    public ChartDef(JFreeChart chart){
+        this.chart = chart;
     }
 
     /**
@@ -103,15 +84,7 @@ public class NorthArrowRenderer implements JRRenderable{
      */
     @Override
     public void render(final Graphics2D g, final Rectangle2D rect) throws JRException {
-        final Graphics2D g2d = (Graphics2D) g.create();
-        final Rectangle area = rect.getBounds();
-
-        try {
-            J2DNorthArrowUtilities.paint((float)rotation, g2d, area.x, area.y, template);
-        } catch (PortrayalException ex) {
-            throw new JRException(ex);
-        }
+        chart.draw(g, rect);
     }
-
 
 }
