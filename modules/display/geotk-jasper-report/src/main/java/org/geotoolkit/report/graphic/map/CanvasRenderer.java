@@ -36,6 +36,7 @@ import org.geotoolkit.display.canvas.DefaultController2D;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
 import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -59,13 +60,11 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
     private Envelope area = null;
 
     private final CanvasController2D controller = new DefaultController2D(this){
-
         @Override
         public void setVisibleArea(Envelope env) throws NoninvertibleTransformException, TransformException {
             super.setVisibleArea(env);
             area = env;
         }
-
     };
     private final DefaultRenderingContext2D context2D = new DefaultRenderingContext2D(this);
     private Graphics2D g2d = null;
@@ -139,32 +138,39 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
      */
     @Override
     public void repaint() {
-                    
         monitor.renderingStarted();
         fireRenderingStateChanged(RenderingState.RENDERING);
-                
+
         final Graphics2D output = g2d;
-        
-        //paint background if there is one.
-        if(background != null){
-            output.setColor(background);
-            output.fillRect(0,0,dim.width,dim.height);
-        }
-        
+
         Rectangle clipBounds = output.getClipBounds();
-        final Rectangle displayBounds = new Rectangle(dim);
-        Rectangle2D dirtyArea = XRectangle2D.INFINITY;
+        /*
+         * Sets a flag for avoiding some "refresh()" events while we are actually painting.
+         * For example some implementation of the GraphicPrimitive2D.paint(...) method may
+         * detects changes since the last rendering and invokes some kind of invalidate(...)
+         * methods before the graphic rendering begin. Invoking those methods may cause in some
+         * indirect way a call to GraphicPrimitive2D.refresh(), which will trig an other widget
+         * repaint. This second repaint is usually not needed, since Graphics usually managed
+         * to update their informations before they start their rendering. Consequently,
+         * disabling repaint events while we are painting help to reduces duplicated rendering.
+         */
         if (clipBounds == null) {
-            clipBounds = displayBounds;
-        } else if (displayBounds.contains(clipBounds)) {
-            dirtyArea = clipBounds;
+            clipBounds = new Rectangle(dim);
+        }
+        output.setClip(clipBounds);
+        output.addRenderingHints(hints);
+
+        final DefaultRenderingContext2D context = prepareContext(context2D, output,null);
+
+        //paint background if there is one.
+        if(painter != null){
+            painter.paint(context2D);
         }
 
-        output.addRenderingHints(hints);
-        
-        final DefaultRenderingContext2D context = prepareContext(context2D, output,null);
-        render(context, getContainer().getSortedGraphics());
-        
+        final AbstractContainer2D renderer2D = getContainer();
+        if(renderer2D != null){
+            render(context, renderer2D.getSortedGraphics());
+        }
 
         /**
          * End painting, erase dirtyArea
@@ -227,9 +233,12 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
      */
     @Override
     public void render(Graphics2D g, Rectangle2D rect) throws JRException {
+        double rotation = getController().getRotation();
+
         setSize(new Dimension((int)rect.getWidth(), (int)rect.getHeight()));
         try {
             getController().setVisibleArea(area);
+            getController().setRotation(rotation);
         } catch (NoninvertibleTransformException ex) {
             Logging.getLogger(CanvasRenderer.class).log(Level.WARNING, null, ex);
         } catch (TransformException ex) {

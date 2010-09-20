@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.display2d.canvas;
 
-import java.awt.AlphaComposite;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
