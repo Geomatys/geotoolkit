@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,15 +14,22 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
+
 package org.geotoolkit.wcs.xml;
 
+import java.util.List;
+import org.opengis.geometry.Envelope;
+
 /**
+ * Content objects contain a list of information about the coverages.
  *
- * @author Cédric Briançon
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface GetCapabilitiesResponse extends WCSResponse {
+public interface CoverageInfo {
 
-    Content getContents();
+    Envelope getLonLatEnvelope();
+
+    List<?> getRest();
 
 }

@@ -53,7 +53,7 @@ import org.geotoolkit.wcs.xml.GetCapabilitiesResponse;
     "contents"
 })
 @XmlRootElement(name = "Capabilities")
-public class Capabilities extends CapabilitiesBaseType {
+public class Capabilities extends CapabilitiesBaseType implements GetCapabilitiesResponse {
 
     @XmlElement(name = "Contents")
     private Contents contents;

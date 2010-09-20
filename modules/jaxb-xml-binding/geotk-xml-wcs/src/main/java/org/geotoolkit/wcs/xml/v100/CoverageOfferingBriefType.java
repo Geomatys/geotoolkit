@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wcs.xml.CoverageInfo;
 
 
 /**
@@ -53,7 +54,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     CoverageOfferingType.class
 })
-public class CoverageOfferingBriefType extends AbstractDescriptionType {
+public class CoverageOfferingBriefType extends AbstractDescriptionType implements CoverageInfo{
     
     private LonLatEnvelopeType lonLatEnvelope;
     
@@ -72,6 +73,7 @@ public class CoverageOfferingBriefType extends AbstractDescriptionType {
         this.keywords       = keywords;
     }
     
+    @Override
     public LonLatEnvelopeType getLonLatEnvelope() {
         return this.lonLatEnvelope;
     }
@@ -82,5 +84,6 @@ public class CoverageOfferingBriefType extends AbstractDescriptionType {
     
     public Keywords getKeywords() {
         return this.keywords;
-    } 
+    }
+
 }

@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.OnlineResourceType;
+import org.geotoolkit.wcs.xml.Content;
+import org.geotoolkit.wcs.xml.CoverageInfo;
 
 
 /**
@@ -59,7 +61,7 @@ import org.geotoolkit.ows.xml.v110.OnlineResourceType;
     "otherSource"
 })
 @XmlRootElement(name = "Contents")
-public class Contents {
+public class Contents implements Content{
 
     @XmlElement(name = "CoverageSummary")
     private List<CoverageSummaryType> coverageSummary  = new ArrayList<CoverageSummaryType>();
@@ -115,6 +117,11 @@ public class Contents {
      */
     public List<OnlineResourceType> getOtherSource() {
         return Collections.unmodifiableList(this.otherSource);
+    }
+
+    @Override
+    public List<? extends CoverageInfo> getCoverageInfos() {
+        return coverageSummary;
     }
 
 }
