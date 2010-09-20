@@ -18,7 +18,9 @@
 package org.geotoolkit.renderer.svg;
 
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.net.URI;
@@ -73,6 +75,19 @@ public class SVGGraphicFactory implements ExternalGraphicFactory {
             }
         }
         return null;
+    }
+
+    @Override
+    public void renderImage(URI uri, String mime, Float size, Graphics2D g,
+            Point2D center, RenderingHints hints) throws Exception {
+        final BufferedImage img = getImage(uri, mime, size, hints);
+
+        final float dispX = img.getWidth()/2;
+        final float dispY = img.getHeight()/2;
+
+        g.translate(-dispX-center.getX(),-dispY-center.getY());
+        SvgUtils.render(uri, new Point2D.Float(size, size), g, hints);
+        g.translate(dispX+center.getX(),dispY+center.getY());
     }
 
     /**

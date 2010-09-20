@@ -18,7 +18,9 @@
 package org.geotoolkit.display2d.ext.northarrow;
 
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
@@ -82,6 +84,18 @@ public class DefaultNorthArrowTemplate implements NorthArrowTemplate{
         }
 
         return buffer;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void renderImage(Graphics2D g, Point2D center) {
+        try {
+            DynamicSymbolFactoryFinder.renderImage(svgFile.toURI(),"svg",(float)size.height,g,center,null);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override

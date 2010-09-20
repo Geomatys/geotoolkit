@@ -18,7 +18,9 @@
 package org.geotoolkit.display2d.ext.northarrow;
 
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.geom.Point2D;
 import org.geotoolkit.display2d.ext.BackgroundTemplate;
 
 /**
@@ -37,6 +39,11 @@ public interface NorthArrowTemplate {
      * @return Image or null if the image could not be generated
      */
     Image getImage();
+
+    /**
+     * Render in SVG quality if possible.
+     */
+    void renderImage(Graphics2D g, Point2D center);
 
     Dimension getSize();
 
