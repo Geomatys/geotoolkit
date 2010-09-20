@@ -75,4 +75,6 @@ public abstract class AbstractLayer {
 
     public abstract List<? extends Style> getStyle();
 
+    public abstract boolean isQueryable();
+
 }

@@ -424,6 +424,7 @@ public class Layer extends AbstractLayer {
     /**
      * Gets the value of the queryable property.
      */
+    @Override
     public boolean isQueryable() {
         return "1".equals(queryable) || "true".equalsIgnoreCase(queryable);
     }
