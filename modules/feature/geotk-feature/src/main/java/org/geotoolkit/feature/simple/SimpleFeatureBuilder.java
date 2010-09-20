@@ -140,8 +140,6 @@ public class SimpleFeatureBuilder {
     private final SimpleFeatureType featureType;
     /** the feature factory */
     private final FeatureFactory factory;
-    /** the attribute name to index index */
-    private final Map<Object, Integer> index;
     /** the values */
     //List<Object> values;
     private Object[] values;
@@ -158,11 +156,6 @@ public class SimpleFeatureBuilder {
         this.featureType = featureType;
         this.factory = factory;
 
-        if (featureType instanceof DefaultSimpleFeatureType) {
-            index = ((DefaultSimpleFeatureType) featureType).index;
-        } else {
-            this.index = DefaultSimpleFeatureType.buildIndex(featureType);
-        }
         reset();
     }
 

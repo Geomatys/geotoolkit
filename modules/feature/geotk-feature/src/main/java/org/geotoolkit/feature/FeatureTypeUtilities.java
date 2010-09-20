@@ -74,6 +74,7 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import org.opengis.feature.Property;
 
 /**
  * Utility methods for working against the FeatureType interface.
@@ -1156,15 +1157,32 @@ public class FeatureTypeUtilities {
      * @throws IllegalAttributeException If value cannot be constructed for
      *         attribtueType
      */
-    public static Object defaultValue(final AttributeDescriptor attributeType)
+    public static Object defaultValue(final PropertyDescriptor attributeType)
             throws IllegalAttributeException {
-        final Object value = attributeType.getDefaultValue();
 
-        if (value == null && !attributeType.isNillable()) {
-            return null; // sometimes there is no valid default value :-(
-            // throw new IllegalAttributeException("Got null default value for non-null type.");
+        if(attributeType instanceof AttributeDescriptor){
+
+            final Object value = ((AttributeDescriptor)attributeType).getDefaultValue();
+
+            if (value == null && !attributeType.isNillable()) {
+                return null; // sometimes there is no valid default value :-(
+                // throw new IllegalAttributeException("Got null default value for non-null type.");
+            }
+            return value;
+        }else{
+            return null;
         }
-        return value;
+    }
+
+    public static Property defaultProperty(final PropertyDescriptor desc){
+        final Object value = defaultValue(desc);
+        if(desc instanceof GeometryDescriptor){
+            return new DefaultGeometryAttribute(value, (GeometryDescriptor)desc, null);
+        }else if(desc instanceof AttributeDescriptor){
+            return new DefaultAttribute(value, (AttributeDescriptor)desc, null);
+        }else{
+            return new DefaultProperty(value, desc);
+        }
     }
     
     /**

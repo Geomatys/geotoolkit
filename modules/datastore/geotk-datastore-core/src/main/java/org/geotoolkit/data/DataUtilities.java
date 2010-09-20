@@ -63,7 +63,7 @@ public class DataUtilities {
     private DataUtilities() {
     }
 
-    public static FeatureCollection collection(Feature[] features){
+    public static FeatureCollection collection(Feature ... features){
         final FeatureCollection col = collection("", features[0].getType());
         col.addAll(Arrays.asList(features));
         return col;

@@ -19,6 +19,7 @@ package org.geotoolkit.feature;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.geotoolkit.factory.FactoryFinder;
@@ -134,6 +135,10 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      */
     @Override
     public Feature createFeature(Collection<Property> value, AttributeDescriptor descriptor, String id) {
+        if(value == null){
+            value = Collections.emptyList();
+        }
+        
         if(descriptor.getType() instanceof SimpleFeatureType){
             //in case we try to create a simple Feature with this method.
             final List<Property> properties = new ArrayList<Property>(value);
