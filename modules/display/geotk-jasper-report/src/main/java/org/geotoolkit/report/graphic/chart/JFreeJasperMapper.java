@@ -31,7 +31,9 @@ import org.jfree.chart.JFreeChart;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @deprecated
  */
+@Deprecated
 public class JFreeJasperMapper implements JRRenderable{
 
     private final String id = System.currentTimeMillis() + "-" + Math.random();

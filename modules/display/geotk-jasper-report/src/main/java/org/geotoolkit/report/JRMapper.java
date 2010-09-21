@@ -26,7 +26,9 @@ import java.util.Collection;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @deprecated
  */
+@Deprecated
 public interface JRMapper<V,C> {
 
     /**

@@ -60,7 +60,9 @@ import org.netbeans.swing.outline.RowModel;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @deprecated 
  */
+@Deprecated
 public class JRConfigTree<C> extends Outline{
 
     private static String STR_PARAMETERS    = "Parameters";

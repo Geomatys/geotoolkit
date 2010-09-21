@@ -30,7 +30,9 @@ import org.opengis.util.InternationalString;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @deprecated
  */
+@Deprecated
 public class CanvasMapperFactory implements JRMapperFactory<JRRenderable,MapContext>{
 
     private static final ImageIcon ICON = new ImageIcon(CanvasMapperFactory.class.getResource("/org/geotoolkit/report/map.png"));

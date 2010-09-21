@@ -38,7 +38,9 @@ import org.opengis.referencing.operation.TransformException;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @deprecated
  */
+@Deprecated
 public class CanvasMapper extends JRRendererMapper{
 
     private static final Logger LOGGER = Logging.getLogger(CanvasMapper.class);

@@ -28,7 +28,9 @@ import org.geotoolkit.report.attribut.context.JRContextAttMapper;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @deprecated
  */
+@Deprecated
 public class ContextTitleMapper extends JRContextAttMapper{
 
     ContextTitleMapper(JRMapperFactory<String,MapContext> factory){

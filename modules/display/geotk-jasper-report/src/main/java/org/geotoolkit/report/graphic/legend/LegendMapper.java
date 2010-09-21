@@ -32,7 +32,9 @@ import org.opengis.display.canvas.Canvas;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @deprecated
  */
+@Deprecated
 public class LegendMapper extends JRRendererMapper{
 
     LegendMapper(JRMapperFactory<JRRenderable,MapContext> factory){

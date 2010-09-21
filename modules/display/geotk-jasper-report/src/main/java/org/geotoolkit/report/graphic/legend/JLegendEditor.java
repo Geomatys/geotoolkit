@@ -21,7 +21,9 @@ package org.geotoolkit.report.graphic.legend;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @deprecated
  */
+@Deprecated
 public class JLegendEditor extends javax.swing.JPanel {
 
     /** Creates new form JNorthArrowEditor */

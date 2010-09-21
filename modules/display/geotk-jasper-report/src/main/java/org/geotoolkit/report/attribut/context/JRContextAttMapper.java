@@ -26,7 +26,9 @@ import org.geotoolkit.report.JRMapperFactory;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @deprecated
  */
+@Deprecated
 public abstract class JRContextAttMapper implements JRMapper<String,MapContext> {
 
     private final JRMapperFactory<String,MapContext> factory;

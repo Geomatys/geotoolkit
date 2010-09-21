@@ -49,6 +49,7 @@ public final class JRMappingUtils {
         return renderers;
     }
 
+    @Deprecated
     public static List<JRMapperFactory> getFactories(Class type){
         final List<JRMapperFactory> factories = new ArrayList<JRMapperFactory>();
 

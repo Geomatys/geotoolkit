@@ -40,7 +40,9 @@ import org.geotoolkit.map.MapContext;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @deprecated use JasperReportService instead
  */
+@Deprecated
 public class JRExportService {
 
     private static JRExportService INSTANCE = null;

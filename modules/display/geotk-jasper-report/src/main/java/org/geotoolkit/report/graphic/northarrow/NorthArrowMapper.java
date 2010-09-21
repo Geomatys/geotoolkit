@@ -33,7 +33,9 @@ import org.opengis.display.canvas.Canvas;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @deprecated
  */
+@Deprecated
 public class NorthArrowMapper extends JRRendererMapper{
 
     NorthArrowMapper(JRMapperFactory<JRRenderable,MapContext> factory){

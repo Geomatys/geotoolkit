@@ -21,7 +21,9 @@ package org.geotoolkit.report.graphic.scalebar;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @deprecated
  */
+@Deprecated
 public class JScaleBarEditor extends javax.swing.JPanel {
 
     /** Creates new form JNorthArrowEditor */

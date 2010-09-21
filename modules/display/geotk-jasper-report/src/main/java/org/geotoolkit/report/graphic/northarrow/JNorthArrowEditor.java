@@ -21,7 +21,9 @@ package org.geotoolkit.report.graphic.northarrow;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @deprecated
  */
+@Deprecated
 public class JNorthArrowEditor extends javax.swing.JPanel {
 
     /** Creates new form JNorthArrowEditor */

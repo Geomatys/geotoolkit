@@ -26,7 +26,9 @@ import org.geotoolkit.report.JRMapperFactory;
  *
  * @author Johann sorel (Geomatys)
  * @module pending
+ * @deprecated
  */
+@Deprecated
 public class StaticStringMapper implements JRMapper<String,Object> {
 
     private String value = "";
