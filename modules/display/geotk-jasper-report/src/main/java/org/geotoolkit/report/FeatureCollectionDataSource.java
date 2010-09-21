@@ -22,6 +22,7 @@ import java.util.Collection;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
+import org.geotoolkit.data.FeatureCollection;
 
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.util.Converters;
@@ -36,15 +37,25 @@ import org.opengis.feature.Property;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-class FeatureCollectionDataSource implements JRDataSource {
+public class FeatureCollectionDataSource implements JRDataSource {
 
+    private final FeatureCollection col;
     private final FeatureIterator iterator;
     private Feature feature;
 
-    FeatureCollectionDataSource(FeatureIterator iterator){
-        if(iterator == null){
-            throw new NullArgumentException("FeatureCollection can not be null.");
+    public FeatureCollectionDataSource(FeatureCollection collection){
+        if(collection == null){
+            throw new NullArgumentException("Feature collection can not be null.");
         }
+        this.col = collection;
+        this.iterator = collection.iterator();
+    }
+
+    public FeatureCollectionDataSource(FeatureIterator iterator){
+        if(iterator == null){
+            throw new NullArgumentException("Feature iterator can not be null.");
+        }
+        this.col = null;
         this.iterator = iterator;
     }
 
@@ -54,7 +65,10 @@ class FeatureCollectionDataSource implements JRDataSource {
             feature = iterator.next();
             return true;
         }else{
-            iterator.close();
+            if(col != null){
+                //we created the iterator, we close it
+                iterator.close();
+            }
             return false;
         }
     }
