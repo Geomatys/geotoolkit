@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing.coverage;
 
 import java.util.Set;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 import java.util.Arrays;
 import java.util.SortedSet;
@@ -35,6 +36,7 @@ import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JList;
@@ -92,7 +94,7 @@ public class CoverageList extends JComponent {
     /**
      * Action commands.
      */
-    private static final String ADD="ADD", REMOVE="REMOVE", REFRESH="REFRESH", OK="OK", CANCEL="CANCEL";
+    private static final String ADD="ADD", REMOVE="REMOVE", REFRESH="REFRESH";
 
     /**
      * Layout parameters for the components put in {@link #selectionPanel}.
@@ -521,9 +523,8 @@ public class CoverageList extends JComponent {
     }
 
     /**
-     * Invoked when the user confirmed his selection in the file chooser. This method shows
-     * a list of available images in the file. If the user confirms his selection, then the
-     * {@link #addNewCoverage()} method will be invoked later.
+     * Potentially invoked after {@link #addNewCoverage()} started its work. This method shows
+     * a list of available images in the file.
      *
      * @since 3.15
      */
@@ -531,20 +532,24 @@ public class CoverageList extends JComponent {
         if (variableChooser == null) {
             variableChooser = new JList();
             final Vocabulary resources = Vocabulary.getResources(getLocale());
-            final JPanel buttonBar = new JPanel(new GridLayout(1, 2, 6, 0));
-            final JButton ok = new JButton(resources.getString(Vocabulary.Keys.OK));
+            final JButton ok     = new JButton(resources.getString(Vocabulary.Keys.OK));
             final JButton cancel = new JButton(resources.getString(Vocabulary.Keys.CANCEL));
-            ok.setActionCommand(OK);
-            ok.addActionListener(listeners);
-            cancel.setActionCommand(CANCEL);
-            cancel.addActionListener(listeners);
-            buttonBar.add(ok);
-            buttonBar.add(cancel);
+            final JPanel buttons = new JPanel(new GridLayout(1, 2, 6, 0));
+            addController.initVariableChooser(ok, cancel);
+            buttons.add(ok);
+            buttons.add(cancel);
+            buttons.setOpaque(false);
+            buttons.setBorder(BorderFactory.createEmptyBorder(6, 0, 6, 0));
+            final Box buttonBar = Box.createHorizontalBox();
+            buttonBar.add(Box.createHorizontalGlue());
+            buttonBar.add(buttons);
+            buttonBar.add(Box.createHorizontalGlue());
+            buttonBar.setOpaque(false);
             final JPanel panel = new JPanel(new BorderLayout());
             panel.add(variableChooser, BorderLayout.CENTER);
             panel.add(buttonBar, BorderLayout.AFTER_LAST_LINE);
             selectionPanel.add(new JXTitledPanel(Widgets.getResources(getLocale())
-                    .getString(Widgets.Keys.SELECT_VARIABLES), variableChooser), VARIABLES);
+                    .getString(Widgets.Keys.SELECT_VARIABLES), panel), VARIABLES);
         }
         variableChooser.setListData(images);
         variableChooser.setSelectionMode(multiSelectionAllowed ?
@@ -554,9 +559,23 @@ public class CoverageList extends JComponent {
     }
 
     /**
-     * Invoked when the user confirmed his selection in the list of available variables.
-     * If the user confirms, then the {@link NewGridCoverageDetails} window will be shown
-     * for each file to be added in the database.
+     * Invoked after {@link #showVariableChooser(String[], boolean)} in order to get the
+     * variables selected by the user. A side effect of this method is to show again the
+     * busy panel, since this method is invoked when {@link #addNewCoverage()} is about
+     * to continue its work.
+     *
+     * @since 3.15
+     */
+    @SuppressWarnings({"unchecked","rawtypes"})
+    final List<String> getSelectedVariables() {
+        setSelectionPanel(BUZY);
+        return (List) Arrays.asList(variableChooser.getSelectedValues());
+    }
+
+    /**
+     * Invoked when the user confirmed his selection in the file chooser. If the user selected
+     * a file, then the {@link NewGridCoverageDetails} window will be shown for each file to be
+     * added in the database.
      */
     private void addNewCoverage() {
         setSelectionPanel(BUZY);
