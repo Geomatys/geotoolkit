@@ -277,6 +277,8 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             query2.setProperties(query.getPropertyNames());
             query2.setFilter(query.getFilter());
             query2.setHints(query.getHints());
+            query2.setStartIndex(query.getStartIndex());
+            query2.setMaxFeatures(query.getMaxFeatures());
 
             reader = handleRemaining(reader, query2.buildQuery());
             return reader;
