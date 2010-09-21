@@ -221,7 +221,9 @@ public final class CoverageDatabaseWizard extends AbstractWizard {
                     String missing = PostgisInstaller.INSTALL;
                     final File directory = (File) event.getNewValue();
                     if (directory != null) {
-                        if (new File(directory, missing).isFile()) {
+                        if (new File(directory, missing).isFile() ||
+                            new File(directory, PostgisInstaller.LEGACY).isFile())
+                        {
                             missing = PostgisInstaller.REF_SYS;
                             if (new File(directory, missing).isFile()) {
                                 missing = null;

@@ -55,7 +55,7 @@ import org.geotoolkit.resources.Vocabulary;
  * is used at the end for every SQL statement.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.15
  *
  * @since 3.00
  * @module
@@ -80,7 +80,7 @@ public class ScriptRunner implements FilenameFilter {
      * The character for escaping a portion of the SQL script. This is used by
      * PostgreSQL for the definition of triggers.
      */
-    private static final String ESCAPE = "$$";
+    private static final String[] ESCAPES = {"$$", "$BODY$"};
 
     /**
      * The quote character for identifiers actually used in the database.
@@ -386,21 +386,24 @@ public class ScriptRunner implements FilenameFilter {
              * lines) until the next occurence of "$$". This simple algorithm does not allow
              * more than one block of "$$ ... $$" on the same line.
              */
-            int escape = line.indexOf(ESCAPE);
-            if (escape >= 0) {
-                escape += ESCAPE.length();
-                while ((escape = line.indexOf(ESCAPE, escape)) < 0) {
-                    escape = 0;
-                    buffer.append(line).append('\n');
-                    line = in.readLine();
-                    if (line == null) {
-                        throw new EOFException();
+            for (final String escape : ESCAPES) {
+                int pos = line.indexOf(escape);
+                if (pos >= 0) {
+                    pos += escape.length();
+                    while ((pos = line.indexOf(escape, pos)) < 0) {
+                        pos = 0;
+                        buffer.append(line).append('\n');
+                        line = in.readLine();
+                        if (line == null) {
+                            throw new EOFException();
+                        }
                     }
+                    pos += escape.length();
+                    buffer.append(line.substring(0, pos));
+                    i = buffer.length(); // Will resume the parsing from that position.
+                    line = line.substring(pos);
+                    break;
                 }
-                escape += ESCAPE.length();
-                buffer.append(line.substring(0, escape));
-                i = buffer.length(); // Will resume the parsing from that position.
-                line = line.substring(escape);
             }
             buffer.append(line);
             int length = buffer.length();

@@ -144,7 +144,7 @@ public final class Wizards extends IndexedResourceBundle {
         public static final int NO_SELECTED_TILES = 17;
 
         /**
-         * <html>Specify the directory which contain the <code>lwpostgis.sql</code> and
+         * <html>Specify the directory which contain the <code>postgis.sql</code> and
          * <code>spatial_ref_sys.sql</code> PostGIS files. If the database is hosted on a remote
          * server, make sure that the files specified below are identical to the files on the
          * server.</html>

@@ -32,5 +32,5 @@ COMMENT ON SCHEMA postgis IS 'PostGIS functions and type definitions';
 --- The intend is to create all PostGIS functions and tables in the "postgis" schema
 --- rather than the "public" schema. The files to execute are:
 ---
----   1) lwpostgis.sql
+---   1) postgis.sql
 ---   2) spatial_ref_sys.sql
