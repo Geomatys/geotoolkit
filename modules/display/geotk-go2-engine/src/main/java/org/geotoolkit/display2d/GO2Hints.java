@@ -19,6 +19,7 @@ package org.geotoolkit.display2d;
 
 import java.awt.RenderingHints.Key;
 import org.geotoolkit.display.canvas.HintKey;
+import org.geotoolkit.lang.Static;
 
 /**
  * Set of hints used by the Go2 Renderer
@@ -26,7 +27,10 @@ import org.geotoolkit.display.canvas.HintKey;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GO2Hints {
+@Static
+public final class GO2Hints {
+
+    private GO2Hints(){}
 
     /**
      * Configure the multithreading support. This usually makes the canvas
@@ -72,6 +76,11 @@ public class GO2Hints {
      */
     public static final Key KEY_LABEL_RENDERER_CLASS = new HintKey(6, Class.class);
 
+    /**
+     * Configure the go2 engine use the given DPI.
+     * Default dpi is 90.
+     */
+    public static final Key KEY_DPI = new HintKey(7, Float.class);
 
     public static final Boolean MULTI_THREAD_ON = Boolean.TRUE;
     public static final Boolean MULTI_THREAD_OFF = Boolean.FALSE;
@@ -85,6 +94,9 @@ public class GO2Hints {
      * Values between 1 and 2.5 give a fair rendering.
      * Going under 1 doesnt bring much more details 
      * going above 2.5 makes small geometries disapear or look sharp.
+     *
+     * Factor is adjusted using the DPI value.
+     * (90/DPI) * GENERALIZE FACTOR
      */
     public static final Number GENERALIZE_FACTOR_DEFAULT = new Float(1.3f);
 }
