@@ -80,6 +80,15 @@ public class J2DLegendUtilities {
         float X = bounds.x;
         float Y = bounds.y;
 
+        if(template == null){
+            //no template generate a glyph
+            for(MapLayer layer : context.layers()){
+                DefaultGlyphService.render(layer.getStyle(), bounds, g2d, layer);
+            }
+            return;
+        }
+
+
         final Dimension estimation = estimate(g2d, context, template, false);
 
         final BackgroundTemplate background = template.getBackground();
@@ -232,6 +241,18 @@ public class J2DLegendUtilities {
     public static Dimension estimate(Graphics2D g, MapContext context, LegendTemplate template, boolean considerBackground){
         final Dimension dim = new Dimension(0, 0);
         if(context == null) return dim;
+
+        if(template == null){
+            //fallback on glyph size
+            for(MapLayer layer : context.layers()){
+                final Dimension preferred = DefaultGlyphService.glyphPreferredSize(layer.getStyle(), dim, layer);
+                if(preferred != null){
+                    if(preferred.width > dim.width) dim.width = preferred.width;
+                    if(preferred.height > dim.height) dim.height = preferred.height;
+                }
+            }
+            return dim;
+        }
 
         final FontMetrics layerFontMetric = g.getFontMetrics(template.getLayerFont());
         final int layerFontHeight = layerFontMetric.getHeight();

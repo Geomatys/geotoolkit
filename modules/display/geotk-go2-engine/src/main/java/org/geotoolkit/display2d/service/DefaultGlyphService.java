@@ -129,17 +129,7 @@ public class DefaultGlyphService {
 
         if(dim == null){
             //search for the best glyph size
-            dim = new Dimension(30,24);
-            final SymbolizerRendererService renderer = GO2Utilities.findRenderer(style.getClass());
-
-            if(renderer != null){
-                final CachedSymbolizer cache = GO2Utilities.getCached(style);
-                final Rectangle2D preferred = renderer.glyphPreferredSize(cache,layer);
-                if(preferred!= null){
-                    if(preferred.getWidth() > dim.getWidth()) dim.width = (int) preferred.getWidth();
-                    if(preferred.getHeight() > dim.getHeight()) dim.height = (int) preferred.getHeight();
-                }
-            }
+            dim = glyphPreferredSize(style, dim, layer);
         }
 
         final BufferedImage buffer = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
@@ -214,17 +204,24 @@ public class DefaultGlyphService {
     }
 
     public static Dimension glyphPreferredSize(Symbolizer style, Dimension dim, MapLayer layer){
-        if(dim == null) dim = new Dimension(30,24);
-        
         final SymbolizerRendererService renderer = GO2Utilities.findRenderer(style.getClass());
 
         if(renderer != null){
             final CachedSymbolizer cache = GO2Utilities.getCached(style);
             final Rectangle2D preferred = renderer.glyphPreferredSize(cache,layer);
             if(preferred!= null){
-                if(preferred.getWidth() > dim.getWidth()) dim.width = (int) preferred.getWidth();
-                if(preferred.getHeight() > dim.getHeight()) dim.height = (int) preferred.getHeight();
+                if(dim == null){
+                    dim = new Dimension((int)preferred.getWidth(), (int)preferred.getHeight());
+                }else{
+                    if(preferred.getWidth() > dim.getWidth()) dim.width = (int) preferred.getWidth();
+                    if(preferred.getHeight() > dim.getHeight()) dim.height = (int) preferred.getHeight();
+                }
             }
+        }
+
+        //default gplyh size
+        if(dim == null){
+            dim = new Dimension(30,24);
         }
 
         return dim;
