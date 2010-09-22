@@ -215,8 +215,8 @@ public final class StyleConstants {
         DEFAULT_UOM = NonSI.PIXEL;
         DEFAULT_GEOM = null;        
         DEFAULT_DESCRIPTION = new DefaultDescription(
-                new SimpleInternationalString("Title"), 
-                new SimpleInternationalString("Description"));
+                new SimpleInternationalString(""), 
+                new SimpleInternationalString(""));
         
         DEFAULT_ANCHOR_POINT_X = LITERAL_HALF_FLOAT;
         DEFAULT_ANCHOR_POINT_Y = LITERAL_HALF_FLOAT;

@@ -134,11 +134,7 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      * {@inheritDoc }
      */
     @Override
-    public Feature createFeature(Collection<Property> value, AttributeDescriptor descriptor, String id) {
-        if(value == null){
-            value = Collections.emptyList();
-        }
-        
+    public Feature createFeature(Collection<Property> value, AttributeDescriptor descriptor, String id) {        
         if(descriptor.getType() instanceof SimpleFeatureType){
             //in case we try to create a simple Feature with this method.
             final List<Property> properties = new ArrayList<Property>(value);

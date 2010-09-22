@@ -25,16 +25,13 @@ import java.util.Map;
 
 import org.geotoolkit.feature.DefaultAttribute;
 import org.geotoolkit.feature.DefaultGeometryAttribute;
-import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.filter.identity.FeatureId;
 
@@ -97,35 +94,8 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
             this.index = DefaultSimpleFeatureType.buildIndex((SimpleFeatureType) desc.getType());
         }
 
-        //set the properties
-        final SimpleFeatureType type = getType();
-        final int nbProperties = type.getAttributeCount();
-        if(properties.size() != nbProperties){
-            //the given property list does not match the number of properties defined in the
-            //feature type, we must reorder and set default values where it is needed.
-            final Property[] array = new Property[nbProperties];
-
-            //first pass to reorder properties
-            for(Property prop : properties){
-                final int position = index.get(prop.getName());
-                array[position] = prop;
-            }
-
-            //second pass to set default values
-            for(int i=0; i<array.length; i++){
-                if(array[i] == null){
-                    //create a default property
-                    final AttributeDescriptor attDesc = type.getDescriptor(i);
-                    array[i] = FeatureTypeUtilities.defaultProperty(attDesc);
-                }
-            }
-
-            properties = UnmodifiableArrayList.wrap(array);
-        }
-
         this.value = properties;
         this.validating = validating;
-
 
         // if we're self validating, do validation right now
         if (validating) {

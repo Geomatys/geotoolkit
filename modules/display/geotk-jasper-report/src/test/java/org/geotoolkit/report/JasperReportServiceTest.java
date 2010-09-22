@@ -31,7 +31,6 @@ import java.awt.image.BufferedImage;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperReport;
 
-import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 
@@ -39,8 +38,6 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.StyleConstants;
-import org.geotoolkit.feature.LenientFeatureFactory;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.display2d.service.OutputDef;
@@ -50,10 +47,10 @@ import org.geotoolkit.display2d.service.CanvasDef;
 import org.geotoolkit.report.graphic.map.MapDef;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.DataUtilities;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
+import org.geotoolkit.feature.FeatureUtilities;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -74,8 +71,6 @@ public class JasperReportServiceTest {
 
     private static final GridCoverageFactory GCF = new GridCoverageFactory();
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
-    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
-                 new Hints(Hints.FEATURE_FACTORY,LenientFeatureFactory.class));
 
     public JasperReportServiceTest() {
     }
@@ -107,7 +102,7 @@ public class JasperReportServiceTest {
         final FeatureType type = entry.getValue();
 
         FeatureCollection collection = DataUtilities.collection("id", type);
-        Feature feature = FF.createFeature(null, type, "id-0");
+        Feature feature = FeatureUtilities.defaultFeature(type, "id-0");
         feature.getProperty("map").setValue(new MapDef(
                 new CanvasDef(new Dimension(1, 1), Color.RED),
                 new SceneDef(context),
@@ -136,7 +131,7 @@ public class JasperReportServiceTest {
         final FeatureType type = entry.getValue();
 
         FeatureCollection collection = DataUtilities.collection("id", type);
-        Feature feature = FF.createFeature(null, type, "id-0");
+        Feature feature = FeatureUtilities.defaultFeature(type, "id-0");
         feature.getProperty("map").setValue(new MapDef(
                 new CanvasDef(new Dimension(1, 1), Color.RED),
                 new SceneDef(context),

@@ -52,8 +52,14 @@ import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.GeometryAttribute;
+import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.identity.Identifier;
 
 /**
@@ -314,6 +320,59 @@ public class FeatureUtilities {
 
         //must copy user data
         return copy;
+    }
+
+    public static SimpleFeature defaultFeature(SimpleFeatureType type, String id){
+        return (SimpleFeature)defaultFeature((FeatureType)type, id);
+    }
+
+    public static Feature defaultFeature(FeatureType type, String id){
+        final List<Property> properties = new ArrayList<Property>();
+        for(PropertyDescriptor desc : type.getDescriptors()){
+            properties.add(defaultProperty(desc));
+        }
+        return FF.createFeature(properties, type, id);
+    }
+
+    /**
+     * Provides a defautlValue for attributeType.
+     *
+     * <p>
+     * Will return null if attributeType isNillable(), or attempt to use
+     * Reflection, or attributeType.parse( null )
+     * </p>
+     *
+     * @param attributeType
+     * @return null for nillable attributeType, attempt at reflection
+     * @throws IllegalAttributeException If value cannot be constructed for
+     *         attribtueType
+     */
+    public static Object defaultValue(final PropertyDescriptor attributeType)
+            throws IllegalAttributeException {
+
+        if(attributeType instanceof AttributeDescriptor){
+            final Object value = ((AttributeDescriptor)attributeType).getDefaultValue();
+
+            if (value == null && !attributeType.isNillable()) {
+                return null; // sometimes there is no valid default value :-(
+                // throw new IllegalAttributeException("Got null default value for non-null type.");
+            }
+            return value;
+        }else{
+            return null;
+        }
+    }
+
+    public static Property defaultProperty(final PropertyDescriptor desc){
+        final Object value = defaultValue(desc);
+        if(desc instanceof GeometryDescriptor){
+            return FF.createGeometryAttribute(value, (GeometryDescriptor)desc, null, null);
+        }else if(desc instanceof AttributeDescriptor){
+            return FF.createAttribute(value, (AttributeDescriptor)desc, null);
+        }else{
+            //todo not the correct way to do it
+            return new DefaultProperty(value, desc);
+        }
     }
 
 }
