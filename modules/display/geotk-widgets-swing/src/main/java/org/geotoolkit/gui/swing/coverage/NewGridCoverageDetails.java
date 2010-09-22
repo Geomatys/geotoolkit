@@ -471,11 +471,12 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
                  * Perform some validity checks on user arguments.
                  */
                 if (reference.horizontalSRID == 0) {
-                    final Widgets resources = Widgets.getResources(getLocale());
-                    final JXLabel label = new JXLabel(resources.getString(Widgets.Keys.HORIZONTAL_CRS_REQUIRED));
-                    final String  title = resources.getString(Widgets.Keys.INCOMPLETE_FORM);
-                    label.setLineWrap(true);
-                    getWindowHandler().showError(this, label, title);
+                    incompleteForm(0);
+                    // Do no weakup the sleeping thread.
+                    return;
+                }
+                if (reference.verticalSRID == 0 && reference.verticalValues != null) {
+                    incompleteForm(1);
                     // Do no weakup the sleeping thread.
                     return;
                 }
@@ -483,6 +484,19 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
             }
         }
         notifyAll(); // Weakup the sleeping 'coverageAdding' method.
+    }
+
+    /**
+     * Invoked when the widget can not process because of missing information in the form.
+     *
+     * @param crsType 0 for horizontal CRS, or 1 for vertical CRS.
+     */
+    private void incompleteForm(final int crsType) {
+        final Widgets resources = Widgets.getResources(getLocale());
+        final JXLabel label = new JXLabel(resources.getString(Widgets.Keys.CRS_REQUIRED_$1, crsType));
+        final String  title = resources.getString(Widgets.Keys.INCOMPLETE_FORM);
+        label.setLineWrap(true);
+        getWindowHandler().showError(this, label, title);
     }
 
     /**
