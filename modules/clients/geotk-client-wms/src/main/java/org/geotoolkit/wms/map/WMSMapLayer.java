@@ -21,6 +21,7 @@ import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -400,6 +401,14 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         }
 
         final Dimension dim = context2D.getCanvasDisplayBounds().getSize();
+        
+        //resolution contain dpi adjustments, to obtain an image of the correct dpi
+        //we raise the request dimension so that when we reduce it it will have the
+        //wanted dpi.
+        final double[] resolution = context2D.getResolution();
+        dim.width /= resolution[0];
+        dim.height /= resolution[1];
+
         final URL url;
         try {
             url = query(env, dim);
