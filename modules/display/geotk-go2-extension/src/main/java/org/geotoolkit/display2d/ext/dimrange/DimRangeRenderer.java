@@ -134,18 +134,6 @@ public class DimRangeRenderer extends AbstractSymbolizerRenderer<CachedDimRangeS
 
         MeasurementRange dimRange = symbol.getSource().getDimRange();
         if (dimRange != null) {
-            if (dataCoverage.getCoordinateReferenceSystem().getCoordinateSystem().getDimension() > 2) {
-                // More than 2 dimensions, we first apply a resampling on the coverage with the 2D part of the CRS.
-                // TODO: resampling should change number of dimensions.
-                dataCoverage = dataCoverage.view(ViewType.GEOPHYSICS);
-                final Envelope env = dataCoverage.getEnvelope();
-                try {
-                    final CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem());
-                    dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage, crs2D);
-                } catch (TransformException ex) {
-                    throw new PortrayalException(ex);
-                }
-            }
             final GridSampleDimension[] samples = dataCoverage.getSampleDimensions();
             if (samples != null && samples.length == 1 && samples[0] != null) {
                 if (samples[0].getSampleToGeophysics() != null) {
