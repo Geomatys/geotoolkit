@@ -76,7 +76,9 @@ public class GridMarkRenderer extends AbstractSymbolizerRenderer<CachedVectorFie
 
         if(coverage != null){
             final RenderedGridMarks marks = new RenderedGridMarks(canvas,coverage);
-            marks.paint(renderingContext);
+            synchronized(marks.getTreeLock()){
+                marks.paint(renderingContext);
+            }
         }
 
     }

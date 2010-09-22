@@ -41,6 +41,7 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.RenderingContext;
@@ -217,13 +218,14 @@ public class RenderedGridMarks extends RenderedMarks {
         }
         
         //we reproject in 2D CRS
-        CoordinateReferenceSystem planarCRS = CRS.getHorizontalCRS(cover.getEnvelope().getCoordinateReferenceSystem());
-        
-        if(planarCRS.equals(cover.getCoordinateReferenceSystem())){
+//        CoordinateReferenceSystem planarCRS = CRS.getHorizontalCRS(cover.getEnvelope().getCoordinateReferenceSystem());
+        // TODO: this solution will not work when there will be a reprojection on the graphic object.
+        CoordinateReferenceSystem planarCRS = canvas.getObjectiveCRS2D();
+
+        if(CRS.equalsIgnoreMetadata(planarCRS, cover.getCoordinateReferenceSystem())){
             this.coverage = cover;
-        }
-        else{
-            this.coverage = reSample(cover, planarCRS);
+        } else {
+            this.coverage = (GridCoverage2D) Operations.DEFAULT.resample(cover, planarCRS);
         }
         
         this.gridToCoverage = this.coverage.getGridGeometry().getGridToCRS2D();
@@ -250,8 +252,8 @@ public class RenderedGridMarks extends RenderedMarks {
                 
         setAutoDecimation(20, 20);
     }
-        
-    
+   
+
     private GridCoverage2D reSample(GridCoverage2D coverage, CoordinateReferenceSystem crs){
         
         RenderedImage rendered = coverage.getRenderedImage();
@@ -293,10 +295,9 @@ public class RenderedGridMarks extends RenderedMarks {
 
             this.image = PlanarImage.wrapRenderedImage(coverage.getRenderedImage());
             this.mainSD = sampleX;
-        }    
-        
-        clearCache();
-           
+            clearCache();
+        }
+
     }
 
     /**
