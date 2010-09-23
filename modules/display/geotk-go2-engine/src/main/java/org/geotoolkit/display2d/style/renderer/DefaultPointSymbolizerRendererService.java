@@ -70,15 +70,6 @@ public class DefaultPointSymbolizerRendererService extends AbstractSymbolizerRen
         return new DefaultPointSymbolizerRenderer(symbol, context);
     }
 
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Rectangle2D glyphPreferredSize(CachedPointSymbolizer symbol, MapLayer layer) {
-        return null;
-    }
-
     /**
      * {@inheritDoc }
      */

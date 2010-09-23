@@ -18,6 +18,7 @@
 package org.geotoolkit.display2d.style.renderer;
 
 
+import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 
 import org.geotoolkit.display.canvas.VisitFilter;
@@ -27,6 +28,7 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
+import org.geotoolkit.map.MapLayer;
 
 import org.opengis.style.Symbolizer;
 
@@ -38,6 +40,14 @@ import org.opengis.style.Symbolizer;
  * @module pending
  */
 public abstract class AbstractSymbolizerRendererService<S extends Symbolizer, C extends CachedSymbolizer<S>> implements SymbolizerRendererService<S, C>{
+
+    /**
+     * Returns the standard glyph size : 30x24
+     */
+    @Override
+    public Rectangle2D glyphPreferredSize(C symbol, MapLayer layer) {
+        return new Rectangle2D.Double(0, 0, 30, 24);
+    }
 
     @Override
     public void portray(ProjectedFeature graphic, C symbol, RenderingContext2D context) throws PortrayalException {

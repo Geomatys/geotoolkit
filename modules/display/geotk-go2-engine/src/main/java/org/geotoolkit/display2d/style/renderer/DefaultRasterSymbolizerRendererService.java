@@ -72,14 +72,6 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
      * {@inheritDoc }
      */
     @Override
-    public Rectangle2D glyphPreferredSize(CachedRasterSymbolizer symbol, MapLayer layer) {
-        return new Rectangle2D.Double(0, 0, 30, 24);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public void glyph(Graphics2D g, Rectangle2D rectangle, CachedRasterSymbolizer symbol, MapLayer layer) {
 
         final float[] fractions = new float[3];

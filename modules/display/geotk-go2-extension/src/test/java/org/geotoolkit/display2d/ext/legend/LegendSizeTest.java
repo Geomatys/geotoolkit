@@ -97,7 +97,7 @@ public class LegendSizeTest {
     }
 
     @Test
-    public void testRNoStyle() {
+    public void testNoStyle() {
 
         final MapLayer layer = MapBuilder.createEmptyMapLayer();
         layer.setStyle(SF.style());
@@ -109,6 +109,21 @@ public class LegendSizeTest {
 
         assertEquals(1,dim.width);
         assertEquals(1,dim.height);
+    }
+
+    @Test
+    public void testPolygonStyle() {
+
+        final MapLayer layer = MapBuilder.createEmptyMapLayer();
+        layer.setStyle(SF.style(StyleConstants.DEFAULT_POLYGON_SYMBOLIZER));
+
+        final MapContext ctx = MapBuilder.createContext();
+        ctx.layers().add(layer);
+
+        final Dimension dim = DefaultLegendService.legendPreferredSize(null, ctx);
+
+        assertEquals(30,dim.width);
+        assertEquals(24,dim.height);
     }
 
 }
