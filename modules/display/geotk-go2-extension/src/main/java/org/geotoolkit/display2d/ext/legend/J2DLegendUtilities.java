@@ -239,7 +239,7 @@ public class J2DLegendUtilities {
 
 
     public static Dimension estimate(Graphics2D g, MapContext context, LegendTemplate template, boolean considerBackground){
-        final Dimension dim = new Dimension(0, 0);
+        final Dimension dim = new Dimension(1, 1);
         if(context == null) return dim;
 
         if(template == null){

@@ -73,7 +73,7 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
      */
     @Override
     public Rectangle2D glyphPreferredSize(CachedRasterSymbolizer symbol, MapLayer layer) {
-        return null;
+        return new Rectangle2D.Double(0, 0, 30, 24);
     }
 
     /**
