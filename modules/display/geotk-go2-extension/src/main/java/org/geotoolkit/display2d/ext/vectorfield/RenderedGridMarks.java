@@ -652,14 +652,14 @@ public class RenderedGridMarks extends RenderedMarks {
                 // TODO: handle the case where gridToCRS is not affine.
                 tr = ((AffineTransform) gridToCoverage).createInverse();
 
-                MathTransform trans = context.getMathTransform(context.getDisplayCRS(), coverage.getCoordinateReferenceSystem());
+                final MathTransform trans = context.getMathTransform(context.getDisplayCRS(), coverage.getCoordinateReferenceSystem2D());
                 if(trans instanceof AffineTransform){
-                    tr.concatenate(context.getAffineTransform(context.getDisplayCRS(), coverage.getCoordinateReferenceSystem()));
+                    tr.concatenate((AffineTransform)trans);
                 }else{
                     //TODO try to find a better way to calculate the step
                     //currently make a fake affinetransform using the difference between envelopes.
-                    AffineTransform dispToObjective = context.getAffineTransform(context.getDisplayCRS(), context.getObjectiveCRS());
-                    AffineTransform objToCoverage   = calculateAverageAffine(context);
+                    final AffineTransform dispToObjective = context.getDisplayToObjective();
+                    final AffineTransform objToCoverage   = calculateAverageAffine(context);
                     tr.concatenate(dispToObjective);
                     tr.concatenate(objToCoverage);
                 }
