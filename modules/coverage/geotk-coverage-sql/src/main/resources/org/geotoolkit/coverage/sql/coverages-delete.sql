@@ -8,7 +8,7 @@
 --------------------------------------------------------------------------------------------------
 
 SET client_encoding = 'UTF8';
-SET search_path = coverages, postgis;
+SET search_path = coverages, metadata, postgis;
 
 DROP VIEW     "DomainOfLayers";
 DROP VIEW     "DomainOfSeries";
