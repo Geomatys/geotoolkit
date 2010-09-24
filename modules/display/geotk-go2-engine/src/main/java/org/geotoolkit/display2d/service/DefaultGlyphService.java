@@ -174,32 +174,32 @@ public class DefaultGlyphService {
     }
 
     public static Dimension glyphPreferredSize(Style style, Dimension dim, MapLayer layer){
-        if(dim == null) dim = new Dimension(30,24);
 
         for(FeatureTypeStyle symbol : style.featureTypeStyles()){
             dim = glyphPreferredSize(symbol, dim, layer);
         }
 
+        if(dim == null) dim = new Dimension(30,24);
         return dim;
     }
 
-    public static Dimension glyphPreferredSize(FeatureTypeStyle style, Dimension dim, MapLayer layer){
-        if(dim == null) dim = new Dimension(30,24);
+    public static Dimension glyphPreferredSize(FeatureTypeStyle style, Dimension dim, MapLayer layer){        
 
         for(Rule symbol : style.rules()){
             dim = glyphPreferredSize(symbol, dim, layer);
         }
 
+        if(dim == null) dim = new Dimension(30,24);
         return dim;
     }
 
     public static Dimension glyphPreferredSize(Rule style, Dimension dim, MapLayer layer){
-        if(dim == null) dim = new Dimension(30,24);
 
         for(Symbolizer symbol : style.symbolizers()){
             dim = glyphPreferredSize(symbol, dim, layer);
         }
 
+        if(dim == null) dim = new Dimension(30,24);
         return dim;
     }
 
@@ -219,11 +219,8 @@ public class DefaultGlyphService {
             }
         }
 
-        //default gplyh size
-        if(dim == null){
-            dim = new Dimension(30,24);
-        }
-
+        //default glyph size
+        if(dim == null) dim = new Dimension(30,24);
         return dim;
     }
 

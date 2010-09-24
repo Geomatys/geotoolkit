@@ -41,7 +41,7 @@ public interface LegendTemplate {
     float getGapSize();
 
     /**
-     * @return size of the glyph
+     * @return size of the glyph, can be null = use the best glyph size
      */
     Dimension getGlyphSize();
 
