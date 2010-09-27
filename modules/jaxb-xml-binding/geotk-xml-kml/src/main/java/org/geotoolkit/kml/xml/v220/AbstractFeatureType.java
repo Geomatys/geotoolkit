@@ -26,9 +26,9 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.oasis.xal.v20.AddressDetails;
 import org.geotoolkit.atom.xml.AtomPersonConstruct;
 import org.geotoolkit.atom.xml.Link;
+import org.geotoolkit.xal.xml.v20.AddressDetails;
 
 
 /**
