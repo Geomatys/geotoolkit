@@ -18,6 +18,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.internal.jaxb.text.GenericNameAdapter;
 import org.geotoolkit.util.Utilities;
 import org.opengis.util.LocalName;
 import org.opengis.feature.catalog.Constraint;
@@ -75,7 +76,8 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
     @XmlID
     @XmlSchemaType(name = "ID")
     private String id;
-    
+
+    @XmlJavaTypeAdapter(GenericNameAdapter.class)
     @XmlElement(required = true)
     private LocalName memberName;
     private String definition;

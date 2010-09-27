@@ -96,6 +96,8 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
     private String code;
     @XmlElement(required = true)
     private Boolean isAbstract;
+
+    @XmlJavaTypeAdapter(GenericNameAdapter.class)
     private List<LocalName> aliases;
     private List<InheritanceRelation> inheritsFrom;
     private List<InheritanceRelation> inheritsTo;
