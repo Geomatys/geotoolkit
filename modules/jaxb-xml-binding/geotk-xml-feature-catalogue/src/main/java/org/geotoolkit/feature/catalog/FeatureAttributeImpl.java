@@ -166,6 +166,7 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
         this.valueType = value;
     }
     
+    @Override
     public FeatureAttributeImpl getReference() {
         FeatureAttributeImpl result = new FeatureAttributeImpl(this);
         result.setReference(true);
