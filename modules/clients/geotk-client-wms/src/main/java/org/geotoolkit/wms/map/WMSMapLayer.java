@@ -21,7 +21,6 @@ import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -145,6 +144,11 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      * Optional SLD file for the layer to request.
      */
     private String sld = null;
+
+    /**
+     * Optional SLD version, if a SLD file have been given it is mandatory.
+     */
+    private String sldVersion = null;
 
     /**
      * Optional SLD body directly in the request.
@@ -363,6 +367,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             request.setStyles(styles);
         }
         request.setSld(sld);
+        request.setSldVersion(sldVersion);
         request.setSldBody(sldBody);
         request.setFormat(format);
         request.dimensions().putAll(dims);
