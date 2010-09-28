@@ -586,6 +586,24 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
     }
 
     /**
+     * Get the SLD specification version for SLD defines with SLD or SLD_BODY parameter
+     *
+     * @return the sldVersion
+     */
+    public String getSldVersion() {
+        return sldVersion;
+    }
+
+    /**
+     * Set the SLD specification version for SLD defines with SLD or SLD_BODY parameter
+     *
+     * @param sldVersion 
+     */
+    public void setSldVersion(String sldVersion) {
+        this.sldVersion = sldVersion;
+    }
+
+    /**
      * Sets the format for the output response. By default sets to {@code image/png}
      * if none.
      *
