@@ -16,11 +16,19 @@
  */
 package org.geotoolkit.data.wfs;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
 import org.geotoolkit.client.AbstractRequest;
+import org.geotoolkit.wfs.xml.WFSMarshallerPool;
+import org.geotoolkit.wfs.xml.v110.DescribeFeatureTypeType;
 
 
 /**
@@ -87,4 +95,33 @@ public abstract class AbstractDescribeFeatureType extends AbstractRequest implem
 
         return super.getURL();
     }
+
+    @Override
+    public InputStream getResponseStream() throws IOException {
+        DescribeFeatureTypeType request = new DescribeFeatureTypeType("WFS", version, null, typeNames, null);
+
+        final URL url = new URL(serverURL);
+        final URLConnection conec = url.openConnection();
+
+        conec.setDoOutput(true);
+        conec.setRequestProperty("Content-Type", "text/xml");
+
+        final OutputStream stream = conec.getOutputStream();
+        Marshaller marshaller = null;
+        try {
+            marshaller = WFSMarshallerPool.getInstance().acquireMarshaller();
+            marshaller.marshal(request, stream);
+            //marshaller.marshal(request, System.out);
+        } catch (JAXBException ex) {
+            throw new IOException(ex);
+        } finally {
+            if (marshaller != null) {
+                WFSMarshallerPool.getInstance().release(marshaller);
+            }
+        }
+        stream.close();
+        return conec.getInputStream();
+    }
+
+    
 }

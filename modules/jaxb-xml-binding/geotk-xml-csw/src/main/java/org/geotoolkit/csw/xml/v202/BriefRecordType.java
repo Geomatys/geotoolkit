@@ -109,11 +109,13 @@ public class BriefRecordType extends AbstractRecordType {
         this.type = type;
         
         this.boundingBox = new ArrayList<JAXBElement<? extends BoundingBoxType>>();
-        for (BoundingBoxType bbox: bboxes) {
-            if (bbox instanceof WGS84BoundingBoxType)
-                this.boundingBox.add(owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType)bbox));
-            else if (bbox != null)
-                this.boundingBox.add(owsFactory.createBoundingBox(bbox));
+        if (bboxes != null) {
+            for (BoundingBoxType bbox: bboxes) {
+                if (bbox instanceof WGS84BoundingBoxType)
+                    this.boundingBox.add(owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType)bbox));
+                else if (bbox != null)
+                    this.boundingBox.add(owsFactory.createBoundingBox(bbox));
+            }
         }
     }
 
@@ -132,11 +134,13 @@ public class BriefRecordType extends AbstractRecordType {
         this.type       = type;
 
         this.boundingBox = new ArrayList<JAXBElement<? extends BoundingBoxType>>();
-        for (BoundingBoxType bbox: bboxes) {
-            if (bbox instanceof WGS84BoundingBoxType)
-                this.boundingBox.add(owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType)bbox));
-            else if (bbox != null)
-                this.boundingBox.add(owsFactory.createBoundingBox(bbox));
+        if (bboxes != null) {
+            for (BoundingBoxType bbox: bboxes) {
+                if (bbox instanceof WGS84BoundingBoxType)
+                    this.boundingBox.add(owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType)bbox));
+                else if (bbox != null)
+                    this.boundingBox.add(owsFactory.createBoundingBox(bbox));
+            }
         }
     }
     
