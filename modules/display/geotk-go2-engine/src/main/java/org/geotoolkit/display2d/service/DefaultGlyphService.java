@@ -58,7 +58,6 @@ public class DefaultGlyphService {
         g2.setColor(Color.WHITE);
         g2.fillRect(0, 0, dim.width, dim.height);
         render(style, new Rectangle(dim), (Graphics2D) g2.create(), layer);
-        g2.setColor(Color.BLACK);
         g2.drawRect(0, 0, dim.width - 1, dim.height - 1);
         g2.dispose();
         return buffer;
@@ -77,7 +76,6 @@ public class DefaultGlyphService {
         g2.setColor(Color.WHITE);
         g2.fillRect(0, 0, dim.width, dim.height);
         render(style, new Rectangle(dim), (Graphics2D) g2.create(), layer);
-        g2.setColor(Color.BLACK);
         g2.drawRect(0, 0, dim.width - 1, dim.height - 1);
         g2.dispose();
         return buffer;
@@ -113,7 +111,6 @@ public class DefaultGlyphService {
         g2.setColor(Color.WHITE);
         g2.fillRect(0, 0, dim.width, dim.height);
         render(style, new Rectangle(dim), (Graphics2D) g2.create(), layer);
-        g2.setColor(Color.BLACK);
         g2.drawRect(0, 0, dim.width - 1, dim.height - 1);
         g2.dispose();
         return buffer;
@@ -137,7 +134,6 @@ public class DefaultGlyphService {
         g2.setColor(Color.WHITE);
         g2.fillRect(0, 0, dim.width, dim.height);
         render(style, new Rectangle(dim), (Graphics2D) g2.create(),layer);
-        g2.setColor(Color.BLACK);
         g2.drawRect(0, 0, dim.width - 1, dim.height - 1);
         g2.dispose();
         return buffer;
