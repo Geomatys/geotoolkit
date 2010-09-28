@@ -100,13 +100,10 @@ public class CachedExternal extends Cache<ExternalGraphic>{
                 isSVG = path.toString().toLowerCase().endsWith(".svg");
 
                 if (!isSVG && path != null) {
-                    File imageFile = new File(path);
-                    if (imageFile != null && imageFile.exists()) {
-                        try {
-                            cachedImage = ImageIO.read(imageFile);
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
-                        }
+                    try {
+                        cachedImage = ImageIO.read(path.toURL());
+                    } catch (IOException ex) {
+                        ex.printStackTrace();
                     }
                 }
             }
