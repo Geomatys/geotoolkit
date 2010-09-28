@@ -440,7 +440,7 @@ public class Test_FC {
         ft.setFeatureCatalogue(cata);*/
        
         String fileOutput = "output.xml";
-        marshaller.marshal(request, new File(fileOutput));
+        //marshaller.marshal(request, new File(fileOutput));
 
        
     }
