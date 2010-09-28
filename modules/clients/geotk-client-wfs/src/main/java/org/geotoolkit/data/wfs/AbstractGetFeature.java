@@ -58,10 +58,11 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
     protected static final Logger LOGGER = Logging.getLogger(AbstractGetFeature.class);
     protected final String version;
 
-    private QName typeName = null;
-    private Filter filter = null;
-    private Integer maxFeatures = null;
+    private QName typeName       = null;
+    private Filter filter        = null;
+    private Integer maxFeatures  = null;
     private Name[] propertyNames = null;
+    private String outputFormat  = null;
 
     protected AbstractGetFeature(String serverURL, String version){
         super(serverURL);
@@ -132,6 +133,20 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
         this.propertyNames = properties;
     }
 
+    /**
+     * {@inheritDoc }
+     */
+    public String getOutputFormat() {
+       return outputFormat;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    public void setOutputFormat(String outputFormat) {
+        this.outputFormat = outputFormat;
+    }
+    
     /**
      * {@inheritDoc }
      */
@@ -206,6 +221,9 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             requestParameters.put("PROPERTYNAME", sb.toString());
         }
 
+        if (outputFormat != null) {
+            requestParameters.put("OUTPUTFORMAT",outputFormat);
+        }
         return super.getURL();
     }
 
@@ -240,7 +258,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
             }
         }
 
-        final GetFeatureType request = new GetFeatureType("WFS", version, null, maxFeatures, Arrays.asList(query), ResultTypeType.RESULTS, subPath);
+        final GetFeatureType request = new GetFeatureType("WFS", version, null, maxFeatures, Arrays.asList(query), ResultTypeType.RESULTS, outputFormat);
 
         final URL url = new URL(serverURL);
         final URLConnection conec = url.openConnection();

@@ -43,6 +43,8 @@ public abstract class AbstractDescribeFeatureType extends AbstractRequest implem
 
     private List<QName> typeNames;
 
+    private String outputFormat;
+
     protected AbstractDescribeFeatureType(String serverURL, String version){
         super(serverURL);
         this.version = version;
@@ -67,13 +69,27 @@ public abstract class AbstractDescribeFeatureType extends AbstractRequest implem
     /**
      * {@inheritDoc }
      */
+    public String getOutputFormat() {
+       return outputFormat;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    public void setOutputFormat(String outputFormat) {
+        this.outputFormat = outputFormat;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public URL getURL() throws MalformedURLException {
         requestParameters.put("SERVICE",    "WFS");
         requestParameters.put("REQUEST",    "DescribeFeatureType");
         requestParameters.put("VERSION",    version);
 
-        if(typeNames != null){
+        if (typeNames != null) {
             final StringBuilder sbN = new StringBuilder();
             final StringBuilder sbNS = new StringBuilder();
             for(QName q : typeNames){
@@ -93,12 +109,16 @@ public abstract class AbstractDescribeFeatureType extends AbstractRequest implem
             requestParameters.put("NAMESPACE",sbNS.toString());
         }
 
+        if (outputFormat != null) {
+            requestParameters.put("OUTPUTFORMAT",outputFormat);
+        }
+
         return super.getURL();
     }
 
     @Override
     public InputStream getResponseStream() throws IOException {
-        DescribeFeatureTypeType request = new DescribeFeatureTypeType("WFS", version, null, typeNames, null);
+        DescribeFeatureTypeType request = new DescribeFeatureTypeType("WFS", version, null, typeNames, outputFormat);
 
         final URL url = new URL(serverURL);
         final URLConnection conec = url.openConnection();
