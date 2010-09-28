@@ -146,7 +146,9 @@ public class J2DCanvasVolatile extends J2DCanvas{
     public synchronized Shape getDisplayBounds() {
         Shape bounds = super.getDisplayBounds();
         if (bounds.equals(XRectangle2D.INFINITY)) {
-            bounds = new Rectangle(dim);
+            if(dim != null){
+                bounds = new Rectangle(dim);
+            }
         }
         return bounds;
     }
