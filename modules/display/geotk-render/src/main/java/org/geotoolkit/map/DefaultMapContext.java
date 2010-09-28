@@ -172,6 +172,7 @@ final class DefaultMapContext implements MapContext, LayerListener {
 
     private Description desc = null;
 
+    private CoordinateReferenceSystem crs = null;
     private Envelope area = null;
 
     public DefaultMapContext(CoordinateReferenceSystem crs) {
@@ -179,8 +180,8 @@ final class DefaultMapContext implements MapContext, LayerListener {
             throw new NullPointerException("CRS can't be null");
         }
 
+        this.crs = crs;
         desc = StyleConstants.DEFAULT_DESCRIPTION;
-        this.area = new GeneralEnvelope(crs);
     }
 
     /**
@@ -250,16 +251,17 @@ final class DefaultMapContext implements MapContext, LayerListener {
         }
 
         synchronized (this) {
-            if(CRS.equalsIgnoreMetadata(this.area.getCoordinateReferenceSystem(),crs)) return;
+            if(CRS.equalsIgnoreMetadata(this.crs,crs)) return;
 
-            try {
-                //update the area of interest
-                final Envelope newEnv = CRS.transform(area, crs);
-                setAreaOfInterest(newEnv);
-            } catch (TransformException ex) {
-                LOGGER.log(Level.WARNING, null, ex);
+            if(this.area != null){
+                try {
+                    //update the area of interest
+                    final Envelope newEnv = CRS.transform(area, crs);
+                    setAreaOfInterest(newEnv);
+                } catch (TransformException ex) {
+                    LOGGER.log(Level.WARNING, null, ex);
+                }
             }
-
         }
     }
 
@@ -269,7 +271,7 @@ final class DefaultMapContext implements MapContext, LayerListener {
      */
     @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
-        return area.getCoordinateReferenceSystem();
+        return crs;
     }
 
     /**
@@ -295,10 +297,6 @@ final class DefaultMapContext implements MapContext, LayerListener {
      */
     @Override
     public Envelope getBounds() throws IOException {
-        final CoordinateReferenceSystem crs = area.getCoordinateReferenceSystem();
-        if (crs == null) {
-            throw new IOException("CRS of this map context is null. Unable to get bounds.");
-        }
         GeneralEnvelope result = null;
 
         GeneralEnvelope env;
@@ -433,7 +431,11 @@ final class DefaultMapContext implements MapContext, LayerListener {
      */
     @Override
     public Envelope getAreaOfInterest() {
-        return new GeneralEnvelope(area);
+        if(area != null){
+            return new GeneralEnvelope(area);
+        }else{
+            return null;
+        }
     }
 
     /**
@@ -448,12 +450,10 @@ final class DefaultMapContext implements MapContext, LayerListener {
         final Envelope oldEnv;
         synchronized (this) {
             oldEnv = this.area;
-            if(oldEnv.equals(aoi)){
+            if(this.area != null && oldEnv.equals(aoi)){
                 return;
             }
-
             this.area = aoi;
-
         }
         firePropertyChange(AREA_OF_INTEREST_PROPERTY, oldEnv, this.area);
     }
@@ -473,6 +473,5 @@ final class DefaultMapContext implements MapContext, LayerListener {
     public Object getUserPropertie(String key){
         return parameters.get(key);
     }
-
 
 }

@@ -717,10 +717,14 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         sb.append(objectiveCRS2D).append("\n");
         sb.append("Display CRS = \n");
         sb.append(displayCRS).append("\n");
-        sb.append("Resolution = ");
-        for(double d : resolution){
-            sb.append(d).append("   ");
+
+        if(resolution != null){
+            sb.append("Resolution = ");
+            for(double d : resolution){
+                sb.append(d).append("   ");
+            }
         }
+
         sb.append("\n");
         sb.append("Geographic Scale = ");
         sb.append(geoScale).append("\n");
@@ -761,8 +765,10 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
 
         
         sb.append("\n---------- Rendering Hints ----------\n");
-        for(Entry<Object,Object> entry : renderingHints.entrySet()){
-            sb.append(entry.getKey()).append("=").append(entry.getValue()).append("\n");
+        if(renderingHints != null){
+            for(Entry<Object,Object> entry : renderingHints.entrySet()){
+                sb.append(entry.getKey()).append("=").append(entry.getValue()).append("\n");
+            }
         }
 
         sb.append("========== Rendering Context 2D ==========\n");

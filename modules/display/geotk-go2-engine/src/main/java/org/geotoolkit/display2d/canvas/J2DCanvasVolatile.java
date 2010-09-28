@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.display2d.canvas;
 
-import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -28,7 +27,9 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Area;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.VolatileImage;
+import java.util.logging.Level;
 
 import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.display.canvas.CanvasController2D;
@@ -43,7 +44,9 @@ import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 
 import org.opengis.display.canvas.RenderingState;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Canvas based on a VolatileImage.
@@ -55,15 +58,12 @@ public class J2DCanvasVolatile extends J2DCanvas{
 
     private final GraphicsConfiguration GC;
     private final DrawingThread thread;
-    private CanvasController2D controller = new DefaultController2D(this);
+    private final DelayedController controller = new DelayedController(this);
     private final DefaultRenderingContext2D context2D = new DefaultRenderingContext2D(this);
     private VolatileImage buffer0;
     private Dimension dim;
     private boolean mustupdate = false;
-
     private final Object LOCK = new Object();
-
-
     private final Area dirtyArea = new Area();
     
     public J2DCanvasVolatile(CoordinateReferenceSystem crs, Dimension dim){
@@ -74,12 +74,11 @@ public class J2DCanvasVolatile extends J2DCanvas{
         super(crs,hints);
         thread = new DrawingThread();
         thread.start();
-        if(dim == null){
-            dim = new Dimension(1, 1);
-        }else if(dim.getHeight() <=0 || dim.getWidth() <=0){
-            dim = new Dimension(1, 1);
+        
+        //we might not know our dimension until it is painted by a swing component for exemple.
+        if(dim != null){
+            setDisplayBounds(new Rectangle(dim));
         }
-        setDisplayBounds(new Rectangle(dim));
         this.dim = dim;
 
         GC = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
@@ -90,7 +89,6 @@ public class J2DCanvasVolatile extends J2DCanvas{
     public void clearCache() {
         super.clearCache();
         buffer0 = null;
-
     }
 
     @Override
@@ -98,7 +96,6 @@ public class J2DCanvasVolatile extends J2DCanvas{
         super.dispose();
         thread.dispose();
         buffer0 = null;
-        controller = null;
         dim = null;
     }
 
@@ -106,26 +103,34 @@ public class J2DCanvasVolatile extends J2DCanvas{
      * Resize the volatile image, this will set to null the buffer.
      * A new one will be created when repaint is called.
      */
-    public void resize(Dimension dim){
-        if(dim == null){
-            dim = new Dimension(1, 1);
-        }else if(dim.getHeight() <=0 || dim.getWidth() <=0){
-            dim = new Dimension(1, 1);
+    public synchronized void resize(Dimension dim){
+        if(this.dim == null){
+            //first time we affect the size
+            this.dim = dim;
+            if(controller.wishedEnvelope!=null){
+                try {
+                    controller.setVisibleArea(controller.wishedEnvelope);
+                } catch (NoninvertibleTransformException ex) {
+                    getLogger().log(Level.SEVERE, null, ex);
+                } catch (TransformException ex) {
+                    getLogger().log(Level.SEVERE, null, ex);
+                }
+                controller.wishedEnvelope = null;
+                return;
+            }
+        }else if(this.dim.equals(dim)){
+            //same size, nothing to do
+            return;
         }
-        this.dim = dim;
-        setDisplayBounds(new Rectangle(dim));
-        buffer0 = null;
 
         if(getController().isAutoRepaint()){
             repaint();
         }
-
     }
 
     private synchronized VolatileImage createBackBuffer() {
         return GC.createCompatibleVolatileImage(dim.width, dim.height, VolatileImage.OPAQUE);
     }
-
 
     @Override
     public CanvasController2D getController() {
@@ -215,11 +220,8 @@ public class J2DCanvasVolatile extends J2DCanvas{
             propertyListeners.firePropertyChange(AbstractCanvas.OBJECTIVE_TO_DISPLAY_PROPERTY, old, context2D.getObjectiveToDisplay());
         }
 
-
-
-            monitor.renderingStarted();
-            fireRenderingStateChanged(RenderingState.RENDERING);
-
+        monitor.renderingStarted();
+        fireRenderingStateChanged(RenderingState.RENDERING);
 
         final AbstractContainer renderer         = getContainer();
         if(renderer != null && renderer instanceof AbstractContainer2D){
@@ -259,13 +261,10 @@ public class J2DCanvasVolatile extends J2DCanvas{
 
     @Override
     public synchronized void repaint(Shape displayArea) {
-        synchronized(dirtyArea){
-           this.dirtyArea.add(new Area(displayArea));
-        }
+        this.dirtyArea.add(new Area(displayArea));
         mustupdate = true;
         thread.wake();
     }
-
 
     private class DrawingThread extends Thread {
 
@@ -308,4 +307,26 @@ public class J2DCanvasVolatile extends J2DCanvas{
         }
     }
 
+    /**
+     * Stores the requested visible area if the canvas size is not knowned yet.
+     */
+    private class DelayedController extends DefaultController2D{
+
+        private Envelope wishedEnvelope = null;
+
+        public DelayedController(J2DCanvasVolatile canvas){
+            super(canvas);
+        }
+
+        @Override
+        public void setVisibleArea(Envelope env) throws NoninvertibleTransformException, TransformException {
+            if(dim == null){
+                //we don't know our size yet, store the information for later
+                wishedEnvelope = env;
+            }else{
+                super.setVisibleArea(env);
+            }
+        }
+
+    }
 }

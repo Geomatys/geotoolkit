@@ -17,11 +17,8 @@
 
 package org.geotoolkit.gui.swing.go2;
 
-import java.awt.BasicStroke;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.RenderingHints;
@@ -40,8 +37,6 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JMenu;
@@ -53,17 +48,9 @@ import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 
 import org.geotoolkit.display2d.GO2Hints;
-import org.geotoolkit.display2d.canvas.painter.BackgroundPainter;
-import org.geotoolkit.display2d.canvas.painter.BackgroundPainterGroup;
-import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
-import org.geotoolkit.display2d.ext.grid.DefaultGridTemplate;
-import org.geotoolkit.display2d.ext.grid.GraphicGridJ2D;
-import org.geotoolkit.display2d.ext.grid.GridPainter;
-import org.geotoolkit.display2d.ext.grid.GridTemplate;
 import org.geotoolkit.gui.swing.go2.control.JConfigBar;
 import org.geotoolkit.gui.swing.go2.control.JCoordinateBar;
 import org.geotoolkit.gui.swing.go2.control.JEditionBar;
@@ -77,7 +64,6 @@ import org.geotoolkit.gui.swing.propertyedit.LayerStylePropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
 import org.geotoolkit.gui.swing.propertyedit.filterproperty.JCQLPropertyPanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JSimpleStylePanel;
-import org.geotoolkit.gui.swing.go2.decoration.JScaleBarDecoration;
 import org.geotoolkit.gui.swing.contexttree.JContextTree;
 import org.geotoolkit.gui.swing.contexttree.TreePopupItem;
 import org.geotoolkit.gui.swing.contexttree.menu.ContextPropertyItem;
@@ -93,7 +79,7 @@ import org.geotoolkit.gui.swing.propertyedit.styleproperty.JAdvancedStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationSingleStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationIntervalStylePanel;
 import org.geotoolkit.map.MapContext;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.opengis.geometry.Envelope;
 
 /**
  * Simple Frame that can be used to quickly display a map or for debug purpose.
@@ -104,12 +90,9 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 public class JMap2DFrame extends javax.swing.JFrame {
 
     private final JMap2D guiMap;
-    private final MapContext context;
     private final JContextTree guiContextTree;
     
     private JMap2DFrame(MapContext context) {
-        this.context = context;
-
         initComponents();        
 
         guiContextTree = (JContextTree) jScrollPane1;
@@ -130,17 +113,18 @@ public class JMap2DFrame extends javax.swing.JFrame {
 
         try{
             guiMap.getCanvas().setObjectiveCRS(context.getCoordinateReferenceSystem());
+            Envelope env = context.getAreaOfInterest();
+            if(env == null || env.){
+                env = context.getBounds();
+            }
+            if(env != null){
+                guiMap.getCanvas().getController().setVisibleArea(env);
+            }
         }catch(Exception ex ){
             ex.printStackTrace();
         }
 
         guiMap.addDecoration(new JClassicNavigationDecoration(JClassicNavigationDecoration.THEME.CLASSIC));
-
-        JScaleBarDecoration deco = new JScaleBarDecoration();
-        deco.setUnit(Unit.valueOf("km"));
-
-        guiMap.addDecoration(deco);
-        //guiMap.addDecoration(new JNorthArrowDecoration());
         
         panGeneral.add(BorderLayout.CENTER, guiMap);
         
@@ -152,32 +136,6 @@ public class JMap2DFrame extends javax.swing.JFrame {
         guiEditBar.setMap(guiMap);
 
         guiMap.getCanvas().getController().setAutoRepaint(true);
-
-
-
-//        GridTemplate gridTemplate = new DefaultGridTemplate(
-//                        DefaultGeographicCRS.WGS84,
-//                        new BasicStroke(2),
-//                        Color.CYAN.darker(),
-//
-//                        new BasicStroke(1,BasicStroke.CAP_BUTT, BasicStroke.JOIN_MITER, 3, new float[]{5,5}, 0),
-//                        Color.DARK_GRAY,
-//
-//                        new Font("serial", Font.BOLD, 14),
-//                        Color.CYAN.darker(),
-//                        0,
-//                        Color.WHITE,
-//
-//                        new Font("serial", Font.ITALIC, 12),
-//                        Color.DARK_GRAY,
-//                        1,
-//                        Color.WHITE);
-
-        BackgroundPainter bgWhite = new SolidColorPainter(Color.WHITE);
-
-//        guiMap.getCanvas().setBackgroundPainter(BackgroundPainterGroup.wrap(bgWhite ,new GridPainter(gridTemplate)));
-//        guiMap.getCanvas().getContainer().add(new GraphicGridJ2D(guiMap.getCanvas(), gridTemplate));
-
 
         setSize(1024,768);
         setLocationRelativeTo(null);             

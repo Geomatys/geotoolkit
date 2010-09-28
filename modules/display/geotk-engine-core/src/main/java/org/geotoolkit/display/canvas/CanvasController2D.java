@@ -109,6 +109,12 @@ public interface CanvasController2D extends CanvasController{
      */
     void scale(double s) throws NoninvertibleTransformException;
 
+    /**
+     *
+     * @param s
+     * @param center in Display CRS
+     * @throws NoninvertibleTransformException
+     */
     void scale(double s, Point2D center) throws NoninvertibleTransformException;
     
     /**
