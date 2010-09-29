@@ -158,7 +158,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
 
                 for(int i=0;i < parts.length && i<2 ;i++){
                     try{
-                        final Float f = Float.valueOf(parts[0]);
+                        final Float f = Float.valueOf(parts[i]);
                         values[i] = f.floatValue();
                     }catch(NumberFormatException ne){}
                 }
