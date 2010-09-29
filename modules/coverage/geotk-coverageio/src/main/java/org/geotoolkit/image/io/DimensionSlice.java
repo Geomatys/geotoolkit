@@ -24,7 +24,7 @@ import javax.imageio.ImageWriteParam;
 
 
 /**
- * Tupple of a <cite>dimension identifier</cite> and <cite>index</cite> in that dimension for a slice
+ * Tuple of a <cite>dimension identifier</cite> and <cite>index</cite> in that dimension for a slice
  * to read or write in a data file. This class is relevant mostly for <var>n</var>-dimensional datasets
  * where <var>n</var>&gt;2. Each {@code DimensionSlice} instance applies to only one dimension;
  * if the indices of a slice need to be specified for more than one dimension, then many instances
@@ -45,10 +45,15 @@ import javax.imageio.ImageWriteParam;
  *       value in the continuous dimension.</li>
  * </ul>}
  *
- * This class refers always to the indices in the file: when used with {@link SpatialImageReadParam},
- * this class contains the index of the section to read from the file (the <cite>source region</cite>).
- * When used with {@link SpatialImageWriteParam}, this class contains the index of the section to
- * write in the file (the <cite>destination offset</cite>).
+ * This class refers always to the indices in the file, which can be either the source
+ * or the destination:
+ * <p>
+ * <ul>
+ *   <li>When used with {@link SpatialImageReadParam}, this class contains the index of the
+ *       section to read from the file (the <cite>source region</cite>).</li>
+ *   <li>When used with {@link SpatialImageWriteParam}, this class contains the index of the
+ *       section to write in the file (the <cite>destination offset</cite>).</li>
+ * </ul>
  * <p>
  * In addition to the index, {@code DimensionSlice} also specifies the dimension on which the
  * index applies. See the {@link DimensionIdentification} javadoc for more information about
@@ -111,13 +116,17 @@ import javax.imageio.ImageWriteParam;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.15
  *
+ * @see SpatialImageReadParam
+ * @see MultidimensionalImageStore
+ *
  * @since 3.08
  * @module
  */
 public class DimensionSlice extends DimensionIdentification {
     /**
-     * The standard Java API used for selecting the slice to read or write.
-     * The selection can be performed in 3 or 4 dimensions by:
+     * The standard Java API used for selecting the slice to read or write in a particular
+     * dimension. The region to read or write in a hyper-cube can be specified in up to 4
+     * dimensions in the following ways:
      *
      * <ul>
      *   <li><p>When reading:</p></li>
@@ -144,6 +153,10 @@ public class DimensionSlice extends DimensionIdentification {
      *
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.08
+     *
+     * @see DimensionSlice
+     * @see MultidimensionalImageStore
+     * @see IllegalImageDimensionException
      *
      * @since 3.08
      * @module
@@ -207,19 +220,23 @@ public class DimensionSlice extends DimensionIdentification {
     private int index;
 
     /**
-     * Creates a new {@code DimensionSlice} instance.
+     * Creates a new {@code DimensionSlice} instance. This constructor is not public in order
+     * to ensure that the given collection contains only {@code DimensionSlice} instances, not
+     * mixed with {@link DimensionIdentification}. In addition, the {@link DimensionSet#owner}
+     * shall be a {@link SpatialImageReadParam} or {@link SpatialImageWriteParam} instance, as
+     * required by {@link #getParameters()}.
      *
      * @param owner The collection that created this object.
      */
-    DimensionSlice(final DimensionSlices<DimensionSlice> owner) {
+    DimensionSlice(final DimensionSet owner) {
         super(owner);
     }
 
     /**
      * Creates a new instance initialized to the same values than the given instance.
      * This copy constructor provides a way to substitute the instances created by
-     * {@link SpatialImageReadParam#newDimensionSlice()} by custom instances which
-     * override some methods, as in the example below:
+     * {@link SpatialImageReadParam#newDimensionSlice()} by custom instances overriding
+     * some methods, as in the example below:
      *
      * {@preformat java
      *     class MyParameters extends SpatialImageReadParam {
@@ -249,6 +266,13 @@ public class DimensionSlice extends DimensionIdentification {
     }
 
     /**
+     * Returns the parameter which created this {@code DimensionSlice} instance.
+     */
+    private IIOParam getParameters() {
+        return (IIOParam) owner.owner;
+    }
+
+    /**
      * Returns the standard Java API that can be used for selecting a region along the
      * dimension represented by this object. The default value is {@link API#NONE NONE}.
      *
@@ -256,17 +280,28 @@ public class DimensionSlice extends DimensionIdentification {
      *
      * @see SpatialImageReadParam#getDimensionSliceForAPI(DimensionSlice.API)
      *
-     * @deprecated Moved to the {@link MultidimensionalImageStore} interface.
+     * @deprecated Replaced by the {@link MultidimensionalImageStore} interface.
      */
     @Deprecated
     public final API getAPI() {
-        final DimensionSlice[] apiMapping = owner.apiMapping;
+        final DimensionIdentification[] apiMapping = owner.apiMapping(false);
         if (apiMapping != null) {
             for (int i=apiMapping.length; --i>=0;) {
                 if (apiMapping[i] == this) {
                     return API.VALIDS[i];
                 }
             }
+        }
+        // Note: code below needs to stay, maybe in a private method.
+        final IIOParam param = getParameters();
+        Object candidate = null;
+        if (param instanceof SpatialImageReadParam) {
+            candidate = ((SpatialImageReadParam) param).reader;
+        } else if (param instanceof SpatialImageWriteParam) {
+            candidate = ((SpatialImageWriteParam) param).writer;
+        }
+        if (candidate instanceof MultidimensionalImageStore) {
+            return ((MultidimensionalImageStore) candidate).getAPIForDimension(getDimensionIds());
         }
         return API.NONE;
     }
@@ -287,17 +322,14 @@ public class DimensionSlice extends DimensionIdentification {
      *
      * @see SpatialImageReadParam#getDimensionSliceForAPI(DimensionSlice.API)
      *
-     * @deprecated Moved to the {@link MultidimensionalImageStore} interface.
+     * @deprecated Replaced by the {@link MultidimensionalImageStore} interface.
      */
     @Deprecated
     public void setAPI(final API newAPI) throws IllegalArgumentException {
         final API api = getAPI();
         if (!newAPI.equals(api)) { // We want a NullPointerException if newAPI is null.
             final int index = getSliceIndex(api);
-            DimensionSlice[] apiMapping = owner.apiMapping;
-            if (apiMapping == null) {
-                owner.apiMapping = apiMapping = new DimensionSlice[API.VALIDS.length];
-            }
+            final DimensionIdentification[] apiMapping = owner.apiMapping(true);
             for (int i=apiMapping.length; --i>=0;) {
                 if (apiMapping[i] == this) {
                     apiMapping[i] = null;
@@ -370,7 +402,7 @@ public class DimensionSlice extends DimensionIdentification {
                 break;
             }
             case BANDS: {
-                final IIOParam parameters = owner.parameters;
+                final IIOParam parameters = getParameters();
                 if (!(parameters instanceof ImageWriteParam)) {
                     final int[] sourceBands = parameters.getSourceBands();
                     return (sourceBands != null && sourceBands.length != 0) ? sourceBands[0] : 0;
@@ -384,7 +416,7 @@ public class DimensionSlice extends DimensionIdentification {
         /*
          * COLUMNS and ROWS cases.
          */
-        final IIOParam parameters = owner.parameters;
+        final IIOParam parameters = getParameters();
         if (parameters instanceof ImageWriteParam) {
             final Point offset = parameters.getDestinationOffset();
             if (offset != null) {
@@ -447,7 +479,7 @@ public class DimensionSlice extends DimensionIdentification {
                 break;
             }
             case BANDS: {
-                final IIOParam parameters = owner.parameters;
+                final IIOParam parameters = getParameters();
                 if (!(parameters instanceof ImageWriteParam)) {
                     parameters.setSourceBands(new int[] {index});
                     return;
@@ -462,7 +494,7 @@ public class DimensionSlice extends DimensionIdentification {
         /*
          * COLUMNS and ROWS cases.
          */
-        final IIOParam parameters = owner.parameters;
+        final IIOParam parameters = getParameters();
         if (parameters instanceof ImageWriteParam) {
             final Point offset = parameters.getDestinationOffset();
             if (isY) {

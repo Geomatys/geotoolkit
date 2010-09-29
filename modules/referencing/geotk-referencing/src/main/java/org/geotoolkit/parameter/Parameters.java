@@ -194,7 +194,7 @@ public final class Parameters {
      * @param <T> The expected type of value.
      * @param parameter The parameter to test.
      * @param localized {@code true} if a fully localized message is wanted in case of failure,
-     *        or {@code false} for a sentinal value (not useful for reporting to the user).
+     *        or {@code false} for a sentinel value (not useful for reporting to the user).
      * @param descriptor The descriptor to use for fetching the conditions.
      * @return {@code null} if the given parameter is valid, or an error message otherwise.
      */

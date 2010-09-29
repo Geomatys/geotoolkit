@@ -18,9 +18,10 @@
 package org.geotoolkit.internal;
 
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -63,7 +64,7 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
     public static final ThreadGroup RESOURCE_DISPOSERS;
 
     /**
-     * The group of low-priority dameons. Tasks in this thread are executed only
+     * The group of low-priority daemons. Tasks in this thread are executed only
      * when the CPU have plenty of time available.
      *
      * @since 3.05
@@ -109,7 +110,7 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
      * condition, and complete quickly when the condition become true.
      * <p>
      * Callers should not keep a reference to the returned executor for a long time.
-     * It is preferrable to use it as soon as possible and discart.
+     * It is preferable to use it as soon as possible and discard.
      *
      * @param  daemon {@code true} if the threads to be created should be daemon threads.
      * @return The executor.
@@ -122,7 +123,11 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
             synchronized (Threads.class) {
                 exec = daemon ? daemonExecutor : normalExecutor;
                 if (exec == null) {
-                    exec = Executors.newCachedThreadPool(new Threads(daemon));
+                    // The tasks should be very short-lived, so limit the number of threads
+                    // in order to avoid the creation of many threads at startup time which
+                    // become idle very soon after their creation.
+                    exec = new ThreadPoolExecutor(0, 4, 60L, TimeUnit.SECONDS,
+                            new LinkedBlockingQueue<Runnable>(), new Threads(daemon));
                     if (daemon) {
                         daemonExecutor = exec;
                     } else {

@@ -19,10 +19,14 @@ package org.geotoolkit.image.io.plugin;
 
 import java.util.Iterator;
 import java.io.IOException;
+import java.awt.Rectangle;
+import java.awt.image.Raster;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import java.awt.image.DataBuffer;
 
+import org.geotoolkit.image.io.DimensionSlice;
+import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 
@@ -37,7 +41,7 @@ import static org.geotoolkit.test.Commons.*;
  * Tests {@link NetcdfImageReader}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @since 3.08
  */
@@ -178,6 +182,93 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
             "            ├───fillSampleValues=“32767.0”\n" +
             "            ├───scaleFactor=“0.01”\n" +
             "            └───transferFunctionType=“linear”"), metadata.toString());
+        reader.dispose();
+    }
+
+    /**
+     * Tests reading a few sample values at different slices, selected as band index.
+     *
+     * @throws IOException if an error occurred while reading the file.
+     *
+     * @since 3.15
+     */
+    @Test
+    public void testReadSliceThroughBandAPI() throws IOException {
+        final NetcdfImageReader reader = createImageReader();
+        assertEquals("Number of images shall be unchanged.", 2, reader.getNumImages(true));
+        assertEquals("Expected only 1 band by default.",     1, reader.getNumBands(0));
+        reader.getDimensionForAPI(DimensionSlice.API.BANDS).addDimensionId("depth");
+        assertEquals("Expected the number of z values.",    59, reader.getNumBands(0));
+        assertEquals("Number of images shall be unchanged.", 2, reader.getNumImages(true));
+        /*
+         * Set the subregion to load.
+         */
+        final SpatialImageReadParam param = reader.getDefaultReadParam();
+        param.setSourceRegion(new Rectangle(360, 260, 2, 3));
+        Raster data;
+        /*
+         * Read data at the default band index, which is 0.
+         */
+        assertArrayEquals(new int[] {0}, param.getSourceBands());
+        data = reader.read(0, param).getRaster();
+        assertEquals(2, data.getWidth());
+        assertEquals(3, data.getHeight());
+        assertEquals(1, data.getNumBands());
+        assertArrayEquals(new int[] {5941, 5933, 6046, 6029, 6138, 6120},
+                data.getSamples(0, 0, 2, 3, 0, (int[]) null));
+        /*
+         * Select a band and read data again.
+         */
+        param.setSourceBands(new int[] {1});
+        data = reader.read(0, param).getRaster();
+        assertEquals(2, data.getWidth());
+        assertEquals(3, data.getHeight());
+        assertEquals(1, data.getNumBands());
+        assertArrayEquals(new int[] {5880, 5888, 6007, 6007, 6125, 6124},
+                data.getSamples(0, 0, 2, 3, 0, (int[]) null));
+        reader.dispose();
+    }
+
+    /**
+     * Tests reading a few sample values at different slices, selected as image index.
+     *
+     * @throws IOException if an error occurred while reading the file.
+     *
+     * @since 3.15
+     */
+    @Test
+    public void testReadSliceThroughImageAPI() throws IOException {
+        final NetcdfImageReader reader = createImageReader();
+        assertEquals("Number of images shall be unchanged.", 2, reader.getNumImages(true));
+        assertEquals("Expected only 1 band by default.",     1, reader.getNumBands(0));
+        reader.getDimensionForAPI(DimensionSlice.API.IMAGES).addDimensionId("depth");
+        assertEquals("Number of bands shall be unchanged.",  1, reader.getNumBands(0));
+        assertEquals("Expected the number of z values.",    59, reader.getNumImages(true));
+        /*
+         * Set the subregion to load.
+         */
+        final SpatialImageReadParam param = reader.getDefaultReadParam();
+        param.setSourceRegion(new Rectangle(360, 260, 2, 3));
+        assertNull(param.getSourceBands());
+        Raster data;
+        /*
+         * Read data in the slice z0.
+         */
+        data = reader.read(0, param).getRaster();
+        assertEquals(2, data.getWidth());
+        assertEquals(3, data.getHeight());
+        assertEquals(1, data.getNumBands());
+        assertArrayEquals(new int[] {5941, 5933, 6046, 6029, 6138, 6120},
+                data.getSamples(0, 0, 2, 3, 0, (int[]) null));
+        /*
+         * Read data in the slice z1.
+         */
+        data = reader.read(1, param).getRaster();
+        assertEquals(2, data.getWidth());
+        assertEquals(3, data.getHeight());
+        assertEquals(1, data.getNumBands());
+        assertArrayEquals(new int[] {5880, 5888, 6007, 6007, 6125, 6124},
+                data.getSamples(0, 0, 2, 3, 0, (int[]) null));
         reader.dispose();
     }
 

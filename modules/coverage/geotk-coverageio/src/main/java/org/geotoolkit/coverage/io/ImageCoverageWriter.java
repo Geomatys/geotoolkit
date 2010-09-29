@@ -35,6 +35,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
 import javax.media.jai.JAI;
 import javax.media.jai.Warp;
+import javax.media.jai.PlanarImage;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.Interpolation;
 import javax.media.jai.RenderedImageAdapter;
@@ -42,6 +43,7 @@ import javax.media.jai.operator.WarpDescriptor;
 
 import org.opengis.util.InternationalString;
 import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.coverage.InterpolationMethod;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -409,7 +411,9 @@ public class ImageCoverageWriter extends GridCoverageWriter {
         final boolean loggingEnabled = LOGGER.isLoggable(level);
         long fullTime = (loggingEnabled) ? System.nanoTime() : 0;
         /*
-         * Parameters check.
+         * Prepares an initially empty ImageWriteParam, to be filled later with the values
+         * provided in the GridCoverageWriteParam. In order to get the ImageWriteParam, we
+         * need the ImageWriter, which need the RenderedImage, which need the GridGeometry.
          */
         abortRequested = false;
         GridGeometry2D gridGeometry = GridGeometry2D.wrap(coverage.getGridGeometry());
@@ -436,12 +440,30 @@ public class ImageCoverageWriter extends GridCoverageWriter {
             throw new CoverageStoreException(formatErrorMessage(e), e);
         }
         MathTransform2D destToExtractedGrid = null;
+        PlanarImage toDispose = null;
         if (param != null) {
+            /*
+             * Now convert the GridCoverageWriteParam values to ImageWriteParam value.
+             * First of all, convert the ISO 119123 InterpolationMethod code to the JAI
+             * code.
+             */
+            final int interp;
+            final InterpolationMethod interpolation = param.getInterpolation();
+            if (interpolation.equals(InterpolationMethod.NEAREST_NEIGHBOUR)) {
+                interp = Interpolation.INTERP_NEAREST;
+            } else if (interpolation.equals(InterpolationMethod.BILINEAR)) {
+                interp = Interpolation.INTERP_BILINEAR;
+            } else if (interpolation.equals(InterpolationMethod.BICUBIC)) {
+                interp = Interpolation.INTERP_BICUBIC;
+            } else {
+                throw new CoverageStoreException(Errors.getResources(locale).getString(
+                        Errors.Keys.ILLEGAL_ARGUMENT_$2, "interpolation", interpolation.name()));
+            }
             destToExtractedGrid = geodeticToPixelCoordinates(gridGeometry, param, imageParam);
             imageParam.setSourceBands(param.getSourceBands());
             final Rectangle sourceRegion  = imageParam.getSourceRegion();
             final Rectangle requestRegion = destGridGeometry.getGridRange2D();
-            if (!isIdentity(destToExtractedGrid) ||
+            if (interp != Interpolation.INTERP_NEAREST || !isIdentity(destToExtractedGrid) ||
                     isGreater(requestRegion.width,  imageParam.getSourceXSubsampling(), sourceRegion.width) ||
                     isGreater(requestRegion.height, imageParam.getSourceYSubsampling(), sourceRegion.height))
             {
@@ -529,9 +551,8 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                 if (backgroundValues == null) {
                     backgroundValues = CoverageUtilities.getBackgroundValues(coverage);
                 }
-                image = WarpDescriptor.create(image, warp,
-                        Interpolation.getInstance(Interpolation.INTERP_NEAREST),
-                        backgroundValues, hints);
+                image = toDispose = WarpDescriptor.create(image, warp,
+                        Interpolation.getInstance(interp), backgroundValues, hints);
                 imageParam.setSourceRegion(null);
                 imageParam.setSourceSubsampling(1, 1, 0, 0);
             }
@@ -572,6 +593,9 @@ public class ImageCoverageWriter extends GridCoverageWriter {
             }
             ImageCoverageStore.logOperation(this, ImageCoverageWriter.class, output, 0,
                     coverage, size, crs, destToExtractedGrid, fullTime);
+        }
+        if (toDispose != null) {
+            toDispose.dispose();
         }
     }
 

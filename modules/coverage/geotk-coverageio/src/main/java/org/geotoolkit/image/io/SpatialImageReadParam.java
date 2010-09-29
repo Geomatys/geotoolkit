@@ -19,9 +19,7 @@ package org.geotoolkit.image.io;
 
 import java.awt.Point;
 import java.util.Set;
-import java.util.Map;
 import java.util.EnumSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.LogRecord;
@@ -69,66 +67,24 @@ import org.geotoolkit.util.converter.Classes;
  *   <li><p>The two first dimensions - typically named (<var>x</var>, <var>y</var>) - are
  *     assigned to the (<var>columns</var>, <var>rows</var>) pixel indices.</p></li>
  *
- *   <li><p>The third dimension can optionally be assigned to band indices. This is typically the
+ *   <li><p>An additional dimension can optionally be assigned to band indices. This is typically the
  *     altitude (<var>z</var>) in a dataset having the (<var>x</var>, <var>y</var>, <var>z</var>,
  *     <var>t</var>) dimensions, but can be customized. The actual dimension assigned to band
- *     indices is returned by {@link DimensionSlice#findDimensionIndex(Iterable)}. See the
- *     next section below for more information.</p>
+ *     indices is returned by {@link DimensionSlice#findDimensionIndex(Iterable)}. See
+ *     {@link MultidimensionalImageStore} for more information.</p></li>
+ *
+ *   <li><p>An additional dimension can optionally be assigned to image index. This is typically
+ *     the time (<var>t</var>) in a dataset having the (<var>x</var>, <var>y</var>, <var>z</var>,
+ *     <var>t</var>) dimensions, but can be customized. See
+ *     {@link MultidimensionalImageStore} for more information.</p></li>
  *
  *   <li><p>Only one slice of every supplemental dimensions can be read. By default the data at index
  *     0 are loaded, but different indices can be selected (see {@link DimensionSlice}). The actual
  *     index used is the value returned by {@link #getSliceIndex(Object[])}.</p></li>
  * </ol>
  *
- * {@section Assigning a third dimension to bands}
- * Whatever a third dimension is assigned to bands or not is plugin-specific. Plugins that have
- * no concept of bands (like NetCDF which has the concept of <var>n</var>-dimensional data cube
- * instead) can do that. For example in a dataset having (<var>x</var>, <var>y</var>, <var>z</var>,
- * <var>t</var>) dimensions, it may be useful to handle the <var>z</var> dimension as bands. After
- * the method calls below, users can select one or many elevation indices through the standard
- * {@link #setSourceBands(int[])} API. Compared to the {@link DimensionSlice} API, it allows
- * loading more than one slice in one read operation.
- *
- * {@preformat java
- *     DimensionSlice thirdDimension = parameters.newDimensionSlice();
- *     thirdDimension.addDimensionId(2); // 0-based index of the third dimension.
- *     thirdDimension.setAPI(DimensionSlice.API.BANDS);
- * }
- *
- * Note that the above code has the side-effect to initialize the {@linkplain #sourceBands source
- * bands} array to {@code {0}} (meaning to load only the first band by default), which is desired
- * since the number of bands in NetCDF files is typically large and those bands are not color
- * components. This is different than the usual {@code ImageReadParam} behavior which is to
- * initialize source bands to {@code null} (meaning to load all bands).
- *
- * {@note The side-effect described above is not a special case. It is a natural consequence
- *        of the fact that the default index of <strong>every</strong> dimension slice in 0.}
- *
- * After the <var>z</var> dimension in the above example has been assigned to the bands API,
- * the bands can be used as below:
- * <p>
- * <ul>
- *   <li>The (<var>x</var>,<var>y</var>) plane at <var>z</var><sub>{@code sourceBands[0]}</sub> is stored in band 0.</li>
- *   <li>The (<var>x</var>,<var>y</var>) plane at <var>z</var><sub>{@code sourceBands[1]}</sub> is stored in band 1.</li>
- *   <li><i>etc.</i></li>
- * </ul>
- * <p>
- * Implementors can determine which (if any) dimension has been assigned to the bands API by
- * using the code below:
- *
- * {@preformat java
- *     DimensionSlice bandsDimension = parameters.getDimensionSliceForAPI(BANDS);
- *     if (bandsDimension != null) {
- *         Collection<?> propertiesOfAxes = ...; // This is plugin-specific.
- *         int index = bandsDimension.findDimensionIndex(propertiesOfAxes);
- *         if (index >= 0) {
- *             // We have found the dimension index of bands.
- *         }
- *     }
- * }
- *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.15
  *
  * @since 3.05 (derived from 2.4)
  * @module
@@ -149,7 +105,7 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      *
      * @since 3.08
      */
-    private DimensionSlices<DimensionSlice> dimensionSlices;
+    private DimensionSet dimensionSlices;
 
     /**
      * The name of the color palette.
@@ -180,10 +136,12 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
     private Set<SampleConversionType> allowedConversions;
 
     /**
-     * The image reader which created the parameters, or {@code null} if unknown.
-     * This is used for emitting warnings.
+     * The image reader for which this {@code SpatialImageReadParam} instance
+     * has been created, or {@code null} if unknown.
+     *
+     * @since 3.15
      */
-    private final ImageReader reader;
+    protected final ImageReader reader;
 
     /**
      * Creates a new, initially empty, set of parameters.
@@ -192,6 +150,15 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      */
     public SpatialImageReadParam(final ImageReader reader) {
         this.reader = reader;
+        /*
+         * If the bands API is used for selecting slices in a extra dimension, set
+         * the default slice index to zero (see MultidimensionalImageStore javadoc).
+         */
+        if (reader instanceof MultidimensionalImageStore && ((MultidimensionalImageStore) reader)
+                .getAPIForDimensions().contains(DimensionSlice.API.BANDS))
+        {
+            sourceBands = new int[1];
+        }
     }
 
     /**
@@ -220,7 +187,7 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      */
     public DimensionSlice newDimensionSlice() {
         if (dimensionSlices == null) {
-            dimensionSlices = new DimensionSlices<DimensionSlice>(this);
+            dimensionSlices = new DimensionSet(this);
         }
         return new DimensionSlice(dimensionSlices);
     }
@@ -237,11 +204,12 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      *
      * @since 3.08
      */
+    @SuppressWarnings({"unchecked","rawtypes"})
     public Set<DimensionSlice> getDimensionSlices() {
         if (dimensionSlices == null) {
-            dimensionSlices = new DimensionSlices<DimensionSlice>(this);
+            dimensionSlices = new DimensionSet(this);
         }
-        return dimensionSlices;
+        return (Set) dimensionSlices;
     }
 
     /**
@@ -259,9 +227,12 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      * @return The dimension slice assigned to the given API, or {@code null} if none.
      *
      * @since 3.08
+     *
+     * @deprecated Replaced by the {@link MultidimensionalImageStore} interface.
      */
+    @Deprecated
     public DimensionSlice getDimensionSliceForAPI(final DimensionSlice.API api) {
-        return (dimensionSlices != null) ? dimensionSlices.getDimensionSliceForAPI(this, api) : null;
+        return (dimensionSlices != null) ? (DimensionSlice) dimensionSlices.get(api) : null;
     }
 
     /**
@@ -287,7 +258,7 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      * @since 3.08
      */
     public DimensionSlice getDimensionSlice(final Object... dimensionIds) {
-        return (dimensionSlices != null) ? dimensionSlices.getDimensionSlice(this,
+        return (dimensionSlices != null) ? (DimensionSlice) dimensionSlices.getDimensionSlice(
                 SpatialImageReadParam.class, dimensionIds) : null;
     }
 
@@ -325,7 +296,7 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      * @since 3.08
      */
     public int getSliceIndex(final Object... dimensionIds) {
-        return (dimensionSlices != null) ? dimensionSlices.getSliceIndex(this,
+        return (dimensionSlices != null) ? dimensionSlices.getSliceIndex(
                 SpatialImageReadParam.class, dimensionIds) : 0;
     }
 
@@ -622,7 +593,7 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
         if (paletteName != null) {
             buffer.append("palette=\"").append(paletteName).append('"');
         }
-        return toStringEnd(buffer, dimensionSlices != null ? dimensionSlices.identifiersMap : null);
+        return toStringEnd(buffer, dimensionSlices);
     }
 
     /**
@@ -630,15 +601,15 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      * in the given buffer is a space, then this method removes the two last characters on the
      * assumption that they are {@code ", "}. Then the closing {@code ']'} character is appended.
      */
-    static String toStringEnd(final StringBuilder buffer, final Map<Object,DimensionSlice> identifiersMap) {
+    static String toStringEnd(final StringBuilder buffer, final Set<DimensionIdentification> identifiers) {
         final int length = buffer.length();
         if (buffer.charAt(length - 1) == ' ') {
             buffer.setLength(length - 2);
         }
         buffer.append(']');
-        if (identifiersMap != null) {
+        if (identifiers != null && !identifiers.isEmpty()) {
             int last = 0;
-            for (final DimensionSlice slice : new LinkedHashSet<DimensionSlice>(identifiersMap.values())) {
+            for (final DimensionIdentification slice : identifiers) {
                 last = buffer.append("\n\u00A0\u00A0\u251C\u2500\u00A0").length();
                 buffer.append(slice);
             }

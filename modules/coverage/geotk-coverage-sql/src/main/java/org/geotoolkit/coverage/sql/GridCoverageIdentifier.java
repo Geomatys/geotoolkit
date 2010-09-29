@@ -85,6 +85,19 @@ final class GridCoverageIdentifier extends MultiColumnIdentifier<GridCoverageIde
     GridGeometryEntry geometry;
 
     /**
+     * Creates a new identifier using only the parameters that are part of the primary
+     * key in the {@code GridCoverages} table. The new identifier has no <var>z</var>
+     * value and no grid geometry. Note that if the grid geometry happens to be needed,
+     * it can be computed by {@link GridCoverageTable#createEntry}.
+     */
+    GridCoverageIdentifier(final SeriesEntry series, final String filename, final short imageIndex) {
+        this.series     = series;
+        this.filename   = filename;
+        this.imageIndex = imageIndex;
+        this.zIndex     = 0;
+    }
+
+    /**
      * Creates a new identifier.
      */
     GridCoverageIdentifier(final SeriesEntry series, final String filename, final short imageIndex,

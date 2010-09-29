@@ -19,6 +19,8 @@ package org.geotoolkit.test.stress;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Random;
+import java.util.logging.Level;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -92,6 +94,20 @@ public final class Main extends CommandLine {
     private String outputCRS;
 
     /**
+     * The seed to use for random number generators. This should be set only when desirable
+     * to run the stressor many time with exactly the same requests. Note that different
+     * threads will still use different requests.
+     */
+    @Option
+    private Long randomSeed;
+
+    /**
+     * If {@code true}, reports more information during the stress.
+     */
+    @Option
+    private boolean verbose;
+
+    /**
      * {@code true} if the results shall be shown in windows.
      */
     @Option
@@ -106,6 +122,23 @@ public final class Main extends CommandLine {
         super("java -jar geotk-stress.jar", arguments);
         numThreads = Runtime.getRuntime().availableProcessors() + 1;
         duration   = 10;
+    }
+
+    /**
+     * Initializes the given stressors before to run them.
+     */
+    private void init(final StressorGroup<?> stressors) {
+        if (randomSeed != null) {
+            final Random random = new Random(randomSeed);
+            for (final Stressor stressor : stressors.getStressors()) {
+                stressor.random.setSeed(random.nextLong());
+            }
+        }
+        if (verbose) {
+            for (final Stressor stressor : stressors.getStressors()) {
+                stressor.setLogLevel(Level.INFO);
+            }
+        }
     }
 
     /**
@@ -169,6 +202,7 @@ public final class Main extends CommandLine {
                 stressor.outputFormat = format;
             }
         }
+        init(stressors);
         stressors.run();
     }
 

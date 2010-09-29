@@ -43,6 +43,7 @@ import javax.media.jai.InterpolationNearest;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.util.FactoryException;
+import org.opengis.util.InternationalString;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
@@ -77,6 +78,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
+import org.geotoolkit.lang.Workaround;
 
 
 /**
@@ -583,6 +585,7 @@ final class Resampler2D extends GridCoverage2D {
                  *       interpolation (which increase the chances to get it down on integers).
                  *       Remove this hack when this JAI bug will be fixed.
                  */
+                @Workaround(library="JAI", version="1.1.3")
                 boolean forceAdapter = false;
                 switch (sourceImage.getSampleModel().getTransferType()) {
                     case DataBuffer.TYPE_DOUBLE:
@@ -650,8 +653,10 @@ final class Resampler2D extends GridCoverage2D {
             MathTransform gridToCRS = targetGG.getGridToCRS(CORNER);
             targetGG = new GridGeometry2D(actualGR, gridToCRS, targetCRS);
             if (!automaticGR) {
+                final InternationalString name = sourceCoverage.getName();
                 log(Loggings.getResources(locale).getLogRecord(Level.WARNING,
-                    Loggings.Keys.ADJUSTED_GRID_GEOMETRY_$1, sourceCoverage.getName().toString(locale)));
+                    Loggings.Keys.ADJUSTED_GRID_GEOMETRY_$1, (name != null) ?
+                        name.toString(locale) : sourceCoverage.getClass()));
             }
         }
         /*
@@ -676,9 +681,10 @@ final class Resampler2D extends GridCoverage2D {
             } else {
                 backgroundText = background[0];
             }
+            final InternationalString name = sourceCoverage.getName();
             log(Loggings.getResources(locale).getLogRecord(LOGGING_LEVEL,
                 Loggings.Keys.APPLIED_RESAMPLE_$11, new Object[] {
-                /*  {0} */ sourceCoverage.getName().toString(locale),
+                /*  {0} */ (name != null) ? name.toString(locale) : sourceCoverage.getClass(),
                 /*  {1} */ sourceCoverage.getCoordinateReferenceSystem().getName().getCode(),
                 /*  {2} */ sourceImage.getWidth(),
                 /*  {3} */ sourceImage.getHeight(),

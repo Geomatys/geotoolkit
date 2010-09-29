@@ -35,6 +35,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.lang.Immutable;
+import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.parameter.Parameter;
@@ -188,6 +189,7 @@ public class WarpTransform2D extends AbstractMathTransform implements MathTransf
      * the one above when the {@code cloneCoords} argument will no longer be needed (after the
      * JAI bug get fixed).
      */
+    @Workaround(library="JAI", version="1.1.3")
     private WarpTransform2D(final Rectangle2D srcBounds, float[] srcCoords, int srcOffset,
                             final Rectangle2D dstBounds, float[] dstCoords, int dstOffset,
                             final int numCoords, final int degree, boolean cloneCoords)

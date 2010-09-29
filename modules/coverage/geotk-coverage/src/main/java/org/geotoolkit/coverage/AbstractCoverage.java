@@ -422,7 +422,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
     /**
      * Invoked when an unsupported operation is invoked.
      */
-    private static final UnsupportedOperationException unsupported() {
+    private static UnsupportedOperationException unsupported() {
         throw new UnsupportedOperationException(
                 "This method is currently not implemented. " +
                 "It may be implemented by next version of coverage module.");

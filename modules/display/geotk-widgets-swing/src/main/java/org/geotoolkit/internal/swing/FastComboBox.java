@@ -19,6 +19,7 @@ package org.geotoolkit.internal.swing;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.JComboBox;
+import org.geotoolkit.lang.Workaround;
 
 
 /**
@@ -37,6 +38,7 @@ import javax.swing.JComboBox;
  * @module
  */
 @SuppressWarnings("serial")
+@Workaround(library="JDK", version="1.6")
 public class FastComboBox extends JComboBox {
     /**
      * Creates a new combo box.

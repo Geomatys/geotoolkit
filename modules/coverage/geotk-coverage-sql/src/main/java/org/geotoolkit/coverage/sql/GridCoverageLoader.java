@@ -50,6 +50,7 @@ import org.geotoolkit.coverage.io.GridCoverageStorePool;
 import org.geotoolkit.image.io.mosaic.MosaicImageReader;
 import org.geotoolkit.image.io.SpatialImageReadParam;
 import org.geotoolkit.image.io.DimensionSlice;
+import org.geotoolkit.image.io.MultidimensionalImageStore;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.SampleConversionType;
 import org.geotoolkit.image.io.XImageIO;
@@ -100,6 +101,13 @@ final class GridCoverageLoader extends ImageCoverageReader {
     transient GridCoverageLoader nextInUse;
 
     /**
+     * Metadata created when first needed.
+     *
+     * @since 3.15
+     */
+    private transient SpatialMetadata streamMetadata, imageMetadata;
+
+    /**
      * {@code true} if the check for image index shall be temporarily disabled. This happen after
      * the {@link #read(int, GridCoverageReadParam) method replaced the user-supplied image index
      * (always 0, which is checked by {@link #ensureValidIndex(int}) by the actual image index as
@@ -147,6 +155,11 @@ final class GridCoverageLoader extends ImageCoverageReader {
      * If the image reader is an instance of {@link NamedImageStore}, then this method sets
      * the name of NetCDF (or similar format) variable to read as the names declared in the
      * {@code SampleDimensions} table.
+     * <p>
+     * If the image reader is an instance of {@link MultidimensionalImageStore} (typically the
+     * NetCDF reader), then this method sets the image index API to the temporal dimension. This
+     * is consistent with the database schema, where the image index is specified together with
+     * the date range in the {@code GridCoverages} table.
      *
      * @param The entry to use as the input.
      * @param imageIndex the image index to use
@@ -170,29 +183,32 @@ final class GridCoverageLoader extends ImageCoverageReader {
         }
         super.setInput(input);
         entry = e; // Set the field only on success.
+        streamMetadata = null;
+        imageMetadata  = null;
         /*
          * For the NetCDF format, find the names of the variables to read. They are the names
          * declared in the SampleDimensions table. Each variable will be assigned to one band.
          * There is typically only one variable to read.
-         *
-         * In principle, the variable name for the whole image is ignored since we specified
-         * variable names for bands. But specifying a variable name for the image prevent
-         * NetCDF image reader to compute its own list.
          */
-        if (input != null && imageReader instanceof NamedImageStore) {
-            final List<GridSampleDimension> bands = format.sampleDimensions;
-            if (bands != null) {
-                final String[] bandNames = new String[bands.size()];
-                for (int i=0; i<bandNames.length; i++) {
-                    bandNames[i] = bands.get(i).getDescription().toString();
+        if (input != null) {
+            if (imageReader instanceof NamedImageStore) {
+                final List<GridSampleDimension> bands = format.sampleDimensions;
+                if (bands != null) {
+                    final String[] bandNames = new String[bands.size()];
+                    for (int i=0; i<bandNames.length; i++) {
+                        bandNames[i] = bands.get(i).getDescription().toString();
+                    }
+                    final NamedImageStore named = (NamedImageStore) imageReader;
+                    try {
+                        named.setBandNames(0, bandNames);
+                    } catch (IOException ex) {
+                        throw new CoverageStoreException(ex);
+                    }
                 }
-                final NamedImageStore named = (NamedImageStore) imageReader;
-                try {
-                    named.setImageNames(entry.getIdentifier().filename);
-                    named.setBandNames(NamedImageStore.ALL_IMAGES, bandNames);
-                } catch (IOException ex) {
-                    throw new CoverageStoreException(ex);
-                }
+            }
+            if (imageReader instanceof MultidimensionalImageStore) {
+                ((MultidimensionalImageStore) imageReader).getDimensionForAPI(DimensionSlice.API.IMAGES)
+                        .addDimensionId(AxisDirection.FUTURE, AxisDirection.PAST);
             }
         }
     }
@@ -266,14 +282,18 @@ final class GridCoverageLoader extends ImageCoverageReader {
      */
     @Override
     public SpatialMetadata getStreamMetadata() throws CoverageStoreException {
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.STREAM);
-        if (entry != null) {
-            final DiscoveryAccessor accessor = new DiscoveryAccessor(metadata) {
-                @Override protected double nice(final double value) {
-                    return GridCoverageLoader.nice(value);
-                }
-            };
-            accessor.setGeographicElement(entry.getGeographicBoundingBox());
+        SpatialMetadata metadata = streamMetadata;
+        if (metadata == null) {
+            metadata = new SpatialMetadata(SpatialMetadataFormat.STREAM);
+            if (entry != null) {
+                final DiscoveryAccessor accessor = new DiscoveryAccessor(metadata) {
+                    @Override protected double nice(final double value) {
+                        return GridCoverageLoader.nice(value);
+                    }
+                };
+                accessor.setGeographicElement(entry.getGeographicBoundingBox());
+            }
+            streamMetadata = metadata;
         }
         return metadata;
     }
@@ -284,8 +304,13 @@ final class GridCoverageLoader extends ImageCoverageReader {
      */
     @Override
     public SpatialMetadata getCoverageMetadata(final int index) throws CoverageStoreException {
-        final List<GridSampleDimension> bands = getSampleDimensions(index);
-        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        ensureValidIndex(index);
+        SpatialMetadata metadata = imageMetadata;
+        if (metadata != null) {
+            return metadata;
+        }
+        final List<GridSampleDimension> bands = format.sampleDimensions;
+        metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
         if (bands != null) {
             final Locale locale = getLocale();
             final DimensionAccessor accessor = new DimensionAccessor(metadata);
@@ -376,15 +401,12 @@ final class GridCoverageLoader extends ImageCoverageReader {
                 }
             }
         }
+        imageMetadata = metadata;
         return metadata;
     }
 
     /**
-     * Returns read parameters with the z-slice initialized, if needed. In addition, if the image
-     * reader is an instance of {@link NamedImageStore} (typically the NetCDF reader), sets the
-     * image index API to the temporal dimension. This is consistent with the database schema,
-     * where the image index is specified together with the date range in the {@code GridCoverages}
-     * table.
+     * Returns read parameters with the z-slice initialized, if needed.
      */
     @Override
     protected ImageReadParam createImageReadParam(final int index) throws IOException {
@@ -395,13 +417,6 @@ final class GridCoverageLoader extends ImageCoverageReader {
                 final DimensionSlice slice = ((SpatialImageReadParam) param).newDimensionSlice();
                 slice.addDimensionId(AxisDirection.UP, AxisDirection.DOWN);
                 slice.setSliceIndex(zIndex - 1);
-            }
-        }
-        if (imageReader instanceof NamedImageStore) {
-            if (param instanceof SpatialImageReadParam) {
-                final DimensionSlice slice = ((SpatialImageReadParam) param).newDimensionSlice();
-                slice.addDimensionId(AxisDirection.FUTURE, AxisDirection.PAST);
-                slice.setAPI(DimensionSlice.API.IMAGES);
             }
         }
         /*
@@ -448,7 +463,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
         final GridCoverageIdentifier identifier = ensureInputSet().getIdentifier();
         index = identifier.getImageIndex();
         final ImageReader imageReader = this.imageReader; // Protect from changes.
-        if (!(imageReader instanceof NamedImageStore)) try {
+        try {
             final Dimension expectedSize = identifier.geometry.getImageSize();
             final int expectedWidth  = expectedSize.width;
             final int expectedHeight = expectedSize.height;
@@ -530,7 +545,9 @@ final class GridCoverageLoader extends ImageCoverageReader {
      */
     @Override
     public void reset() throws CoverageStoreException {
-        entry = null;
+        entry          = null;
+        streamMetadata = null;
+        imageMetadata  = null;
         super.reset();
     }
 
@@ -539,7 +556,9 @@ final class GridCoverageLoader extends ImageCoverageReader {
      */
     @Override
     public void dispose() throws CoverageStoreException {
-        entry = null;
+        entry          = null;
+        streamMetadata = null;
+        imageMetadata  = null;
         super.dispose();
     }
 

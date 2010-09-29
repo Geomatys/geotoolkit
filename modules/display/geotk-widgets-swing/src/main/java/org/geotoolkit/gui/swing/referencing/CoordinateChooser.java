@@ -101,7 +101,7 @@ public class CoordinateChooser extends JComponent implements Dialog {
     private static final double RESOLUTION_FACTOR = 60;
 
     /**
-     * An enumeration constant for showing or hidding the geographic area selector.
+     * An enumeration constant for showing or hiding the geographic area selector.
      * Used as argument for {@link #isSelectorVisible} and {@link #setSelectorVisible}.
      *
      * @see #TIME_RANGE
@@ -114,7 +114,7 @@ public class CoordinateChooser extends JComponent implements Dialog {
     public static final int GEOGRAPHIC_AREA = 1;
 
     /**
-     * An enumeration constant for showing or hidding the time range selector.
+     * An enumeration constant for showing or hiding the time range selector.
      * Used as argument for {@link #isSelectorVisible} and {@link #setSelectorVisible}.
      *
      * @see #GEOGRAPHIC_AREA
@@ -127,7 +127,7 @@ public class CoordinateChooser extends JComponent implements Dialog {
     public static final int TIME_RANGE = 2;
 
     /**
-     * An enumeration constant for showing or hidding the resolution selector.
+     * An enumeration constant for showing or hiding the resolution selector.
      * Used as argument for {@link #isSelectorVisible} and {@link #setSelectorVisible}.
      *
      * @see #GEOGRAPHIC_AREA
@@ -649,7 +649,7 @@ public class CoordinateChooser extends JComponent implements Dialog {
      */
     @Override
     public void commitEdit() throws ParseException {
-        JSpinner focus=null;
+        JSpinner focus = null;
         try {
             (focus = tmin).commitEdit();
             (focus = tmax).commitEdit();

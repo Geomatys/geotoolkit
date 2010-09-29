@@ -19,7 +19,9 @@ package org.geotoolkit.internal.jaxb.referencing;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.lang.Workaround;
 
 
 /**
@@ -32,12 +34,13 @@ import org.geotoolkit.xml.Namespaces;
  * @since 3.03
  * @module
  *
- * TODO: The namespace of this class is set to {@link Namespaces#GMD} as a workaround. Actually we do
- *       that because we already have an other class in the GML binding of Constellation, and it falls on conflict.
- *       Remove the namespace, in order to fallback on GML, when the temporal implementation will have a floor
- *       in Geotk.
+ * @todo The namespace of this class is set to {@link Namespaces#GMD} as a workaround. Actually we
+ *       do that because we already have an other class in the GML binding of Constellation, and it
+ *       falls on conflict. Remove the namespace, in order to fallback on GML, when the temporal
+ *       implementation will have a floor in Geotk.
  */
 @XmlType(name = "TimeInstantPropertyType", propOrder = {"timeInstant"}, namespace = Namespaces.GMD)
+@Workaround(library="Geotk", version="3.15")
 public final class TimeInstantPropertyType {
     /**
      * The time.

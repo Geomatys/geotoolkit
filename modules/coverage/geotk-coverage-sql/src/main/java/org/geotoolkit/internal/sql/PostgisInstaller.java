@@ -30,7 +30,7 @@ import java.sql.SQLException;
  * This runner assumes that the file encoding is {@code "ISO-8859-1"}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.15
  *
  * @since 3.11
  * @module
@@ -39,7 +39,14 @@ public final class PostgisInstaller extends ScriptRunner {
     /**
      * The filename of the installation script.
      */
-    public static final String INSTALL = "lwpostgis.sql";
+    public static final String INSTALL = "postgis.sql";
+
+    /**
+     * Legacy filename of the installation script.
+     *
+     * @since 3.15
+     */
+    public static final String LEGACY = "lw" + INSTALL;
 
     /**
      * The filename of the CRS definitions.
@@ -95,7 +102,14 @@ public final class PostgisInstaller extends ScriptRunner {
             n = run(reader);
             reader.close();
         }
-        n += run(new File(directory, INSTALL));
+        File install = new File(directory, INSTALL);
+        if (!install.isFile()) {
+            final File legacy = new File(directory, LEGACY);
+            if (legacy.isFile()) {
+                install = legacy;
+            }
+        }
+        n += run(install);
         n += run(new File(directory, REF_SYS));
         return n;
     }

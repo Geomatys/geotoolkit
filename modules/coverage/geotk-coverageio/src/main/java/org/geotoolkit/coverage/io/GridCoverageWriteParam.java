@@ -19,6 +19,9 @@ package org.geotoolkit.coverage.io;
 
 import javax.imageio.ImageWriter;
 import javax.imageio.ImageWriteParam;
+
+import org.opengis.coverage.InterpolationMethod;
+
 import org.geotoolkit.resources.Errors;
 
 
@@ -59,6 +62,13 @@ public class GridCoverageWriteParam extends GridCoverageStoreParam {
      * @since 3.15
      */
     private Float compressionQuality;
+
+    /**
+     * The interpolation, or {@code null} for the default (nearest-neighbor).
+     *
+     * @since 3.15
+     */
+    private InterpolationMethod interpolation;
 
     /**
      * The sample values to use for filling empty areas, or {@code null} for the default values.
@@ -163,6 +173,40 @@ public class GridCoverageWriteParam extends GridCoverageStoreParam {
             }
         }
         compressionQuality = quality;
+    }
+
+    /**
+     * Returns the interpolation method. The default value is
+     * {@linkplain InterpolationMethod#NEAREST_NEIGHBOUR nearest-neighbor}.
+     *
+     * @return The interpolation method (never {@code null}).
+     *
+     * @since 3.15
+     */
+    public InterpolationMethod getInterpolation() {
+        if (interpolation == null) {
+            interpolation = InterpolationMethod.NEAREST_NEIGHBOUR;
+        }
+        return interpolation;
+    }
+
+    /**
+     * Sets the interpolation method. As a convenience, the {@code null} value is considered
+     * as synonymous to nearest-neighbor. We allow that because {@code null} can be interpreted
+     * as "no interpolation".
+     * <p>
+     * The {@link InterpolationMethod#NEAREST_NEIGHBOUR} method shall be supported by all writers.
+     * Other interpolation methods may or may not be supported on a case-by-case basis, but the
+     * {@linkplain InterpolationMethod#BILINEAR} and {@linkplain InterpolationMethod#BICUBIC}
+     * methods can be considered as typically supported for {@linkplain ImageCoverageWriter
+     * image writers} backed by <cite>Java Advanced Imaging</cite>.
+     *
+     * @param method The interpolation method, or {@code null} for nearest-neighbor.
+     *
+     * @since 3.15
+     */
+    public void setInterpolation(final InterpolationMethod method) {
+        interpolation = method;
     }
 
     /**

@@ -37,6 +37,7 @@ import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
+import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.measure.Units;
 
 
@@ -207,6 +208,7 @@ public class NetcdfAxis extends NetcdfIdentifiedObject implements CoordinateSyst
      */
     @Override
     @SuppressWarnings({"unchecked","rawtypes"})
+    @Workaround(library="NetCDF", version="4.1")
     public synchronized Range<?> getOrdinateRangeAt(final int index)
             throws IndexOutOfBoundsException, UnsupportedOperationException
     {

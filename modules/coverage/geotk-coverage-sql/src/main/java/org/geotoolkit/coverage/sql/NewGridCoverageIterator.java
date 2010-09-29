@@ -17,40 +17,37 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.util.Map;
+import java.util.List;
+import java.util.Arrays;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
+import java.util.Collection;
 import java.io.IOException;
 import java.sql.SQLException;
-import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.IIOException;
-import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.stream.ImageInputStream;
 
 import org.opengis.util.FactoryException;
 
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.mosaic.Tile;
-import org.geotoolkit.internal.image.io.CheckedImageInputStream;
+import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
-import org.geotoolkit.util.collection.BackingStoreException;
-import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.resources.Errors;
 
 
 /**
  * An iterator creating {@link NewGridCoverageReference} on-the-fly using different input source.
- * The iterator reuse a unique {@link ImageReader} instance when possible. Each iterator is for a
- * single {@link SeriesEntry} only.
+ * For the sake of simplicity, this method does not have {@code hasNext()} method. Instead, the
+ * {@code #next()} method returns {@code null} when there is no more element to return.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.12
+ * @version 3.15
  *
  * @since 3.12 (derived from Seagis)
  * @module
  */
-final class NewGridCoverageIterator implements Iterator<NewGridCoverageReference> {
+final class NewGridCoverageIterator {
     /**
      * The object which contains the listeners. While we are keeping a reference to the
      * full {@link CoverageDatabase} objects, only the listeners are of interest to this
@@ -69,44 +66,11 @@ final class NewGridCoverageIterator implements Iterator<NewGridCoverageReference
     private final SpatialDatabase database;
 
     /**
-     * The series in which the images will be added, or {@code null} if unknown.
-     */
-    private final SeriesEntry series;
-
-    /**
-     * Index of image to read. Ignored if the inputs are {@link Tile} instances.
-     */
-    private final int imageIndex;
-
-    /**
-     * An iterator over the inputs to read. If elements are {@link java.util.Map.Entry}, then the
-     * key is selected as the input provided that the value is equals to the {@linkplain #series}.
-     * Otherwise the entry is discarded.
-     * <p>
-     * If {@link #series} if non-null, the {@link Iterator#remove} method will be invoked for each
-     * elements which has not been omitted. This is required by {@link WritableGridCoverageTable}.
-     * <p>
+     * An iterator over the inputs to read.
      * If input are {@link File} or {@link URI}, they shall be relative to current directory.
      * Inputs may also be {@link Tile} or {@link ImageReader} instances.
      */
     private final Iterator<?> inputToAdd;
-
-    /**
-     * The next entry to return, or {@code null} if we have reached the iteration end.
-     */
-    private NewGridCoverageReference next;
-
-    /**
-     * The image reader inferred from the information declared in the {@link SeriesEntry}.
-     * Will be created when first needed.
-     */
-    private ImageReader seriesReader;
-
-    /**
-     * The legal input types of the {@link #seriesReader}, or {@code null}.
-     * This is created when {@link #seriesReader} is initialized.
-     */
-    private Class<?>[] readerInputTypes;
 
     /**
      * Creates an iterator for the specified files.
@@ -116,50 +80,33 @@ final class NewGridCoverageIterator implements Iterator<NewGridCoverageReference
      *                    interest to this class.
      * @param  controller An optional controller to invoke before the listeners, or {@code null}.
      * @param  database   The database where new entries will be added. This is mandatory.
-     * @param  series     The series in which the images will be added, or {@code null} if unknown.
-     * @param  imageIndex Index of images to read. Ignored if the inputs are {@link Tile} instances.
-     * @param  inputToAdd The files to read. Iteration shall be at the second element.
-     * @param  input      The first element from the given iterator.
+     * @param  inputToAdd The files to read.
      * @throws IOException if an I/O operation was required and failed.
      */
     NewGridCoverageIterator(final CoverageDatabase           listeners,
                             final CoverageDatabaseController controller,
                             final SpatialDatabase            database,
-                            final SeriesEntry                series,
-                            final int                        imageIndex,
-                            final Iterator<?>                inputToAdd,
-                            Object input) throws SQLException, IOException, FactoryException
+                            final Collection<?>              inputToAdd)
+                            throws SQLException, IOException, FactoryException, DatabaseVetoException
     {
         this.listeners  = listeners;
         this.controller = controller;
         this.database   = database;
-        this.series     = series;
-        this.imageIndex = imageIndex;
-        this.inputToAdd = inputToAdd;
-        do {
-            next = createEntry(input);
-        } while (next == null && (input = nextInput()) != null);
+        this.inputToAdd = inputToAdd.iterator();
     }
 
     /**
-     * Returns {@code true} if there is more entry to iterate over.
-     */
-    @Override
-    public boolean hasNext() {
-        return next != null;
-    }
-
-    /**
-     * Creantes an entry for the given input.
+     * Creates an entry for the given input. If this method detects that there is many images
+     * in the file, then {@link CoverageDatabaseController#filterImages} is invoked. Finally,
+     * the {@link NewGridCoverageReference} constructor will fetch the image metadata.
      *
-     * @param  input The input, or {@code null} if none.
-     * @return The entry, or {@code null} if the given input should be skipped.
+     * @param  input The input.
+     * @return The entry.
      * @throws IOException if an I/O operation was required and failed.
      */
-    private NewGridCoverageReference createEntry(Object input) throws SQLException, IOException, FactoryException {
-        if (input == null) {
-            return null;
-        }
+    private NewGridCoverageReference createEntry(Object input)
+            throws SQLException, IOException, FactoryException, DatabaseVetoException
+    {
         if (input instanceof NewGridCoverageReference) {
             return (NewGridCoverageReference) input;
         }
@@ -170,95 +117,83 @@ final class NewGridCoverageIterator implements Iterator<NewGridCoverageReference
         if (input instanceof ImageReader) {
             reader = (ImageReader) input;
             input = reader.getInput();
-        } else if (series == null) {
-            reader = XImageIO.getReaderBySuffix(input, true, false);
         } else {
-            /*
-             * If we are adding into a specific series, use the reader of that series.
-             * We must set the input outself, as required by the NewGridCoverageReference
-             * constructor.
-             */
-            if (seriesReader == null) {
-                final String format = series.format.imageFormat;
-                final Iterator<ImageReader> it = ImageIO.getImageReadersByFormatName(format);
-                if (it.hasNext()) {
-                    seriesReader = it.next();
+            reader = XImageIO.getReaderBySuffix(input, true, false);
+        }
+        /*
+         * If there is many images, get the list of them. If the file is some format having
+         * named images (e.g. NetCDF files where images are actually NetCDF variables), then
+         * this is the list of those variables. Otherwise we generate a list with "Image 1",
+         * "Image 2", etc. items. After the list has been created, ask the controller to
+         * choose some images in that list. The selection may happen in a Swing GUI.
+         */
+        int imageIndex = 0;
+        if (controller != null) {
+            final int numImages = reader.getNumImages(true);
+            if (numImages > 1) {
+                final boolean multiSelectionAllowed = (reader instanceof NamedImageStore);
+                final List<String> variables;
+                if (multiSelectionAllowed) {
+                    variables = ((NamedImageStore) reader).getImageNames();
                 } else {
-                    throw new IIOException(Errors.format(Errors.Keys.UNKNOWN_IMAGE_FORMAT_$1, format));
+                    final String[] names = new String[numImages];
+                    final Vocabulary resources = Vocabulary.getResources(listeners.getLocale());
+                    for (int i=0; i<names.length; i++) {
+                        names[i] = resources.getString(Vocabulary.Keys.IMAGE_$1, i+1);
+                    }
+                    variables = Arrays.asList(names);
                 }
-                final ImageReaderSpi spi = seriesReader.getOriginatingProvider();
-                if (spi != null) {
-                    readerInputTypes = spi.getInputTypes();
+                final Collection<String> selected = controller.filterImages(variables, multiSelectionAllowed);
+                if (selected != null) {
+                    /*
+                     * At this point, the controller selected some images in the proposed list.
+                     * Get the image index of each selected item. If the image reader supports
+                     * named bands, each selected item will be a band of the only image to be
+                     * read. For example in a NetCDF file, the "U" and "V" variable may be two
+                     * bands of the same image. For any other kind of image reader, the selection
+                     * can contain only one image.
+                     */
+                    int numSelected = 0;
+                    final int[] index = new int[selected.size()];
+                    for (final String variable : selected) {
+                        if ((index[numSelected++] = variables.indexOf(variable)) < 0) {
+                            throw new IIOException(error(Errors.Keys.NO_SUCH_ELEMENT_$1, variable));
+                        }
+                    }
+                    if (numSelected != 0) {
+                        if (multiSelectionAllowed) {
+                            final String[] names = new String[numSelected];
+                            for (int i=0; i<names.length; i++) {
+                                names[i] = variables.get(index[i]);
+                            }
+                            final NamedImageStore store = (NamedImageStore) reader;
+                            store.setImageNames(names[0]);
+                            store.setBandNames(0, names);
+                        } else if (numSelected != 1) {
+                            throw new IIOException(error(Errors.Keys.UNEXPECTED_PARAMETER_$1, "images[2]"));
+                        } else {
+                            imageIndex = index[0];
+                        }
+                    }
                 }
             }
-            reader = seriesReader;
-            Object imageInput = input;
-            if (!Classes.isAssignableTo(input.getClass(), readerInputTypes)) {
-                if (Classes.isAssignableTo(ImageInputStream.class, readerInputTypes)) {
-                    imageInput = ImageIO.createImageInputStream(input);
-                    assert CheckedImageInputStream.isValid((ImageInputStream) (imageInput =
-                           CheckedImageInputStream.wrap((ImageInputStream) imageInput)));
-                }
-            }
-            // Need metadata, but no need for backward seeks.
-            reader.setInput(imageInput, true, false);
         }
         return new NewGridCoverageReference(database, reader, input, imageIndex);
     }
 
     /**
-     * Returns the next entry to add to the database.
-     */
-    @Override
-    public NewGridCoverageReference next() {
-        final NewGridCoverageReference entry = next;
-        if (entry == null) {
-            throw new NoSuchElementException();
-        }
-        next = null;
-        do {
-            final Object input = nextInput();
-            if (input == null) {
-                break;
-            }
-            try {
-                next = createEntry(input);
-            } catch (SQLException exception) { // TODO: multi-catch
-                // Will be unwrapped by WritableGridCoverageTable.
-                throw new BackingStoreException(exception);
-            } catch (IOException exception) {
-                throw new BackingStoreException(exception);
-            } catch (FactoryException exception) {
-                throw new BackingStoreException(exception);
-            }
-        } while (next == null);
-        entry.series = series;
-        return entry;
-    }
-
-    /**
      * Returns the next elements (skipping {@code null} values) from the {@link #inputToAdd}
-     * iterator, or {@code null} if we have reached the iteration end. The elements returned
-     * by this method may be removed from the backing collection; see {@link #inputToAdd} for
-     * more information.
+     * iterator, or {@code null} if we have reached the iteration end.
      *
      * @return The next input, or {@code null} if we have reached iteration end.
      */
-    private Object nextInput() {
+    public NewGridCoverageReference next()
+            throws SQLException, IOException, FactoryException, DatabaseVetoException
+    {
         while (inputToAdd.hasNext()) {
-            Object input = inputToAdd.next();
+            final Object input = inputToAdd.next();
             if (input != null) {
-                if (input instanceof Map.Entry<?,?>) {
-                    final Map.Entry<?,?> candidate = (Map.Entry<?,?>) input;
-                    if (series != null && !series.equals(candidate.getValue())) {
-                        continue;
-                    }
-                    input = candidate.getKey();
-                }
-                if (series != null) {
-                    inputToAdd.remove();
-                }
-                return input;
+                return createEntry(input);
             }
         }
         return null;
@@ -286,26 +221,9 @@ final class NewGridCoverageIterator implements Iterator<NewGridCoverageReference
     }
 
     /**
-     * Unsupported operation.
+     * Formats an error message for the given key.
      */
-    @Override
-    public void remove() {
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Returns a string representation for debugging purpose.
-     */
-    @Override
-    public String toString() {
-        final StringBuilder buffer = new StringBuilder(getClass().getSimpleName());
-        buffer.append('[');
-        if (series != null) {
-            buffer.append("series=\"").append(series).append("\", ");
-        }
-        if (seriesReader != null) {
-            buffer.append("reader=").append(seriesReader.getClass().getSimpleName()).append(", ");
-        }
-        return buffer.append("imageIndex=").append(imageIndex).append(']').toString();
+    private String error(final int key, final Object argument) {
+        return Errors.getResources(listeners.getLocale()).getString(key, argument);
     }
 }

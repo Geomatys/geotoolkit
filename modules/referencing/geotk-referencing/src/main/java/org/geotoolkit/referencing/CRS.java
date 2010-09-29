@@ -1102,9 +1102,10 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      * </ul>
      *
      * {@section Implementation note}
-     * If the given objects are instances of {@link AbstractIdentifiedObject}, then this method delegates to
-     * <code>{@link AbstractIdentifiedObject#equals(AbstractIdentifiedObject,boolean) equals}(..., false)</code>.
-     * Otherwise if the given objects are instances of {@link AbstractMathTransform}, then this method delegates to
+     * If the given objects are instances of {@link AbstractIdentifiedObject}, then this method
+     * delegates to <code>{@link AbstractIdentifiedObject#equals(AbstractIdentifiedObject,
+     * ComparisonMode) equals}(..., {@linkplain ComparisonMode#IGNORE_METADATA})</code>. Otherwise
+     * if the given objects are instances of {@link AbstractMathTransform}, then this method delegates to
      * <code>{@link AbstractMathTransform#equivalent(MathTransform,boolean) equivalent}(..., false)</code>.
      * The {@code false} boolean argument value in the later case explains why the comparison of math
      * transforms is only approximative. <strong>Note that it may change in a future release</strong>

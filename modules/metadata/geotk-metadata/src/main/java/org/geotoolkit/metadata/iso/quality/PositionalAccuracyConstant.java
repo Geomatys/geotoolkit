@@ -29,6 +29,7 @@ import org.opengis.metadata.quality.EvaluationMethodType;
 import org.opengis.metadata.quality.AbsoluteExternalPositionalAccuracy;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 
@@ -49,6 +50,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * @module
  */
 @ThreadSafe
+@Workaround(library="JDK", version="1.6")
 @XmlRootElement(name = "DQ_AbsoluteExternalPositionalAccuracy")
 final class PositionalAccuracyConstant extends AbstractPositionalAccuracy
        implements AbsoluteExternalPositionalAccuracy

@@ -665,8 +665,7 @@ public class MetadataHelper implements Localized {
                 final double[] fillValues = sd.getFillSampleValues();
                 if (fillValues != null) {
                     final CharSequence name = Category.NODATA.getName();
-                    for (int j=0; j<fillValues.length; j++) {
-                        final double fv = fillValues[i];
+                    for (final double fv : fillValues) {
                         final int ifv = (int) fv;
                         final Category c;
                         if (ifv == fv) {

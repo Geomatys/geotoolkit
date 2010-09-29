@@ -172,7 +172,7 @@ public abstract class IndexColorOperation extends Operation2D {
         final RenderedImage newImage = new NullOpImage(image, layout, null, OpImage.OP_COMPUTE_BOUND);
         final GridCoverage2D target = getFactory(hints).create(
                     source.getName(), newImage,
-                    source.getCoordinateReferenceSystem2D(),
+                    source.getCoordinateReferenceSystem(),
                     source.getGridGeometry().getGridToCRS(),
                     bands, new GridCoverage[] { source }, null);
         return target.view(targetView);

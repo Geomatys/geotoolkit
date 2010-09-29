@@ -111,7 +111,7 @@ import org.geotoolkit.resources.Errors;
  * a new window listing the coverages in the selected layer.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.15
  *
  * @since 3.11
  * @module
@@ -122,6 +122,15 @@ public class LayerList extends WindowCreator {
      * The default width and height.
      */
     private static final int WIDTH = 600, HEIGHT = 400;
+
+    /**
+     * The time resolution for computing the minimal and maximal time values.
+     * This is useful for avoiding the "Value out of bounds" message when the
+     * user validates the time range in {@link CoordinateChooser} and the default
+     * time values have seconds precision, while only minute precision is used in
+     * the widget.
+     */
+    private static final int TIME_RESOLUTION = 24*60*60*1000;
 
     /**
      * Action commands.
@@ -853,7 +862,12 @@ public class LayerList extends WindowCreator {
             int hide = 0;
             final CoordinateChooser domain;
             if (dateRange != null) {
-                domain = new CoordinateChooser(dateRange.getMinValue(), dateRange.getMaxValue());
+                final Date startTime = dateRange.getMinValue();
+                final Date   endTime = dateRange.getMaxValue();
+                domain = new CoordinateChooser(
+                        new Date((startTime.getTime() / TIME_RESOLUTION) * TIME_RESOLUTION),
+                        new Date(((endTime.getTime() + (TIME_RESOLUTION-1)) / TIME_RESOLUTION) * TIME_RESOLUTION));
+                domain.setTimeRange(startTime, endTime);
             } else {
                 domain = new CoordinateChooser();
                 hide = CoordinateChooser.TIME_RANGE;

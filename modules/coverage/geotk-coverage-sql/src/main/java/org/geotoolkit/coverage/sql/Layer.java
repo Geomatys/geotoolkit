@@ -205,7 +205,7 @@ public interface Layer {
     /**
      * Returns a reference to a coverage that intersect the given envelope. If more than one
      * coverage intersect the given envelope, then this method will select the one which seem
-     * the most repesentative. The criterion for this selection is implementation-dependant
+     * the most representative. The criterion for this selection is implementation-dependant
      * and may change in future versions.
      *
      * @param  envelope The envelope for filtering the coverages, or {@code null} for no
@@ -219,25 +219,31 @@ public interface Layer {
     /**
      * Adds new coverage references in the database. The new references are given by a collection
      * of inputs. Each input can be any of the following instances:
-     * <p>
+     *
      * <ul>
-     *   <li>{@link java.io.File}, {@link java.net.URL}, {@link java.net.URI} or
-     *       {@link String} instances.</li>
+     *   <li><p>{@link java.io.File}, {@link java.net.URL}, {@link java.net.URI} or
+     *       {@link String} instances.</p></li>
      *
-     *   <li>{@link org.geotoolkit.image.io.mosaic.Tile} instances, which will be added to the
-     *       {@code "GridCoverages"} table (not to the {@code "Tiles"} table).</li>
+     *   <li><p>{@link org.geotoolkit.image.io.mosaic.Tile} instances, which will be added to the
+     *       {@code "GridCoverages"} table (not to the {@code "Tiles"} table).</p></li>
      *
-     *   <li>{@link javax.imageio.ImageReader} instances with their
+     *   <li><p>{@link javax.imageio.ImageReader} instances with their
      *       {@linkplain javax.imageio.ImageReader#getInput() input} set and
      *       {@linkplain javax.imageio.ImageReader#getImageMetadata image metadata} conform to the Geotk
      *       {@linkplain org.geotoolkit.image.io.metadata.SpatialMetadata spatial metadata} format. The
      *       reader input shall be one of the above-cited instances. If this is not possible (for example
      *       because a {@link javax.imageio.stream.ImageInputStream} is required), consider wrapping
      *       the {@link javax.imageio.spi.ImageReaderSpi} and the input in a
-     *       {@link org.geotoolkit.image.io.mosaic.Tile} instance.</li>
+     *       {@link org.geotoolkit.image.io.mosaic.Tile} instance.</p></li>
      * </ul>
-     * <p>
+     *
      * This method will typically read only the required metadata rather than the full image.
+     *
+     * {@section Multi-images files}
+     * If a file contains more than one image, then the images to insert can be selected by
+     * the {@link CoverageDatabaseController#filterImages(List)} method. If no controller has
+     * been supplied, then the default behavior is to insert only the first image on the
+     * assumption that other images are typically error estimations or overviews.
      *
      * @param  files The image inputs.
      * @param  controller An optional controller to be notified when new references are added.

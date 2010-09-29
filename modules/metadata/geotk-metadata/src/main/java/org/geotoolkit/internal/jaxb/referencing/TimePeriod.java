@@ -29,6 +29,7 @@ import org.opengis.temporal.Position;
 
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.internal.jaxb.XmlUtilities;
+import org.geotoolkit.lang.Workaround;
 
 
 /**
@@ -40,12 +41,13 @@ import org.geotoolkit.internal.jaxb.XmlUtilities;
  * @since 3.00
  * @module
  *
- * TODO: The namespace of this class is set to {@link Namespaces#GMD} as a workaround. Actually we do
- *       that because we already have an other class in the GML binding of Constellation, and it falls on conflict.
- *       Remove the namespace, in order to fallback on GML, when the temporal implementation will have a floor
- *       in Geotk.
+ * @todo The namespace of this class is set to {@link Namespaces#GMD} as a workaround. Actually we
+ *       do that because we already have an other class in the GML binding of Constellation, and it
+ *       falls on conflict. Remove the namespace, in order to fallback on GML, when the temporal
+ *       implementation will have a floor in Geotk.
  */
 @XmlType(name = "TimePeriodType", propOrder = {"beginPosition", "endPosition", "begin", "end"}, namespace = Namespaces.GMD)
+@Workaround(library="Geotk", version="3.15")
 public final class TimePeriod {
     /**
      * The start time. This element is part of GML 3.1.1 specification.

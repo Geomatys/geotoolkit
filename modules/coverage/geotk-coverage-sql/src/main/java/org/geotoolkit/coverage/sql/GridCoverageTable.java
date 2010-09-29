@@ -321,8 +321,11 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
     }
 
     /**
-     * Returns an element for the given identifier. This method is not actually used except
-     * for testing purpose, but we override it anyway in order to ensure consistent behavior.
+     * Returns an element for the given identifier.
+     *
+     * @param identifier The filename as a {@link String} (in which case the series is
+     *        the {@linkplain #getSeries() current one} and the image index is 1) or a
+     *        {@link GridCoverageIdentifier} with all primary key values.
      */
     @Override
     public GridCoverageEntry getEntry(Comparable<?> identifier) throws SQLException {
@@ -330,8 +333,12 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
     }
 
     /**
-     * Tests if the given entry exists. This method is not actually used except for testing
-     * purpose, but we override it anyway in order to ensure consistent behavior.
+     * Tests if the given entry exists. This method does not attempt to create
+     * the entry and doesn't check if the entry is valid.
+     *
+     * @param identifier The filename as a {@link String} (in which case the series is
+     *        the {@linkplain #getSeries() current one} and the image index is 1) or a
+     *        {@link GridCoverageIdentifier} with all primary key values.
      */
     @Override
     public boolean exists(Comparable<?> identifier) throws SQLException {
@@ -339,8 +346,11 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
     }
 
     /**
-     * Delete the given entry. This method is not actually used except for testing purpose,
-     * but we override it anyway in order to ensure consistent behavior.
+     * Deletes the given entry.
+     *
+     * @param identifier The filename as a {@link String} (in which case the series is
+     *        the {@linkplain #getSeries() current one} and the image index is 1) or a
+     *        {@link GridCoverageIdentifier} with all primary key values.
      */
     @Override
     public int delete(Comparable<?> identifier) throws SQLException {
@@ -564,8 +574,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
      */
     private Comparable<?> toGridCoverageIdentifier(Comparable<?> identifier) throws SQLException {
         if (identifier instanceof CharSequence) {
-            identifier = new GridCoverageIdentifier(getSeries(), identifier.toString(),
-                    (short) 1, (short) 0, null); // GridGeometryEntry to be computed by createEntry.
+            identifier = new GridCoverageIdentifier(getSeries(), identifier.toString(), (short) 1);
         }
         return identifier;
     }

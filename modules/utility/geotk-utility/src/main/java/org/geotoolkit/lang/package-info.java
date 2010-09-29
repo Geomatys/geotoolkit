@@ -26,7 +26,7 @@
  * of their '<cite>Use</cite>" page content for convenience.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.04
+ * @version 3.11
  *
  * @since 3.00
  * @module

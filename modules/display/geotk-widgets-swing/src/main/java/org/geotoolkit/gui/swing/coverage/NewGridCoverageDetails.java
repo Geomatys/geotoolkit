@@ -19,7 +19,9 @@ package org.geotoolkit.gui.swing.coverage;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.EventQueue;
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.text.ParseException;
@@ -67,7 +69,7 @@ import org.geotoolkit.internal.swing.SwingUtilities;
  * Users can verify and modify those information before they are written in the database.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @since 3.12
  * @module
@@ -77,7 +79,8 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
     /**
      * Action commands.
      */
-    private static final String SELECT_FORMAT="SELECT_FORMAT", OK="OK", CANCEL="CANCEL";
+    private static final String SELECT_FORMAT="SELECT_FORMAT",
+            SELECT_VARIABLES="SELECT_VARIABLES", OK="OK", CANCEL="CANCEL";
 
     /**
      * The {@link CoverageList} that created this panel.
@@ -124,6 +127,13 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
      * The component for the definition of categories.
      */
     private final SampleDimensionPanel sampleDimensionEditor;
+
+    /**
+     * The variables selected by the user after the {@link #filterImages} method.
+     *
+     * @since 3.15
+     */
+    private transient List<String> selectedVariables;
 
     /**
      * The coverage reference in process of being edited, or {@code null} if none.
@@ -221,6 +231,25 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
     }
 
     /**
+     * Set the listeners of the "Ok" and "Cancel" buttons of the variable chooser.
+     * This method is invoked by {@link CoverageList#showFileChooser()} when first
+     * needed.
+     */
+    final void initVariableChooser(final JButton ok, final JButton cancel) {
+        for (final ActionListener listener : format.getActionListeners()) {
+            if (listener instanceof Listeners) {
+                final Listeners listeners = (Listeners) listener;
+                ok    .addActionListener(listeners);
+                cancel.addActionListener(listeners);
+                ok    .setActionCommand(SELECT_VARIABLES);
+                cancel.setActionCommand(CANCEL);
+                return;
+            }
+        }
+        throw new AssertionError();
+    }
+
+    /**
      * Listener for various action handled by the enclosing class.
      *
      * @todo switch(String) with Java 7.
@@ -230,17 +259,19 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
             final String action = event.getActionCommand();
             if (SELECT_FORMAT.equals(action)) {
                 formatSelected();
+            } else if (SELECT_VARIABLES.equals(action)) {
+                NewGridCoverageDetails.this.actionPerformed(1);
             } else if (OK.equals(action)) {
-                NewGridCoverageDetails.this.actionPerformed(true);
+                NewGridCoverageDetails.this.actionPerformed(2);
             } if (CANCEL.equals(action)) {
-                NewGridCoverageDetails.this.actionPerformed(false);
+                NewGridCoverageDetails.this.actionPerformed(0);
             }
         }
     }
 
     /**
      * Invoked when the user selected a format in the {@link JComboBox}, or when the format
-     * changed programatically. If the format changed, get the {@link GridSampleDimension}s
+     * changed programmatically. If the format changed, get the {@link GridSampleDimension}s
      * and updates the field with the new values.
      */
     private void formatSelected() {
@@ -294,9 +325,52 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
     }
 
     /**
+     * Invoked before {@link #coverageAdding} in order to let the user select a variable among
+     * a list of variables found in the file.
+     * <p>
+     * This method needs to be invoked in a thread different than the <cite>Swing</cite> thread.
+     *
+     * @param  images The variables found in the file.
+     * @param  multiSelectionAllowed {@code true} if the {@link JList} shall allow multi-selection.
+     * @return The variables selected by the user.
+     * @throws DatabaseVetoException If the user clicked on the "Cancel" button.
+     *
+     * @since 3.15
+     */
+    @Override
+    public synchronized Collection<String> filterImages(final List<String> images, final boolean multiSelectionAllowed)
+            throws DatabaseVetoException
+    {
+        assert !EventQueue.isDispatchThread();
+        SwingUtilities.invokeAndWait(new Runnable() {
+           @Override public void run() {
+               owner.showVariableChooser(images.toArray(new String[images.size()]), multiSelectionAllowed);
+           }
+        });
+        try {
+            wait(); // Weakup at the end of actionPerformed(boolean) below.
+        } catch (InterruptedException e) {
+            // This happen if the CoverageList frame has been closed
+            // by CoverageList.Listeners.ancestorRemoved(AncestorEvent).
+            throw new DatabaseVetoException(e);
+        }
+        /*
+         * At this point, we have been weakup by a button pressed by the user.
+         * If it was the "Ok" button, the fields are already updated (see the
+         * actionPerformed method below). If it was the "Cancel" button, then
+         * the reference has been set to null.
+         */
+        if (selectedVariables == null) {
+            throw new DatabaseVetoException();
+        }
+        return selectedVariables;
+    }
+
+    /**
      * Invoked when a new coverage is about to be added. This method set the fields value to
      * the values declared in the given {@code reference} argument, and shows the window.
-     * This method needs to be invoked in a thread different than <cite>Swing</cite>.
+     * <p>
+     * This method needs to be invoked in a thread different than the <cite>Swing</cite> thread.
      *
      * @throws DatabaseVetoException If the user clicked on the "Cancel" button.
      */
@@ -304,6 +378,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
     public synchronized void coverageAdding(final CoverageDatabaseEvent event, final NewGridCoverageReference reference)
             throws DatabaseVetoException
     {
+        assert !EventQueue.isDispatchThread();
         /*
          * Do not show the widget if this method is invoked after the insertion (because
          * it is too late for editing the values), or invoked for record removal.
@@ -334,7 +409,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
             }
         });
         try {
-            wait();
+            wait(); // Weakup at the end of actionPerformed(boolean) below.
         } catch (InterruptedException e) {
             // This happen if the CoverageList frame has been closed
             // by CoverageList.Listeners.ancestorRemoved(AncestorEvent).
@@ -354,49 +429,74 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
     /**
      * Invoked when the user pressed the "Ok" or "Cancel" button.
      *
-     * @param confirm {@code true} if the user pressed the "Ok" button,
-     *        or {@code false} if he pressed the "Cancel" button.
+     * @param action 0 if the user pressed the "Cancel" button,
+     *               1 if he confirmed the variable choice, or
+     *               2 if he confirmed the coverage insertion.
      */
-    private synchronized void actionPerformed(final boolean confirm) {
-        if (confirm) {
-            final NewGridCoverageReference reference = this.reference;
-            if (reference != null) try {
-                reference.format = (String) format.getSelectedItem();
-                reference.horizontalSRID = getSelectedCode(horizontalCRS);
-                reference.verticalSRID   = getSelectedCode(verticalCRS);
-                reference.sampleDimensions.clear();
-                sampleDimensionEditor.commitEdit();
-                final List<GridSampleDimension> bands = sampleDimensionEditor.getSampleDimensions();
-                if (bands != null) {
-                    final boolean isGeophysics = this.isGeophysics.isSelected();
-                    for (int i=bands.size(); --i>=0;) {
-                        bands.set(i, bands.get(i).geophysics(isGeophysics));
+    private synchronized void actionPerformed(final int action) {
+        switch (action) {
+            case 0: { // Cancel
+                selectedVariables = null;
+                reference = null;
+                break;
+            }
+            case 1: { // Confirm variable selection
+                selectedVariables = owner.getSelectedVariables();
+                break;
+            }
+            case 2: { // Confirm coverage insertion
+                final NewGridCoverageReference reference = this.reference;
+                if (reference != null) try {
+                    reference.format = (String) format.getSelectedItem();
+                    reference.horizontalSRID = getSelectedCode(horizontalCRS);
+                    reference.verticalSRID   = getSelectedCode(verticalCRS);
+                    reference.sampleDimensions.clear();
+                    sampleDimensionEditor.commitEdit();
+                    final List<GridSampleDimension> bands = sampleDimensionEditor.getSampleDimensions();
+                    if (bands != null) {
+                        final boolean isGeophysics = this.isGeophysics.isSelected();
+                        for (int i=bands.size(); --i>=0;) {
+                            bands.set(i, bands.get(i).geophysics(isGeophysics));
+                        }
+                        reference.sampleDimensions.addAll(bands);
                     }
-                    reference.sampleDimensions.addAll(bands);
+                } catch (NumberFormatException e) {
+                    // Do not weakup the sleeping thread.
+                    // User will need to make an other selection.
+                    return;
+                } catch (ParseException e) {
+                    return;
                 }
-            } catch (NumberFormatException e) {
-                // Do not weakup the sleeping thread.
-                // User will need to make an other selection.
-                return;
-            } catch (ParseException e) {
-                return;
+                /*
+                 * Perform some validity checks on user arguments.
+                 */
+                if (reference.horizontalSRID == 0) {
+                    incompleteForm(0);
+                    // Do no weakup the sleeping thread.
+                    return;
+                }
+                if (reference.verticalSRID == 0 && reference.verticalValues != null) {
+                    incompleteForm(1);
+                    // Do no weakup the sleeping thread.
+                    return;
+                }
+                break;
             }
-            /*
-             * Perform some validity checks on user arguments.
-             */
-            if (reference.horizontalSRID == 0) {
-                final Widgets resources = Widgets.getResources(getLocale());
-                final JXLabel label = new JXLabel(resources.getString(Widgets.Keys.HORIZONTAL_CRS_REQUIRED));
-                final String  title = resources.getString(Widgets.Keys.INCOMPLETE_FORM);
-                label.setLineWrap(true);
-                getWindowHandler().showError(this, label, title);
-                // Do no weakup the sleeping thread.
-                return;
-            }
-        } else {
-            reference = null;
         }
         notifyAll(); // Weakup the sleeping 'coverageAdding' method.
+    }
+
+    /**
+     * Invoked when the widget can not process because of missing information in the form.
+     *
+     * @param crsType 0 for horizontal CRS, or 1 for vertical CRS.
+     */
+    private void incompleteForm(final int crsType) {
+        final Widgets resources = Widgets.getResources(getLocale());
+        final JXLabel label = new JXLabel(resources.getString(Widgets.Keys.CRS_REQUIRED_$1, crsType));
+        final String  title = resources.getString(Widgets.Keys.INCOMPLETE_FORM);
+        label.setLineWrap(true);
+        getWindowHandler().showError(this, label, title);
     }
 
     /**

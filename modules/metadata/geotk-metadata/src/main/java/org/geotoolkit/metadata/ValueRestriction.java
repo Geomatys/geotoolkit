@@ -65,7 +65,7 @@ public class ValueRestriction implements Serializable {
     private static final long serialVersionUID = 888961503200860655L;
 
     /**
-     * A sentinal value meaning that the restriction has not yet been calculated.
+     * A sentinel value meaning that the restriction has not yet been calculated.
      */
     static final ValueRestriction PENDING = new ValueRestriction(null, null, null);
 

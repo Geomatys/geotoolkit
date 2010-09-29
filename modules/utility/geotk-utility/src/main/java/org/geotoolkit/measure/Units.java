@@ -32,6 +32,7 @@ import javax.measure.quantity.Quantity;
 import javax.measure.converter.UnitConverter;
 
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.resources.Errors;
 
 
@@ -290,6 +291,7 @@ public final class Units {
      *
      * @since 3.07
      */
+    @Workaround(library="Units", version="0.9.3")
     public static double derivative(final UnitConverter converter, final double value) {
         return converter.convert(value + 1) - converter.convert(value);
     }

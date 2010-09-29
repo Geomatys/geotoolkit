@@ -258,6 +258,8 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * @return The number of dimension for the image at the given index.
      * @throws IOException if an error occurs reading the information from the input source.
      *
+     * @see MultidimensionalImageStore
+     *
      * @since 2.5
      */
     public int getDimension(final int imageIndex) throws IOException {
@@ -715,12 +717,17 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
             MetadataHelper helper = null;              // To be created only if needed.
             final int numMetadataBands = bands.size(); // Never 0 - check was performed above.
             for (int i=0; i<numBands; i++) {
-                final int bandIndex = convertBandIndices ? sourceBands[i] : i;
+                int bandIndex = convertBandIndices ? sourceBands[i] : i;
                 if (bandIndex < 0 || bandIndex >= numMetadataBands) {
-                    Warnings.log(this, null, SpatialImageReader.class, "getImageType",
-                            indexOutOfBounds(bandIndex, 0, numMetadataBands));
+                    if (numMetadataBands != 1) {
+                        // If there is exactly one metadata band, don't log any warning since
+                        // we will assume that the metadata band apply to all data bands.
+                        Warnings.log(this, null, SpatialImageReader.class, "getImageType",
+                                indexOutOfBounds(bandIndex, 0, numMetadataBands));
+                    }
+                    bandIndex = numMetadataBands - 1;
                 }
-                final SampleDomain band = bands.get(Math.min(bandIndex, numMetadataBands-1));
+                final SampleDomain band = bands.get(bandIndex);
                 final double[] fillValues = band.getFillSampleValues();
                 final NumberRange<?> range;
                 if (band instanceof SampleDimension) {

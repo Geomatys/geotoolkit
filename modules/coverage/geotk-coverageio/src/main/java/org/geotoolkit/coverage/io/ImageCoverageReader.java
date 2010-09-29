@@ -53,7 +53,6 @@ import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.image.io.DimensionSlice.API;
 import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.SampleConversionType;
@@ -875,14 +874,10 @@ public class ImageCoverageReader extends GridCoverageReader {
          * in order to make them unsigned. We will allow such offset if the SampleDimensions
          * declare unsigned range of sample values.
          */
-        int imageIndex = index; // Temporary workaround for GEOTK-114 (TODO).
         boolean usePaletteFactory = false;
         final GridSampleDimension[] bands = getSampleDimensions(index, srcBands, dstBands);
         if (imageParam instanceof SpatialImageReadParam) {
             final SpatialImageReadParam sp = (SpatialImageReadParam) imageParam;
-            if (sp.getDimensionSliceForAPI(API.IMAGES) != null) {
-                imageIndex = 0; // Temporary workaround for GEOTK-114 (TODO).
-            }
             if (!isRangeSigned(bands)) {
                 sp.setSampleConversionAllowed(SampleConversionType.SHIFT_SIGNED_INTEGERS, true);
             }
@@ -892,9 +887,7 @@ public class ImageCoverageReader extends GridCoverageReader {
              * which will create the IndexColorModel (if needed) from the GridSampleDimension.
              */
             if (bands != null && imageReader instanceof SpatialImageReader) try {
-                // TODO: The 'imageIndex' argument should really be 'index'.
-                // Revisit when GEOTK-114 has been fixed.
-                usePaletteFactory = !((SpatialImageReader) imageReader).hasColors(imageIndex);
+                usePaletteFactory = !((SpatialImageReader) imageReader).hasColors(index);
             } catch (IOException e) {
                 throw new CoverageStoreException(formatErrorMessage(e), e);
             }
@@ -910,10 +903,9 @@ public class ImageCoverageReader extends GridCoverageReader {
         final String name;
         final RenderedImage image;
         try {
+            final List<String> names = getCoverageNames();
             try {
-                // TODO: The 'imageIndex' argument should really be 'index'.
-                // Revisit when GEOTK-114 has been fixed.
-                name = getCoverageNames().get(imageIndex);
+                name = (index < names.size()) ? names.get(index) : null;
             } catch (BackingStoreException e) {
                 throw e.unwrapOrRethrow(IOException.class);
             }

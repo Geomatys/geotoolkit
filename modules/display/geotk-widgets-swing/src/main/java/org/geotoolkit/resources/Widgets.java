@@ -74,6 +74,11 @@ public final class Widgets extends IndexedResourceBundle {
         public static final int CONFIRM_DELETE_LAYER_$1 = 7;
 
         /**
+         * A {0,choice,0#horizontal|1#vertical} Coordinate Reference System must be specified.
+         */
+        public static final int CRS_REQUIRED_$1 = 16;
+
+        /**
          * Domain of entries to list
          */
         public static final int DOMAIN_OF_ENTRIES = 8;
@@ -84,11 +89,6 @@ public final class Widgets extends IndexedResourceBundle {
          * available in the layer.
          */
         public static final int EXPLAIN_DOMAIN_OF_ENTRIES = 11;
-
-        /**
-         * A horizontal Coordinate Reference System must be specified.
-         */
-        public static final int HORIZONTAL_CRS_REQUIRED = 16;
 
         /**
          * Incomplete form
@@ -134,6 +134,11 @@ public final class Widgets extends IndexedResourceBundle {
          * Select a file
          */
         public static final int SELECT_FILE = 12;
+
+        /**
+         * Select variables
+         */
+        public static final int SELECT_VARIABLES = 18;
 
         /**
          * <html><i>from</i> {0}<br><i>to</i> {1}</html>

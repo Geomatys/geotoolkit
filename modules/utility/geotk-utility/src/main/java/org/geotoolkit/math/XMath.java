@@ -19,6 +19,7 @@ package org.geotoolkit.math;
 
 import java.util.Arrays;
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
@@ -159,6 +160,7 @@ public final class XMath {
      * @param x The exponent.
      * @return 10 raised to the given exponent.
      */
+    @Workaround(library="JDK", version="1.4")
     public static strictfp double pow10(final int x) {
         if (x >= 0) {
             if (x < POW10.length) {
@@ -172,7 +174,7 @@ public final class XMath {
         }
         try {
             /*
-             * Double.parseDouble("1E"+x) give gives as good or better numbers than Math.pow(10,x)
+             * Double.parseDouble("1E"+x) gives as good or better numbers than Math.pow(10,x)
              * for ALL integer powers, but is slower. We hope that the current workaround is only
              * temporary. See http://developer.java.sun.com/developer/bugParade/bugs/4358794.html
              */

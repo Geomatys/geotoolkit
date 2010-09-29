@@ -158,9 +158,9 @@ public class StressorGroup<S extends Stressor> implements Runnable, ThreadFactor
      */
     @Override
     public void run() {
-        final long startTime = System.currentTimeMillis();
+        final long startTime = System.nanoTime();
         for (final Stressor stressor : stressors) {
-            stressor.stopTime = startTime + duration;
+            stressor.stopTime = startTime + duration * 1000000;
         }
         final List<Future<Statistics>> tasks;
         try {
@@ -176,15 +176,15 @@ public class StressorGroup<S extends Stressor> implements Runnable, ThreadFactor
             return;
         }
         err.flush();
-        final Statistics  statsRaw   = new Statistics();
-        final Statistics  statsByMpx = new Statistics();
-        final TableWriter table      = new TableWriter(out);
-        final PrintWriter printer    = new PrintWriter(new ExpandedTabWriter(table, 2));
+        final Statistics  responseTime = new Statistics();
+        final Statistics  throughput   = new Statistics();
+        final TableWriter table        = new TableWriter(out);
+        final PrintWriter printer      = new PrintWriter(new ExpandedTabWriter(table, 2));
         table.setMultiLinesCells(true);
         table.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
-        table.write("Thread");       table.nextColumn();
-        table.write("Time (ms)");    table.nextColumn();
-        table.write("Time (ms/Mb)"); table.nextColumn();
+        table.write("Thread");            table.nextColumn();
+        table.write("Time (ms)");         table.nextColumn();
+        table.write("Throughput (/min)"); table.nextColumn();
         table.nextLine();
         table.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
         final int numTasks = stressors.size();
@@ -202,20 +202,21 @@ public class StressorGroup<S extends Stressor> implements Runnable, ThreadFactor
                 e.getCause().printStackTrace(printer);
             }
             if (statistics != null) {
-                statsRaw.add(statistics);
-                statsByMpx.add(stressor.statsByMpx);
+                responseTime.add(statistics);
                 printer.print(statistics);
                 table.nextColumn();
-                printer.print(stressor.statsByMpx);
+                final double th = statistics.count() / statistics.sum() * 60000;
+                throughput.add(th);
+                printer.print((float) th);
             }
             table.nextLine();
             table.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
         }
         printer.print("Global");
         table.nextColumn();
-        printer.print(statsRaw);
+        printer.print(responseTime);
         table.nextColumn();
-        printer.print(statsByMpx);
+        printer.print(throughput);
         table.nextLine();
         table.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
         printer.flush();

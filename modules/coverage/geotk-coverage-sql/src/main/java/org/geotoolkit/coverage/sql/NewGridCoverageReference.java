@@ -121,13 +121,6 @@ public final class NewGridCoverageReference {
     private final SpatialDatabase database;
 
     /**
-     * The series in which the images will be added, or {@code null} if unknown.
-     * This field may be set explicitly by {@link WritableGridCoverageIterator},
-     * and is read by {@link WritableGridCoverageTable}.
-     */
-    SeriesEntry series;
-
-    /**
      * The path to the coverage file (not including the filename), or {@code null} if the filename
      * has no parent directory.
      * <p>
@@ -149,6 +142,13 @@ public final class NewGridCoverageReference {
      * The filename extension (not including the leading dot), or {@code null} if none.
      */
     public final String extension;
+
+    /**
+     * The zero-based index of the image to be inserted in the database. If there is many
+     * images to insert for many different {@linkplain #dateRanges dates}, then this is
+     * the index of the first image.
+     */
+    final int imageIndex;
 
     /**
      * The name of the coverage format. It shall be one of the primary key values in the
@@ -302,6 +302,7 @@ public final class NewGridCoverageReference {
             throws SQLException, IOException, FactoryException
     {
         this.database = database;
+        this.imageIndex = imageIndex;
         /*
          * Get the input, which must be an instance of File.
          * Split that input file into the path components.
@@ -767,9 +768,8 @@ fill:   for (int i=0; ;i++) {
             final String label;
             final Object value;
             switch (i) {
-                case 0: label="series"; value=series;    break;
-                case 1: label="format"; value=format;    break;
-                case 2: label="file";   value=getFile(); break;
+                case 0: label="format"; value=format;    break;
+                case 1: label="file";   value=getFile(); break;
                 default: break fill;
             }
             if (value != null) {

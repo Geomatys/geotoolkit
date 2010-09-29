@@ -29,6 +29,7 @@ import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
+import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.internal.swing.InternalWindowListener;
 import org.geotoolkit.internal.swing.SwingUtilities;
@@ -268,6 +269,7 @@ public abstract class WindowCreator extends JComponent {
          * the {@code owner} ancestor.
          */
         @Override
+        @Workaround(library="MacOS", version="10.5")
         public boolean showDialog(Component owner, final Component content, final String title) {
             // Workaround for the Mac L&F, where the internal dialog box has no border
             // and can not be moved. We will use a native dialog window instead.
