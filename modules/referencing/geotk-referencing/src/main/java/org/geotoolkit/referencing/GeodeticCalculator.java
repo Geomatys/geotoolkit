@@ -51,7 +51,6 @@ import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.TransformedDirectPosition;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
-import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
@@ -508,9 +507,8 @@ public class GeodeticCalculator {
     public GeographicCRS getGeographicCRS() {
         if (geographicCRS == null) {
             final String name = Vocabulary.format(Vocabulary.Keys.GEODETIC_2D);
-            geographicCRS = new DefaultGeographicCRS(name,
-                    new DefaultGeodeticDatum(name, getEllipsoid(), DefaultPrimeMeridian.GREENWICH),
-                        DefaultEllipsoidalCS.GEODETIC_2D);
+            geographicCRS = new DefaultGeographicCRS(name, new DefaultGeodeticDatum(
+                    name, getEllipsoid()), DefaultEllipsoidalCS.GEODETIC_2D);
         }
         return geographicCRS;
     }

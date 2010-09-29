@@ -50,7 +50,7 @@ import org.geotoolkit.lang.Immutable;
  * system centered in this ellipsoid (or sphere).
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @see Ellipsoid
  * @see PrimeMeridian
@@ -73,6 +73,9 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
     /**
      * Default WGS 1984 datum (EPSG:6326).
      * Prime meridian is {@linkplain DefaultPrimeMeridian#GREENWICH Greenwich}.
+     *
+     * @see DefaultEllipsoid#WGS84
+     * @see org.geotoolkit.referencing.crs.DefaultGeographicCRS#WGS84
      */
     public static final DefaultGeodeticDatum WGS84;
     static {
@@ -85,16 +88,18 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
             new NamedIdentifier(Citations.ESRI,   "D_WGS_1984"),
             new NamedIdentifier(Citations.EPSG,   "World Geodetic System 1984")
         };
-        final Map<String,Object> properties = new HashMap<String,Object>(4);
+        final Map<String,Object> properties = new HashMap<String,Object>(6);
         properties.put(NAME_KEY,  identifiers[0]);
         properties.put(ALIAS_KEY, identifiers);
-        WGS84 = new DefaultGeodeticDatum(properties, DefaultEllipsoid.WGS84,
-                                         DefaultPrimeMeridian.GREENWICH);
+        properties.put(IDENTIFIERS_KEY, new NamedIdentifier(Citations.EPSG, "6326"));
+        WGS84 = new DefaultGeodeticDatum(properties, DefaultEllipsoid.WGS84);
     }
 
     /**
      * Default WGS 1972 datum (EPSG:6322).
      * Prime meridian is {@linkplain DefaultPrimeMeridian#GREENWICH Greenwich}.
+     *
+     * @see DefaultEllipsoid#WGS72
      *
      * @since 3.00
      */
@@ -104,12 +109,27 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
             new NamedIdentifier(Citations.OGC,  "WGS72"),
             new NamedIdentifier(Citations.EPSG, "World Geodetic System 1972")
         };
-        final Map<String,Object> properties = new HashMap<String,Object>(4);
+        final Map<String,Object> properties = new HashMap<String,Object>(6);
         properties.put(NAME_KEY,  identifiers[0]);
         properties.put(ALIAS_KEY, identifiers);
-        WGS72 = new DefaultGeodeticDatum(properties, DefaultEllipsoid.WGS72,
-                                         DefaultPrimeMeridian.GREENWICH);
+        properties.put(IDENTIFIERS_KEY, new NamedIdentifier(Citations.EPSG, "6322"));
+        WGS72 = new DefaultGeodeticDatum(properties, DefaultEllipsoid.WGS72);
     }
+
+    /**
+     * Default spherical datum.
+     * Prime meridian is {@linkplain DefaultPrimeMeridian#GREENWICH Greenwich}.
+     *
+     * {@note This datum is close, but not identical, to the datum based on GRS 1980
+     *        Authalic Sphere (EPSG:6047).}
+     *
+     * @see DefaultEllipsoid#SPHERE
+     * @see org.geotoolkit.referencing.crs.DefaultGeographicCRS#SPHERE
+     *
+     * @since 3.15
+     */
+    public static final DefaultGeodeticDatum SPHERE = new DefaultGeodeticDatum(
+            getProperties(DefaultEllipsoid.SPHERE), DefaultEllipsoid.SPHERE);
 
     /**
      * The <code>{@value #BURSA_WOLF_KEY}</code> property for
@@ -161,11 +181,40 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
     }
 
     /**
-     * Constructs a geodetic datum from a name.
+     * Constructs a geodetic datum using the {@linkplain DefaultPrimeMeridian#GREENWICH Greenwich}
+     * prime meridian. This is a convenience constructor for the very common case where the prime
+     * meridian is the Greenwich one.
+     *
+     * @param name      The datum name.
+     * @param ellipsoid The ellipsoid.
+     *
+     * @since 3.15
+     */
+    public DefaultGeodeticDatum(final String name, final Ellipsoid ellipsoid) {
+        this(name, ellipsoid, DefaultPrimeMeridian.GREENWICH);
+    }
+
+    /**
+     * Constructs a geodetic datum using the {@linkplain DefaultPrimeMeridian#GREENWICH Greenwich}
+     * prime meridian. This is a convenience constructor for the very common case where the prime
+     * meridian is the Greenwich one.
+     *
+     * @param properties Set of properties. Should contains at least {@code "name"}.
+     * @param ellipsoid  The ellipsoid.
+     *
+     * @since 3.15
+     */
+    public DefaultGeodeticDatum(final Map<String,?> properties, final Ellipsoid ellipsoid) {
+        this(properties, ellipsoid, DefaultPrimeMeridian.GREENWICH);
+    }
+
+    /**
+     * Constructs a geodetic datum from a name and the given prime meridian.
      *
      * @param name          The datum name.
      * @param ellipsoid     The ellipsoid.
-     * @param primeMeridian The prime meridian.
+     * @param primeMeridian The prime meridian. If omitted, the default is
+     *                      {@linkplain DefaultPrimeMeridian#GREENWICH Greenwich}.
      */
     public DefaultGeodeticDatum(final String        name,
                                 final Ellipsoid     ellipsoid,
@@ -177,7 +226,7 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
     /**
      * Constructs a geodetic datum from a set of properties. The properties map is given
      * unchanged to the {@linkplain AbstractDatum#AbstractDatum(Map) super-class constructor}.
-     * Additionally, the following properties are understood by this construtor:
+     * Additionally, the following properties are understood by this constructor:
      * <p>
      * <table border='1'>
      *   <tr bgcolor="#CCCCFF" class="TableHeadingColor">
@@ -194,7 +243,8 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
      *
      * @param properties    Set of properties. Should contains at least {@code "name"}.
      * @param ellipsoid     The ellipsoid.
-     * @param primeMeridian The prime meridian.
+     * @param primeMeridian The prime meridian. If omitted, the default is
+     *                      {@linkplain DefaultPrimeMeridian#GREENWICH Greenwich}.
      */
     public DefaultGeodeticDatum(final Map<String,?> properties,
                                 final Ellipsoid     ellipsoid,
@@ -453,7 +503,7 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
      * {@linkplain #getRemarks remarks} and the like are not taken in account. In
      * other words, two geodetic datums will return the same hash value if they
      * are equal in the sense of
-     * <code>{@link #equals equals}(AbstractIdentifiedObject, <strong>false</strong>)</code>.
+     * <code>{@linkplain #equals equals}(AbstractIdentifiedObject, <strong>false</strong>)</code>.
      *
      * @return The hash code value. This value doesn't need to be the same
      *         in past or future versions of this class.

@@ -50,7 +50,6 @@ import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 
@@ -159,8 +158,7 @@ public final class IGNF extends DirectAuthorityFactory implements CRSAuthorityFa
         // Creates the datum
         final Map<String,Object> properties = new HashMap<String,Object>(4);
         properties.put(DefaultGeodeticDatum.NAME_KEY, new NamedIdentifier(Citations.OGC, "GRS80"));
-        final DefaultGeodeticDatum datum = new DefaultGeodeticDatum(properties,
-                DefaultEllipsoid.GRS80, DefaultPrimeMeridian.GREENWICH);
+        final DefaultGeodeticDatum datum = new DefaultGeodeticDatum(properties, DefaultEllipsoid.GRS80);
 
         // Creates the projection.
         final ParameterValueGroup param = factories.getMathTransformFactory().getDefaultParameters((String) value);

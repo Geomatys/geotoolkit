@@ -36,7 +36,6 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.resources.Errors;
@@ -404,8 +403,7 @@ public final class CRSUtilities {
         }
         GeodeticDatum geoDatum = (GeodeticDatum) datum;
         if (geoDatum.getPrimeMeridian().getGreenwichLongitude() != 0) {
-            geoDatum = new DefaultGeodeticDatum(geoDatum.getName().getCode(),
-                    geoDatum.getEllipsoid(), DefaultPrimeMeridian.GREENWICH);
+            geoDatum = new DefaultGeodeticDatum(geoDatum.getName().getCode(), geoDatum.getEllipsoid());
         } else if (crs instanceof GeographicCRS) {
             if (CRS.equalsIgnoreMetadata(DefaultEllipsoidalCS.GEODETIC_2D, crs.getCoordinateSystem())) {
                 return (GeographicCRS) crs;

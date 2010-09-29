@@ -50,7 +50,6 @@ import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.Matrix4;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
@@ -492,7 +491,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
 
         /** Wrap the specified datum. */
         public TemporaryDatum(final GeodeticDatum datum) {
-            super(getTemporaryName(datum), datum.getEllipsoid(), DefaultPrimeMeridian.GREENWICH);
+            super(getTemporaryName(datum), datum.getEllipsoid());
             this.datum = datum;
         }
 

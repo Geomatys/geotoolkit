@@ -22,6 +22,7 @@ package org.geotoolkit.referencing.datum;
 
 import java.awt.geom.Point2D;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
@@ -40,7 +41,9 @@ import org.geotoolkit.internal.jaxb.referencing.datum.SecondDefiningParameter;
 import org.geotoolkit.internal.jaxb.uom.Measure;
 import org.geotoolkit.measure.CoordinateFormat;
 import org.geotoolkit.referencing.ComparisonMode;
+import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
@@ -61,7 +64,7 @@ import org.geotoolkit.lang.Immutable;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @since 1.2
  * @module
@@ -79,48 +82,75 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
     private static final long serialVersionUID = -1149451543954764081L;
 
     /**
+     * Returns a properties map with the given name and EPSG code.
+     * This is used for the creation of default ellipsoid constants.
+     */
+    private static Map<String,?> properties(final String name, final int code, final Object alias) {
+        final Map<String,Object> map = new HashMap<String,Object>(4);
+        map.put(NAME_KEY, name);
+        map.put(IDENTIFIERS_KEY, new NamedIdentifier(Citations.EPSG, String.valueOf(code)));
+        if (alias != null) {
+            map.put(ALIAS_KEY, alias);
+        }
+        return map;
+    }
+
+    /**
      * WGS 1984 ellipsoid (EPSG:7030) with axis in {@linkplain SI#METRE metres}. This ellipsoid
      * is used in GPS systems and is the default for most {@code org.geotoolkit} packages.
+     *
+     * @see DefaultGeodeticDatum#WGS84
      */
-    public static final DefaultEllipsoid WGS84 =
-            createFlattenedSphere("WGS84", 6378137.0, 298.257223563, SI.METRE);
+    public static final DefaultEllipsoid WGS84 = createFlattenedSphere(
+            properties("WGS84", 7030, "WGS 1984"), 6378137.0, 298.257223563, SI.METRE);
 
     /**
      * WGS 1972 ellipsoid (EPSG:7043) with axis in {@linkplain SI#METRE metres}.
      *
+     * @see DefaultGeodeticDatum#WGS72
+     *
      * @since 3.00
      */
-    public static final DefaultEllipsoid WGS72 =
-            createFlattenedSphere("WGS72", 6378135.0, 298.26, SI.METRE);
+    public static final DefaultEllipsoid WGS72 = createFlattenedSphere(
+            properties("WGS72", 7043, "WGS 1972"), 6378135.0, 298.26, SI.METRE);
 
     /**
-     * GRS 80 ellipsoid with axis in {@linkplain SI#METRE metres}.
+     * GRS 1980 ellipsoid (EPSG:7019) with axis in {@linkplain SI#METRE metres}.
+     *
+     * {@note This is also called "<cite>International 1979</cite>".}
      *
      * @since 2.2
      */
-    public static final DefaultEllipsoid GRS80 =
-            createFlattenedSphere("GRS80", 6378137.0, 298.257222101, SI.METRE);
+    public static final DefaultEllipsoid GRS80 = createFlattenedSphere(
+            properties("GRS80", 7019, new String[] {"GRS 1980", "International 1979"}),
+            6378137.0, 298.257222101, SI.METRE);
 
     /**
-     * International 1924 ellipsoid with axis in {@linkplain SI#METRE metres}.
-     * Note that the <cite>European Datum 1950</cite> ellipsoid uses the same
-     * semi-axis length and units.
+     * International 1924 ellipsoid (EPSG:7022) with axis in {@linkplain SI#METRE metres}.
+     *
+     * {@note The <cite>European Datum 1950</cite> ellipsoid uses the same
+     *        semi-axis length and units.}
      */
-    public static final DefaultEllipsoid INTERNATIONAL_1924 =
-            createFlattenedSphere("International 1924", 6378388.0, 297.0, SI.METRE);
+    public static final DefaultEllipsoid INTERNATIONAL_1924 = createFlattenedSphere(
+            properties("International 1924", 7022, null), 6378388.0, 297.0, SI.METRE);
 
     /**
-     * Clarke 1866 ellipsoid with axis in {@linkplain SI#METRE metres}.
+     * Clarke 1866 ellipsoid (EPSG:7008) with axis in {@linkplain SI#METRE metres}.
      *
      * @since 2.2
      */
-    public static final DefaultEllipsoid CLARKE_1866 =
-            createFlattenedSphere("Clarke 1866", 6378206.4, 294.9786982, SI.METRE);
+    public static final DefaultEllipsoid CLARKE_1866 = createEllipsoid(
+            properties("Clarke 1866", 7008, null), 6378206.4, 6356583.8 , SI.METRE);
 
     /**
      * A sphere with a radius of 6371000 {@linkplain SI#METRE metres}. Spheres use a simplier
      * algorithm for {@linkplain #orthodromicDistance orthodromic distance computation}, which
      * may be faster and more robust.
+     *
+     * {@note This ellipsoid is close to the <cite>GRS 1980 Authalic Sphere</cite> (EPSG:7048),
+     *        which has a radius of 6371007 metres.}
+     *
+     * @see DefaultGeodeticDatum#SPHERE
      */
     public static final DefaultEllipsoid SPHERE =
             createEllipsoid("SPHERE", 6371000, 6371000, SI.METRE);
