@@ -26,8 +26,10 @@ import org.geotoolkit.display2d.style.CachedPolygonSymbolizer;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.map.MapLayer;
+import org.opengis.style.Fill;
 
 import org.opengis.style.PolygonSymbolizer;
+import org.opengis.style.Stroke;
 
 /**
  * @author Johann Sorel (Geomatys)
@@ -80,8 +82,14 @@ public class DefaultPolygonSymbolizerRendererService extends AbstractSymbolizerR
         shape.setOriginalShape(GO2Utilities.GLYPH_POLYGON);
         shape.setTransform(affine);
 
-        GO2Utilities.renderFill(shape, symbol.getSource().getFill(), g);
-        GO2Utilities.renderStroke(shape, symbol.getSource().getStroke(), symbol.getSource().getUnitOfMeasure(), g);
+        final Fill fill = symbol.getSource().getFill();
+        final Stroke stroke = symbol.getSource().getStroke();
+        if(fill != null){
+            GO2Utilities.renderFill(shape, symbol.getSource().getFill(), g);
+        }
+        if(stroke != null){
+            GO2Utilities.renderStroke(shape, symbol.getSource().getStroke(), symbol.getSource().getUnitOfMeasure(), g);
+        }
     }
 
 }
