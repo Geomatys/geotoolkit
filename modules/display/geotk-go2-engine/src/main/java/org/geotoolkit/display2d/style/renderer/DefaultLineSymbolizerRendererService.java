@@ -71,14 +71,6 @@ public class DefaultLineSymbolizerRendererService extends AbstractSymbolizerRend
      * {@inheritDoc }
      */
     @Override
-    public Rectangle2D glyphPreferredSize(CachedLineSymbolizer symbol, MapLayer layer) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public void glyph(Graphics2D g, Rectangle2D rectangle, CachedLineSymbolizer symbol, MapLayer layer) {
         final AffineTransform affine = new AffineTransform(rectangle.getWidth(), 0, 0,
                 rectangle.getHeight(), rectangle.getX(), rectangle.getY());

@@ -122,7 +122,7 @@ public class Tester {
     private static void testSLDUnMarshall_V100(File file) {        
         org.geotoolkit.sld.xml.v100.StyledLayerDescriptor sld = SLD_UTILITIES.unmarshallV100(file);
         MutableStyledLayerDescriptor geoSLD = SLD_UTILITIES.transformV100(sld);
-        showSLD(geoSLD);
+//        showSLD(geoSLD);
     }
     
     
@@ -137,7 +137,7 @@ public class Tester {
     private static void testSLDUnMarshall_V110(File file) throws FactoryException {
         org.geotoolkit.sld.xml.v110.StyledLayerDescriptor sld = SLD_UTILITIES.unmarshallV110(file);
         MutableStyledLayerDescriptor geoSLD = SLD_UTILITIES.transformV110(sld);
-        showSLD(geoSLD);
+//        showSLD(geoSLD);
     }
     
     

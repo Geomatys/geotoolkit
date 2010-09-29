@@ -54,6 +54,22 @@ public class J2DNorthArrowUtilities {
                               final Graphics2D g2d,
                               int x, int y,
                               final NorthArrowTemplate template) throws PortrayalException{
+        paint(rotation,g2d,x,y,false,template);
+    }
+
+    /**
+     * Paint a north arrow using Java2D.
+     *
+     * @param rotation : map rotation, in radians
+     * @param g2d : Graphics2D used to render
+     * @param bounds : Rectangle where the scale must be painted
+     * @param template  : north arrow template
+     * @throws org.geotoolkit.display.exception.PortrayalException
+     */
+    public static void paint(final float rotation,
+                              final Graphics2D g2d,
+                              int x, int y, boolean svgQuality,
+                              final NorthArrowTemplate template) throws PortrayalException{
 
         final Dimension estimation = estimate(g2d, template, false);
         final Dimension size = template.getSize();
@@ -79,24 +95,33 @@ public class J2DNorthArrowUtilities {
         bounds.x = X;
         bounds.y = Y;
 
-        final Image img = template.getImage();
+        if(svgQuality){
+            final Shape oldClip = g2d.getClip();
+            g2d.setClip(bounds);
 
-        if(img == null) return;
+            g2d.translate(bounds.getCenterX(), bounds.getCenterY());
+            g2d.rotate(rotation);
+            template.renderImage(g2d, new java.awt.geom.Point2D.Double(0,0));
+            g2d.rotate(-rotation);
+            g2d.translate(-bounds.getCenterX(), -bounds.getCenterY());
+            g2d.setClip(oldClip);
+        }else{
+            final Image img = template.getImage();
+            if(img == null) return;
 
-        final Shape oldClip = g2d.getClip();
-        g2d.setClip(bounds);
+            final Shape oldClip = g2d.getClip();
+            g2d.setClip(bounds);
 
-        g2d.translate(bounds.getCenterX(), bounds.getCenterY());
-        g2d.rotate(rotation);
-        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.drawImage(img, -img.getWidth(null)/2, -img.getHeight(null)/2, null);
+            g2d.translate(bounds.getCenterX(), bounds.getCenterY());
+            g2d.rotate(rotation);
+            g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.drawImage(img, -img.getWidth(null)/2, -img.getHeight(null)/2, null);
 
-
-        g2d.rotate(-rotation);
-        g2d.translate(-bounds.getCenterX(), -bounds.getCenterY());
-        g2d.setClip(oldClip);
-
+            g2d.rotate(-rotation);
+            g2d.translate(-bounds.getCenterX(), -bounds.getCenterY());
+            g2d.setClip(oldClip);
+        }
     }
 
     public static Dimension estimate(Graphics2D g, NorthArrowTemplate template, boolean considerBackground){

@@ -28,6 +28,8 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.DescriptionType;
 import org.geotoolkit.ows.xml.v110.KeywordsType;
 import org.geotoolkit.ows.xml.v110.LanguageStringType;
+import org.geotoolkit.wcs.xml.CoverageInfo;
+import org.opengis.geometry.Envelope;
 
 
 /**
@@ -66,7 +68,7 @@ import org.geotoolkit.ows.xml.v110.LanguageStringType;
 @XmlType(name = "CoverageSummaryType", propOrder = {
     "rest"
 })
-public class CoverageSummaryType extends DescriptionType {
+public class CoverageSummaryType extends DescriptionType implements CoverageInfo{
 
     @XmlElementRefs({
         @XmlElementRef(name = "CoverageSummary", namespace = "http://www.opengis.net/wcs/1.1.1", type = JAXBElement.class),
@@ -107,6 +109,7 @@ public class CoverageSummaryType extends DescriptionType {
      * Gets the rest of the content model. 
      * 
      */
+    @Override
     public List<JAXBElement<?>> getRest() {
         return Collections.unmodifiableList(rest);
     }
@@ -116,6 +119,12 @@ public class CoverageSummaryType extends DescriptionType {
      */
     public void addRest(JAXBElement<?> element) {
         this.rest.add(element);
+    }
+
+    @Override
+    public Envelope getLonLatEnvelope() {
+        //should return the WGS84BoundingBox from the REST list
+        return null;
     }
 
 }

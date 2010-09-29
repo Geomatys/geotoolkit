@@ -17,7 +17,9 @@
  */
 package org.geotoolkit.renderer.style;
 
+import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.net.URI;
 import java.util.Collection;
@@ -38,11 +40,18 @@ public interface ExternalGraphicFactory {
      * <code>null</code> will be returned if this factory cannot handle the
      * provided uri.
      */
-    public BufferedImage getImage(URI uri, String mime, Float size, RenderingHints hints) throws Exception;
+    BufferedImage getImage(URI uri, String mime, Float size, RenderingHints hints) throws Exception;
+
+    /**
+     * Render in vector quality if possible.
+     * @see #getImage(java.net.URI, java.lang.String, java.lang.Float, java.awt.RenderingHints) 
+     */
+    void renderImage(URI uri, String mime, Float size, Graphics2D g,
+            Point2D center,RenderingHints hints) throws Exception;
 
     /**
      * The mime types supported by this factory.
      */
-    public Collection<String> getSupportedMimeTypes();
+    Collection<String> getSupportedMimeTypes();
 
 }

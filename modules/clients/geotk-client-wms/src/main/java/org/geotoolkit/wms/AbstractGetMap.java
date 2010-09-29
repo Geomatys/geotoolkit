@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractRequest;
-import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.Envelope;
@@ -66,6 +65,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
     protected Envelope enveloppe = null;
     protected Dimension dimension = null;
     protected String sld = null;
+    protected String sldVersion = null;
     protected String sldBody = null;
     protected Boolean transparent = true;
 
@@ -208,6 +208,16 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
         this.sldBody = sldBody;
     }
 
+    @Override
+    public String getSldVersion() {
+        return sldVersion;
+    }
+
+    @Override
+    public void setSldVersion(String sldVersion) {
+        this.sldVersion = sldVersion;
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -261,6 +271,9 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
 
         if (sld != null) {
             requestParameters.put("SLD",sld);
+        }
+        if (sldVersion != null) {
+            requestParameters.put("SLD_VERSION",sldVersion);
         }
         if (sldBody != null) {
             requestParameters.put("SLD_BODY",sldBody);

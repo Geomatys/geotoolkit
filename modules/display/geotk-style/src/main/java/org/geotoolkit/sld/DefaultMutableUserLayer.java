@@ -46,7 +46,7 @@ import org.opengis.style.Description;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-class DefaultMutableUserLayer implements MutableUserLayer{
+class DefaultMutableUserLayer implements MutableUserLayer,StyleListener{
 
     private final List<MutableStyle> styles = new NotifiedCheckedList<MutableStyle>(MutableStyle.class) {
 
@@ -57,46 +57,35 @@ class DefaultMutableUserLayer implements MutableUserLayer{
 
             @Override
             protected void notifyAdd(final MutableStyle item, final int index) {
-                item.addListener(styleListener);
+                styleListener.registerSource(item);
                 fireStyleChange(CollectionChangeEvent.ITEM_ADDED, item, NumberRange.create(index, index));
             }
 
             @Override
             protected void notifyAdd(final Collection<? extends MutableStyle> items, final NumberRange<Integer> range) {
                 for(MutableLayerStyle item : items){
-                    item.addListener(styleListener);
+                    styleListener.registerSource(item);
                 }
                 fireStyleChange(CollectionChangeEvent.ITEM_ADDED, items, range);
             }
 
             @Override
             protected void notifyRemove(final MutableStyle item, final int index) {
-                item.removeListener(styleListener);
+                styleListener.unregisterSource(item);
                 fireStyleChange(CollectionChangeEvent.ITEM_REMOVED, item, NumberRange.create(index, index));
             }
 
             @Override
             protected void notifyRemove(final Collection<? extends MutableStyle> items, final NumberRange<Integer> range) {
-                for(final MutableStyle ms : items){
-                    ms.removeListener(styleListener);
+                for(final MutableStyle item : items){
+                    styleListener.unregisterSource(item);
                 }
                 fireStyleChange(CollectionChangeEvent.ITEM_REMOVED, items, range);
             }
             
         };
         
-    private final StyleListener styleListener = new StyleListener() {
-
-        @Override
-        public void propertyChange(PropertyChangeEvent event) {
-            fireStyleChange(CollectionChangeEvent.ITEM_CHANGED, (MutableLayerStyle)event.getSource(), null, event);
-        }
-        
-        @Override
-        public void featureTypeStyleChange(CollectionChangeEvent<MutableFeatureTypeStyle> event) {
-            fireStyleChange(CollectionChangeEvent.ITEM_CHANGED, (MutableLayerStyle)event.getSource(), null, event);
-        }
-    };
+    private final StyleListener.Weak styleListener = new StyleListener.Weak(null,this);
     
     private final CollectionChangeListener collectionListener = new CollectionChangeListener<FeatureTypeConstraint>(){
 
@@ -316,7 +305,21 @@ class DefaultMutableUserLayer implements MutableUserLayer{
             listener.constraintChange(newEvent);
         }
     }
+
+    //--------------------------------------------------------------------------
+    // style listener-----------------------------------------------------------
+    //--------------------------------------------------------------------------
     
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+        fireStyleChange(CollectionChangeEvent.ITEM_CHANGED, (MutableLayerStyle)event.getSource(), null, event);
+    }
+    @Override
+    public void featureTypeStyleChange(CollectionChangeEvent<MutableFeatureTypeStyle> event) {
+        fireStyleChange(CollectionChangeEvent.ITEM_CHANGED, (MutableLayerStyle)event.getSource(), null, event);
+    }
+
+
     /**
      * {@inheritDoc }
      */

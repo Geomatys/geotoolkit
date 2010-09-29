@@ -58,7 +58,6 @@ public class DefaultGlyphService {
         g2.setColor(Color.WHITE);
         g2.fillRect(0, 0, dim.width, dim.height);
         render(style, new Rectangle(dim), (Graphics2D) g2.create(), layer);
-        g2.setColor(Color.BLACK);
         g2.drawRect(0, 0, dim.width - 1, dim.height - 1);
         g2.dispose();
         return buffer;
@@ -77,7 +76,6 @@ public class DefaultGlyphService {
         g2.setColor(Color.WHITE);
         g2.fillRect(0, 0, dim.width, dim.height);
         render(style, new Rectangle(dim), (Graphics2D) g2.create(), layer);
-        g2.setColor(Color.BLACK);
         g2.drawRect(0, 0, dim.width - 1, dim.height - 1);
         g2.dispose();
         return buffer;
@@ -113,7 +111,6 @@ public class DefaultGlyphService {
         g2.setColor(Color.WHITE);
         g2.fillRect(0, 0, dim.width, dim.height);
         render(style, new Rectangle(dim), (Graphics2D) g2.create(), layer);
-        g2.setColor(Color.BLACK);
         g2.drawRect(0, 0, dim.width - 1, dim.height - 1);
         g2.dispose();
         return buffer;
@@ -129,17 +126,7 @@ public class DefaultGlyphService {
 
         if(dim == null){
             //search for the best glyph size
-            dim = new Dimension(30,24);
-            final SymbolizerRendererService renderer = GO2Utilities.findRenderer(style.getClass());
-
-            if(renderer != null){
-                final CachedSymbolizer cache = GO2Utilities.getCached(style);
-                final Rectangle2D preferred = renderer.glyphPreferredSize(cache,layer);
-                if(preferred!= null){
-                    if(preferred.getWidth() > dim.getWidth()) dim.width = (int) preferred.getWidth();
-                    if(preferred.getHeight() > dim.getHeight()) dim.height = (int) preferred.getHeight();
-                }
-            }
+            dim = glyphPreferredSize(style, dim, layer);
         }
 
         final BufferedImage buffer = new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
@@ -147,7 +134,6 @@ public class DefaultGlyphService {
         g2.setColor(Color.WHITE);
         g2.fillRect(0, 0, dim.width, dim.height);
         render(style, new Rectangle(dim), (Graphics2D) g2.create(),layer);
-        g2.setColor(Color.BLACK);
         g2.drawRect(0, 0, dim.width - 1, dim.height - 1);
         g2.dispose();
         return buffer;
@@ -184,49 +170,53 @@ public class DefaultGlyphService {
     }
 
     public static Dimension glyphPreferredSize(Style style, Dimension dim, MapLayer layer){
-        if(dim == null) dim = new Dimension(30,24);
 
         for(FeatureTypeStyle symbol : style.featureTypeStyles()){
             dim = glyphPreferredSize(symbol, dim, layer);
         }
 
+        if(dim == null) dim = new Dimension(30,24);
         return dim;
     }
 
-    public static Dimension glyphPreferredSize(FeatureTypeStyle style, Dimension dim, MapLayer layer){
-        if(dim == null) dim = new Dimension(30,24);
+    public static Dimension glyphPreferredSize(FeatureTypeStyle style, Dimension dim, MapLayer layer){        
 
         for(Rule symbol : style.rules()){
             dim = glyphPreferredSize(symbol, dim, layer);
         }
 
+        if(dim == null) dim = new Dimension(30,24);
         return dim;
     }
 
     public static Dimension glyphPreferredSize(Rule style, Dimension dim, MapLayer layer){
-        if(dim == null) dim = new Dimension(30,24);
 
         for(Symbolizer symbol : style.symbolizers()){
             dim = glyphPreferredSize(symbol, dim, layer);
         }
 
+        if(dim == null) dim = new Dimension(30,24);
         return dim;
     }
 
     public static Dimension glyphPreferredSize(Symbolizer style, Dimension dim, MapLayer layer){
-        if(dim == null) dim = new Dimension(30,24);
-        
         final SymbolizerRendererService renderer = GO2Utilities.findRenderer(style.getClass());
 
         if(renderer != null){
             final CachedSymbolizer cache = GO2Utilities.getCached(style);
             final Rectangle2D preferred = renderer.glyphPreferredSize(cache,layer);
             if(preferred!= null){
-                if(preferred.getWidth() > dim.getWidth()) dim.width = (int) preferred.getWidth();
-                if(preferred.getHeight() > dim.getHeight()) dim.height = (int) preferred.getHeight();
+                if(dim == null){
+                    dim = new Dimension((int)preferred.getWidth(), (int)preferred.getHeight());
+                }else{
+                    if(preferred.getWidth() > dim.getWidth()) dim.width = (int) preferred.getWidth();
+                    if(preferred.getHeight() > dim.getHeight()) dim.height = (int) preferred.getHeight();
+                }
             }
         }
 
+        //default glyph size
+        if(dim == null) dim = new Dimension(30,24);
         return dim;
     }
 

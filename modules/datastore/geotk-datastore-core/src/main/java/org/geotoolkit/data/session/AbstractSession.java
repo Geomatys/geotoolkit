@@ -26,7 +26,7 @@ import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.StorageContentEvent;
 import org.geotoolkit.data.StorageManagementEvent;
 import org.geotoolkit.data.StorageListener;
-import org.geotoolkit.data.WeakStorageListener;
+
 
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.Name;
@@ -41,6 +41,7 @@ import org.opengis.filter.Filter;
 public abstract class AbstractSession implements Session, StorageListener{
 
     private final Set<StorageListener> listeners = new HashSet<StorageListener>();
+    private final StorageListener.Weak weakListener = new Weak(this);
     protected final DataStore store;
 
     public AbstractSession(DataStore store){
@@ -49,10 +50,7 @@ public abstract class AbstractSession implements Session, StorageListener{
         }
 
         this.store = store;
-        
-        //register a wek listener, to memory leak since we don't know when to remove the listener.
-        //@todo should we have a dispose method on the session ? I dont think so
-        //this.store.addStorageListener(new WeakStorageListener(store, this));
+        weakListener.registerSource(store);
     }
 
     /**

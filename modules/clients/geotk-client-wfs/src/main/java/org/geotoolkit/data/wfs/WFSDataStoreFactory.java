@@ -45,10 +45,15 @@ public class WFSDataStoreFactory extends AbstractDataStoreFactory{
      */
     public static final GeneralParameterDescriptor SERVER_URI =
             new DefaultParameterDescriptor("server uri","server uri",URI.class,null,true);
+    /**
+     * Optional -post request
+     */
+    public static final GeneralParameterDescriptor POST_REQUEST =
+            new DefaultParameterDescriptor("post request","post request",Boolean.class,false,false);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("WFSParameters",
-                new GeneralParameterDescriptor[]{SERVER_URI});
+                new GeneralParameterDescriptor[]{SERVER_URI, POST_REQUEST});
 
     private static final WeakHashMap<URI,WFSDataStore> STORES = new WeakHashMap<URI, WFSDataStore>();
 
@@ -73,13 +78,14 @@ public class WFSDataStoreFactory extends AbstractDataStoreFactory{
      */
     @Override
     public synchronized WFSDataStore createDataStore(ParameterValueGroup params) throws DataStoreException {
-        final URI serverURI = (URI) params.parameter(SERVER_URI.getName().getCode()).getValue();
+        final URI serverURI       = (URI) params.parameter(SERVER_URI.getName().getCode()).getValue();
+        final boolean postrequest = params.parameter(POST_REQUEST.getName().getCode()).booleanValue();
 
         WFSDataStore store = STORES.get(serverURI);
 
         if(store == null){
             try {
-                store = new WFSDataStore(serverURI);
+                store = new WFSDataStore(serverURI, postrequest);
             } catch (MalformedURLException ex) {
                 throw new DataStoreException(ex);
             }

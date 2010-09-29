@@ -38,6 +38,7 @@ import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display.primitive.ReferencedGraphic;
 import org.geotoolkit.display.container.AbstractContainer;
 import org.geotoolkit.display.container.AbstractContainer2D;
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
@@ -170,6 +171,12 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
             }
         }
 
+        //grab the dpi
+        Number dpi = (Number)getRenderingHint(GO2Hints.KEY_DPI);
+        if(dpi == null){
+            dpi = 90;
+        }
+
         context.initParameters(
                 new AffineTransform2D(objToDisp),
                 monitor,
@@ -178,7 +185,8 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
                 canvasDisplayShape,
                 canvasObjectShape,
                 getController().getTemporalRange(),
-                getController().getElevationRange());
+                getController().getElevationRange(),
+                dpi.doubleValue());
         if(output != null) context.initGraphic(output);
         
         return context;

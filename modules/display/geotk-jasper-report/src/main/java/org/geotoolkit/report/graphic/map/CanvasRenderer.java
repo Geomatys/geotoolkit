@@ -27,7 +27,6 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRRenderable;
@@ -35,17 +34,17 @@ import net.sf.jasperreports.engine.JRRenderable;
 import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display.canvas.DefaultController2D;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
-import org.geotoolkit.display2d.container.ContextContainer2D;
-import org.geotoolkit.display2d.container.DefaultContextContainer2D;
 import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
 import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.display.shape.XRectangle2D;
-
 import org.geotoolkit.util.logging.Logging;
+
 import org.opengis.display.canvas.RenderingState;
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -57,19 +56,23 @@ import org.opengis.referencing.operation.TransformException;
 public class CanvasRenderer extends J2DCanvas implements JRRenderable{
 
     private final String id = System.currentTimeMillis() + "-" + Math.random();
-    
-    private final CanvasController2D controller = new DefaultController2D(this);
+
+    private Envelope area = null;
+
+    private final CanvasController2D controller = new DefaultController2D(this){
+        @Override
+        public void setVisibleArea(Envelope env) throws NoninvertibleTransformException, TransformException {
+            super.setVisibleArea(env);
+            area = env;
+        }
+    };
     private final DefaultRenderingContext2D context2D = new DefaultRenderingContext2D(this);
     private Graphics2D g2d = null;
     private Color background = null;
     private Dimension dim = new Dimension(1,1);
-
-    final ContextContainer2D renderer = new DefaultContextContainer2D(this, false);
     
     public CanvasRenderer(MapContext context){
         super(context.getCoordinateReferenceSystem(),null);
-        setContainer(renderer);
-        renderer.setContext(context);
     }
     
     private CanvasRenderer( final Hints hints){
@@ -135,32 +138,39 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
      */
     @Override
     public void repaint() {
-                    
         monitor.renderingStarted();
         fireRenderingStateChanged(RenderingState.RENDERING);
-                
+
         final Graphics2D output = g2d;
-        
-        //paint background if there is one.
-        if(background != null){
-            output.setColor(background);
-            output.fillRect(0,0,dim.width,dim.height);
-        }
-        
+
         Rectangle clipBounds = output.getClipBounds();
-        final Rectangle displayBounds = new Rectangle(dim);
-        Rectangle2D dirtyArea = XRectangle2D.INFINITY;
+        /*
+         * Sets a flag for avoiding some "refresh()" events while we are actually painting.
+         * For example some implementation of the GraphicPrimitive2D.paint(...) method may
+         * detects changes since the last rendering and invokes some kind of invalidate(...)
+         * methods before the graphic rendering begin. Invoking those methods may cause in some
+         * indirect way a call to GraphicPrimitive2D.refresh(), which will trig an other widget
+         * repaint. This second repaint is usually not needed, since Graphics usually managed
+         * to update their informations before they start their rendering. Consequently,
+         * disabling repaint events while we are painting help to reduces duplicated rendering.
+         */
         if (clipBounds == null) {
-            clipBounds = displayBounds;
-        } else if (displayBounds.contains(clipBounds)) {
-            dirtyArea = clipBounds;
+            clipBounds = new Rectangle(dim);
+        }
+        output.setClip(clipBounds);
+        output.addRenderingHints(hints);
+
+        final DefaultRenderingContext2D context = prepareContext(context2D, output,null);
+
+        //paint background if there is one.
+        if(painter != null){
+            painter.paint(context2D);
         }
 
-        output.addRenderingHints(hints);
-        
-        final DefaultRenderingContext2D context = prepareContext(context2D, output,null);
-        render(context, renderer.getSortedGraphics());
-        
+        final AbstractContainer2D renderer2D = getContainer();
+        if(renderer2D != null){
+            render(context, renderer2D.getSortedGraphics());
+        }
 
         /**
          * End painting, erase dirtyArea
@@ -223,9 +233,12 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
      */
     @Override
     public void render(Graphics2D g, Rectangle2D rect) throws JRException {
+        double rotation = getController().getRotation();
+
         setSize(new Dimension((int)rect.getWidth(), (int)rect.getHeight()));
         try {
-            getController().setVisibleArea(renderer.getContext().getAreaOfInterest());
+            getController().setVisibleArea(area);
+            getController().setRotation(rotation);
         } catch (NoninvertibleTransformException ex) {
             Logging.getLogger(CanvasRenderer.class).log(Level.WARNING, null, ex);
         } catch (TransformException ex) {

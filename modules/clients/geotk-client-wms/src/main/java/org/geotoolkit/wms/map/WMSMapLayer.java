@@ -27,8 +27,10 @@ import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
 
@@ -60,13 +62,13 @@ import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WebMapServer;
 import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractLayer;
+import org.geotoolkit.wms.xml.Style;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
@@ -144,6 +146,11 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
     private String sld = null;
 
     /**
+     * Optional SLD version, if a SLD file have been given it is mandatory.
+     */
+    private String sldVersion = null;
+
+    /**
      * Optional SLD body directly in the request.
      */
     private String sldBody = null;
@@ -157,6 +164,8 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
     private EPSG4326Politic epsg4326Politic = EPSG4326Politic.STRICT;
     private boolean useLocalReprojection = false;
     private boolean matchCapabilitiesDates = false;
+
+    private Envelope env = null;
 
     public WMSMapLayer(final WebMapServer server, final String... layers) {
         super(new DefaultStyleFactory().style());
@@ -225,7 +234,13 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      */
     @Override
     public Envelope getBounds() {
-        return MAXEXTEND_ENV;
+        if(env == null){
+            env = findEnvelope();
+            if(env == null){
+                env = MAXEXTEND_ENV;
+            }
+        }
+        return env;
     }
 
     /**
@@ -352,6 +367,7 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             request.setStyles(styles);
         }
         request.setSld(sld);
+        request.setSldVersion(sldVersion);
         request.setSldBody(sldBody);
         request.setFormat(format);
         request.dimensions().putAll(dims);
@@ -390,6 +406,14 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         }
 
         final Dimension dim = context2D.getCanvasDisplayBounds().getSize();
+        
+        //resolution contain dpi adjustments, to obtain an image of the correct dpi
+        //we raise the request dimension so that when we reduce it it will have the
+        //wanted dpi.
+        final double[] resolution = context2D.getResolution();
+        dim.width /= resolution[0];
+        dim.height /= resolution[1];
+
         final URL url;
         try {
             url = query(env, dim);
@@ -562,6 +586,24 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
     }
 
     /**
+     * Get the SLD specification version for SLD defines with SLD or SLD_BODY parameter
+     *
+     * @return the sldVersion
+     */
+    public String getSldVersion() {
+        return sldVersion;
+    }
+
+    /**
+     * Set the SLD specification version for SLD defines with SLD or SLD_BODY parameter
+     *
+     * @param sldVersion 
+     */
+    public void setSldVersion(String sldVersion) {
+        this.sldVersion = sldVersion;
+    }
+
+    /**
      * Sets the format for the output response. By default sets to {@code image/png}
      * if none.
      *
@@ -674,6 +716,23 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         }
 
         return null;
+    }
+
+    private Envelope findEnvelope(){
+        final AbstractLayer layer = server.getCapabilities().getLayerFromName(layers[0]);
+
+        if(layer != null){
+            return layer.getEnvelope();
+        }
+        return null;
+    }
+
+    public List<? extends Style> findStyleCandidates(){
+        final AbstractLayer layer = server.getCapabilities().getLayerFromName(layers[0]);
+         if(layer != null){
+            return layer.getStyle();
+        }
+        return Collections.emptyList();
     }
 
 }

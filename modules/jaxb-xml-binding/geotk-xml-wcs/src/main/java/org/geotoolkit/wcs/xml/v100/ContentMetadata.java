@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wcs.xml.Content;
+import org.geotoolkit.wcs.xml.CoverageInfo;
 
 
 /**
@@ -55,7 +57,7 @@ import javax.xml.bind.annotation.XmlType;
     "coverageOfferingBrief"
 })
 @XmlRootElement(name = "ContentMetadata")
-public class ContentMetadata {
+public class ContentMetadata implements Content{
 
     @XmlElement(name = "CoverageOfferingBrief")
     private List<CoverageOfferingBriefType> coverageOfferingBrief;
@@ -195,5 +197,10 @@ public class ContentMetadata {
 
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    @Override
+    public List<? extends CoverageInfo> getCoverageInfos() {
+        return coverageOfferingBrief;
     }
 }

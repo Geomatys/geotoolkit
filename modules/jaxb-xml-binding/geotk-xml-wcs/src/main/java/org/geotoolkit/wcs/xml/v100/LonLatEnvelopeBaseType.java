@@ -17,12 +17,19 @@
 package org.geotoolkit.wcs.xml.v100;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
+import org.geotoolkit.referencing.CRS;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -53,12 +60,49 @@ import org.geotoolkit.gml.xml.v311.DirectPositionType;
 @XmlSeeAlso({
     LonLatEnvelopeType.class
 })
-public class LonLatEnvelopeBaseType extends EnvelopeEntry {
+public class LonLatEnvelopeBaseType extends EnvelopeEntry implements Envelope{
     
     LonLatEnvelopeBaseType(){
     }
     
     public LonLatEnvelopeBaseType(List<DirectPositionType> pos, String srsName) {
         super(pos, srsName);
+    }
+
+    @Override
+    public CoordinateReferenceSystem getCoordinateReferenceSystem() {
+        try {
+            return CRS.decode(getSrsName());
+        } catch (NoSuchAuthorityCodeException ex) {
+            Logger.getLogger(LonLatEnvelopeBaseType.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (FactoryException ex) {
+            Logger.getLogger(LonLatEnvelopeBaseType.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    @Override
+    public int getDimension() {
+        return getCoordinateReferenceSystem().getCoordinateSystem().getDimension();
+    }
+
+    @Override
+    public double getMinimum(int dimension) throws IndexOutOfBoundsException {
+        return getPos().get(0).getOrdinate(dimension);
+    }
+
+    @Override
+    public double getMaximum(int dimension) throws IndexOutOfBoundsException {
+        return getPos().get(1).getOrdinate(dimension);
+    }
+
+    @Override
+    public double getMedian(int dimension) throws IndexOutOfBoundsException {
+        return (getMinimum(dimension) + getMaximum(dimension)) /2 ;
+    }
+
+    @Override
+    public double getSpan(int dimension) throws IndexOutOfBoundsException {
+        return getMaximum(dimension) - getMinimum(dimension);
     }
 }

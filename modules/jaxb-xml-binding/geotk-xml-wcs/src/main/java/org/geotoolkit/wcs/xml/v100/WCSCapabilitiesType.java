@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.geotoolkit.wcs.xml.Content;
 import org.geotoolkit.wcs.xml.GetCapabilitiesResponse;
 
 
@@ -167,5 +168,10 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse {
      */
     public String getUpdateSequence() {
         return updateSequence;
+    }
+
+    @Override
+    public Content getContents() {
+        return contentMetadata;
     }
 }

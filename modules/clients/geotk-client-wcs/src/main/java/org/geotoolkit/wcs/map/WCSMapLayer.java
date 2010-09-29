@@ -16,15 +16,20 @@
  */
 package org.geotoolkit.wcs.map;
 
+import java.awt.Dimension;
 import java.awt.Image;
 import java.util.logging.Level;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import javax.imageio.ImageIO;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.processing.CoverageProcessingException;
 import org.geotoolkit.coverage.processing.Operations;
@@ -95,8 +100,6 @@ public class WCSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      */
     private String format = "image/png";
 
-    private boolean useLocalReprojection = false;
-
     public WCSMapLayer(final WebCoverageServer server, final String layer) {
         super(new DefaultStyleFactory().style());
         this.server = server;
@@ -108,20 +111,6 @@ public class WCSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
      */
     public WebCoverageServer getServer() {
         return server;
-    }
-
-    /**
-     * Define if the map layer must rely on the geotoolkit reprojection capabilities
-     * if the distant server can not handle the canvas crs.
-     * The result image might not be pretty, but still better than no image.
-     * @param useLocalReprojection
-     */
-    public void setUseLocalReprojection(boolean useLocalReprojection) {
-        this.useLocalReprojection = useLocalReprojection;
-    }
-
-    public boolean isUseLocalReprojection() {
-        return useLocalReprojection;
     }
 
     /**
@@ -152,6 +141,17 @@ public class WCSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         return null;
     }
 
+    private URL query(Envelope env, Dimension dim) throws MalformedURLException {
+
+        final GetCoverageRequest request = server.createGetCoverage();
+        request.setEnvelope(env);
+        request.setDimension(dim);
+        request.setCoverage(layer);
+        request.setResponseCRS(env.getCoordinateReferenceSystem());
+        request.setFormat(format);
+        return request.getURL();
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -160,7 +160,38 @@ public class WCSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         if (!(context instanceof RenderingContext2D)) {
             throw new PortrayalException("WCSMapLayer only support rendering for RenderingContext2D");
         }
-        //todo
+
+        final RenderingContext2D context2D = (RenderingContext2D) context;
+
+        CoordinateReferenceSystem queryCrs = context.getObjectiveCRS2D();
+        Envelope env = context2D.getCanvasObjectiveBounds();
+
+        final Dimension dim = context2D.getCanvasDisplayBounds().getSize();
+        final URL url;
+        try {
+            url = query(env, dim);
+        } catch (Exception ex) {
+            System.out.println(ex);
+            throw new PortrayalException(ex);
+        }
+
+        LOGGER.log(Level.WARNING, "[WCSMapLayer] : GETCOVERAGE request : {0}", url);
+
+        final BufferedImage image;
+        try {
+            image = ImageIO.read(url);
+        } catch (IOException io) {
+            throw new PortrayalException(io);
+        }
+
+        if (image == null) {
+            throw new PortrayalException("WMS server didn't return an image.");
+        }
+
+        final GridCoverageFactory gc = new GridCoverageFactory();
+        final GridCoverage2D coverage = gc.create("wcs", image, env);
+        portray(context2D, coverage);
+
     }
 
     private static void portray(RenderingContext2D renderingContext, GridCoverage2D dataCoverage) throws PortrayalException{

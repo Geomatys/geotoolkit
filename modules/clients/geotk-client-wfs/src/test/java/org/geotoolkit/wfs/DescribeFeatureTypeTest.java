@@ -51,6 +51,6 @@ public class DescribeFeatureTypeTest {
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
         assertTrue(sUrl.contains("TYPENAME=ut:value"));
-        assertTrue(sUrl.contains("NAMESPACE={xmlns(ut=http://myqnametest.com)}"));
+        assertTrue(sUrl.contains("NAMESPACE=xmlns(ut=http://myqnametest.com)"));
     }
 }

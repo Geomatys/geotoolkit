@@ -57,6 +57,10 @@ public interface GetMapRequest extends Request {
 
     void setSld(String sld);
 
+    String getSldVersion();
+
+    void setSldVersion(String sldVersion);
+
     String getSldBody();
 
     void setSldBody(String sldBody);

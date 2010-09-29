@@ -27,7 +27,9 @@ import org.opengis.util.InternationalString;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @deprecated
  */
+@Deprecated
 public interface JRMapperFactory<V,C> {
 
     /**

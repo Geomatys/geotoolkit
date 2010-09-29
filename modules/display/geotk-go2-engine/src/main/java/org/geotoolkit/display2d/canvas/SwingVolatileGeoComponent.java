@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.display2d.canvas;
 
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -49,8 +50,18 @@ public class SwingVolatileGeoComponent extends JComponent{
 
         /** Invoked when the component's size changes. */
         @Override public void componentResized(final ComponentEvent event) {
-            synchronized (SwingVolatileGeoComponent.this) {
+            synchronized (SwingVolatileGeoComponent.this) {                
                 canvas.resize(SwingVolatileGeoComponent.this.getSize());
+//                try {
+//                    System.out.println(">>>>>> hereeeeee " + SwingVolatileGeoComponent.this.getSize());
+//                    final Envelope env = canvas.getController().getVisibleArea();
+//                    System.out.println(env);
+//                    canvas.resize(SwingVolatileGeoComponent.this.getSize());
+//                    canvas.getController().setVisibleArea(env);
+//                } catch (Exception ex) {
+//                    Logger.getLogger(SwingVolatileGeoComponent.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+
             }
         }
 

@@ -1,0 +1,4 @@
+org.geotoolkit.report.graphic.map.MapFieldRenderer
+org.geotoolkit.report.graphic.legend.LegendFieldRenderer
+org.geotoolkit.report.graphic.northarrow.NorthArrowFieldRenderer
+org.geotoolkit.report.graphic.scalebar.ScaleBarFieldRenderer

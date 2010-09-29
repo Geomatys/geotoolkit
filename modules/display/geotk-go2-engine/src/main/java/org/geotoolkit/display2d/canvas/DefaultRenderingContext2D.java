@@ -118,6 +118,8 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
      */
     private RenderingHints renderingHints = null;
 
+    private double dpi = 90;
+
     /**
      * A snapshot of {@link ReferencedCanvas#getObjectiveCRS} at the time of painting. This is the
      * "real world" coordinate reference system that the user will see on the screen. Data from all
@@ -226,7 +228,8 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
 
     public void initParameters(final AffineTransform2D objToDisp, final CanvasMonitor monitor,
             final Shape paintingDisplayShape, final Shape paintingObjectiveShape,
-            final Shape canvasDisplayShape, final Shape canvasObjectiveShape, Date[] temporal, Double[] elevation){
+            final Shape canvasDisplayShape, final Shape canvasObjectiveShape, 
+            Date[] temporal, Double[] elevation, double dpi){
         this.objectiveCRS       = canvas.getObjectiveCRS();
         this.objectiveCRS2D = canvas.getObjectiveCRS2D();
         this.displayCRS         = canvas.getDisplayCRS();
@@ -265,6 +268,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
 
 
         //calculate the resolution -----------------------------------------------
+        this.dpi = dpi;
         this.resolution = new double[canvasObjectiveBBox.getDimension()];
         this.resolution[0] = canvasObjectiveBounds.getWidth()/canvasDisplayBounds.getWidth();
         this.resolution[1] = canvasObjectiveBounds.getHeight()/canvasDisplayBounds.getHeight();
@@ -273,6 +277,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
             //we set a hug resolution to ensure that only one slice of data will be retrived.
             resolution[i] = Double.MAX_VALUE;
         }
+        adjustResolutionWithDPI(resolution);
 
         //calculate painting shape/bounds values -------------------------------
         this.paintingDisplayShape = paintingDisplayShape;
@@ -474,7 +479,8 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         final DefaultRenderingContext2D context = new DefaultRenderingContext2D(canvas);
         context.initParameters(objectiveToDisplay, monitor,
                                paintingDisplayShape, paintingObjectiveShape,
-                               canvasDisplayShape, canvasObjectiveShape,temporalRange,elevationRange);
+                               canvasDisplayShape, canvasObjectiveShape,
+                               temporalRange,elevationRange, dpi);
         context.initGraphic(g2d);
         g2d.setRenderingHints(this.graphics.getRenderingHints());
         context.labelRenderer = getLabelRenderer(true);
@@ -531,6 +537,10 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         return f;
     }
 
+    public double getDPI() {
+        return dpi;
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -568,8 +578,19 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
                 LOGGER.log(Level.WARNING, null, ex);
             }
             
-            return res;
+            return adjustResolutionWithDPI(res);
         }
+    }
+
+    /**
+     * Adjust the resolution relative to 90 DPI.
+     * a dpi under 90 with raise the resolution level while
+     * a bigger spi will lower the resolution level.
+     */
+    private double[] adjustResolutionWithDPI(double[] res){
+        res[0] = (90/dpi) * res[0];
+        res[1] = (90/dpi) * res[1];
+        return res;
     }
 
     /**
@@ -715,10 +736,14 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         sb.append(objectiveCRS2D).append("\n");
         sb.append("Display CRS = \n");
         sb.append(displayCRS).append("\n");
-        sb.append("Resolution = ");
-        for(double d : resolution){
-            sb.append(d).append("   ");
+
+        if(resolution != null){
+            sb.append("Resolution = ");
+            for(double d : resolution){
+                sb.append(d).append("   ");
+            }
         }
+
         sb.append("\n");
         sb.append("Geographic Scale = ");
         sb.append(geoScale).append("\n");
@@ -761,8 +786,10 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
 
         
         sb.append("\n---------- Rendering Hints ----------\n");
-        for(Entry<Object,Object> entry : renderingHints.entrySet()){
-            sb.append(entry.getKey()).append("=").append(entry.getValue()).append("\n");
+        if(renderingHints != null){
+            for(Entry<Object,Object> entry : renderingHints.entrySet()){
+                sb.append(entry.getKey()).append("=").append(entry.getValue()).append("\n");
+            }
         }
 
         sb.append("========== Rendering Context 2D ==========\n");

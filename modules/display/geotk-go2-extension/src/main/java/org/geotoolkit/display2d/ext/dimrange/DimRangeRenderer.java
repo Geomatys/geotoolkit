@@ -40,18 +40,14 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
-import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.util.MeasurementRange;
-import org.geotoolkit.util.logging.Logging;
 
-import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
@@ -89,10 +85,8 @@ public class DimRangeRenderer extends AbstractSymbolizerRenderer<CachedDimRangeS
         param.setResolution(resolution);
 
         GridCoverage2D dataCoverage;
-        GridCoverage2D elevationCoverage;
         try {
             dataCoverage = projectedCoverage.getCoverage(param);
-            elevationCoverage = projectedCoverage.getElevationCoverage(param);
         } catch (CoverageStoreException ex) {
             throw new PortrayalException(ex);
         }
@@ -139,7 +133,7 @@ public class DimRangeRenderer extends AbstractSymbolizerRenderer<CachedDimRangeS
         renderingContext.switchToObjectiveCRS();
 
         MeasurementRange dimRange = symbol.getSource().getDimRange();
-        if (dimRange != null && dataCoverage.getCoordinateReferenceSystem().getCoordinateSystem().getDimension() <= 2) {
+        if (dimRange != null) {
             final GridSampleDimension[] samples = dataCoverage.getSampleDimensions();
             if (samples != null && samples.length == 1 && samples[0] != null) {
                 if (samples[0].getSampleToGeophysics() != null) {

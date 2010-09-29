@@ -21,7 +21,9 @@ package org.geotoolkit.report.graphic.map;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @deprecated
  */
+@Deprecated
 public class JCanvasEditor extends javax.swing.JPanel {
 
     /** Creates new form JCanvasEditor */

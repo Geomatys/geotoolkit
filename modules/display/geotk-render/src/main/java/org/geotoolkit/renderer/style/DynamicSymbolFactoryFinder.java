@@ -17,7 +17,9 @@
  */
 package org.geotoolkit.renderer.style;
 
+import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.net.URI;
 import java.util.Arrays;
@@ -70,6 +72,21 @@ public final class DynamicSymbolFactoryFinder {
             }
         }
         return null;
+    }
+
+    /**
+     * @see org.geotoolkit.renderer.style.ExternalGraphicFactory#getImage(java.net.URI, java.lang.String, java.lang.Float, RenderingHints)
+     */
+    public static void renderImage(URI uri, String mime, Float size, Graphics2D g,
+            Point2D center,RenderingHints hints) throws Exception{
+        final Iterator<ExternalGraphicFactory> ite = getExternalGraphicFactories();
+        while(ite.hasNext()){
+            final ExternalGraphicFactory factory = ite.next();
+            if(factory.getSupportedMimeTypes().contains(mime)){
+                 factory.renderImage(uri, mime, size, g, center, hints);
+                 return;
+            }
+        }
     }
 
     /**

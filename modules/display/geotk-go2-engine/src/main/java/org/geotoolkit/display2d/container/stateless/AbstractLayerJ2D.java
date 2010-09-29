@@ -41,36 +41,13 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractLayerJ2D<T extends MapLayer> extends AbstractGraphicJ2D{
+public abstract class AbstractLayerJ2D<T extends MapLayer> extends AbstractGraphicJ2D implements LayerListener{
 
     private static final TileRecycler TILE_RECYCLER = (TileRecycler)JAI.getDefaultInstance().getRenderingHint(JAI.KEY_TILE_RECYCLER);
     private static final TileFactory TILE_FACTORY = (TileFactory)JAI.getDefaultInstance().getRenderingHint(JAI.KEY_TILE_FACTORY);
     private static final Point pt = new Point(0, 0);
 
-    private final LayerListener listener = new LayerListener() {
-
-        @Override
-        public void propertyChange(PropertyChangeEvent event) {
-            if(getCanvas().getController().isAutoRepaint()){
-                if(MapLayer.STYLE_PROPERTY.equals(event.getPropertyName())){
-                    //TODO should call a repaint only on this graphic
-                    getCanvas().getController().repaint();
-                    return;
-                }else if(MapLayer.SELECTION_FILTER_PROPERTY.equals(event.getPropertyName())){
-                    //TODO should call a repaint only on this graphic
-                    getCanvas().getController().repaint();
-                }
-            }
-        }
-
-        @Override
-        public void styleChange(MapLayer source, EventObject event) {
-            if(getCanvas().getController().isAutoRepaint()){
-                //TODO should call a repaint only on this graphic
-                getCanvas().getController().repaint();
-            }
-        }
-    };
+    private final LayerListener.Weak weakListener = new LayerListener.Weak(this);
 
     protected final T layer;
 
@@ -84,7 +61,7 @@ public abstract class AbstractLayerJ2D<T extends MapLayer> extends AbstractGraph
         //super(canvas, layer.getBounds().getCoordinateReferenceSystem());
         this.layer = layer;
 
-        layer.addLayerListener(listener);
+        weakListener.registerSource(layer);
 
         try{
             if (useLayerEnv) {
@@ -108,6 +85,12 @@ public abstract class AbstractLayerJ2D<T extends MapLayer> extends AbstractGraph
         return layer;
     }
 
+    @Override
+    public void dispose() {
+        super.dispose();
+        weakListener.dispose();
+    }
+
     protected BufferedImage createBufferedImage(ColorModel cm, SampleModel model){
         final WritableRaster raster = TILE_FACTORY.createTile(model, pt);
         return new BufferedImage(cm, raster, cm.isAlphaPremultiplied(), null);
@@ -116,6 +99,34 @@ public abstract class AbstractLayerJ2D<T extends MapLayer> extends AbstractGraph
     protected void recycleBufferedImage(BufferedImage img){
         if(img != null){
             TILE_RECYCLER.recycleTile(img.getRaster());
+        }
+    }
+
+    // layer listener ----------------------------------------------
+
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+        if(getCanvas().getController().isAutoRepaint()){
+            final String propName = event.getPropertyName();
+            if(MapLayer.VISIBILITY_PROPERTY.equals(propName)){
+                //TODO should call a repaint only on this graphic
+                getCanvas().getController().repaint();
+            } else if (layer.isVisible() &&
+               (  MapLayer.STYLE_PROPERTY.equals(propName)
+               || MapLayer.SELECTION_FILTER_PROPERTY.equals(propName)
+               || MapLayer.OPACITY_PROPERTY.equals(propName)
+               || MapLayer.QUERY_PROPERTY.equals(propName) )){
+                //TODO should call a repaint only on this graphic
+                getCanvas().getController().repaint();
+            }
+        }
+    }
+
+    @Override
+    public void styleChange(MapLayer source, EventObject event) {
+        if(layer.isVisible() && getCanvas().getController().isAutoRepaint()){
+            //TODO should call a repaint only on this graphic
+            getCanvas().getController().repaint();
         }
     }
 

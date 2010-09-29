@@ -23,7 +23,6 @@ import java.util.EventObject;
 import java.util.List;
 import java.util.Set;
 import javax.swing.event.EventListenerList;
-import org.geotoolkit.gui.swing.tree.Trees;
 
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.StringUtilities;
@@ -46,7 +45,7 @@ import org.opengis.style.Symbolizer;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle{
+public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, RuleListener{
     
     private final List<MutableRule> rules = new NotifiedCheckedList<MutableRule>(MutableRule.class) {
 
@@ -57,28 +56,28 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle{
 
             @Override
             protected void notifyAdd(final MutableRule item, final int index) {
-                item.addListener(ruleListener);
+                ruleListener.registerSource(item);
                 fireRuleChange(CollectionChangeEvent.ITEM_ADDED, item, NumberRange.create(index, index) );
             }
 
             @Override
             protected void notifyAdd(final Collection<? extends MutableRule> items, final NumberRange<Integer> range) {
                 for(final MutableRule item : items){
-                    item.addListener(ruleListener);
+                    ruleListener.registerSource(item);
                 }
                 fireRuleChange(CollectionChangeEvent.ITEM_ADDED, items, range);
             }
 
             @Override
             protected void notifyRemove(final MutableRule item, int index) {
-                item.removeListener(ruleListener);
+                ruleListener.unregisterSource(item);
                 fireRuleChange(CollectionChangeEvent.ITEM_REMOVED, item, NumberRange.create(index, index) );
             }
 
             @Override
             protected void notifyRemove(final Collection<? extends MutableRule> items, final NumberRange<Integer> range) {
                 for(final MutableRule rule : items){
-                    rule.removeListener(ruleListener);
+                    ruleListener.unregisterSource(rule);
                 }
                 fireRuleChange(CollectionChangeEvent.ITEM_REMOVED, items, range );
             }
@@ -131,22 +130,7 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle{
         }
     };
     
-    private final RuleListener ruleListener = new RuleListener() {
-
-        @Override
-        public void propertyChange(PropertyChangeEvent event) {
-            final int index = rules.indexOf(event.getSource());
-            fireRuleChange(CollectionChangeEvent.ITEM_CHANGED, (MutableRule)event.getSource(), 
-                    NumberRange.create(index, index), event);
-        }
-
-        @Override
-        public void symbolizerChange(CollectionChangeEvent<Symbolizer> event) {
-            final int index = rules.indexOf(event.getSource());
-            fireRuleChange(CollectionChangeEvent.ITEM_CHANGED, (MutableRule)event.getSource(),
-                    NumberRange.create(index, index), event);
-        }
-    };
+    private final RuleListener.Weak ruleListener = new RuleListener.Weak(this);
         
     private final EventListenerList listeners = new EventListenerList();
     
@@ -422,7 +406,25 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle{
         }
         
     }
-    
+
+    //--------------------------------------------------------------------------
+    // rule listener -----------------------------------------------------------
+    //--------------------------------------------------------------------------
+
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+        final int index = rules.indexOf(event.getSource());
+        fireRuleChange(CollectionChangeEvent.ITEM_CHANGED, (MutableRule)event.getSource(),
+                NumberRange.create(index, index), event);
+    }
+
+    @Override
+    public void symbolizerChange(CollectionChangeEvent<Symbolizer> event) {
+        final int index = rules.indexOf(event.getSource());
+        fireRuleChange(CollectionChangeEvent.ITEM_CHANGED, (MutableRule)event.getSource(),
+                NumberRange.create(index, index), event);
+    }
+
     /**
      * {@inheritDoc }
      */

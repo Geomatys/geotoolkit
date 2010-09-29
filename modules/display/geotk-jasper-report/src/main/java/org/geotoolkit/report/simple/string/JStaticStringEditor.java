@@ -21,7 +21,9 @@ package org.geotoolkit.report.simple.string;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @deprecated
  */
+@Deprecated
 public class JStaticStringEditor extends javax.swing.JPanel {
 
     private final StaticStringMapper mapper;

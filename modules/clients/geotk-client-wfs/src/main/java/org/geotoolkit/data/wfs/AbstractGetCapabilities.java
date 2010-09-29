@@ -16,9 +16,18 @@
  */
 package org.geotoolkit.data.wfs;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import org.geotoolkit.client.AbstractRequest;
+import org.geotoolkit.ows.xml.v100.AcceptVersionsType;
+import org.geotoolkit.wfs.xml.WFSMarshallerPool;
+import org.geotoolkit.wfs.xml.v110.GetCapabilitiesType;
 
 
 /**
@@ -46,5 +55,39 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
         requestParameters.put("VERSION",    version);        
         return super.getURL();
     }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public InputStream getResponseStream() throws IOException {
+
+        final GetCapabilitiesType request = new GetCapabilitiesType("WFS");
+        request.setAcceptVersions(new AcceptVersionsType(version));
+
+        final URL url = new URL(serverURL);
+        final URLConnection conec = url.openConnection();
+
+        conec.setDoOutput(true);
+        conec.setRequestProperty("Content-Type", "text/xml");
+
+        final OutputStream stream = conec.getOutputStream();
+        Marshaller marshaller = null;
+        try {
+            marshaller = WFSMarshallerPool.getInstance().acquireMarshaller();
+            marshaller.marshal(request, stream);
+            //marshaller.marshal(request, System.out);
+        } catch (JAXBException ex) {
+            throw new IOException(ex);
+        } finally {
+            if (marshaller != null) {
+                WFSMarshallerPool.getInstance().release(marshaller);
+            }
+        }
+        stream.close();
+        return conec.getInputStream();
+    }
+
+
 
 }

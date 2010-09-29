@@ -69,7 +69,6 @@ import org.geotoolkit.map.ContextListener;
 import org.geotoolkit.map.DynamicMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.map.WeakContextListener;
 import org.geotoolkit.style.CollectionChangeEvent;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -97,7 +96,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
 
     private final ContextCellRenderer editor = new ContextCellRenderer();
     private final ContextCellRenderer renderer = new ContextCellRenderer();
-    private WeakContextListener weakListener = null;
+    private final ContextListener.Weak weakListener = new ContextListener.Weak(this);
 
     public JContextTree() {
         add(tree);
@@ -135,18 +134,15 @@ public class JContextTree extends JScrollPane implements ContextListener {
     }
 
     public void setContext(MapContext context) {
-        if(this.context != null && weakListener != null){
-            context.removeContextListener(weakListener);
+        if(this.context != null){
+            weakListener.unregisterSource(this.context);
         }
         this.context = context;
 
         if(this.context != null){
-            weakListener = new WeakContextListener(this, context);
-            context.addContextListener(weakListener);
+            weakListener.registerSource(this.context);
         }
-
         updateContent();
-
     }
 
     public MapContext getContext() {

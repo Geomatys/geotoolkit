@@ -72,14 +72,6 @@ public class DefaultPolygonSymbolizerRendererService extends AbstractSymbolizerR
      * {@inheritDoc }
      */
     @Override
-    public Rectangle2D glyphPreferredSize(CachedPolygonSymbolizer symbol, MapLayer layer) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public void glyph(Graphics2D g, Rectangle2D rectangle, CachedPolygonSymbolizer symbol, MapLayer layer) {
         final AffineTransform affine = new AffineTransform(rectangle.getWidth(), 0, 0,
                 rectangle.getHeight(), rectangle.getX(), rectangle.getY());

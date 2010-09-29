@@ -17,8 +17,10 @@
  */
 package org.geotoolkit.renderer.style;
 
+import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.net.URI;
@@ -81,6 +83,19 @@ public class ImageGraphicFactory implements ExternalGraphicFactory {
     @Override
     public Collection<String> getSupportedMimeTypes() {
         return supportedGraphicFormats;
+    }
+
+    @Override
+    public void renderImage(URI uri, String mime, Float size, Graphics2D g,
+            Point2D center, RenderingHints hints) throws Exception {
+        final BufferedImage img = getImage(uri, mime, size, hints);
+
+        final float dispX = img.getWidth()/2;
+        final float dispY = img.getHeight()/2;
+
+        g.translate(-dispX-center.getX(),-dispY-center.getY());
+        g.drawImage(img, null, 0, 0);
+        g.translate(dispX+center.getX(),dispY+center.getY());
     }
 
 }

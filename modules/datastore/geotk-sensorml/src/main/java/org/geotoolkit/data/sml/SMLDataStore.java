@@ -112,15 +112,19 @@ public class SMLDataStore extends AbstractDataStore {
     private static final String pathCRS                = "SensorML:SensorML:member:location:pos:srsName";
     private static final String pathSmlRef             = "SensorML:SensorML:member:documentation:onlineResource:href";
 
-    private static final String SQL_ALL_FORM_ID = "SELECT \"identifier\" FROM \"Storage\".\"Forms\" WHERE \"catalog\"='SMLC'";
-    private static final String SQL_TEXT_VALUE = "SELECT \"value\" FROM \"Storage\".\"TextValues\" WHERE \"path\"=? AND \"form\"=?";
+    private static final String SQL_MDW_VERSION  = "SELECT * FROM \"version\"";
+
+    private static final String SQL_ALL_FORM_ID  = "SELECT \"identifier\" FROM \"Storage\".\"Forms\" WHERE \"catalog\"='SMLC'";
+    private static final String SQL_TEXT_VALUE   = "SELECT \"value\" FROM \"Storage\".\"TextValues\" WHERE \"path\"=? AND \"form\"=?";
     private static final String SQL_TEXT_VALUE_2 = "SELECT \"value\" FROM \"Storage\".\"TextValues\" WHERE \"path\"=? AND \"form\"=?";
-    private static final String SQL_SML_TYPE = "SELECT \"type\" FROM \"Storage\".\"Values\" WHERE \"path\"='SensorML:SensorML:member' AND \"form\"=?";
+    private static final String SQL_SML_TYPE     = "SELECT \"type\" FROM \"Storage\".\"Values\" WHERE \"path\"='SensorML:SensorML:member' AND \"form\"=?";
     private static final String SQL_CONTACT_ROLE = "SELECT \"id_value\"  FROM \"Storage\".\"TextValues\" " +
-                                                "WHERE \"path\"='SensorML:SensorML:member:contact:role' " +
-                                                    "AND \"value\"='urn:x-ogc:def:role:producer' " +
-                                                    "AND \"form\"=? ";
+                                                   "WHERE \"path\"='SensorML:SensorML:member:contact:role' " +
+                                                   "AND \"value\"='urn:x-ogc:def:role:producer' " +
+                                                   "AND \"form\"=? ";
     private static final String SQL_CONTACT_NAME = "SELECT \"value\" FROM \"Storage\".\"TextValues\" WHERE \"id_value\"=? AND \"form\"=?";
+
+    private static final String SQL_ALL_FORM_ID_21  = "SELECT \"accessionNumber\" FROM \"Storage\".\"Records\" WHERE \"recordSet\"='SMLC'";
 
 
     // Shared attributes
@@ -368,7 +372,22 @@ public class SMLDataStore extends AbstractDataStore {
 
         public SMLFeatureReader(FeatureType type) throws SQLException{
             this.type = type;
-            stmtAllFormId = cnx.prepareStatement(SQL_ALL_FORM_ID);
+            final PreparedStatement st = cnx.prepareStatement(SQL_MDW_VERSION);
+            final ResultSet rs         = st.executeQuery();
+            final PreparedStatement identifierStmt;
+            if (rs.next()) {
+                final String version = rs.getString(1);
+                if (version != null && version.startsWith("2.0")) {
+                    identifierStmt = cnx.prepareStatement(SQL_ALL_FORM_ID);
+                } else if (version != null && version.startsWith("2.1")) {
+                    identifierStmt = cnx.prepareStatement(SQL_ALL_FORM_ID_21);
+                } else {
+                    throw new IllegalArgumentException("unexpected database mdw version");
+                }
+            } else {
+                 identifierStmt = cnx.prepareStatement(SQL_ALL_FORM_ID);
+            }
+            stmtAllFormId = identifierStmt;
             stmtTextValue = cnx.prepareStatement(SQL_TEXT_VALUE);
             stmtSMLType = cnx.prepareStatement(SQL_SML_TYPE);
             stmtTextValue2 = cnx.prepareStatement(SQL_TEXT_VALUE_2);

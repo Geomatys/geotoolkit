@@ -36,7 +36,9 @@ import org.geotoolkit.util.collection.WeakHashSet;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @deprecated
  */
+@Deprecated
 public class JRMappedDataSource<C> implements JRDataSource{
 
     private final Map<String,JRMapper<?, ? super C>> map = new HashMap<String, JRMapper<?, ? super C>>();

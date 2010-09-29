@@ -50,7 +50,7 @@ import org.opengis.style.Description;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-final class DefaultMapContext implements MapContext {
+final class DefaultMapContext implements MapContext, LayerListener {
 
     private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.map");
 
@@ -61,26 +61,26 @@ final class DefaultMapContext implements MapContext {
         }
 
         protected void notifyAdd(final MapLayer item, final int index) {
-            fireLayerChange(CollectionChangeEvent.ITEM_ADDED, item, NumberRange.create(index, index),null );
-            item.addLayerListener(layerListener);
+            fireLayerChange(CollectionChangeEvent.ITEM_ADDED, item, NumberRange.create(index, index),null);
+            layerListener.registerSource(item);
         }
 
         protected void notifyAdd(final Collection<? extends MapLayer> items, final NumberRange<Integer> range) {
             fireLayerChange(CollectionChangeEvent.ITEM_ADDED, items, range);
             for(final MapLayer layer : items){
-                layer.addLayerListener(layerListener);
+                layerListener.registerSource(layer);
             }
         }
 
         protected void notifyRemove(final MapLayer item, final int index) {
             fireLayerChange(CollectionChangeEvent.ITEM_REMOVED, item, NumberRange.create(index, index),null );
-            item.removeLayerListener(layerListener);
+            layerListener.unregisterSource(item);
         }
 
         protected void notifyRemove(final Collection<? extends MapLayer> items, final NumberRange<Integer> range) {
             fireLayerChange(CollectionChangeEvent.ITEM_REMOVED, items, range );
             for(final MapLayer layer : items){
-                layer.removeLayerListener(layerListener);
+                layerListener.unregisterSource(layer);
             }
         }
 
@@ -162,29 +162,17 @@ final class DefaultMapContext implements MapContext {
 
     };
 
-    private final LayerListener layerListener = new LayerListener() {
-
-        @Override
-        public void propertyChange(PropertyChangeEvent event) {
-            final int number = layers.indexOf((MapLayer)event.getSource());
-            fireLayerChange(CollectionChangeEvent.ITEM_CHANGED, (MapLayer)event.getSource(), NumberRange.create(number,number),event);
-        }
-
-        @Override
-        public void styleChange(MapLayer source, EventObject event) {
-            final int number = layers.indexOf(source);
-            fireLayerChange(CollectionChangeEvent.ITEM_CHANGED, source, NumberRange.create(number,number),event);
-        }
-    };
+    private final LayerListener.Weak layerListener = new LayerListener.Weak(this);
 
     private final Map<String,Object> parameters = new HashMap<String,Object>();
 
-//    private final EventListenerList listeners = new EventListenerList();
+    private final EventListenerList listeners = new EventListenerList();
 
     private String name = null;
 
     private Description desc = null;
 
+    private CoordinateReferenceSystem crs = null;
     private Envelope area = null;
 
     public DefaultMapContext(CoordinateReferenceSystem crs) {
@@ -192,8 +180,8 @@ final class DefaultMapContext implements MapContext {
             throw new NullPointerException("CRS can't be null");
         }
 
+        this.crs = crs;
         desc = StyleConstants.DEFAULT_DESCRIPTION;
-        this.area = new GeneralEnvelope(crs);
     }
 
     /**
@@ -263,16 +251,17 @@ final class DefaultMapContext implements MapContext {
         }
 
         synchronized (this) {
-            if(CRS.equalsIgnoreMetadata(this.area.getCoordinateReferenceSystem(),crs)) return;
+            if(CRS.equalsIgnoreMetadata(this.crs,crs)) return;
 
-            try {
-                //update the area of interest
-                final Envelope newEnv = CRS.transform(area, crs);
-                setAreaOfInterest(newEnv);
-            } catch (TransformException ex) {
-                LOGGER.log(Level.WARNING, null, ex);
+            if(this.area != null){
+                try {
+                    //update the area of interest
+                    final Envelope newEnv = CRS.transform(area, crs);
+                    setAreaOfInterest(newEnv);
+                } catch (TransformException ex) {
+                    LOGGER.log(Level.WARNING, null, ex);
+                }
             }
-
         }
     }
 
@@ -282,7 +271,7 @@ final class DefaultMapContext implements MapContext {
      */
     @Override
     public CoordinateReferenceSystem getCoordinateReferenceSystem() {
-        return area.getCoordinateReferenceSystem();
+        return crs;
     }
 
     /**
@@ -308,10 +297,6 @@ final class DefaultMapContext implements MapContext {
      */
     @Override
     public Envelope getBounds() throws IOException {
-        final CoordinateReferenceSystem crs = area.getCoordinateReferenceSystem();
-        if (crs == null) {
-            throw new IOException("CRS of this map context is null. Unable to get bounds.");
-        }
         GeneralEnvelope result = null;
 
         GeneralEnvelope env;
@@ -358,37 +343,53 @@ final class DefaultMapContext implements MapContext {
     protected void firePropertyChange(String propertyName, Object oldValue, Object newValue){
         //TODO make fire property change thread safe, preserve fire order
 
-//        final PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);
-//        final ContextListener[] lists = listeners.getListeners(ContextListener.class);
-//
-//        for(ContextListener listener : lists){
-//            listener.propertyChange(event);
-//        }
+        final PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);
+        final ContextListener[] lists = listeners.getListeners(ContextListener.class);
+
+        for(ContextListener listener : lists){
+            listener.propertyChange(event);
+        }
 
     }
 
     protected void fireLayerChange(int type, MapLayer layer, NumberRange<Integer> range, EventObject orig) {
         //TODO make fire property change thread safe, preserve fire order
 
-//        final CollectionChangeEvent<MapLayer> event = new CollectionChangeEvent<MapLayer>(this, layer, type, range, orig);
-//        final ContextListener[] lists = listeners.getListeners(ContextListener.class);
-//
-//        for (ContextListener listener : lists) {
-//            listener.layerChange(event);
-//        }
+        final CollectionChangeEvent<MapLayer> event = new CollectionChangeEvent<MapLayer>(this, layer, type, range, orig);
+        final ContextListener[] lists = listeners.getListeners(ContextListener.class);
+
+        for (ContextListener listener : lists) {
+            listener.layerChange(event);
+        }
 
     }
 
     protected void fireLayerChange(int type, Collection<? extends MapLayer> layer, NumberRange<Integer> range){
         //TODO make fire property change thread safe, preserve fire order
 
-//        final CollectionChangeEvent<MapLayer> event = new CollectionChangeEvent<MapLayer>(this,layer,type,range, null);
-//        final ContextListener[] lists = listeners.getListeners(ContextListener.class);
-//
-//        for(ContextListener listener : lists){
-//            listener.layerChange(event);
-//        }
+        final CollectionChangeEvent<MapLayer> event = new CollectionChangeEvent<MapLayer>(this,layer,type,range, null);
+        final ContextListener[] lists = listeners.getListeners(ContextListener.class);
 
+        for(ContextListener listener : lists){
+            listener.layerChange(event);
+        }
+
+    }
+
+    //--------------------------------------------------------------------------
+    // layer listener ----------------------------------------------------------
+    //--------------------------------------------------------------------------
+
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+        final int number = layers.indexOf((MapLayer)event.getSource());
+        fireLayerChange(CollectionChangeEvent.ITEM_CHANGED, (MapLayer)event.getSource(), NumberRange.create(number,number),event);
+    }
+
+    @Override
+    public void styleChange(MapLayer source, EventObject event) {
+        final int number = layers.indexOf(source);
+        fireLayerChange(CollectionChangeEvent.ITEM_CHANGED, source, NumberRange.create(number,number),event);
     }
 
     /**
@@ -396,7 +397,7 @@ final class DefaultMapContext implements MapContext {
      */
     @Override
     public void addContextListener(ContextListener listener){
-//        listeners.add(ContextListener.class, listener);
+        listeners.add(ContextListener.class, listener);
     }
 
     /**
@@ -404,7 +405,7 @@ final class DefaultMapContext implements MapContext {
      */
     @Override
     public void removeContextListener(ContextListener listener){
-//        listeners.remove(ContextListener.class, listener);
+        listeners.remove(ContextListener.class, listener);
     }
 
     /**
@@ -430,7 +431,11 @@ final class DefaultMapContext implements MapContext {
      */
     @Override
     public Envelope getAreaOfInterest() {
-        return new GeneralEnvelope(area);
+        if(area != null){
+            return new GeneralEnvelope(area);
+        }else{
+            return null;
+        }
     }
 
     /**
@@ -445,12 +450,10 @@ final class DefaultMapContext implements MapContext {
         final Envelope oldEnv;
         synchronized (this) {
             oldEnv = this.area;
-            if(oldEnv.equals(aoi)){
+            if(this.area != null && oldEnv.equals(aoi)){
                 return;
             }
-
             this.area = aoi;
-
         }
         firePropertyChange(AREA_OF_INTEREST_PROPERTY, oldEnv, this.area);
     }
@@ -470,6 +473,5 @@ final class DefaultMapContext implements MapContext {
     public Object getUserPropertie(String key){
         return parameters.get(key);
     }
-
 
 }

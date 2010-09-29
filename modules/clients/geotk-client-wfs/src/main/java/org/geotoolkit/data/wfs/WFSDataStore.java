@@ -93,13 +93,14 @@ public class WFSDataStore extends AbstractDataStore{
     private final Map<Name,FeatureType> types = new HashMap<Name,FeatureType>();
     private final Map<Name,Envelope> bounds = new HashMap<Name, Envelope>();
     private final Map<String,String> prefixes = new HashMap<String, String>();
-
+    private final boolean postRequest;
     private Request lastRequest = null;
     private SoftReference<FeatureCollection<Feature>> lastCollection = null;
 
 
-    public WFSDataStore(URI serverURI) throws MalformedURLException{
+    public WFSDataStore(URI serverURI, boolean postRequest) throws MalformedURLException{
         super(null);
+        this.postRequest = postRequest;
         this.server = new WebFeatureServer(serverURI.toURL(), "1.1.0");
         final WFSCapabilitiesType capabilities = server.getCapabilities();
 
@@ -388,8 +389,15 @@ public class WFSDataStore extends AbstractDataStore{
 
         try {
             final JAXBFeatureTypeReader reader = new JAXBFeatureTypeReader();
-            getLogger().log(Level.INFO, "[WFS Client] request type : " + request.getURL());
-            final List<FeatureType> featureTypes = reader.read(request.getURL().openStream());
+            final InputStream stream;
+            if (postRequest) {
+                getLogger().log(Level.INFO, "[WFS Client] request type by POST.");
+                stream = request.getResponseStream();
+            } else {
+                getLogger().log(Level.INFO, "[WFS Client] request type : " + request.getURL());
+                stream = request.getURL().openStream();
+            }
+            final List<FeatureType> featureTypes = reader.read(stream);
             return featureTypes.get(0);
 
         } catch (MalformedURLException ex) {
@@ -435,9 +443,16 @@ public class WFSDataStore extends AbstractDataStore{
         XmlFeatureReader reader = null;
         try {
             reader = new JAXPStreamFeatureReader(sft);
-            final URL url = request.getURL();
-            getLogger().log(Level.INFO, "[WFS Client] request feature : " + url);
-            final Object result = reader.read(url.openStream());
+            final InputStream stream;
+            if (postRequest) {
+                getLogger().log(Level.INFO, "[WFS Client] request feature by POST.");
+                stream = request.getResponseStream();
+            } else {
+                final URL url = request.getURL();
+                getLogger().log(Level.INFO, "[WFS Client] request feature : " + url);
+                stream = url.openStream();
+            }
+            final Object result = reader.read(stream);
 
             lastRequest = request;
 

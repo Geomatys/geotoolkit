@@ -24,11 +24,13 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractRequest;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 
 
 /**
@@ -235,8 +237,11 @@ public abstract class AbstractGetCoverage extends AbstractRequest implements Get
         }
         params.put("BBOX", sb.toString());
         try {
-            params.put("CRS", CRS.lookupIdentifier(envelope.getCoordinateReferenceSystem(), false));
+            CoordinateReferenceSystem crs2d = CRSUtilities.getCRS2D(envelope.getCoordinateReferenceSystem());
+            params.put("CRS", CRS.lookupIdentifier(crs2d, true));
         } catch (FactoryException ex) {
+            LOGGER.log(Level.WARNING, null, ex);
+        } catch (TransformException ex) {
             LOGGER.log(Level.WARNING, null, ex);
         }
         return params;

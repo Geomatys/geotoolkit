@@ -33,6 +33,8 @@ import org.geotoolkit.lang.Static;
 @Static
 public final class GO2Hints {
 
+    private GO2Hints(){}
+
     private static class NamedKey extends Hints.Key{
 
         private final String name;
@@ -58,9 +60,7 @@ public final class GO2Hints {
 
 
     }
-
-    private GO2Hints(){}
-    
+        
     /**
      * Configure the multithreading support. This usually makes the canvas
      * build several buffered images to render each layer separately.
@@ -106,6 +106,12 @@ public final class GO2Hints {
      */
     public static final Key KEY_LABEL_RENDERER_CLASS = new NamedKey(Class.class, "GO2 - Label Renderer");
 
+     /**
+     * Configure the go2 engine use the given DPI.
+     * Default dpi is 90.
+     */
+    public static final Key KEY_DPI = new HintKey(7, Float.class);
+
     /**
      * Force the canvas to use the given color model.
      * This only works with the J2DBufferedCanvas.
@@ -148,6 +154,9 @@ public final class GO2Hints {
      * Values between 1 and 2.5 give a fair rendering.
      * Going under 1 doesnt bring much more details 
      * going above 2.5 makes small geometries disapear or look sharp.
+     *
+     * Factor is adjusted using the DPI value.
+     * (90/DPI) * GENERALIZE FACTOR
      */
     public static final Number GENERALIZE_FACTOR_DEFAULT = Float.valueOf(1.3f);
 }

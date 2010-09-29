@@ -110,7 +110,7 @@ public class Test_FC {
         Object request;
         if (true){
 
-            request = unmarshaller.unmarshal(new FileReader(fileName));
+            //request = unmarshaller.unmarshal(new FileReader(fileName));
            
         
             String name = "Digital Geographic information Exchange Standard (DIGEST) Feature and Attribute Coding Catalogue (FACC)";
@@ -414,11 +414,13 @@ public class Test_FC {
                 request = operation;
             }
             
-            System.out.println("beforeEquals");
+            /*System.out.println("beforeEquals");
             System.out.println("equals?" + (request.equals(catalogue)));
             System.out.println("after equals");
             
-            System.out.println(request);
+            System.out.println(request);*/
+
+            marshaller.marshal(catalogue, System.out);
             /*FeatureAssociationImpl requtt = (FeatureAssociationImpl) request;
             
             
@@ -438,7 +440,7 @@ public class Test_FC {
         ft.setFeatureCatalogue(cata);*/
        
         String fileOutput = "output.xml";
-        marshaller.marshal(request, new File(fileOutput));
+        //marshaller.marshal(request, new File(fileOutput));
 
        
     }

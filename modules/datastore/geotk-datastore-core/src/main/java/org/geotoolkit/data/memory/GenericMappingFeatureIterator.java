@@ -48,8 +48,12 @@ public class GenericMappingFeatureIterator<F extends Feature> implements Feature
             FeatureType originalType, FeatureType newType,
             Map<PropertyDescriptor,List<PropertyDescriptor>> mapping,
             Map<PropertyDescriptor,Object> defaults){
+        this(ite,new DefaultFeatureMapper((SimpleFeatureType)originalType,(SimpleFeatureType)newType,mapping,defaults));
+    }
+
+    public GenericMappingFeatureIterator(FeatureIterator<F> ite, FeatureMapper mapper){
         this.ite = ite;
-        mapper = new DefaultFeatureMapper((SimpleFeatureType)originalType,(SimpleFeatureType)newType,mapping,defaults);
+        this.mapper = mapper;
     }
 
     @Override

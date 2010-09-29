@@ -27,7 +27,9 @@ import org.opengis.util.InternationalString;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @deprecated
  */
+@Deprecated
 public class StaticStringMapperFactory implements JRMapperFactory<String,Object>{
 
     private static final InternationalString TITLE = new SimpleInternationalString("Static text");

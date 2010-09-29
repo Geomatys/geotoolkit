@@ -25,6 +25,7 @@ import java.util.Map;
 
 import org.geotoolkit.feature.DefaultAttribute;
 import org.geotoolkit.feature.DefaultGeometryAttribute;
+import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 
 import org.opengis.feature.Property;
@@ -73,24 +74,8 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
         this(featureType, id, toProperties(featureType,values), validating);
     }
 
-    public DefaultSimpleFeature(SimpleFeatureType featureType, FeatureId id, List<Property> properties, boolean validating){
-        super(featureType,id);
-        this.value = properties;
-        this.validating = validating;
-
-        // in the most common case reuse the map cached in the feature type
-        if (featureType instanceof DefaultSimpleFeatureType) {
-            index = ((DefaultSimpleFeatureType) featureType).index;
-        } else {
-            // if we're not lucky, rebuild the index completely...
-            // TODO: create a separate cache for this case?
-            this.index = DefaultSimpleFeatureType.buildIndex(featureType);
-        }
-
-        // if we're self validating, do validation right now
-        if (validating) {
-            validate();
-        }
+    public DefaultSimpleFeature(SimpleFeatureType type, FeatureId id, List<Property> properties, boolean validating){
+        this(new DefaultAttributeDescriptor( type, type.getName(), 1, 1, true, null),id,properties,validating);
     }
 
     public DefaultSimpleFeature(AttributeDescriptor desc, FeatureId id, Object[] values, boolean validating){
@@ -99,8 +84,6 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
 
     public DefaultSimpleFeature(AttributeDescriptor desc, FeatureId id, List<Property> properties, boolean validating){
         super(desc,id);
-        this.value = properties;
-        this.validating = validating;
 
         // in the most common case reuse the map cached in the feature type
         if (desc.getType() instanceof DefaultSimpleFeatureType) {
@@ -110,6 +93,9 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
             // TODO: create a separate cache for this case?
             this.index = DefaultSimpleFeatureType.buildIndex((SimpleFeatureType) desc.getType());
         }
+
+        this.value = properties;
+        this.validating = validating;
 
         // if we're self validating, do validation right now
         if (validating) {

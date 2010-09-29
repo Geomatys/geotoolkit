@@ -16,11 +16,19 @@
  */
 package org.geotoolkit.data.wfs;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.List;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
 import org.geotoolkit.client.AbstractRequest;
+import org.geotoolkit.wfs.xml.WFSMarshallerPool;
+import org.geotoolkit.wfs.xml.v110.DescribeFeatureTypeType;
 
 
 /**
@@ -34,6 +42,8 @@ public abstract class AbstractDescribeFeatureType extends AbstractRequest implem
     protected final String version;
 
     private List<QName> typeNames;
+
+    private String outputFormat;
 
     protected AbstractDescribeFeatureType(String serverURL, String version){
         super(serverURL);
@@ -59,15 +69,29 @@ public abstract class AbstractDescribeFeatureType extends AbstractRequest implem
     /**
      * {@inheritDoc }
      */
+    public String getOutputFormat() {
+       return outputFormat;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    public void setOutputFormat(String outputFormat) {
+        this.outputFormat = outputFormat;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public URL getURL() throws MalformedURLException {
         requestParameters.put("SERVICE",    "WFS");
         requestParameters.put("REQUEST",    "DescribeFeatureType");
         requestParameters.put("VERSION",    version);
 
-        if(typeNames != null){
+        if (typeNames != null) {
             final StringBuilder sbN = new StringBuilder();
-            final StringBuilder sbNS = new StringBuilder("{");
+            final StringBuilder sbNS = new StringBuilder();
             for(QName q : typeNames){
                 sbN.append(q.getPrefix()).append(':').append(q.getLocalPart()).append(',');
                 sbNS.append("xmlns(").append(q.getPrefix()).append('=').append(q.getNamespaceURI()).append(')').append(',');
@@ -81,12 +105,43 @@ public abstract class AbstractDescribeFeatureType extends AbstractRequest implem
                 sbNS.deleteCharAt(sbNS.length()-1);
             }
 
-            sbNS.append("}");
-
             requestParameters.put("TYPENAME",sbN.toString());
             requestParameters.put("NAMESPACE",sbNS.toString());
         }
 
+        if (outputFormat != null) {
+            requestParameters.put("OUTPUTFORMAT",outputFormat);
+        }
+
         return super.getURL();
     }
+
+    @Override
+    public InputStream getResponseStream() throws IOException {
+        DescribeFeatureTypeType request = new DescribeFeatureTypeType("WFS", version, null, typeNames, outputFormat);
+
+        final URL url = new URL(serverURL);
+        final URLConnection conec = url.openConnection();
+
+        conec.setDoOutput(true);
+        conec.setRequestProperty("Content-Type", "text/xml");
+
+        final OutputStream stream = conec.getOutputStream();
+        Marshaller marshaller = null;
+        try {
+            marshaller = WFSMarshallerPool.getInstance().acquireMarshaller();
+            marshaller.marshal(request, stream);
+            //marshaller.marshal(request, System.out);
+        } catch (JAXBException ex) {
+            throw new IOException(ex);
+        } finally {
+            if (marshaller != null) {
+                WFSMarshallerPool.getInstance().release(marshaller);
+            }
+        }
+        stream.close();
+        return conec.getInputStream();
+    }
+
+    
 }

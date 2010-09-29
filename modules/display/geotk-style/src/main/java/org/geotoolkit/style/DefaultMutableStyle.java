@@ -23,7 +23,6 @@ import java.util.EventObject;
 import java.util.List;
 import javax.swing.event.EventListenerList;
 
-import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.Utilities;
@@ -32,7 +31,6 @@ import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.type.Name;
 import org.opengis.style.Description;
-import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.SemanticType;
 import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
@@ -43,7 +41,7 @@ import org.opengis.style.Symbolizer;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultMutableStyle implements MutableStyle{
+public class DefaultMutableStyle implements MutableStyle,FeatureTypeStyleListener{
     
     private final List<MutableFeatureTypeStyle> fts = new NotifiedCheckedList<MutableFeatureTypeStyle>(MutableFeatureTypeStyle.class) {
 
@@ -54,28 +52,28 @@ public class DefaultMutableStyle implements MutableStyle{
 
             @Override
             protected void notifyAdd(final MutableFeatureTypeStyle item, final int index) {
-                item.addListener(ftsListener);
+                ftsListener.registerSource(item);
                 fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_ADDED, item, NumberRange.create(index, index) );
             }
 
             @Override
             protected void notifyAdd(final Collection<? extends MutableFeatureTypeStyle> items, final NumberRange<Integer> range) {
                 for(MutableFeatureTypeStyle item : items){
-                    item.addListener(ftsListener);
+                    ftsListener.registerSource(item);
                 }
                 fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_ADDED, items, range);
             }
 
             @Override
             protected void notifyRemove(final MutableFeatureTypeStyle item, final int index) {
-                item.removeListener(ftsListener);
+                ftsListener.unregisterSource(item);
                 fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_REMOVED, item, NumberRange.create(index, index) );
             }
 
             @Override
             protected void notifyRemove(final Collection<? extends MutableFeatureTypeStyle> items, final NumberRange<Integer> range) {
                 for(final MutableFeatureTypeStyle fts : items){
-                    fts.removeListener(ftsListener);
+                    ftsListener.unregisterSource(fts);
                 }
                 fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_REMOVED, items, range );
             }
@@ -84,36 +82,7 @@ public class DefaultMutableStyle implements MutableStyle{
         
     private final EventListenerList listeners = new EventListenerList();
     
-    private final FeatureTypeStyleListener ftsListener = new FeatureTypeStyleListener() {
-
-        @Override
-        public void propertyChange(PropertyChangeEvent event) {
-            final int index = fts.indexOf(event.getSource());
-            fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_CHANGED, 
-                    (MutableFeatureTypeStyle)event.getSource(), NumberRange.create(index, index), event);
-        }
-
-        @Override
-        public void ruleChange(CollectionChangeEvent<MutableRule> event) {
-            final int index = fts.indexOf(event.getSource());
-            fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_CHANGED, 
-                    (MutableFeatureTypeStyle)event.getSource(), NumberRange.create(index, index), event);
-        }
-
-        @Override
-        public void featureTypeNameChange(CollectionChangeEvent<Name> event) {
-            final int index = fts.indexOf(event.getSource());
-            fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_CHANGED, 
-                    (MutableFeatureTypeStyle)event.getSource(), NumberRange.create(index, index), event);
-        }
-
-        @Override
-        public void semanticTypeChange(CollectionChangeEvent<SemanticType> event) {
-            final int index = fts.indexOf(event.getSource());
-            fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_CHANGED, 
-                    (MutableFeatureTypeStyle)event.getSource(), NumberRange.create(index, index), event);
-        }
-    };
+    private final FeatureTypeStyleListener.Weak ftsListener = new FeatureTypeStyleListener.Weak(this);
    
     private Symbolizer symbol = null;
     
@@ -320,7 +289,40 @@ public class DefaultMutableStyle implements MutableStyle{
         }
         
     }
-    
+
+    //--------------------------------------------------------------------------
+    // fts listener ------------------------------------------------------------
+    //--------------------------------------------------------------------------
+
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+        final int index = fts.indexOf(event.getSource());
+        fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_CHANGED,
+                (MutableFeatureTypeStyle)event.getSource(), NumberRange.create(index, index), event);
+    }
+
+    @Override
+    public void ruleChange(CollectionChangeEvent<MutableRule> event) {
+        final int index = fts.indexOf(event.getSource());
+        fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_CHANGED,
+                (MutableFeatureTypeStyle)event.getSource(), NumberRange.create(index, index), event);
+    }
+
+    @Override
+    public void featureTypeNameChange(CollectionChangeEvent<Name> event) {
+        final int index = fts.indexOf(event.getSource());
+        fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_CHANGED,
+                (MutableFeatureTypeStyle)event.getSource(), NumberRange.create(index, index), event);
+    }
+
+    @Override
+    public void semanticTypeChange(CollectionChangeEvent<SemanticType> event) {
+        final int index = fts.indexOf(event.getSource());
+        fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_CHANGED,
+                (MutableFeatureTypeStyle)event.getSource(), NumberRange.create(index, index), event);
+    }
+
+
     /**
      * {@inheritDoc }
      */

@@ -77,14 +77,6 @@ public class DefaultTextSymbolizerRendererService extends AbstractSymbolizerRend
      * {@inheritDoc }
      */
     @Override
-    public Rectangle2D glyphPreferredSize(CachedTextSymbolizer symbol, MapLayer layer) {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public void glyph(Graphics2D g, Rectangle2D rectangle, CachedTextSymbolizer symbol, MapLayer layer) {
         g.setClip(rectangle);
 

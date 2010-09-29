@@ -21,6 +21,7 @@ import java.util.Collection;
 
 import net.sf.jasperreports.engine.JRRenderable;
 
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.report.graphic.JRRendererMapper;
 import org.geotoolkit.report.JRMapperFactory;
@@ -32,7 +33,9 @@ import org.opengis.display.canvas.Canvas;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @deprecated
  */
+@Deprecated
 public class NorthArrowMapper extends JRRendererMapper{
 
     NorthArrowMapper(JRMapperFactory<JRRenderable,MapContext> factory){
@@ -48,7 +51,7 @@ public class NorthArrowMapper extends JRRendererMapper{
             if(renderedValue instanceof Canvas){
                 Canvas canvas = (Canvas) renderedValue;
                 NorthArrowRenderer renderer = new NorthArrowRenderer();
-                renderer.setCanvas(canvas);
+                renderer.setRotation( ((ReferencedCanvas2D)canvas).getController().getRotation());
                 return renderer;
             }
         }

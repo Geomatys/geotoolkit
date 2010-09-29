@@ -10,6 +10,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.internal.jaxb.text.GenericNameAdapter;
 import org.geotoolkit.util.Utilities;
 import org.opengis.feature.catalog.Constraint;
 import org.opengis.feature.catalog.FeatureAttribute;
@@ -58,6 +60,8 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
     private String code;
    //TODO private UnitOfMeasurePropertyType valueMeasurementUnit;
     private List<ListedValue> listedValue;
+
+    @XmlJavaTypeAdapter(GenericNameAdapter.class)
     @XmlElement(required = true)
     private TypeName valueType;
 
@@ -162,6 +166,7 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
         this.valueType = value;
     }
     
+    @Override
     public FeatureAttributeImpl getReference() {
         FeatureAttributeImpl result = new FeatureAttributeImpl(this);
         result.setReference(true);

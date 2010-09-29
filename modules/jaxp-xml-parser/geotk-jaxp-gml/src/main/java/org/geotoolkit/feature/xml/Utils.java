@@ -114,6 +114,7 @@ public class Utils {
         CLASS_BINDING.put("dateTime", Timestamp.class);
         CLASS_BINDING.put("date",     Date.class);
         CLASS_BINDING.put("double",   Double.class);
+        CLASS_BINDING.put("float",    Float.class);
 
         // GML geometry types
         CLASS_BINDING.put("GeometryPropertyType",          Geometry.class);

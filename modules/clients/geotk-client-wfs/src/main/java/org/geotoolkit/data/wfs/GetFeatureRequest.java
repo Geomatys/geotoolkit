@@ -75,5 +75,24 @@ public interface GetFeatureRequest extends Request{
      *  null if all properties, empty for only the id.
      */
     void setPropertyNames(Name[] properties);
-    
+
+    /**
+     * Return the output format to use for the response.
+     * text/xml; subtype=gml/3.1.1 must be supported.
+     * Other output formats are possible as well as long as their MIME
+     * type is advertised in the capabilities document.
+     *
+     * @return The current outputFormat
+     */
+    String getOutputFormat();
+
+    /**
+     * Set the output format to use for the response.
+     * text/xml; subtype=gml/3.1.1 must be supported.
+     * Other output formats are possible as well as long as their MIME
+     * type is advertised in the capabilities document.
+     *
+     * @param outputFormat The current outputFormat
+     */
+    void setOutputFormat(String outputFormat);
 }

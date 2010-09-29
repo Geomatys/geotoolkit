@@ -30,7 +30,9 @@ import org.opengis.util.InternationalString;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @deprecated
  */
+@Deprecated
 public class ContextTitleMapperFactory implements JRMapperFactory<String,MapContext>{
 
     private static final ImageIcon ICON = new ImageIcon(ContextTitleMapperFactory.class.getResource("/org/geotoolkit/report/text.png"));

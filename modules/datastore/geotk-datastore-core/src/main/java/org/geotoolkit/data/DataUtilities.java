@@ -19,12 +19,14 @@ package org.geotoolkit.data;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.logging.Logger;
 
 import org.geotoolkit.data.memory.MemoryDataStore;
 import org.geotoolkit.data.query.Query;
@@ -37,6 +39,7 @@ import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.util.collection.CloseableIterator;
+import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -55,14 +58,14 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class DataUtilities {
 
+    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.data");
+
     private DataUtilities() {
     }
 
-    public static FeatureCollection collection(Feature[] features){
+    public static FeatureCollection collection(Feature ... features){
         final FeatureCollection col = collection("", features[0].getType());
-        for(Feature f : features){
-            col.add(f);
-        }
+        col.addAll(Arrays.asList(features));
         return col;
     }
 

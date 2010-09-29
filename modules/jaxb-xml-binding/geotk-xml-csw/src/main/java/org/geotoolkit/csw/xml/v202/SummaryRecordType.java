@@ -130,11 +130,13 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
         this.type = type;
         
         this.boundingBox = new ArrayList<JAXBElement<? extends BoundingBoxType>>();
-        for (BoundingBoxType bbox: bboxes) {
-            if (bbox instanceof WGS84BoundingBoxType)
-                this.boundingBox.add(owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType)bbox));
-            else if (bbox != null)
-                this.boundingBox.add(owsFactory.createBoundingBox(bbox));
+        if (bboxes != null) {
+            for (BoundingBoxType bbox: bboxes) {
+                if (bbox instanceof WGS84BoundingBoxType)
+                    this.boundingBox.add(owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType)bbox));
+                else if (bbox != null)
+                    this.boundingBox.add(owsFactory.createBoundingBox(bbox));
+            }
         }
         this.subject = subject;
         
@@ -171,11 +173,13 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
         this.type = type;
         
         this.boundingBox = new ArrayList<JAXBElement<? extends BoundingBoxType>>();
-        for (BoundingBoxType bbox: bboxes) {
-            if (bbox instanceof WGS84BoundingBoxType)
-                this.boundingBox.add(owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType)bbox));
-            else if (bbox != null)
-                this.boundingBox.add(owsFactory.createBoundingBox(bbox));
+        if (bboxes != null) {
+            for (BoundingBoxType bbox: bboxes) {
+                if (bbox instanceof WGS84BoundingBoxType)
+                    this.boundingBox.add(owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType)bbox));
+                else if (bbox != null)
+                    this.boundingBox.add(owsFactory.createBoundingBox(bbox));
+            }
         }
         this.subject = subject;
         
@@ -203,11 +207,13 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
         this.format = format;
 
         this.boundingBox = new ArrayList<JAXBElement<? extends BoundingBoxType>>();
-        for (BoundingBoxType bbox: bboxes) {
-            if (bbox instanceof WGS84BoundingBoxType)
-                this.boundingBox.add(owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType)bbox));
-            else if (bbox != null)
-                this.boundingBox.add(owsFactory.createBoundingBox(bbox));
+        if (bboxes != null) {
+            for (BoundingBoxType bbox: bboxes) {
+                if (bbox instanceof WGS84BoundingBoxType)
+                    this.boundingBox.add(owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType)bbox));
+                else if (bbox != null)
+                    this.boundingBox.add(owsFactory.createBoundingBox(bbox));
+            }
         }
     }
     

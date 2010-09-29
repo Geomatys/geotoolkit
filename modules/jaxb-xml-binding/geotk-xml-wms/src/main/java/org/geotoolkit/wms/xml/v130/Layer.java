@@ -26,9 +26,11 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractGeographicBoundingBox;
 import org.geotoolkit.wms.xml.AbstractLayer;
+import org.opengis.geometry.Envelope;
 
 
 /**
@@ -134,7 +136,7 @@ public class Layer extends AbstractLayer {
     @XmlElement(name = "Layer")
     private List<Layer> layer = new ArrayList<Layer>();
     @XmlAttribute
-    private Integer queryable;
+    private String queryable;
     @XmlAttribute
     @XmlSchemaType(name = "nonNegativeInteger")
     private BigInteger cascaded;
@@ -209,7 +211,7 @@ public class Layer extends AbstractLayer {
       * @param version    The version of the wms service.
       */
      public Layer(final String name, final String _abstract, final String keyword, final List<String> crs, 
-             final EXGeographicBoundingBox exGeographicBoundingBox, final BoundingBox boundingBox, final Integer queryable,
+             final EXGeographicBoundingBox exGeographicBoundingBox, final BoundingBox boundingBox, final String queryable,
              final List<AbstractDimension> dimensions, final List<Style> styles) {
          this.name                    = name;
          this.title                   = name;
@@ -246,7 +248,7 @@ public class Layer extends AbstractLayer {
             final List<BoundingBox> boundingBox, final List<Dimension> dimension, final Attribution attribution,
             final List<AuthorityURL> authorityURL, final List<Identifier> identifier, final List<MetadataURL> metadataURL,
             final List<DataURL> dataURL, final List<FeatureListURL> featureListURL, final List<Style> style, final Double minScaleDenominator,
-            final Double maxScaleDenominator, final List<Layer> layer, final Integer queryable, final BigInteger cascaded,
+            final Double maxScaleDenominator, final List<Layer> layer, final String queryable, final BigInteger cascaded,
             final Integer opaque, final Integer noSubsets, final BigInteger fixedWidth,  final BigInteger fixedHeight) {
         
         this._abstract               = _abstract;
@@ -392,6 +394,7 @@ public class Layer extends AbstractLayer {
     /**
      * Gets the value of the style property.
      */
+    @Override
     public List<Style> getStyle() {
         return Collections.unmodifiableList(style);
     }
@@ -421,12 +424,9 @@ public class Layer extends AbstractLayer {
     /**
      * Gets the value of the queryable property.
      */
+    @Override
     public boolean isQueryable() {
-        if (queryable == null) {
-            return false;
-        } else {
-            return queryable == 1;
-        }
+        return "1".equals(queryable) || "true".equalsIgnoreCase(queryable);
     }
 
     /**
@@ -484,5 +484,14 @@ public class Layer extends AbstractLayer {
             list.add((AbstractDimension) dim);
         }    
         return list;
+    }
+
+    @Override
+    public Envelope getEnvelope() {
+        final AbstractGeographicBoundingBox bbox = getEXGeographicBoundingBox();
+        if(bbox != null){
+            return new GeneralEnvelope(bbox);
+        }
+        return null;
     }
 }

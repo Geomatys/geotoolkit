@@ -19,11 +19,13 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.internal.jaxb.text.GenericNameAdapter;
 import org.geotoolkit.resources.jaxb.feature.catalog.FeatureCatalogueAdapter;
 import org.geotoolkit.util.Utilities;
 import org.opengis.util.LocalName;
 import org.opengis.feature.catalog.Constraint;
 import org.opengis.feature.catalog.DefinitionReference;
+import org.opengis.feature.catalog.FeatureAttribute;
 import org.opengis.feature.catalog.FeatureCatalogue;
 import org.opengis.feature.catalog.FeatureType;
 import org.opengis.feature.catalog.InheritanceRelation;
@@ -87,13 +89,16 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
     @XmlID
     @XmlSchemaType(name = "ID")
     private String id;
-    
+
+    @XmlJavaTypeAdapter(GenericNameAdapter.class)
     @XmlElement(required = true)
     private LocalName typeName;
     private String definition;
     private String code;
     @XmlElement(required = true)
     private Boolean isAbstract;
+
+    @XmlJavaTypeAdapter(GenericNameAdapter.class)
     private List<LocalName> aliases;
     private List<InheritanceRelation> inheritsFrom;
     private List<InheritanceRelation> inheritsTo;
@@ -217,7 +222,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
         if (aliases == null) {
             aliases = new ArrayList<LocalName>();
         }
-        return this.aliases;
+        return aliases;
     }
     
     public void setAliases(LocalName alias) {
@@ -299,6 +304,13 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
     }
     
     public void setCarrierOfCharacteristics(PropertyType carrierOfCharacteristics) {
+        if (this.carrierOfCharacteristics == null) {
+            this.carrierOfCharacteristics = new ArrayList<PropertyType>();
+        }
+        this.carrierOfCharacteristics.add(carrierOfCharacteristics);
+    }
+
+    public void setCarrierOfCharacteristics(FeatureAttribute carrierOfCharacteristics) {
         if (this.carrierOfCharacteristics == null) {
             this.carrierOfCharacteristics = new ArrayList<PropertyType>();
         }
@@ -517,8 +529,16 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
              carrier = Utilities.equals(this.getCarrierOfCharacteristics().size(), that.getCarrierOfCharacteristics().size());
              if (carrier) {
                  for (int i = 0; i < this.getCarrierOfCharacteristics().size(); i++) {
-                     if (!this.getCarrierOfCharacteristics().get(i).getId().equals(that.getCarrierOfCharacteristics().get(i).getId())) {
-                         carrier = false;
+                     final String thisId = this.getCarrierOfCharacteristics().get(i).getId();
+                     final String thatId = that.getCarrierOfCharacteristics().get(i).getId();
+                     // if the ids are null we try the name
+                     if (thisId == null && thatId == null) {
+                         final LocalName thisName = this.getCarrierOfCharacteristics().get(i).getMemberName();
+                         final LocalName thatName = that.getCarrierOfCharacteristics().get(i).getMemberName();
+                         carrier = Utilities.equals(thisName, thatName);
+                     
+                     } else {
+                         carrier = Utilities.equals(thisId, thatId);
                      }
                  }
              } else {

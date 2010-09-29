@@ -27,7 +27,9 @@ import org.geotoolkit.report.JRMapperFactory;
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
+ * @deprecated
  */
+@Deprecated
 public abstract class JRRendererMapper implements JRMapper<JRRenderable,MapContext> {
 
     public static String MAP_START_DATE = "jasper_context_date";

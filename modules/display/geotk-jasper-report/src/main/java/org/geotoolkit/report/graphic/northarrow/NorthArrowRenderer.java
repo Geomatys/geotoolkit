@@ -25,13 +25,10 @@ import java.awt.geom.Rectangle2D;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRRenderable;
 
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.exception.PortrayalException;
-
 import org.geotoolkit.display2d.ext.northarrow.DefaultNorthArrowTemplate;
 import org.geotoolkit.display2d.ext.northarrow.J2DNorthArrowUtilities;
 import org.geotoolkit.display2d.ext.northarrow.NorthArrowTemplate;
-import org.opengis.display.canvas.Canvas;
 
 /**
  * Jasper Report renderer used to render north arrow graphic.
@@ -41,21 +38,14 @@ import org.opengis.display.canvas.Canvas;
  */
 public class NorthArrowRenderer implements JRRenderable{
 
-    private NorthArrowTemplate template = null;
-
     private final String id = System.currentTimeMillis() + "-" + Math.random();
-    private Canvas canvas = null;
+    private double rotation = 0;
 
     public NorthArrowRenderer(){
-
-        template = new DefaultNorthArrowTemplate(null,
-                NorthArrowRenderer.class.getResource("/org/geotoolkit/report/boussole.svg"), new Dimension(100, 100));
-        
-
     }
 
-    public void setCanvas(final Canvas canvas){
-        this.canvas = canvas;
+    public void setRotation(double rotation){
+        this.rotation = rotation;
     }
 
     /**
@@ -106,15 +96,14 @@ public class NorthArrowRenderer implements JRRenderable{
         final Graphics2D g2d = (Graphics2D) g.create();
         final Rectangle area = rect.getBounds();
 
-        if(canvas instanceof ReferencedCanvas2D){
-           ReferencedCanvas2D c2d = (ReferencedCanvas2D) canvas;
+        final NorthArrowTemplate template = new DefaultNorthArrowTemplate(null,
+                NorthArrowRenderer.class.getResource("/org/geotoolkit/report/boussole.svg"),
+                        new Dimension((int)rect.getWidth(),(int)rect.getHeight()));
 
-            try {
-                J2DNorthArrowUtilities.paint((float)c2d.getController().getRotation(), g2d, area.x, area.y, template);
-            } catch (PortrayalException ex) {
-                ex.printStackTrace();
-            }
-
+        try {
+            J2DNorthArrowUtilities.paint((float)rotation, g2d, area.x, area.y, true,template);
+        } catch (PortrayalException ex) {
+            throw new JRException(ex);
         }
     }
 

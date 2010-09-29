@@ -26,7 +26,7 @@ import java.util.logging.Level;
 import javax.swing.tree.DefaultTreeModel;
 
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
-import org.geotoolkit.map.WeakStyleListener;
+import org.geotoolkit.sld.MutableLayerStyle;
 import org.geotoolkit.style.CollectionChangeEvent;
 import org.geotoolkit.style.FeatureTypeStyleListener;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
@@ -49,14 +49,15 @@ import org.opengis.style.Symbolizer;
  */
 public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener, FeatureTypeStyleListener, RuleListener {
 
-    private WeakStyleListener weakListener = null;
+    private final StyleListener.Weak weakStyleListener          = new StyleListener.Weak(null, this);
+    private final FeatureTypeStyleListener.Weak weakFTSListener = new FeatureTypeStyleListener.Weak(null, this);
+    private final RuleListener.Weak weakRuleListener            = new RuleListener.Weak(null, this);
     private T styleElement = null;
 
     public StyleTreeModel(){
         super(null);
     }
     
-
     /**
      * create a StyleTreeModel
      * @param style , can't be null
@@ -78,25 +79,19 @@ public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener
             throw new NullPointerException("Style can't be null");
         }
 
-        if(this.styleElement != null && weakListener != null){
-            try {
-                final Method method = styleElement.getClass().getMethod("removeListener", PropertyChangeListener.class);
-                method.invoke(styleElement, weakListener);
-                weakListener = null;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        
+        weakStyleListener.dispose();
+        weakFTSListener.dispose();
+        weakRuleListener.dispose();
+
         this.styleElement = style;
 
         if(this.styleElement != null){
-            weakListener = new WeakStyleListener(this, this.styleElement);
-            try {
-                final Method method = styleElement.getClass().getMethod("addListener", PropertyChangeListener.class);
-                method.invoke(styleElement, weakListener);
-            } catch (Exception e) {
-                e.printStackTrace();
+            if(style instanceof MutableLayerStyle){
+                weakStyleListener.registerSource((MutableLayerStyle)style);
+            }else if(style instanceof MutableFeatureTypeStyle){
+                weakFTSListener.registerSource((MutableFeatureTypeStyle)style);
+            }else if(style instanceof MutableRule){
+                weakRuleListener.registerSource((MutableRule)style);
             }
         }
 

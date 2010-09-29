@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.display2d.service;
 
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.awt.Color;
@@ -227,12 +228,28 @@ public class DefaultPortrayalService implements PortrayalService{
                 crs,
                 canvasDef.getDimension(),
                 sceneDef.getHints());
+
+        prepareCanvas(canvas, canvasDef, sceneDef, viewDef);
+
+        canvas.getController().repaint();
+        final BufferedImage buffer = canvas.getSnapShot();
+        canvas.dispose();
+
+        return buffer;
+    }
+
+    public static void prepareCanvas(J2DCanvas canvas, CanvasDef canvasDef, SceneDef sceneDef, ViewDef viewDef) throws PortrayalException{
+
+        final Envelope contextEnv = viewDef.getEnvelope();
+        final CoordinateReferenceSystem crs = contextEnv.getCoordinateReferenceSystem();
+
         final ContextContainer2D renderer = new DefaultContextContainer2D(canvas, false);
         canvas.setContainer(renderer);
+
         final Color bgColor = canvasDef.getBackground();
         if(bgColor != null){
             canvas.setBackgroundPainter(new SolidColorPainter(bgColor));
-        }        
+        }
 
         final CanvasMonitor monitor = viewDef.getMonitor();
         if(monitor != null){
@@ -276,11 +293,6 @@ public class DefaultPortrayalService implements PortrayalService{
             }
         }
 
-        canvas.getController().repaint();
-        final BufferedImage buffer = canvas.getSnapShot();
-        canvas.dispose();
-
-        return buffer;
     }
 
     ////////////////////////////////////////////////////////////////////////////

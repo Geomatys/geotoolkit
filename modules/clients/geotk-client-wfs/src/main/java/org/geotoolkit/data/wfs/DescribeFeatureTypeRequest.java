@@ -30,7 +30,7 @@ import org.geotoolkit.client.Request;
 public interface DescribeFeatureTypeRequest extends Request{
 
     /**
-     * @return QName : requested type namse, can be empty
+     * @return QName : requested type names, can be empty
      * if not yet configured.
      */
     List<QName> getTypeNames();
@@ -40,5 +40,23 @@ public interface DescribeFeatureTypeRequest extends Request{
      * if not yet configured.
      */
     void setTypeNames(List<QName> typeNames);
+
+    /**
+     * Return the output format to use to describe feature types.
+     * text/xml; subtype=gml/3.1.1 must be supported.
+     * Other output formats, such as DTD are possible.
+     *
+     * @return The current outputFormat
+     */
+    String getOutputFormat();
+
+    /**
+     * Set the output format to use to describe feature types.
+     * text/xml; subtype=gml/3.1.1 must be supported.
+     * Other output formats, such as DTD are possible.
+     *
+     * @param outputFormat The current outputFormat
+     */
+    void setOutputFormat(String outputFormat);
 
 }
