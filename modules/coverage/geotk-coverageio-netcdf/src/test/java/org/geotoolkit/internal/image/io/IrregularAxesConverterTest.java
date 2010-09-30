@@ -17,11 +17,15 @@
  */
 package org.geotoolkit.internal.image.io;
 
+import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.referencing.crs.ProjectedCRS;
 
 import org.geotoolkit.util.Range;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
+import org.geotoolkit.referencing.operation.transform.LinearTransform;
+import org.geotoolkit.referencing.operation.matrix.Matrix3;
 
 import org.junit.*;
 
@@ -36,7 +40,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.15
  */
-public class IrregularAxesConverterTest {
+public final class IrregularAxesConverterTest {
     /**
      * A {@link DiscreteCoordinateSystemAxis} implementation used for this test.
      */
@@ -226,15 +230,35 @@ public class IrregularAxesConverterTest {
             76.31867, 76.43644, 76.55320, 76.66898, 76.78378, 76.89761, 77.01048
         );
         /*
-         * Following threshold is too low for the above data.
+         * No match should be found for the WGS84 CRS, because the above latitudes were
+         * computed using spherical formulas instead than spherical ones. We expect a
+         * match for the sphere CRS instead.
+         *
+         * Note: we use 1E-4 as a threshold. This is slightly stricter than the NetCDF 4.1
+         * library, where the thresholds for the CoordinateAxis1D.isRegular() method is 5E-3.
          */
-        IrregularAxesConverter converter = new IrregularAxesConverter(1.4E-4, null);
+        final IrregularAxesConverter converter = new IrregularAxesConverter(1E-4, null);
         assertNull(converter.canConvert(DefaultGeographicCRS.WGS84, longitudes, latitudes));
+        final ProjectedCRS result = converter.canConvert(DefaultGeographicCRS.SPHERE, longitudes, latitudes);
+        assertNotNull("When using the sphere CRS, a regular grid should have been found.", result);
+        assertEquals("Mercator_1SP", result.getConversionFromBase().getParameterValues().getDescriptor().getName().getCode());
         /*
-         * Try again with a suffisient threshold.
+         * Try again while letting IrregularAxisConverter makes its own iteration over
+         * candidate source CRS.
          */
-        converter = new IrregularAxesConverter(1.5E-4, null);
-        final ProjectedCRS result = converter.canConvert(DefaultGeographicCRS.WGS84, longitudes, latitudes);
-        assertNotNull(result);
+        final ProjectedCRS again = converter.canConvert(longitudes, latitudes);
+        assertNotSame(result, again);
+        assertEquals(result, again);
+        assertEquals(result.hashCode(), again.hashCode());
+        /*
+         * Inspect the grid geometry.
+         */
+        assertTrue(result.getClass().getName(), result instanceof GridGeometry);
+        final GridGeometry geometry = (GridGeometry) result;
+        final GridEnvelope range = geometry.getGridRange();
+        assertArrayEquals("GridEnvelope low",  new int[] {  0,   0}, range.getLow ().getCoordinateValues());
+        assertArrayEquals("GridEnvelope high", new int[] {719, 498}, range.getHigh().getCoordinateValues());
+        final Matrix3 gridToCRS = (Matrix3) ((LinearTransform) geometry.getGridToCRS()).getMatrix();
+        assertTrue(gridToCRS.epsilonEquals(new Matrix3(55597, 0, -19959489, 0, 55597, -13843771, 0, 0, 1), 1));
     }
 }

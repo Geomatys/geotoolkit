@@ -39,8 +39,10 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.util.Range;
+import org.geotoolkit.test.Depend;
 import org.geotoolkit.image.io.plugin.NetcdfTestBase;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.geotoolkit.internal.image.io.IrregularAxesConverterTest;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -54,6 +56,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.08
  */
+@Depend(IrregularAxesConverterTest.class)
 public final class NetcdfCRSTest extends NetcdfTestBase {
     /**
      * Small tolerance factor for floating point comparison.
@@ -74,8 +77,29 @@ public final class NetcdfCRSTest extends NetcdfTestBase {
             final List<CoordinateSystem> cs = data.getCoordinateSystems();
             assertNotNull("List of CoordinateSystem shall not be null.", cs);
             assertEquals("Expected exactly one CoordinateSystem.", 1, cs.size());
-            assertValid(NetcdfCRS.wrap(cs.get(0)), false);
-            assertValid(NetcdfCRS.wrap(cs.get(0), data, null), true);
+            assertValid(NetcdfCRS.wrap(cs.get(0)),             false, false);
+            assertValid(NetcdfCRS.wrap(cs.get(0), data, null), false, true);
+        } finally {
+            data.close();
+        }
+    }
+
+    /**
+     * Tests the creation of a geographic CRS, which is then made regular.
+     *
+     * @throws IOException If an error occurred while reading the test file.
+     * @throws TransformException Should not happen.
+     *
+     * @since 3.15
+     */
+    @Test
+    public void testRegularCRS() throws IOException, TransformException {
+        final NetcdfDataset data = NetcdfDataset.openDataset(getTestFile().getPath());
+        try {
+            final List<CoordinateSystem> cs = data.getCoordinateSystems();
+            final NetcdfCRS geographic = NetcdfCRS.wrap(cs.get(0), data, null);
+            final CoordinateReferenceSystem projected = geographic.regularize();
+            assertValid(geographic, false, true);
         } finally {
             data.close();
         }
@@ -85,10 +109,11 @@ public final class NetcdfCRSTest extends NetcdfTestBase {
      * Run the test on the following NetCDF wrapper.
      *
      * @param crs The NetCDF wrapper to test.
+     * @param isRegular   {@code true} if the CRS geodetic axes are expected to be regular.
      * @param hasTimeAxis {@code true} if the 4th dimension is expected to wraps an
      *        instance of {@link CoordinateAxis1DTime}.
      */
-    private static void assertValid(final NetcdfCRS crs, final boolean hasTimeAxis)
+    private static void assertValid(final NetcdfCRS crs, final boolean isRegular, final boolean hasTimeAxis)
             throws IOException, TransformException
     {
         assertEquals("The CRS shall be equals to itself.", crs, crs);
@@ -168,7 +193,11 @@ public final class NetcdfCRSTest extends NetcdfTestBase {
         assertArrayEquals(new int[] {719, 498, 58, 0},
                 crs.getGridRange().getHigh().getCoordinateValues());
         final MathTransform gridToCRS = crs.getGridToCRS();
-        // TODO: Test with a regular grid.
+        if (!isRegular) {
+            assertNull(gridToCRS);
+        } else {
+            // TODO: Test with a regular grid.
+        }
     }
 
     /**

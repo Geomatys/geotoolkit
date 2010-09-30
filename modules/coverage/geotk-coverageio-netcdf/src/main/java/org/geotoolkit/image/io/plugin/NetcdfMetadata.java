@@ -212,7 +212,7 @@ final class NetcdfMetadata extends SpatialMetadata {
      * Coordinate Reference System} implementation.
      *
      * @param file The originating dataset file, or {@code null} if none.
-     * @param cs The coordinate system to define in metadata.
+     * @param cs The NetCDF coordinate system to define in metadata.
      * @param crs Always {@code null}, unless an alternative CRS should be formatted
      *        in replacement of the CRS built from the given NetCDF coordinate system.
      * @throws IOException If an I/O operation was needed and failed.
@@ -221,8 +221,8 @@ final class NetcdfMetadata extends SpatialMetadata {
             CoordinateReferenceSystem crs) throws IOException
     {
         final NetcdfCRS netcdfCRS = NetcdfCRS.wrap(cs, file, this);
-        final int dimension = netcdfCRS.getDimension();
-        for (int i=0; i<dimension; i++) {
+        final int dim = netcdfCRS.getDimension();
+        for (int i=0; i<dim; i++) {
             final NetcdfAxis axis = netcdfCRS.getAxis(i);
             final String units = axis.delegate().getUnitsString();
             final int offset = units.lastIndexOf('_');
@@ -242,16 +242,15 @@ final class NetcdfMetadata extends SpatialMetadata {
             crs = netcdfCRS;
         }
         final GridDomainAccessor accessor = new GridDomainAccessor(this);
-        final ReferencingBuilder helper = new ReferencingBuilder(this);
+        final ReferencingBuilder helper   = new ReferencingBuilder(this);
         helper.setCoordinateReferenceSystem(crs);
-        final int dim = netcdfCRS.getDimension();
         final int[]    lower  = new int   [dim];
         final int[]    upper  = new int   [dim];
         final double[] origin = new double[dim];
         final double[] vector = new double[dim];
         for (int i=0; i<dim; i++) {
             final CoordinateAxis1D axis = netcdfCRS.getAxis(i).delegate();
-            upper [i] = axis.getDimension(0).getLength() - 1;
+            upper [i] = axis.getShape(0) - 1;
             origin[i] = axis.getStart();
             vector[i] = axis.isRegular() ? axis.getIncrement() : Double.NaN;
             accessor.addOffsetVector(vector);
