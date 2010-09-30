@@ -68,6 +68,9 @@ import org.opengis.metadata.citation.ResponsibleParty;
 @XmlRootElement( name = "FC_FeatureCatalogue")
 public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
 
+    @XmlTransient
+    private static final Logger LOGGER = Logger.getLogger("featureCatalogueImpl");
+    
     @XmlAttribute
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
     @XmlID
@@ -93,8 +96,6 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
     private boolean isReference = false;
     @XmlTransient
     protected boolean rootElement = true;
-    @XmlTransient
-    private Logger logger = Logger.getLogger("featureCatalogueImpl");
     
      /**
      * An empty constructor used by JAXB

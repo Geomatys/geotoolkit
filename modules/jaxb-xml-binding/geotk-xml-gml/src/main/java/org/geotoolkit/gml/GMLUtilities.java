@@ -21,9 +21,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.JAXBException;
 
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.gml.xml.v311.AbstractGMLEntry;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v311.CurveInterpolationType;
@@ -66,14 +64,6 @@ public class GMLUtilities {
     private static final GeometryFactory GF = new GeometryFactory();
 
     public GMLUtilities(){}
-
-    public FeatureCollection read(final Object source) throws JAXBException{
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
-
-    public void write(FeatureCollection collection, Object stream) throws JAXBException{
-        throw new UnsupportedOperationException("Not implemented yet");
-    }
 
     public static AbstractGeometryType getGMLFromISO(org.opengis.geometry.Geometry geometry) {
        if (geometry instanceof Point) {
