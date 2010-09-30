@@ -17,8 +17,11 @@
  */
 package org.geotoolkit.filter.accessor;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -40,17 +43,18 @@ public class Accessors {
         final FactoryRegistry fr = new FactoryRegistry(PropertyAccessorFactory.class);
         final Iterator<PropertyAccessorFactory> factories = fr.getServiceProviders(PropertyAccessorFactory.class, null, null, null);
 
-        final Set<PropertyAccessorFactory> lst = new TreeSet<PropertyAccessorFactory>(
-                new Comparator<PropertyAccessorFactory>(){
-                    @Override
-                    public int compare(PropertyAccessorFactory t, PropertyAccessorFactory t1) {
-                        return t1.getPriority() - t.getPriority();
-                    }
-            });
-
+        final List<PropertyAccessorFactory> lst = new ArrayList<PropertyAccessorFactory>();
         while(factories.hasNext()){
             lst.add(factories.next());
         }
+
+        Collections.sort(lst, new Comparator<PropertyAccessorFactory>(){
+            @Override
+            public int compare(PropertyAccessorFactory t, PropertyAccessorFactory t1) {
+                return t1.getPriority() - t.getPriority();
+            }
+        });
+
 
         ACCESSOR_FACTORIES = lst.toArray(new PropertyAccessorFactory[lst.size()]);
     }

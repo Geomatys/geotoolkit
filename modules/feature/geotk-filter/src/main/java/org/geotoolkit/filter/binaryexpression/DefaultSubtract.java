@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.filter.binaryexpression;
 
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.Subtract;
@@ -61,10 +62,9 @@ public class DefaultSubtract extends AbstractBinaryExpression<Expression,Express
      */
     @Override
     public String toString() {
-        return new StringBuilder("Substract{")
-                .append(left).append(',')
-                .append(right).append('}')
-                .toString();
+        final StringBuilder sb = new StringBuilder("Substract \n");
+        sb.append(StringUtilities.toStringTree(left,right));
+        return sb.toString();
     }
 
     /**

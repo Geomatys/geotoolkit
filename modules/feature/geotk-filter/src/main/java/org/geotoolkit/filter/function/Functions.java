@@ -17,6 +17,9 @@
  */
 package org.geotoolkit.filter.function;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -35,7 +38,8 @@ import org.opengis.filter.expression.Literal;
  */
 public class Functions {
 
-    private static final Map<String,FunctionFactory> FACTORIES = new HashMap<String,FunctionFactory>();
+    private static final Collection<FunctionFactory> FACTORIES = new ArrayList<FunctionFactory>();
+    private static final Map<String,FunctionFactory> MAPPING = new HashMap<String,FunctionFactory>();
 
     static{
         final FactoryRegistry fr = new FactoryRegistry(FunctionFactory.class);
@@ -43,14 +47,22 @@ public class Functions {
 
         while(factories.hasNext()){
             final FunctionFactory ff = factories.next();
+            FACTORIES.add(ff);
             for(String name : ff.getNames()){
-                FACTORIES.put(name, ff);
+                MAPPING.put(name, ff);
             }
         }
 
     }
 
     private Functions(){}
+
+    /**
+     * @return map of all function factories, key is the factory name.
+     */
+    public static Collection<FunctionFactory> getFactories(){
+        return Collections.unmodifiableCollection(FACTORIES);
+    }
 
     /**
      * Create a function.
@@ -60,8 +72,8 @@ public class Functions {
      * @param parameters : parameters of the function
      * @return Function or null if no factory are able to create this function
      */
-    public static final Function function(String name, Literal fallback, Expression ... parameters){
-        final FunctionFactory ff = FACTORIES.get(name);
+    public static Function function(String name, Literal fallback, Expression ... parameters){
+        final FunctionFactory ff = MAPPING.get(name);
         if(ff != null){
             return ff.createFunction(name,fallback, parameters);
         }

@@ -17,11 +17,14 @@
  */
 package org.geotoolkit.filter;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.logging.Logging;
+
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.expression.Expression;
@@ -153,8 +156,8 @@ public class DefaultPropertyIsLike implements PropertyIsLike {
             //  (2) If a user-defined escape exists, Java wildcard + user-escape
             //  Then, test for matching pattern and return result.
             final char esc = escape.charAt(0);
-            LOGGER.finer("wildcard " + wildcardMulti + " single " + wildcardSingle);
-            LOGGER.finer("escape " + escape + " esc " + esc + " esc == \\ " + (esc == '\\'));
+            LOGGER.log(Level.FINER, "wildcard {0} single {1}", new Object[]{wildcardMulti, wildcardSingle});
+            LOGGER.log(Level.FINER, "escape {0} esc {1} esc == \\ {2}", new Object[]{escape, esc, esc == '\\'});
 
             final String escapedWildcardMulti = fixSpecials(wildcardMulti);
             final String escapedWildcardSingle = fixSpecials(wildcardSingle);
@@ -166,7 +169,7 @@ public class DefaultPropertyIsLike implements PropertyIsLike {
 
             for (int i = 0; i < pattern1.length(); i++) {
                 char chr = pattern1.charAt(i);
-                LOGGER.finer("tmp = " + tmp + " looking at " + chr);
+                LOGGER.log(Level.FINER, "tmp = {0} looking at {1}", new Object[]{tmp, chr});
 
                 if (pattern1.regionMatches(false, i, escape, 0, escape.length())) {
                     // skip the escape string
@@ -227,7 +230,7 @@ public class DefaultPropertyIsLike implements PropertyIsLike {
             }
 
             pattern1 = tmp.toString();
-            LOGGER.finer("final pattern " + pattern1);
+            LOGGER.log(Level.FINER, "final pattern {0}", pattern1);
             compPattern = java.util.regex.Pattern.compile(pattern1);
             match = compPattern.matcher("");
         }
@@ -396,15 +399,17 @@ public class DefaultPropertyIsLike implements PropertyIsLike {
 
     @Override
     public String toString() {
-        return "DefaultPropertyIsLike[" +
-               "attribute="+ this.attribute + ", " +
-               "pattern="+ this.pattern +", " +
-               "wildcardSingle="+ this.wildcardSingle +", "+
-               "wildcardMulti="+ this.wildcardMulti +", "+
-               "escape="+ this.escape + ", "+
-               "compPattern="+ this.compPattern +", "+
-               "match="+ this.match +", "+
-               "matchingCase="+ this.matchingCase +"]";
+        final StringBuilder sb = new StringBuilder("PropertyIsLike (");
+        sb.append("pattern=").append(pattern).append(", ");
+        sb.append("wildcardSingle=").append(wildcardSingle).append(", ");
+        sb.append("wildcardMulti=").append(wildcardMulti).append(", ");
+        sb.append("escape=").append(escape).append(", ");
+        sb.append("compPattern=").append(compPattern).append(", ");
+        sb.append("match=").append(match).append(", ");
+        sb.append("matchingCase=").append(matchingCase);
+        sb.append(")\n");
+        sb.append(StringUtilities.toStringTree(attribute));
+        return sb.toString();
     }
 
 }

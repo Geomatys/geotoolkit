@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.filter.binarycomparison;
 
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsLessThanOrEqualTo;
 import org.opengis.filter.expression.Expression;
@@ -55,11 +56,10 @@ public class DefaultPropertyIsLessThanOrEqualTo extends AbstractBinaryComparison
      */
     @Override
     public String toString() {
-        return new StringBuilder("PropertyIsLessThanOrEqualTo{")
-                .append(left).append(',')
-                .append(right).append(',')
-                .append(match).append('}')
-                .toString();
+        final StringBuilder sb = new StringBuilder("PropertyIsLessThanOrEqualTo (matchcase=");
+        sb.append(match).append(")\n");
+        sb.append(StringUtilities.toStringTree(left,right));
+        return sb.toString();
     }
 
     /**

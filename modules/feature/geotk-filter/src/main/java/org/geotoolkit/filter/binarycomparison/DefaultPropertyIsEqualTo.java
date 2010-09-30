@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.filter.binarycomparison;
 
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsEqualTo;
 import org.opengis.filter.expression.Expression;
@@ -46,11 +47,10 @@ public class DefaultPropertyIsEqualTo extends AbstractPropertyEqual implements P
      */
     @Override
     public String toString() {
-        return new StringBuilder("PropertyIsEqualTo{")
-                .append(left).append(',')
-                .append(right).append(',')
-                .append(match).append('}')
-                .toString();
+        final StringBuilder sb = new StringBuilder("PropertyIsEqualTo (matchcase=");
+        sb.append(match).append(")\n");
+        sb.append(StringUtilities.toStringTree(left,right));
+        return sb.toString();
     }
 
     /**

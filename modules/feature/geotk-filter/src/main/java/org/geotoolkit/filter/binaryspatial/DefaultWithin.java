@@ -22,6 +22,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.spatial.Within;
@@ -88,10 +89,9 @@ public class DefaultWithin extends AbstractBinarySpatialOperator<Expression,Expr
      */
     @Override
     public String toString() {
-        return new StringBuilder("Within{")
-                .append(left).append(',')
-                .append(right).append('}')
-                .toString();
+        final StringBuilder sb = new StringBuilder("Within \n");
+        sb.append(StringUtilities.toStringTree(left,right));
+        return sb.toString();
     }
 
     /**
