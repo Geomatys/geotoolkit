@@ -18,6 +18,7 @@
 package org.geotoolkit.xml.binding;
 
 // JUnit dependencies
+import org.geotoolkit.util.StringUtilities;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
@@ -195,7 +196,7 @@ public class JTSGeometryBindingTest {
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSPoint(point), sw);
 
-        String result = removeXmlns(sw.toString());
+        String result = StringUtilities.removeXmlns(sw.toString());
 
         String expResult = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"              + '\n' +
                            "<gml:Point srsName=\"urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":4326\" >" + '\n' +
@@ -283,7 +284,7 @@ public class JTSGeometryBindingTest {
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSCurve(curve), sw);
 
-        String result = removeXmlns(sw.toString());
+        String result = StringUtilities.removeXmlns(sw.toString());
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                 + '\n' +
@@ -401,7 +402,7 @@ public class JTSGeometryBindingTest {
         
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSEnvelope(envelope), sw);
-        String result = removeXmlns(sw.toString());
+        String result = StringUtilities.removeXmlns(sw.toString());
 
         String expresult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                               + '\n' +
@@ -479,7 +480,7 @@ public class JTSGeometryBindingTest {
         
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSMultiPoint(multiPoint), sw);
-        String result = removeXmlns(sw.toString());
+        String result = StringUtilities.removeXmlns(sw.toString());
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                               + '\n' +
@@ -614,7 +615,7 @@ public class JTSGeometryBindingTest {
         
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSCompositeCurve(compositeCurve), sw);
-        String result = removeXmlns(sw.toString());
+        String result = StringUtilities.removeXmlns(sw.toString());
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
@@ -702,7 +703,7 @@ public class JTSGeometryBindingTest {
 
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSMultiCurve(multiCurve), sw);
-        String result = removeXmlns(sw.toString());
+        String result = StringUtilities.removeXmlns(sw.toString());
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
@@ -1048,7 +1049,7 @@ public class JTSGeometryBindingTest {
         
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSPolyhedralSurface(polyHedralSurface), sw);
-        String result = removeXmlns(sw.toString());
+        String result = StringUtilities.removeXmlns(sw.toString());
 
 
         String expResult =
@@ -1330,7 +1331,7 @@ public class JTSGeometryBindingTest {
         
         StringWriter sw = new StringWriter();
         m.marshal(ring, sw);
-        String result = removeXmlns(sw.toString());
+        String result = StringUtilities.removeXmlns(sw.toString());
 
         String expResult = 
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                    + '\n'  +
@@ -1502,7 +1503,7 @@ public class JTSGeometryBindingTest {
         
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSPolygon(polygon), sw);
-        String result = removeXmlns(sw.toString());
+        String result = StringUtilities.removeXmlns(sw.toString());
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                               + '\n'  +
@@ -1698,7 +1699,7 @@ public class JTSGeometryBindingTest {
 
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSMultiPolygon(multiPolygon), sw);
-        String result = removeXmlns(sw.toString());
+        String result = StringUtilities.removeXmlns(sw.toString());
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                               + '\n'  +
@@ -1893,7 +1894,7 @@ public class JTSGeometryBindingTest {
         
         StringWriter sw = new StringWriter();
         m.marshal(factory.createJTSMultiGeometry(multip), sw);
-        String result = removeXmlns(sw.toString());
+        String result = StringUtilities.removeXmlns(sw.toString());
 
         String expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
@@ -1971,7 +1972,7 @@ public class JTSGeometryBindingTest {
 
         sw = new StringWriter();
         m.marshal(factory.createJTSMultiGeometry(multip), sw);
-        result = removeXmlns(sw.toString());
+        result = StringUtilities.removeXmlns(sw.toString());
 
         expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                                       + '\n' +
@@ -2044,7 +2045,7 @@ public class JTSGeometryBindingTest {
 
         sw = new StringWriter();
         m.marshal(factory.createJTSMultiGeometry(multip), sw);
-        result = removeXmlns(sw.toString());
+        result = StringUtilities.removeXmlns(sw.toString());
 
         expResult =
         "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>"                              + '\n' +
@@ -2334,23 +2335,5 @@ public class JTSGeometryBindingTest {
         assertEquals(expResult.getElements(), result.getElements());
         assertEquals(expResult, result);
     }
-
-
-   public String removeXmlns(String xml) {
-
-        String s = xml;
-        s = s.replaceAll("xmlns=\"[^\"]*\" ", "");
-
-        s = s.replaceAll("xmlns=\"[^\"]*\"", "");
-
-        s = s.replaceAll("xmlns:[^=]*=\"[^\"]*\" ", "");
-
-        s = s.replaceAll("xmlns:[^=]*=\"[^\"]*\"", "");
-
-
-        return s;
-    }
-
-
 }
 

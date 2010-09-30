@@ -295,6 +295,19 @@ public final class StringUtilities {
     }
 
     /**
+     * Remove all the XML namespace declaration.
+     * @param xml
+     * @return
+     */
+    public static String removeXmlns(String xml) {
+        String s = xml;
+        s = s.replaceAll("xmlns=\"[^\"]*\" ", "");
+        s = s.replaceAll("xmlns=\"[^\"]*\"", "");
+        s = s.replaceAll("xmlns:[^=]*=\"[^\"]*\" ", "");
+        s = s.replaceAll("xmlns:[^=]*=\"[^\"]*\"", "");
+        return s;
+    }
+    /**
      * Remove the prefix on propertyName.
      * example : removePrefix(csw:GetRecords) return "GetRecords".
      */

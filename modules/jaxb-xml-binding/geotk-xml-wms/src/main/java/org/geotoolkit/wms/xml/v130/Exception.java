@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -77,5 +78,41 @@ public class Exception {
     public List<String> getFormat() {
         return Collections.unmodifiableList(format);
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder();
+        if (format != null) {
+            for (String ext: format) {
+                s.append("format:").append(ext).append('\n');
+            }
+            s.append('\n');
+        }
+        return s.toString();
+    }
+
+    /**
+     * Verifie si cette entree est identique a l'objet specifie.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof Exception) {
+            final Exception that = (Exception) object;
+
+            return Utilities.equals(this.format, that.format);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 61 * hash + (this.format != null ? this.format.hashCode() : 0);
+        return hash;
+    }
+
 
 }

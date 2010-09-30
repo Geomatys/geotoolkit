@@ -17,6 +17,8 @@
 package org.geotoolkit.csw.xml;
 
 // J2SE dependencies
+import java.util.logging.Level;
+import org.geotoolkit.util.StringUtilities;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -292,7 +294,7 @@ public class CswXMLBindingTest {
         jb = (JAXBElement) unmarshaller.unmarshal(sr);
         org.geotoolkit.csw.xml.v200.RecordType result2 = (org.geotoolkit.csw.xml.v200.RecordType) jb.getValue();
         
-        LOGGER.finer("result:" + result2.toString());
+        LOGGER.log(Level.FINER, "result:{0}", result2.toString());
         
          /*
          * Test Unmarshalling csw Record v2.0.0 with http://www.purl... DC namespace
@@ -330,7 +332,7 @@ public class CswXMLBindingTest {
         jb = (JAXBElement) unmarshaller.unmarshal(sr);
         result2 = (org.geotoolkit.csw.xml.v200.RecordType) jb.getValue();
         
-        LOGGER.finer("result:" + result2.toString());
+        LOGGER.log(Level.FINER, "result:{0}", result2.toString());
         pool.release(unmarshaller);
         
     }
@@ -893,8 +895,8 @@ public class CswXMLBindingTest {
         result = result.substring(result.indexOf('\n') + 1);
         result = result.substring(result.indexOf('\n') + 1);
         
-        LOGGER.finer("RESULT:\n" + result);
-        LOGGER.finer("EXPRESULT:\n" + expResult);
+        LOGGER.log(Level.FINER, "RESULT:\n{0}", result);
+        LOGGER.log(Level.FINER, "EXPRESULT:\n{0}", expResult);
         assertEquals(expResult, result);
         
         pool.release(marshaller);
@@ -1170,8 +1172,8 @@ public class CswXMLBindingTest {
          
         
         
-        LOGGER.finer("RESULT:\n" + result);
-        LOGGER.finer("EXPRESULT:\n" + expResult);
+        LOGGER.log(Level.FINER, "RESULT:\n{0}", result);
+        LOGGER.log(Level.FINER, "EXPRESULT:\n{0}", expResult);
         GetRecordsType gres = (GetRecordsType)result;
         QueryType expQT = (QueryType) expResult.getAbstractQuery();
         QueryType resQT = (QueryType) gres.getAbstractQuery();
@@ -1285,7 +1287,7 @@ public class CswXMLBindingTest {
         
         String result = sw.toString();
 
-        result = removeXmlns(result);
+        result = StringUtilities.removeXmlns(result);
 
         assertEquals(expResult, result);
 
@@ -1333,7 +1335,7 @@ public class CswXMLBindingTest {
 
         result = sw.toString();
 
-        result = removeXmlns(result);
+        result = StringUtilities.removeXmlns(result);
 
         assertEquals(expResult, result);
         
@@ -1518,25 +1520,10 @@ public class CswXMLBindingTest {
 
         String result = sw.toString();
 
-        result = removeXmlns(result);
+        result = StringUtilities.removeXmlns(result);
 
         assertEquals(expResult, result);
 
         pool.release(marshaller);
-    }
-
-    public String removeXmlns(String xml) {
-
-        String s = xml;
-        s = s.replaceAll("xmlns=\"[^\"]*\" ", "");
-
-        s = s.replaceAll("xmlns=\"[^\"]*\"", "");
-
-        s = s.replaceAll("xmlns:[^=]*=\"[^\"]*\" ", "");
-
-        s = s.replaceAll("xmlns:[^=]*=\"[^\"]*\"", "");
-
-
-        return s;
     }
 }

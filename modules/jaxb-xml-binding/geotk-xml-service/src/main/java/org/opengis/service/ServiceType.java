@@ -11,6 +11,7 @@
 
 package org.opengis.service;
 
+import org.opengis.util.LocalName;
 import org.opengis.annotation.UML;
 import static org.opengis.annotation.Obligation.*;
 import static org.opengis.annotation.Specification.*;
@@ -27,4 +28,5 @@ import static org.opengis.annotation.Specification.*;
 //@UML(identifier="SV_ServiceType", specification=ISO_19119)
 public interface ServiceType {
 
+    LocalName getServiceType();
 }

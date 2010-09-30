@@ -30,7 +30,7 @@ xmlns = {
     @XmlJavaTypeAdapter(org.geotoolkit.resources.jaxb.service.OperationAdapter.class),
     @XmlJavaTypeAdapter(ParameterAdapter.class),
     @XmlJavaTypeAdapter(OperationMetadataAdapter.class),
-    @XmlJavaTypeAdapter(ServiceTypeAdapter.class),
+    @XmlJavaTypeAdapter(ServiceTypePropertyAdapter.class),
     @XmlJavaTypeAdapter(PlatformSpecificServiceSpecificationAdapter.class),
     @XmlJavaTypeAdapter(PlatformNeutralServiceSpecificationAdapter.class),
     @XmlJavaTypeAdapter(ServiceAdapter.class),

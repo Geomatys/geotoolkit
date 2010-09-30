@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.wms.xml.v130;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -25,6 +25,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.inspire.xml.vs.ExtendedCapabilitiesType;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wms.xml.AbstractCapability;
 import org.geotoolkit.wms.xml.AbstractLayer;
 
@@ -86,6 +88,7 @@ public class Capability extends AbstractCapability {
         this.exception = exception;
         this.layer     = layer;
         if (extendedCapabilities != null && extendedCapabilities.length != 0) {
+            this.extendedCapabilities = new ArrayList<JAXBElement<?>>();
             for (final JAXBElement<?> element : extendedCapabilities) {
                 this.extendedCapabilities.add(element);
             }
@@ -110,7 +113,21 @@ public class Capability extends AbstractCapability {
      * Gets the value of the extendedCapabilities property.
      */
     public List<JAXBElement<?>> getExtendedCapabilities() {
-        return Collections.unmodifiableList(extendedCapabilities);
+        return extendedCapabilities;
+    }
+
+    /**
+     * Gets the value of the INSPIRE extendedCapabilities property.
+     */
+    public ExtendedCapabilitiesType getInspireExtendedCapabilities() {
+        if (extendedCapabilities != null) {
+            for (JAXBElement<?> jb : extendedCapabilities) {
+                if (jb.getValue() instanceof ExtendedCapabilitiesType) {
+                    return (ExtendedCapabilitiesType) jb.getValue();
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -133,5 +150,69 @@ public class Capability extends AbstractCapability {
         }
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder("[Capability]\n");
+        if (request != null) {
+            s.append("request:").append(request).append('\n');
+        }
+        if (layer != null) {
+            s.append("layer:").append(layer).append('\n');
+        }
+        if (exception != null) {
+            s.append("exception:").append(exception).append('\n');
+        }
+        if (extendedCapabilities != null) {
+            for (JAXBElement<?> ext: extendedCapabilities) {
+                s.append("extension:").append(ext.getValue()).append('\n');
+            }
+            s.append('\n');
+        }
+        return s.toString();
+    }
+
+    /**
+     * Verifie si cette entree est identique a l'objet specifie.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof Capability) {
+            final Capability that = (Capability) object;
+
+            boolean ext = true;
+            if (this.extendedCapabilities != null && that.extendedCapabilities != null &&
+                this.extendedCapabilities.size() == that.extendedCapabilities.size()) {
+                for (int i = 0; i < this.extendedCapabilities.size(); i++) {
+                    if (!Utilities.equals(this.extendedCapabilities.get(i).getValue(), that.extendedCapabilities.get(i).getValue())) {
+                        ext = false;
+                        break;
+                    }
+                }
+
+            } else if (this.extendedCapabilities == null && that.extendedCapabilities == null) {
+                ext = true;
+            } else  {
+                ext = false;
+            }
+            return Utilities.equals(this.exception, that.exception) &&
+                   Utilities.equals(this.layer,     that.layer)     &&
+                   Utilities.equals(this.request,   that.request)   &&
+                   ext;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 61 * hash + (this.request != null ? this.request.hashCode() : 0);
+        hash = 61 * hash + (this.exception != null ? this.exception.hashCode() : 0);
+        hash = 61 * hash + (this.extendedCapabilities != null ? this.extendedCapabilities.hashCode() : 0);
+        hash = 61 * hash + (this.layer != null ? this.layer.hashCode() : 0);
+        return hash;
+    }
 
 }
