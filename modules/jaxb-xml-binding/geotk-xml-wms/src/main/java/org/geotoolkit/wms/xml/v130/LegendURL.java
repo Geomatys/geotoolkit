@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.wms.xml.v130;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -63,10 +62,10 @@ public class LegendURL {
     private OnlineResource onlineResource;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger width;
+    private Integer width;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger height;
+    private Integer height;
 
     /**
      * An empty constructor used by JAXB.
@@ -85,8 +84,8 @@ public class LegendURL {
     /**
      * Build a new legend url object.
      */
-    public LegendURL(final String format, final OnlineResource onlineResource, final BigInteger width,
-            final BigInteger height) {
+    public LegendURL(final String format, final OnlineResource onlineResource, final Integer width,
+            final Integer height) {
         this.format         = format;
         this.height         = height;
         this.onlineResource = onlineResource;
@@ -113,7 +112,7 @@ public class LegendURL {
     /**
      * Gets the value of the width property.
      */
-    public BigInteger getWidth() {
+    public Integer getWidth() {
         return width;
     }
 
@@ -121,7 +120,7 @@ public class LegendURL {
      * Gets the value of the height property.
      * 
      */
-    public BigInteger getHeight() {
+    public Integer getHeight() {
         return height;
     }
 }

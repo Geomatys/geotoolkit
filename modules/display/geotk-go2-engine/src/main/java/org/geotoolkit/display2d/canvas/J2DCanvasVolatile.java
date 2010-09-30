@@ -126,6 +126,10 @@ public class J2DCanvasVolatile extends J2DCanvas{
             return;
         }
 
+        this.dim = dim;
+        setDisplayBounds(new Rectangle(dim));
+        buffer0 = null;
+
         if(getController().isAutoRepaint()){
             repaint();
         }

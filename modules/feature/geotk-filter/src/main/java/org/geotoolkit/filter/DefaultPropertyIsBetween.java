@@ -18,6 +18,8 @@
 package org.geotoolkit.filter;
 
 import org.geotoolkit.util.Converters;
+import org.geotoolkit.util.StringUtilities;
+
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsBetween;
 import org.opengis.filter.expression.Expression;
@@ -146,8 +148,14 @@ public class DefaultPropertyIsBetween implements PropertyIsBetween{
         return hash;
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public String toString() {
-        return new StringBuilder("Between[").append(lower).append(',').append(upper).append("]").toString();
+        final StringBuilder sb = new StringBuilder("Between\n");
+        sb.append(StringUtilities.toStringTree("Exp : "+ candidate,"Lower : "+lower, "Upper : "+upper));
+        return sb.toString();
     }
+
 }

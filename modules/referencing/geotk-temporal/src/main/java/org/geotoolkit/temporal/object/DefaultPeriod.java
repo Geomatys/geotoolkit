@@ -46,17 +46,14 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
     }
     
     public DefaultPeriod(Instant begining, Instant ending) {
-        if (begining != null && RelativePosition.BEFORE.equals(begining.relativePosition(ending))) {
-            this.begining = begining;
-            this.ending = ending;
-        }
-        /*if (((DefaultInstant) begining).getPosition().getDate().before(((DefaultInstant) ending).getPosition().getDate())) {
-            this.begining = begining;
-            this.ending = ending;
-        } */else {
-            throw new IllegalArgumentException("The temporal position of the beginning of the period must be less than (i.e. earlier than) the temporal position of the end of the period");
-        }
-    }
+	// begining must be before or equals ending
+        if (begining != null && 
+                (RelativePosition.BEFORE.equals(begining.relativePosition(ending)) ||
+                RelativePosition.EQUALS.equals(begining.relativePosition(ending)))) {
+             this.begining = begining;
+             this.ending = ending;
+         }
+     }
 
     /**
      * Links this period to the instant at which it starts.

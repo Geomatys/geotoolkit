@@ -29,14 +29,14 @@ import org.opengis.service.ServiceType;
  * @since 2.5
  * @author Guilhem Legal
  */
-public class ServiceTypeAdapter extends XmlAdapter<ServiceTypeImpl, ServiceType> {
+public class ServiceTypePropertyAdapter extends XmlAdapter<ServiceTypePropertyAdapter, ServiceType> {
     
     private ServiceType serviceType;
     
     /**
      * Empty constructor for JAXB only.
      */
-    private ServiceTypeAdapter() {
+    private ServiceTypePropertyAdapter() {
     }
 
     /**
@@ -44,8 +44,36 @@ public class ServiceTypeAdapter extends XmlAdapter<ServiceTypeImpl, ServiceType>
      *
      * @param serviceType The serviceType value to marshall.
      */
-    protected ServiceTypeAdapter(final ServiceType serviceType) {
+    protected ServiceTypePropertyAdapter(final ServiceType serviceType) {
         this.serviceType = serviceType;
+    }
+
+    /**
+     * Returns the ServiceType value covered by a {@code CI_ServiceType} tags.
+     *
+     * @param value The value to marshall.
+     * @return The adapter which covers the serviceType value.
+     */
+    protected ServiceTypePropertyAdapter wrap(final ServiceType value) {
+        return new ServiceTypePropertyAdapter(value);
+    }
+
+    /**
+     * Returns the {@link ServiceTypeImpl} generated from the serviceType value.
+     * This method is systematically called at marshalling-time by JAXB.
+     */
+    @XmlElement(name = "SV_ServiceType")
+    public ServiceTypeImpl getServiceType() {
+        return (serviceType instanceof ServiceTypeImpl) ?
+            (ServiceTypeImpl)serviceType : new ServiceTypeImpl();
+    }
+
+    /**
+     * Sets the value for the {@link ServiceTypeImpl}. This method is systematically
+     * called at unmarshalling-time by JAXB.
+     */
+    public void setServiceType(final ServiceTypeImpl ServiceType) {
+        this.serviceType = ServiceType;
     }
 
     /**
@@ -56,8 +84,11 @@ public class ServiceTypeAdapter extends XmlAdapter<ServiceTypeImpl, ServiceType>
      * @return A java object which represents the serviceType value.
      */
     @Override
-    public ServiceType unmarshal(ServiceTypeImpl value) throws Exception {
-        return value;
+    public ServiceType unmarshal(ServiceTypePropertyAdapter value) throws Exception {
+        if (value == null) {
+            return null;
+        }
+        return value.serviceType;
     }
 
     /**
@@ -68,8 +99,8 @@ public class ServiceTypeAdapter extends XmlAdapter<ServiceTypeImpl, ServiceType>
      * @return The adapter for this interface.
      */
     @Override
-    public ServiceTypeImpl marshal(ServiceType value) throws Exception {
-        return (ServiceTypeImpl) value;
+    public ServiceTypePropertyAdapter marshal(ServiceType value) throws Exception {
+        return new ServiceTypePropertyAdapter(value);
     }
 
     

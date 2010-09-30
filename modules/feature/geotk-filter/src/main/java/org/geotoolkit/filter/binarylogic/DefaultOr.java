@@ -18,6 +18,7 @@
 package org.geotoolkit.filter.binarylogic;
 
 import java.util.List;
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.Or;
@@ -64,11 +65,8 @@ public class DefaultOr extends AbstractBinaryLogicOperator implements Or {
      */
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Or{");
-        for(Filter f : filters){
-            sb.append(f.toString());
-        }
-        sb.append("}");
+        final StringBuilder sb = new StringBuilder("Or\n");
+        sb.append(StringUtilities.toStringTree(filters));
         return sb.toString();
     }
 

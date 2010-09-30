@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wms.xml.AbstractRequest;
 
 
@@ -118,6 +119,71 @@ public class Request extends AbstractRequest {
      */
     public List<JAXBElement<OperationType>> getExtendedOperation() {
         return Collections.unmodifiableList(extendedOperation);
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder();
+        if (getCapabilities!= null) {
+            s.append("getCapabilities:").append(getCapabilities).append('\n');
+        }
+        if (getFeatureInfo != null) {
+            s.append("getFeatureInfo:").append(getFeatureInfo).append('\n');
+        }
+        if (getMap != null) {
+            s.append("getMap:").append(getMap).append('\n');
+        }
+        if (extendedOperation != null) {
+            for (JAXBElement<OperationType> ext: extendedOperation) {
+                s.append("extension operation:").append(ext.getValue()).append('\n');
+            }
+            s.append('\n');
+        }
+        return s.toString();
+    }
+
+    /**
+     * Verifie si cette entree est identique a l'objet specifie.
+     */
+    @Override
+    public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
+        if (object instanceof Request) {
+            final Request that = (Request) object;
+
+            boolean ext = true;
+            if (this.extendedOperation != null && that.extendedOperation != null &&
+                this.extendedOperation.size() == extendedOperation.size()) {
+                for (int i = 0; i < this.extendedOperation.size(); i++) {
+                    if (!Utilities.equals(this.extendedOperation.get(i), that.extendedOperation.get(i))) {
+                        ext = false;
+                        break;
+                    }
+                }
+
+            } else if (this.extendedOperation == null && that.extendedOperation == null) {
+                ext = true;
+            } else  {
+                ext = false;
+            }
+            return Utilities.equals(this.getCapabilities, that.getCapabilities) &&
+                   Utilities.equals(this.getFeatureInfo,  that.getFeatureInfo)     &&
+                   Utilities.equals(this.getMap,          that.getMap)   &&
+                   ext;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 73 * hash + (this.getCapabilities != null ? this.getCapabilities.hashCode() : 0);
+        hash = 73 * hash + (this.getMap != null ? this.getMap.hashCode() : 0);
+        hash = 73 * hash + (this.getFeatureInfo != null ? this.getFeatureInfo.hashCode() : 0);
+        hash = 73 * hash + (this.extendedOperation != null ? this.extendedOperation.hashCode() : 0);
+        return hash;
     }
 
 }

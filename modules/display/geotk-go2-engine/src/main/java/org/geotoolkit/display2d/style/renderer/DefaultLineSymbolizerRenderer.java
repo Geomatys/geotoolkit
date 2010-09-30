@@ -234,6 +234,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
             g2d.draw(j2dShape);
         }else if(cachedStroke instanceof CachedStrokeGraphic){
             final CachedStrokeGraphic gc = (CachedStrokeGraphic)cachedStroke;
+            g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
             final float initGap = gc.getInitialGap(feature);
             final Point2D pt = new Point2D.Double();
             final CachedGraphicStroke cgs = gc.getCachedGraphic();

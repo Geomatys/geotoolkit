@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.wms.xml.v130;
 
-import java.math.BigInteger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
@@ -357,12 +356,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link BigInteger }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "MaxHeight")
-    public JAXBElement<BigInteger> createMaxHeight(BigInteger value) {
-        return new JAXBElement<BigInteger>(_MaxHeight_QNAME, BigInteger.class, null, value);
+    public JAXBElement<Integer> createMaxHeight(Integer value) {
+        return new JAXBElement<Integer>(_MaxHeight_QNAME, Integer.class, null, value);
     }
 
     /**
@@ -411,12 +410,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link BigInteger }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "MaxWidth")
-    public JAXBElement<BigInteger> createMaxWidth(BigInteger value) {
-        return new JAXBElement<BigInteger>(_MaxWidth_QNAME, BigInteger.class, null, value);
+    public JAXBElement<Integer> createMaxWidth(Integer value) {
+        return new JAXBElement<Integer>(_MaxWidth_QNAME, Integer.class, null, value);
     }
 
     /**
@@ -456,12 +455,12 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link BigInteger }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Integer }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "LayerLimit")
-    public JAXBElement<BigInteger> createLayerLimit(BigInteger value) {
-        return new JAXBElement<BigInteger>(_LayerLimit_QNAME, BigInteger.class, null, value);
+    public JAXBElement<Integer> createLayerLimit(Integer value) {
+        return new JAXBElement<Integer>(_LayerLimit_QNAME, Integer.class, null, value);
     }
 
     /**

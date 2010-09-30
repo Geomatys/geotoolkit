@@ -72,6 +72,12 @@
           <artifactId>geotk-test</artifactId>
           <scope>test</scope>
       </dependency>
+      <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-utility-pending</artifactId>
+	  <version>${project.version}</version>
+          <scope>test</scope>
+      </dependency>
   </dependencies>
             
   </project>

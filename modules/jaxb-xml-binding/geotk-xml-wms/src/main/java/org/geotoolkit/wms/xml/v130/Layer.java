@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.wms.xml.v130;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -139,17 +138,17 @@ public class Layer extends AbstractLayer {
     private String queryable;
     @XmlAttribute
     @XmlSchemaType(name = "nonNegativeInteger")
-    private BigInteger cascaded;
+    private Integer cascaded;
     @XmlAttribute
     private Integer opaque;
     @XmlAttribute
     private Integer noSubsets;
     @XmlAttribute
     @XmlSchemaType(name = "nonNegativeInteger")
-    private BigInteger fixedWidth;
+    private Integer fixedWidth;
     @XmlAttribute
     @XmlSchemaType(name = "nonNegativeInteger")
-    private BigInteger fixedHeight;
+    private Integer fixedHeight;
     
     /**
      * An empty constructor used by JAXB.
@@ -248,8 +247,8 @@ public class Layer extends AbstractLayer {
             final List<BoundingBox> boundingBox, final List<Dimension> dimension, final Attribution attribution,
             final List<AuthorityURL> authorityURL, final List<Identifier> identifier, final List<MetadataURL> metadataURL,
             final List<DataURL> dataURL, final List<FeatureListURL> featureListURL, final List<Style> style, final Double minScaleDenominator,
-            final Double maxScaleDenominator, final List<Layer> layer, final String queryable, final BigInteger cascaded,
-            final Integer opaque, final Integer noSubsets, final BigInteger fixedWidth,  final BigInteger fixedHeight) {
+            final Double maxScaleDenominator, final List<Layer> layer, final String queryable, final Integer cascaded,
+            final Integer opaque, final Integer noSubsets, final Integer fixedWidth,  final Integer fixedHeight) {
         
         this._abstract               = _abstract;
         this.attribution             = attribution;
@@ -432,7 +431,7 @@ public class Layer extends AbstractLayer {
     /**
      * Gets the value of the cascaded property.
      */
-    public BigInteger getCascaded() {
+    public Integer getCascaded() {
         return cascaded;
     }
 
@@ -461,14 +460,14 @@ public class Layer extends AbstractLayer {
     /**
      * Gets the value of the fixedWidth property.
      */
-    public BigInteger getFixedWidth() {
+    public Integer getFixedWidth() {
         return fixedWidth;
     }
 
     /**
      * Gets the value of the fixedHeight property.
      */
-    public BigInteger getFixedHeight() {
+    public Integer getFixedHeight() {
         return fixedHeight;
     }
     

@@ -62,6 +62,17 @@
     in the JARs' list that maven will put in the directory "target/binaries".
   -->
   <dependencies>
+      <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-xml-service</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.geotoolkit.pending</groupId>
+          <artifactId>geotk-temporal</artifactId>
+	  <version>${project.version}</version>
+          <scope>test</scope>
+      </dependency>
   </dependencies>
 
 </project>

@@ -23,6 +23,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.converter.UnitConverter;
 import javax.measure.unit.Unit;
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.spatial.DWithin;
@@ -115,12 +116,10 @@ public class DefaultDWithin extends AbstractBinarySpatialOperator<Expression,Exp
      */
     @Override
     public String toString() {
-        return new StringBuilder("DWithin{")
-                .append(left).append(',')
-                .append(right).append(',')
-                .append(distance).append(',')
-                .append(strUnit).append('}')
-                .toString();
+        final StringBuilder sb = new StringBuilder("DWithin (distance=");
+        sb.append(distance).append(" ,unit=").append(strUnit).append(")\n");
+        sb.append(StringUtilities.toStringTree(left,right));
+        return sb.toString();
     }
 
     /**

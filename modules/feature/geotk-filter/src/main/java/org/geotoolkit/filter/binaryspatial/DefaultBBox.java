@@ -31,6 +31,7 @@ import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.feature.Feature;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.PropertyName;
@@ -191,10 +192,9 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
      */
     @Override
     public String toString() {
-        return new StringBuilder("BBOX{")
-                .append(left).append(',')
-                .append(right).append('}')
-                .toString();
+        final StringBuilder sb = new StringBuilder("BBOX \n");
+        sb.append(StringUtilities.toStringTree(left,right));
+        return sb.toString();
     }
 
     /**

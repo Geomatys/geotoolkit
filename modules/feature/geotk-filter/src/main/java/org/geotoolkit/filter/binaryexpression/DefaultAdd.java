@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.filter.binaryexpression;
 
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.filter.expression.Add;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.ExpressionVisitor;
@@ -61,10 +62,9 @@ public class DefaultAdd extends AbstractBinaryExpression<Expression,Expression> 
      */
     @Override
     public String toString() {
-        return new StringBuilder("Add{")
-                .append(left).append(',')
-                .append(right).append('}')
-                .toString();
+        final StringBuilder sb = new StringBuilder("Add \n");
+        sb.append(StringUtilities.toStringTree(left,right));
+        return sb.toString();
     }
 
     /**

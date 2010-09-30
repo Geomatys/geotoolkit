@@ -20,10 +20,11 @@ public class WMSMarshallerPool {
     static {
         try {
             instance = new MarshallerPool("org.geotoolkit.ogc.xml.exception:" +
-                                         "org.geotoolkit.wms.xml.v111:" +
-                                         "org.geotoolkit.wms.xml.v130:" +
-                                         "org.geotoolkit.sld.xml.v110:" +
-                                         "org.geotoolkit.internal.jaxb.geometry");
+                                          "org.geotoolkit.wms.xml.v111:" +
+                                          "org.geotoolkit.wms.xml.v130:" +
+                                          "org.geotoolkit.sld.xml.v110:" +
+                                          "org.geotoolkit.inspire.xml.vs:" +
+                                          "org.geotoolkit.internal.jaxb.geometry");
         } catch (JAXBException ex) {
             Logger.getLogger(WMSMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }

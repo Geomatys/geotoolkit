@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.filter.binaryexpression;
 
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.filter.expression.Divide;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.ExpressionVisitor;
@@ -61,10 +62,9 @@ public class DefaultDivide extends AbstractBinaryExpression<Expression,Expressio
      */
     @Override
     public String toString() {
-        return new StringBuilder("Divide{")
-                .append(left).append(',')
-                .append(right).append('}')
-                .toString();
+        final StringBuilder sb = new StringBuilder("Divide \n");
+        sb.append(StringUtilities.toStringTree(left,right));
+        return sb.toString();
     }
 
     /**

@@ -57,7 +57,7 @@ public class JavaScriptFunctionFactory implements FunctionFactory{
             try {
                 return new JavaScriptFunction(parameters[0]);
             } catch (ScriptException ex) {
-                new IllegalArgumentException("Malformated Javascript function : "+ ex.getMessage(), ex);
+                throw new IllegalArgumentException("Malformated Javascript function : "+ ex.getMessage(), ex);
             }
         }
 

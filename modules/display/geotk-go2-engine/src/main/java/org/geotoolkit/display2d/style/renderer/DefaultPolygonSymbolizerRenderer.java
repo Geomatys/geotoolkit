@@ -97,6 +97,13 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
         final float offset = symbol.getOffset(feature, coeff);
         final Shape shape;
 
+        //calculate displacement
+        final float[] disps = symbol.getDisplacement(feature);
+        Point2D dispStep = null;
+        if(disps[0] != 0 || disps[1] != 0){
+            dispStep = new Point2D.Float(disps[0], -disps[1]);
+        }
+
         try {
             if(dispGeom){
                 renderingContext.switchToDisplayCRS();
@@ -106,6 +113,10 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
                 renderingContext.switchToObjectiveCRS();
                 shape = (offset != 0) ? bufferObjectiveGeometry(renderingContext, projectedGeometry, symbolUnit, offset)
                                       : projectedGeometry.getObjectiveShape();
+                
+                //adjust displacement, displacement is expressed in pixel units
+                final AffineTransform inverse = renderingContext.getDisplayToObjective();
+                dispStep = inverse.deltaTransform(dispStep, dispStep);
             }
         }catch (TransformException ex){
             throw new PortrayalException("Could not calculate projected geometry",ex);
@@ -116,13 +127,8 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
             return;
         }
 
-        //we apply the displacement ---------------------------------------
-        final float[] disps = symbol.getDisplacement(feature);
-        Point2D dispStep = null;
-        if(disps[0] != 0 || disps[1] != 0){
-            final AffineTransform inverse = renderingContext.getDisplayToObjective();
-            dispStep = new Point2D.Float(disps[0], -disps[1]);
-            dispStep = inverse.deltaTransform(dispStep, dispStep);
+        //we apply the displacement ---------------------------------------        
+        if(dispStep != null){
             g2d.translate(dispStep.getX(), dispStep.getY());
         }
 
