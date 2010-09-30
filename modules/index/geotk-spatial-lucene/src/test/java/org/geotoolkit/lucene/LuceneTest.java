@@ -790,7 +790,7 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 12);
+        assertEquals(nbResults, 11);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 2"));
@@ -802,8 +802,8 @@ public class LuceneTest {
         assertTrue(results.contains("box 3"));
         assertTrue(results.contains("box 4"));
         assertTrue(results.contains("box 5"));
-        //considering precision errors this geometry should also be present
-        assertTrue(results.contains("line 1 projected"));
+        //since there is no more precision errors this geometry should not be present
+        assertFalse(results.contains("line 1 projected"));
         
         /*
          * case 3: a line
@@ -832,7 +832,7 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 9);
+        assertEquals(nbResults, 8);
         assertTrue(results.contains("point 1"));
         assertTrue(results.contains("point 1 projected"));
         assertTrue(results.contains("point 4"));
@@ -841,8 +841,8 @@ public class LuceneTest {
         assertTrue(results.contains("box 2"));
         assertTrue(results.contains("box 2 projected"));
         assertTrue(results.contains("box 5"));
-        //considering precision errors this geometry should also be present
-        assertTrue(results.contains("line 1 projected"));
+        //since there is no more precision errors this geometry should not be present
+        assertFalse(results.contains("line 1 projected"));
         
         /*
          * case 4: another line
@@ -987,10 +987,10 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 2);
+        assertEquals(nbResults, 3);
 //        assertTrue(results.contains("point 3")); //it overlaps
         assertTrue(results.contains("line 1"));
-//        assertTrue(results.contains("line 1 projected")); //doesnt match because of precision errors
+        assertTrue(results.contains("line 1 projected")); // match because precision errors have been corrected
         assertTrue(results.contains("line 2"));
         
         /*
@@ -1131,9 +1131,9 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 1);
+        assertEquals(nbResults, 2);
         assertTrue(results.contains("line 1"));
-//        assertTrue(results.contains("line 1 projected")); //not valid because of precision transformation errors
+        assertTrue(results.contains("line 1 projected")); // match because precision errors have been corrected
         
         /*
          * case 7: another line
@@ -1193,11 +1193,11 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 4);
+        assertEquals(nbResults, 5);
         assertTrue(results.contains("point 3"));
         assertTrue(results.contains("box 1"));
         assertTrue(results.contains("line 1"));
-//        assertTrue(results.contains("line 1 projected"));  //not valid because of precision transformation errors
+        assertTrue(results.contains("line 1 projected"));  // match because precision errors have been corrected
         assertTrue(results.contains("line 2"));
         
         /*
@@ -1226,13 +1226,13 @@ public class LuceneTest {
         }
         
         //we verify that we obtain the correct results.
-        assertEquals(nbResults, 6);
+        assertEquals(nbResults, 7);
         assertTrue(results.contains("point 2"));
         assertTrue(results.contains("point 3"));
         assertTrue(results.contains("box 3"  ));
         assertTrue(results.contains("box 4"  ));
         assertTrue(results.contains("line 1"));
-//        assertTrue(results.contains("line 1 projected")); //not valid because of precision transformation errors
+        assertTrue(results.contains("line 1 projected"));// match because precision errors have been corrected
         assertTrue(results.contains("line 2"));
     }
     
