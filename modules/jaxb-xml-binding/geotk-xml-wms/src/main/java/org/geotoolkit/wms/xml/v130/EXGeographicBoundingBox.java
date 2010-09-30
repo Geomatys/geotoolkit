@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.wms.xml.AbstractGeographicBoundingBox;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 
 
 /**
@@ -79,6 +80,18 @@ public class EXGeographicBoundingBox extends AbstractGeographicBoundingBox {
         this.westBoundLongitude = westBoundLongitude;
         
     }
+
+    /**
+     * Build a new bounding box.
+     *
+     */
+    public EXGeographicBoundingBox(final GeographicBoundingBox geoBox) {
+        this.westBoundLongitude = geoBox.getWestBoundLongitude();
+        this.southBoundLatitude = geoBox.getSouthBoundLatitude();
+        this.eastBoundLongitude = geoBox.getEastBoundLongitude();
+        this.northBoundLatitude = geoBox.getNorthBoundLatitude();
+    }
+
     /**
      * Gets the value of the westBoundLongitude property.
      * 

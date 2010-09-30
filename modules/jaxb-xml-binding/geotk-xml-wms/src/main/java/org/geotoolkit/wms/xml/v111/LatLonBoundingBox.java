@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.wms.xml.AbstractGeographicBoundingBox;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 
 /**
  * Geographic bounding box for 1.1.1 version of WMS
@@ -60,6 +61,14 @@ public class LatLonBoundingBox extends AbstractGeographicBoundingBox {
         this.maxy = maxy;
         
     }
+
+    public LatLonBoundingBox(final GeographicBoundingBox geoBox) {
+        this.minx = geoBox.getWestBoundLongitude();
+        this.miny = geoBox.getSouthBoundLatitude();
+        this.maxx = geoBox.getEastBoundLongitude();
+        this.maxy = geoBox.getNorthBoundLatitude();
+    }
+
     /**
      * Gets the value of the maxy property.
      * 
