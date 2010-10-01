@@ -355,6 +355,7 @@ public class ShapefileDataStore extends AbstractDataStore{
                 query2.setProperties(query.getPropertyNames());
                 query2.setFilter(query.getFilter());
                 query2.setHints(query.getHints());
+                query2.setCRS(query.getCoordinateSystemReproject());
                 reader = handleRemaining(reader, query2.buildQuery());
 
                 return reader;
@@ -375,6 +376,7 @@ public class ShapefileDataStore extends AbstractDataStore{
                 query2.setProperties(query.getPropertyNames());
                 query2.setFilter(query.getFilter());
                 query2.setHints(query.getHints());
+                query2.setCRS(query.getCoordinateSystemReproject());
                 reader = handleRemaining(reader, query2.buildQuery());
 
                 return reader;

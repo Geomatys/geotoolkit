@@ -279,6 +279,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
             query2.setHints(query.getHints());
             query2.setStartIndex(query.getStartIndex());
             query2.setMaxFeatures(query.getMaxFeatures());
+            query2.setCRS(query.getCoordinateSystemReproject());
 
             reader = handleRemaining(reader, query2.buildQuery());
             return reader;
