@@ -69,7 +69,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
- * @version 3.05
+ * @version 3.15
  *
  * @see Factory
  * @see FactoryRegistry
@@ -547,6 +547,17 @@ public class Hints extends RenderingHints {
     ////////               Feature, Filter and Style                ////////
     ////////                                                        ////////
     ////////////////////////////////////////////////////////////////////////
+
+    /**
+     * The {@link org.opengis.feature.type.FeatureTypeFactory} instance to use.
+     *
+     * @see FactoryFinder#getFeatureTypeFactory(Hints)
+     *
+     * @category Feature
+     *
+     * @since 3.15
+     */
+    public static final ClassKey FEATURE_TYPE_FACTORY = new ClassKey("org.opengis.feature.type.FeatureTypeFactory");
 
     /**
      * The {@link org.opengis.feature.FeatureFactory} instance to use.
