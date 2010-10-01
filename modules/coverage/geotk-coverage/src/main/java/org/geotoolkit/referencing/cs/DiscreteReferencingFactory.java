@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.referencing.cs;
 
-import java.util.List;
 import java.util.Arrays;
 
 import org.opengis.referencing.cs.TimeCS;
@@ -26,7 +25,6 @@ import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.EllipsoidalCS;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.VerticalCRS;
@@ -44,8 +42,8 @@ import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 
 /**
  * Factory methods for creating {@link DiscreteCoordinateSystemAxis} and derived objects.
- * Every {@code createXXX} methods provided in this class wrap an existing referencing object
- * and add discrete behavior to it.
+ * Every {@code createXXX(...)} methods provided in this class wrap an existing referencing
+ * object and add discrete behavior to it.
  * <p>
  * <b>IMPORTANT NOTE:</b><br>
  * In current implementation, every factory methods defined in this class do <strong>not</strong>
@@ -78,6 +76,9 @@ public final class DiscreteReferencingFactory {
 
     /**
      * Creates a new discrete axis wrapping the given axis with the given ordinate values.
+     * If the given axis is already an instance of {@code DiscreteCoordinateSystemAxis} having
+     * the given ordinates values (or the ordinates array is {@code null}), then that instance
+     * is returned directly.
      *
      * @param  axis      The axis to wrap.
      * @param  ordinates The ordinate values. This array is <strong>not</strong> cloned.
@@ -85,19 +86,23 @@ public final class DiscreteReferencingFactory {
      */
     public static DiscreteCoordinateSystemAxis createDiscreteAxis(CoordinateSystemAxis axis, final double... ordinates) {
         ensureNonNull("axis", axis);
-        ensureNonNull("ordinates", ordinates);
         if (axis instanceof DiscreteAxis) {
             final DiscreteAxis candidate = (DiscreteAxis) axis;
-            if (Arrays.equals(ordinates, candidate.ordinates)) {
+            if (ordinates == null || Arrays.equals(ordinates, candidate.ordinates)) {
                 return candidate;
             }
             axis = candidate.axis;
         }
+        ensureNonNull("ordinates", ordinates);
         return new DiscreteAxis(axis, ordinates);
     }
 
     /**
-     * Creates a new CS instance wrapping the given CS with the given ordinate values for each axis.
+     * Returns a CS instance wrapping the given CS with the given ordinate values for each axis.
+     * If the given CS already have discrete axes with the given ordinate values, then it is
+     * returned directly.
+     *
+     * {@section Grid geometry}
      * The instance returned by this method implements the {@link GridGeometry} interface. However
      * the <cite>grid to CRS</cite> transform is meaningful only if the ordinate values in the given
      * arrays are regularly spaced.
@@ -114,12 +119,14 @@ public final class DiscreteReferencingFactory {
     {
         ensureNonNull("cs", cs);
         ensureNonNull("ordinates", ordinates);
+        if (canReuse(cs, ordinates)) {
+            return cs;
+        }
         if (cs instanceof DiscreteCS) {
-            final DiscreteCS candidate = (DiscreteCS) cs;
-            if (candidate.useOrdinates(ordinates)) {
-                return candidate;
+            cs = ((DiscreteCS) cs).cs;
+            if (canReuse(cs, ordinates)) {
+                return cs;
             }
-            cs = candidate.cs;
         }
         if (cs instanceof CartesianCS)   return new DiscreteCS.Cartesian  ((CartesianCS)   cs, ordinates);
         if (cs instanceof EllipsoidalCS) return new DiscreteCS.Ellipsoidal((EllipsoidalCS) cs, ordinates);
@@ -129,7 +136,11 @@ public final class DiscreteReferencingFactory {
     }
 
     /**
-     * Creates a new CRS instance wrapping the given CRS with the given ordinate values for each axis.
+     * Returns a CRS instance wrapping the given CRS with the given ordinate values for each axis.
+     * If the coordinate system of the given CRS already have discrete axes with the given ordinate
+     * values, then the CRS is returned directly.
+     *
+     * {@section Grid geometry}
      * The instance returned by this method implements the {@link GridGeometry} interface. However
      * the <cite>grid to CRS</cite> transform is meaningful only if the ordinate values in the given
      * arrays are regularly spaced.
@@ -145,32 +156,71 @@ public final class DiscreteReferencingFactory {
     {
         ensureNonNull("crs", crs);
         ensureNonNull("ordinates", ordinates);
+        if (canReuse(crs.getCoordinateSystem(), ordinates)) {
+            return crs;
+        }
         if (crs instanceof DiscreteCRS<?>) {
-            final DiscreteCRS<?> candidate = (DiscreteCRS<?>) crs;
-            if (candidate.cs.useOrdinates(ordinates)) {
-                return candidate;
+            crs = ((DiscreteCRS<?>) crs).crs;
+            if (canReuse(crs.getCoordinateSystem(), ordinates)) {
+                return crs;
             }
-            crs = candidate.crs;
         }
         if (crs instanceof GeographicCRS) return new DiscreteCRS.Geographic((GeographicCRS) crs, ordinates);
         if (crs instanceof ProjectedCRS)  return new DiscreteCRS.Projected ((ProjectedCRS)  crs, ordinates);
         if (crs instanceof VerticalCRS)   return new DiscreteCRS.Vertical  ((VerticalCRS)   crs, ordinates);
         if (crs instanceof TemporalCRS)   return new DiscreteCRS.Temporal  ((TemporalCRS)   crs, ordinates);
-        if (crs instanceof CompoundCRS) {
-            final CompoundCRS compound = (CompoundCRS) crs;
-            final List<CoordinateReferenceSystem> components = compound.getComponents();
-            final DiscreteCRS<?>[] discretes = new DiscreteCRS<?>[components.size()];
-            int lower = 0;
-            for (int i=0; i<discretes.length; i++) {
-                final CoordinateReferenceSystem component = components.get(i);
-                final int upper = lower + component.getCoordinateSystem().getDimension();
-                discretes[i] = (DiscreteCRS<?>) createDiscreteCRS(component,
-                        Arrays.copyOfRange(ordinates, lower, upper));
-                lower = upper;
-            }
-            return new DiscreteCRS.Compound(compound, discretes);
-        }
+        if (crs instanceof CompoundCRS)   return DiscreteCompoundCRS.create((CompoundCRS)   crs, ordinates);
         return new DiscreteCRS<CoordinateReferenceSystem>(crs, new DiscreteCS(crs.getCoordinateSystem(), ordinates));
+    }
+
+    /**
+     * Returns {@code true} if the given coordinate system uses the given ordinate values for each
+     * axis. If an ordinate array is null, it will be interpreted as "no change in ordinate values"
+     * (compared to the existing discrete axis).
+     */
+    private static boolean canReuse(final CoordinateSystem cs, final double[]... ordinates) {
+        final int dimension = cs.getDimension();
+        if (ordinates.length != dimension) {
+            return false;
+        }
+        for (int i=0; i<dimension; i++) {
+            final CoordinateSystemAxis axis = cs.getAxis(i);
+            if (axis instanceof DiscreteCoordinateSystemAxis) {
+                final double[] expected = ordinates[i];
+                if (expected == null) {
+                    // Keep the ordinate values that are already in the axis instance.
+                    continue;
+                }
+                /*
+                 * Check if the specified ordinate values are the same than the ones
+                 * already declared in the axis. In such case, keep the axis instance.
+                 */
+                if (axis instanceof DiscreteAxis) {
+                    // Optimized case for the DiscreteAxis case (direct array comparison).
+                    if (Arrays.equals(((DiscreteAxis) axis).ordinates, expected)) {
+                        continue;
+                    }
+                } else {
+                    final DiscreteCoordinateSystemAxis dx = (DiscreteCoordinateSystemAxis) axis;
+                    if (dx.length() == ordinates.length) {
+                        for (int j=0; j<ordinates.length; j++) {
+                            final Comparable<?> ordinate = dx.getOrdinateAt(j);
+                            if (!(ordinate instanceof Number) || Double.doubleToLongBits(expected[j]) !=
+                                    Double.doubleToLongBits(((Number) ordinate).doubleValue()))
+                            {
+                                // Found an ordinate value which is not the same.
+                                return false;
+                            }
+                        }
+                        continue;
+                    }
+                }
+            }
+            // At least one condition failed (not a discrete
+            // instance, or number of values don't match).
+            return false;
+        }
+        return true;
     }
 
     /**

@@ -197,7 +197,7 @@ public class GridCoverageWriteParam extends GridCoverageStoreParam {
      * <p>
      * The {@link InterpolationMethod#NEAREST_NEIGHBOUR} method shall be supported by all writers.
      * Other interpolation methods may or may not be supported on a case-by-case basis, but the
-     * {@linkplain InterpolationMethod#BILINEAR} and {@linkplain InterpolationMethod#BICUBIC}
+     * {@link InterpolationMethod#BILINEAR BILINEAR} and {@link InterpolationMethod#BICUBIC BICUBIC}
      * methods can be considered as typically supported for {@linkplain ImageCoverageWriter
      * image writers} backed by <cite>Java Advanced Imaging</cite>.
      *

@@ -142,6 +142,22 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
     private transient MathTransform gridToCRS;
 
     /**
+     * Creates a new {@code NetcdfCRS} object wrapping the same NetCDF coordinate system
+     * than the given object. This copy constructor is provided for subclasses wanting to
+     * wraps the same NetCDF coordinate system and change a few properties or methods.
+     *
+     * @param crs The CRS to copy.
+     *
+     * @since 3.15
+     */
+    NetcdfCRS(final NetcdfCRS crs) {
+        this.cs           = crs.cs;
+        this.axes         = crs.axes;
+        this.gridEnvelope = crs.gridEnvelope;
+        this.gridToCRS    = crs.gridToCRS;
+    }
+
+    /**
      * Creates a new {@code NetcdfCRS} object wrapping the given NetCDF coordinate system.
      * The {@link CoordinateSystem#getCoordinateAxes()} is invoked at construction time and
      * every elements are assumed instance of {@link CoordinateAxis1D}.
@@ -552,6 +568,14 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
         }
 
         /**
+         * Wraps the same coordinate system than the given CRS, with different components.
+         */
+        private Compound(final Compound crs, final CoordinateReferenceSystem[] components) {
+            super(crs);
+            this.components = UnmodifiableArrayList.wrap(components);
+        }
+
+        /**
          * For each components, tries to make them regular.
          */
         @Override
@@ -563,8 +587,8 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
                 changed |= ((regular[i] = old.regularize()) != old);
             }
             if (changed) {
-                // TODO
-                //return DiscreteReferencingFactory.createDiscreteCRS(this, regular);
+                final double[][] ordinates = new double[getDimension()][]; // Null elements are okay.
+                return DiscreteReferencingFactory.createDiscreteCRS(new Compound(this, regular), ordinates);
             }
             return super.regularize();
         }

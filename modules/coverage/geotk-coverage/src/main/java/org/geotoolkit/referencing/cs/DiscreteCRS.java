@@ -18,7 +18,6 @@
 package org.geotoolkit.referencing.cs;
 
 import java.util.Set;
-import java.util.List;
 import java.util.Collection;
 import java.io.Serializable;
 
@@ -36,7 +35,6 @@ import org.opengis.referencing.cs.VerticalCS;
 import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.EllipsoidalCS;
 import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
@@ -46,14 +44,13 @@ import org.opengis.referencing.operation.Projection;
 import org.opengis.referencing.operation.MathTransform;
 
 import org.geotoolkit.lang.Decorator;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 
 /**
- * An implementation of {@link ProjectedCRS} delegating every method calls to the wrapped CRS,
- * except the coordinate system. The axes will be instances of {@link DiscreteCoordinateSystemAxis}
- * built from the ordinate values given at construction time.
+ * An implementation of {@link CoordinateReferenceSystem} delegating every method
+ * calls to the wrapped CRS, except the coordinate system. The axes will be instances
+ * of {@link DiscreteCoordinateSystemAxis} built from the ordinate values given at
+ * construction time.
  * <p>
  * This class implements {@link GridGeometry}. But the <cite>grid to CRS</cite> transform
  * returned by the later is correct only if every axes are regular.  This is not verified
@@ -173,45 +170,6 @@ class DiscreteCRS<T extends CoordinateReferenceSystem> implements CoordinateRefe
         }
         @Override public TimeCS getCoordinateSystem() {return (TimeCS) cs;}
         @Override public TemporalDatum getDatum()     {return crs.getDatum();}
-    }
-
-    /**
-     * A discrete compound CRS.
-     */
-    static final class Compound extends DiscreteCRS<CompoundCRS> implements CompoundCRS {
-        private static final long serialVersionUID = -4292250243969805179L;
-
-        private final List<CoordinateReferenceSystem> components;
-
-        public Compound(final CompoundCRS crs, final DiscreteCRS<?>... components) {
-            super(crs, createCS(crs, components));
-            this.components = UnmodifiableArrayList.<CoordinateReferenceSystem>wrap(components);
-        }
-
-        /** Workaround for RFE ##4093999 */
-        private static DiscreteCS createCS(final CompoundCRS crs, final DiscreteCRS<?>... components) {
-            final CoordinateSystem original = crs.getCoordinateSystem();
-            final DiscreteAxis[] axes = new DiscreteAxis[original.getDimension()];
-            int count = 0;
-            for (final CoordinateReferenceSystem component : components) {
-                final DiscreteAxis[] toAdd = ((DiscreteCRS<?>) component).cs.axes;
-                final int dimension = toAdd.length;
-                if (count + dimension <= axes.length) {
-                    System.arraycopy(toAdd, 0, axes, count, dimension);
-                }
-                count += dimension;
-            }
-            if (count != axes.length) {
-                throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.MISMATCHED_DIMENSION_$2, axes.length, count));
-            }
-            return new DiscreteCS(original, axes);
-        }
-
-        @Override
-        public List<CoordinateReferenceSystem> getComponents() {
-            return components;
-        }
     }
 
     /**

@@ -69,9 +69,10 @@ class DiscreteCS implements CoordinateSystem, GridGeometry, Serializable {
     protected final CoordinateSystem cs;
 
     /**
-     * The axes.
+     * The axes. Each elements in this array shall also implement the
+     * {@link CoordinateSystemAxis} interface.
      */
-    protected final DiscreteAxis[] axes;
+    protected final DiscreteCoordinateSystemAxis[] axes;
 
     /**
      * The grid envelope, created only when first needed.
@@ -131,9 +132,9 @@ class DiscreteCS implements CoordinateSystem, GridGeometry, Serializable {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.MISMATCHED_DIMENSION_$3, "ordinates", ordinates.length, dimension));
         }
-        axes = new DiscreteAxis[dimension];
+        axes = new DiscreteCoordinateSystemAxis[dimension];
         for (int i=0; i<dimension; i++) {
-            axes[i] = new DiscreteAxis(cs.getAxis(i), ordinates[i]);
+            axes[i] = DiscreteReferencingFactory.createDiscreteAxis(cs.getAxis(i), ordinates[i]);
         }
     }
 
@@ -143,24 +144,9 @@ class DiscreteCS implements CoordinateSystem, GridGeometry, Serializable {
      * @param cs The coordinate system to wrap.
      * @param ordinates The axes. This array is <strong>not</strong> cloned.
      */
-    DiscreteCS(final CoordinateSystem cs, final DiscreteAxis... axes) {
+    DiscreteCS(final CoordinateSystem cs, final DiscreteCoordinateSystemAxis... axes) {
         this.cs = cs;
         this.axes = axes;
-    }
-
-    /**
-     * Returns {@code true} if this coordinate system uses the given ordinate values for each axis.
-     */
-    final boolean useOrdinates(final double[]... ordinates) {
-        if (ordinates.length != axes.length) {
-            return false;
-        }
-        for (int i=0; i<ordinates.length; i++) {
-            if (!Arrays.equals(axes[i].ordinates, ordinates[i])) {
-                return false;
-            }
-        }
-        return true;
     }
 
     /**
@@ -202,7 +188,7 @@ class DiscreteCS implements CoordinateSystem, GridGeometry, Serializable {
      */
     @Override
     public final CoordinateSystemAxis getAxis(final int dimension) throws IndexOutOfBoundsException {
-        return axes[dimension];
+        return (CoordinateSystemAxis) axes[dimension];
     }
 
     /**
