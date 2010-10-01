@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
+import org.geotoolkit.factory.FactoryFinder;
 
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.DefaultName;
@@ -60,7 +61,7 @@ public class FeatureTypeBuilderTest {
     public void testFactoryUse(){
 
         //check it correctly use the given factory
-        FeatureTypeFactory ftf = new DefaultFeatureTypeFactory();
+        FeatureTypeFactory ftf = FactoryFinder.getFeatureTypeFactory(null);
         FeatureTypeBuilder ftb = new FeatureTypeBuilder(ftf);
         assertEquals(ftf, ftb.getFeatureTypeFactory());
 

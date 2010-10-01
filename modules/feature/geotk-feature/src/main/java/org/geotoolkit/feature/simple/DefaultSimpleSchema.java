@@ -24,7 +24,6 @@ import java.sql.Timestamp;
 import java.util.Collections;
 import javax.xml.namespace.QName;
 
-import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.geotoolkit.feature.type.DefaultSchema;
 import org.geotoolkit.feature.DefaultName;
 
@@ -40,6 +39,7 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import org.geotoolkit.factory.FactoryFinder;
 
 
 /**
@@ -60,7 +60,7 @@ import com.vividsolutions.jts.geom.Polygon;
 public class DefaultSimpleSchema extends DefaultSchema {
 
     //internal factory
-    private static final FeatureTypeFactory FACTORY = new DefaultFeatureTypeFactory();
+    private static final FeatureTypeFactory FACTORY = FactoryFinder.getFeatureTypeFactory(null);
     //schema namespace
     public static final String NAMESPACE = "http://www.geotoolkit.org/simple";
     //
