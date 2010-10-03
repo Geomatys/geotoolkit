@@ -17,22 +17,22 @@
  */
 package org.geotoolkit.referencing.adapters;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
+import java.io.IOException;
 
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.nc2.dataset.CoordinateAxis1DTime;
 
-import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.coverage.grid.GridGeometry;
+import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.crs.VerticalCRS;
+import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -42,6 +42,7 @@ import org.geotoolkit.util.Range;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.image.io.plugin.NetcdfTestBase;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.internal.image.io.IrregularAxesConverterTest;
 
 import org.junit.*;
@@ -100,6 +101,7 @@ public final class NetcdfCRSTest extends NetcdfTestBase {
             final NetcdfCRS geographic = NetcdfCRS.wrap(cs.get(0), data, null);
             final CoordinateReferenceSystem projected = geographic.regularize();
             assertValid(geographic, false, true);
+            assertValid(projected , true,  true);
         } finally {
             data.close();
         }
@@ -109,61 +111,46 @@ public final class NetcdfCRSTest extends NetcdfTestBase {
      * Run the test on the following NetCDF wrapper.
      *
      * @param crs The NetCDF wrapper to test.
-     * @param isRegular   {@code true} if the CRS geodetic axes are expected to be regular.
+     * @param isProjected {@code true} if the CRS axes are expected to be projected.
      * @param hasTimeAxis {@code true} if the 4th dimension is expected to wraps an
      *        instance of {@link CoordinateAxis1DTime}.
      */
-    private static void assertValid(final NetcdfCRS crs, final boolean isRegular, final boolean hasTimeAxis)
+    private static void assertValid(final CoordinateReferenceSystem crs, final boolean isProjected, final boolean hasTimeAxis)
             throws IOException, TransformException
     {
         assertEquals("The CRS shall be equals to itself.", crs, crs);
         assertFalse ("The CRS shall not be equals to null.", crs.equals(null));
-        /*
-         * Check the axes and compare with the expected values.
-         */
-        final String[] names = {"longitude", "latitude", "depth", "time"};
-        final String[] abbreviations = {"λ", "φ", "d", "t"};
-        final AxisDirection[] directions = new AxisDirection[] {
-            AxisDirection.EAST,
-            AxisDirection.NORTH,
-            AxisDirection.DOWN,
-            AxisDirection.FUTURE
-        };
-        final Unit<?>[] units = new Unit<?>[] {
-            NonSI.DEGREE_ANGLE,
-            NonSI.DEGREE_ANGLE,
-            SI.METRE,
-            NonSI.DAY
-        };
-        final int[] length = {720, 499, 59, 1};
-        assertEquals("Expected a 4-dimensional CRS.", names.length, crs.getDimension());
-        for (int i=0; i<names.length; i++) {
-            final NetcdfAxis axis = crs.getAxis(i);
-            assertEquals("Unexpected axis name.", names[i], axis.getName().getCode());
-            assertEquals("Unexpected toString() value.", "NetCDF:" + names[i], axis.toString());
-            assertEquals("Unexpected abbreviation.", abbreviations[i], axis.getAbbreviation());
-            assertEquals("Unexpected axis direction.", directions[i], axis.getDirection());
-            assertEquals("Unexpected axis unit.", units[i], axis.getUnit());
+        final org.opengis.referencing.cs.CoordinateSystem cs = crs.getCoordinateSystem();
+        assertEquals("Expected a 4-dimensional CRS.", GRID_SIZE.length, cs.getDimension());
+        assertExpectedAxes(cs, isProjected);
+        for (int i=0; i<GRID_SIZE.length; i++) {
             /*
-             * Check the ordinate values.
+             * For each axis, check the consistency of ordinate values.
              */
-            final int n = length[i];
-            assertEquals("Unexpected number of indices.", n, axis.length());
+            final CoordinateSystemAxis axis = cs.getAxis(i);
+            assertTrue("Expected a discrete axis.", axis instanceof DiscreteCoordinateSystemAxis);
+            final DiscreteCoordinateSystemAxis discreteAxis = (DiscreteCoordinateSystemAxis) axis;
+            final int n = discreteAxis.length();
+            assertEquals("Unexpected number of indices.", GRID_SIZE[i], n);
             final boolean isTimeAxis = (hasTimeAxis && i == 3);
             if (isTimeAxis) {
-                assertFalse("Inconsistent dates.",
-                        ((Date) axis.getOrdinateAt(0)).after((Date) axis.getOrdinateAt(n-1)));
+                final Date first = ((Date) discreteAxis.getOrdinateAt(0));
+                final Date last  = (Date)  discreteAxis.getOrdinateAt(n-1);
+                assertFalse("Inconsistent dates.", first.after(last));
             } else {
-                assertEquals("Error transforming the first indice for dimension " + i + '.',
-                        axis.getMinimumValue(), ((Number) axis.getOrdinateAt(0)).doubleValue(), EPS);
-                assertEquals("Error transforming the last indice for dimension " + i + '.',
-                        axis.getMaximumValue(), ((Number) axis.getOrdinateAt(n-1)).doubleValue(), EPS);
+                final double minimum = axis.getMinimumValue();
+                final double maximum = axis.getMaximumValue();
+                final double first   = ((Number) discreteAxis.getOrdinateAt(0)).doubleValue();
+                final double last    = ((Number) discreteAxis.getOrdinateAt(n-1)).doubleValue();
+                assertTrue  ("Inconsistent first ordinate.", minimum <= first);
+                assertTrue  ("Inconsistent last ordinate.",  maximum >= last);
+                if (!isProjected) {
+                    assertEquals("Inconsistent first ordinate.", minimum, first, EPS);
+                    assertEquals("Inconsistent last ordinate.",  maximum, last,  EPS);
+                }
             }
-            /*
-             * Check the range of ordinate values.
-             */
-            final Range<?> r1 = axis.getOrdinateRangeAt(0);
-            final Range<?> r2 = axis.getOrdinateRangeAt(n-1);
+            final Range<?> r1 = discreteAxis.getOrdinateRangeAt(0);
+            final Range<?> r2 = discreteAxis.getOrdinateRangeAt(n-1);
             if (n > 1) {
                 assertFalse(r1.intersects(r2));
             }
@@ -172,16 +159,21 @@ public final class NetcdfCRSTest extends NetcdfTestBase {
             assertEquals(elementClass, r2.getElementClass());
         }
         /*
-         * Check the CRS types.
+         * Check the CRS types. It should be a CompoundCRS. The first component shall be either
+         * geographic and projected, and the last components shall be vertical and temporal.
          */
         assertTrue("Expected a Compound CRS.", crs instanceof CompoundCRS);
         final List<CoordinateReferenceSystem> components = ((CompoundCRS) crs).getComponents();
         assertEquals(3, components.size());
-        assertTrue("Expected a Geographic CRS.", components.get(0) instanceof GeographicCRS);
+        if (isProjected) {
+            assertTrue("Expected a Projected CRS.", components.get(0) instanceof ProjectedCRS);
+        } else {
+            assertTrue("Expected a Geographic CRS.", components.get(0) instanceof GeographicCRS);
+        }
         assertTrue("Expected a Vertical CRS.",   components.get(1) instanceof VerticalCRS);
         assertTrue("Expected a Temporal CRS.",   components.get(2) instanceof TemporalCRS);
         /*
-         * Check the temporal CRS.
+         * Check the epoch of the temporal CRS.
          */
         final DefaultTemporalCRS timeCS = DefaultTemporalCRS.wrap((TemporalCRS) components.get(2));
         assertEquals("Expected the 1950-01-01 origin", -20L * 365250 * 24 * 60 * 60,
@@ -189,11 +181,17 @@ public final class NetcdfCRSTest extends NetcdfTestBase {
         /*
          * Check the grid geometry.
          */
-        assertArrayEquals(new int[4], crs.getGridRange().getLow().getCoordinateValues());
-        assertArrayEquals(new int[] {719, 498, 58, 0},
-                crs.getGridRange().getHigh().getCoordinateValues());
-        final MathTransform gridToCRS = crs.getGridToCRS();
-        if (!isRegular) {
+        assertTrue("Expected a grid geometry.", crs instanceof GridGeometry);
+        final GridGeometry gg = (GridGeometry) crs;
+        final GridEnvelope ge = gg.getGridRange();
+        final int[] high = GRID_SIZE.clone();
+        for (int i=0; i<high.length; i++) {
+            high[i]--;
+        }
+        assertArrayEquals(new int[high.length], ge.getLow() .getCoordinateValues());
+        assertArrayEquals(high,                 ge.getHigh().getCoordinateValues());
+        final MathTransform gridToCRS = gg.getGridToCRS();
+        if (!isProjected) {
             assertNull(gridToCRS);
         } else {
             // TODO: Test with a regular grid.

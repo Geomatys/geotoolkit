@@ -21,6 +21,15 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
+import javax.measure.unit.Unit;
+import static javax.measure.unit.SI.METRE;
+import static javax.measure.unit.NonSI.DAY;
+import static javax.measure.unit.NonSI.DEGREE_ANGLE;
+
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.internal.io.Installation;
 
@@ -29,14 +38,54 @@ import static org.junit.Assume.*;
 
 
 /**
- * Base class (when possible) for tests requirying a NetCDF file.
+ * Base class (when possible) for tests requerying a NetCDF file.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.15
  *
  * @since 3.10
  */
-public abstract class NetcdfTestBase {
+public class NetcdfTestBase {
+    /**
+     * The file to be used for the tests.
+     */
+    private static final String FILENAME = "OA_RTQCGL01_20070606_FLD_TEMP.nc";
+
+    /**
+     * The name of variables in the {@value #FILENAME} file.
+     */
+    protected static final String[] VARIABLE_NAMES = new String[] {"temperature", "pct_variance"};
+
+    /**
+     * The size of the grid in each dimension.
+     */
+    protected static final int[] GRID_SIZE = new int[] {720, 499, 59, 1};
+
+    /**
+     * Name of axes in the {@value #FILENAME} file.
+     */
+    private static final String[] AXIS_NAMES = new String[] {"longitude", "latitude", "depth", "time"},
+                        PROJECTED_AXIS_NAMES = new String[] {"Easting",   "Northing", "depth", "time"};
+
+    /**
+     * Abbreviations of axes in the {@value #FILENAME} file.
+     */
+    private static final String[] AXIS_ABBREVIATIONS = new String[] {"λ", "φ", "d", "t"},
+                        PROJECTED_AXIS_ABBREVIATIONS = new String[] {"E", "N", "d", "t"};
+
+    /**
+     * Directions of axes in the {@value #FILENAME} file.
+     */
+    private static final AxisDirection[] AXIS_DIRECTIONS = new AxisDirection[] {
+        AxisDirection.EAST, AxisDirection.NORTH, AxisDirection.DOWN, AxisDirection.FUTURE
+    };
+
+    /**
+     * Units of axes in the {@value #FILENAME} file.
+     */
+    private static final Unit<?>[] AXIS_UNITS = new Unit<?>[] {DEGREE_ANGLE, DEGREE_ANGLE,  METRE, DAY},
+                         PROJECTED_AXIS_UNITS = new Unit<?>[] {METRE,        METRE,         METRE, DAY};
+
     /**
      * Default constructor for subclasses.
      */
@@ -63,8 +112,43 @@ public abstract class NetcdfTestBase {
         }
         final String directory = properties.getProperty("rootDirectory");
         assertNotNull("Missing \"rootDirectory\" property.", directory);
-        file = new File(directory, "World/Coriolis/OA_RTQCGL01_20070606_FLD_TEMP.nc");
-        assertTrue("OA_RTQCGL01_20070606_FLD_TEMP.nc file not found.", file.isFile());
+        file = new File(directory, "World/Coriolis/" + FILENAME);
+        assertTrue(FILENAME + " file not found.", file.isFile());
         return file;
+    }
+
+    /**
+     * Ensures that axes in the given coordinate system have the expected name, abbreviation,
+     * direction and unit for a geographic or projected CRS.
+     *
+     * @param cs The coordinate system to test.
+     * @param isProjected {@code true} if the CRS is expected to be projected,
+     *                     or {@code false} if it is expected to be geographic.
+     */
+    protected static void assertExpectedAxes(final CoordinateSystem cs, final boolean isProjected) {
+        assertNotNull("The coordinate system can't be null.", cs);
+        final int dimension = cs.getDimension();
+        final String [] axisNames;
+        final String [] axisAbbreviations;
+        final Unit<?>[] axisUnits;
+        if (isProjected) {
+            axisNames         = PROJECTED_AXIS_NAMES;
+            axisAbbreviations = PROJECTED_AXIS_ABBREVIATIONS;
+            axisUnits         = PROJECTED_AXIS_UNITS;
+        } else {
+            axisNames         = AXIS_NAMES;
+            axisAbbreviations = AXIS_ABBREVIATIONS;
+            axisUnits         = AXIS_UNITS;
+        }
+        for (int i=0; i<dimension; i++) {
+            final CoordinateSystemAxis axis = cs.getAxis(i);
+            assertEquals("Unexpected axis name.",      axisNames        [i], axis.getName().getCode());
+            assertEquals("Unexpected abbreviation.",   axisAbbreviations[i], axis.getAbbreviation());
+            assertEquals("Unexpected axis direction.", AXIS_DIRECTIONS  [i], axis.getDirection());
+            assertEquals("Unexpected axis unit.",      axisUnits        [i], axis.getUnit());
+            if (!isProjected) {
+                assertEquals("Unexpected toString().", "NetCDF:" + AXIS_NAMES[i], axis.toString());
+            }
+        }
     }
 }

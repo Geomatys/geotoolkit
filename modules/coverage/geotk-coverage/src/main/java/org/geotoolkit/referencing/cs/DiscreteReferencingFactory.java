@@ -17,7 +17,11 @@
  */
 package org.geotoolkit.referencing.cs;
 
+import java.util.Date;
 import java.util.Arrays;
+import javax.measure.unit.Unit;
+import javax.measure.converter.UnitConverter;
+import javax.measure.quantity.Duration;
 
 import org.opengis.referencing.cs.TimeCS;
 import org.opengis.referencing.cs.VerticalCS;
@@ -34,6 +38,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.coverage.grid.GridGeometry;
 
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.measure.Units;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
@@ -86,12 +91,14 @@ public final class DiscreteReferencingFactory {
      */
     public static DiscreteCoordinateSystemAxis createDiscreteAxis(CoordinateSystemAxis axis, final double... ordinates) {
         ensureNonNull("axis", axis);
+        if (canReuse(axis, ordinates)) {
+            return (DiscreteCoordinateSystemAxis) axis;
+        }
         if (axis instanceof DiscreteAxis) {
-            final DiscreteAxis candidate = (DiscreteAxis) axis;
-            if (ordinates == null || Arrays.equals(ordinates, candidate.ordinates)) {
-                return candidate;
+            axis = ((DiscreteAxis) axis).axis;
+            if (canReuse(axis, ordinates)) {
+                return (DiscreteCoordinateSystemAxis) axis;
             }
-            axis = candidate.axis;
         }
         ensureNonNull("ordinates", ordinates);
         return new DiscreteAxis(axis, ordinates);
@@ -151,11 +158,14 @@ public final class DiscreteReferencingFactory {
      * @throws IllegalArgumentException If the length of the {@code ordinates} array is not equals
      *         to the coordinate system {@linkplain CoordinateSystem#getDimension() dimension}.
      */
-    public static CoordinateReferenceSystem createDiscreteCRS(CoordinateReferenceSystem crs, final double[]... ordinates)
+    public static CoordinateReferenceSystem createDiscreteCRS(CoordinateReferenceSystem crs, double[]... ordinates)
             throws IllegalArgumentException
     {
         ensureNonNull("crs", crs);
         ensureNonNull("ordinates", ordinates);
+        if (crs instanceof CompoundCRS) {
+            ordinates = replaceNulls((CompoundCRS) crs, ordinates, ordinates, 0);
+        }
         if (canReuse(crs.getCoordinateSystem(), ordinates)) {
             return crs;
         }
@@ -176,51 +186,103 @@ public final class DiscreteReferencingFactory {
     /**
      * Returns {@code true} if the given coordinate system uses the given ordinate values for each
      * axis. If an ordinate array is null, it will be interpreted as "no change in ordinate values"
-     * (compared to the existing discrete axis).
+     * (i.e. the existing discrete axis will be kept unchanged).
      */
-    private static boolean canReuse(final CoordinateSystem cs, final double[]... ordinates) {
+    private static boolean canReuse(final CoordinateSystem cs, final double[][] ordinates) {
         final int dimension = cs.getDimension();
         if (ordinates.length != dimension) {
             return false;
         }
         for (int i=0; i<dimension; i++) {
-            final CoordinateSystemAxis axis = cs.getAxis(i);
-            if (axis instanceof DiscreteCoordinateSystemAxis) {
-                final double[] expected = ordinates[i];
-                if (expected == null) {
-                    // Keep the ordinate values that are already in the axis instance.
-                    continue;
-                }
-                /*
-                 * Check if the specified ordinate values are the same than the ones
-                 * already declared in the axis. In such case, keep the axis instance.
-                 */
-                if (axis instanceof DiscreteAxis) {
-                    // Optimized case for the DiscreteAxis case (direct array comparison).
-                    if (Arrays.equals(((DiscreteAxis) axis).ordinates, expected)) {
-                        continue;
-                    }
-                } else {
-                    final DiscreteCoordinateSystemAxis dx = (DiscreteCoordinateSystemAxis) axis;
-                    if (dx.length() == ordinates.length) {
-                        for (int j=0; j<ordinates.length; j++) {
-                            final Comparable<?> ordinate = dx.getOrdinateAt(j);
-                            if (!(ordinate instanceof Number) || Double.doubleToLongBits(expected[j]) !=
-                                    Double.doubleToLongBits(((Number) ordinate).doubleValue()))
-                            {
-                                // Found an ordinate value which is not the same.
-                                return false;
-                            }
-                        }
-                        continue;
-                    }
-                }
+            if (!canReuse(cs.getAxis(i), ordinates[i])) {
+                return false;
             }
-            // At least one condition failed (not a discrete
-            // instance, or number of values don't match).
-            return false;
         }
         return true;
+    }
+
+    /**
+     * Returns {@code true} if the given axis uses the given ordinate values. If the
+     * ordinate array is null, it will be interpreted as "no change in ordinate values"
+     * (i.e. the existing discrete axis will be kept unchanged).
+     */
+    private static boolean canReuse(final CoordinateSystemAxis axis, final double[] ordinates) {
+        if (!(axis instanceof DiscreteCoordinateSystemAxis)) {
+            return false;
+        }
+        if (ordinates != null) {
+            /*
+             * Check if the specified ordinate values are the same than the ones
+             * already declared in the axis. In such case, keep the axis instance.
+             */
+            if (axis instanceof DiscreteAxis) {
+                // Optimized case for the DiscreteAxis case (direct array comparison).
+                return Arrays.equals(((DiscreteAxis) axis).ordinates, ordinates);
+            }
+            final DiscreteCoordinateSystemAxis dx = (DiscreteCoordinateSystemAxis) axis;
+            if (dx.length() != ordinates.length) {
+                return false;
+            }
+            for (int i=0; i<ordinates.length; i++) {
+                final Comparable<?> ordinate = dx.getOrdinateAt(i);
+                if (!(ordinate instanceof Number) || Double.doubleToLongBits(ordinates[i]) !=
+                        Double.doubleToLongBits(((Number) ordinate).doubleValue()))
+                {
+                    // Found an ordinate value which is not the same.
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Replaces {@code null} values in the given array by {@link DiscreteAxis#ordinates}, when
+     * possible. The {@link DiscreteAxis} instances are fetched through the {@link CompoundCRS}
+     * <strong>components</strong>, not from the {@code CompoundCRS} coordinate system. This is
+     * a way to ensure that the axes of components are consistent with the axis of the compound
+     * CRS, because the {@link #canReuse(CoordinateSystem, double[][])} method will check the
+     * later.
+     * <p>
+     * The only purpose of this method is to force {@code canReuse} to return {@code false} if
+     * the axes of components are inconsistent with the {@code CompoundCRS} axes. It happen in
+     * {@link org.geotoolkit.referencing.adapters.NetcdfCRS}, which invoke the methods in this
+     * class precisely in order to fix that inconsistency.
+     *
+     * @param  crs           The compound CRS.
+     * @param  ordinates     The ordinates arrays.
+     * @param  original      The ordinates arrays (needs to be supplied twice for the internal
+     *                       working of this method).
+     * @param  nextDimension Index of the first element to check in {@code ordinates}.
+     * @return {@code ordinates}, or a new array if at least one {@code null} element has been
+     *         replaced by a non-null element.
+     */
+    private static double[][] replaceNulls(final CompoundCRS crs, double[][] ordinates,
+            final double[][] original, int nextDimension)
+    {
+scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
+            final CoordinateSystem cs = component.getCoordinateSystem();
+            final int dimension = cs.getDimension();
+            if (component instanceof CompoundCRS) {
+                ordinates = replaceNulls((CompoundCRS) component, ordinates, original, nextDimension);
+            }
+            for (int i=0; i<dimension; i++) {
+                if (nextDimension == ordinates.length) {
+                    break scan;
+                }
+                if (ordinates[nextDimension] == null) {
+                    final CoordinateSystemAxis axis = cs.getAxis(i);
+                    if (axis instanceof DiscreteAxis) {
+                        if (ordinates == original) {
+                            ordinates = ordinates.clone();
+                        }
+                        ordinates[nextDimension] = ((DiscreteAxis) axis).ordinates;
+                    }
+                }
+                nextDimension++;
+            }
+        }
+        return ordinates;
     }
 
     /**
@@ -253,21 +315,34 @@ public final class DiscreteReferencingFactory {
              * regular (this is not verified).
              */
             final int n = axis.length() - 1;
-            if (n > 0) {
-                final Comparable<?> first, last;
-                if ((first = axis.getOrdinateAt(0)) instanceof Number &&
-                    (last  = axis.getOrdinateAt(n)) instanceof Number)
-                {
-                    final double start = ((Number) first).doubleValue();
-                    final double scale = (((Number) last).doubleValue() - start) / n;
-                    if (!Double.isNaN(scale) && scale != 0) {
-                        matrix.setElement(i, i, scale);
-                        matrix.setElement(i, dimension, start);
-                        continue; // Set other matrix coefficients.
-                    }
-                }
+            if (n < 0) {
+                return null;
             }
-            return null; // Not numeric axes, or not enough ordinate values.
+            final Comparable<?> first = axis.getOrdinateAt(0);
+            final Comparable<?> last  = axis.getOrdinateAt(n);
+            final double start, end;
+            if (first instanceof Number && last instanceof Number) {
+                start = ((Number) first).doubleValue();
+                end   = ((Number) last) .doubleValue();
+            } else if (first instanceof Date && last instanceof Date && axis instanceof CoordinateSystemAxis) {
+                final Unit<?> unit = ((CoordinateSystemAxis) axis).getUnit();
+                if (unit == null) {
+                    return null;
+                }
+                final UnitConverter converter = Units.MILLISECOND.getConverterTo(unit.asType(Duration.class));
+                start = converter.convert((double) ((Date) first).getTime());
+                end   = converter.convert((double) ((Date) last) .getTime());
+            } else {
+                return null;
+            }
+            if (n != 0) {
+                final double scale = (end - start) / n ;
+                if (Double.isNaN(scale) || scale == 0) {
+                    return null;
+                }
+                matrix.setElement(i, i, scale);
+            }
+            matrix.setElement(i, dimension, start);
         }
         return matrix;
     }

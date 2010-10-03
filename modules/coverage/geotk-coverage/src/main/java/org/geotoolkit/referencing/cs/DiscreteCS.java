@@ -34,6 +34,7 @@ import org.opengis.referencing.cs.EllipsoidalCS;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.resources.Errors;
@@ -215,7 +216,11 @@ class DiscreteCS implements CoordinateSystem, GridGeometry, Serializable {
     @Override
     public final synchronized MathTransform getGridToCRS() {
         if (gridToCRS == null) {
-            gridToCRS = ProjectiveTransform.create(DiscreteReferencingFactory.getAffineTransform(axes));
+            final Matrix matrix = DiscreteReferencingFactory.getAffineTransform(axes);
+            if (matrix == null) {
+                throw new UnsupportedOperationException(Errors.format(Errors.Keys.NOT_AN_AFFINE_TRANSFORM));
+            }
+            gridToCRS = ProjectiveTransform.create(matrix);
         }
         return gridToCRS;
     }
