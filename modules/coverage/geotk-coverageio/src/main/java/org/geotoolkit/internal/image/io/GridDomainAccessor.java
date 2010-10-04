@@ -103,6 +103,12 @@ public final class GridDomainAccessor extends MetadataAccessor {
                 for (int i=0; i<dim; i++) {
                     vector[i] = gridToCRS.getElement(j, i);
                 }
+                // TODO: Remove the special case below when GEOTK-117 has been fixed.
+                if (j == 1) {
+                    vector[j] = -vector[j];
+                    origin[j] -= vector[j] * envelope.getSpan(j);
+                }
+                // End of pre-GEOTK-117 patch to delete.
                 addOffsetVector(vector);
             }
         }

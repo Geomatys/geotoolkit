@@ -69,7 +69,7 @@ public final class NetcdfCoverageReaderTest extends NetcdfTestBase {
          */
         Envelope envelope = coverage.getEnvelope();
         assertEquals(-19987288, envelope.getMinimum(0), 1);
-        assertEquals(-13871566, envelope.getMinimum(1), 1);
+        assertEquals(-13815969, envelope.getMinimum(1), 1);
         envelope = CRS.transform(envelope, DefaultGeographicCRS.SPHERE);
         /*
          * Note: Coriolis data have a 0.25° offset in longitude. This is a known
@@ -77,7 +77,7 @@ public final class NetcdfCoverageReaderTest extends NetcdfTestBase {
          */
         assertEquals(-179.750, envelope.getMinimum(0), 1E-10);
         assertEquals( 180.250, envelope.getMaximum(0), 1E-10);
-        assertEquals(-77.0666, envelope.getMinimum(1), 1E-4);
-        assertEquals( 77.0666, envelope.getMaximum(1), 1E-4);
+        assertEquals( -76.954, envelope.getMinimum(1), 1E-3);
+        assertEquals(  77.178, envelope.getMaximum(1), 1E-3);
     }
 }

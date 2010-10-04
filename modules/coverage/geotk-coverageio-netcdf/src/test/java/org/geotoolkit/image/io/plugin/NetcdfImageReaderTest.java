@@ -63,7 +63,7 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
     private static final String EXPECTED_METADATA =
             SpatialMetadataFormat.FORMAT_NAME + '\n' +
             "├───RectifiedGridDomain\n" +
-            "│   ├───origin=“-1.9959489E7 -1.3843768E7 5.0 20975.0”\n" +
+            "│   ├───origin=“-1.9959489E7 1.3899365E7 5.0 20975.0”\n" +
             "│   ├───CoordinateReferenceSystem\n" +
             "│   │   ├───name=“NetCDF:time depth latitude longitude”\n" +
             "│   │   └───CoordinateSystem\n" +
@@ -98,7 +98,7 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
             "│   │   ├───OffsetVector\n" +
             "│   │   │   └───values=“55597.46 0.0 0.0 0.0”\n" +
             "│   │   ├───OffsetVector\n" +
-            "│   │   │   └───values=“0.0 55597.46 0.0 0.0”\n" +
+            "│   │   │   └───values=“0.0 -55597.46 0.0 0.0”\n" +
             "│   │   ├───OffsetVector\n" +
             "│   │   │   └───values=“0.0 0.0 NaN 0.0”\n" +
             "│   │   └───OffsetVector\n" +
@@ -112,7 +112,7 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
      * is performed in order to protect the test suite from slight variations in
      * floating point computations.
      */
-    private static final String[] SIMPLIFIED = {"-1.9959489", "-1.3843768", "55597.46"};
+    private static final String[] SIMPLIFIED = {"-1.9959489", "1.3899365", "55597.46"};
 
     /**
      * Removes a few digits to some numbers, in order to protect the test suite from
