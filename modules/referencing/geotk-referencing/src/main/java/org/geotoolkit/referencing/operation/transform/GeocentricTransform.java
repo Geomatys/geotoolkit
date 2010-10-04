@@ -138,22 +138,6 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
     private transient MathTransform inverse;
 
     /**
-     * Constructs a transform from the specified ellipsoid.
-     *
-     * @param ellipsoid The ellipsoid.
-     * @param hasHeight {@code true} if geographic coordinates include an ellipsoidal
-     *        height (i.e. are 3-D), or {@code false} if they are only 2-D.
-     *
-     * @deprecated Use {@link #create(Ellipsoid, boolean)} instead.
-     */
-    @Deprecated
-    public GeocentricTransform(final Ellipsoid ellipsoid, final boolean hasHeight) {
-        this(ellipsoid.getSemiMajorAxis(),
-             ellipsoid.getSemiMinorAxis(),
-             ellipsoid.getAxisUnit(), hasHeight);
-    }
-
-    /**
      * Constructs a transform from the specified parameters.
      * <p>
      * <strong>WARNING:</strong> Current implementation expects longitude and latitude ordinates
@@ -167,15 +151,11 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
      *        height (i.e. are 3-D), or {@code false} if they are only 2-D.
      *
      * @see #create(double, double, Unit, boolean)
-     *
-     * @deprecated Use {@link #create(double, double, Unit, boolean)} instead. This constructor
-     *             Will be given protected access in a future version.
      */
-    @Deprecated
-    public GeocentricTransform(final double  semiMajor,
-                               final double  semiMinor,
-                               final Unit<Length> units,
-                               final boolean hasHeight)
+    protected GeocentricTransform(final double  semiMajor,
+                                  final double  semiMinor,
+                                  final Unit<Length> units,
+                                  final boolean hasHeight)
     {
         this.hasHeight = hasHeight;
         final UnitConverter converter = units.getConverterTo(SI.METRE);

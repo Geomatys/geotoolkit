@@ -279,20 +279,8 @@ public class DimensionSlice extends DimensionIdentification {
      * @return The standard Java API for selecting a region along the dimension.
      *
      * @see SpatialImageReadParam#getDimensionSliceForAPI(DimensionSlice.API)
-     *
-     * @deprecated Replaced by the {@link MultidimensionalImageStore} interface.
      */
-    @Deprecated
-    public final API getAPI() {
-        final DimensionIdentification[] apiMapping = owner.apiMapping(false);
-        if (apiMapping != null) {
-            for (int i=apiMapping.length; --i>=0;) {
-                if (apiMapping[i] == this) {
-                    return API.VALIDS[i];
-                }
-            }
-        }
-        // Note: code below needs to stay, maybe in a private method.
+    private API getAPI() {
         final IIOParam param = getParameters();
         Object candidate = null;
         if (param instanceof SpatialImageReadParam) {
@@ -304,43 +292,6 @@ public class DimensionSlice extends DimensionIdentification {
             return ((MultidimensionalImageStore) candidate).getAPIForDimension(getDimensionIds());
         }
         return API.NONE;
-    }
-
-    /**
-     * Sets the standard Java API to use for selecting a region to read/write along the
-     * dimension represented by this object. If the given API was already assigned to an
-     * other {@code DimensionSlice} instance, then the API of the other dimension is set
-     * to {@link API#NONE NONE}.
-     * <p>
-     * Note that many plugins don't allow usage of {@link API#COLUMNS COLUMNS} and
-     * {@link API#ROWS ROWS} API for anything else than dimensions 0 and 1 respectively.
-     * If the given APi can not be set to this dimension slice, then an exception may be
-     * thrown at image reading or writing time.
-     *
-     * @param  newAPI The standard Java API to use for the dimension.
-     * @throws IllegalArgumentException If the given API can not be used with this dimension.
-     *
-     * @see SpatialImageReadParam#getDimensionSliceForAPI(DimensionSlice.API)
-     *
-     * @deprecated Replaced by the {@link MultidimensionalImageStore} interface.
-     */
-    @Deprecated
-    public void setAPI(final API newAPI) throws IllegalArgumentException {
-        final API api = getAPI();
-        if (!newAPI.equals(api)) { // We want a NullPointerException if newAPI is null.
-            final int index = getSliceIndex(api);
-            final DimensionIdentification[] apiMapping = owner.apiMapping(true);
-            for (int i=apiMapping.length; --i>=0;) {
-                if (apiMapping[i] == this) {
-                    apiMapping[i] = null;
-                }
-            }
-            if (!newAPI.equals(API.NONE)) {
-                apiMapping[newAPI.ordinal()] = this;
-            }
-            assert newAPI.equals(getAPI()) : newAPI;
-            setSliceIndex(newAPI, index, index == 0);
-        }
     }
 
     /**
@@ -380,19 +331,10 @@ public class DimensionSlice extends DimensionIdentification {
      *
      * @see SpatialImageReadParam#getSliceIndex(Object[])
      */
-    public int getSliceIndex() {
-        return getSliceIndex(getAPI());
-    }
-
-    /**
-     * Implementation of {@link #getSliceIndex()}.
-     *
-     * @param api The value of {@link #getAPI()}.
-     */
     @SuppressWarnings("fallthrough")
-    private int getSliceIndex(final API api) {
+    public int getSliceIndex() {
         final boolean isY;
-        switch (api) {
+        switch (getAPI()) {
             case COLUMNS: {
                 isY = false;
                 break;
@@ -457,19 +399,10 @@ public class DimensionSlice extends DimensionIdentification {
      *
      * @see SpatialImageReadParam#getSliceIndex(Object[])
      */
-    public void setSliceIndex(final int index) {
-        setSliceIndex(getAPI(), index, false);
-    }
-
-    /**
-     * Implementation of {@link #getSliceIndex()}.
-     *
-     * @param api The value of {@link #getAPI()}.
-     */
     @SuppressWarnings("fallthrough")
-    private void setSliceIndex(final API api, final int index, final boolean noCreate) {
+    public void setSliceIndex(final int index) {
         final boolean isY;
-        switch (api) {
+        switch (getAPI()) {
             case COLUMNS: {
                 isY = false;
                 break;
@@ -506,9 +439,6 @@ public class DimensionSlice extends DimensionIdentification {
         } else {
             Rectangle region = parameters.getSourceRegion();
             if (region == null) {
-                if (noCreate) {
-                    return;
-                }
                 region = new Rectangle(1,1);
             }
             if (isY) {
@@ -535,7 +465,7 @@ public class DimensionSlice extends DimensionIdentification {
         final API api = getAPI();
         if (!API.NONE.equals(api)) {
             buffer.append(", API=").append(api.name());
-        }
+    }
         return buffer.append(']').toString();
     }
 }

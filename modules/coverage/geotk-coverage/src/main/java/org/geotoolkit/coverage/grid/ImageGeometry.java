@@ -111,23 +111,6 @@ public class ImageGeometry implements GridGeometry, Serializable {
     }
 
     /**
-     * Returns the image envelope in "real world" coordinates. This is the {@linkplain #getGridRange
-     * grid envelope} transformed using the {@link #getGridToCRS grid to CRS} transform, assuming
-     * that the transform maps {@linkplain PixelOrientation#CENTER pixel center}.
-     *
-     * @return The image envelope in "real world" coordinates.
-     *
-     * @since 3.00
-     *
-     * @deprecated Since {@code ImageGeometry} does not specify whatever the transform maps pixel
-     * center or corner, users are required to provide an explicit {@link PixelOrientation} argument.
-     */
-    @Deprecated
-    public Rectangle2D getEnvelope() {
-        return getEnvelope(PixelOrientation.CENTER);
-    }
-
-    /**
      * Returns the georeferenced image envelope in "real world" coordinates. This is the
      * {@linkplain #getGridRange grid envelope} transformed using the {@link #getGridToCRS
      * grid to CRS} transform. The transform may maps pixel center or a corner, depending
