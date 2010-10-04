@@ -24,13 +24,24 @@ package org.geotoolkit.wms;
  * @module pending
  */
 public interface GetFeatureInfoRequest extends GetMapRequest {
-
+    /**
+     * Returns the output format, never {@code null}.
+     */
     String getInfoFormat();
 
+    /**
+     * Sets the information format to use. Must be called.
+     */
     void setInfoFormat(String format);
 
+    /**
+     * Returns the layer(s) to request, never {@code null}. Should not be empty.
+     */
     String[] getQueryLayers();
 
+    /**
+     * Sets the layer(s) to request. Must be called.
+     */
     void setQueryLayers(String[] layers);
 
     /**
