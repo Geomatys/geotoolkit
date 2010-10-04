@@ -50,6 +50,7 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
     protected String sldBody = null;
     protected Boolean transparent = true;
     protected String rule = null;
+    protected Double scale = null;
     protected String sldVersion = null;
 
     /**
@@ -141,6 +142,22 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
     @Override
     public void setRule(String rule) {
         this.rule = rule;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Double getScale() {
+        return scale;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setScale(Double scale) {
+        this.scale = scale;
     }
 
     /**
@@ -241,6 +258,9 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
         }
         if (rule != null) {
             requestParameters.put("RULE", rule);
+        }
+        if (scale != null) {
+            requestParameters.put("SCALE", scale.toString());
         }
         if (sldBody != null) {
             requestParameters.put("SLD_BODY", sldBody);

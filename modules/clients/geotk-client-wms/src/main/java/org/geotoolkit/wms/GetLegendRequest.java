@@ -78,6 +78,17 @@ public interface GetLegendRequest extends Request {
     void setRule(String rule);
 
     /**
+     * Returns the scale for filtering rules that can be applied in the sld file,
+     * or {@code null} if none.
+     */
+    Double getScale();
+
+    /**
+     * Sets a scale for filtering rules that can be applied in the sld file.
+     */
+    void setScale(Double scale);
+
+    /**
      * Returns the style to apply, or {@code null} if none was given.
      */
     String getStyle();
