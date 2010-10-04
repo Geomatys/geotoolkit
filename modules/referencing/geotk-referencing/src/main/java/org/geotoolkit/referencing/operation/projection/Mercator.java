@@ -228,17 +228,23 @@ public class Mercator extends UnitaryProjection {
     protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws ProjectionException
     {
-        double y = srcPts[srcOff + 1]; // Must be before writing x.
-        // See the javadoc of the Spherical inner class for a note
-        // about why we perform explicit checks for the pole cases.
-        final double a = abs(y);
-        if (a < PI/2) {
-            y = -log(tsfn(y, sin(y)));
-        } else {
-            y = copySign(a <= (PI/2 + ANGLE_TOLERANCE) ? POSITIVE_INFINITY : NaN, y);
+        double x = srcPts[srcOff];
+        double y = srcPts[srcOff + 1];
+        // Projection of zero is zero. However the formulas below have a slight rounding error
+        // which produce values close to 1E-10, so we will avoid them when y=0. In addition of
+        // avoiding rounding error, this also preserve the sign (positive vs negative zero).
+        if (y != 0) {
+            // See the javadoc of the Spherical inner class for a note
+            // about why we perform explicit checks for the pole cases.
+            final double a = abs(y);
+            if (a < PI/2) {
+                y = -log(tsfn(y, sin(y)));
+            } else {
+                y = copySign(a <= (PI/2 + ANGLE_TOLERANCE) ? POSITIVE_INFINITY : NaN, y);
+            }
+            dstPts[dstOff + 1] = y;
         }
-        dstPts[dstOff] = rollLongitude(srcPts[srcOff]);  // Must be before writing y.
-        dstPts[dstOff + 1] = y;
+        dstPts[dstOff] = rollLongitude(x);
     }
 
     /**
@@ -263,16 +269,18 @@ public class Mercator extends UnitaryProjection {
         }
         dstOff--;
         while (--numPts >= 0) {
-            double y = dstPts[dstOff += 2]; // Same as srcPts[srcOff...].
-            // See the javadoc of the Spherical inner class for a note
-            // about why we perform explicit checks for the pole cases.
-            final double a = abs(y);
-            if (a < PI/2) {
-                y = -log(tsfn(y, sin(y)));
-            } else {
-                y = copySign(a <= (PI/2 + ANGLE_TOLERANCE) ? POSITIVE_INFINITY : NaN, y);
+            double y = dstPts[dstOff += 2]; // Same as srcPts[srcOff + 1].
+            if (y != 0) {
+                // See the javadoc of the Spherical inner class for a note
+                // about why we perform explicit checks for the pole cases.
+                final double a = abs(y);
+                if (a < PI/2) {
+                    y = -log(tsfn(y, sin(y)));
+                } else {
+                    y = copySign(a <= (PI/2 + ANGLE_TOLERANCE) ? POSITIVE_INFINITY : NaN, y);
+                }
+                dstPts[dstOff] = y;
             }
-            dstPts[dstOff] = y;
         }
         // Invoking Assertions.checkReciprocal(...) here would be
         // useless since it works only for non-overlapping arrays.
@@ -376,16 +384,21 @@ public class Mercator extends UnitaryProjection {
         {
             double x = rollLongitude(srcPts[srcOff]);
             double y = srcPts[srcOff + 1];
-            // See class javadoc for a note about explicit check for poles.
-            final double a = abs(y);
-            if (a < PI/2) {
-                y = log(tan(PI/4 + 0.5*y));
-            } else {
-                y = copySign(a <= (PI/2 + ANGLE_TOLERANCE) ? POSITIVE_INFINITY : NaN, y);
+            // Projection of zero is zero. However the formulas below have a slight rounding error
+            // which produce values close to 1E-10, so we will avoid them when y=0. In addition of
+            // avoiding rounding error, this also preserve the sign (positive vs negative zero).
+            if (y != 0) {
+                // See class javadoc for a note about explicit check for poles.
+                final double a = abs(y);
+                if (a < PI/2) {
+                    y = log(tan(PI/4 + 0.5*y));
+                } else {
+                    y = copySign(a <= (PI/2 + ANGLE_TOLERANCE) ? POSITIVE_INFINITY : NaN, y);
+                }
+                assert pseudo || checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
+                dstPts[dstOff + 1] = y;
             }
-            assert pseudo || checkTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff] = x;
-            dstPts[dstOff + 1] = y;
         }
 
         /**
@@ -409,13 +422,15 @@ public class Mercator extends UnitaryProjection {
             dstOff--;
             while (--numPts >= 0) {
                 double y = dstPts[dstOff += 2]; // Same as srcPts[srcOff...].
-                final double a = abs(y);
-                if (a < PI/2) {
-                    y = log(tan(PI/4 + 0.5*y));
-                } else {
-                    y = copySign(a <= (PI/2 + ANGLE_TOLERANCE) ? POSITIVE_INFINITY : NaN, y);
+                if (y != 0) {
+                    final double a = abs(y);
+                    if (a < PI/2) {
+                        y = log(tan(PI/4 + 0.5*y));
+                    } else {
+                        y = copySign(a <= (PI/2 + ANGLE_TOLERANCE) ? POSITIVE_INFINITY : NaN, y);
+                    }
+                    dstPts[dstOff] = y;
                 }
-                dstPts[dstOff] = y;
             }
             // Invoking Assertions.checkReciprocal(...) here would be
             // useless since it works only for non-overlapping arrays.

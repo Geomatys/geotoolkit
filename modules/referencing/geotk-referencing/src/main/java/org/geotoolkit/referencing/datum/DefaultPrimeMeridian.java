@@ -21,6 +21,7 @@
 package org.geotoolkit.referencing.datum;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
@@ -31,7 +32,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.referencing.datum.PrimeMeridian;
 
 import org.geotoolkit.referencing.ComparisonMode;
+import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.lang.Immutable;
@@ -45,7 +48,7 @@ import org.geotoolkit.lang.Immutable;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.14
+ * @version 3.15
  *
  * @since 1.2
  * @module
@@ -59,10 +62,15 @@ public class DefaultPrimeMeridian extends AbstractIdentifiedObject implements Pr
     private static final long serialVersionUID = 541978454643213305L;;
 
     /**
-     * The Greenwich meridian, with angular measurements in decimal degrees.
+     * The Greenwich meridian (EPSG:8901), with angular measurements in decimal degrees.
      */
-    public static final DefaultPrimeMeridian GREENWICH =
-            new DefaultPrimeMeridian("Greenwich", 0, NonSI.DEGREE_ANGLE);
+    public static final DefaultPrimeMeridian GREENWICH;
+    static {
+        final Map<String,Object> properties = new HashMap<String,Object>(4);
+        properties.put(NAME_KEY, "Greenwich");
+        properties.put(IDENTIFIERS_KEY, new NamedIdentifier(Citations.EPSG, "8901"));
+        GREENWICH = new DefaultPrimeMeridian(properties, 0, NonSI.DEGREE_ANGLE);
+    }
 
     /**
      * Longitude of the prime meridian measured from the Greenwich meridian, positive eastward.

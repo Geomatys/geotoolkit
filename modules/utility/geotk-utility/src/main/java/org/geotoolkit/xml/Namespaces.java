@@ -137,7 +137,7 @@ public final class Namespaces {
      */
     private static final Map<String,String> SPECIFIC_URLS;
     static {
-        final Map<String,String> p = new HashMap<String,String>(30);
+        final Map<String,String> p = new HashMap<String,String>(40);
         p.put("http://www.w3.org/2001/XMLSchema",                         "xsd");
         p.put("http://www.w3.org/2001/XMLSchema-instance",                "xsi");
         p.put("http://www.w3.org/2004/02/skos/core#",                    "skos");
@@ -157,6 +157,7 @@ public final class Namespaces {
         p.put("http://www.purl.org/dc/terms/",                           "dct2");
         p.put("http://purl.org/dc/terms/",                                "dct");
         p.put("http://www.inspire.org",                                   "ins");
+        p.put("http://inspira.europa.eu/networkservice/view/1.0",  "inspire_vs");
         p.put("urn:oasis:names:tc:ciq:xsdschema:xAL:2.0",                 "xal");
         p.put("urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0",              "rim");
         p.put("urn:oasis:names:tc:ebxml-regrep:rim:xsd:2.5",            "rim25");

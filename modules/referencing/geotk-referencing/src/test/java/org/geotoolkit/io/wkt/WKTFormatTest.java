@@ -286,8 +286,9 @@ public final class WKTFormatTest {
         String wkt = decodeQuotes(
                 "GEOCCS[“" + name + "”,\n" +
                 "  DATUM[“WGS84”,\n" +
-                "    SPHEROID[“WGS84”, 6378137.0, 298.257223563]],\n" +
-                "  PRIMEM[“Greenwich”, 0.0],\n" +
+                "    SPHEROID[“WGS84”, 6378137.0, 298.257223563, AUTHORITY[“EPSG”,“7030”]],\n" +
+                "    AUTHORITY[“EPSG”,“6326”]],\n" +
+                "  PRIMEM[“Greenwich”, 0.0, AUTHORITY[“EPSG”,“8901”]],\n" +
                 "  UNIT[“metre”, 1.0],\n" +
                 "  AXIS[“Geocentric X”, GEOCENTRIC_X],\n" +
                 "  AXIS[“Geocentric Y”, GEOCENTRIC_Y],\n" +
@@ -301,8 +302,9 @@ public final class WKTFormatTest {
         wkt = decodeQuotes(
                 "GEOCCS[“" + name + "”,\n" +
                 "  DATUM[“WGS84”,\n" +
-                "    SPHEROID[“WGS84”, 6378137.0, 298.257223563]],\n" +
-                "  PRIMEM[“Greenwich”, 0.0],\n" +
+                "    SPHEROID[“WGS84”, 6378137.0, 298.257223563, AUTHORITY[“EPSG”,“7030”]],\n" +
+                "    AUTHORITY[“EPSG”,“6326”]],\n" +
+                "  PRIMEM[“Greenwich”, 0.0, AUTHORITY[“EPSG”,“8901”]],\n" +
                 "  UNIT[“metre”, 1.0],\n" +
                 "  AXIS[“X”, OTHER],\n" +
                 "  AXIS[“Y”, EAST],\n" +

@@ -42,7 +42,7 @@ import static org.geotoolkit.test.Commons.*;
  * Tests {@link WebCRSFactory}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.04
+ * @version 3.15
  *
  * @since 2.2
  */
@@ -144,8 +144,8 @@ public final class WebCRSFactoryTest {
         assertMultilinesEquals(decodeQuotes(
             "GEOGCS[“WGS84”, \n" +
             "  DATUM[“WGS84”, \n" +
-            "    SPHEROID[“WGS84”, 6378137.0, 298.257223563]], \n" +
-            "  PRIMEM[“Greenwich”, 0.0], \n" +
+            "    SPHEROID[“WGS84”, 6378137.0, 298.257223563, AUTHORITY[“EPSG”,“7030”]]], \n" +
+            "  PRIMEM[“Greenwich”, 0.0, AUTHORITY[“EPSG”,“8901”]], \n" +
             "  UNIT[“degree”, 0.017453292519943295], \n" +
             "  AXIS[“Geodetic longitude”, EAST], \n" +
             "  AXIS[“Geodetic latitude”, NORTH], \n" +

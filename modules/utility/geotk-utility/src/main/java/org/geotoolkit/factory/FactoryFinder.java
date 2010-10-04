@@ -30,6 +30,7 @@ import org.opengis.util.NameFactory;
 import org.opengis.style.StyleFactory;
 import org.opengis.filter.FilterFactory;
 import org.opengis.feature.FeatureFactory;
+import org.opengis.feature.type.FeatureTypeFactory;
 import org.opengis.referencing.cs.CSFactory;
 import org.opengis.referencing.cs.CSAuthorityFactory;
 import org.opengis.referencing.crs.CRSFactory;
@@ -55,7 +56,7 @@ import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
- * Defines static methods used to access the application's {@linkplain Factory factory}
+ * Defines static methods used to access the application {@linkplain Factory factory}
  * implementations. This class provide access to the following services:
  * <p>
  * <ul>
@@ -80,6 +81,7 @@ import org.geotoolkit.lang.ThreadSafe;
  *     <li>{@link AggregateFactory}</li>
  *   </ul>
  *   <li><b>Feature</b></li><ul>
+ *     <li>{@link FeatureTypeFactory}</li>
  *     <li>{@link FeatureFactory}</li>
  *     <li>{@link FilterFactory}</li>
  *     <li>{@link StyleFactory}</li>
@@ -98,7 +100,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * itself is just a convenience wrapper around a {@code FactoryRegistry} instance.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.03
+ * @version 3.15
  *
  * @since 2.1
  * @level basic
@@ -175,6 +177,7 @@ public class FactoryFinder {
                     GeometryFactory.class,
                     ComplexFactory.class,
                     AggregateFactory.class,
+                    FeatureTypeFactory.class,
                     FeatureFactory.class,
                     FilterFactory.class,
                     StyleFactory.class,
@@ -618,6 +621,36 @@ public class FactoryFinder {
      */
     public static Set<AggregateFactory> getAggregateFactories(final Hints hints) {
         return getFactories(AggregateFactory.class, hints, Hints.AGGREGATE_FACTORY);
+    }
+
+    /**
+     * Returns the first implementation of {@link FeatureTypeFactory} matching the specified hints.
+     *
+     * @param  hints An optional map of hints, or {@code null} for the default ones.
+     * @return The first feature type factory that matches the supplied hints.
+     * @throws FactoryRegistryException if no implementation was found or can be created for the
+     *         {@link FeatureTypeFactory} interface.
+     *
+     * @since 3.15
+     * @category Feature
+     *
+     * @see Hints#FEATURE_TYPE_FACTORY
+     */
+    public static FeatureTypeFactory getFeatureTypeFactory(final Hints hints) throws FactoryRegistryException {
+        return getFactory(FeatureTypeFactory.class, hints, Hints.FEATURE_TYPE_FACTORY);
+    }
+
+    /**
+     * Returns a set of all available implementations for the {@link FeatureTypeFactory} interface.
+     *
+     * @param  hints An optional map of hints, or {@code null} for the default ones.
+     * @return Set of available feature type factory implementations.
+     *
+     * @since 3.15
+     * @category Feature
+     */
+    public static Set<FeatureTypeFactory> getFeatureTypeFactories(final Hints hints) {
+        return getFactories(FeatureTypeFactory.class, hints, Hints.FEATURE_TYPE_FACTORY);
     }
 
     /**

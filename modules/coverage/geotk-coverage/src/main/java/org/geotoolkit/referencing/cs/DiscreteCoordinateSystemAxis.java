@@ -23,7 +23,7 @@ import org.geotoolkit.util.Range;
 /**
  * Interface for coordinate systems axes having a finite number of discrete ordinate values.
  * This interface is sometime used for axes associated to a grid coverage, for example in the
- * NetCDF file format.
+ * NetCDF file format. Instances can be created by {@link DiscreteReferencingFactory}.
  *
  * {@note The services provided by <code>DiscreteCoordinateSystemAxis</code> are redundant with
  * the service provided by the <cite>grid to CRS</cite> transform associated with grid geometries.
@@ -33,6 +33,7 @@ import org.geotoolkit.util.Range;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.15
  *
+ * @see org.opengis.referencing.cs.CoordinateSystemAxis
  * @see org.opengis.coverage.grid.GridGeometry#getGridToCRS()
  *
  * @since 3.15

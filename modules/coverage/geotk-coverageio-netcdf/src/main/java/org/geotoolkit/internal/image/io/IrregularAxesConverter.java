@@ -35,6 +35,8 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 
 
@@ -61,12 +63,23 @@ import org.geotoolkit.referencing.operation.DefiningConversion;
  */
 public final class IrregularAxesConverter {
     /**
+     * A collection of source geographic CRS to try, in preference order.
+     */
+    private static final GeographicCRS[] SOURCES = {
+        DefaultGeographicCRS.WGS84,
+        DefaultGeographicCRS.SPHERE
+    };
+
+    /**
      * The operation methods to try.
      */
     private static final String[] METHODS = {"Mercator_1SP"};
 
     /**
      * A tolerance factor, relative to the increment.
+     * <p>
+     * <b>Tip:</b> In the NetCDF library version 4.1, the threshold in the
+     * {@link ucar.nc2.dataset.CoordinateAxis1D#isRegular()} method is 5E-3.
      */
     private final double tolerance;
 
@@ -81,15 +94,9 @@ public final class IrregularAxesConverter {
     private final CRSFactory crsFactory;
 
     /**
-     * The new <var>x</var> and <var>y</var> axis ordinate values.
-     * Those fields are valid only if {@link #canConvert} returned a non-null value.
-     */
-    public double[] nx, ny;
-
-    /**
      * Creates a new instance.
      *
-     * @param tolerance A tolerance factor, relative to the increment.
+     * @param tolerance A tolerance factor, relative to the increment (suggestion: 1E-4).
      * @param hints An optional set of hints for determining the factories to use.
      */
     public IrregularAxesConverter(final double tolerance, final Hints hints) {
@@ -122,13 +129,36 @@ public final class IrregularAxesConverter {
     }
 
     /**
+     * Tests if the given axes can be made regular. This method can be used when the source CRS
+     * is not well known. This method will try a default set of geographic CRS.
+     *
+     * @param  x The <var>x</var> axis.
+     * @param  y The <var>y</var> axis.
+     * @return {@code null} if the axis can not be made regular, or the target CRS otherwise.
+     *         The returned CRS implements the {@link org.opengis.coverage.grid.GridGeometry}
+     *         interface.
+     */
+    public ProjectedCRS canConvert(final DiscreteCoordinateSystemAxis x,
+                                   final DiscreteCoordinateSystemAxis y)
+    {
+        for (final GeographicCRS sourceCRS : SOURCES) {
+            final ProjectedCRS targetCRS = canConvert(sourceCRS, x, y);
+            if (targetCRS != null) {
+                return targetCRS;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Tests if the given axes can be made regular.
      *
      * @param  sourceCRS The two-dimensional CRS of the given <var>x</var> and <var>y</var> axes.
      * @param  x The <var>x</var> axis.
      * @param  y The <var>y</var> axis.
      * @return {@code null} if the axis can not be made regular, or the target CRS otherwise.
-     *         In the later case, ({@link #nx},{@link #ny}) contain the new ordinate values.
+     *         The returned CRS implements the {@link org.opengis.coverage.grid.GridGeometry}
+     *         interface.
      */
     public ProjectedCRS canConvert(final GeographicCRS sourceCRS,
                                    final DiscreteCoordinateSystemAxis x,
@@ -138,10 +168,11 @@ public final class IrregularAxesConverter {
             try {
                 final ProjectedCRS targetCRS = createProjectedCRS(sourceCRS, method);
                 final MathTransform tr = CRS.findMathTransform(sourceCRS, targetCRS);
+                final double[] nx, ny;
                 if ((ny = canConvert(tr, 1, y, x)) != null &&
                     (nx = canConvert(tr, 0, x, y)) != null)
                 {
-                    return targetCRS;
+                    return (ProjectedCRS) DiscreteReferencingFactory.createDiscreteCRS(targetCRS, nx, ny);
                 }
             } catch (FactoryException e) { // TODO: multi-catch with Java 7.
                 Logging.recoverableException(IrregularAxesConverter.class, "canConvert", e);
@@ -189,14 +220,19 @@ public final class IrregularAxesConverter {
         }
         tr.transform(coords, 0, coords, 0, numPts);
         /*
-         * Check if the ordinates values are regularly spaced among both dimensions.
-         * The ordinate values can be in increasing or decreasing order.
+         * Check if the ordinates values among both dimensions are close to the ones computed by
+         * linear interpolation. The ordinate values can be in increasing or decreasing order.
          */
-        final double tx = ((coords[coords.length - 2] - coords[0]) / (numPts-1)) * tolerance;
-        final double ty = ((coords[coords.length - 1] - coords[1]) / (numPts-1)) * tolerance;
-        for (int i=4; i<coords.length; i+=2) {
-            if (!(Math.abs(coords[i  ] - 2*coords[i-2] + coords[i-4]) <= tx) ||
-                !(Math.abs(coords[i+1] - 2*coords[i-1] + coords[i-3]) <= ty))
+        final double ox = coords[0];
+        final double oy = coords[1];
+        final double dx = ((coords[coords.length - 2] - ox) / (numPts-1));
+        final double dy = ((coords[coords.length - 1] - oy) / (numPts-1));
+        final double tx = dx * tolerance;
+        final double ty = dy * tolerance;
+        for (int p=1; p<numPts; p++) {
+            final int i = p << 1;
+            if (!(Math.abs(coords[i  ] - (ox + dx*p)) <= tx) ||
+                !(Math.abs(coords[i+1] - (oy + dy*p)) <= ty))
             {
                 // Ordinate values are irregular.
                 return null;

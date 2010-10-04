@@ -70,7 +70,7 @@ public class DefaultCompoundCS extends AbstractCS {
      *
      * @param cs The set of coordinate syztem.
      */
-    public DefaultCompoundCS(CoordinateSystem[] cs) {
+    public DefaultCompoundCS(CoordinateSystem... cs) {
         super(getName(cs=clone(cs)), getAxis(cs));
         this.cs = cs;
     }

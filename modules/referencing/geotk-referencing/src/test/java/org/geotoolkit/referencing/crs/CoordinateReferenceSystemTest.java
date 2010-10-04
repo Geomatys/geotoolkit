@@ -40,7 +40,7 @@ import org.geotoolkit.referencing.ReferencingTestCase;
  * Tests {@link AbstractCRS} objects.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.15
  *
  * @since 2.2
  */
@@ -83,8 +83,9 @@ public final class CoordinateReferenceSystemTest extends ReferencingTestCase {
         assertWktEquals(WGS84,
                 "GEOGCS[“WGS84(DD)”,\n" +
                 "  DATUM[“WGS84”,\n" +
-                "    SPHEROID[“WGS84”, 6378137.0, 298.257223563]],\n" +
-                "  PRIMEM[“Greenwich”, 0.0],\n" +
+                "    SPHEROID[“WGS84”, 6378137.0, 298.257223563, AUTHORITY[“EPSG”,“7030”]],\n" +
+                "    AUTHORITY[“EPSG”,“6326”]],\n" +
+                "  PRIMEM[“Greenwich”, 0.0, AUTHORITY[“EPSG”,“8901”]],\n" +
                 "  UNIT[“degree”, 0.017453292519943295],\n" +
                 "  AXIS[“Geodetic longitude”, EAST],\n" +
                 "  AXIS[“Geodetic latitude”, NORTH]]");
@@ -98,8 +99,9 @@ public final class CoordinateReferenceSystemTest extends ReferencingTestCase {
         assertEquals("WGS84", decodeQuotes(
                 "GEOGCS[“WGS84(DD)”, " +
                 "DATUM[“WGS84”, " +
-                "SPHEROID[“WGS84”, 6378137.0, 298.257223563]], " +
-                "PRIMEM[“Greenwich”, 0.0], " +
+                "SPHEROID[“WGS84”, 6378137.0, 298.257223563, AUTHORITY[“EPSG”,“7030”]], " +
+                "AUTHORITY[“EPSG”,“6326”]], " +
+                "PRIMEM[“Greenwich”, 0.0, AUTHORITY[“EPSG”,“8901”]], " +
                 "UNIT[“degree”, 0.017453292519943295], " +
                 "AXIS[“Geodetic longitude”, EAST], " +
                 "AXIS[“Geodetic latitude”, NORTH]]"),

@@ -47,7 +47,7 @@ import org.geotoolkit.test.Depend;
  * Tests {@link AbstractDatum} and well-know text formatting.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.02
+ * @version 3.15
  *
  * @since 2.2
  */
@@ -108,11 +108,11 @@ public final class DatumTest extends ReferencingTestCase {
      */
     @Test
     public void testWKT() {
-        assertWktEquals(DefaultEllipsoid.WGS84, "SPHEROID[“WGS84”, 6378137.0, 298.257223563]");
-        assertWktEquals(GREENWICH,              "PRIMEM[“Greenwich”, 0.0]");
+        assertWktEquals(DefaultEllipsoid.WGS84, "SPHEROID[“WGS84”, 6378137.0, 298.257223563, AUTHORITY[“EPSG”,“7030”]]");
+        assertWktEquals(GREENWICH,              "PRIMEM[“Greenwich”, 0.0, AUTHORITY[“EPSG”,“8901”]]");
         assertWktEquals(GEOIDAL,                "VERT_DATUM[“Geoidal”, 2005]");
         assertWktEquals(ELLIPSOIDAL,            "VERT_DATUM[“Ellipsoidal”, 2002]");
-        assertWktEquals(WGS84,                  "DATUM[“WGS84”, SPHEROID[“WGS84”, 6378137.0, 298.257223563]]");
+        assertWktEquals(WGS84,                  "DATUM[“WGS84”, SPHEROID[“WGS84”, 6378137.0, 298.257223563, AUTHORITY[“EPSG”,“7030”]], AUTHORITY[“EPSG”,“6326”]]");
     }
 
     /**

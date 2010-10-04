@@ -46,7 +46,7 @@ public final class NetcdfCoverageReaderTest extends NetcdfTestBase {
     public void testRead() throws CoverageStoreException {
         final ImageCoverageReader reader = new ImageCoverageReader();
         reader.setInput(getTestFile());
-        assertArrayEquals(new String[] {"temperature", "pct_variance"}, reader.getCoverageNames().toArray());
+        assertArrayEquals(VARIABLE_NAMES, reader.getCoverageNames().toArray());
         if (false) {
             // TODO: enable this test when we will able to process irregular axis.
             final GridCoverage2D coverage = reader.read(0, null);

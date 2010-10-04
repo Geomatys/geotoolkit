@@ -63,7 +63,7 @@ import org.geotoolkit.measure.Units;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.04
+ * @version 3.15
  *
  * @since 1.2
  * @module
@@ -84,6 +84,8 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
      * <p>
      * This CRS is equivalent to {@code EPSG:4326} except for axis order,
      * since EPSG puts latitude before longitude.
+     *
+     * @see DefaultGeodeticDatum#WGS84
      */
     public static final DefaultGeographicCRS WGS84;
 
@@ -98,6 +100,8 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
      * This CRS is equivalent to {@code EPSG:4979} (the successor to
      * {@code EPSG:4329}, itself the successor to {@code EPSG:4327}) except for
      * axis order, since EPSG puts latitude before longitude.
+     *
+     * @see DefaultGeodeticDatum#WGS84
      */
     public static final DefaultGeographicCRS WGS84_3D;
     static {
@@ -111,12 +115,29 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
         };
         properties.put(ALIAS_KEY, alias);
         properties.put(DOMAIN_OF_VALIDITY_KEY, DefaultExtent.WORLD);
+        // Do not declare EPSG identifiers, because axis order are not the same.
         WGS84    = new DefaultGeographicCRS(properties, DefaultGeodeticDatum.WGS84,
                                             DefaultEllipsoidalCS.GEODETIC_2D);
         alias[1] = "WGS 84 (geographic 3D)"; // Replaces the EPSG name.
         WGS84_3D = new DefaultGeographicCRS(properties, DefaultGeodeticDatum.WGS84,
                                             DefaultEllipsoidalCS.GEODETIC_3D);
     }
+
+    /**
+     * A two-dimensional geographic coordinate reference system using a spherical datum.
+     * This CRS uses (<var>longitude</var>, <var>latitude</var>) ordinates with longitude values
+     * increasing towards the East and latitude values increasing towards the North. The angular
+     * units are decimal degrees and the prime meridian is Greenwich.
+     *
+     * {@note This datum is close, but not identical, to the geographic CRS based on GRS 1980
+     *        Authalic Sphere (EPSG:4047).}
+     *
+     * @see DefaultGeodeticDatum#SPHERE
+     *
+     * @since 3.15
+     */
+    public static final DefaultGeographicCRS SPHERE = new DefaultGeographicCRS(
+            getProperties(DefaultGeodeticDatum.SPHERE), DefaultGeodeticDatum.SPHERE, DefaultEllipsoidalCS.GEODETIC_2D);
 
     /**
      * Constructs a new object in which every attributes are set to a default value.
@@ -218,7 +239,7 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
 
     /**
      * Computes the orthodromic distance between two points. This convenience method delegates
-     * the work to the underlyling {@linkplain DefaultEllipsoid ellipsoid}, if possible.
+     * the work to the underlying {@linkplain DefaultEllipsoid ellipsoid}, if possible.
      *
      * @param  coord1 Coordinates of the first point.
      * @param  coord2 Coordinates of the second point.
