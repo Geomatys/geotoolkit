@@ -140,6 +140,8 @@ import org.geotoolkit.util.logging.Logging;
  * @author Antoine Hnawia (IRD)
  * @version 3.15
  *
+ * @see org.geotoolkit.referencing.adapters.NetcdfCRS
+ *
  * @since 3.08 (derived from 2.4)
  * @module
  */

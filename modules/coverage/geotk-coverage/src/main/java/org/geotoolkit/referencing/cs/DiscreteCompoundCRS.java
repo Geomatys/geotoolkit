@@ -20,12 +20,17 @@ package org.geotoolkit.referencing.cs;
 import java.util.List;
 import java.util.Arrays;
 
+import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.CompoundCRS;
+import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.operation.MathTransform;
 
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.referencing.operation.transform.LinearTransform;
+import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 
@@ -141,5 +146,61 @@ final class DiscreteCompoundCRS extends DiscreteCRS<CompoundCRS> implements Comp
                     Errors.Keys.MISMATCHED_DIMENSION_$2, axes.length, count));
         }
         return new DiscreteCompoundCRS(crs, new DiscreteCS(cs, axes), components);
+    }
+
+    /**
+     * Returns the transform from grid coordinates to CRS coordinates mapping pixel center.
+     * This method delegates to each component, because some component may compute their own
+     * transform in a different way than {@link DiscreteReferencingFactory#getAffineTransform}.
+     * For example {@link org.geotoolkit.referencing.adapters.NetcdfCRS} returns {@code null}
+     * if an axis is irregular.
+     */
+    @Override
+    public synchronized MathTransform getGridToCRS() {
+        if (gridToCRS == null) {
+            final Matrix matrix = DiscreteReferencingFactory.getAffineTransform(this, cs.axes);
+            final int lastColumn = matrix.getNumCol() - 1;
+            int lower = 0;
+            for (final CoordinateReferenceSystem component : components) {
+                final int dimension = component.getCoordinateSystem().getDimension();
+                /*
+                 * If the CRS is an instance of DiscreteCRS<?>, then the grid geometry computed by
+                 * that CRS would have identical coefficients than the one computed above (because
+                 * the DiscreteCRS.getGridToCRS() delegates to getAffineTransform(...) as we did).
+                 * So it is not worth to call component.getGridToCRS() again.
+                 */
+                if (!(component instanceof DiscreteCRS<?>) && component instanceof GridGeometry) {
+                    final MathTransform tr = ((GridGeometry) component).getGridToCRS();
+                    if (tr instanceof LinearTransform) {
+                        /*
+                         * Copies the coefficients and translation term from the matrix
+                         * computed by the individual component.
+                         */
+                        final Matrix sub = ((LinearTransform) tr).getMatrix();
+                        for (int j=0; j<dimension; j++) {
+                            final int dj = j + lower;
+                            for (int i=0; i<dimension; i++) {
+                                matrix.setElement(dj, i+lower, sub.getElement(j, i));
+                            }
+                            matrix.setElement(j+lower, lastColumn, sub.getElement(j, dimension));
+                        }
+                    } else {
+                        /*
+                         * If the component considers that there is no valid grid to CRS, set
+                         * the scale coefficient to NaN. The other coefficient are already 0,
+                         * which is correct. The translation term is keep unchanged, because
+                         * it still valid.
+                         */
+                        for (int j=0; j<dimension; j++) {
+                            final int dj = j + lower;
+                            matrix.setElement(dj, dj, Double.NaN);
+                        }
+                    }
+                }
+                lower += dimension;
+            }
+            gridToCRS = ProjectiveTransform.create(matrix);
+        }
+        return gridToCRS;
     }
 }

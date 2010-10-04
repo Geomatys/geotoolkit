@@ -19,9 +19,6 @@ package org.geotoolkit.referencing.cs;
 
 import java.util.Date;
 import java.util.Arrays;
-import javax.measure.unit.Unit;
-import javax.measure.converter.UnitConverter;
-import javax.measure.quantity.Duration;
 
 import org.opengis.referencing.cs.TimeCS;
 import org.opengis.referencing.cs.VerticalCS;
@@ -38,9 +35,10 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.coverage.grid.GridGeometry;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.measure.Units;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 
@@ -305,6 +303,17 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
      */
     public static XMatrix getAffineTransform(final DiscreteCoordinateSystemAxis... axes) {
         ensureNonNull("axes", axes);
+        return getAffineTransform(null, axes);
+    }
+
+    /**
+     * Implementation of {@link #getAffineTransform(DiscreteCoordinateSystemAxis[])} with an
+     * optional CRS. If non-null, the temporal component of the given CRS is used in order to
+     * convert dates to numerical values.
+     */
+    static XMatrix getAffineTransform(final CoordinateReferenceSystem crs,
+            final DiscreteCoordinateSystemAxis... axes)
+    {
         final int dimension = axes.length;
         final XMatrix matrix = MatrixFactory.create(dimension + 1);
         for (int i=0; i<dimension; i++) {
@@ -324,14 +333,17 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
             if (first instanceof Number && last instanceof Number) {
                 start = ((Number) first).doubleValue();
                 end   = ((Number) last) .doubleValue();
-            } else if (first instanceof Date && last instanceof Date && axis instanceof CoordinateSystemAxis) {
-                final Unit<?> unit = ((CoordinateSystemAxis) axis).getUnit();
-                if (unit == null) {
+            } else if (first instanceof Date && last instanceof Date) {
+                CoordinateReferenceSystem temporalCRS = CRSUtilities.getSubCRS(crs, i, i+1);
+                if (temporalCRS instanceof DiscreteCRS<?>) {
+                    temporalCRS = ((DiscreteCRS<?>) temporalCRS).crs;
+                }
+                if (!(temporalCRS instanceof TemporalCRS)) {
                     return null;
                 }
-                final UnitConverter converter = Units.MILLISECOND.getConverterTo(unit.asType(Duration.class));
-                start = converter.convert((double) ((Date) first).getTime());
-                end   = converter.convert((double) ((Date) last) .getTime());
+                final DefaultTemporalCRS converter = DefaultTemporalCRS.wrap((TemporalCRS) temporalCRS);
+                start = converter.toValue((Date) first);
+                end   = converter.toValue((Date) last);
             } else {
                 return null;
             }

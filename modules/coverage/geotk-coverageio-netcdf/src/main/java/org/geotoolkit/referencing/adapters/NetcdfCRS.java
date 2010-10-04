@@ -115,6 +115,8 @@ import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.15
  *
+ * @see org.geotoolkit.image.io.plugin.NetcdfImageReader
+ *
  * @since 3.08
  * @module
  */
@@ -359,6 +361,8 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      *
      * @return A CRS with potentially some axes made regular, or {@code this}.
      *
+     * @see org.geotoolkit.referencing.cs.DiscreteReferencingFactory
+     *
      * @since 3.15
      */
     public CoordinateReferenceSystem regularize() {
@@ -367,21 +371,12 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
     }
 
     /**
-     * Returns the wrapped NetCDF coordinate system. Be aware that the axes of the NetCDF CS
-     * object may not be the same than the axes of this {@code NetcdfCRS} object:
-     *
-     * <ul>
-     *   <li><p>If the axes have been {@linkplain #regularize() made regular}, then the axes
-     *       of the returned coordinate system may be different than the axes returned by this
-     *       {@code NetcdfCRS} object. For example the returned CS may have (<var>longitude</var>,
-     *       <var>latitude</var>) axes while this {@code NetcdfCRS} object may have projected
-     *       axes.</p></li>
-     *
-     *   <li><p>The dimension of the returned NetCDF coordinate system may be greater than the
-     *       dimension of the GeoAPI CRS implemented by this object, because NetCDF puts all
-     *       axes in a single object while GeoAPI CRS may have separated the axes between
-     *       various kind of CRS ({@link GeographicCRS}, {@link TemporalCRS}, <i>etc</i>).</p></li>
-     * </ul>
+     * Returns the wrapped NetCDF coordinate system.
+     * <p>
+     * <b>Note:</b> The dimension of the returned NetCDF Coordinate System may be greater than the
+     * dimension of the GeoAPI CRS implemented by this object, because the NetCDF CS puts all axes
+     * in a single object while the GeoAPI CRS may splits the axes in various kind of CRS
+     * ({@link GeographicCRS}, {@link VerticalCRS}, {@link TemporalCRS}).
      */
     @Override
     public CoordinateSystem delegate() {
@@ -516,7 +511,11 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
             if (!axis.isRegular()) {
                 return null;
             }
-            matrix.setElement(i, i, axis.getIncrement());
+            final double scale = axis.getIncrement();
+            if (Double.isNaN(scale) || scale == 0) {
+                return null;
+            }
+            matrix.setElement(i, i, scale);
             matrix.setElement(i, numDimensions, axis.getStart());
         }
         return ProjectiveTransform.create(matrix);

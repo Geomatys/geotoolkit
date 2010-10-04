@@ -22,12 +22,16 @@ import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 import javax.imageio.metadata.IIOMetadata;
 
+import org.opengis.coverage.grid.GridEnvelope;
+import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.metadata.spatial.CellGeometry;
 import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.MetadataAccessor;
+import org.geotoolkit.internal.referencing.MatrixUtilities;
 
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME;
 
@@ -72,6 +76,40 @@ public final class GridDomainAccessor extends MetadataAccessor {
      */
     public GridDomainAccessor(final IIOMetadata metadata) {
         super(metadata, FORMAT_NAME, "RectifiedGridDomain", null);
+    }
+
+    /**
+     * Sets the limits, origin and offset vectors from the given grid geometry.
+     * The <cite>grid to CRS</cite> transform needs to be linear in order to get
+     * the offset vectors formatted.
+     *
+     * @param geometry The grid geometry.
+     *
+     * @since 3.15
+     */
+    public void setGridGeometry(final GridGeometry geometry) {
+        final GridEnvelope envelope = geometry.getGridRange();
+        final Matrix gridToCRS = MatrixUtilities.getMatrix(geometry.getGridToCRS());
+        final int dim = envelope.getDimension();
+        final int[]    lower  = new int   [dim];
+        final int[]    upper  = new int   [dim];
+        final double[] origin = new double[dim];
+        final double[] vector = new double[dim];
+        for (int j=0; j<dim; j++) {
+            lower[j] = envelope.getLow (j);
+            upper[j] = envelope.getHigh(j);
+            if (gridToCRS != null) {
+                origin[j] = gridToCRS.getElement(j, dim);
+                for (int i=0; i<dim; i++) {
+                    vector[i] = gridToCRS.getElement(j, i);
+                }
+                addOffsetVector(vector);
+            }
+        }
+        if (gridToCRS != null) {
+            setOrigin(origin);
+        }
+        setLimits(lower, upper);
     }
 
     /**

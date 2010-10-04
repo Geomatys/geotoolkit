@@ -36,17 +36,20 @@ import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
+import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.util.Range;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.image.io.plugin.NetcdfTestBase;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
+import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
+import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.internal.image.io.IrregularAxesConverterTest;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import static java.lang.Double.NaN;
 
 
 /**
@@ -68,10 +71,9 @@ public final class NetcdfCRSTest extends NetcdfTestBase {
      * Tests the creation of a geographic CRS.
      *
      * @throws IOException If an error occurred while reading the test file.
-     * @throws TransformException Should not happen.
      */
     @Test
-    public void testGeographicCRS() throws IOException, TransformException {
+    public void testGeographicCRS() throws IOException {
         final NetcdfDataset data = NetcdfDataset.openDataset(getTestFile().getPath());
         assertNotNull("NetcdfDataset shall not be null.", data);
         try {
@@ -89,12 +91,11 @@ public final class NetcdfCRSTest extends NetcdfTestBase {
      * Tests the creation of a geographic CRS, which is then made regular.
      *
      * @throws IOException If an error occurred while reading the test file.
-     * @throws TransformException Should not happen.
      *
      * @since 3.15
      */
     @Test
-    public void testRegularCRS() throws IOException, TransformException {
+    public void testRegularCRS() throws IOException {
         final NetcdfDataset data = NetcdfDataset.openDataset(getTestFile().getPath());
         try {
             final List<CoordinateSystem> cs = data.getCoordinateSystems();
@@ -115,12 +116,25 @@ public final class NetcdfCRSTest extends NetcdfTestBase {
      * @param hasTimeAxis {@code true} if the 4th dimension is expected to wraps an
      *        instance of {@link CoordinateAxis1DTime}.
      */
-    private static void assertValid(final CoordinateReferenceSystem crs, final boolean isProjected, final boolean hasTimeAxis)
-            throws IOException, TransformException
-    {
+    private static void assertValid(final CoordinateReferenceSystem crs, final boolean isProjected, final boolean hasTimeAxis) {
+        final CoordinateReferenceSystem NULL = null; // Only for avoiding a NetBeans warning.
         assertEquals("The CRS shall be equals to itself.", crs, crs);
-        assertFalse ("The CRS shall not be equals to null.", crs.equals(null));
-        final org.opengis.referencing.cs.CoordinateSystem cs = crs.getCoordinateSystem();
+        assertFalse ("The CRS shall not be equals to null.", crs.equals(NULL));
+        assertValidAxes(crs.getCoordinateSystem(), isProjected, hasTimeAxis);
+        assertValidGridGeometry(crs, isProjected);
+    }
+
+    /**
+     * Checks that the given coordinate system has the expected axes.
+     *
+     * @param cs The coordinate system to test.
+     * @param isProjected {@code true} if the CRS axes are expected to be projected.
+     * @param hasTimeAxis {@code true} if the 4th dimension is expected to wraps an
+     *        instance of {@link CoordinateAxis1DTime}.
+     */
+    private static void assertValidAxes(final org.opengis.referencing.cs.CoordinateSystem cs,
+            final boolean isProjected, final boolean hasTimeAxis)
+    {
         assertEquals("Expected a 4-dimensional CRS.", GRID_SIZE.length, cs.getDimension());
         assertExpectedAxes(cs, isProjected);
         for (int i=0; i<GRID_SIZE.length; i++) {
@@ -158,6 +172,15 @@ public final class NetcdfCRSTest extends NetcdfTestBase {
             assertEquals(elementClass, r1.getElementClass());
             assertEquals(elementClass, r2.getElementClass());
         }
+    }
+
+    /**
+     * Checks that the given CRS has the expected grid geometry.
+     *
+     * @param crs The NetCDF wrapper to test.
+     * @param isProjected {@code true} if the CRS axes are expected to be projected.
+     */
+    private static void assertValidGridGeometry(final CoordinateReferenceSystem crs, final boolean isProjected) {
         /*
          * Check the CRS types. It should be a CompoundCRS. The first component shall be either
          * geographic and projected, and the last components shall be vertical and temporal.
@@ -170,8 +193,8 @@ public final class NetcdfCRSTest extends NetcdfTestBase {
         } else {
             assertTrue("Expected a Geographic CRS.", components.get(0) instanceof GeographicCRS);
         }
-        assertTrue("Expected a Vertical CRS.",   components.get(1) instanceof VerticalCRS);
-        assertTrue("Expected a Temporal CRS.",   components.get(2) instanceof TemporalCRS);
+        assertTrue("Expected a Vertical CRS.", components.get(1) instanceof VerticalCRS);
+        assertTrue("Expected a Temporal CRS.", components.get(2) instanceof TemporalCRS);
         /*
          * Check the epoch of the temporal CRS.
          */
@@ -191,10 +214,23 @@ public final class NetcdfCRSTest extends NetcdfTestBase {
         assertArrayEquals(new int[high.length], ge.getLow() .getCoordinateValues());
         assertArrayEquals(high,                 ge.getHigh().getCoordinateValues());
         final MathTransform gridToCRS = gg.getGridToCRS();
-        if (!isProjected) {
-            assertNull(gridToCRS);
+        if (isProjected) {
+            assertTrue(gridToCRS instanceof LinearTransform);
+            final Matrix matrix = ((LinearTransform) gridToCRS).getMatrix();
+            /*
+             * The first two lines of the above matrix contain the same offset and scale factors
+             * than the ones in IrregularAxesConverterTest, except for a slight southing offset.
+             * The error (3 metres in the translation term of the y axis) is assumed to be caused
+             * by slightly different input values.
+             */
+            assertTrue(new GeneralMatrix(
+                    new double[] {55597,     0,     0,     0, -19959489},
+                    new double[] {    0, 55597,     0,     0, -13843768},
+                    new double[] {    0,     0,   NaN,     0,         5},
+                    new double[] {    0,     0,     0,   NaN,     20975},
+                    new double[] {    0,     0,     0,     0,         1}).equals(matrix, 1));
         } else {
-            // TODO: Test with a regular grid.
+            assertNull(gridToCRS);
         }
     }
 

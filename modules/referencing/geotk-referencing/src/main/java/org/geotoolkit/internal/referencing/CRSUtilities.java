@@ -248,24 +248,26 @@ public final class CRSUtilities {
     public static CoordinateReferenceSystem getSubCRS(CoordinateReferenceSystem crs,
                                                       int lower, int upper)
     {
-        int dimension = crs.getCoordinateSystem().getDimension();
-        if (lower<0 || lower>upper || upper>dimension) {
-            throw new IndexOutOfBoundsException(Errors.format(
-                    Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, lower<0 ? lower : upper));
-        }
-        while (lower!=0 || upper!=dimension) {
-            final List<? extends CoordinateReferenceSystem> c = getComponents(crs);
-            if (c == null) {
-                return null;
+        if (crs != null) {
+            int dimension = crs.getCoordinateSystem().getDimension();
+            if (lower < 0 || lower > upper || upper > dimension) {
+                throw new IndexOutOfBoundsException(Errors.format(
+                        Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, lower < 0 ? lower : upper));
             }
-            for (final Iterator<? extends CoordinateReferenceSystem> it=c.iterator(); it.hasNext();) {
-                crs = it.next();
-                dimension = crs.getCoordinateSystem().getDimension();
-                if (lower < dimension) {
-                    break;
+            while (lower != 0 || upper != dimension) {
+                final List<? extends CoordinateReferenceSystem> c = getComponents(crs);
+                if (c == null) {
+                    return null;
                 }
-                lower -= dimension;
-                upper -= dimension;
+                for (final Iterator<? extends CoordinateReferenceSystem> it=c.iterator(); it.hasNext();) {
+                    crs = it.next();
+                    dimension = crs.getCoordinateSystem().getDimension();
+                    if (lower < dimension) {
+                        break;
+                    }
+                    lower -= dimension;
+                    upper -= dimension;
+                }
             }
         }
         return crs;

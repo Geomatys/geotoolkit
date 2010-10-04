@@ -80,6 +80,11 @@ class DiscreteCRS<T extends CoordinateReferenceSystem> implements CoordinateRefe
     protected final DiscreteCS cs;
 
     /**
+     * The grid to CRS transform, created only when first needed.
+     */
+    transient MathTransform gridToCRS;
+
+    /**
      * Creates a new instance wrapping the given CRS with the given coordinate system.
      *
      * @param crs The CRS to wrap.
@@ -187,8 +192,11 @@ class DiscreteCRS<T extends CoordinateReferenceSystem> implements CoordinateRefe
      * This method assumes that all axes are regular (this is not verified).
      */
     @Override
-    public final MathTransform getGridToCRS() {
-        return cs.getGridToCRS();
+    public synchronized MathTransform getGridToCRS() {
+        if (gridToCRS == null) {
+            gridToCRS = cs.getGridToCRS(this);
+        }
+        return gridToCRS;
     }
 
     /**

@@ -63,7 +63,7 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
     private static final String EXPECTED_METADATA =
             SpatialMetadataFormat.FORMAT_NAME + '\n' +
             "├───RectifiedGridDomain\n" +
-            "│   ├───origin=“-179.5 -77.0104751586914 5.0 0.0”\n" +
+            "│   ├───origin=“-1.9959489E7 -1.3843768E7 5.0 20975.0”\n" +
             "│   ├───CoordinateReferenceSystem\n" +
             "│   │   ├───name=“NetCDF:time depth latitude longitude”\n" +
             "│   │   └───CoordinateSystem\n" +
@@ -71,19 +71,15 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
             "│   │       ├───dimension=“4”\n" +
             "│   │       └───Axes\n" +
             "│   │           ├───CoordinateSystemAxis\n" +
-            "│   │           │   ├───name=“NetCDF:longitude”\n" +
-            "│   │           │   ├───axisAbbrev=“λ”\n" +
+            "│   │           │   ├───name=“Easting”\n" +
+            "│   │           │   ├───axisAbbrev=“E”\n" +
             "│   │           │   ├───direction=“east”\n" +
-            "│   │           │   ├───minimumValue=“-179.5”\n" +
-            "│   │           │   ├───maximumValue=“180.0”\n" +
-            "│   │           │   └───unit=“deg”\n" +
+            "│   │           │   └───unit=“m”\n" +
             "│   │           ├───CoordinateSystemAxis\n" +
-            "│   │           │   ├───name=“NetCDF:latitude”\n" +
-            "│   │           │   ├───axisAbbrev=“φ”\n" +
+            "│   │           │   ├───name=“Northing”\n" +
+            "│   │           │   ├───axisAbbrev=“N”\n" +
             "│   │           │   ├───direction=“north”\n" +
-            "│   │           │   ├───minimumValue=“-77.0104751586914”\n" +
-            "│   │           │   ├───maximumValue=“77.0104751586914”\n" +
-            "│   │           │   └───unit=“deg”\n" +
+            "│   │           │   └───unit=“m”\n" +
             "│   │           ├───CoordinateSystemAxis\n" +
             "│   │           │   ├───name=“NetCDF:depth”\n" +
             "│   │           │   ├───axisAbbrev=“d”\n" +
@@ -100,16 +96,42 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
             "│   │               └───unit=“d”\n" +
             "│   ├───OffsetVectors\n" +
             "│   │   ├───OffsetVector\n" +
-            "│   │   │   └───values=“0.5 0.0 0.0 0.0”\n" +
+            "│   │   │   └───values=“55597.46 0.0 0.0 0.0”\n" +
             "│   │   ├───OffsetVector\n" +
-            "│   │   │   └───values=“0.0 NaN 0.0 0.0”\n" +
+            "│   │   │   └───values=“0.0 55597.46 0.0 0.0”\n" +
             "│   │   ├───OffsetVector\n" +
             "│   │   │   └───values=“0.0 0.0 NaN 0.0”\n" +
             "│   │   └───OffsetVector\n" +
-            "│   │       └───values=“0.0 0.0 0.0 0.0”\n" +
+            "│   │       └───values=“0.0 0.0 0.0 NaN”\n" +
             "│   └───Limits\n" +
             "│       ├───low=“0 0 0 0”\n" +
             "│       └───high=“719 498 58 0”\n";
+
+    /**
+     * Numbers which were simplified in the above metadata. This simplification
+     * is performed in order to protect the test suite from slight variations in
+     * floating point computations.
+     */
+    private static final String[] SIMPLIFIED = {"-1.9959489", "-1.3843768", "55597.46"};
+
+    /**
+     * Removes a few digits to some numbers, in order to protect the test suite from
+     * slight variation in floating point computation.
+     */
+    private static String simplify(final String tree) {
+        final StringBuilder buffer = new StringBuilder(tree);
+        for (final String search : SIMPLIFIED) {
+            final int length = search.length();
+            for (int i=buffer.indexOf(search); i>=0; i=buffer.indexOf(search, i)) {
+                int j = (i += length);
+                char c;
+                do c = buffer.charAt(++j);
+                while (c >= '0' && c <= '9');
+                buffer.delete(i, j);
+            }
+        }
+        return buffer.toString();
+    }
 
     /**
      * Tests the metadata.
@@ -140,7 +162,7 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
             "            ├───fillSampleValues=“32767.0”\n" +
             "            ├───scaleFactor=“0.0010”\n" +
             "            ├───offset=“20.0”\n" +
-            "            └───transferFunctionType=“linear”"), metadata.toString());
+            "            └───transferFunctionType=“linear”"), simplify(metadata.toString()));
         reader.dispose();
     }
 
@@ -181,7 +203,7 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
             "            ├───validSampleValues=“[0 … 100]”\n" +
             "            ├───fillSampleValues=“32767.0”\n" +
             "            ├───scaleFactor=“0.01”\n" +
-            "            └───transferFunctionType=“linear”"), metadata.toString());
+            "            └───transferFunctionType=“linear”"), simplify(metadata.toString()));
         reader.dispose();
     }
 

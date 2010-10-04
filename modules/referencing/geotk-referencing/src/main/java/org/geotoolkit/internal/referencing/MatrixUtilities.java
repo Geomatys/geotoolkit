@@ -20,12 +20,15 @@ package org.geotoolkit.internal.referencing;
 import java.awt.geom.AffineTransform;
 import javax.vecmath.MismatchedSizeException;
 import javax.vecmath.SingularMatrixException;
+
 import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.operation.matrix.*;
+import org.geotoolkit.referencing.operation.transform.LinearTransform;
 
 
 /**
@@ -35,7 +38,7 @@ import org.geotoolkit.referencing.operation.matrix.*;
  * example multiplication) for efficiency again.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.15
  *
  * @since 3.00
  * @module
@@ -46,6 +49,25 @@ public final class MatrixUtilities {
      * Do not allow instantiation of this class.
      */
     private MatrixUtilities() {
+    }
+
+    /**
+     * Returns the underlying matrix for the specified transform,
+     * or {@code null} if the matrix is unavailable.
+     *
+     * @param  transform The transform, or {@code null}.
+     * @return The matrix of the given transform, or {@code null} if none.
+     *
+     * @since 3.15
+     */
+    public static Matrix getMatrix(final MathTransform transform) {
+        if (transform instanceof LinearTransform) {
+            return ((LinearTransform) transform).getMatrix();
+        }
+        if (transform instanceof AffineTransform) {
+            return new Matrix3((AffineTransform) transform);
+        }
+        return null;
     }
 
     /**

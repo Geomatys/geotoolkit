@@ -113,7 +113,7 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
      * @throws IllegalArgumentException if the specified matrix is not regular
      *         (i.e. if all rows doesn't have the same length).
      */
-    public GeneralMatrix(final double[][] matrix) throws IllegalArgumentException {
+    public GeneralMatrix(final double[]... matrix) throws IllegalArgumentException {
         super(matrix.length, (matrix.length!=0) ? matrix[0].length : 0);
         final int numRow = getNumRow();
         final int numCol = getNumCol();
@@ -202,7 +202,7 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
     /**
      * Constructs a transform changing axis order and/or direction.
      * For example, the transform may converts (NORTH,WEST) coordinates
-     * into (EAST,NORTH). Axis direction can be inversed only. For example,
+     * into (EAST,NORTH). Axis direction can be inverted only. For example,
      * it is illegal to transform (NORTH,WEST) coordinates into (NORTH,DOWN).
      * <p>
      * If the source dimension is equal to the destination dimension,
@@ -230,7 +230,7 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
      * Constructs a transform mapping a source region to a destination region.
      * Axis order and/or direction can be changed during the process.
      * For example, the transform may convert (NORTH,WEST) coordinates
-     * into (EAST,NORTH). Axis direction can be inversed only. For example,
+     * into (EAST,NORTH). Axis direction can be inverted only. For example,
      * it is illegal to transform (NORTH,WEST) coordinates into (NORTH,DOWN).
      * <p>
      * If the source dimension is equal to the destination dimension,
@@ -524,7 +524,7 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
     }
 
     /**
-     * Loads data from the specified streal until the first blank line or end of stream.
+     * Loads data from the specified stream until the first blank line or end of stream.
      *
      * @param  in The stream to read.
      * @param  locale The locale for the numbers to be parsed.
