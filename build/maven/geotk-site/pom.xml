@@ -47,4 +47,16 @@
       </roles>
     </developer>
   </developers>
+
+
+  <!-- =========================================================== -->
+  <!--     Dependency Management                                   -->
+  <!-- =========================================================== -->
+  <dependencies>
+    <dependency>
+      <groupId>net.sourceforge</groupId>
+      <artifactId>jdocfilter</artifactId>
+      <version>1.1</version>
+    </dependency>
+  </dependencies>
 </project>
