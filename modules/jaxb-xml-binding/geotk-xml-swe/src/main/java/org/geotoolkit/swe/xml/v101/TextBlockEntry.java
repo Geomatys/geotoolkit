@@ -36,7 +36,11 @@ import org.geotoolkit.util.Utilities;
     "decimalSeparator",
     "blockSeparator"})
 public class TextBlockEntry extends AbstractEncodingEntry implements TextBlock {
-    
+
+    public final static TextBlockEntry DEFAULT_ENCODING = new TextBlockEntry("encoding-1", ",", "@@", ".");
+
+    public final static TextBlockEntry CSV_ENCODING     = new TextBlockEntry("encoding-CSV", ",", "\n", ".");
+
     /**
      * chaine de 3 caractere maximum pour separer les tokens.
      */
