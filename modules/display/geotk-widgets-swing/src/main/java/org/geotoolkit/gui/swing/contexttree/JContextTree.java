@@ -190,6 +190,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
                     }else{
                         model.reload(node);
                     }
+                    tree.expandPath(new TreePath(root));
 
                     if(selected){
                         tree.setSelectionPath(newPath);
