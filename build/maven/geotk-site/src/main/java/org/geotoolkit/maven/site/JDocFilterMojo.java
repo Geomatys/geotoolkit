@@ -23,6 +23,10 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.project.MavenProject;
 
+import org.jdocfilter.FilterInstaller;
+
+import static org.geotoolkit.maven.site.HomePageMojo.ENCODING;
+
 
 /**
  * Adds the <a href="http://jdocfilter.sourceforge.net/">JDocFilter</a> to the generated javadoc.
@@ -38,7 +42,7 @@ import org.apache.maven.project.MavenProject;
  * @goal jdocfilter
  * @phase post-site
  */
-public class JDocFilter extends AbstractMojo {
+public class JDocFilterMojo extends AbstractMojo {
     /**
      * The Maven project running this plugin.
      *
@@ -58,9 +62,9 @@ public class JDocFilter extends AbstractMojo {
         final File indexFile = new File(directory, "index.html");
         try {
             final String index = getModifiedIndex(indexFile);
-            org.jdocfilter.FilterInstaller.main(new String[] {directory.getPath()});
+            FilterInstaller.main(new String[] {directory.getPath()});
             new File(directory, "index_original.html").delete();
-            final Writer out = new OutputStreamWriter(new FileOutputStream(indexFile), "UTF-8");
+            final Writer out = new OutputStreamWriter(new FileOutputStream(indexFile), ENCODING);
             out.write(index);
             out.close();
         } catch (Exception e) {
@@ -75,7 +79,7 @@ public class JDocFilter extends AbstractMojo {
      */
     private static String getModifiedIndex(final File file) throws IOException {
         final StringBuilder buffer = new StringBuilder();
-        final BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"));
+        final BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(file), ENCODING));
         try {
             boolean frameAdded = false;
             String line;
