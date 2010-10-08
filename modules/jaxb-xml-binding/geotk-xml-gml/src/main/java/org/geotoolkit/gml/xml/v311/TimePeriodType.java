@@ -19,6 +19,7 @@ package org.geotoolkit.gml.xml.v311;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.Duration;
 import org.geotoolkit.util.Utilities;
@@ -63,14 +64,15 @@ import org.opengis.temporal.Period;
     "duration",
     "timeInterval"
 })
+@XmlRootElement(name="TimePeriod")
 public class TimePeriodType extends AbstractTimeGeometricPrimitiveType  implements Period {
 
-    protected TimePositionType beginPosition;
-    protected TimeInstantPropertyType begin;
-    protected TimePositionType endPosition;
-    protected TimeInstantPropertyType end;
-    protected Duration duration;
-    protected TimeIntervalLengthType timeInterval;
+    private TimePositionType beginPosition;
+    private TimeInstantPropertyType begin;
+    private TimePositionType endPosition;
+    private TimeInstantPropertyType end;
+    private Duration duration;
+    private TimeIntervalLengthType timeInterval;
 
     /**
      * Empty constructor used by JAXB.

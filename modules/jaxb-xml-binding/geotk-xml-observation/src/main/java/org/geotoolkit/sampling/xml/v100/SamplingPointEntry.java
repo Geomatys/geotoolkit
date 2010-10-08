@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.sampling.xml.v100;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -24,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
+import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
 import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 import org.geotoolkit.gml.xml.v311.PointPropertyType;
 import org.geotoolkit.gml.xml.v311.PointType;
@@ -70,6 +73,17 @@ public class SamplingPointEntry extends SamplingFeatureEntry implements Sampling
     {
         super(identifier, name, remarks, relatedSamplingFeature, relatedObservation, sampledFeature, surveyDetail);
         this.position = location;
+    }
+
+    public SamplingPointEntry(String identifier, String name, double x, double y) {
+        super(identifier, name,  null, new FeaturePropertyType(""));
+        final DirectPositionType pos  = new DirectPositionType("urn:ogc:crs:espg:4326", 2, new ArrayList<Double>(Arrays.asList(y, x)));
+        this.position = new PointPropertyType(new PointType(null, pos));
+
+        final DirectPositionType pos2 = new DirectPositionType("urn:ogc:crs:espg:4326", 2, new ArrayList<Double>(Arrays.asList(y, x)));
+        final DirectPositionType pos3 = new DirectPositionType("urn:ogc:crs:espg:4326", 2, new ArrayList<Double>(Arrays.asList(y, x)));
+        final EnvelopeEntry envelope = new EnvelopeEntry(null, pos2, pos3, "urn:ogc:crs:espg:4326");
+        this.setBoundedBy(envelope);
     }
     
      /** 

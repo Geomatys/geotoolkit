@@ -47,7 +47,7 @@ public class SimpleDataRecordEntry extends AbstractDataRecordEntry implements Si
     /**
      * Textual or scalar value List.
      */
-    private Collection<AnyScalarPropertyType> field;
+    private List<AnyScalarPropertyType> field;
    
     /**
      *  Constructor used by jaxB.
@@ -72,7 +72,9 @@ public class SimpleDataRecordEntry extends AbstractDataRecordEntry implements Si
             final Collection<AnyScalarPropertyType> fields) {
         super(id, definition, fixed);
         this.blockId = blockId;
-        this.field = fields;
+        if (fields != null) {
+            this.field = new ArrayList<AnyScalarPropertyType>(fields);
+        }
     }
 
      public SimpleDataRecordEntry(List<AnyScalarPropertyType> field) {
@@ -82,6 +84,7 @@ public class SimpleDataRecordEntry extends AbstractDataRecordEntry implements Si
     /**
      * {@inheritDoc}
      */
+    @Override
     public Collection<AnyScalarPropertyType> getField() {
         if (field == null) {
             field = new ArrayList<AnyScalarPropertyType>();
@@ -89,12 +92,32 @@ public class SimpleDataRecordEntry extends AbstractDataRecordEntry implements Si
         return field;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+
     public void addField(AnyScalarPropertyType field) {
         if (field != null) {
             this.field.add(field);
+        }
+    }
+
+    public void addOrderedField(AnyScalarPropertyType field, int delta) {
+        if (field != null) {
+            if (this.field.isEmpty()) {
+                this.field.add(field);
+            } else {
+                if (delta > this.field.size()) {
+                    throw new IllegalArgumentException("delta must be < field size");
+                }
+                String newId = field.getIdentifier();
+                for (int i = delta; i < this.field.size(); i++) {
+                    String currentID = this.field.get(i).getIdentifier();
+                    if (newId.compareTo(currentID) < 0) {
+
+                        this.field.add(i, field);
+                        return;
+                    }
+                }
+                this.field.add(field);
+            }
         }
     }
 
@@ -116,7 +139,11 @@ public class SimpleDataRecordEntry extends AbstractDataRecordEntry implements Si
      * {@inheritDoc}
      */
     public void setField(Collection<AnyScalarPropertyType> field) {
-        this.field = field;
+        if (field != null) {
+            this.field = new ArrayList<AnyScalarPropertyType>(field);
+        } else {
+            this.field = null;
+        }
     }
 
     /**

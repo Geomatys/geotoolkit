@@ -17,6 +17,7 @@
 package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -146,6 +147,40 @@ public abstract class AbstractFeatureEntry extends AbstractGMLEntry implements A
         this.srsName.add(name);
     }
 
+    /**
+     * Extends the boundingShape if the coordinate x and y are out of the previous envelope
+     *
+     * @param x The longitude value of the point.
+     * @param y The latitude value of the point.
+     */
+    public void updateBoundingShape(double x, double y) {
+        if (boundedBy != null && boundedBy.getEnvelope() != null) {
+            EnvelopeEntry envelope = boundedBy.getEnvelope();
+            if (envelope.getLowerCorner() != null) {
+                Double minx = envelope.getLowerCorner().getValue().get(1);
+                if (x < minx) {
+                    minx = x;
+                }
+                Double miny = envelope.getLowerCorner().getValue().get(0);
+                if (y < miny) {
+                    miny = y;
+                }
+                envelope.getLowerCorner().setValue(Arrays.asList(miny, minx));
+            }
+            if (envelope.getUpperCorner() != null) {
+                Double maxx = envelope.getUpperCorner().getValue().get(1);
+                if (x > maxx) {
+                    maxx = x;
+                }
+                Double maxy = envelope.getUpperCorner().getValue().get(0);
+                if (y > maxy) {
+                    maxy = y;
+                }
+                envelope.getUpperCorner().setValue(Arrays.asList(maxy, maxx));
+            }
+        }
+
+    }
     /**
      * Verify if this entry is identical to the specified object.
      */
