@@ -133,6 +133,9 @@ public class J2DCanvasVolatile extends J2DCanvas{
     }
 
     private synchronized VolatileImage createBackBuffer() {
+        if(dim == null){
+            return null;
+        }
         return GC.createCompatibleVolatileImage(dim.width, dim.height, VolatileImage.OPAQUE);
     }
 
@@ -173,6 +176,11 @@ public class J2DCanvasVolatile extends J2DCanvas{
                 //or create a new one if we are already rendering
                 //TODO : find a way to stop previous thread
                 buffer = createBackBuffer();
+                if(buffer == null){
+                    //size may not be knowned yet
+                    return;
+                }
+
                 buffer.setAccelerationPriority(1);
                 output = (Graphics2D) buffer.getGraphics();
                 output.setComposite(GO2Utilities.ALPHA_COMPOSITE_0F);
