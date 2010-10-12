@@ -18,6 +18,7 @@ package org.geotoolkit.sml.xml.v101;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -29,8 +30,23 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.sml.xml.AbstractCapabilities;
+import org.geotoolkit.sml.xml.AbstractCharacteristics;
+import org.geotoolkit.sml.xml.AbstractClassification;
+import org.geotoolkit.sml.xml.AbstractContact;
+import org.geotoolkit.sml.xml.AbstractDataSource;
+import org.geotoolkit.sml.xml.AbstractDocumentation;
+import org.geotoolkit.sml.xml.AbstractHistory;
+import org.geotoolkit.sml.xml.AbstractIdentification;
+import org.geotoolkit.sml.xml.AbstractKeywords;
+import org.geotoolkit.sml.xml.AbstractLegalConstraint;
 import org.geotoolkit.sml.xml.AbstractProcess;
+import org.geotoolkit.sml.xml.AbstractProcessChain;
+import org.geotoolkit.sml.xml.AbstractProcessModel;
 import org.geotoolkit.sml.xml.AbstractSensorML;
+import org.geotoolkit.sml.xml.Component;
+import org.geotoolkit.sml.xml.ComponentArray;
+import org.geotoolkit.sml.xml.System;
 import org.geotoolkit.sml.xml.SMLMember;
 import org.geotoolkit.util.Utilities;
 
@@ -116,6 +132,78 @@ public class SensorML extends AbstractSensorML {
     public SensorML(String version, List<SensorML.Member> members) {
         this.version = version;
         this.member  = members;
+    }
+
+    public SensorML(AbstractSensorML sml) {
+        if (sml != null) {
+            this.version = sml.getVersion();
+            if (sml.getMember() != null) {
+                this.member  = new ArrayList<SensorML.Member>();
+                for (SMLMember m : sml.getMember()) {
+                    this.member.add(new Member(m));
+                }
+            }
+            if (sml.getCapabilities() != null) {
+                this.capabilities  = new ArrayList<Capabilities>();
+                for (AbstractCapabilities m : sml.getCapabilities()) {
+                    this.capabilities.add(new Capabilities(m));
+                }
+            }
+            if (sml.getIdentification() != null) {
+                this.identification  = new ArrayList<Identification>();
+                for (AbstractIdentification m : sml.getIdentification()) {
+                    this.identification.add(new Identification(m));
+                }
+            }
+            if (sml.getCharacteristics() != null) {
+                this.characteristics  = new ArrayList<Characteristics>();
+                for (AbstractCharacteristics m : sml.getCharacteristics()) {
+                    this.characteristics.add(new Characteristics(m));
+                }
+            }
+            if (sml.getClassification() != null) {
+                this.classification  = new ArrayList<Classification>();
+                for (AbstractClassification m : sml.getClassification()) {
+                    this.classification.add(new Classification(m));
+                }
+            }
+            if (sml.getContact() != null) {
+                this.contact  = new ArrayList<Contact>();
+                for (AbstractContact m : sml.getContact()) {
+                    this.contact.add(new Contact(m));
+                }
+            }
+            if (sml.getDocumentation() != null) {
+                this.documentation  = new ArrayList<Documentation>();
+                for (AbstractDocumentation m : sml.getDocumentation()) {
+                    this.documentation.add(new Documentation(m));
+                }
+            }
+            if (sml.getHistory() != null) {
+                this.history  = new ArrayList<History>();
+                for (AbstractHistory m : sml.getHistory()) {
+                    this.history.add(new History(m));
+                }
+            }
+            if (sml.getKeywords() != null) {
+                this.keywords  = new ArrayList<Keywords>();
+                for (AbstractKeywords m : sml.getKeywords()) {
+                    this.keywords.add(new Keywords(m));
+                }
+            }
+            if (sml.getLegalConstraint() != null) {
+                this.legalConstraint  = new ArrayList<LegalConstraint>();
+                for (AbstractLegalConstraint m : sml.getLegalConstraint()) {
+                    this.legalConstraint.add(new LegalConstraint(m));
+                }
+            }
+            if (sml.getSecurityConstraint() != null) {
+                this.securityConstraint = new SecurityConstraint(sml.getSecurityConstraint());
+            }
+            if (sml.getValidTime() != null) {
+                this.validTime = new ValidTime(sml.getValidTime());
+            }
+        }
     }
 
     /**
@@ -467,7 +555,7 @@ public class SensorML extends AbstractSensorML {
             } else if (process instanceof ComponentArrayType) {
                 this.process = factory.createComponentArray((ComponentArrayType) process);
             } else {
-                System.out.println("Unexpected AbstractProcessType:" + process);
+                Logger.getLogger("SensorML").warning("Unexpected AbstractProcessType:" + process);
             }
         }
         public Member(SystemType system) {
@@ -478,6 +566,41 @@ public class SensorML extends AbstractSensorML {
         public Member(ComponentType compo) {
             ObjectFactory factory = new ObjectFactory();
             this.process = factory.createComponent(compo);
+        }
+
+        public Member(SMLMember sm) {
+            if (sm != null) {
+                this.actuate      = sm.getActuate();
+                this.arcrole      = sm.getArcrole();
+                this.href         = sm.getHref();
+                this.remoteSchema = sm.getRemoteSchema();
+                this.role         = sm.getRole();
+                this.show         = sm.getShow();
+                this.title        = sm.getTitle();
+                this.type         = sm.getType();
+
+                ObjectFactory factory = new ObjectFactory();
+                if (sm.getRealProcess() instanceof System) {
+                    this.process = factory.createSystem(new SystemType((SystemType)sm.getRealProcess()));
+                } else if (sm.getRealProcess() instanceof Component) {
+                    this.process = factory.createComponent(new ComponentType((Component) sm.getRealProcess()));
+                } else if (sm.getRealProcess() instanceof AbstractDataSource) {
+                    this.process = factory.createDataSource(new DataSourceType((AbstractDataSource) sm.getRealProcess()));
+                } else if (sm.getRealProcess() instanceof AbstractProcessChain) {
+                    this.process = factory.createProcessChain(new ProcessChainType((AbstractProcessChain) sm.getRealProcess()));
+                } else if (sm.getRealProcess() instanceof AbstractProcessModel) {
+                    this.process = factory.createProcessModel(new ProcessModelType((AbstractProcessModel) sm.getRealProcess()));
+                } else if (sm.getRealProcess() instanceof ComponentArray) {
+                    this.process = factory.createComponentArray(new ComponentArrayType((ComponentArray) sm.getRealProcess()));
+                }
+
+                if (sm.getContactList() != null) {
+                    this.contactList = new ContactList(sm.getContactList());
+                }
+                if (sm.getDocumentList() != null) {
+                    this.documentList = new DocumentList(sm.getDocumentList());
+                }
+            }
         }
         
         /**
