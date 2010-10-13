@@ -24,6 +24,7 @@ import java.awt.geom.AffineTransform;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 
+import org.geotoolkit.util.Exceptions;
 import org.geotoolkit.gui.swing.tree.TreeNode;
 import org.geotoolkit.internal.GraphicsUtilities;
 
@@ -177,7 +178,7 @@ final class TreeTileManagerViewer extends JPanel implements TreeSelectionListene
                 gr.setPaint(oldPaint);
             }
         } catch (IOException e) {
-            GraphicsUtilities.paintStackTrace(gr, getBounds(), e);
+            Exceptions.paintStackTrace(gr, getBounds(), e);
         }
     }
 
