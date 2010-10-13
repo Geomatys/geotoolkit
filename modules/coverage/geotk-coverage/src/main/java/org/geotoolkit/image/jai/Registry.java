@@ -79,7 +79,7 @@ public final class Registry {
     @Configuration
     public static boolean registerGeotoolkitServices(final OperationRegistry registry) {
         LogRecord record;
-        String op = "org.geotoolkit";
+        String op = PRODUCT_NAME;
         try {
             op = Combine.OPERATION_NAME;
             registry.registerDescriptor(new CombineDescriptor());

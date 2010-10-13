@@ -289,7 +289,7 @@ final class SampleTranscoder extends PointOpImage {
         try {
             registry.registerDescriptor(new Descriptor());
             registry.registerFactory(RenderedRegistryMode.MODE_NAME, OPERATION_NAME,
-                                     "geotoolkit.org", new CRIF());
+                    org.geotoolkit.internal.image.Setup.PRODUCT_NAME, new CRIF());
         } catch (IllegalArgumentException exception) {
             final LogRecord record = Loggings.format(Level.SEVERE,
                    Loggings.Keys.CANT_REGISTER_JAI_OPERATION_$1, OPERATION_NAME);
