@@ -34,6 +34,7 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
+import org.opengis.filter.Id;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -210,27 +211,30 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * Fires a features add event.
      *
      * @param name of the schema where features where added.
+     * @param ids modified feature ids.
      */
-    protected void fireFeaturesAdded(Name name){
-        sendEvent(StorageContentEvent.createAddEvent(this, name));
+    protected void fireFeaturesAdded(Name name, Id ids){
+        sendEvent(StorageContentEvent.createAddEvent(this, name,ids));
     }
 
     /**
      * Fires a features update event.
      *
      * @param name of the schema where features where updated.
+     * @param ids modified feature ids.
      */
-    protected void fireFeaturesUpdated(Name name){
-        sendEvent(StorageContentEvent.createUpdateEvent(this, name));
+    protected void fireFeaturesUpdated(Name name, Id ids){
+        sendEvent(StorageContentEvent.createUpdateEvent(this, name, ids));
     }
 
     /**
      * Fires a features delete event.
      *
      * @param name of the schema where features where deleted
+     * @param ids modified feature ids.
      */
-    protected void fireFeaturesDeleted(Name name){
-        sendEvent(StorageContentEvent.createDeleteEvent(this, name));
+    protected void fireFeaturesDeleted(Name name, Id ids){
+        sendEvent(StorageContentEvent.createDeleteEvent(this, name, ids));
     }
 
     /**

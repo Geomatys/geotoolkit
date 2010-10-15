@@ -21,6 +21,7 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -38,6 +39,7 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.DefaultQueryCapabilities;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.SchemaException;
@@ -54,7 +56,10 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.Id;
 import org.opengis.filter.identity.FeatureId;
+import org.opengis.filter.identity.Identifier;
 
 /**
  * @todo : make this concurrent
@@ -62,6 +67,8 @@ import org.opengis.filter.identity.FeatureId;
  * @module pending
  */
 public class MemoryDataStore extends AbstractDataStore{
+    
+    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
     private static interface Group{
         FeatureType getFeatureType();
@@ -335,9 +342,6 @@ public class MemoryDataStore extends AbstractDataStore{
                     }
                     writer.grp.datas.add(vals);
 
-                    //fire add event
-                    fireFeaturesAdded(writer.grp.type.getName());
-
                     ids.add(new DefaultFeatureId(vals[0].toString()));
                 }
             }finally{
@@ -353,6 +357,9 @@ public class MemoryDataStore extends AbstractDataStore{
                 writer.close();
             }
 
+            //fire add event
+            final Id eventIds = FF.id(new HashSet<Identifier>(ids));
+            fireFeaturesAdded(writer.grp.type.getName(),eventIds);
             return ids;
         }
 
@@ -501,13 +508,15 @@ public class MemoryDataStore extends AbstractDataStore{
                 reader.next();
 
                 //fire add event
-                fireFeaturesAdded(grp.type.getName());
+                fireFeaturesAdded(grp.type.getName(),
+                        FF.id(Collections.singleton(modified.getIdentifier())));
             }else{
                 for(int i=0; i<descs.length; i++){
                     properties.setValue(i, modified.getProperty(descs[i].getName()).getValue());
                 }
                 //fire modified event
-                fireFeaturesUpdated(grp.type.getName());
+                fireFeaturesUpdated(grp.type.getName(),
+                        FF.id(Collections.singleton(modified.getIdentifier())));
             }
         }
 
