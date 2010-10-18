@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<netcdf xmlns="http://www.unidata.ucar.edu/namespaces/netcdf/ncml-2.2">
+    <aggregation dimName="time" type="joinExisting">
+        <variableAgg name="temperature"/>
+        <variableAgg name="salinity"/>
+        <variableAgg name="temperature_pct_variance"/>
+        <variableAgg name="salinity_pct_variance"/>
+        <netcdf>
+            <aggregation dimName="time" type="union">
+                <netcdf location="file://${rootDirectory}/World/Coriolis/OA_RTQCGL01_20070606_FLD_TEMP.nc" ncoords="1">
+                    <dimension name="time" length="1"/>
+                    <variable name="time" shape="time" type="float">
+                        <values start="20975.000000" increment="0.000000" npts="1"/>
+                    </variable>
+                    <variable name="temperature"/>
+                    <variable name="temperature_pct_variance" orgName="pct_variance"/>
+                </netcdf>
+                <netcdf location="file://${rootDirectory}/World/Coriolis/OA_RTQCGL01_20070606_FLD_PSAL.nc" ncoords="1">
+                    <dimension name="time" length="1"/>
+                    <variable name="time" shape="time" type="float">
+                        <values start="20975.000000" increment="0.000000" npts="1"/>
+                    </variable>
+                    <variable name="salinity"/>
+                    <variable name="salinity_pct_variance" orgName="pct_variance"/>
+                </netcdf>
+            </aggregation>
+        </netcdf>
+        <netcdf>
+            <aggregation dimName="time" type="union">
+                <netcdf location="file://${rootDirectory}/World/Coriolis/OA_RTQCGL01_20070613_FLD_TEMP.nc" ncoords="1">
+                    <dimension name="time" length="1"/>
+                    <variable name="time" shape="time" type="float">
+                        <values start="20982.000000" increment="0.000000" npts="1"/>
+                    </variable>
+                    <variable name="temperature"/>
+                    <variable name="temperature_pct_variance" orgName="pct_variance"/>
+                </netcdf>
+                <netcdf location="file://${rootDirectory}/World/Coriolis/OA_RTQCGL01_20070613_FLD_PSAL.nc" ncoords="1">
+                    <dimension name="time" length="1"/>
+                    <variable name="time" shape="time" type="float">
+                        <values start="20982.000000" increment="0.000000" npts="1"/>
+                    </variable>
+                    <variable name="salinity"/>
+                    <variable name="salinity_pct_variance" orgName="pct_variance"/>
+                </netcdf>
+            </aggregation>
+        </netcdf>
+        <netcdf>
+            <aggregation dimName="time" type="union">
+                <netcdf location="file://${rootDirectory}/World/Coriolis/OA_RTQCGL01_20070620_FLD_TEMP.nc" ncoords="1">
+                    <dimension name="time" length="1"/>
+                    <variable name="time" shape="time" type="float">
+                        <values start="20989.000000" increment="0.000000" npts="1"/>
+                    </variable>
+                    <variable name="temperature"/>
+                    <variable name="temperature_pct_variance" orgName="pct_variance"/>
+                </netcdf>
+                <netcdf location="file://${rootDirectory}/World/Coriolis/OA_RTQCGL01_20070620_FLD_PSAL.nc" ncoords="1">
+                    <dimension name="time" length="1"/>
+                    <variable name="time" shape="time" type="float">
+                        <values start="20989.000000" increment="0.000000" npts="1"/>
+                    </variable>
+                    <variable name="salinity"/>
+                    <variable name="salinity_pct_variance" orgName="pct_variance"/>
+                </netcdf>
+            </aggregation>
+        </netcdf>
+    </aggregation>
+</netcdf>

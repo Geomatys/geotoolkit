@@ -17,7 +17,10 @@
  */
 package org.geotoolkit.image.io.plugin;
 
+import java.net.URI;
+import java.util.List;
 import java.util.Iterator;
+import java.io.File;
 import java.io.IOException;
 import java.awt.Rectangle;
 import java.awt.image.Raster;
@@ -41,7 +44,7 @@ import static org.geotoolkit.test.Commons.*;
  * Tests {@link NetcdfImageReader}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @since 3.08
  */
@@ -217,11 +220,14 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
     @Test
     public void testReadSliceThroughBandAPI() throws IOException {
         final NetcdfImageReader reader = createImageReader();
-        assertEquals("Number of images shall be unchanged.", 2, reader.getNumImages(true));
+        assertEquals("Unexpected number of variables.",      2, reader.getNumImages(true));
         assertEquals("Expected only 1 band by default.",     1, reader.getNumBands(0));
         reader.getDimensionForAPI(DimensionSlice.API.BANDS).addDimensionId("depth");
         assertEquals("Expected the number of z values.",    59, reader.getNumBands(0));
         assertEquals("Number of images shall be unchanged.", 2, reader.getNumImages(true));
+        assertNull  ("Should not be an aggregation.",           reader.getAggregatedFiles(0));
+        assertArrayEquals("Expected the names of the variables found in the NetCDF file.",
+                new String[] {"temperature", "pct_variance"}, reader.getImageNames().toArray());
         /*
          * Set the subregion to load.
          */
@@ -261,11 +267,14 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
     @Test
     public void testReadSliceThroughImageAPI() throws IOException {
         final NetcdfImageReader reader = createImageReader();
-        assertEquals("Number of images shall be unchanged.", 2, reader.getNumImages(true));
+        assertEquals("Unexpected number of variables.",      2, reader.getNumImages(true));
         assertEquals("Expected only 1 band by default.",     1, reader.getNumBands(0));
         reader.getDimensionForAPI(DimensionSlice.API.IMAGES).addDimensionId("depth");
         assertEquals("Number of bands shall be unchanged.",  1, reader.getNumBands(0));
         assertEquals("Expected the number of z values.",    59, reader.getNumImages(true));
+        assertNull  ("Should not be an aggregation.",           reader.getAggregatedFiles(0));
+        assertArrayEquals("Expected the names of the variables found in the NetCDF file.",
+                new String[] {"temperature", "pct_variance"}, reader.getImageNames().toArray());
         /*
          * Set the subregion to load.
          */
@@ -292,6 +301,56 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
         assertArrayEquals(new int[] {5880, 5888, 6007, 6007, 6125, 6124},
                 data.getSamples(0, 0, 2, 3, 0, (int[]) null));
         reader.dispose();
+    }
+
+    /**
+     * Tests reading a NcML file.
+     *
+     * @throws IOException if an error occurred while reading the file.
+     *
+     * @since 3.16
+     */
+    @Test
+    public void testNcML() throws IOException {
+        final NetcdfImageReader reader = new NetcdfImageReader(null);
+        reader.setInput(new File(NetcdfTestBase.getTestFile().getParentFile(), "Aggregation.ncml"));
+        assertEquals("Unexpected number of variables.",  4, reader.getNumImages(true));
+        assertEquals("Expected only 1 band by default.", 1, reader.getNumBands(0));
+        assertArrayEquals("Expected the names of the variables found in the NcML file.",
+                new String[] { // Note that "pct_variance" variables are renamed in the NcML file.
+                    "temperature", "temperature_pct_variance",
+                    "salinity",    "salinity_pct_variance"},
+                reader.getImageNames().toArray());
+        /*
+         * Test the paths to the file components for the "temperature" variable.
+         */
+        assertArrayEquals(new String[] {
+                "OA_RTQCGL01_20070606_FLD_TEMP.nc",
+                "OA_RTQCGL01_20070613_FLD_TEMP.nc",
+                "OA_RTQCGL01_20070620_FLD_TEMP.nc"
+            }, filenames(reader.getAggregatedFiles(0)));
+        /*
+         * Test the paths to the file components for the "salinity_pct_variance" variable.
+         */
+        assertArrayEquals(new String[] {
+                "OA_RTQCGL01_20070606_FLD_PSAL.nc",
+                "OA_RTQCGL01_20070613_FLD_PSAL.nc",
+                "OA_RTQCGL01_20070620_FLD_PSAL.nc"
+            }, filenames(reader.getAggregatedFiles(3)));
+        reader.dispose();
+    }
+
+    /**
+     * Returns the filename of the given aggregated URI. We omit the parent
+     * directory because they are platform-dependent.
+     */
+    private static String[] filenames(final List<URI> aggregated) {
+        assertNotNull("Expected aggregated NetCDF files.", aggregated);
+        final String[] filenames = new String[aggregated.size()];
+        for (int i=0; i<filenames.length; i++) {
+            filenames[i] = new File(aggregated.get(i).getPath()).getName();
+        }
+        return filenames;
     }
 
     /**

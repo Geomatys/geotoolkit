@@ -68,12 +68,6 @@
  * Concrete implementations are provided in the {@linkplain org.geotoolkit.image.io.plugin plugin}
  * and {@linkplain org.geotoolkit.image.io.mosaic mosaic} sub-packages.
  *
- * {@section Static utility methods}
- * The {@link org.geotoolkit.image.io.XImageIO} class provides static methods completing the ones
- * provided in the standard {@link javax.imageio.ImageIO} class. Those methods consider the input
- * or output type before to select an image reader or writer, because not every plugins can accept
- * the standard types (image input or output stream) defined by the Java Image I/O specification.
- *
  * {@section System initialization}
  * While not mandatory, it is recommended to invoke the following methods at least once before
  * to use the Geotk library. Those methods are not invoked automatically in order to let users
@@ -85,15 +79,26 @@
  *   <li>{@link org.geotoolkit.image.io.plugin.WorldFileImageReader.Spi#registerDefaults(ServiceRegistry)}</li>
  *   <li>{@link org.geotoolkit.image.io.plugin.WorldFileImageWriter.Spi#registerDefaults(ServiceRegistry)}</li>
  * </ol>
- * <ul>
- *   <li><b>Alternative:</b> {@link org.geotoolkit.lang.Setup#initialize(Properties)} performs
- *       (among other tasks) all the above tasks except 1.</li>
- * </ul>
+ * <p>
+ * <b>Alternative:</b> {@link org.geotoolkit.lang.Setup#initialize(Properties)} performs
+ * (among other tasks) all the above tasks except 1.
  * <p>
  * Those methods can be invoked more than once if the set of standard readers available (PNG, TIFF,
  * <i>etc.</i>) is changed. For example invoking {@code WorldFileImageReader.Spi.registerDefaults(...)}
  * again will replace the old <cite>World File</cite> readers by new one wrapping the new standard
  * readers.
+ *
+ * {@section Static utility methods}
+ * The {@link org.geotoolkit.image.io.XImageIO} class provides static methods completing the ones
+ * provided in the standard {@link javax.imageio.ImageIO} class. Those methods consider the input
+ * or output type before to select an image reader or writer, because not every plugins can accept
+ * the standard types (image input or output stream) defined by the Java Image I/O specification.
+ *
+ * {@section Multi-dimensional dataset}
+ * The Java Image I/O library is designed for two-dimensional images. The Geotk library extends
+ * the Java library with the {@link org.geotoolkit.image.io.MultidimensionalImageStore} interface,
+ * which provide method for accessing data above the two first dimensions. See the
+ * {@code MultidimensionalImageStore} javadoc for more details.
  *
  * {@section Conversion of sample values}
  * Spatial image formats often contain geophysical values (e.g. temperatures in Celsius degrees,
@@ -113,7 +118,7 @@
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Antoine Hnawia (IRD)
- * @version 3.11
+ * @version 3.16
  *
  * @see org.geotoolkit.image.io.plugin
  *

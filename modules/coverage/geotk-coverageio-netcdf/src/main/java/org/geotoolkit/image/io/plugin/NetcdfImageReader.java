@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.EnumSet;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Locale;
@@ -34,6 +35,8 @@ import java.net.URI;
 import java.io.File;
 import java.io.IOException;
 import java.io.FileNotFoundException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import javax.imageio.IIOException;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageReadParam;
@@ -49,6 +52,7 @@ import ucar.nc2.dataset.CoordSysBuilderIF;
 import ucar.nc2.dataset.NetcdfDataset;
 import ucar.nc2.dataset.VariableDS;
 import ucar.nc2.dataset.Enhancements;
+import ucar.nc2.ncml.Aggregation;
 import ucar.nc2.util.CancelTask;
 import ucar.nc2.Dimension;
 import ucar.nc2.Variable;
@@ -61,6 +65,7 @@ import org.geotoolkit.image.io.FileImageReader;
 import org.geotoolkit.image.io.DimensionIdentification;
 import org.geotoolkit.image.io.IllegalImageDimensionException;
 import org.geotoolkit.image.io.MultidimensionalImageStore;
+import org.geotoolkit.image.io.AggregatedImageStore;
 import org.geotoolkit.image.io.NamedImageStore;
 import org.geotoolkit.image.io.SampleConverter;
 import org.geotoolkit.image.io.SpatialImageReadParam;
@@ -138,7 +143,7 @@ import org.geotoolkit.util.logging.Logging;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Antoine Hnawia (IRD)
- * @version 3.15
+ * @version 3.16
  *
  * @see org.geotoolkit.referencing.adapters.NetcdfCRS
  *
@@ -146,7 +151,7 @@ import org.geotoolkit.util.logging.Logging;
  * @module
  */
 public class NetcdfImageReader extends FileImageReader implements
-        MultidimensionalImageStore, NamedImageStore, CancelTask
+        MultidimensionalImageStore, NamedImageStore, AggregatedImageStore, CancelTask
 {
     /**
      * The enhancements to enable when opening a NetCDF data set.
@@ -181,7 +186,7 @@ public class NetcdfImageReader extends FileImageReader implements
 
     /**
      * The NetCDF dataset, or {@code null} if not yet open. The NetCDF file is open by
-     * {@link #ensureOpen} when first needed.
+     * {@link #ensureFileOpen()} when first needed.
      */
     private NetcdfDataset dataset;
 
@@ -233,7 +238,7 @@ public class NetcdfImageReader extends FileImageReader implements
      * @param spi The service provider.
      */
     public NetcdfImageReader(final Spi spi) {
-        super(spi);
+        super(spi != null ? spi : new Spi());
         dimensionManager = new DimensionManager(this);
     }
 
@@ -301,6 +306,96 @@ public class NetcdfImageReader extends FileImageReader implements
     }
 
     /**
+     * Returns the URIs to the aggregated files, or {@code null} if none. This information applies
+     * mostly to NcML files, which are XML files listing many NetCDF files to be aggregated as if
+     * they were a single dataset. The method returns the individual files that compose such
+     * aggregation.
+     *
+     * @param  imageIndex The index of the variable for which to get the aggregated files.
+     * @return The individual files which are aggregated, or {@code null} if none.
+     * @throws IOException If an error occurred while building the list of files.
+     *
+     * @see NetcdfDataset#getAggregation()
+     *
+     * @since 3.16
+     */
+    @Override
+    public List<URI> getAggregatedFiles(final int imageIndex) throws IOException {
+        clearAbortRequest();
+        ensureFileOpen();
+        return getAggregatedFiles(dataset, getVariableNames().get(imageIndex), null);
+    }
+
+    /**
+     * Adds the aggregated files to the given list. This method invokes itself recursively
+     * if an aggregation is a outer aggregation containing inner elements.
+     *
+     * @param  dataset  The dataset from which to get the aggregation.
+     * @param  variable The name of the variable for which to get aggregated elements.
+     * @param  addTo    The list in which to add the URI, or {@code null} if not yet created.
+     * @return The {@code addTo} list, or a new list if {@code addTo} was null and new elements
+     *         were found.
+     * @throws IOException If an error occurred while building the list of files.
+     */
+    private List<URI> getAggregatedFiles(NetcdfDataset dataset, final String variable,
+            List<URI> addTo) throws IOException
+    {
+        final Aggregation aggregation = dataset.getAggregation();
+        if (aggregation != null) {
+            final List<Aggregation.Dataset> components = aggregation.getDatasets();
+            if (components != null) {
+                if (addTo == null) {
+                    addTo = new ArrayList<URI>(components.size());
+                }
+                for (final Aggregation.Dataset component : components) {
+                    if (abortRequested()) {
+                        throw new IIOException(errors().getString(Errors.Keys.CANCELED_OPERATION));
+                    }
+                    if (component != null) {
+                        /*
+                         * We will process the aggregated file only if it contains the variable
+                         * we are looking for.
+                         */
+                        final NetcdfFile componentFile = component.acquireFile(this);
+                        if (componentFile.findVariable(variable) != null) {
+                            final String location = component.getLocation();
+                            if (location == null) {
+                                /*
+                                 * If the component does not contain a link to a file, it may be an
+                                 * outer aggregation which contain inner aggregations.  Explore the
+                                 * content recursively.
+                                 */
+                                if (componentFile instanceof NetcdfDataset) {
+                                    addTo = getAggregatedFiles((NetcdfDataset) componentFile, variable, addTo);
+                                }
+                            } else {
+                                /*
+                                 * Get the URI, wrapping exception in a MalformedURLException since
+                                 * in order to get a subclass of IOException. We give the location
+                                 * as the message a let the more detailled explanation in the cause.
+                                 * We do that because MalformedURLException does not have an getInput()
+                                 * method (at the opposite of URISyntaxException).
+                                 */
+                                final URI url;
+                                try {
+                                    url = new URI(location);
+                                } catch (URISyntaxException c) {
+                                    MalformedURLException e = new MalformedURLException(location);
+                                    e.initCause(c);
+                                    throw e;
+                                }
+                                addTo.add(url);
+                            }
+                        }
+                        componentFile.close();
+                    }
+                }
+            }
+        }
+        return addTo;
+    }
+
+    /**
      * Returns the names of the variables to be read. The first name is assigned to the image
      * at index 0, the second name to the image at index 1, <i>etc</i>. In other words a call
      * to <code>{@linkplain #read(int) read}(imageIndex)</code> will read the variable named
@@ -312,6 +407,8 @@ public class NetcdfImageReader extends FileImageReader implements
      *
      * @return The names of the variables to be read.
      * @throws IOException if the NetCDF file can not be read.
+     *
+     * @see NetcdfDataset#getVariables()
      */
     @Override
     public List<String> getImageNames() throws IOException {
@@ -454,6 +551,8 @@ public class NetcdfImageReader extends FileImageReader implements
      * Returns the image width.
      *
      * @throws IOException If an error occurred while reading the NetCDF file.
+     *
+     * @see Variable#getDimension(int)
      */
     @Override
     public int getWidth(final int imageIndex) throws IOException {
@@ -465,6 +564,8 @@ public class NetcdfImageReader extends FileImageReader implements
      * Returns the image height.
      *
      * @throws IOException If an error occurred while reading the NetCDF file.
+     *
+     * @see Variable#getDimension(int)
      */
     @Override
     public int getHeight(final int imageIndex) throws IOException {
@@ -480,6 +581,8 @@ public class NetcdfImageReader extends FileImageReader implements
      * @param  imageIndex The image index.
      * @return The number of dimension for the image at the given index.
      * @throws IOException if an error occurs reading the information from the input source.
+     *
+     * @see Variable#getRank()
      */
     @Override
     public int getDimension(final int imageIndex) throws IOException {
@@ -622,6 +725,8 @@ public class NetcdfImageReader extends FileImageReader implements
     /**
      * Creates a new stream or image metadata. This method is invoked automatically when first
      * needed.
+     *
+     * @see CoordSysBuilder#factory(NetcdfDataset, CancelTask)
      */
     @Override
     protected SpatialMetadata createMetadata(final int imageIndex) throws IOException {
@@ -868,6 +973,8 @@ public class NetcdfImageReader extends FileImageReader implements
      * @param  name The name of the variable to search.
      * @return The variable for the given name.
      * @throws IOException If an error occurred while reading the NetCDF file.
+     *
+     * @see NetcdfDataset#findVariable(String)
      */
     protected Variable findVariable(final String name) throws IOException {
         ensureFileOpen();

@@ -84,7 +84,7 @@ import org.geotoolkit.math.XMath;
  * the insertion in the database occurs.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @see CoverageDatabaseListener
  *
@@ -145,10 +145,23 @@ public final class NewGridCoverageReference {
 
     /**
      * The zero-based index of the image to be inserted in the database. If there is many
-     * images to insert for many different {@linkplain #dateRanges dates}, then this is
-     * the index of the first image.
+     * images to insert for many different {@linkplain #dateRanges date ranges}, then this
+     * is the index of the first image, i.e.:
+     * <p>
+     * <ul>
+     *   <li>The temporal extent of the image at index {@code imageIndex} is
+     *       <code>{@linkplain #dateRanges}[0]</code>.</li>
+     *   <li>The temporal extent of the image at index {@code imageIndex + 1} is
+     *       <code>{@linkplain #dateRanges}[1]</code>.</li>
+     *   <li><i>etc.</i></li>
+     *   <li>Finally the temporal extent of the image at index {@code imageIndex + n}
+     *       is <code>{@linkplain #dateRanges}[n]</code> where <var>n</var> =
+     *       {@code dateRanges.length - 1}.</li>
+     * </ul>
+     *
+     * @since 3.16
      */
-    final int imageIndex;
+    public int imageIndex;
 
     /**
      * The name of the coverage format. It shall be one of the primary key values in the
@@ -190,7 +203,8 @@ public final class NewGridCoverageReference {
 
     /**
      * Some formats which may be applicable as an alternative to {@code series.format}.
-     * This list is created by {@link #getAlternativeFormats()} when first needed.
+     * This list is created by {@link #getAlternativeFormats()} when first needed. The
+     * content shall not be modified after creation.
      */
     private FormatEntry[] alternativeFormats;
 
@@ -250,8 +264,58 @@ public final class NewGridCoverageReference {
     /**
      * The date range, or {@code null} if none. This array usually contains only one element,
      * but more than one time range is allowed if the image file contains data at many times.
+     * In the later case, the sequence of date ranges is associated to the sequence of
+     * {@linkplain #imageIndex image indices}, i.e.:
+     * <p>
+     * <ul>
+     *   <li>{@code dateRanges[0]} is the temporal extent of the image at index {@link #imageIndex}.</li>
+     *   <li>{@code dateRanges[1]} is the temporal extent of the image at index {@link #imageIndex} + 1.</li>
+     *   <li><i>etc.</i></li>
+     *   <li>Finally, {@code dateRanges[n]} is the temporal extent of the image at index
+     *       {@link #imageIndex} + n where <var>n</var> = {@code dateRanges.length - 1}.</li>
+     * </ul>
      */
     public DateRange[] dateRanges;
+
+    /**
+     * Creates a new instance which is a copy of the given instance except for the input file,
+     * image index and time range. This method is used only when iterating over the content of
+     * an aggregate (typically a NcML file).
+     * <p>
+     * This constructor does not clone the references to mutable objects.
+     * Consequently this instance is not allowed to be made visible through public API.
+     *
+     * @param master     The reference to copy.
+     * @param file       The path, filename and index to the new image file.
+     * @param dateIndex  Index of the element to select in the {@code dateRanges} array.
+     *
+     * @since 3.16
+     */
+    NewGridCoverageReference(final NewGridCoverageReference master, final File file, final int dateIndex) {
+        String filename  = file.getName();
+        String extension = null;
+        final int s = filename.lastIndexOf('.');
+        if (s > 0) {
+            extension = filename.substring(s+1);
+            filename = filename.substring(0, s);
+        }
+        this.database           = master.database;
+        this.path               = file.getParentFile();
+        this.filename           = filename;
+        this.extension          = extension;
+        this.format             = master.format;
+        this.sampleDimensions   = master.sampleDimensions;
+        this.bestFormat         = master.bestFormat;
+        this.alternativeFormats = master.alternativeFormats;
+        this.spi                = master.spi;
+        this.imageBounds        = master.imageBounds;
+        this.gridToCRS          = master.gridToCRS;
+        this.horizontalSRID     = master.horizontalSRID;
+        this.verticalSRID       = master.verticalSRID;
+        this.verticalValues     = master.verticalValues;
+        this.dateRanges         = new DateRange[] {master.dateRanges[dateIndex]};
+        // 'imageIndex' needs to be left to 0.
+    }
 
     /**
      * Creates an entry for the given tile.
@@ -263,25 +327,27 @@ public final class NewGridCoverageReference {
     NewGridCoverageReference(final SpatialDatabase database, final Tile tile)
             throws SQLException, IOException, FactoryException
     {
-        this(database, tile.getImageReader(), tile.getInput(), tile.getImageIndex(), tile);
+        this(database, tile.getImageReader(), tile.getInput(), tile.getImageIndex(), tile, true);
     }
 
     /**
      * Creates en entry for the given reader. The {@linkplain ImageReader#setInput(Object)
      * reader input must be set} by the caller before to invoke this constructor.
      *
-     * @param  database   The database where the new entry will be added.
-     * @param  reader     The image reader with its input set.
-     * @param  input      The original input. May not be the same than {@link ImageReader#getInput()}
-     *                    because the later may have been transformed in an image input stream.
-     * @param  imageIndex Index of the image to read.
+     * @param  database      The database where the new entry will be added.
+     * @param  reader        The image reader with its input set.
+     * @param  input         The original input. May not be the same than {@link ImageReader#getInput()}
+     *                       because the later may have been transformed in an image input stream.
+     * @param  imageIndex    Index of the image to read.
+     * @param  disposeReader {@code true} if {@link ImageReader#dispose()} should be invoked on
+     *                       the given {@code reader} after this method finished its work.
      * @throws IOException if an error occurred while reading the image.
      */
     NewGridCoverageReference(final SpatialDatabase database, final ImageReader reader,
-            final Object input, final int imageIndex)
+            final Object input, final int imageIndex, final boolean disposeReader)
             throws SQLException, IOException, FactoryException
     {
-        this(database, reader, input, imageIndex, null);
+        this(database, reader, input, imageIndex, null, disposeReader);
     }
 
     /**
@@ -289,16 +355,18 @@ public final class NewGridCoverageReference {
      * and must have its {@linkplain ImageReader#setInput(Object) input set}. The tile
      * argument is optional.
      *
-     * @param  database   The database where the new entry will be added.
-     * @param  reader     The image reader with its input set.
-     * @param  input      The original input. May not be the same than {@link ImageReader#getInput()}
-     *                    because the later may have been transformed in an image input stream.
-     * @param  imageIndex Index of the image to read.
-     * @param  tile       The tile for which a reference is created, or {@code null} if none.
+     * @param  database      The database where the new entry will be added.
+     * @param  reader        The image reader with its input set.
+     * @param  input         The original input. May not be the same than {@link ImageReader#getInput()}
+     *                       because the later may have been transformed in an image input stream.
+     * @param  imageIndex    Index of the image to read.
+     * @param  tile          The tile for which a reference is created, or {@code null} if none.
+     * @param  disposeReader {@code true} if {@link ImageReader#dispose()} should be invoked on
+     *                       the given {@code reader} after this method finished its work.
      * @throws IOException if an error occurred while reading the image.
      */
     private NewGridCoverageReference(final SpatialDatabase database, final ImageReader reader,
-            Object input, final int imageIndex, final Tile tile)
+            Object input, final int imageIndex, final Tile tile, final boolean disposeReader)
             throws SQLException, IOException, FactoryException
     {
         this.database = database;
@@ -546,9 +614,13 @@ public final class NewGridCoverageReference {
             new ArrayList<GridSampleDimension>(candidate.sampleDimensions) :
             new ArrayList<GridSampleDimension>();
         /*
-         * Close the reader but do not dispose it, since it may be used for the next entry.
+         * Close the reader but do not dispose it (unless we were asked to),
+         * since it may be used for the next entry.
          */
         XImageIO.close(reader);
+        if (disposeReader) {
+            reader.dispose();
+        }
     }
 
     /**

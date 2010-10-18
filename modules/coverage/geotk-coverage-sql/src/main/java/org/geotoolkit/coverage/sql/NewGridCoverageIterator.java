@@ -42,7 +42,7 @@ import org.geotoolkit.resources.Errors;
  * {@code #next()} method returns {@code null} when there is no more element to return.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @since 3.12 (derived from Seagis)
  * @module
@@ -114,11 +114,14 @@ final class NewGridCoverageIterator {
             return new NewGridCoverageReference(database, (Tile) input);
         }
         final ImageReader reader;
+        final boolean disposeReader;
         if (input instanceof ImageReader) {
             reader = (ImageReader) input;
             input = reader.getInput();
+            disposeReader = false;
         } else {
             reader = XImageIO.getReaderBySuffix(input, true, false);
+            disposeReader = true;
         }
         /*
          * If there is many images, get the list of them. If the file is some format having
@@ -169,6 +172,7 @@ final class NewGridCoverageIterator {
                             final NamedImageStore store = (NamedImageStore) reader;
                             store.setImageNames(names[0]);
                             store.setBandNames(0, names);
+                            // Leave the imageIndex to 0: it may be used for images at different dates.
                         } else if (numSelected != 1) {
                             throw new IIOException(error(Errors.Keys.UNEXPECTED_PARAMETER_$1, "images[2]"));
                         } else {
@@ -178,7 +182,7 @@ final class NewGridCoverageIterator {
                 }
             }
         }
-        return new NewGridCoverageReference(database, reader, input, imageIndex);
+        return new NewGridCoverageReference(database, reader, input, imageIndex, disposeReader);
     }
 
     /**
