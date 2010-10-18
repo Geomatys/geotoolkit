@@ -29,7 +29,33 @@ import javax.xml.transform.Result;
 
 
 /**
- * An abstract class for all stax writer.
+ * An abstract class for all stax stream writer.<br/>
+ * Writers for a given specification should extend this class and
+ * provide appropriate write methods.<br/>
+ * <br/>
+ * Example : <br/>
+ * <pre>
+ * {@code
+ * public class UserWriter extends StaxStreamWriter{
+ *
+ *   public void write(User user) throws XMLStreamException{
+ *      //casual stax writing operations
+ *      writer.writeStartElement(...
+ *   }
+ * }
+ * }
+ * </pre>
+ * And should be used like :<br/>
+ * <pre>
+ * {@code
+ * final UserWriter instance = new UserWriter();
+ * try{
+ *     instance.setOutput(stream);
+ *     instance.write(aUser);
+ * }finally{
+ *     instance.dispose();
+ * }
+ * </pre>
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -49,6 +75,10 @@ public abstract class StaxStreamWriter {
 
     /**
      * Acces the underlying stax writer.
+     * This method is used when several writer are wrapping a single writer.
+     * Like when an Symbology Encoding writer wraps a Filter writer.
+     * <br>
+     * It can also be used to write tag before or after this writer is used.
      */
     public XMLStreamWriter getWriter(){
         return writer;
@@ -57,6 +87,7 @@ public abstract class StaxStreamWriter {
     /**
      * close potentiel previous stream and cache if there are some.
      * This way the writer can be reused for a different output later.
+     * The underlying stax writer will be closed.
      */
     public void reset() throws IOException, XMLStreamException{
         if(targetStream != null){
@@ -79,13 +110,13 @@ public abstract class StaxStreamWriter {
     }
 
     /**
-     * Set the output for this writer.
-     * Handle types are :
-     * - java.io.File
-     * - java.io.Writer
-     * - java.io.OutputStream
-     * - javax.xml.stream.XMLStreamWriter
-     * - javax.xml.transform.Result
+     * Set the output for this writer.<br/>
+     * Handle types are :<br/>
+     * - java.io.File<br/>
+     * - java.io.Writer<br/>
+     * - java.io.OutputStream<br/>
+     * - javax.xml.stream.XMLStreamWriter<br/>
+     * - javax.xml.transform.Result<br/>
      * 
      * @param output
      * @throws IOException
@@ -129,7 +160,7 @@ public abstract class StaxStreamWriter {
      * @return XMLStreamWriter
      * @throws XMLStreamException if the output is not handled
      */
-    private static final XMLStreamWriter toWriter(Object output)
+    private static XMLStreamWriter toWriter(Object output)
             throws XMLStreamException{
         final XMLOutputFactory XMLfactory = XMLOutputFactory.newInstance();
         XMLfactory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.TRUE);

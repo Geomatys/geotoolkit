@@ -33,7 +33,33 @@ import javax.xml.transform.Source;
 import static javax.xml.stream.XMLStreamReader.*;
 
 /**
- * An abstract class for all stax parser.
+ * An abstract class for all stax parser.<br/>
+ * Readers for a given specification should extend this class and
+ * provide appropriate read methods.<br/>
+ * <br/>
+ * Example : <br/>
+ * <pre>
+ * {@code
+ * public class UserReader extends StaxStreamReader{
+ *
+ *   public User read() throws XMLStreamException{
+ *      //casual stax reading operations
+ *      return user;
+ *   }
+ * }
+ * }
+ * </pre>
+ * And should be used like :<br/>
+ * <pre>
+ * {@code
+ * final UserReader instance = new UserReader();
+ * try{
+ *     instance.setInput(stream);
+ *     user = instance.read();
+ * }finally{
+ *     instance.dispose();
+ * }
+ * </pre>
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -54,6 +80,7 @@ public abstract class StaxStreamReader {
     /**
      * close potentiel previous stream and cache if there are some.
      * This way the reader can be reused for a different input later.
+     * The underlying stax reader will be closed.
      */
     public void reset() throws IOException, XMLStreamException{
         if(sourceStream != null){
@@ -76,15 +103,15 @@ public abstract class StaxStreamReader {
     }
 
     /**
-     * Set the input for this reader.
-     * Handle types are :
-     * - java.io.File
-     * - java.io.Reader
-     * - java.io.InputStream
-     * - java.net.URL
-     * - java.net.URI
-     * - javax.xml.stream.XMLStreamReader
-     * - javax.xml.transform.Source
+     * Set the input for this reader.<br/>
+     * Handle types are :<br/>
+     * - java.io.File<br/>
+     * - java.io.Reader<br/>
+     * - java.io.InputStream<br/>
+     * - java.net.URL<br/>
+     * - java.net.URI<br/>
+     * - javax.xml.stream.XMLStreamReader<br/>
+     * - javax.xml.transform.Source<br/>
      * 
      * @param input
      * @throws IOException
