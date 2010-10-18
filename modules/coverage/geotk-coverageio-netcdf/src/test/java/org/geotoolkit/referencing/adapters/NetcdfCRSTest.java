@@ -42,6 +42,7 @@ import org.geotoolkit.util.Range;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.image.io.plugin.NetcdfTestBase;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
@@ -214,9 +215,9 @@ public final class NetcdfCRSTest extends NetcdfTestBase {
         assertArrayEquals(new int[high.length], ge.getLow() .getCoordinateValues());
         assertArrayEquals(high,                 ge.getHigh().getCoordinateValues());
         final MathTransform gridToCRS = gg.getGridToCRS();
+        final Matrix matrix = DiscreteReferencingFactory.getAffineTransform(crs);
         if (isProjected) {
             assertTrue(gridToCRS instanceof LinearTransform);
-            final Matrix matrix = ((LinearTransform) gridToCRS).getMatrix();
             /*
              * The first two lines of the above matrix contain the same offset and scale factors
              * than the ones in IrregularAxesConverterTest, except for a slight southing offset.
@@ -231,6 +232,12 @@ public final class NetcdfCRSTest extends NetcdfTestBase {
                     new double[] {    0,     0,     0,     0,         1}).equals(matrix, 1));
         } else {
             assertNull(gridToCRS);
+            assertTrue(new GeneralMatrix(
+                    new double[] {NaN,   0,   0,   0,  -179.5}, // Actually, the scale should be 0.5
+                    new double[] {  0, NaN,   0,   0,   -77.0105},
+                    new double[] {  0,   0, NaN,   0,     5.0},
+                    new double[] {  0,   0,   0, NaN, 20975.0},
+                    new double[] {  0,   0,   0,   0,     1.0}).equals(matrix, 1));
         }
     }
 

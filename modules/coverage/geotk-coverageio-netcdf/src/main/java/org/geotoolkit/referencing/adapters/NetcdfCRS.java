@@ -113,7 +113,7 @@ import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @see org.geotoolkit.image.io.plugin.NetcdfImageReader
  *
@@ -123,6 +123,11 @@ import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateReferenceSystem,
         org.opengis.referencing.cs.CoordinateSystem, GridGeometry
 {
+    /**
+     * Small tolerance factor for rounding error.
+     */
+    private static final double EPS = 1E-10;
+
     /**
      * The NetCDF coordinate system wrapped by this {@code NetcdfCRS} instance.
      */
@@ -515,10 +520,24 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
             if (Double.isNaN(scale) || scale == 0) {
                 return null;
             }
-            matrix.setElement(i, i, scale);
-            matrix.setElement(i, numDimensions, axis.getStart());
+            matrix.setElement(i, i, nice(scale));
+            matrix.setElement(i, numDimensions, nice(axis.getStart()));
         }
         return ProjectiveTransform.create(matrix);
+    }
+
+    /**
+     * Workaround rounding errors found in NetCDF files.
+     *
+     * @since 3.16
+     */
+    private static double nice(double value) {
+        final double tf = value * 360;
+        final double ti = Math.rint(tf);
+        if (Math.abs(tf - ti) <= EPS) {
+            value = ti / 360;
+        }
+        return value;
     }
 
     /**
@@ -779,7 +798,10 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
                     case Lon: longitude = axis; break;
                 }
             }
-            if (latitude != null && longitude != null) {
+            if (latitude != null && longitude != null &&
+                   (!latitude .delegate().isRegular() ||
+                    !longitude.delegate().isRegular()))
+            {
                 /*
                  * The 1E-4 threshold have been determined empirically from the IFREMER Coriolis
                  * data. Note that the threshold used by the NetCDF library version 4.1 in the

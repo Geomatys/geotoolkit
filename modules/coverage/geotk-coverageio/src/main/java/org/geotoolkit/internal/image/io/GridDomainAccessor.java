@@ -27,11 +27,13 @@ import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.metadata.spatial.CellGeometry;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.MetadataAccessor;
 import org.geotoolkit.internal.referencing.MatrixUtilities;
+import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
 
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME;
 
@@ -51,7 +53,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @since 3.06
  * @module
@@ -89,7 +91,18 @@ public final class GridDomainAccessor extends MetadataAccessor {
      */
     public void setGridGeometry(final GridGeometry geometry) {
         final GridEnvelope envelope = geometry.getGridRange();
-        final Matrix gridToCRS = MatrixUtilities.getMatrix(geometry.getGridToCRS());
+        final Matrix gridToCRS;
+        if (geometry instanceof CoordinateReferenceSystem) {
+            /*
+             * This happen especially with NetCDF data, where coordinate axes have discrete values.
+             * The DiscreteReferencingFactory class is more sophesticated than the MatrixUtilities
+             * class in such case, since it fallback on an analysis of axes if getGridToCRS() can
+             * not provide a linear transform.
+             */
+            gridToCRS = DiscreteReferencingFactory.getAffineTransform((CoordinateReferenceSystem) geometry);
+        } else {
+            gridToCRS = MatrixUtilities.getMatrix(geometry.getGridToCRS());
+        }
         final int dim = envelope.getDimension();
         final int[]    lower  = new int   [dim];
         final int[]    upper  = new int   [dim];
