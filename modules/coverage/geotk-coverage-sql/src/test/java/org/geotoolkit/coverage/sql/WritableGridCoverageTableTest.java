@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.sql;
 
 import java.io.File;
 import java.awt.Rectangle;
+import java.awt.image.RenderedImage;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
@@ -26,11 +27,14 @@ import java.util.Locale;
 import java.util.List;
 import java.util.Set;
 
+import org.opengis.geometry.Envelope;
+
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReader;
+import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.util.MeasurementRange;
 
@@ -42,7 +46,7 @@ import static org.junit.Assert.*;
  * Tests {@link WritableGridCoverageTable}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.16
  *
  * @since 3.12
  */
@@ -54,9 +58,19 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
     public static final String GEOSTROPHIC_CURRENT_FILE = "Iroise/champs.r3_23-05-2007.nc";
 
     /**
+     * The NcML file which is an aggregation of 6 NetCDF files (2 variables at 3 different dates).
+     */
+    public static final String AGGREGATION_FILE = "World/Coriolis/Aggregation.ncml";
+
+    /**
      * A temporary layer in which images will be inserted.
      */
     private static final String TEMPORARY_LAYER = "Temporary";
+
+    /**
+     * Tolerance factor for floating point comparisons.
+     */
+    private static final double EPS = 1E-7;
 
     /**
      * {@code true} if {@link #createTemporaryLayer()} has created a temporary layer.
@@ -133,7 +147,14 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
                 assertEquals("matrix",              reference.filename);
                 assertEquals("txt",                 reference.extension);
                 assertEquals("matrix",              reference.format);
+                assertEquals("imageIndex", 0,       reference.imageIndex);
                 assertEquals(new Rectangle(20, 42), reference.imageBounds);
+                assertEquals(     0,                reference.gridToCRS.getShearX(),     0);
+                assertEquals(     0,                reference.gridToCRS.getShearY(),     0);
+                assertEquals(  1000,                reference.gridToCRS.getScaleX(),     0);
+                assertEquals( -1000,                reference.gridToCRS.getScaleY(),     0);
+                assertEquals(-10000,                reference.gridToCRS.getTranslateX(), 0);
+                assertEquals( 21000,                reference.gridToCRS.getTranslateY(), 0);
                 assertEquals(3395,                  reference.horizontalSRID);
                 assertEquals(0,                     reference.verticalSRID);
                 assertNull  (                       reference.verticalValues);
@@ -149,7 +170,7 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
         final Set<File> files = Collections.singleton(TestData.file(TextMatrixImageReader.class, "matrix.txt"));
         table.setLayer(TEMPORARY_LAYER);
         /*
-         * TODO: Ugly patch below: set the locale the an anglo-saxon one, so we can parse the
+         * TODO: Ugly patch below: set the locale to an anglo-saxon one, so we can parse the
          * matrix numbers. We should find an other way to provide the locale to the reader...
          */
         final Locale locale = Locale.getDefault();
@@ -159,6 +180,12 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
         } finally {
             Locale.setDefault(locale);
         }
+        /*
+         * Check the entry that we just added.
+         * (TODO: tests reading the coverage, but we need a fix for the locale issue).
+         */
+        final GridCoverageEntry entry = table.getEntry();
+        assertEquals("matrix.txt", entry.getFile(File.class).getName());
         table.release();
         /*
          * Clean-up: delete the "matrix" format, so that the next execution will
@@ -170,7 +197,9 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
         final FormatEntry format = ft.getEntry("matrix");
         assertEquals(1, ft.delete("matrix"));
         ft.release();
-
+        /*
+         * Verify the format.
+         */
         assertEquals("matrix",    format.identifier);
         assertEquals("matrix",    format.imageFormat);
         assertEquals("grayscale", format.paletteName);
@@ -212,7 +241,14 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
                 assertEquals ("champs.r3_23-05-2007",  reference.filename);
                 assertEquals ("nc",                    reference.extension);
                 assertEquals ("NetCDF",                reference.format);
+                assertEquals ("imageIndex", 0,         reference.imageIndex);
                 assertEquals (new Rectangle(273, 423), reference.imageBounds);
+                assertEquals ( 0.0,                    reference.gridToCRS.getShearX(),     0.0);
+                assertEquals ( 0.0,                    reference.gridToCRS.getShearY(),     0.0);
+                assertEquals ( 0.0040461,              reference.gridToCRS.getScaleX(),     EPS);
+                assertEquals (-0.0026991,              reference.gridToCRS.getScaleY(),     EPS);
+                assertEquals (-5.3390946,              reference.gridToCRS.getTranslateX(), EPS);
+                assertEquals (48.7960646,              reference.gridToCRS.getTranslateY(), EPS);
                 assertEquals ("TODO", 0,               reference.horizontalSRID);
                 assertEquals ("Expected no z.", 0,     reference.verticalSRID);
                 assertNull   ("Expected no z.",        reference.verticalValues);
@@ -228,6 +264,7 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
                 assertArrayEquals("Expected one image for each variable.", new String[] {
                     "h0", "xe", "u", "v"
                 }, images.toArray());
+                // Select the "xe" variable for this test.
                 return Collections.singleton(images.get(1));
             }
         };
@@ -236,6 +273,144 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
         table.setLayer(TEMPORARY_LAYER);
         assertEquals("Expected the addition of many entries, one for each date.",
                 285, table.addEntries(files, database, controller));
+        /*
+         * Test each individual entry, including a test of coverage reading.
+         */
+        int imageIndex = 285;
+        double lastTime = Double.POSITIVE_INFINITY;
+        for (final GridCoverageEntry entry : table.getEntries()) {
+            assertEquals("Every entry are expected to use the same input file.",
+                         "champs.r3_23-05-2007.nc", entry.getFile(File.class).getName());
+            assertEquals("Image indices are expected to be decreasing when iterating " +
+                         "from the most recent image to the oldest one.",
+                         imageIndex--, entry.getIdentifier().imageIndex);
+            /*
+             * Inspect the coverage. For performance raison in this test suite,
+             * we test only some images (they should all be similar anyway).
+             */
+            if ((imageIndex % 10) == 0) {
+                final GridCoverage2D coverage = entry.getCoverage(null);
+                assertSame("The coverage should be the geophysics view.",
+                           coverage, coverage.view(ViewType.GEOPHYSICS));
+                assertNotSame("The coverage should not be packed.",
+                              coverage, coverage.view(ViewType.PACKED));
+                final Envelope envelope = coverage.getEnvelope();
+                assertEquals("Expected a three-dimensional coverage.", 3, envelope.getDimension());
+                assertEquals(-5.3390946, envelope.getMinimum(0), EPS);
+                assertEquals(-4.2345093, envelope.getMaximum(0), EPS);
+                assertEquals(47.6543427, envelope.getMinimum(1), EPS);
+                assertEquals(48.7960646, envelope.getMaximum(1), EPS);
+                final double time = envelope.getMedian(2);
+                assertTrue("Expected ordering from most recent to oldest entries.", time < lastTime);
+                lastTime = time;
+                /*
+                 * Inspect the image of the rendered view. We expect two bands,
+                 * despite the color model being an instance of IndexColorModel.
+                 */
+                final RenderedImage image = coverage.view(ViewType.RENDERED).getRenderedImage();
+                assertEquals("Expected two bands.", 2, image.getSampleModel().getNumBands());
+//              org.geotoolkit.gui.swing.image.OperationTreeBrowser.show(image);
+            }
+        }
+        assertEquals("Missing entries.", 0, imageIndex);
+        table.release();
+    }
+
+    /**
+     * Tests insertion of a NcML file which is an aggregation of 3 NetCDF files.
+     *
+     * @throws Exception If a SQL, I/O or referencing error occurred.
+     */
+    @Test
+    public void testNcML() throws Exception {
+        final WritableGridCoverageTable table = getDatabase().getTable(WritableGridCoverageTable.class);
+        final CoverageDatabase database = new CoverageDatabase((TableFactory) getDatabase());
+        final CoverageDatabaseController controller = new CoverageDatabaseController() {
+            /**
+             * Checks the parameter values before their insertion in the database.
+             */
+            @Override
+            public void coverageAdding(CoverageDatabaseEvent event, NewGridCoverageReference reference) {
+                assertEquals ("Coriolis",              reference.path.getName());
+                assertEquals ("Aggregation",           reference.filename);
+                assertEquals ("ncml",                  reference.extension);
+                assertEquals ("Coriolis (salinity)",   reference.format);
+                assertEquals ("imageIndex", 0,         reference.imageIndex);
+                assertEquals (new Rectangle(720, 499), reference.imageBounds);
+                assertEquals (        0.00,            reference.gridToCRS.getShearX(),     0);
+                assertEquals (        0.00,            reference.gridToCRS.getShearY(),     0);
+                assertEquals (    55597.46,            reference.gridToCRS.getScaleX(),     0.01);
+                assertEquals (   -55597.46,            reference.gridToCRS.getScaleY(),     0.01);
+                assertEquals (-19959489.33,            reference.gridToCRS.getTranslateX(), 0.01);
+                assertEquals ( 13899365.64,            reference.gridToCRS.getTranslateY(), 0.01);
+                assertEquals ("TODO", 0,               reference.horizontalSRID);
+                assertEquals ("TODO", 0,               reference.verticalSRID);
+                assertNotNull("Expected depths",       reference.verticalValues);
+                assertNotNull("Expected dates",        reference.dateRanges);
+
+                reference.horizontalSRID = 3395; // TODO: need to auto-detect.
+                reference.verticalSRID   = 5715; // TODO: need to auto-detect.
+            }
+
+            @Override
+            public Collection<String> filterImages(List<String> images, boolean multiSelectionAllowed) throws DatabaseVetoException {
+                assertTrue("Multi-selection should be allowed for NetCDF files.", multiSelectionAllowed);
+                assertArrayEquals("Expected one image for each variable.", new String[] {
+                    "temperature", "temperature_pct_variance", "salinity", "salinity_pct_variance"
+                }, images.toArray());
+                // Select the "salinity" variable for this test.
+                return Collections.singleton(images.get(2));
+            }
+        };
+        requireImageData();
+        final Set<File> files = Collections.singleton(toImageFile(AGGREGATION_FILE));
+        table.setLayer(TEMPORARY_LAYER);
+        assertEquals("Expected the addition of many entries, one for each date.",
+                3, table.addEntries(files, database, controller));
+        /*
+         * Tests the entries that we just added.
+         */
+        final String[] expectedFilenames = {
+            "OA_RTQCGL01_20070620_FLD_PSAL.nc",
+            "OA_RTQCGL01_20070613_FLD_PSAL.nc",
+            "OA_RTQCGL01_20070606_FLD_PSAL.nc"
+        };
+        int count = 0;
+        double lastTime = Double.POSITIVE_INFINITY;
+        for (final GridCoverageEntry entry : table.getEntries()) {
+            assertEquals(expectedFilenames[count++], entry.getFile(File.class).getName());
+            assertEquals(1, entry.getIdentifier().imageIndex);
+            /*
+             * Inspect the coverage. For performance raison, we inspect
+             * only the last image (all other images should be similar).
+             */
+            if (count == expectedFilenames.length) {
+                final GridCoverage2D coverage = entry.getCoverage(null);
+                assertSame("The coverage should be the geophysics view.",
+                           coverage, coverage.view(ViewType.GEOPHYSICS));
+                assertNotSame("The coverage should not be packed.",
+                              coverage, coverage.view(ViewType.PACKED));
+                final Envelope envelope = coverage.getEnvelope();
+                assertEquals("Expected a four-dimensional coverage.", 4, envelope.getDimension());
+                assertEquals(-19959489.33, envelope.getMinimum(0), 0.01);
+                assertEquals( 20070684.26, envelope.getMaximum(0), 0.01);
+                assertEquals(-13843768.17, envelope.getMinimum(1), 0.01);
+                assertEquals( 13899365.64, envelope.getMaximum(1), 0.01);
+//              assertEquals(        5,    envelope.getMinimum(2), 0);
+//              assertEquals(     1950,    envelope.getMaximum(2), 0);
+                final double time = envelope.getMedian(3);
+                assertTrue("Expected ordering from most recent to oldest entries.", time < lastTime);
+                lastTime = time;
+                /*
+                 * Inspect the image of the rendered view. We expect two bands,
+                 * despite the color model being an instance of IndexColorModel.
+                 */
+                final RenderedImage image = coverage.view(ViewType.RENDERED).getRenderedImage();
+                assertEquals("Expected one band.", 1, image.getSampleModel().getNumBands());
+//              org.geotoolkit.gui.swing.image.OperationTreeBrowser.show(image);
+            }
+        }
+        assertEquals("Missing entries.", expectedFilenames.length, count);
         table.release();
     }
 }

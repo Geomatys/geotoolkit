@@ -45,12 +45,17 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.16
  *
  * @since 3.06
  * @module
  */
 public final class DimensionAccessor extends MetadataAccessor {
+    /**
+     * Small tolerance threshold for rounding errors.
+     */
+    private static final double EPS = 1E-10;
+
     /**
      * Creates a new accessor for the given metadata.
      *
@@ -271,7 +276,7 @@ nextPixel:          do {
      *
      * @since 3.14
      */
-    public boolean scanSuggested(final ImageReader reader, final int imageIndex) throws IOException {
+    public boolean isScanSuggested(final ImageReader reader, final int imageIndex) throws IOException {
         final int numChilds = childCount();
         for (int i=0; i<numChilds; i++) {
             selectChild(i);
@@ -289,5 +294,25 @@ nextPixel:          do {
             }
         }
         return false;
+    }
+
+    /**
+     * Fixes the given value for rounding errors. This method should be invoked only for
+     * variables related to sample dimensions, in order to avoid mixing potentially different
+     * approach for fixing rounding error (the criterion for geographic coordinates could be
+     * different).
+     *
+     * @param  value The computed value.
+     * @return The value to store.
+     *
+     * @since 3.16
+     */
+    public static double fixRoundingError(double value) {
+        final double sv = value * 36000;
+        final double sr = Math.rint(sv);
+        if (sv != sr && Math.abs(sv - sr) <= EPS) {
+            value = sr / 36000;
+        }
+        return value;
     }
 }

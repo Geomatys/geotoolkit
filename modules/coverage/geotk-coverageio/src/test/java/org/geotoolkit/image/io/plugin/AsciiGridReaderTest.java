@@ -100,10 +100,10 @@ public class AsciiGridReaderTest extends TextImageReaderTestBase {
          * Forces a scan of pixel values and test again.
          */
         final DimensionAccessor helper = new DimensionAccessor(metadata);
-        assertFalse("Pixels scan should not be needed.", helper.scanSuggested(reader, 0));
+        assertFalse("Pixels scan should not be needed.", helper.isScanSuggested(reader, 0));
         // Scan anyway, even if the above returned 'false'.
         helper.scanValidSampleValue(reader, 0);
-        assertFalse("Pixels scan should not be needed.", helper.scanSuggested(reader, 0));
+        assertFalse("Pixels scan should not be needed.", helper.isScanSuggested(reader, 0));
         assertMultilinesEquals(decodeQuotes(
             SpatialMetadataFormat.FORMAT_NAME + '\n' +
             "├───RectifiedGridDomain\n" +

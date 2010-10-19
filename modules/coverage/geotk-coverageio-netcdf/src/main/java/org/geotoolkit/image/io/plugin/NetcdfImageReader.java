@@ -320,10 +320,15 @@ public class NetcdfImageReader extends FileImageReader implements
      * @since 3.16
      */
     @Override
-    public List<URI> getAggregatedFiles(final int imageIndex) throws IOException {
+    public List<URI> getAggregatedFiles(int imageIndex) throws IOException {
         clearAbortRequest();
         ensureFileOpen();
-        return getAggregatedFiles(dataset, getVariableNames().get(imageIndex), null);
+        imageIndex = dimensionManager.replaceImageIndex(imageIndex);
+        String name = dimensionManager.getVariableName(imageIndex);
+        if (name == null) {
+            name = getVariableNames().get(imageIndex);
+        }
+        return getAggregatedFiles(dataset, name, null);
     }
 
     /**

@@ -50,7 +50,7 @@ import org.geotoolkit.internal.sql.table.SpatialDatabase;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Antoine Hnawia (IRD)
- * @version 3.15
+ * @version 3.16
  *
  * @since 3.12 (derived from Seagis)
  * @module
@@ -193,52 +193,56 @@ final class WritableGridCoverageTable extends GridCoverageTable {
              */
             entries.fireCoverageAdding(true, entry);
             entry.format = formatTable.findOrCreate(entry.format, entry.bestFormat.imageFormat, entry.sampleDimensions);
-            final String directory = (entry.path != null) ? entry.path.getPath() : "";
-            final int seriesID = seriesTable.findOrCreate(directory, entry.extension, entry.format);
-            specificSeries = seriesTable.getEntry(seriesID);
-            /*
-             * Gets the metadata of interest. The metadata should contains at least the image
-             * envelope and CRS. If it doesn't, then we will use the table envelope as a fall
-             * back. It defaults to the whole Earth in WGS 84 geographic coordinates, but the
-             * user can set an other value using {@link #setEnvelope}.
-             */
-            final Rectangle imageBounds = entry.imageBounds;
-            final AffineTransform gridToCRS = entry.gridToCRS;
-            if (!explicitTranslate && (imageBounds.x != 0 || imageBounds.y != 0)) {
-                // If the translation can not be recorded explicitly in the database, then we
-                // need to apply it on the affine transform. Note that we really want to update
-                // the NewGridCoverageReference field, in order to notify the listeners with an
-                // accurate AffineTransform after the change.
-                gridToCRS.translate(imageBounds.x, imageBounds.y);
-            }
-            final int extent = gridTable.findOrCreate(imageBounds.getSize(), gridToCRS,
-                    entry.horizontalSRID, entry.verticalValues, entry.verticalSRID);
-            /*
-             * Adds the entries for each image found in the file.
-             * There is often only one image per file, but not always.
-             */
-            statement.setInt   (bySeries,   specificSeries.getIdentifier());
-            statement.setString(byFilename, entry.filename);
-            statement.setInt   (byExtent,   extent);
-            if (explicitTranslate) {
-                final Rectangle translate = entry.imageBounds;
-                statement.setInt(byDx, translate.x);
-                statement.setInt(byDy, translate.y);
-            }
-            final DateRange[] dateRanges = entry.dateRanges;
-            int imageIndex = entry.imageIndex;
-            if (dateRanges == null) {
-                statement.setInt (byIndex,     ++imageIndex);
-                statement.setNull(byStartTime, Types.TIMESTAMP);
-                statement.setNull(byEndTime,   Types.TIMESTAMP);
-                if (updateSingleton(statement)) count++;
-            } else for (final DateRange dateRange : dateRanges) {
-                final Date startTime = dateRange.getMinValue();
-                final Date   endTime = dateRange.getMaxValue();
-                statement.setInt      (byIndex,     ++imageIndex);
-                statement.setTimestamp(byStartTime, new Timestamp(startTime.getTime()), calendar);
-                statement.setTimestamp(byEndTime,   new Timestamp(endTime  .getTime()), calendar);
-                if (updateSingleton(statement)) count++;
+            final NewGridCoverageReference[] aggregation = entries.aggregation(entry);
+            for (int i=0; i<aggregation.length; i++) {
+                entry = aggregation[i];
+                final String directory = (entry.path != null) ? entry.path.getPath() : "";
+                final int seriesID = seriesTable.findOrCreate(directory, entry.extension, entry.format);
+                specificSeries = seriesTable.getEntry(seriesID);
+                /*
+                 * Gets the metadata of interest. The metadata should contains at least the image
+                 * envelope and CRS. If it doesn't, then we will use the table envelope as a fall
+                 * back. It defaults to the whole Earth in WGS 84 geographic coordinates, but the
+                 * user can set an other value using {@link #setEnvelope}.
+                 */
+                final Rectangle imageBounds = entry.imageBounds;
+                final AffineTransform gridToCRS = entry.gridToCRS;
+                if (!explicitTranslate && (imageBounds.x != 0 || imageBounds.y != 0)) {
+                    // If the translation can not be recorded explicitly in the database, then we
+                    // need to apply it on the affine transform. Note that we really want to update
+                    // the NewGridCoverageReference field, in order to notify the listeners with an
+                    // accurate AffineTransform after the change.
+                    gridToCRS.translate(imageBounds.x, imageBounds.y);
+                }
+                final int extent = gridTable.findOrCreate(imageBounds.getSize(), gridToCRS,
+                        entry.horizontalSRID, entry.verticalValues, entry.verticalSRID);
+                /*
+                 * Adds the entries for each image found in the file.
+                 * There is often only one image per file, but not always.
+                 */
+                statement.setInt   (bySeries,   specificSeries.getIdentifier());
+                statement.setString(byFilename, entry.filename);
+                statement.setInt   (byExtent,   extent);
+                if (explicitTranslate) {
+                    final Rectangle translate = entry.imageBounds;
+                    statement.setInt(byDx, translate.x);
+                    statement.setInt(byDy, translate.y);
+                }
+                final DateRange[] dateRanges = entry.dateRanges;
+                int imageIndex = entry.imageIndex;
+                if (dateRanges == null) {
+                    statement.setInt (byIndex,     ++imageIndex);
+                    statement.setNull(byStartTime, Types.TIMESTAMP);
+                    statement.setNull(byEndTime,   Types.TIMESTAMP);
+                    if (updateSingleton(statement)) count++;
+                } else for (final DateRange dateRange : dateRanges) {
+                    final Date startTime = dateRange.getMinValue();
+                    final Date   endTime = dateRange.getMaxValue();
+                    statement.setInt      (byIndex,     ++imageIndex);
+                    statement.setTimestamp(byStartTime, new Timestamp(startTime.getTime()), calendar);
+                    statement.setTimestamp(byEndTime,   new Timestamp(endTime  .getTime()), calendar);
+                    if (updateSingleton(statement)) count++;
+                }
             }
             /*
              * Notifies the listeners that the entries have been added.

@@ -53,6 +53,7 @@ import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SampleDimension;
+import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
@@ -68,9 +69,9 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.Category;
-import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.math.XMath;
+
+import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingError;
 
 
 /**
@@ -111,22 +112,17 @@ public final class NewGridCoverageReference {
     private static final NumberRange<Integer> PACKED_RANGE = NumberRange.create(1, 255);
 
     /**
-     * An arbitrary scale used in intermediate calculation for working around rounding errors.
-     */
-    private static final double FIX_ROUNDING_ERROR = 1E+6;
-
-    /**
      * The originating database.
      */
     private final SpatialDatabase database;
 
     /**
      * The path to the coverage file (not including the filename), or {@code null} if the filename
-     * has no parent directory.
-     * <p>
-     * The full path to the input file is
+     * has no parent directory. The full path to the input file is
      * "{@linkplain #path}/{@linkplain #filename}.{@linkplain #extension}".
      *
+     * @see #filename
+     * @see #extension
      * @see #getFile()
      */
     public final File path;
@@ -134,12 +130,18 @@ public final class NewGridCoverageReference {
     /**
      * The filename, not including the {@linkplain #path} and {@linkplain #extension}.
      *
+     * @see #path
+     * @see #extension
      * @see #getFile()
      */
     public final String filename;
 
     /**
      * The filename extension (not including the leading dot), or {@code null} if none.
+     *
+     * @see #path
+     * @see #filename
+     * @see #getFile()
      */
     public final String extension;
 
@@ -171,6 +173,7 @@ public final class NewGridCoverageReference {
      * This field is initialized to the format which seems the best fit. A list of
      * alternative formats can be obtained by {@link #getAlternativeFormats()}.
      *
+     * @see #isFormatDefined()
      * @see #getAlternativeFormats()
      * @see #refresh()
      */
@@ -196,7 +199,7 @@ public final class NewGridCoverageReference {
 
     /**
      * The format entry which seems the best fit. The {@link #format} field is initialized
-     * to the name of this format. The most interresting information from this field is the
+     * to the name of this format. The most interesting information from this field is the
      * list of sample dimensions.
      */
     final FormatEntry bestFormat;
@@ -221,8 +224,8 @@ public final class NewGridCoverageReference {
      * the {@linkplain Tile#getLocation location of a tile} in tiled images.
      * <p>
      * If the (x,y) origin is different than (0,0), then it will be interpreted as the
-     * translation to apply on the grid before to apply the {@link #gridToCRS} transform
-     * at reading time.
+     * translation to apply on the grid <em>before</em> to apply the {@link #gridToCRS}
+     * transform at reading time.
      * <p>
      * This field is never {@code null}. However users can modify it before the
      * new entry is inserted in the database.
@@ -231,10 +234,8 @@ public final class NewGridCoverageReference {
 
     /**
      * The <cite>grid to CRS</cite> transform, which maps always the pixel
-     * {@linkplain PixelOrientation#UPPER_LEFT upper left} corner.
-     * <p>
-     * If {@link #imageBounds} has an origin different than (0,0), then the (x,y)
-     * translation shall be applied before the {@code gridToCRS} transform.
+     * {@linkplain PixelOrientation#UPPER_LEFT upper left} corner. This transform
+     * does <em>not</em> include the (x,y) translation of the {@link #imageBounds}.
      * <p>
      * This field is never {@code null}. However users can modify it before the
      * new entry is inserted in the database.
@@ -524,7 +525,7 @@ public final class NewGridCoverageReference {
         List<GridSampleDimension> sampleDimensions = null;
         if (metadata != null) {
             final DimensionAccessor dimHelper = new DimensionAccessor(metadata);
-            if (dimHelper.scanSuggested(reader, imageIndex)) {
+            if (dimHelper.isScanSuggested(reader, imageIndex)) {
                 dimHelper.scanValidSampleValue(reader, imageIndex);
             }
             sampleDimensions = helper.getGridSampleDimensions(metadata.getListForType(SampleDimension.class));
@@ -563,14 +564,7 @@ public final class NewGridCoverageReference {
                                 // Upper sample value: Add 1 because value 0 is reserved for
                                 // "no data", and add 1 again because 'upper' is exclusive.
                                 final int upper = (tf.maximum - tf.minimum) + 2;
-                                double offset = tf.offset - tf.scale * (1 - tf.minimum);
-                                if (Math.abs(offset) < FIX_ROUNDING_ERROR) {
-                                    final double t1 = offset * FIX_ROUNDING_ERROR;
-                                    final double t2 = XMath.roundIfAlmostInteger(t1, 12);
-                                    if (t2 != t1) {
-                                        offset = t2 / FIX_ROUNDING_ERROR;
-                                    }
-                                }
+                                double offset = fixRoundingError(tf.offset - tf.scale * (1 - tf.minimum));
                                 c = new Category(c.getName(), c.getColors(), 1, upper, tf.scale, offset);
                                 bands[i] = packSampleDimension(band, c);
                                 packMode = ViewType.PACKED;
@@ -723,6 +717,10 @@ public final class NewGridCoverageReference {
      * "{@linkplain #path}/{@linkplain #filename}.{@linkplain #extension}".
      *
      * @return The path to the image file, or {@code null} if {@link #filename} is null.
+     *
+     * @see #path
+     * @see #filename
+     * @see #extension
      */
     public File getFile() {
         String name = filename;
@@ -771,6 +769,8 @@ public final class NewGridCoverageReference {
      * @throws CoverageStoreException If an error occurred while reading from the database.
      *
      * @since 3.13
+     *
+     * @see #format
      */
     public boolean isFormatDefined() throws CoverageStoreException {
         final boolean isDefined;
