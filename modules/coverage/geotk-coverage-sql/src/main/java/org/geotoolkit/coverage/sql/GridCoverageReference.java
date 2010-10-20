@@ -145,14 +145,17 @@ public interface GridCoverageReference extends CoverageStack.Element {
     Rectangle2D getXYRange();
 
     /**
-     * Returns the range of values in the third dimension, which may be vertical or temporal.
+     * Returns the range of values in the third dimension, which may be vertical <strong>or
+     * temporal</strong>. The main purpose of this method is to allow sorting of entries,
+     * not to get the elevation. If the coverage is not restricted to a particular range
+     * along the third dimension, then this method returns a range with infinite bounds.
+     *
+     * {@section Unit of measurement}
      * This method returns the range in units of the database vertical or temporal CRS, which
      * may not be the same than the vertical or temporal CRS of the coverage. This is done that
      * way in order to allow sorting coverages by elevation or by time no matter how the coverage
-     * represents those quantities.
-     * <p>
-     * If elevation or time in units of the coverage CRS is desired, then use the
-     * {@link #getEnvelope()} method instead.
+     * represents those quantities. If elevation or time in units of the coverage CRS is desired,
+     * then use the {@link #getEnvelope()} method instead.
      *
      * @return The range of values in the third dimension, in units of the database CRS.
      */
@@ -161,10 +164,13 @@ public interface GridCoverageReference extends CoverageStack.Element {
 
     /**
      * Returns the temporal part of the {@linkplain #getEnvelope coverage envelope}.
+     * If the coverage is not restricted to a particular time range, then this method
+     * returns a range with infinite bounds.
+     * <p>
      * Invoking this method is equivalent to extracting the temporal component of the
      * envelope and transforming the coordinates if needed.
      *
-     * @return The temporal component of the envelope, or {@code null} if none.
+     * @return The temporal component of the envelope.
      */
     DateRange getTimeRange();
 
@@ -198,7 +204,7 @@ public interface GridCoverageReference extends CoverageStack.Element {
      * new reader on each method invocation. If the argument is {@code null} or the given
      * instance can not be reused, then this method returns a new instance.
      * <p>
-     * Callers should invoke {@linkplain GridCoverageReader#setInput(Object) set the input}
+     * Callers should {@linkplain GridCoverageReader#setInput(Object) set the input}
      * to {@code null}, {@linkplain GridCoverageReader#reset() reset} or
      * {@linkplain GridCoverageReader#dispose() dispose} the reader as soon as the reading
      * process is completed, in order to close the underlying image input stream.

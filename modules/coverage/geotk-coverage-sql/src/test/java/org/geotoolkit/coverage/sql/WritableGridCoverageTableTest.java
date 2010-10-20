@@ -36,7 +36,9 @@ import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReader;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
+import org.geotoolkit.geometry.AbstractEnvelope;
 import org.geotoolkit.util.MeasurementRange;
+import org.geotoolkit.util.Range;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -125,6 +127,16 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
     }
 
     /**
+     * Returns {@code true} if the given range is bounded, or {@code false} if unbounded.
+     */
+    private static boolean isBounded(final Range<?> range) {
+        final Comparable<?> min = range.getMinValue();
+        final Comparable<?> max = range.getMaxValue();
+        assertEquals(min != null, max != null);
+        return (min != null) & (max != null);
+    }
+
+    /**
      * Tests insertion for ASCII data. This test reuses the {@code "matrix.txt"} test file
      * from the {@code geotk-coverageio} module. The {@code ".txt"} file is completed by
      * {@code "matrix.tfw"} and {@code "matrix.prj"} files.
@@ -181,11 +193,19 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
             Locale.setDefault(locale);
         }
         /*
-         * Check the entry that we just added.
-         * (TODO: tests reading the coverage, but we need a fix for the locale issue).
+         * At this point, the entry has been added to the database. Now read
+         * the GridCoverages table in order to get the entry we just added.
          */
         final GridCoverageEntry entry = table.getEntry();
-        assertEquals("matrix.txt", entry.getFile(File.class).getName());
+        assertEquals("matrix.txt",                entry.getFile(File.class).getName());
+        assertEquals("matrix",                    entry.getImageFormat());
+        assertFalse ("Expected unbounded range.", isBounded(entry.getZRange()));
+        assertFalse ("Expected unbounded range.", isBounded(entry.getTimeRange()));
+        final Envelope envelope = entry.getEnvelope();
+        assertEquals(-10000, envelope.getMinimum(0), 0);
+        assertEquals( 10000, envelope.getMaximum(0), 0);
+        assertEquals(-21000, envelope.getMinimum(1), 0);
+        assertEquals( 21000, envelope.getMaximum(1), 0);
         table.release();
         /*
          * Clean-up: delete the "matrix" format, so that the next execution will
@@ -274,7 +294,8 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
         assertEquals("Expected the addition of many entries, one for each date.",
                 285, table.addEntries(files, database, controller));
         /*
-         * Test each individual entry, including a test of coverage reading.
+         * At this point, the entries have been added to the database. Now
+         * test each individual entry, including a test of coverage reading.
          */
         int imageIndex = 285;
         double lastTime = Double.POSITIVE_INFINITY;
@@ -284,6 +305,22 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
             assertEquals("Image indices are expected to be decreasing when iterating " +
                          "from the most recent image to the oldest one.",
                          imageIndex--, entry.getIdentifier().imageIndex);
+            assertEquals("NetCDF", entry.getImageFormat());
+            assertTrue  ("Expected bounded range.", isBounded(entry.getZRange()));
+            assertTrue  ("Expected bounded range.", isBounded(entry.getTimeRange()));
+            /*
+             * Check the envelope, we should be the same for all entry in
+             * all dimensions except the time dimension.
+             */
+            final Envelope envelope = entry.getEnvelope();
+            assertEquals("Expected a three-dimensional coverage.", 3, envelope.getDimension());
+            assertEquals(-5.3390946, envelope.getMinimum(0), EPS);
+            assertEquals(-4.2345093, envelope.getMaximum(0), EPS);
+            assertEquals(47.6543427, envelope.getMinimum(1), EPS);
+            assertEquals(48.7960646, envelope.getMaximum(1), EPS);
+            final double time = envelope.getMedian(2);
+            assertTrue("Expected ordering from most recent to oldest entries.", time < lastTime);
+            lastTime = time;
             /*
              * Inspect the coverage. For performance raison in this test suite,
              * we test only some images (they should all be similar anyway).
@@ -294,15 +331,7 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
                            coverage, coverage.view(ViewType.GEOPHYSICS));
                 assertNotSame("The coverage should not be packed.",
                               coverage, coverage.view(ViewType.PACKED));
-                final Envelope envelope = coverage.getEnvelope();
-                assertEquals("Expected a three-dimensional coverage.", 3, envelope.getDimension());
-                assertEquals(-5.3390946, envelope.getMinimum(0), EPS);
-                assertEquals(-4.2345093, envelope.getMaximum(0), EPS);
-                assertEquals(47.6543427, envelope.getMinimum(1), EPS);
-                assertEquals(48.7960646, envelope.getMaximum(1), EPS);
-                final double time = envelope.getMedian(2);
-                assertTrue("Expected ordering from most recent to oldest entries.", time < lastTime);
-                lastTime = time;
+                assertTrue(((AbstractEnvelope) envelope).equals(coverage.getEnvelope(), EPS, false));
                 /*
                  * Inspect the image of the rendered view. We expect two bands,
                  * despite the color model being an instance of IndexColorModel.
@@ -368,7 +397,8 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
         assertEquals("Expected the addition of many entries, one for each date.",
                 3, table.addEntries(files, database, controller));
         /*
-         * Tests the entries that we just added.
+         * At this point, the entries have been added to the database. Now
+         * test each individual entry, including a test of coverage reading.
          */
         final String[] expectedFilenames = {
             "OA_RTQCGL01_20070620_FLD_PSAL.nc",
@@ -380,6 +410,24 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
         for (final GridCoverageEntry entry : table.getEntries()) {
             assertEquals(expectedFilenames[count++], entry.getFile(File.class).getName());
             assertEquals(1, entry.getIdentifier().imageIndex);
+            assertEquals("NetCDF", entry.getImageFormat());
+            assertTrue  ("Expected bounded range.", isBounded(entry.getZRange()));
+            assertTrue  ("Expected bounded range.", isBounded(entry.getTimeRange()));
+            /*
+             * Check the envelope, we should be the same for all entry in
+             * all dimensions except the time dimension.
+             */
+            final Envelope envelope = entry.getEnvelope();
+            assertEquals("Expected a four-dimensional coverage.", 4, envelope.getDimension());
+            assertEquals(-19959489.33, envelope.getMinimum(0), 0.01);
+            assertEquals( 20070684.26, envelope.getMaximum(0), 0.01);
+            assertEquals(-13843768.17, envelope.getMinimum(1), 0.01);
+            assertEquals( 13899365.64, envelope.getMaximum(1), 0.01);
+            assertEquals(        5,    envelope.getMinimum(2), 0);
+            assertEquals(     1950,    envelope.getMaximum(2), 0);
+            final double time = envelope.getMedian(3);
+            assertTrue("Expected ordering from most recent to oldest entries.", time < lastTime);
+            lastTime = time;
             /*
              * Inspect the coverage. For performance raison, we inspect
              * only the last image (all other images should be similar).
@@ -390,17 +438,7 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
                            coverage, coverage.view(ViewType.GEOPHYSICS));
                 assertNotSame("The coverage should not be packed.",
                               coverage, coverage.view(ViewType.PACKED));
-                final Envelope envelope = coverage.getEnvelope();
-                assertEquals("Expected a four-dimensional coverage.", 4, envelope.getDimension());
-                assertEquals(-19959489.33, envelope.getMinimum(0), 0.01);
-                assertEquals( 20070684.26, envelope.getMaximum(0), 0.01);
-                assertEquals(-13843768.17, envelope.getMinimum(1), 0.01);
-                assertEquals( 13899365.64, envelope.getMaximum(1), 0.01);
-//              assertEquals(        5,    envelope.getMinimum(2), 0);
-//              assertEquals(     1950,    envelope.getMaximum(2), 0);
-                final double time = envelope.getMedian(3);
-                assertTrue("Expected ordering from most recent to oldest entries.", time < lastTime);
-                lastTime = time;
+                assertTrue(((AbstractEnvelope) envelope).equals(coverage.getEnvelope(), 0.01, false));
                 /*
                  * Inspect the image of the rendered view. We expect two bands,
                  * despite the color model being an instance of IndexColorModel.

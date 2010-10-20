@@ -184,38 +184,50 @@ final class WritableGridCoverageTable extends GridCoverageTable {
         final int byDx = (query.dx != null) ? query.dx.indexOf(QueryType.INSERT) : 0;
         final int byDy = (query.dy != null) ? query.dy.indexOf(QueryType.INSERT) : 0;
         final boolean explicitTranslate = (byDx != 0 && byDy != 0);
-        NewGridCoverageReference entry;
-        while ((entry = entries.next()) != null) {
+        NewGridCoverageReference mainEntry;
+        while ((mainEntry = entries.next()) != null) {
             /*
              * Notifies the controller (if any), then the listeners (if any) after the
              * NewGridCoverageReference entry has been fully initialized. The controller
-             * may change the values. Then create the series if it does not exists.
+             * may change the values. Then creates the format, assuming that every entry
+             * will use the same format.
              */
-            entries.fireCoverageAdding(true, entry);
-            entry.format = formatTable.findOrCreate(entry.format, entry.bestFormat.imageFormat, entry.sampleDimensions);
-            final NewGridCoverageReference[] aggregation = entries.aggregation(entry);
-            for (int i=0; i<aggregation.length; i++) {
-                entry = aggregation[i];
+            entries.fireCoverageAdding(true, mainEntry);
+            mainEntry.format = formatTable.findOrCreate(mainEntry.format,
+                    mainEntry.bestFormat.imageFormat, mainEntry.sampleDimensions);
+            /*
+             * Gets the metadata of interest. The metadata should contains at least the image
+             * envelope and CRS. If it doesn't, then we will use the table envelope as a fall
+             * back. It defaults to the whole Earth in WGS 84 geographic coordinates, but the
+             * user can set an other value using the setEnvelope(...) method.
+             */
+            final Rectangle imageBounds = mainEntry.imageBounds;
+            final AffineTransform gridToCRS = mainEntry.gridToCRS;
+            if (!explicitTranslate && (imageBounds.x != 0 || imageBounds.y != 0)) {
+                // If the translation can not be recorded explicitly in the database, then we
+                // need to apply it on the affine transform. Note that we really want to update
+                // the NewGridCoverageReference field, in order to notify the listeners with an
+                // accurate AffineTransform after the change.
+                gridToCRS.translate(imageBounds.x, imageBounds.y);
+            }
+            final int extent = gridTable.findOrCreate(imageBounds.getSize(), gridToCRS,
+                    mainEntry.horizontalSRID, mainEntry.verticalValues, mainEntry.verticalSRID);
+            /*
+             * If the entry is an aggregation, actually inserts the aggregated elements instead
+             * than the aggregation. This loop assumes that all aggregated element use the same
+             * format and the same extent than the aggregation. This assumption is burned in the
+             * NewGridCoverageReference(NewGridCoverageReference, ...) constructor. If this
+             * assumption doesn't hold anymore in a future version, then the calculation of
+             * 'entry.format' and 'extent' above need to move inside the loop.
+             */
+            for (final NewGridCoverageReference entry : entries.aggregation(mainEntry)) {
+                /*
+                 * Create the series if it does not exist. Note that new series
+                 * may be created if the entries are in different directories.
+                 */
                 final String directory = (entry.path != null) ? entry.path.getPath() : "";
                 final int seriesID = seriesTable.findOrCreate(directory, entry.extension, entry.format);
                 specificSeries = seriesTable.getEntry(seriesID);
-                /*
-                 * Gets the metadata of interest. The metadata should contains at least the image
-                 * envelope and CRS. If it doesn't, then we will use the table envelope as a fall
-                 * back. It defaults to the whole Earth in WGS 84 geographic coordinates, but the
-                 * user can set an other value using {@link #setEnvelope}.
-                 */
-                final Rectangle imageBounds = entry.imageBounds;
-                final AffineTransform gridToCRS = entry.gridToCRS;
-                if (!explicitTranslate && (imageBounds.x != 0 || imageBounds.y != 0)) {
-                    // If the translation can not be recorded explicitly in the database, then we
-                    // need to apply it on the affine transform. Note that we really want to update
-                    // the NewGridCoverageReference field, in order to notify the listeners with an
-                    // accurate AffineTransform after the change.
-                    gridToCRS.translate(imageBounds.x, imageBounds.y);
-                }
-                final int extent = gridTable.findOrCreate(imageBounds.getSize(), gridToCRS,
-                        entry.horizontalSRID, entry.verticalValues, entry.verticalSRID);
                 /*
                  * Adds the entries for each image found in the file.
                  * There is often only one image per file, but not always.
@@ -247,7 +259,7 @@ final class WritableGridCoverageTable extends GridCoverageTable {
             /*
              * Notifies the listeners that the entries have been added.
              */
-            entries.fireCoverageAdding(false, entry);
+            entries.fireCoverageAdding(false, mainEntry);
         }
         seriesTable.release();
         formatTable.release();

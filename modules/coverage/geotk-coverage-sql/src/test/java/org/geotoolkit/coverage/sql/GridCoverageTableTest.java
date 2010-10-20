@@ -224,10 +224,19 @@ public final class GridCoverageTableTest extends CatalogTestBase {
         assertEquals(1, entry.getIdentifier().imageIndex);
         assertEquals(1, entry.getIdentifier().zIndex);
 
+        // Internally, match exactly one of the above elevations.
         table.envelope.setVerticalRange(90, 110);
         entry = table.getEntry();
         assertEquals(1, entry.getIdentifier().imageIndex);
         assertEquals(9, entry.getIdentifier().zIndex);
+
+        // Internally, slightly below one of the above elevations.
+        table.envelope.setVerticalRange(89, 110);
+        assertSame(entry, table.getEntry());
+
+        // Internally, slightly above one of the above elevations.
+        table.envelope.setVerticalRange(90, 111);
+        assertSame(entry, table.getEntry());
 
         table.envelope.setVerticalRange(2000, 2000);
         entry = table.getEntry();

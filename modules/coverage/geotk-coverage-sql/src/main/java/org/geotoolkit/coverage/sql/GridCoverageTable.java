@@ -498,7 +498,8 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
         /*
          * Gets the SeriesEntry in which this coverage is declared. The entry should be available
          * from the layer HashMap. If not, we will query the SeriesTable as a fallback, but there
-         * is probably a bug (so it is not worth to keep a reference to the series table).
+         * is probably a bug (unless the table is queried immediately after the insertion of new
+         * entries, and the LayerEntry has not been recreated from a refreshen LayerTable).
          */
         final LayerEntry layer = getLayerEntry(true);
         SeriesEntry series = layer.getSeries(seriesID);

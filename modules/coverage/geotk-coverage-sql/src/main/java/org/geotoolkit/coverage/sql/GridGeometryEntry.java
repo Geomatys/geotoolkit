@@ -62,7 +62,7 @@ import org.geotoolkit.referencing.operation.matrix.XMatrix;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Sam Hiatt
- * @version 3.15
+ * @version 3.16
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -130,7 +130,15 @@ final class GridGeometryEntry extends DefaultEntry {
     private final double[] verticalOrdinates;
 
     /**
-     * Creates an entry from the given grid geometry.
+     * {@code true} if the {@link #verticalOrdinates} array elements are sorted in
+     * increasing order.
+     */
+    private final boolean verticalOrdinatesSorted;
+
+    /**
+     * Creates an entry from the given grid geometry. This constructor does not clone
+     * the object given in argument. Consequently, those object shall not be modified
+     * after {@code GridGeometryEntry} construction.
      *
      * @param identifier        The identifier of this grid geometry.
      * @param gridToCRS         The grid to CRS affine transform.
@@ -148,22 +156,26 @@ final class GridGeometryEntry extends DefaultEntry {
         this.srsEntry          = srsEntry;
         this.gridToCRS         = gridToCRS;
         this.verticalOrdinates = verticalOrdinates;
+        /*
+         * Inspect the vertical ordinates, in search for extremums values
+         * and whatever the array is sorted or not.
+         */
+        double min = Double.POSITIVE_INFINITY;
+        double max = Double.NEGATIVE_INFINITY;
+        boolean isSorted = true;
         if (verticalOrdinates != null) {
             if (verticalOrdinates.length > Short.MAX_VALUE - 1) {
                 throw new IllegalArgumentException(); // See 'indexOfNearestAltitude' for this limitation.
             }
-        }
-        geometry = srsEntry.createGridGeometry(size, gridToCRS, verticalOrdinates, mtFactory, true);
-        if (srsEntry.temporalCRS != null) {
-            spatialGeometry = srsEntry.createGridGeometry(size, gridToCRS, verticalOrdinates, mtFactory, false);
-        } else {
-            spatialGeometry = geometry;
-        }
-        standardEnvelope = srsEntry.toDatabaseHorizontalCRS().createTransformedShape(getHorizontalEnvelope());
-        double min = Double.NaN, max = Double.NaN;
-        if (verticalOrdinates != null && verticalOrdinates.length != 0) {
-            min = verticalOrdinates[0];
-            max = verticalOrdinates[verticalOrdinates.length - 1];
+            double previous = Double.NEGATIVE_INFINITY;
+            for (int i=0; i<verticalOrdinates.length; i++) {
+                final double z = verticalOrdinates[i];
+                if (z < min) min = z;
+                if (z > max) max = z;
+                isSorted &= (z > previous);
+                previous = z;
+            }
+            // Transform the (min, max) in "standard" units of the database.
             final MathTransform1D tr = srsEntry.toDatabaseVerticalCRS();
             if (tr != null) {
                 min = tr.transform(min);
@@ -175,8 +187,22 @@ final class GridGeometryEntry extends DefaultEntry {
                 }
             }
         }
+        if (!(min < max)) {
+            min = max = Double.NaN;
+        }
         standardMinZ = min;
         standardMaxZ = max;
+        verticalOrdinatesSorted = isSorted;
+        /*
+         * Create the geometry and the envelope.
+         */
+        geometry = srsEntry.createGridGeometry(size, gridToCRS, verticalOrdinates, mtFactory, true);
+        if (srsEntry.temporalCRS != null) {
+            spatialGeometry = srsEntry.createGridGeometry(size, gridToCRS, verticalOrdinates, mtFactory, false);
+        } else {
+            spatialGeometry = geometry;
+        }
+        standardEnvelope = srsEntry.toDatabaseHorizontalCRS().createTransformedShape(getHorizontalEnvelope());
     }
 
     /**
@@ -235,18 +261,25 @@ final class GridGeometryEntry extends DefaultEntry {
         SpatialRefSysEntry.copy(gridToCRS, matrix);
         if (verticalOrdinates != null) {
             final int imax = verticalOrdinates.length - 1;
-            if (--zIndex > imax) {
-                zIndex = imax;
-            }
-            if (zIndex >= 0) {
+            if (imax >= 0) {
                 final int zDimension = srsEntry.zDimension();
                 if (zDimension >= 0) {
-                    final double z = verticalOrdinates[zIndex];
-                    final double before = (zIndex != 0)    ? z - verticalOrdinates[zIndex - 1] : 0;
-                    final double after  = (zIndex != imax) ? verticalOrdinates[zIndex + 1] - z : 0;
-                    double interval = (before != 0 && abs(before) <= abs(after)) ? before : after;
-                    matrix.setElement(zDimension, zDimension, interval);
-                    matrix.setElement(zDimension, dimension, z - 0.5*interval);
+                    if (--zIndex > imax) {
+                        zIndex = imax;
+                    }
+                    final double scale, offset;
+                    if (zIndex >= 0) {
+                        final double z = verticalOrdinates[zIndex];
+                        final double before = (zIndex != 0)    ? z - verticalOrdinates[zIndex - 1] : 0;
+                        final double after  = (zIndex != imax) ? verticalOrdinates[zIndex + 1] - z : 0;
+                        scale = (before != 0 && abs(before) <= abs(after)) ? before : after;
+                        offset = z - 0.5 * scale;
+                    } else {
+                        offset = verticalOrdinates[0];
+                        scale  = verticalOrdinates[imax] - offset;
+                    }
+                    matrix.setElement(zDimension, zDimension, scale);
+                    matrix.setElement(zDimension, dimension, offset);
                 }
             }
         }
@@ -362,20 +395,35 @@ final class GridGeometryEntry extends DefaultEntry {
      * @return  The 1-based altitude index, or {@code 0} if none.
      */
     final short indexOfNearestAltitude(final double z) {
-        short index = 0;
+        int index = 0;
         if (!Double.isNaN(z) && !Double.isInfinite(z)) {
             double delta = Double.POSITIVE_INFINITY;
             if (verticalOrdinates != null) {
-                for (int i=0; i<verticalOrdinates.length; i++) {
-                    final double d = abs(verticalOrdinates[i] - z);
-                    if (d < delta) {
-                        delta = d;
-                        index = (short) (i + 1); // Array length has been checked at construction time.
+                if (verticalOrdinatesSorted) {
+                    index = Arrays.binarySearch(verticalOrdinates, z);
+                    if (index >= 0) {
+                        index++; // Make the index 1-based.
+                    } else {
+                        index = ~index;
+                        if (index != verticalOrdinates.length && (index == 0 ||
+                                verticalOrdinates[index] - z < z - verticalOrdinates[index-1]))
+                        {
+                            index++; // Upper value is closer to z than the lower value.
+                        }
+                        // At this point, the index is 1-based.
+                    }
+                } else {
+                    for (int i=0; i<verticalOrdinates.length; i++) {
+                        final double d = abs(verticalOrdinates[i] - z);
+                        if (d < delta) {
+                            delta = d;
+                            index = i + 1;
+                        }
                     }
                 }
             }
         }
-        return index;
+        return (short) index; // Array length has been checked at construction time.
     }
 
     /**

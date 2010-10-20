@@ -42,7 +42,7 @@ import static java.lang.Double.NEGATIVE_INFINITY;
  * Tests parsing and formatting done by the {@link RangeFormat} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
+ * @version 3.16
  *
  * @since 3.06
  */
@@ -146,21 +146,21 @@ public final class RangeFormatTest {
         assertEquals("maxPos.endIndex",   1, maxPos.getEndIndex());
 
         // Negative infinity
-        assertEquals("[-∞ … 30]", format(NumberRange.create(Double.NEGATIVE_INFINITY, 30)));
+        assertEquals("(-∞ … 30]", format(NumberRange.create(Double.NEGATIVE_INFINITY, 30)));
         assertEquals("minPos.beginIndex", 2, minPos.getBeginIndex());
         assertEquals("minPos.endIndex",   3, minPos.getEndIndex());
         assertEquals("maxPos.beginIndex", 6, maxPos.getBeginIndex());
         assertEquals("maxPos.endIndex",   8, maxPos.getEndIndex());
 
         // Positive infinity
-        assertEquals("[50 … ∞]", format(NumberRange.create(50, Double.POSITIVE_INFINITY)));
+        assertEquals("[50 … ∞)", format(NumberRange.create(50, Double.POSITIVE_INFINITY)));
         assertEquals("minPos.beginIndex", 1, minPos.getBeginIndex());
         assertEquals("minPos.endIndex",   3, minPos.getEndIndex());
         assertEquals("maxPos.beginIndex", 6, maxPos.getBeginIndex());
         assertEquals("maxPos.endIndex",   7, maxPos.getEndIndex());
 
         // Positive infinities
-        assertEquals("[-∞ … ∞]", format(NumberRange.create(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)));
+        assertEquals("(-∞ … ∞)", format(NumberRange.create(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY)));
         assertEquals("minPos.beginIndex", 2, minPos.getBeginIndex());
         assertEquals("minPos.endIndex",   3, minPos.getEndIndex());
         assertEquals("maxPos.beginIndex", 6, maxPos.getBeginIndex());

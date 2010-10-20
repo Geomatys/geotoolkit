@@ -57,7 +57,7 @@ import org.geotoolkit.resources.Errors;
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.16
  *
  * @see Range
  * @see DateRange
@@ -689,6 +689,8 @@ public class RangeFormat extends Format {
                 min  = Classes.cast(min, type);
                 max  = Classes.cast(max, type);
             }
+            if (min.doubleValue() == Double.NEGATIVE_INFINITY) min = null;
+            if (max.doubleValue() == Double.POSITIVE_INFINITY) max = null;
             if (unit != null) {
                 @SuppressWarnings({"unchecked","rawtypes"})
                 final MeasurementRange<?> range = new MeasurementRange(type, min, isMinIncluded, max, isMaxIncluded, unit);

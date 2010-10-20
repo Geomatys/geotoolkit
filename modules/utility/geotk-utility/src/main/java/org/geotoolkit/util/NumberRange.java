@@ -36,7 +36,7 @@ import static org.geotoolkit.util.converter.Classes.widestClass;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Jody Garnett (Refractions)
- * @version 3.06
+ * @version 3.16
  *
  * @see org.geotoolkit.measure.RangeFormat
  *
@@ -212,8 +212,8 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
                                             final float maximum, final boolean isMaxIncluded)
     {
         return new NumberRange<Float>(Float.class,
-                Float.valueOf(minimum), isMinIncluded,
-                Float.valueOf(maximum), isMaxIncluded);
+                valueOf(minimum, Float.NEGATIVE_INFINITY), isMinIncluded,
+                valueOf(maximum, Float.POSITIVE_INFINITY), isMaxIncluded);
     }
 
     /**
@@ -244,8 +244,8 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
                                              final double maximum, final boolean isMaxIncluded)
     {
         return new NumberRange<Double>(Double.class,
-                Double.valueOf(minimum), isMinIncluded,
-                Double.valueOf(maximum), isMaxIncluded);
+                valueOf(minimum, Double.NEGATIVE_INFINITY), isMinIncluded,
+                valueOf(maximum, Double.POSITIVE_INFINITY), isMaxIncluded);
     }
 
     /**
@@ -367,6 +367,14 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
                           final T maxValue, final boolean isMaxIncluded)
     {
         return new NumberRange<T>(elementClass, minValue, isMinIncluded, maxValue, isMaxIncluded);
+    }
+
+    /**
+     * Returns the {@code Float} wrapper of the given primitive {@code float},
+     * or {@code null} if it equals to the infinity value.
+     */
+    private static Float valueOf(final float value, final float infinity) {
+        return (value != infinity) ? Float.valueOf(value) : null;
     }
 
     /**
