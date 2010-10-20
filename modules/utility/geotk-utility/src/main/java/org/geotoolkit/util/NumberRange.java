@@ -397,6 +397,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     /**
      * Returns the type of minimum and maximum values.
      */
+    @SuppressWarnings("unchecked")
     private static Class<? extends Number> getElementClass(final Range<?> range) {
         ensureNonNull("range", range);
         final Class<?> type = range.elementClass;
@@ -406,9 +407,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
          * instead but we want an IllegalArgumentException in case of failure rather than a
          * ClassCastException.
          */
-        @SuppressWarnings("unchecked")
-        final Class<? extends Number> result = (Class<? extends Number>) type;
-        return result;
+        return (Class<? extends Number>) type;
     }
 
     /**
@@ -431,8 +430,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
      */
     public static <N extends Number & Comparable<? super N>> NumberRange<N> wrap(final Range<N> range) {
         if (range instanceof NumberRange<?>) {
-            final NumberRange<N> cast = (NumberRange<N>) range;
-            return cast;
+            return (NumberRange<N>) range;
         }
         // The constructor will ensure that the range element class is a subclass of Number.
         return new NumberRange<N>(range);
@@ -449,14 +447,14 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
      * @return The casted range, or {@code range} if no cast is needed.
      * @throws IllegalArgumentException if the values are not convertible to the specified class.
      */
+    @SuppressWarnings({"unchecked","rawtypes"})
     <N extends Number & Comparable<? super N>>
     NumberRange<N> convertAndCast(final Range<? extends Number> range, final Class<N> type)
             throws IllegalArgumentException
     {
         if (type.equals(range.getElementClass())) {
-            @SuppressWarnings({"unchecked","rawtypes"}) // Safe because we checked in the line just above.
-            final NumberRange<N> cast = (NumberRange<N>) wrap((Range) range);
-            return cast;
+            // Safe because we checked in the line just above.
+            return (NumberRange<N>) wrap((Range) range);
         }
         return new NumberRange<N>(type, range);
     }
@@ -507,6 +505,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
      * @throws IllegalArgumentException if the given value is not a subclass of {@link Number}.
      */
     @Override
+    @SuppressWarnings({"unchecked","rawtypes"})
     public boolean contains(Comparable<?> value) throws IllegalArgumentException {
         if (value == null) {
             return false;
@@ -517,7 +516,6 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
          * We could have used Class.cast(Object) but we want an IllegalArgumentException with a
          * localized message.
          */
-        @SuppressWarnings("unchecked")
         Number number = (Number) value;
         final Class<? extends Number> type = widestClass(elementClass, number.getClass());
         number = Classes.cast(number, type);
@@ -526,9 +524,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
          * signature expect a Comparable and we have additionally casted to a Number.  However I
          * have not found a way to express that safely in a local variable with Java 6.
          */
-        @SuppressWarnings({"unchecked","rawtypes"})
-        final boolean contains = castTo((Class) type).containsNC((Comparable<?>) number);
-        return contains;
+        return castTo((Class) type).containsNC((Comparable<?>) number);
     }
 
     /**

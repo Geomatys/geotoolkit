@@ -266,7 +266,7 @@ public class XRectangle2D extends Rectangle2D implements Serializable {
      */
     @Override
     public void setFrame(final Rectangle2D r) {
-        setFrame(r);
+        setRect(r);
     }
 
     /**

@@ -863,41 +863,41 @@ public class GeodeticCalculator {
          * Source: ftp://ftp.ngs.noaa.gov/pub/pcsoft/for_inv.3d/source/forward.for
          *         subroutine DIRECT1
          */
-        double TU  = fo*sin(lat1) / cos(lat1);
-        double SF  = sin(azimuth);
-        double CF  = cos(azimuth);
-        double BAZ = (CF!=0) ? atan2(TU,CF)*2.0 : 0;
-        double CU  = 1 / sqrt(TU*TU + 1.0);
-        double SU  = TU*CU;
-        double SA  = CU*SF;
-        double C2A = 1.0 - SA*SA;
-        double X   = sqrt((1.0/fo/fo - 1) * C2A + 1.0) + 1.0;
-        X   = (X - 2.0) / X;
-        double C   = 1.0-X;
-        C   = (X*X / 4.0 + 1.0) / C;
-        double D   = (0.375 * X*X - 1.0) * X;
-        TU   = distance / fo / semiMajorAxis / C;
-        double Y   = TU;
-        double SY, CY, CZ, E;
+        double tu  = fo*sin(lat1) / cos(lat1);
+        double sf  = sin(azimuth);
+        double cf  = cos(azimuth);
+        double baz = (cf != 0) ? atan2(tu, cf) * 2.0 : 0;
+        double cu  = 1 / sqrt(tu*tu + 1.0);
+        double su  = tu*cu;
+        double sa  = cu*sf;
+        double c2a = 1.0 - sa*sa;
+        double x   = sqrt((1.0/fo/fo - 1) * c2a + 1.0) + 1.0;
+               x   = (x - 2.0) / x;
+        double c   = 1.0 - x;
+               c   = (x*x / 4.0 + 1.0) / c;
+        double d   = (0.375 * x*x - 1.0) * x;
+               tu  = distance / fo / semiMajorAxis / c;
+        double y   = tu;
+        double sy, cy, cz, e;
         do {
-            SY = sin(Y);
-            CY = cos(Y);
-            CZ = cos(BAZ + Y);
-            E  = CZ*CZ*2.0-1.0;
-            C  = Y;
-            X  = E*CY;
-            Y  = E+E-1.0;
-            Y  = (((SY*SY*4.0-3.0)*Y*CZ*D/6.0+X)*D/4.0-CZ)*SY*D+TU;
-        } while (abs(Y-C) > TOLERANCE_1);
-        BAZ  = CU*CY*CF - SU*SY;
-        C    = fo * hypot(SA, BAZ);
-        D    = SU*CY + CU*SY*CF;
-        lat2 = atan2(D,C);
-        C    = CU*CY - SU*SY*CF;
-        X    = atan2(SY*SF, C);
-        C    = ((-3.0 * C2A + 4.0) * f + 4.0) * C2A * f / 16.0;
-        D    = ((E * CY * C + CZ) * SY * C + Y) * SA;
-        long2 = long1+X - (1.0-C)*D*f;
+            sy = sin(y);
+            cy = cos(y);
+            cz = cos(baz + y);
+            e  = cz*cz*2.0 - 1.0;
+            c  = y;
+            x  = e*cy;
+            y  = e + e - 1.0;
+            y  = (((sy*sy*4.0 - 3.0) * y*cz*d/6.0 + x) * d/4.0 - cz) * sy*d + tu;
+        } while (abs(y-c) > TOLERANCE_1);
+        baz  = cu*cy*cf - su*sy;
+        c    = fo * hypot(sa, baz);
+        d    = su*cy + cu*sy*cf;
+        lat2 = atan2(d,c);
+        c    = cu*cy - su*sy*cf;
+        x    = atan2(sy*sf, c);
+        c    = ((-3.0 * c2a + 4.0) * f + 4.0) * c2a * f / 16.0;
+        d    = ((e * cy * c + cz) * sy * c + y) * sa;
+        long2 = long1+x - (1.0-c)*d*f;
         long2 = castToAngleRange(long2);
         destinationValid = true;
     }
@@ -918,13 +918,13 @@ public class GeodeticCalculator {
      * Calculates the meridian arc length between two points in the same meridian
      * in the referenced ellipsoid.
      *
-     * @param  P1 The latitude of the first  point (in radians).
-     * @param  P2 The latitude of the second point (in radians).
-     * @return Returned the meridian arc length between P1 and P2
+     * @param  φ1 The latitude of the first  point (in radians).
+     * @param  φ2 The latitude of the second point (in radians).
+     * @return Returned the meridian arc length between φ1 and φ2
      */
-    private double getMeridianArcLengthRadians(final double P1, final double P2) {
+    private double getMeridianArcLengthRadians(final double φ1, final double φ2) {
         /*
-         * Latitudes P1 and P2 in radians positive North and East.
+         * Latitudes φ1 and φ2 in radians positive North and East.
          * Forward azimuths at both points returned in radians from North.
          *
          * Source: ftp://ftp.ngs.noaa.gov/pub/pcsoft/for_inv.3d/source/inverse.for
@@ -934,23 +934,23 @@ public class GeodeticCalculator {
          *
          * Ported from Fortran to Java by Daniele Franzoni.
          */
-        double S1 = abs(P1);
-        double S2 = abs(P2);
-        double DA = (P2-P1);
+        double s1 = abs(φ1);
+        double s2 = abs(φ2);
+        double da = (φ2-φ1);
         // Check for a 90 degree lookup
-        if (S1 > TOLERANCE_0 || S2 <= (PI/2 - TOLERANCE_0) || S2 >= (PI/2 + TOLERANCE_0)) {
-            final double DB = sin(P2* 2.0) - sin(P1* 2.0);
-            final double DC = sin(P2* 4.0) - sin(P1* 4.0);
-            final double DD = sin(P2* 6.0) - sin(P1* 6.0);
-            final double DE = sin(P2* 8.0) - sin(P1* 8.0);
-            final double DF = sin(P2*10.0) - sin(P1*10.0);
+        if (s1 > TOLERANCE_0 || s2 <= (PI/2 - TOLERANCE_0) || s2 >= (PI/2 + TOLERANCE_0)) {
+            final double db = sin(φ2 *  2.0) - sin(φ1 *  2.0);
+            final double dc = sin(φ2 *  4.0) - sin(φ1 *  4.0);
+            final double dd = sin(φ2 *  6.0) - sin(φ1 *  6.0);
+            final double de = sin(φ2 *  8.0) - sin(φ1 *  8.0);
+            final double df = sin(φ2 * 10.0) - sin(φ1 * 10.0);
             // Compute the S2 part of the series expansion
-            S2 = -DB*B/2.0 + DC*C/4.0 - DD*D/6.0 + DE*E/8.0 - DF*F/10.0;
+            s2 = -db*B/2.0 + dc*C/4.0 - dd*D/6.0 + de*E/8.0 - df*F/10.0;
         }
         // Compute the S1 part of the series expansion
-        S1 = DA * A;
+        s1 = da * A;
         // Compute the arc length
-        return abs(semiMajorAxis * (1.0-eccentricitySquared) * (S1+S2));
+        return abs(semiMajorAxis * (1.0 - eccentricitySquared) * (s1 + s2));
     }
 
     /**
@@ -1012,41 +1012,41 @@ public class GeodeticCalculator {
             lat2 < TOLERANCE_3 && lat2 > -TOLERANCE_3)
         {
             // Computes an approximate AZ
-            final double CONS = (PI - ss) / (PI * f);
-            double AZ = asin(CONS);
-            double AZ_TEMP, S, AO;
+            final double cons = (PI - ss) / (PI * f);
+            double az = asin(cons);
+            double az_temp, s, ao;
             int iter = 0;
             do {
                 if (++iter > 8) {
                     throw new ArithmeticException(getNoConvergenceErrorMessage());
                 }
-                S = cos(AZ);
-                final double C2 = S*S;
+                s = cos(az);
+                final double c2 = s*s;
                 // Compute new AO
-                AO = T1 + T2*C2 + T4*C2*C2 + T6*C2*C2*C2;
-                final double CS = CONS/AO;
-                S = asin(CS);
-                AZ_TEMP = AZ;
-                AZ = S;
-            } while (abs(S - AZ_TEMP) >= TOLERANCE_2);
+                ao = T1 + T2*c2 + T4*c2*c2 + T6*c2*c2*c2;
+                final double cs = cons / ao;
+                s = asin(cs);
+                az_temp = az;
+                az = s;
+            } while (abs(s - az_temp) >= TOLERANCE_2);
 
-            final double AZ1 = (dlon < 0.0) ? 2.0*PI - S : S;
-            azimuth = castToAngleRange(AZ1);
-            S = cos(AZ1);
+            final double az1 = (dlon < 0.0) ? 2.0*PI - s : s;
+            azimuth = castToAngleRange(az1);
+            s = cos(az1);
 
             // Equatorial - geodesic(S-s) SMS
-            final double U2 = ESQP*S*S;
-            final double U4 = U2*U2;
-            final double U6 = U4*U2;
-            final double U8 = U6*U2;
-            final double BO =  1.0                 +
-                               0.25            *U2 +
-                               0.046875        *U4 +
-                               0.01953125      *U6 +
-                              -0.01068115234375*U8;
-            S = sin(AZ1);
-            final double SMS = semiMajorAxis*PI*(1.0 - f*abs(S)*AO - BO*fo);
-            distance = semiMajorAxis*ss - SMS;
+            final double u2 = ESQP*s*s;
+            final double u4 = u2*u2;
+            final double u6 = u4*u2;
+            final double u8 = u6*u2;
+            final double bo =  1.0                 +
+                               0.25            *u2 +
+                               0.046875        *u4 +
+                               0.01953125      *u6 +
+                              -0.01068115234375*u8;
+            s = sin(az1);
+            final double sms = semiMajorAxis*PI*(1.0 - f*abs(s)*ao - bo*fo);
+            distance = semiMajorAxis*ss - sms;
             directionValid = true;
             return;
         }
@@ -1118,7 +1118,6 @@ public class GeodeticCalculator {
         }
         azimuth = castToAngleRange(az1);
         directionValid = true;
-        return;
     }
 
     /**

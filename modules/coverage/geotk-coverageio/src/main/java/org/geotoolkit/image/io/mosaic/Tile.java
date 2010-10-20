@@ -769,7 +769,7 @@ public class Tile implements Comparable<Tile>, Serializable {
         if (input instanceof CharSequence) {
             final String path = input.toString();
             final Object url;
-            if (path.indexOf("://") > 0) {
+            if (path.indexOf("://") > 0) { // NOSONAR
                 url = new URL(path);
             } else {
                 url = new File(path);

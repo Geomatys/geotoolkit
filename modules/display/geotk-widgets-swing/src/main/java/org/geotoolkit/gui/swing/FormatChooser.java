@@ -443,9 +443,9 @@ public class FormatChooser extends JComponent implements Dialog {
             if (index != 0) {
                 model.insertElementAt(pattern, 0);
             }
-            final int size = model.getSize();
-            while (size > HISTORY_SIZE) {
-                model.removeElementAt(size-1);
+            int size;
+            while ((size = model.getSize()) > HISTORY_SIZE) {
+                model.removeElementAt(size - 1);
             }
             if (size != 0) {
                 choices.setSelectedIndex(0);

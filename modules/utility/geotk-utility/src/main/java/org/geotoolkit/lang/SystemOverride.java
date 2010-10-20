@@ -57,7 +57,7 @@ package org.geotoolkit.lang;
  * @since 3.07
  * @module
  */
-public interface SystemOverride {
+public interface SystemOverride { // NOSONAR
     /**
      * The {@linkplain System#getProperties() system properties} key which control whatever
      * Geotk is allowed to override standard providers. The name of this property key is
