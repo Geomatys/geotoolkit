@@ -30,4 +30,26 @@ public abstract class AbstractSensorML {
 
     public abstract String getVersion();
 
+    public abstract List<? extends AbstractKeywords> getKeywords();
+
+    public abstract List<? extends AbstractIdentification> getIdentification();
+
+    public abstract List<? extends AbstractClassification> getClassification();
+
+    public abstract AbstractValidTime getValidTime();
+
+    public abstract AbstractSecurityConstraint getSecurityConstraint();
+
+    public abstract List<? extends AbstractLegalConstraint> getLegalConstraint();
+
+    public abstract List<? extends AbstractCharacteristics> getCharacteristics();
+
+    public abstract List<? extends AbstractCapabilities> getCapabilities();
+
+    public abstract List<? extends AbstractContact> getContact();
+
+    public abstract List<? extends AbstractDocumentation> getDocumentation();
+
+    public abstract List<? extends AbstractHistory> getHistory();
+
 }
