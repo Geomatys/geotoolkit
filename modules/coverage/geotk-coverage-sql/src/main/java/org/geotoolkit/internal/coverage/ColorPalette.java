@@ -56,33 +56,12 @@ public final class ColorPalette implements Serializable {
     private transient Color[] colors;
 
     /**
-     * The expanded ARGB colors, created when first needed.
-     */
-    private transient int[] ARGB;
-
-    /**
      * Creates a new {@code Gradiant} for the given color palette name.
      *
      * @param paletteName The color palette name.
      */
     public ColorPalette(final String paletteName) {
         this.paletteName = paletteName;
-    }
-
-    /**
-     * Returns the ARGB colors. This method loads the colors when first needed.
-     * This method returns the internal array - <strong>do not modify</strong>.
-     *
-     * @param  factory The factory to use for loading the colors.
-     * @return The ARGB codes for the palette name given at construction time.
-     */
-    public int[] getARGBs(final PaletteFactory factory) {
-        if (ARGB == null) {
-            final Color[] colors = getColors(factory);
-            ARGB = new int[Math.max(colors.length, 64)];
-            ColorUtilities.expand(colors, ARGB, 0, ARGB.length);
-        }
-        return ARGB;
     }
 
     /**

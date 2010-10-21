@@ -34,6 +34,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.swing.SwingUtilities;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.Disposable;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -643,7 +644,7 @@ public class ProgressWindow implements ProgressListener, Disposable {
                 c.insets.top = 3;
                 final String[] values = (String[]) value;
                 String source = values[0];
-                if (source != lastSource) {
+                if (!Utilities.equals(source, lastSource)) {
                     lastSource = source;
                     if (source == null) {
                         source = getString(Vocabulary.Keys.UNTITLED);

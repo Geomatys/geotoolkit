@@ -47,7 +47,7 @@ public final class ZoomPaneTest extends SwingBase<ZoomPane> {
      */
     @Override
     @SuppressWarnings("serial")
-    protected ZoomPane create() {
+    protected ZoomPane create(final int index) {
         final Rectangle rect = new Rectangle(100,200,100,93);
         final Polygon   poly = new Polygon(new int[] {125,175,150}, new int[] {225,225,268}, 3);
         final ZoomPane  pane = new ZoomPane(

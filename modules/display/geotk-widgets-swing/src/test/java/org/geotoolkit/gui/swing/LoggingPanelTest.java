@@ -77,7 +77,7 @@ public final class LoggingPanelTest extends SwingBase<LoggingPanel> {
      * Creates the widget.
      */
     @Override
-    protected LoggingPanel create() {
+    protected LoggingPanel create(final int index) {
         final LoggingPanel test = new LoggingPanel(logger);
         if (true) {
             test.setColumnVisible(LoggingPanel.Column.LOGGER, false);

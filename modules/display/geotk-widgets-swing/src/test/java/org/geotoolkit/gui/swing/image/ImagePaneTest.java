@@ -50,7 +50,7 @@ public final class ImagePaneTest extends SwingBase<ImagePane> {
      * @throws IOException If an error occurred while reading the test file.
      */
     @Override
-    protected ImagePane create() throws IOException {
+    protected ImagePane create(final int index) throws IOException {
         final ImagePane test = new ImagePane();
         try {
             test.setImage(ImageIO.read(TestData.url(org.geotoolkit.image.ImageInspector.class, "QL95209.png")));
@@ -66,8 +66,8 @@ public final class ImagePaneTest extends SwingBase<ImagePane> {
      * @throws InterruptedException If the test has been interrupted.
      */
     @Override
-    protected void animate(final JComponent component) throws InterruptedException {
-        final ImagePane pane = (ImagePane) component;
+    protected void animate(final JComponent[] components) throws InterruptedException {
+        final ImagePane pane = (ImagePane) components[0];
         for (int i=0; i<=100; i++) {
             final int percentageDone = i;
             SwingUtilities.invokeAndWait(new Runnable() {

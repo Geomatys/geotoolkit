@@ -42,7 +42,7 @@ public class PaletteComboBoxTest extends SwingBase<PaletteComboBox> {
      * Creates the widget.
      */
     @Override
-    protected PaletteComboBox create() {
+    protected PaletteComboBox create(final int index) {
         final PaletteComboBox widget = new PaletteComboBox();
         assertNull("No colors should be selected by default.", widget.getSelectedItem());
         assertNull("No colors should be selected by default.", widget.getSelectedColors());

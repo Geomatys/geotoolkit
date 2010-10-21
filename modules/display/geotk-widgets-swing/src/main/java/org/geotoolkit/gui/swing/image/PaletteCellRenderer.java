@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.gui.swing.image;
 
+import java.util.Locale;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -47,7 +48,7 @@ import org.geotoolkit.internal.coverage.ColorPalette;
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.16
  *
  * @since 3.14 (derived from 3.13)
  * @module
@@ -86,12 +87,15 @@ final class PaletteCellRenderer extends DefaultListCellRenderer implements Table
      *
      * @param choices The available choices of colors.
      * @param factory The factory to use for fetching color palettes from their name.
+     * @param locale  The locale to use for formatting error messages and graduation labels.
      */
-    public PaletteCellRenderer(final ComboBoxModel choices, final PaletteFactory factory) {
+    public PaletteCellRenderer(final ComboBoxModel choices, final PaletteFactory factory, final Locale locale) {
         this.choices = choices;
         this.factory = factory;
         painter = new ColorRamp();
+        painter.setLocale(locale);
         painter.labelVisibles = false;
+        painter.interpolationEnabled = true;
         setPreferredSize(new Dimension(100, 20));
         setHorizontalAlignment(CENTER);
     }
@@ -189,13 +193,13 @@ final class PaletteCellRenderer extends DefaultListCellRenderer implements Table
             setForeground(foreground);
             if (!value.equals(oldValue)) {
                 setText(null);
-                final int[] ARGB;
+                final Color[] colors;
                 if (isGradiant) {
-                    ARGB = ((ColorPalette) value).getARGBs(factory);
+                    colors = ((ColorPalette) value).getColors(factory);
                 } else {
-                    ARGB = new int[] {((Color) value).getRGB()};
+                    colors = new Color[] {(Color) value};
                 }
-                painter.setColors(ARGB);
+                painter.setColors(colors);
             }
             setBorder(noFocusBorder);
             setEnabled(component.isEnabled());

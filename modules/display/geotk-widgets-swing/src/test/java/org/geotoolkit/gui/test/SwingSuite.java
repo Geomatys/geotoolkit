@@ -49,7 +49,7 @@ public final class SwingSuite extends SwingBase<About> {
      * Returns the {@link About} dialog box.
      */
     @Override
-    protected About create() {
+    protected About create(final int index) {
         return new About();
     }
 
@@ -97,7 +97,7 @@ public final class SwingSuite extends SwingBase<About> {
      */
     private static void show(final Class<? extends SwingBase<?>>... tests) throws Exception {
         for (final Class<? extends SwingBase<?>> type : tests) {
-            show(type != null ? type.newInstance() : null, null);
+            show(type != null ? type.newInstance() : null);
         }
     }
 }

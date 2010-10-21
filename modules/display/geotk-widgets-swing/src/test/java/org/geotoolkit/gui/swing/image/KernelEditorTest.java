@@ -40,7 +40,7 @@ public final class KernelEditorTest extends SwingBase<KernelEditor> {
      * Creates the widget.
      */
     @Override
-    protected KernelEditor create() {
+    protected KernelEditor create(final int index) {
         final KernelEditor test = new KernelEditor();
         test.addDefaultKernels();
         return test;

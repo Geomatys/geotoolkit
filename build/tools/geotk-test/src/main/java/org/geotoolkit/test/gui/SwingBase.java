@@ -46,7 +46,7 @@ import static org.junit.Assume.*;
  * @param <T> The type of the widget to be tested.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.07
+ * @version 3.16
  *
  * @since 2.3
  */
@@ -64,13 +64,32 @@ public abstract class SwingBase<T extends JComponent> {
     final Class<T> testing;
 
     /**
-     * Creates a new instance of {@code SwingBase}.
+     * Number of invocation of {@link #create(int)} to perform.
+     */
+    final int numTests;
+
+    /**
+     * Creates a new instance of {@code SwingBase} which will invoke
+     * {@link #create(int)} only once.
      *
      * @param testing The class being tested.
      */
     protected SwingBase(final Class<T> testing) {
+        this(testing, 1);
+    }
+
+    /**
+     * Creates a new instance of {@code SwingBase}.
+     *
+     * @param testing The class being tested.
+     * @param numTests Number of invocation of {@link #create(int)} to perform.
+     */
+    protected SwingBase(final Class<T> testing, final int numTests) {
         assertTrue(testing.desiredAssertionStatus());
-        this.testing = testing;
+        assertTrue(JComponent.class.isAssignableFrom(testing));
+        assertTrue(numTests >= 1);
+        this.testing  = testing;
+        this.numTests = numTests;
     }
 
     /**
@@ -105,11 +124,13 @@ public abstract class SwingBase<T extends JComponent> {
      * raison which is not a test failure, for example if the widget relies on some
      * resources which may not be available on the classpath.
      *
+     * @param  index Index of the widget being created, from 0 inclusive to the value given
+     *         at construction time, exclusive.
      * @return The created widget, or {@code null} if the widget can not be created for
      *         an acceptable raison.
      * @throws Exception If an exception occurred while creating the widget.
      */
-    protected abstract JComponent create() throws Exception;
+    protected abstract JComponent create(int index) throws Exception;
 
     /**
      * {@linkplain #create() Creates} the widget. If the "{@code org.geotoolkit.showWidgetTests}"
@@ -120,46 +141,51 @@ public abstract class SwingBase<T extends JComponent> {
      */
     @Test
     public void display() throws Exception {
-        final JComponent component = create();
-        assumeNotNull(component);
-        if (!show(this, component)) {
-            component.setSize(component.getPreferredSize());
-            component.setVisible(true);
-            final int width  = component.getWidth();
-            final int height = component.getHeight();
-            final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-            final Graphics2D gr = image.createGraphics();
-            try {
-                component.print(gr);
-            } finally {
-                gr.dispose();
-            }
-            /*
-             * Optionally save to a file in the current directory, for checking purpose.
-             * Actually the image is empty if we didn't overrided the Component.paint method,
-             * so the above check is useful only for widgets doing their own painting like
-             * ColorRamp.
-             */
-            if (false) {
-                final File file = new File(DesktopPane.getTitle(component.getClass()) + ".png");
-                assertTrue(ImageIO.write(image, "png", file));
-                System.out.println("Image saved in " + file.getAbsolutePath());
+        final JComponent[] components = new JComponent[numTests];
+        for (int i=0; i<components.length; i++) {
+            assumeNotNull(components[i] = create(i));
+        }
+        if (!show(this, components)) {
+            for (int i=0; i<components.length; i++) {
+                final JComponent component = components[i];
+                component.setSize(component.getPreferredSize());
+                component.setVisible(true);
+                final int width  = component.getWidth();
+                final int height = component.getHeight();
+                final BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+                final Graphics2D gr = image.createGraphics();
+                try {
+                    component.print(gr);
+                } finally {
+                    gr.dispose();
+                }
+                /*
+                 * Optionally save to a file in the current directory, for checking purpose.
+                 * Actually the image is empty if we didn't overrided the Component.paint method,
+                 * so the above check is useful only for widgets doing their own painting like
+                 * ColorRamp.
+                 */
+                if (false) {
+                    final File file = new File(DesktopPane.getTitle(component.getClass()) + '-' + i + ".png");
+                    assertTrue(ImageIO.write(image, "png", file));
+                    System.out.println("Image saved in " + file.getAbsolutePath());
+                }
             }
         } else {
-            animate(component);
+            animate(components);
         }
     }
 
     /**
-     * Invoked in the JUnit thread if the widget has been shown. The default implementation
+     * Invoked in the JUnit thread if the widget have been shown. The default implementation
      * does nothing. Subclasses can override this method for testing an animation.
      *
-     * @param component The widget that were created.
+     * @param  components The widgets that were created.
      * @throws Exception If an exception occurred while animating the widget.
      *
      * @since 3.07
      */
-    protected void animate(final JComponent component) throws Exception {
+    protected void animate(final JComponent[] components) throws Exception {
     }
 
     /**
@@ -167,21 +193,25 @@ public abstract class SwingBase<T extends JComponent> {
      * the given component is not null.
      *
      * @param  testCase The test case for which the component is added.
-     * @param  component The component to show, or {@code null} if none.
+     * @param  components The components to show, or {@code null} if none.
      * @return {@code true} if the component has been shown.
      * @throws PropertyVetoException Should not happen.
      */
-    protected static synchronized boolean show(final SwingBase<?> testCase, final JComponent component)
+    protected static synchronized boolean show(final SwingBase<?> testCase, final JComponent... components)
             throws PropertyVetoException
     {
+        boolean added = false;
         if (desktop != null) {
             desktop.addTestCase(testCase);
-            if (component != null) {
-                desktop.show(component);
-                return true;
+            for (int i=0; i<components.length; i++) {
+                final JComponent component = components[i];
+                if (component != null) {
+                    desktop.show(component, i, components.length);
+                    added = true;
+                }
             }
         }
-        return false;
+        return added;
     }
 
     /**

@@ -45,7 +45,7 @@ public final class Plot2DTest extends SwingBase<Plot2D> {
      * Creates the widget.
      */
     @Override
-    protected JComponent create() {
+    protected JComponent create(final int index) {
         final Random random = new Random();
         Plot2D test = new Plot2D(true, false);
         test.addXAxis("Some x values");

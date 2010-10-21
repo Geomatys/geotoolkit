@@ -40,7 +40,7 @@ public final class CoordinateChooserTest extends SwingBase<CoordinateChooser> {
      * Creates the widget.
      */
     @Override
-    protected CoordinateChooser create() {
+    protected CoordinateChooser create(final int index) {
         return new CoordinateChooser();
     }
 }

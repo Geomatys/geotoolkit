@@ -54,7 +54,7 @@ public final class ImageFileChooserTest extends SwingBase<ImageFileChooser> {
      * Creates the widget.
      */
     @Override
-    protected ImageFileChooser create() {
+    protected ImageFileChooser create(final int index) {
         final ImageFileChooser test = new ImageFileChooser("png");
         test.setDialogType(ImageFileChooser.OPEN_DIALOG);
         test.setApproveButtonText("Noop");

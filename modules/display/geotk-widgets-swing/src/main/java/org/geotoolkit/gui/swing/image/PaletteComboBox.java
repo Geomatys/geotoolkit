@@ -19,15 +19,16 @@ package org.geotoolkit.gui.swing.image;
 
 import java.util.Set;
 import java.util.List;
+import java.util.Locale;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EventObject;
+import java.util.concurrent.Callable;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.BorderLayout;
 import java.awt.event.MouseEvent;
-import java.util.concurrent.Callable;
 import javax.swing.JTable;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -53,7 +54,7 @@ import org.geotoolkit.internal.coverage.ColorPalette;
  * by invoking the {@link #useAsTableCellEditor(TableColumn)} method.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.16
  *
  * @since 3.13
  * @module
@@ -90,7 +91,8 @@ public class PaletteComboBox extends JComponent {
             factory = PaletteFactory.getDefault();
         }
         this.factory = factory;
-        final Vocabulary resources = Vocabulary.getResources(getLocale());
+        final Locale locale = getLocale();
+        final Vocabulary resources = Vocabulary.getResources(locale);
         Set<String> names = factory.getAvailableNames();
         if (names == null) {
             /*
@@ -109,7 +111,7 @@ public class PaletteComboBox extends JComponent {
         }
         comboBox = new JComboBox(items.toArray());
         comboBox.setPrototypeDisplayValue(SpatialImageReadParam.DEFAULT_PALETTE_NAME); // For preventing pre-rendering of all palettes.
-        comboBox.setRenderer(new PaletteCellRenderer(comboBox.getModel(), factory));
+        comboBox.setRenderer(new PaletteCellRenderer(comboBox.getModel(), factory, locale));
         setLayout(new BorderLayout());
         add(comboBox, BorderLayout.CENTER);
     }
