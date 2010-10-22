@@ -164,7 +164,12 @@ public class SimpleLiteral extends AbstractSimpleLiteral {
         if (scheme != null) {
             s.append(scheme).append(':');
         }
-        s.append(content);
+        if (content != null && !content.isEmpty()) {
+            for (String c : content) {
+                s.append(c).append('\n');
+            }
+            s.deleteCharAt(s.length() -1);
+        }
         return s.toString();
     }
 

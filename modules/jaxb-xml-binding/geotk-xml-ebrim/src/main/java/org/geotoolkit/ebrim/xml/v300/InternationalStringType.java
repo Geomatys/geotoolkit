@@ -54,6 +54,21 @@ public class InternationalStringType implements EbrimInternationalString {
     @XmlElement(name = "LocalizedString")
     private List<LocalizedStringType> localizedString;
 
+    public InternationalStringType() {
+
+    }
+
+    public InternationalStringType(LocalizedStringType ls) {
+        this.localizedString  = new ArrayList<LocalizedStringType>();
+        if (ls != null) {
+            this.localizedString.add(ls);
+        }
+    }
+
+    public InternationalStringType(List<LocalizedStringType> ls) {
+        this.localizedString  = ls;
+    }
+
     /**
      * Gets the value of the localizedString property.
      */
