@@ -112,6 +112,6 @@ public class CharacterString {
     @Override
     public final String toString() {
         final CharSequence text = this.text;
-        return (text != null) ? text.toString() : null;
+        return (text != null) ? text.toString() : null; // NOSONAR
     }
 }

@@ -381,7 +381,7 @@ loop:   for (final GridCoverageEntry newEntry : entries) {
                 final long      time;
                 if (startTime != null) {
                     if (endTime != null) {
-                        time = (startTime.getTime() + endTime.getTime()) / 2;
+                        time = (startTime.getTime() + endTime.getTime()) >>> 1;
                     } else {
                         time = startTime.getTime();
                     }

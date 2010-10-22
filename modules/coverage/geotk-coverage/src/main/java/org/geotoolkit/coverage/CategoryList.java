@@ -362,10 +362,10 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
      */
     static int binarySearch(final double[] array, final double key) {
         int low  = 0;
-        int high = array.length-1;
+        int high = array.length - 1;
         final boolean keyIsNaN = Double.isNaN(key);
         while (low <= high) {
-            final int mid = (low + high) >> 1;
+            final int mid = (low + high) >>> 1;
             final double midVal = array[mid];
             if (midVal < key) { // Neither val is NaN, midVal is smaller
                 low = mid + 1;

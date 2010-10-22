@@ -93,7 +93,7 @@ final class ComparedTileManager extends TileManager {
      * to the {@linkplain System#err standard error stream}.
      */
     private boolean equal(final Collection<Tile> c1, final Collection<Tile> c2) {
-        return equals(first, c1, c2) & equals(second, c2, c1); // Really "&", not "&&".
+        return equals(first, c1, c2) & equals(second, c2, c1); // NOSONAR: Really "&", not "&&".
     }
 
     /**

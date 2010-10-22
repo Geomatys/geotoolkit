@@ -163,6 +163,7 @@ public class FactoryFinder {
      */
     static FactoryRegistry getServiceRegistry() {
         assert Thread.holdsLock(FactoryFinder.class);
+        FactoryRegistry registry = FactoryFinder.registry;
         if (registry == null) {
             registry = new DynamicFactoryRegistry(new Class<?>[] {
                     NameFactory.class,
@@ -199,6 +200,7 @@ public class FactoryFinder {
                 }
             };
             ShutdownHook.INSTANCE.register(registry);
+            FactoryFinder.registry = registry;
         }
         return registry;
     }

@@ -299,7 +299,6 @@ public class ScriptRunner implements FilenameFilter {
             @Override public int compare(final String o1, final String o2) {
                 final Integer i1 = order.get(o1);
                 final Integer i2 = order.get(o2);
-                if (i1 == i2)   return  0;
                 if (i1 == null) return +1;
                 if (i2 == null) return -1;
                 return i1 - i2;

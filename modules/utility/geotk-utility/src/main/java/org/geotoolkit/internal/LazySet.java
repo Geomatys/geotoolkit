@@ -20,6 +20,7 @@ package org.geotoolkit.internal;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.AbstractSet;
+import java.util.NoSuchElementException;
 
 
 /**
@@ -158,7 +159,13 @@ public final class LazySet<E> extends AbstractSet<E> {
          */
         @Override
         public E next() {
-            return get(cursor++);
+            try {
+                return get(cursor++);
+            } catch (IndexOutOfBoundsException cause) {
+                NoSuchElementException ex = new NoSuchElementException();
+                ex.initCause(cause);
+                throw ex;
+            }
         }
 
         /**

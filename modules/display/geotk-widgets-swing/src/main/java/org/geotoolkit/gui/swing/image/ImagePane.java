@@ -371,7 +371,7 @@ public class ImagePane extends ZoomPane {
      * @since 3.07
      */
     public void setProgress(final int percentageDone) {
-        getProgressPane().bar.setValue(Math.round(percentageDone));
+        getProgressPane().bar.setValue(percentageDone);
     }
 
     /**

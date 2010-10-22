@@ -25,7 +25,7 @@ Geotoolkit.org demos
   module.
 
 *--------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+
-| {{{geotk-simples/applet/CoordinateChooser.html}CoordinateChooser}}                   | Specify a spatial bounding box, a temporal extent and optionnaly a spatial resolution. |
+| {{{geotk-simples/applet/CoordinateChooser.html}CoordinateChooser}}                   | Specify a spatial bounding box, a temporal extent and optionally a spatial resolution. |
 *--------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+
 | {{{geotk-simples/applet/GradientKernelEditor.html}GradientKernelEditor}}             | Select the kernels to use for computing gradient magnitudes in a raster.               |
 *--------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+

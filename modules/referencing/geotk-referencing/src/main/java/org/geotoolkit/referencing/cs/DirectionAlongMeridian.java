@@ -161,12 +161,9 @@ final class DirectionAlongMeridian implements Comparable<DirectionAlongMeridian>
      * Returns the axis direction for this object. If a suitable axis direction already exists,
      * it will be returned. Otherwise a new one is created and returned.
      */
-    public AxisDirection getDirection() {
-        if (direction != null) {
-            return direction;
-        }
-        final String name = toString();
-        synchronized (AxisDirection.class) {
+    public synchronized AxisDirection getDirection() {
+        if (direction == null) {
+            final String name = toString();
             /*
              * The calls to  'AxisDirection.values()' and 'findDirection(...)'  should be performed
              * inside the synchronized block, since we try to avoid the creation of many directions

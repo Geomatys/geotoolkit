@@ -236,7 +236,7 @@ public class UUIDs {
          */
         @Override
         public boolean equals(final Object other) {
-            return (other == this) || (other instanceof StrongRef && ((StrongRef) other).same(this));
+            return (other == this) || (other instanceof StrongRef && ((StrongRef) other).same(this)); // NOSONAR
         }
     }
 

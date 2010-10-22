@@ -173,7 +173,7 @@ public class AbstractIdentifiedObject extends FormattableObject implements Ident
             final Iterator<ReferenceIdentifier> i1 = a1.iterator();
             final Iterator<ReferenceIdentifier> i2 = a2.iterator();
             boolean n1, n2;
-            while ((n1 = i1.hasNext()) & (n2 = i2.hasNext())) {  // Really '&', not '&&'
+            while ((n1 = i1.hasNext()) & (n2 = i2.hasNext())) {  // NOSONAR: Really '&', not '&&'
                 final int c = doCompare(i1.next().getCode(), i2.next().getCode());
                 if (c != 0) {
                     return c;
@@ -747,17 +747,14 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
         if (info == null) {
             return null;
         }
-        for (final Identifier candidate : info.getIdentifiers()) {
-            if (candidate instanceof ReferenceIdentifier) {
-                final ReferenceIdentifier identifier = (ReferenceIdentifier) candidate;
-                if (authority == null) {
+        for (final ReferenceIdentifier identifier : info.getIdentifiers()) {
+            if (authority == null) {
+                return identifier;
+            }
+            final Citation infoAuthority = identifier.getAuthority();
+            if (infoAuthority != null) {
+                if (Citations.identifierMatches(authority, infoAuthority)) {
                     return identifier;
-                }
-                final Citation infoAuthority = identifier.getAuthority();
-                if (infoAuthority != null) {
-                    if (Citations.identifierMatches(authority, infoAuthority)) {
-                        return identifier;
-                    }
                 }
             }
         }

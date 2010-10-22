@@ -211,7 +211,7 @@ public class RequestGenerator {
         final GridEnvelope gridRange = domain.getGridRange();
         final int dimension = gridRange.getDimension();
         for (int i=0; i<dimension; i++) {
-            final double scale = gridRange.getSpan(i) / minimalGridSize[i];
+            final double scale = gridRange.getSpan(i) / (double) minimalGridSize[i];
             if (scale < maxScale) {
                 maxScale = scale;
             }

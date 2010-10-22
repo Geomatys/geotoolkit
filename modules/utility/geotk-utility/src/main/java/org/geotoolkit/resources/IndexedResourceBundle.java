@@ -226,7 +226,7 @@ public class IndexedResourceBundle extends ResourceBundle {
                  */
                 InputStream in;
                 String name = filename;
-                while ((in = getClass().getResourceAsStream(name)) == null) {
+                while ((in = getClass().getResourceAsStream(name)) == null) { // NOSONAR
                     final int ext  = name.lastIndexOf('.');
                     final int lang = name.lastIndexOf('_', ext-1);
                     if (lang <= 0) {
@@ -425,7 +425,7 @@ public class IndexedResourceBundle extends ResourceBundle {
                     s0 = element.toString();
                 }
                 final String s1 = summarize(s0, MAX_STRING_LENGTH);
-                if (s0!=s1 && !s0.equals(s1)) {
+                if (!s0.equals(s1)) {
                     if (array == arguments) {
                         array = new Object[array.length];
                         System.arraycopy(arguments, 0, array, 0, array.length);

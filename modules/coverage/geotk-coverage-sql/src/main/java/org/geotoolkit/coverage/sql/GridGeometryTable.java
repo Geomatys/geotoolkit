@@ -295,9 +295,12 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
                  * uneasy to write a statement that works for both non-null and null values (the former
                  * requires "? IS NULL" since the "? = NULL" statement doesn't work with PostgreSQL 8.2.
                  */
-                if (results.wasNull() != (verticalOrdinates == null) ||
-                    (verticalOrdinates != null && nextSRID != verticalSRID))
-                {
+                if (results.wasNull() != (verticalOrdinates == null)) {
+                    // Inconsistent fields. We will ignore this entry.
+                    continue; //
+                }
+                if (verticalOrdinates != null && nextSRID != verticalSRID) {
+                    // Not the expected SRID. Search for an other entry.
                     continue;
                 }
                 /*
@@ -390,7 +393,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
                         statement.setInt(vsIndex, verticalSRID);
                         final Double[] numbers = new Double[verticalOrdinates.length];
                         for (int i=0; i<numbers.length; i++) {
-                            numbers[i] = verticalOrdinates[i];
+                            numbers[i] = Double.valueOf(verticalOrdinates[i]);
                         }
                         final Array array = statement.getConnection().createArrayOf("float8", numbers);
                         statement.setArray(voIndex, array);
