@@ -95,7 +95,6 @@ final class PaletteCellRenderer extends DefaultListCellRenderer implements Table
         painter = new ColorRamp();
         painter.setLocale(locale);
         painter.labelVisibles = false;
-        painter.interpolationEnabled = true;
         setPreferredSize(new Dimension(100, 20));
         setHorizontalAlignment(CENTER);
     }

@@ -293,7 +293,7 @@ public class ColorRamp extends JComponent {
 
     /**
      * Sets whatever the colors should be interpolated at rendering time.
-     * If this method is never invoked, then the default value is {@code false}.
+     * If this method is never invoked, then the default value is {@code true}.
      *
      * @param enabled Whatever the colors will be interpolated at rendering time.
      *
@@ -404,7 +404,8 @@ public class ColorRamp extends JComponent {
     protected Graduation createGraduation(final Graduation reuse, final SampleDimension band,
                                           final double minimum, final double maximum)
     {
-        return Painter.createDefaultGraduation(reuse, band, minimum, maximum, getLocale());
+        return Painter.createDefaultGraduation(reuse, band.getSampleToGeophysics(),
+                minimum, maximum, band.getUnits(), getLocale());
     }
 
     /**
