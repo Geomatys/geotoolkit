@@ -198,14 +198,14 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());
-        if (anyText != null && anyText.size() != 0) {
+        if (anyText != null && !anyText.isEmpty()) {
             s.append("anyText:");
             for (EmptyType e :anyText) {
                 s.append(e.toString()).append('\n');
             }
         }
         
-        if (boundingBox != null && boundingBox.size() != 0) {
+        if (boundingBox != null && !boundingBox.isEmpty()) {
             s.append("bounding boxes:");
             for (JAXBElement<? extends BoundingBoxType> bb: boundingBox) {
                 BoundingBoxType bbox = bb.getValue();

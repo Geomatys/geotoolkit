@@ -27,7 +27,7 @@ import org.geotoolkit.client.Request;
  */
 public interface GetCapabilitiesRequest extends Request {
     /**
-     * Returns the upate sequence string.
+     * Returns the upate sequence string, or {@code null} if none.
      */
     String getUpdateSequence();
 

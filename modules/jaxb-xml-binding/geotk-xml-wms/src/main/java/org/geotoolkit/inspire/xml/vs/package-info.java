@@ -50,9 +50,14 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 import org.geotoolkit.internal.jaxb.code.ScopeCodeAdapter;
+import org.geotoolkit.internal.jaxb.metadata.ContactAdapter;
+import org.geotoolkit.internal.jaxb.metadata.ExtentAdapter;
+import org.geotoolkit.internal.jaxb.metadata.direct.KeywordsAdapter;
+import org.geotoolkit.internal.jaxb.metadata.direct.OnlineResourceAdapter;
+import org.geotoolkit.internal.jaxb.metadata.ResponsiblePartyAdapter;
+import org.geotoolkit.internal.jaxb.metadata.ResultAdapter;
 
 import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.internal.jaxb.metadata.*;
 import org.geotoolkit.internal.jaxb.uom.DateAdapter;
 import org.geotoolkit.resources.jaxb.service.ServiceTypeAdapter;
 

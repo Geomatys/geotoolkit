@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,7 +21,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
+import org.geotoolkit.factory.FactoryFinder;
 
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
@@ -116,7 +116,7 @@ public class AttributeDescriptorBuilder {
      */
     public AttributeDescriptorBuilder(FeatureTypeFactory factory) {
         if(factory == null){
-            this.factory = new DefaultFeatureTypeFactory();
+            this.factory = FactoryFinder.getFeatureTypeFactory(null);
         }else{
             this.factory = factory;
         }

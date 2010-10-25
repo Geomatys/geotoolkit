@@ -65,6 +65,16 @@ import org.geotoolkit.util.Utilities;
 })
 public class AnyScalarPropertyType implements AnyScalar, Entry {
 
+    public static final AnyScalarPropertyType LATITUDE_FIELD  = new AnyScalarPropertyType("Latitude",  new QuantityType("urn:ogc:phenomenon:latitude:wgs84", "degree"));
+
+    public static final AnyScalarPropertyType LONGITUDE_FIELD = new AnyScalarPropertyType("Longitude", new QuantityType("urn:ogc:phenomenon:longitude:wgs84", "degree"));
+
+    public static final AnyScalarPropertyType FEATURE_FIELD   = new AnyScalarPropertyType("FeatureID", new Text("urn:ogc:data:feature", null));
+
+    public static final AnyScalarPropertyType PRESSION_FIELD  = new AnyScalarPropertyType("Pression",  new QuantityType("urn:ogc:phenomenon:PRES", "decibar"));
+
+    public static final AnyScalarPropertyType TIME_FIELD      = new AnyScalarPropertyType("Time",      new TimeType("urn:ogc:data:time:iso8601"));
+
     @XmlTransient
     private String idDataRecord;
     
@@ -167,6 +177,12 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     public AnyScalarPropertyType(String name, Text text) {
         this.name  = name;
         this.text  = text;
+    }
+
+
+    public AnyScalarPropertyType(String name, TimeType time) {
+        this.name  = name;
+        this.time  = time;
     }
     
     /**

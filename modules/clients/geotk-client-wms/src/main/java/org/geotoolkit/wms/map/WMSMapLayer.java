@@ -344,15 +344,14 @@ public class WMSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
             final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
             final int index = CRSUtilities.dimensionColinearWith(crs.getCoordinateSystem(), DefaultCoordinateSystemAxis.TIME);
             if(index >= 0){
-                System.out.println("here");
                 //there is a temporal axis
-                double median = env.getMedian(index);
-                Long closest = findClosestDate((long)median);
+                final double median = env.getMedian(index);
+                final Long closest = findClosestDate((long)median);
                 if(closest != null){
-                    GeneralEnvelope adjusted = new GeneralEnvelope(env);
+                    final GeneralEnvelope adjusted = new GeneralEnvelope(env);
                     adjusted.setRange(index, closest, closest);
                     env = adjusted;
-                    System.out.println("adjusted : " + new Date(closest));
+                    LOGGER.fine("adjusted : " + new Date(closest));
                 }
             }
         }

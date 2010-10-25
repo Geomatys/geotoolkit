@@ -31,6 +31,7 @@ import org.geotoolkit.factory.DynamicFactoryRegistry;
 import org.geotoolkit.factory.FactoryRegistry;
 import org.geotoolkit.internal.LazySet;
 import org.geotoolkit.storage.DataStoreException;
+import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Enable programs to find all available datastore implementations.
@@ -124,6 +125,67 @@ public final class DataStoreFinder{
                 if (isAvailable) {
                     try {
                         return fac.createDataStore(params);
+                    } catch (DataStoreException couldNotConnect) {
+                        canProcessButNotAvailable = couldNotConnect;
+                        LOGGER.log(Level.WARNING, fac.getDisplayName() + " should be used, but could not connect", couldNotConnect);
+                    }
+                } else {
+                    canProcessButNotAvailable = new DataStoreException(
+                            fac.getDisplayName() + " should be used, but is not availble. Have you installed the required drivers or jar files?");
+                    LOGGER.log(Level.WARNING, fac.getDisplayName() + " should be used, but is not availble", canProcessButNotAvailable);
+                }
+            }
+        }
+        if (canProcessButNotAvailable != null) {
+            throw canProcessButNotAvailable;
+        }
+        return null;
+    }
+
+    /**
+     * Checks each available datasource implementation in turn and returns the
+     * first one which claims to support the resource identified by the params
+     * object.
+     *
+     * @param parameters
+     *            A parameter value group with all requiered configuration.
+     *
+     * @return The first datasource which claims to process the required
+     *         resource, returns null if none can be found.
+     *
+     * @throws IOException
+     *             If a suitable loader can be found, but it can not be attached
+     *             to the specified resource without errors.
+     */
+    public static synchronized DataStore getDataStore(
+            ParameterValueGroup parameters) throws DataStoreException {
+        final Iterator<DataStoreFactory> ps = getAvailableDataStores();
+
+        DataStoreException canProcessButNotAvailable = null;
+        while (ps.hasNext()) {
+            final DataStoreFactory fac = (DataStoreFactory) ps.next();
+            boolean canProcess = false;
+            try {
+                canProcess = fac.canProcess(parameters);
+            } catch (Throwable t) {
+                LOGGER.log(Level.WARNING, "Problem asking " + fac.getDisplayName() + " if it can process request:" + t, t);
+                // Protect against DataStores that don't carefully code
+                // canProcess
+                continue;
+            }
+            if (canProcess) {
+                boolean isAvailable = false;
+                try {
+                    isAvailable = fac.availability().pass();
+                } catch (Throwable t) {
+                    LOGGER.log(Level.WARNING, "Difficulity checking if " + fac.getDisplayName() + " is available:" + t, t);
+                    // Protect against DataStores that don't carefully code
+                    // isAvailable
+                    continue;
+                }
+                if (isAvailable) {
+                    try {
+                        return fac.createDataStore(parameters);
                     } catch (DataStoreException couldNotConnect) {
                         canProcessButNotAvailable = couldNotConnect;
                         LOGGER.log(Level.WARNING, fac.getDisplayName() + " should be used, but could not connect", couldNotConnect);

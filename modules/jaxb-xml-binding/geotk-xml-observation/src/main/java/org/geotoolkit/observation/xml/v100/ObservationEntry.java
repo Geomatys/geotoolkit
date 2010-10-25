@@ -89,19 +89,15 @@ public class ObservationEntry implements Observation, Entry {
      */
     private static final long serialVersionUID = 3269639171560208276L;
 
-    @XmlTransient
-    protected org.geotoolkit.sampling.xml.v100.ObjectFactory factory = new org.geotoolkit.sampling.xml.v100.ObjectFactory();
+    protected static final org.geotoolkit.sampling.xml.v100.ObjectFactory SAMPLING_FACTORY = new org.geotoolkit.sampling.xml.v100.ObjectFactory();
 
-    @XmlTransient
-    protected org.geotoolkit.gml.xml.v311.ObjectFactory gmlfactory = new org.geotoolkit.gml.xml.v311.ObjectFactory();
+    protected static final org.geotoolkit.gml.xml.v311.ObjectFactory GML_FACTORY = new org.geotoolkit.gml.xml.v311.ObjectFactory();
 
-    @XmlTransient
-    protected ObjectFactory omfactory = new ObjectFactory();
+    protected static final ObjectFactory OM_FACTORY = new ObjectFactory();
     
     /**
      * A logger (debugging purpose)
      */
-    @XmlTransient
     private static final Logger LOGGER = Logging.getLogger("observationEntry");
     
     /**
@@ -196,7 +192,7 @@ public class ObservationEntry implements Observation, Entry {
         this.procedureParameter  = observation.procedureParameter;
         this.procedureTime       = observation.procedureTime;
         if (observation.result != null && observation.result.getValue() instanceof DataArrayPropertyType) {
-            this.result = omfactory.createResult(new DataArrayPropertyType((DataArrayPropertyType)observation.result.getValue()));
+            this.result = OM_FACTORY.createResult(new DataArrayPropertyType((DataArrayPropertyType)observation.result.getValue()));
         } else {
             this.result              = observation.result;
         }
@@ -228,20 +224,20 @@ public class ObservationEntry implements Observation, Entry {
         this.name                = name;
         this.definition          = definition;
         if (featureOfInterest instanceof SamplingPointEntry) {
-            this.featureOfInterest   = new FeaturePropertyType(factory.createSamplingPoint((SamplingPointEntry)featureOfInterest));
+            this.featureOfInterest   = new FeaturePropertyType(SAMPLING_FACTORY.createSamplingPoint((SamplingPointEntry)featureOfInterest));
         } else if (featureOfInterest instanceof SamplingCurveType) {
-            this.featureOfInterest   = new FeaturePropertyType(factory.createSamplingCurve((SamplingCurveType)featureOfInterest));
+            this.featureOfInterest   = new FeaturePropertyType(SAMPLING_FACTORY.createSamplingCurve((SamplingCurveType)featureOfInterest));
         } else if (featureOfInterest instanceof SamplingSolidType) {
-            this.featureOfInterest   = new FeaturePropertyType(factory.createSamplingSolid((SamplingSolidType)featureOfInterest));
+            this.featureOfInterest   = new FeaturePropertyType(SAMPLING_FACTORY.createSamplingSolid((SamplingSolidType)featureOfInterest));
         } else if (featureOfInterest instanceof SamplingSurfaceType) {
-            this.featureOfInterest   = new FeaturePropertyType(factory.createSamplingSurface((SamplingSurfaceType)featureOfInterest));
+            this.featureOfInterest   = new FeaturePropertyType(SAMPLING_FACTORY.createSamplingSurface((SamplingSurfaceType)featureOfInterest));
         }
         if (observedProperty != null) {
             this.observedProperty    = new PhenomenonPropertyType(observedProperty);
         }
         this.procedure           = procedure;
         this.resultQuality       = quality;
-        this.result              = omfactory.createResult(result);
+        this.result              = OM_FACTORY.createResult(result);
         this.observationMetadata = observationMetadata;
         this.procedureParameter  = procedureParameter; 
         this.samplingTime        = new TimeGeometricPrimitivePropertyType(samplingTime);
@@ -267,18 +263,18 @@ public class ObservationEntry implements Observation, Entry {
         this.name                = name;
         this.definition          = definition;
         if (featureOfInterest instanceof SamplingPointEntry) {
-            this.featureOfInterest   = new FeaturePropertyType(factory.createSamplingPoint((SamplingPointEntry)featureOfInterest));
+            this.featureOfInterest   = new FeaturePropertyType(SAMPLING_FACTORY.createSamplingPoint((SamplingPointEntry)featureOfInterest));
         } else if (featureOfInterest instanceof SamplingCurveType) {
-            this.featureOfInterest   = new FeaturePropertyType(factory.createSamplingCurve((SamplingCurveType)featureOfInterest));
+            this.featureOfInterest   = new FeaturePropertyType(SAMPLING_FACTORY.createSamplingCurve((SamplingCurveType)featureOfInterest));
         } else if (featureOfInterest instanceof SamplingSolidType) {
-            this.featureOfInterest   = new FeaturePropertyType(factory.createSamplingSolid((SamplingSolidType)featureOfInterest));
+            this.featureOfInterest   = new FeaturePropertyType(SAMPLING_FACTORY.createSamplingSolid((SamplingSolidType)featureOfInterest));
         } else if (featureOfInterest instanceof SamplingSurfaceType) {
-            this.featureOfInterest   = new FeaturePropertyType(factory.createSamplingSurface((SamplingSurfaceType)featureOfInterest));
+            this.featureOfInterest   = new FeaturePropertyType(SAMPLING_FACTORY.createSamplingSurface((SamplingSurfaceType)featureOfInterest));
         }
         this.observedProperty    = new PhenomenonPropertyType(observedProperty);
         this.procedure           = procedure;
         this.resultQuality       = null;      
-        this.result              = omfactory.createResult(result);
+        this.result              = OM_FACTORY.createResult(result);
         this.observationMetadata = null;
         this.procedureTime       = null;
         this.procedureParameter  = null;
@@ -309,7 +305,7 @@ public class ObservationEntry implements Observation, Entry {
         }
         this.procedure           = procedure;
         this.resultQuality       = null;
-        this.result              = omfactory.createResult(result);
+        this.result              = OM_FACTORY.createResult(result);
         this.observationMetadata = null;
         this.procedureTime       = null;
         this.procedureParameter  = null;
@@ -384,15 +380,15 @@ public class ObservationEntry implements Observation, Entry {
     public void setFeatureOfInterest(AbstractFeatureEntry featureOfInterest) {
         if (featureOfInterest != null) {
             if (featureOfInterest instanceof SamplingPointEntry) {
-                this.featureOfInterest = new FeaturePropertyType(factory.createSamplingPoint((SamplingPointEntry) featureOfInterest));
+                this.featureOfInterest = new FeaturePropertyType(SAMPLING_FACTORY.createSamplingPoint((SamplingPointEntry) featureOfInterest));
             } else if (featureOfInterest instanceof SamplingCurveType) {
-                this.featureOfInterest = new FeaturePropertyType(factory.createSamplingCurve((SamplingCurveType) featureOfInterest));
+                this.featureOfInterest = new FeaturePropertyType(SAMPLING_FACTORY.createSamplingCurve((SamplingCurveType) featureOfInterest));
             } else if (featureOfInterest instanceof SamplingSolidType) {
-                this.featureOfInterest = new FeaturePropertyType(factory.createSamplingSolid((SamplingSolidType) featureOfInterest));
+                this.featureOfInterest = new FeaturePropertyType(SAMPLING_FACTORY.createSamplingSolid((SamplingSolidType) featureOfInterest));
             } else if (featureOfInterest instanceof SamplingSurfaceType) {
-                this.featureOfInterest = new FeaturePropertyType(factory.createSamplingSurface((SamplingSurfaceType) featureOfInterest));
+                this.featureOfInterest = new FeaturePropertyType(SAMPLING_FACTORY.createSamplingSurface((SamplingSurfaceType) featureOfInterest));
             } else if (featureOfInterest instanceof FeatureCollectionType) {
-                this.featureOfInterest = new FeaturePropertyType(gmlfactory.createFeatureCollection((FeatureCollectionType) featureOfInterest));
+                this.featureOfInterest = new FeaturePropertyType(GML_FACTORY.createFeatureCollection((FeatureCollectionType) featureOfInterest));
             }
         }
     }
@@ -465,16 +461,33 @@ public class ObservationEntry implements Observation, Entry {
     }
     
     /**
-     * fixe le resultat de l'observation
+     * Set the result of the observation.
      */
     public void setResult(Object result) {
-        if (!(result instanceof ReferenceEntry) && !(result instanceof AnyResultEntry) && !(result instanceof DataArrayPropertyType) && !(result instanceof MeasureEntry)) {
+        if (!(result instanceof ReferenceEntry) && !(result instanceof AnyResultEntry) &&
+            !(result instanceof DataArrayPropertyType) && !(result instanceof MeasureEntry)) {
             throw new IllegalArgumentException("this type " + result.getClass().getSimpleName() +
                                            " is not allowed in result");
         }
-        this.result = omfactory.createResult(result);
+        this.result = OM_FACTORY.createResult(result);
     }
-    
+
+    /**
+     * Update the result of the obervation by setting the specified String value and numbers of result.
+     *
+     * @param values A datablock of values.
+     * @param nbResult the number of result in the datablock.
+     * @throws IllegalArgumentException if the resulat of the observation is not a DataArray.
+     */
+    public void updateDataArrayResult(String values, int nbResult) {
+        if (getResult() instanceof DataArrayPropertyType) {
+            DataArrayEntry array = ((DataArrayPropertyType)getResult()).getDataArray();
+            array.updateArray(values, nbResult);
+        } else {
+            throw new IllegalArgumentException("The result is not a data array.");
+        }
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -539,7 +552,7 @@ public class ObservationEntry implements Observation, Entry {
     }
     
     /**
-     * Retourne vrai si l'observation satisfait le template specifie
+     * Return true if the observation match the specified template.
      */ 
     public boolean matchTemplate(ObservationEntry template) {
         
@@ -547,7 +560,8 @@ public class ObservationEntry implements Observation, Entry {
         if (this.observedProperty != null && template.observedProperty != null) {
             obsProperty = Utilities.equals(this.observedProperty.getPhenomenon(),    template.observedProperty.getPhenomenon());
             if (!obsProperty) {
-                System.out.println('\n' + "comparing observed property:" + '\n' + "THIS     => "+  this.observedProperty.getPhenomenon() + '\n' + "TEMPLATE => " + template.observedProperty.getPhenomenon() + '\n');
+                LOGGER.info("\ncomparing observed property:\nTHIS     => " +  this.observedProperty.getPhenomenon() +
+                            "\nTEMPLATE => "                               + template.observedProperty.getPhenomenon() + '\n');
             }
         } else {
             obsProperty = this.observedProperty == null && template.observedProperty == null;
@@ -557,7 +571,8 @@ public class ObservationEntry implements Observation, Entry {
         if (this.featureOfInterest != null && template.featureOfInterest != null) {
             obsFoi = Utilities.equals(this.featureOfInterest.getAbstractFeature(),    template.featureOfInterest.getAbstractFeature());
             if (!obsFoi) {
-                System.out.println('\n' + "comparing feature of interest:" + '\n' + "THIS    => "+  this.featureOfInterest.getAbstractFeature() + '\n' + "TEMPLATE => " + template.featureOfInterest.getAbstractFeature() + '\n');
+                LOGGER.info("\ncomparing feature of interest:\nTHIS    => "+  this.featureOfInterest.getAbstractFeature() +
+                            "\nTEMPLATE => " + template.featureOfInterest.getAbstractFeature() + '\n');
             }
         } else {
             obsFoi = this.featureOfInterest == null && template.featureOfInterest == null;

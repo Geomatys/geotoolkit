@@ -35,7 +35,7 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
     /**
      * Default logger for all GetLegendGraphic requests.
      */
-    protected static final Logger LOGGER = Logging.getLogger(AbstractGetMap.class);
+    protected static final Logger LOGGER = Logging.getLogger(AbstractGetLegend.class);
 
     /**
      * The version to use for this webservice request.
@@ -44,11 +44,14 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
     protected String format = "image/png";
     protected String exception = "application/vnd.ogc.se_inimage";
     protected String layer = null;
-    protected String[] styles = null;
+    protected String style = null;
     protected Dimension dimension = null;
     protected String sld = null;
     protected String sldBody = null;
     protected Boolean transparent = true;
+    protected String rule = null;
+    protected Double scale = null;
+    protected String sldVersion = null;
 
     /**
      * Defines the server url and the service version for this kind of request.
@@ -129,16 +132,48 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
      * {@inheritDoc }
      */
     @Override
-    public String[] getStyles() {
-        return styles;
+    public String getRule() {
+        return rule;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public void setStyles(String... styles) {
-        this.styles = styles;
+    public void setRule(String rule) {
+        this.rule = rule;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Double getScale() {
+        return scale;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setScale(Double scale) {
+        this.scale = scale;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String getStyle() {
+        return style;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setStyle(String style) {
+        this.style = style;
     }
 
     /**
@@ -155,6 +190,22 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
     @Override
     public void setSld(String sld){
         this.sld = sld;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String getSldVersion() {
+        return sldVersion;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setSldVersion(String sldVersion) {
+        this.sldVersion = sldVersion;
     }
 
     /**
@@ -178,33 +229,42 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
      */
     @Override
     public URL getURL() throws MalformedURLException {
-        if(layer == null){
-            throw new IllegalArgumentException("Layer are not defined");
+        if (layer == null) {
+            throw new IllegalArgumentException("Layer is not defined");
         }
-//        if(dimension == null){
-//            throw new IllegalArgumentException("Dimension is not defined");
-//        }
-
+        if (format == null) {
+            throw new IllegalArgumentException("Format is not defined");
+        }
+        requestParameters.put("LAYER",      layer);
         requestParameters.put("SERVICE",    "WMS");
         requestParameters.put("REQUEST",    "GetLegendGraphic");
         requestParameters.put("VERSION",    version);
-        requestParameters.put("EXCEPTIONS", exception);
         requestParameters.put("FORMAT",     format);
+        if (exception != null) {
+            requestParameters.put("EXCEPTIONS", exception);
+        }
 
-        if(dimension != null){
+        if (dimension != null) {
             requestParameters.put("WIDTH",      String.valueOf(dimension.width));
             requestParameters.put("HEIGHT",     String.valueOf(dimension.height));
         }
-        requestParameters.put("LAYER",     layer);
-//        requestParameters.put("STYLES",     toString(styles));
-//        requestParameters.put("TRANSPARENT", Boolean.toString(transparent).toUpperCase());
-//
-//        if (sld != null) {
-//            requestParameters.put("SLD",sld);
-//        }
-//        if (sldBody != null) {
-//            requestParameters.put("SLD_BODY",sldBody);
-//        }
+        if (style != null) {
+            requestParameters.put("STYLE", style);
+        }
+        // SLD_VERSION is mandatory when SLD is given.
+        if (sld != null && sldVersion != null) {
+            requestParameters.put("SLD", sld);
+            requestParameters.put("SLD_VERSION", sldVersion);
+        }
+        if (rule != null) {
+            requestParameters.put("RULE", rule);
+        }
+        if (scale != null) {
+            requestParameters.put("SCALE", scale.toString());
+        }
+        if (sldBody != null) {
+            requestParameters.put("SLD_BODY", sldBody);
+        }
 
         return super.getURL();
     }

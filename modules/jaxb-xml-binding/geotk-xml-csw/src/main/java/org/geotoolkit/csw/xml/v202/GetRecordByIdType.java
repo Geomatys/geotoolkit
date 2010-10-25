@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.GetRecordById;
@@ -64,6 +65,7 @@ import org.geotoolkit.util.Utilities;
     "id",
     "elementSetName"
 })
+@XmlRootElement(name="GetRecordById")
 public class GetRecordByIdType extends RequestBaseType implements GetRecordById {
 
     @XmlElement(name = "Id", required = true)

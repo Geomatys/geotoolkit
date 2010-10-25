@@ -73,20 +73,22 @@ public class EnvelopeEntry implements Entry {
 
     @XmlAttribute(namespace="http://www.opengis.net/gml")
     private String id;
-    protected DirectPositionType lowerCorner;
-    protected DirectPositionType upperCorner;
-    protected List<DirectPositionType> pos;
-    protected CoordinatesType coordinates;
+    private DirectPositionType lowerCorner;
+    private DirectPositionType upperCorner;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
-    protected String srsName;
+    private String srsName;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    protected Integer srsDimension;
+    private Integer srsDimension;
     @XmlAttribute
-    protected List<String> axisLabels;
+    private List<String> axisLabels;
     @XmlAttribute
-    protected List<String> uomLabels;
+    private List<String> uomLabels;
+    @Deprecated
+    private List<DirectPositionType> pos;
+    @Deprecated
+    private CoordinatesType coordinates;
 
     /**
      * An empty constructor used by JAXB.
@@ -112,6 +114,10 @@ public class EnvelopeEntry implements Entry {
         this.srsDimension = null;
     }
 
+    /**
+     * Return the gml identifier of the envelope
+     * @return
+     */
     public String getId() {
         return id;
     }
@@ -124,10 +130,16 @@ public class EnvelopeEntry implements Entry {
     public Comparable<?> getIdentifier() {
         return id;
     }
-    
+
+    /**
+     * used for Entry
+     *
+     * @return id
+     */
     public String getName() {
         return id;
     }
+
     /**
      * Gets the value of the lowerCorner property.
      * 
@@ -177,46 +189,12 @@ public class EnvelopeEntry implements Entry {
     }
 
     /**
-     * Deprecated with GML version 3.1. Use the explicit properties "lowerCorner" and "upperCorner" instead.Gets the value of the pos property.
-     */
-    public List<DirectPositionType> getPos() {
-        if (pos == null) {
-            pos = new ArrayList<DirectPositionType>();
-        }
-        return this.pos;
-    }
-
-    /**
-     * Deprecated with GML version 3.1.0. Use the explicit properties "lowerCorner" and "upperCorner" instead.
-     * 
-     * @return
-     *     possible object is
-     *     {@link CoordinatesType }
-     *     
-     */
-    public CoordinatesType getCoordinates() {
-        return coordinates;
-    }
-
-    /**
-     * Deprecated with GML version 3.1.0. Use the explicit properties "lowerCorner" and "upperCorner" instead.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link CoordinatesType }
-     *     
-     */
-    public void setCoordinates(CoordinatesType value) {
-        this.coordinates = value;
-    }
-
-    /**
      * Gets the value of the srsName property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link String }
-     *     
+     *
      */
     public String getSrsName() {
         return srsName;
@@ -224,11 +202,11 @@ public class EnvelopeEntry implements Entry {
 
     /**
      * Sets the value of the srsName property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link String }
-     *     
+     *
      */
     public void setSrsName(String value) {
         this.srsName = value;
@@ -236,11 +214,11 @@ public class EnvelopeEntry implements Entry {
 
     /**
      * Gets the value of the srsDimension property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Integer }
-     *     
+     *
      */
     public Integer getSrsDimension() {
         return srsDimension;
@@ -248,11 +226,11 @@ public class EnvelopeEntry implements Entry {
 
     /**
      * Sets the value of the srsDimension property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Integer }
-     *     
+     *
      */
     public void setSrsDimension(Integer value) {
         this.srsDimension = value;
@@ -292,8 +270,58 @@ public class EnvelopeEntry implements Entry {
         return this.uomLabels;
     }
 
+
     /**
-     * Verifie si cette entree est identique a l'objet specifie.
+     * return true if the envelope is fill with x and y coordinates in upper and lower corner.
+     * @return
+     */
+    public boolean isCompleteEnvelope2D() {
+        return getLowerCorner() != null && getUpperCorner() != null &&
+               getLowerCorner().getValue().size() == 2 && getUpperCorner().getValue().size() == 2;
+    }
+
+    /**
+     * Deprecated with GML version 3.1. Use the explicit properties "lowerCorner" and "upperCorner" instead.
+     * Gets the value of the pos property.
+     */
+    @Deprecated
+    public List<DirectPositionType> getPos() {
+        if (pos == null) {
+            pos = new ArrayList<DirectPositionType>();
+        }
+        return this.pos;
+    }
+
+    /**
+     * Deprecated with GML version 3.1.0.
+     * Use the explicit properties "lowerCorner" and "upperCorner" instead.
+     * 
+     * @return
+     *     possible object is
+     *     {@link CoordinatesType }
+     *     
+     */
+    @Deprecated
+    public CoordinatesType getCoordinates() {
+        return coordinates;
+    }
+
+    /**
+     * Deprecated with GML version 3.1.0.
+     * Use the explicit properties "lowerCorner" and "upperCorner" instead.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link CoordinatesType }
+     *     
+     */
+    @Deprecated
+    public void setCoordinates(CoordinatesType value) {
+        this.coordinates = value;
+    }
+
+    /**
+     * Verify if this entry est identical to the specified object.
      */
     @Override
     public boolean equals(final Object object) {

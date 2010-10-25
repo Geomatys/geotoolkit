@@ -19,6 +19,7 @@ package org.geotoolkit.data;
 
 import java.util.EventObject;
 import org.opengis.feature.type.Name;
+import org.opengis.filter.Id;
 
 /**
  * Storage content event.
@@ -39,12 +40,14 @@ public class StorageContentEvent extends EventObject{
 
     private final Type type;
     private final Name name;
+    private Id ids;
 
-    public StorageContentEvent(Object source, Type type, Name name){
+    public StorageContentEvent(Object source, Type type, Name name, Id candidates){
         super(source);
 
         this.type = type;
         this.name = name;
+        this.ids = candidates;
     }
 
     /**
@@ -63,20 +66,31 @@ public class StorageContentEvent extends EventObject{
         return name;
     }
 
-    public static StorageContentEvent createAddEvent(Object source, Name name){
-        return new StorageContentEvent(source, Type.ADD, name);
+    /**
+     * Get the modified feature ids related to this event.
+     * This object may be null if the ids could not be retrieved.
+     * @return Id or null
+     */
+    public Id getIds() {
+        return ids;
     }
 
-    public static StorageContentEvent createUpdateEvent(Object source, Name name){
-        return new StorageContentEvent(source, Type.UPDATE, name);
+
+
+    public static StorageContentEvent createAddEvent(Object source, Name name, Id ids){
+        return new StorageContentEvent(source, Type.ADD, name, ids);
     }
 
-    public static StorageContentEvent createDeleteEvent(Object source, Name name){
-        return new StorageContentEvent(source, Type.DELETE, name);
+    public static StorageContentEvent createUpdateEvent(Object source, Name name, Id ids){
+        return new StorageContentEvent(source, Type.UPDATE, name, ids);
+    }
+
+    public static StorageContentEvent createDeleteEvent(Object source, Name name, Id ids){
+        return new StorageContentEvent(source, Type.DELETE, name, ids);
     }
 
     public static StorageContentEvent resetSource(Object source, StorageContentEvent event){
-        return new StorageContentEvent(source, event.type, event.name);
+        return new StorageContentEvent(source, event.type, event.name, event.ids);
     }
 
 }

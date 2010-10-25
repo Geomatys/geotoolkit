@@ -55,7 +55,6 @@ public class DCP implements AbstractDCP {
     @XmlElement(name = "HTTP")
     private HTTP http;
 
-    
     /**
      * Empty constructor used by JAXB.
      */
@@ -69,11 +68,19 @@ public class DCP implements AbstractDCP {
     public DCP(HTTP http){
         this.http = http;
     }
+    
     /**
      * Gets the value of the http property.
      */
     public HTTP getHTTP() {
         return http;
+    }
+
+    /**
+     * Sets the value of the http property.
+     */
+    public void setHTTP(HTTP http) {
+        this.http = http;
     }
 
     /**

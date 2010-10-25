@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.FilterFactory;
+import org.opengis.filter.Id;
 
 /**
  * Generic schema manipulation tests
@@ -76,8 +77,8 @@ public abstract class AbstractModelTests extends TestCase{
             final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
 
             //add listeners
-            SimpleListener storeListen = new SimpleListener();
-            SimpleListener sessionListen = new SimpleListener();
+            StorageCountListener storeListen = new StorageCountListener();
+            StorageCountListener sessionListen = new StorageCountListener();
             store.addStorageListener(storeListen);
             session.addStorageListener(sessionListen);
 
@@ -122,8 +123,8 @@ public abstract class AbstractModelTests extends TestCase{
             readAndWriteTest(store, nsname);
 
             //add listeners
-            storeListen = new SimpleListener();
-            sessionListen = new SimpleListener();
+            storeListen = new StorageCountListener();
+            sessionListen = new StorageCountListener();
             store.addStorageListener(storeListen);
             session.addStorageListener(sessionListen);
 
@@ -169,28 +170,6 @@ public abstract class AbstractModelTests extends TestCase{
     public void testUpdateSchemas(){
         final DataStore store = getDataStore();
         //todo, must find a way to test this in a correct way.
-    }
-
-
-    private static class SimpleListener implements StorageListener{
-
-        public int numManageEvent = 0;
-        public int numContentEvent = 0;
-        public StorageManagementEvent lastManagementEvent = null;
-        public StorageContentEvent lastContentEvent = null;
-
-        @Override
-        public void structureChanged(StorageManagementEvent event) {
-            numManageEvent++;
-            this.lastManagementEvent = event;
-        }
-
-        @Override
-        public void contentChanged(StorageContentEvent event) {
-            numContentEvent++;
-            this.lastContentEvent = event;
-        }
-
     }
 
 }

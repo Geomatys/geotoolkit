@@ -104,7 +104,15 @@ public class RecordType extends DCMIRecordType implements Record {
     public void setBoundingBox(JAXBElement<? extends BoundingBoxType> value) {
         this.boundingBox = ((JAXBElement<? extends BoundingBoxType> ) value);
     }
-    
+
+    public void setBoundingBox(BoundingBoxType bbox) {
+        if (bbox instanceof WGS84BoundingBoxType) {
+            this.boundingBox = owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType)bbox);
+        } else {
+            this.boundingBox = owsFactory.createBoundingBox(bbox);
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder(super.toString());

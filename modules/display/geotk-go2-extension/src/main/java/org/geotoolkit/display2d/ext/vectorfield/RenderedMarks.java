@@ -43,6 +43,7 @@ import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.util.XArrays;
 
 import org.geotoolkit.util.logging.Logging;
@@ -327,8 +328,11 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
                         
             MathTransform2D coverageToObjective = null;
             try {
-                coverageToObjective = (MathTransform2D) context.getMathTransform(getEnvelope().getCoordinateReferenceSystem(), context.getObjectiveCRS());
+                coverageToObjective = (MathTransform2D) context.getMathTransform(getEnvelope().getCoordinateReferenceSystem(),
+                                                                                 CRSUtilities.getCRS2D(context.getObjectiveCRS()));
             } catch (FactoryException ex) {
+                Logging.getLogger(RenderedMarks.class).log(Level.WARNING, null, ex);
+            } catch (TransformException ex) {
                 Logging.getLogger(RenderedMarks.class).log(Level.WARNING, null, ex);
             }
             /*

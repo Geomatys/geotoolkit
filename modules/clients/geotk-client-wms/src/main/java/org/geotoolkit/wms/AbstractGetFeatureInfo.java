@@ -54,11 +54,17 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
         return rawIndex;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getInfoFormat() {
         return infoFormat;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String[] getQueryLayers() {
         return queryLayers;
@@ -80,11 +86,17 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
         this.rawIndex = rawIndex;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setQueryLayers(String... layers) {
         this.queryLayers = layers;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setInfoFormat(String format) {
         this.infoFormat = format;

@@ -85,6 +85,15 @@ public class QuantityType extends AbstractDataComponentEntry implements Quantity
         this.uom = new UomPropertyType(uomCode, uomHref);
     }
 
+    /**
+     * Build a new QuantityType
+     */
+    public QuantityType(String definition, String uomCode) {
+        super(null, definition, null);
+        this.uom = new UomPropertyType(uomCode, null);
+    }
+
+
     public QuantityType(String definition, UomPropertyType uom, Double value) {
         super(definition);
         this.uom   = uom;

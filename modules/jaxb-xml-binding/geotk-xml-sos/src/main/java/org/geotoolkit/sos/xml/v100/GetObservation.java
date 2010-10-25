@@ -37,6 +37,15 @@ import org.geotoolkit.ogc.xml.v110.PropertyIsLikeType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsNullType;
 import org.geotoolkit.ogc.xml.v110.SpatialOpsType;
 import org.geotoolkit.util.Utilities;
+import org.opengis.filter.PropertyIsBetween;
+import org.opengis.filter.PropertyIsEqualTo;
+import org.opengis.filter.PropertyIsGreaterThan;
+import org.opengis.filter.PropertyIsGreaterThanOrEqualTo;
+import org.opengis.filter.PropertyIsLessThan;
+import org.opengis.filter.PropertyIsLessThanOrEqualTo;
+import org.opengis.filter.PropertyIsLike;
+import org.opengis.filter.PropertyIsNotEqualTo;
+import org.opengis.filter.PropertyIsNull;
 
 
 /**
@@ -638,6 +647,36 @@ public class GetObservation extends RequestBaseType {
         private BinaryComparisonOpType propertyIsGreaterThan;
         @XmlElement(name = "PropertyIsNull", namespace = "http://www.opengis.net/ogc")
         private PropertyIsNullType propertyIsNull;
+
+        public Result() {
+
+        }
+
+        public Result(ComparisonOpsType ops) {
+            if (ops instanceof PropertyIsLessThan) {
+                this.propertyIsLessThan = (BinaryComparisonOpType) ops;
+            } else if (ops instanceof PropertyIsGreaterThanOrEqualTo) {
+                this.propertyIsGreaterThanOrEqualTo = (BinaryComparisonOpType) ops;
+            } else if (ops instanceof PropertyIsBetween) {
+                this.propertyIsBetween = (PropertyIsBetweenType) ops;
+            } else if (ops instanceof PropertyIsEqualTo) {
+                this.propertyIsEqualTo = (BinaryComparisonOpType) ops;
+            } else if (ops instanceof PropertyIsGreaterThan) {
+                this.propertyIsGreaterThan = (BinaryComparisonOpType) ops;
+            } else if (ops instanceof PropertyIsLessThan) {
+                this.propertyIsLessThan = (BinaryComparisonOpType) ops;
+            } else if (ops instanceof PropertyIsLessThanOrEqualTo) {
+                this.propertyIsLessThanOrEqualTo = (BinaryComparisonOpType) ops;
+            } else if (ops instanceof PropertyIsLike) {
+                this.propertyIsLike = (PropertyIsLikeType) ops;
+            } else if (ops instanceof PropertyIsNotEqualTo) {
+                this.propertyIsNotEqualTo = (BinaryComparisonOpType) ops;
+            } else if (ops instanceof PropertyIsNull) {
+                this.propertyIsNull = (PropertyIsNullType) ops;
+            } else {
+                comparisonOps = ops;
+            }
+        }
 
         /**
          * Gets the value of the comparisonOps property.

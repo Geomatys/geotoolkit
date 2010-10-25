@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,11 +19,9 @@ package org.geotoolkit.feature;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.type.DefaultFeatureTypeFactory;
 import org.geotoolkit.filter.function.other.OtherFunctionFactory;
 import org.geotoolkit.filter.IllegalFilterException;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -149,7 +147,7 @@ public class AttributeTypeBuilder {
      */
     public AttributeTypeBuilder(final FeatureTypeFactory factory) {
         if(factory == null){
-            this.factory = new DefaultFeatureTypeFactory();
+            this.factory = FactoryFinder.getFeatureTypeFactory(null);
         }else{
             this.factory = factory;
         }

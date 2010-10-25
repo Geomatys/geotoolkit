@@ -350,7 +350,7 @@ public class ShapefileDataStore extends AbstractDataStore{
             try {
                 final SimpleFeatureType newSchema = (SimpleFeatureType) FeatureTypeUtilities.createSubType(
                         schema, propertyNames);
-
+               
                 FeatureReader reader = createFeatureReader(typeName,getAttributesReader(false,read3D,resample), newSchema,hints);
                 final QueryBuilder remaining = new QueryBuilder(query.getTypeName());
                 remaining.setProperties(query.getPropertyNames());
