@@ -133,7 +133,11 @@ final class NewGridCoverageIterator {
             input = reader.getInput();
             disposeReader = false;
         } else {
-            reader = XImageIO.getReaderBySuffix(input, true, false);
+            /*
+             * If there is a controller, then 'seekForwardOnly' must be set to 'false' in order
+             * to allow the call to ImageReader.getNumImages(true) inside the controller block.
+             */
+            reader = XImageIO.getReaderBySuffix(input, controller == null, false);
             disposeReader = true;
         }
         /*

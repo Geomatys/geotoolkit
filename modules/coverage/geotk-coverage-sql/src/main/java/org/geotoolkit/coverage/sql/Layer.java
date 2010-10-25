@@ -152,26 +152,26 @@ public interface Layer {
      * <p>
      * <table>
      *   <tr>
-     *     <th>Key</th>
-     *     <th>Value type</th>
-     *     <th>Description</th>
+     *     <th nowrap>Key</th>
+     *     <th nowrap>Value type</th>
+     *     <th nowrap>Description</th>
      *   </tr>
-     *   <tr>
+     *   <tr valign="top">
      *     <td>{@code "size"}</td>
      *     <td>{@link java.awt.Dimension}</td>
      *     <td>The image size, in pixels.</td>
      *   </tr>
-     *   <tr>
+     *   <tr valign="top">
      *     <td>{@code "font"}</td>
      *     <td>{@link java.awt.Font}</td>
      *     <td>The font to use for rendering graduation labels.</td>
      *   </tr>
-     *   <tr>
+     *   <tr valign="top">
      *     <td>{@code "foreground"}</td>
      *     <td>{@link java.awt.Color}</td>
      *     <td>The color to use for rendering graduation labels.</td>
      *   </tr>
-     *   <tr>
+     *   <tr valign="top">
      *     <td>{@code "graphics"}</td>
      *     <td>{@link java.awt.Graphics2D}</td>
      *     <td>In provided, paints the image using the given graphics handle instead than
