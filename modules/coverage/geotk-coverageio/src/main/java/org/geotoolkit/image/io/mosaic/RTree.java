@@ -34,6 +34,7 @@ import java.io.IOException;
 
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.Cloneable;
 
 
 /**
@@ -51,7 +52,7 @@ import org.geotoolkit.util.logging.Logging;
  * @since 2.5
  * @module
  */
-final class RTree {
+final class RTree implements Cloneable {
     /**
      * The logger for debugging information.
      */

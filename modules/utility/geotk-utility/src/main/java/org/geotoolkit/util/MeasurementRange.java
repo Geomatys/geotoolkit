@@ -215,7 +215,7 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
      * then the specified target units are simply assigned to the returned range with no
      * other changes.
      *
-     * @param  targetUnits the target units.
+     * @param  targetUnits the target units, or {@code null} for keeping the units unchanged.
      * @return The converted range, or {@code this} if no conversion is needed.
      * @throws ConversionException if the target units are not compatible with
      *         this {@linkplain #getUnits range units}.
@@ -268,19 +268,18 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
      *
      * @param  type The class to cast to. Must be one of {@link Byte}, {@link Short},
      *             {@link Integer}, {@link Long}, {@link Float} or {@link Double}.
-     * @param  targetUnit the target units.
+     * @param  targetUnit the target units, or {@code null} for no change.
      * @return The casted range, or {@code this}.
      * @throws ConversionException if the target units are not compatible with
      *         this {@linkplain #getUnits range units}.
      */
+    @SuppressWarnings("unchecked")
     private <N extends Number & Comparable<? super N>> MeasurementRange<N>
             convertAndCast(final Class<N> type, final Unit<?> targetUnits) throws ConversionException
     {
         if (targetUnits == null || targetUnits.equals(units)) {
             if (type.equals(elementClass)) {
-                @SuppressWarnings("unchecked")
-                final MeasurementRange<N> result = (MeasurementRange<N>) this;
-                return result;
+                return (MeasurementRange<N>) this;
             } else {
                 return new MeasurementRange<N>(type, this, units);
             }

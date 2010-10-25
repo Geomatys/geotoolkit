@@ -84,7 +84,7 @@ public final class Semaphores {
     public static boolean queryAndSet(final int flag) {
         Semaphores s = FLAGS.get();
         if (s == null) {
-            s = new Semaphores();
+            s = new Semaphores(); // NOSONAR
             FLAGS.set(s);
         }
         final boolean isSet = ((s.flags & flag) != 0);

@@ -29,8 +29,10 @@ The Geotoolkit.org library
 
 * News
 
-  Latest Geotoolkit.org monthly release is Geotk-3.14, released August 5, 2010.
-  This release depends on GeoAPI 2.3-M9.
+  Latest Geotoolkit.org monthly release is Geotk-3.15, released October 4, 2010.
+  This release depends on GeoAPI 2.3-M9. It is probably the last release to use
+  the <<<javax.measure>>> package name of units of measurement. The next package
+  will be {{{http://www.unitsofmeasurement.org/}org.unitsofmeasurement}}.
 
 
 * License

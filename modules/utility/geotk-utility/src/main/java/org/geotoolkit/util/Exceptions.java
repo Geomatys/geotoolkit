@@ -39,7 +39,9 @@ import org.geotoolkit.io.ExpandedTabWriter;
  * Utilities methods for dealing with exceptions.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.01
+ * @version 3.16
+ *
+ * @see org.geotoolkit.gui.swing.ExceptionMonitor
  *
  * @since 2.0
  * @module
@@ -184,8 +186,8 @@ public final class Exceptions {
         /*
          * Proceeds to draw all the previously calculated glyphs.
          */
-        float xpos = (float) (0.5 * (widgetBounds.width - width));
-        float ypos = (float) (0.5 * (widgetBounds.height - height));
+        float xpos = widgetBounds.x + (float) (0.5 * Math.max(0, widgetBounds.width  - width));
+        float ypos = widgetBounds.y + (float) (0.5 * Math.max(0, widgetBounds.height - height));
         final int size = glyphs.size();
         for (int i = 0; i < size; i++) {
             final GlyphVector line = glyphs.get(i);

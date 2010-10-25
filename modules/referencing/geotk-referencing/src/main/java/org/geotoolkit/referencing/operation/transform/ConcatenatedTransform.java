@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.ArrayList;
 import java.io.Serializable;
 import java.awt.geom.Point2D;
-import java.awt.geom.AffineTransform;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.ParameterValueGroup;
@@ -36,7 +35,6 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
-import org.geotoolkit.referencing.operation.matrix.Matrix3;
 import org.geotoolkit.internal.referencing.Semaphores;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.io.wkt.Formattable;
@@ -123,20 +121,6 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
                     Errors.Keys.CANT_CONCATENATE_TRANSFORMS_$2,
                     getName(transform1), getName(transform2)));
         }
-    }
-
-    /**
-     * Returns the underlying matrix for the specified transform,
-     * or {@code null} if the matrix is unavailable.
-     */
-    private static Matrix getMatrix(final MathTransform transform) {
-        if (transform instanceof LinearTransform) {
-            return ((LinearTransform) transform).getMatrix();
-        }
-        if (transform instanceof AffineTransform) {
-            return new Matrix3((AffineTransform) transform);
-        }
-        return null;
     }
 
     /**

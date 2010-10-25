@@ -33,6 +33,7 @@ import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.EllipsoidalCS;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Matrix;
 
@@ -216,13 +217,21 @@ class DiscreteCS implements CoordinateSystem, GridGeometry, Serializable {
     @Override
     public final synchronized MathTransform getGridToCRS() {
         if (gridToCRS == null) {
-            final Matrix matrix = DiscreteReferencingFactory.getAffineTransform(axes);
-            if (matrix == null) {
-                throw new UnsupportedOperationException(Errors.format(Errors.Keys.NOT_AN_AFFINE_TRANSFORM));
-            }
-            gridToCRS = ProjectiveTransform.create(matrix);
+            gridToCRS = getGridToCRS(null);
         }
         return gridToCRS;
+    }
+
+    /**
+     * Computes the <cite>grid to CRS</cite> transform using the given CRS for converting dates
+     * to numerical values. This method assumes that all axes are regular (this is not verified).
+     */
+    final MathTransform getGridToCRS(final CoordinateReferenceSystem crs) {
+        final Matrix matrix = DiscreteReferencingFactory.getAffineTransform(crs, axes);
+        if (matrix == null) {
+            throw new UnsupportedOperationException(Errors.format(Errors.Keys.NOT_AN_AFFINE_TRANSFORM));
+        }
+        return ProjectiveTransform.create(matrix);
     }
 
     /**

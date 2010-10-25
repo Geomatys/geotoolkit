@@ -88,6 +88,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-display</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>postgresql</groupId>
       <artifactId>postgresql</artifactId>
       <scope>test</scope>
@@ -95,11 +101,22 @@
   </dependencies>
 
 
-  <!-- ==================================================== -->
-  <!--     Compilation                                      -->
-  <!--     Reuse some test files from the coverage module.  -->
-  <!-- ==================================================== -->
+  <!-- ===================================================== -->
+  <!--     Resources management                              -->
+  <!--                                                       -->
+  <!--     Exclude a resource file which is not in wide use. -->
+  <!--     Reuse some test files from the coverage module.   -->
+  <!-- ===================================================== -->
   <build>
+    <resources>
+      <resource>
+        <directory>org/geotoolkit/coverage/sql</directory>
+        <excludes>
+          <exclude>upgrade-2.0.sql</exclude>
+        </excludes>
+      </resource>
+    </resources>
+
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>

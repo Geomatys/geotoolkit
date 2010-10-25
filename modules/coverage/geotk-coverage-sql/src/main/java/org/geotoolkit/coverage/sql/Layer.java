@@ -18,11 +18,13 @@
 package org.geotoolkit.coverage.sql;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.Collection;
+import java.awt.image.RenderedImage;
 
 import org.opengis.metadata.extent.GeographicBoundingBox;
 
@@ -41,30 +43,12 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
  * {@code Layer} instances are immutable and thread-safe.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.12
+ * @version 3.16
  *
  * @since 3.10 (derived from Seagis)
  * @module
  */
 public interface Layer {
-    /**
-     * Returns the name of this layer.
-     *
-     * @return The layer name.
-     */
-    String getName();
-
-    /**
-     * Returns a layer to use as a fallback if no data is available in this layer for a given
-     * position. For example if no data is available in a weekly averaged <cite>Sea Surface
-     * Temperature</cite> (SST) coverage because a location is masked by clouds, we may want
-     * to look in the mounthly averaged SST coverage as a fallback.
-     *
-     * @return The fallback layer, or {@code null} if none.
-     * @throws CoverageStoreException If an error occurred while fetching the information.
-     */
-    Layer getFallback() throws CoverageStoreException;
-
     /**
      * Returns the database which created this layer, or {@code null} if unknown.
      * The returned value is never null except when this {@code Layer} is the result
@@ -75,6 +59,13 @@ public interface Layer {
      * @since 3.12
      */
     CoverageDatabase getCoverageDatabase();
+
+    /**
+     * Returns the name of this layer.
+     *
+     * @return The layer name.
+     */
+    String getName();
 
     /**
      * Returns the number of coverages in this layer.
@@ -111,25 +102,100 @@ public interface Layer {
     SortedSet<Number> getAvailableElevations() throws CoverageStoreException;
 
     /**
-     * Returns the ranges of valid <cite>geophysics</cite> values for each band. If some
-     * coverages found in this layer have different range of values, then this method
-     * returns the union of their ranges.
+     * Returns the ranges of valid <cite>geophysics</cite> values for each band. The length of
+     * the returned list is the maximal number of bands in all coverages. If some coverages
+     * found in this layer have different range of values, then this method returns the union
+     * of their ranges.
      *
-     * @return The range of valid sample values.
+     * @return The range of valid sample values for each bands.
      * @throws CoverageStoreException If an error occurred while fetching the information.
      */
     List<MeasurementRange<?>> getSampleValueRanges() throws CoverageStoreException;
 
     /**
-     * Returns the typical pixel resolution in this layer.
-     * Values are in the unit of the main CRS used by the database (typically degrees
-     * of longitude and latitude for the horizontal part, and days for the temporal part).
-     * Some elements of the returned array may be {@link Double#NaN NaN} if they are unnkown.
+     * Creates a color ramp for the coverages in this layer. This method searches for a
+     * {@linkplain org.geotoolkit.coverage.Category category} which intersect the given
+     * range. Then, an image is created with the colors from that category and optionally
+     * a graduation for the given range.
+     * <p>
+     * Note that the default implementation of this method requires the optional
+     * <a href="http://www.geotoolkit.org/modules/display/geotk-display">{@code geotk-display}</a>
+     * module to be on reachable the classpath.
      *
-     * @return The typical pixel resolution.
-     * @throws CoverageStoreException if an error occurred while fetching the resolution.
+     * {@note There is usually only one quantitative category for a layer. However if more
+     * than one quantitative category is found, the one which seems the "best fit" for the
+     * given range is selected. The definition of "best fit" is implementation-dependent.}
+     *
+     * The range given to this method is typically the following value:
+     *
+     * {@preformat java
+     *     MeasurementRange<?> range = getSampleValueRanges().get(band);
+     * }
+     *
+     * However a different value can be specified, typically in the following situations:
+     * <p>
+     * <ul>
+     *   <li>When no graduation is desired, the range can be {@code null}.</li>
+     *   <li>When the same range needs to be expressed in different units.
+     *       In such case, the value given to this method can be computed by
+     *       <code>range.{@linkplain MeasurementRange#convertTo convertTo}(displayUnit)</code>.</li>
+     *   <li>When the caller want to apply the color palette on a subrange of the layer range.
+     *       In such case, the range given to this method can be the subrange of interest.
+     *       Note that it is caller responsibility to apply a corresponding
+     *       {@link org.geotoolkit.coverage.processing.ColorMap} operation on the
+     *       {@linkplain GridCoverageReference#read coverage read}.</li>
+     * </ul>
+     * <p>
+     * This method accepts an optional map of properties, which provide more control on
+     * the image to be generated. Current implementation recognizes the following entries
+     * (all other entries are silently ignored):
+     * <p>
+     * <table>
+     *   <tr>
+     *     <th nowrap>Key</th>
+     *     <th nowrap>Value type</th>
+     *     <th nowrap>Description</th>
+     *   </tr>
+     *   <tr valign="top">
+     *     <td>{@code "size"}</td>
+     *     <td>{@link java.awt.Dimension}</td>
+     *     <td>The image size, in pixels.</td>
+     *   </tr>
+     *   <tr valign="top">
+     *     <td>{@code "font"}</td>
+     *     <td>{@link java.awt.Font}</td>
+     *     <td>The font to use for rendering graduation labels.</td>
+     *   </tr>
+     *   <tr valign="top">
+     *     <td>{@code "foreground"}</td>
+     *     <td>{@link java.awt.Color}</td>
+     *     <td>The color to use for rendering graduation labels.</td>
+     *   </tr>
+     *   <tr valign="top">
+     *     <td>{@code "graphics"}</td>
+     *     <td>{@link java.awt.Graphics2D}</td>
+     *     <td>In provided, paints the image using the given graphics handle instead than
+     *         creating a new image. In such case, this method returns {@code null}.</td>
+     *   </tr>
+     * </table>
+     *
+     * @param  band The band for which to create a color ramp, from 0 inclusive to
+     *         <code>{@linkplain #getSampleValueRanges()}.size()</code> exclusive.
+     * @param  range The range for the graduation, or {@code null} if no graduation
+     *         should be written. See the above javadoc for a suggested value.
+     * @param  properties An optional map of properties controlling the rendering.
+     *         See the above javadoc for a description of expected entries.
+     * @return The color ramp as an image, or {@code null} if none.
+     * @throws IllegalArgumentException If the units of the given range are incompatible
+     *         with the units of measurement found in this layer.
+     * @throws CoverageStoreException If an error occurred while creating the color ramp.
+     *
+     * @see org.geotoolkit.gui.swing.image.ColorRamp
+     *
+     * @since 3.16
      */
-    double[] getTypicalResolution() throws CoverageStoreException;
+    RenderedImage getColorRamp(int band, MeasurementRange<?> range, Map<String,?> properties)
+            throws CoverageStoreException, IllegalArgumentException;
 
     /**
      * Returns the image format used by the coverages in this layer, sorted by decreasing frequency
@@ -153,6 +219,18 @@ public interface Layer {
     SortedSet<File> getImageDirectories() throws CoverageStoreException;
 
     /**
+     * Returns the typical pixel resolution in this layer. Values are in the unit of the
+     * {@linkplain CoverageDatabase#getCoordinateReferenceSystem() main CRS used by the database}
+     * (typically degrees of longitude and latitude for the horizontal part, and days for the
+     * temporal part). Some elements of the returned array may be {@link Double#NaN NaN} if
+     * they are unknown.
+     *
+     * @return The typical pixel resolution.
+     * @throws CoverageStoreException if an error occurred while fetching the resolution.
+     */
+    double[] getTypicalResolution() throws CoverageStoreException;
+
+    /**
      * Returns the grid geometries used by the coverages in this layer, sorted by decreasing
      * frequency of use. The grid geometries may be 2D, 3D or 4D, including the vertical and
      * temporal ranges if any. The Coordinate Reference System is the one declared in the
@@ -166,7 +244,7 @@ public interface Layer {
     /**
      * Returns the geographic bounding box, or {@code null} if unknown. If the CRS used by
      * the database is not geographic (for example if it is a projected CRS), then this method
-     * will transform the layer envelope to a geographic CRS.
+     * will transform the layer envelope from the layer CRS to a geographic CRS.
      *
      * @return The layer geographic bounding box, or {@code null} if none.
      * @throws CoverageStoreException if an error occurred while querying the database
@@ -177,7 +255,7 @@ public interface Layer {
     GeographicBoundingBox getGeographicBoundingBox() throws CoverageStoreException;
 
     /**
-     * Returns the envelope of this layer, optionnaly centered at the given date and
+     * Returns the envelope of this layer, optionally centered at the given date and
      * elevation. Callers are free to modify the returned instance before to pass it
      * to the {@code getCoverageReference} methods.
      *
@@ -257,4 +335,15 @@ public interface Layer {
      */
     void addCoverageReferences(Collection<?> files, CoverageDatabaseController controller)
             throws DatabaseVetoException, CoverageStoreException;
+
+    /**
+     * Returns a layer to use as a fallback if no data is available in this layer for a given
+     * position. For example if no data is available in a weekly averaged <cite>Sea Surface
+     * Temperature</cite> (SST) coverage because a location is masked by clouds, we may want
+     * to look in the monthly averaged SST coverage as a fallback.
+     *
+     * @return The fallback layer, or {@code null} if none.
+     * @throws CoverageStoreException If an error occurred while fetching the information.
+     */
+    Layer getFallback() throws CoverageStoreException;
 }

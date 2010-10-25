@@ -56,7 +56,7 @@ public final class AboutTest extends SwingBase<About> {
      * Creates the widget.
      */
     @Override
-    protected About create() {
+    protected About create(final int index) {
         return new About();
     }
 

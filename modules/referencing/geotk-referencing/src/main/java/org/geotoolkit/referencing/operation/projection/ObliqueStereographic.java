@@ -81,7 +81,7 @@ public class ObliqueStereographic extends Stereographic {
     private static final double ITERATION_TOLERANCE = 1E-14;
 
     /**
-     * Contstants used in the forward and inverse gauss methods.
+     * Constants used in the forward and inverse gauss methods.
      */
     private final double C, K, ratexp;
 
@@ -98,7 +98,7 @@ public class ObliqueStereographic extends Stereographic {
     protected ObliqueStereographic(final Parameters parameters) {
         super(parameters, parameters.latitudeOfOrigin);
         final double cphi = cosphi0 * cosphi0;
-        final double R2 = 2 * sqrt(1-excentricitySquared) / (1 - excentricitySquared*(sinphi0*sinphi0));
+        final double r = 2 * sqrt(1-excentricitySquared) / (1 - excentricitySquared*(sinphi0*sinphi0));
         C      = sqrt(1 + excentricitySquared*(cphi*cphi) / (1 - excentricitySquared));
         phic0  = asin(sinphi0 / C);
         sinc0  = sin(phic0);
@@ -112,7 +112,7 @@ public class ObliqueStereographic extends Stereographic {
          */
         parameters.normalize(true).scale(C, 1);
         parameters.validate();
-        parameters.normalize(false).scale(R2, R2);
+        parameters.normalize(false).scale(r, r);
         finish();
     }
 

@@ -213,29 +213,6 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
     }
 
     /**
-     * Returns the dimension slice which has been assigned to the given API, or {@code null}
-     * if none. This method returns the last {@code DimensionSlice} instance created by the
-     * {@link #newDimensionSlice()} method on which the {@link DimensionSlice#setAPI setAPI}
-     * method has been invoked with the given {@code api} value.
-     * <p>
-     * This method is typically invoked by {@link SpatialImageReader} implementations together
-     * with {@link DimensionSlice#findDimensionIndex(Iterable)} in order to locate the index of
-     * the dimension to read as bands. See <cite>Assigning a third dimension to bands</cite> in
-     * the <a href="#skip-navbar_top">class javadoc</a>.
-     *
-     * @param  api The API for which to test if a dimension slice has been assigned.
-     * @return The dimension slice assigned to the given API, or {@code null} if none.
-     *
-     * @since 3.08
-     *
-     * @deprecated Replaced by the {@link MultidimensionalImageStore} interface.
-     */
-    @Deprecated
-    public DimensionSlice getDimensionSliceForAPI(final DimensionSlice.API api) {
-        return (dimensionSlices != null) ? (DimensionSlice) dimensionSlices.get(api) : null;
-    }
-
-    /**
      * Returns the dimension slice identified by at least one of the given identifiers. This is
      * relevant mostly for <var>n</var>-dimensional dataset where <var>n</var>&gt;2. The dimension
      * can be identified by a zero-based index as an {@link Integer}, a dimension name as a

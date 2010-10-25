@@ -50,7 +50,7 @@ public final class AuthorityCodesComboBoxTest extends SwingBase<AuthorityCodesCo
      */
     @Override
     @SuppressWarnings("unchecked")
-    protected AuthorityCodesComboBox create() throws FactoryException {
+    protected AuthorityCodesComboBox create(final int index) throws FactoryException {
         AuthorityCodesComboBox chooser;
         try {
             final CRSAuthorityFactory factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", null);

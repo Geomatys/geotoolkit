@@ -48,8 +48,8 @@ import org.jdesktop.swingx.JXLabel;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.util.Exceptions;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.internal.GraphicsUtilities;
 import org.geotoolkit.internal.swing.SwingUtilities;
 
 
@@ -68,6 +68,7 @@ import org.geotoolkit.internal.swing.SwingUtilities;
  * @version 3.11
  *
  * @see org.jdesktop.swingx.JXErrorPane
+ * @see Exceptions
  *
  * @since 1.0
  * @module
@@ -120,12 +121,15 @@ public final class ExceptionMonitor {
      * to write it rather than leaving an empty window.
      *
      * @param graphics Graphics context in which to write exception. The graphics context should
-     *        be in its initial state (default affine transform, default colour, etc...)
+     *        be in its initial state (default affine transform, default color, etc...)
      * @param widgetBounds Size of the trace which was being drawn.
      * @param exception Exception whose trace we want to write.
+     *
+     * @deprecated Moved to the {@link Exceptions} utility class.
      */
+    @Deprecated
     public static void paintStackTrace(Graphics2D graphics, Rectangle widgetBounds, Throwable exception) {
-        GraphicsUtilities.paintStackTrace(graphics, widgetBounds, exception);
+        Exceptions.paintStackTrace(graphics, widgetBounds, exception);
     }
 
     /**
@@ -288,7 +292,7 @@ public final class ExceptionMonitor {
                 for (Throwable cause = exception; cause != null; cause = cause.getCause()) {
                     final JTextArea text = new JTextArea();
                     text.setTabSize(4);
-                    text.setText(GraphicsUtilities.printStackTrace(cause));
+                    text.setText(Exceptions.formatStackTrace(cause));
                     text.setEditable(false);
                     text.setCaretPosition(0);
                     final JScrollPane scroll = new JScrollPane(text);

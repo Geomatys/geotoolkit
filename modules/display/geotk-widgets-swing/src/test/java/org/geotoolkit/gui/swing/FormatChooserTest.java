@@ -41,7 +41,7 @@ public final class FormatChooserTest extends SwingBase<FormatChooser> {
      * Creates the widget.
      */
     @Override
-    protected FormatChooser create() {
+    protected FormatChooser create(final int index) {
         return new FormatChooser(new AngleFormat());
     }
 }

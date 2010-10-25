@@ -761,7 +761,7 @@ public class OperationJAI extends Operation2D {
                     result[numBands] = sampleDim;
                     continue;
                 }
-                categoryArray       = (Category[]) categories.toArray();
+                categoryArray       = (Category[]) categories.toArray(); // NOSONAR
                 indexOfQuantitative = getQuantitative(categoryArray);
                 if (indexOfQuantitative < 0) {
                     return null;

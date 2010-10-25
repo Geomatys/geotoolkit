@@ -31,6 +31,7 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 
 import java.util.Map;
+import java.util.Locale;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -53,7 +54,7 @@ import org.geotoolkit.internal.coverage.CoverageUtilities;
  * <p>&nbsp;</p>
  *
  * @author Martin Desruisseaux (MPO, IRD)
- * @version 3.10
+ * @version 3.16
  *
  * @since 1.1
  * @module
@@ -63,6 +64,7 @@ public class ColorRamp extends JComponent {
     /**
      * The object to use for painting the color ramp.
      */
+    @SuppressWarnings("serial")
     private final class Painter extends org.geotoolkit.internal.image.ColorRamp {
         /** Tells the painter that we want to be informed about color changes. */
         @Override protected boolean reportColorChanges() {
@@ -74,6 +76,11 @@ public class ColorRamp extends JComponent {
                 final SampleDimension band, final double minimum, final double maximum)
         {
             return ColorRamp.this.createGraduation(reuse, band, minimum, maximum);
+        }
+
+        /** Uses the widget locale for formatting error messages and graduation labels. */
+        @Override public Locale getLocale() {
+            return ColorRamp.this.getLocale();
         }
     }
 
@@ -168,7 +175,7 @@ public class ColorRamp extends JComponent {
      * @see #getColors()
      * @see #getGraduation()
      */
-    public boolean setColors(final Color[] colors) {
+    public boolean setColors(final Color... colors) {
         return fireColorChange(painter.setColors(colors));
     }
 
@@ -186,7 +193,7 @@ public class ColorRamp extends JComponent {
      *
      * @since 3.09
      */
-    public boolean setColors(final int[] colors) {
+    public boolean setColors(final int... colors) {
         return fireColorChange(painter.setColors(colors));
     }
 
@@ -270,6 +277,38 @@ public class ColorRamp extends JComponent {
     }
 
     /**
+     * Returns {@code true} if the colors are interpolated at rendering time. If {@code false},
+     * only the colors given to the {@code setColors(...)} method will be used: the color ramp
+     * will be painted using rectangles of uniform colors. If {@code true}, then a linear
+     * interpolation will be used between every colors given to the {@code setColors(...)}
+     * method.
+     *
+     * @return Whatever the colors will be interpolated at rendering time.
+     *
+     * @since 3.16
+     */
+    public boolean isInterpolationEnabled() {
+        return painter.interpolationEnabled;
+    }
+
+    /**
+     * Sets whatever the colors should be interpolated at rendering time.
+     * If this method is never invoked, then the default value is {@code true}.
+     *
+     * @param enabled Whatever the colors will be interpolated at rendering time.
+     *
+     * @since 3.16
+     */
+    public void setInterpolationEnabled(final boolean enabled) {
+        final boolean old = painter.interpolationEnabled;
+        painter.interpolationEnabled = enabled;
+        if (old != enabled) {
+            firePropertyChange("interpolationEnabled", old, enabled);
+            repaint();
+        }
+    }
+
+    /**
      * Returns the component's orientation (horizontal or vertical). It should be one of the
      * following constants: {@link SwingConstants#HORIZONTAL} or {@link SwingConstants#VERTICAL}.
      *
@@ -350,7 +389,7 @@ public class ColorRamp extends JComponent {
      * {@link org.geotoolkit.display.axis.NumberGraduation} or
      * {@link org.geotoolkit.display.axis.LogarithmicNumberGraduation}.
      * <p>
-     * In every cases, this method must set graduations's
+     * In every cases, this method must set graduations
      * {@linkplain org.geotoolkit.display.axis.AbstractGraduation#setMinimum minimum},
      * {@linkplain org.geotoolkit.display.axis.AbstractGraduation#setMaximum maximum} and
      * {@linkplain org.geotoolkit.display.axis.AbstractGraduation#setUnit unit}
@@ -358,14 +397,15 @@ public class ColorRamp extends JComponent {
      *
      * @param  reuse   The graduation to reuse if possible.
      * @param  band    The sample dimension to create graduation for.
-     * @param  minimum The minimal geophysics value to appears in the graduation.
-     * @param  maximum The maximal geophysics value to appears in the graduation.
+     * @param  minimum The minimal geophysics value to appear in the graduation.
+     * @param  maximum The maximal geophysics value to appear in the graduation.
      * @return A graduation for the supplied sample dimension.
      */
     protected Graduation createGraduation(final Graduation reuse, final SampleDimension band,
                                           final double minimum, final double maximum)
     {
-        return Painter.createDefaultGraduation(reuse, band, minimum, maximum);
+        return Painter.createDefaultGraduation(reuse, band.getSampleToGeophysics(),
+                minimum, maximum, band.getUnits(), getLocale());
     }
 
     /**

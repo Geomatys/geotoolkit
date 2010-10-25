@@ -39,6 +39,9 @@ import static org.junit.Assume.*;
 
 /**
  * Base class (when possible) for tests requerying a NetCDF file.
+ * Those tests require large test files. For more information, see:
+ * <p>
+ * <a href="http://hg.geotoolkit.org/geotoolkit/raw-file/tip/modules/coverage/geotk-coverage-sql/src/test/resources/Tests/README.html">About large test files</a>
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.15

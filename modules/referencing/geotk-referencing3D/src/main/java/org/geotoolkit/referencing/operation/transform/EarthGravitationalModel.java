@@ -296,7 +296,7 @@ public class EarthGravitationalModel extends VerticalTransform {
      * to read the coefficient from an other source than an ASCII file in some future
      * version.
      */
-    private final void initialize() {
+    private void initialize() {
         /*
          * MODIFY CNM EVEN ZONAL COEFFICIENTS.
          */
@@ -415,7 +415,7 @@ public class EarthGravitationalModel extends VerticalTransform {
      * @param  nmax The order in the range [2 .. 180].
      * @return The hash code, or 0 if an argument is invalid.
      */
-    private static final int hashCode(final boolean isWGS84, int nmax) {
+    private static int hashCode(final boolean isWGS84, int nmax) {
         if (!isWGS84) {
             nmax = ~nmax;
         }

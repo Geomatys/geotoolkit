@@ -130,7 +130,7 @@ final class LoggingTableModel extends Handler implements TableModel {
          * @return The value at the given column.
          */
         public Object getValueAt(final LoggingTableModel owner, final int columnIndex) {
-            if (time == ADDITIONAL_LINES) { // Intentional identity comparisons, not String.equals
+            if (time == ADDITIONAL_LINES) { // NOSONAR (Intentional identity comparisons, not String.equals)
                 switch (columnIndex) {
                     // The Level as Integer will be handled specially by
                     // LoggingPanel.Highlighter.isHighlighted(...).

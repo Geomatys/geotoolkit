@@ -49,7 +49,7 @@ public final class SampleDimensionPanelTest extends SwingBase<SampleDimensionPan
      * Creates the widget.
      */
     @Override
-    protected SampleDimensionPanel create() {
+    protected SampleDimensionPanel create(final int index) {
         final GridSampleDimension band1 = new GridSampleDimension("Temperature",
             new Category[] {
                 new Category("No data",     null, 0),

@@ -25,7 +25,7 @@ import org.apache.maven.project.MavenProject;
 
 
 /**
- * Modifies the home page in order to insert the Geotoolkit mascot.
+ * Modifies the home page in order to insert the Geotoolkit.org mascot.
  * Maven invocation syntax is:
  *
  * <blockquote><code>mvn org.geotoolkit.project:geotk-site:home --non-recursive</code></blockquote>
@@ -40,9 +40,9 @@ import org.apache.maven.project.MavenProject;
  */
 public class HomePageMojo extends AbstractMojo {
     /**
-     * The file encoding.
+     * The encoding of HTML pages.
      */
-    private static final String ENCODING = "UTF-8";
+    static final String ENCODING = "UTF-8";
 
     /**
      * The Maven project running this plugin.

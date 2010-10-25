@@ -65,8 +65,9 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.math.XMath;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
+
+import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingError;
 
 
 /**
@@ -288,7 +289,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
             if (entry != null) {
                 final DiscoveryAccessor accessor = new DiscoveryAccessor(metadata) {
                     @Override protected double nice(final double value) {
-                        return GridCoverageLoader.nice(value);
+                        return fixRoundingError(value);
                     }
                 };
                 accessor.setGeographicElement(entry.getGeographicBoundingBox());
@@ -324,7 +325,8 @@ final class GridCoverageLoader extends ImageCoverageReader {
                  * Add the range of geophysics values to the metadata.
                  */
                 band = band.geophysics(true);
-                accessor.setValueRange(nice(band.getMinimumValue()), nice(band.getMaximumValue()));
+                accessor.setValueRange(fixRoundingError(band.getMinimumValue()),
+                                       fixRoundingError(band.getMaximumValue()));
                 accessor.setUnits(band.getUnits());
                 /*
                  * Add the range of sample values to the metadata. Those values should
@@ -360,7 +362,8 @@ final class GridCoverageLoader extends ImageCoverageReader {
                  * Add the transfert function.
                  */
                 if (tf != null) {
-                    accessor.setTransfertFunction(nice(tf.scale), nice(tf.offset), tf.type);
+                    accessor.setTransfertFunction(fixRoundingError(tf.scale),
+                                                  fixRoundingError(tf.offset), tf.type);
                 }
             }
         }
@@ -520,22 +523,12 @@ final class GridCoverageLoader extends ImageCoverageReader {
     }
 
     /**
-     * Converts the given number into something nicer to display. This is used only for
-     * formatting attributes in {@link IIOMetadata} and is not used for computation purpose.
-     */
-    private static double nice(final double value) {
-        final double t1 = value * 3600000;
-        final double t2 = XMath.roundIfAlmostInteger(t1, 12);
-        return (t1 != t2) ? t2 / 3600000 : value;
-    }
-
-    /**
-     * Invokes {@link #nice(double)} for all elements in the given array.
+     * Invokes {@code fixRoundingError(double)} for all elements in the given array.
      * Values in the given array will be modified in-place.
      */
     private static double[] nice(final double[] values) {
         for (int i=0; i<values.length; i++) {
-            values[i] = nice(values[i]);
+            values[i] = fixRoundingError(values[i]);
         }
         return values;
     }

@@ -154,9 +154,8 @@ final class FactoryPrinter implements Comparator<Class<?>> {
                     final Citation authority = ((AuthorityFactory) provider).getAuthority();
                     final Iterator<? extends Identifier> identifiers =
                             authority.getIdentifiers().iterator();
-                    final String identifier = identifiers.hasNext()
-                            ? identifiers.next().getCode().toString()
-                            : authority.getTitle().toString(locale);
+                    final String identifier = identifiers.hasNext() ?
+                            identifiers.next().getCode() : authority.getTitle().toString(locale);
 
                     authorities.append(identifier);
                 }

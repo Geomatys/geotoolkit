@@ -40,7 +40,7 @@ public final class MosaicChooserTest extends SwingBase<MosaicChooser> {
      * Creates the widget.
      */
     @Override
-    protected MosaicChooser create() {
+    protected MosaicChooser create(final int index) {
         return new MosaicChooser();
     }
 }

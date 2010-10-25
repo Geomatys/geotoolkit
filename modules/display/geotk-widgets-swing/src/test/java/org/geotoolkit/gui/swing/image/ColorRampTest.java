@@ -19,11 +19,11 @@ package org.geotoolkit.gui.swing.image;
 
 import java.awt.Color;
 import javax.measure.unit.SI;
+import javax.swing.SwingConstants;
 import static java.awt.Color.*;
 
 import org.geotoolkit.test.gui.SwingBase;
 import org.geotoolkit.display.axis.NumberGraduation;
-import org.geotoolkit.internal.image.ColorUtilities;
 
 
 /**
@@ -39,22 +39,22 @@ public final class ColorRampTest extends SwingBase<ColorRamp> {
      * Constructs the test case.
      */
     public ColorRampTest() {
-        super(ColorRamp.class);
+        super(ColorRamp.class, 4);
     }
 
     /**
      * Creates the widget.
      */
     @Override
-    protected ColorRamp create() {
+    protected ColorRamp create(final int index) {
         final NumberGraduation graduation = new NumberGraduation(SI.CELSIUS);
         graduation.setMinimum(-3);
         graduation.setMaximum(40);
 
         final ColorRamp test = new ColorRamp();
-        final int[] ARGB = new int[256];
-        ColorUtilities.expand(new Color[] {RED, ORANGE, YELLOW, CYAN}, ARGB, 0, ARGB.length);
-        test.setColors(ColorUtilities.getIndexColorModel(ARGB));
+        test.setColors(new Color[] {CYAN, YELLOW, ORANGE, RED});
+        test.setOrientation((index & 2) == 0 ? SwingConstants.HORIZONTAL : SwingConstants.VERTICAL);
+        test.setInterpolationEnabled((index & 1) != 0);
         test.setGraduation(graduation);
         return test;
     }

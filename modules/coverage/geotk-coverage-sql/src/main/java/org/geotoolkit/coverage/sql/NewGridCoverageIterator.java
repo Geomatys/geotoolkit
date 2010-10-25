@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Collection;
+import java.net.URI;
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 import javax.imageio.ImageReader;
@@ -31,6 +33,7 @@ import org.opengis.util.FactoryException;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.mosaic.Tile;
 import org.geotoolkit.image.io.NamedImageStore;
+import org.geotoolkit.image.io.AggregatedImageStore;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
@@ -42,7 +45,7 @@ import org.geotoolkit.resources.Errors;
  * {@code #next()} method returns {@code null} when there is no more element to return.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @since 3.12 (derived from Seagis)
  * @module
@@ -71,6 +74,15 @@ final class NewGridCoverageIterator {
      * Inputs may also be {@link Tile} or {@link ImageReader} instances.
      */
     private final Iterator<?> inputToAdd;
+
+    /**
+     * If the last returned element is actually an aggregation of other files (e.g. a NcML file
+     * which is basically a XML file listing many NetCDF files), the list of aggregated files.
+     * Otherwise {@code null}.
+     *
+     * @since 3.16
+     */
+    private List<URI> aggregatedFiles;
 
     /**
      * Creates an iterator for the specified files.
@@ -107,6 +119,7 @@ final class NewGridCoverageIterator {
     private NewGridCoverageReference createEntry(Object input)
             throws SQLException, IOException, FactoryException, DatabaseVetoException
     {
+        aggregatedFiles = null;
         if (input instanceof NewGridCoverageReference) {
             return (NewGridCoverageReference) input;
         }
@@ -114,11 +127,18 @@ final class NewGridCoverageIterator {
             return new NewGridCoverageReference(database, (Tile) input);
         }
         final ImageReader reader;
+        final boolean disposeReader;
         if (input instanceof ImageReader) {
             reader = (ImageReader) input;
             input = reader.getInput();
+            disposeReader = false;
         } else {
-            reader = XImageIO.getReaderBySuffix(input, true, false);
+            /*
+             * If there is a controller, then 'seekForwardOnly' must be set to 'false' in order
+             * to allow the call to ImageReader.getNumImages(true) inside the controller block.
+             */
+            reader = XImageIO.getReaderBySuffix(input, controller == null, false);
+            disposeReader = true;
         }
         /*
          * If there is many images, get the list of them. If the file is some format having
@@ -169,6 +189,7 @@ final class NewGridCoverageIterator {
                             final NamedImageStore store = (NamedImageStore) reader;
                             store.setImageNames(names[0]);
                             store.setBandNames(0, names);
+                            // Leave the imageIndex to 0: it may be used for images at different dates.
                         } else if (numSelected != 1) {
                             throw new IIOException(error(Errors.Keys.UNEXPECTED_PARAMETER_$1, "images[2]"));
                         } else {
@@ -178,7 +199,15 @@ final class NewGridCoverageIterator {
                 }
             }
         }
-        return new NewGridCoverageReference(database, reader, input, imageIndex);
+        /*
+         * From this point, we have enough information for creating the
+         * NewGridCoverageReference instance. Before to close the reader,
+         * check if the file is actually an aggregation of many smaller files.
+         */
+        if (reader instanceof AggregatedImageStore) {
+            aggregatedFiles = ((AggregatedImageStore) reader).getAggregatedFiles(imageIndex);
+        }
+        return new NewGridCoverageReference(database, reader, input, imageIndex, disposeReader);
     }
 
     /**
@@ -197,6 +226,36 @@ final class NewGridCoverageIterator {
             }
         }
         return null;
+    }
+
+    /**
+     * If the given entry is actually an aggregation of many files, returns the aggregated
+     * elements. Otherwise returns the given entry in an array of length 1. The entry given
+     * to this method must be the one returned by the last call to {@link #next()}.
+     *
+     * @param  entry The last entry returned by {@link #next()}.
+     * @return The aggregated elements.
+     * @throws IIOException If an aggregated elements can not be created.
+     *
+     * @since 3.16
+     */
+    final NewGridCoverageReference[] aggregation(final NewGridCoverageReference entry) throws IIOException {
+        if (aggregatedFiles == null) {
+            return new NewGridCoverageReference[] {entry};
+        }
+        final NewGridCoverageReference[] references = new NewGridCoverageReference[aggregatedFiles.size()];
+        int count = 0;
+        int dateIndex = entry.imageIndex;
+        for (final URI uri : aggregatedFiles) {
+            final File file;
+            try {
+                file = new File(uri);
+            } catch (IllegalArgumentException e) {
+                throw new IIOException(e.getLocalizedMessage(), e);
+            }
+            references[count++] = new NewGridCoverageReference(entry, file, dateIndex++);
+        }
+        return references;
     }
 
     /**

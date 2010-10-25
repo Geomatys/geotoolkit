@@ -88,14 +88,18 @@ INSERT INTO "GridCoverages" ("series", "filename", "index", "startTime", "endTim
 -- Coriolis data from IFREMER                                                                   --
 --------------------------------------------------------------------------------------------------
 INSERT INTO "Formats" ("name", "plugin", "packMode") VALUES
- ('Coriolis (temperature)', 'NetCDF', 'packed');
+ ('Coriolis (temperature)', 'NetCDF', 'packed'),
+ ('Coriolis (salinity)',    'NetCDF', 'packed');
 
 INSERT INTO "SampleDimensions" ("format", "name", "units") VALUES
- ('Coriolis (temperature)', 'Temperature', '°C');
+ ('Coriolis (temperature)', 'Temperature', '°C'),
+ ('Coriolis (salinity)',    'Salinity',    '');
 
 INSERT INTO "Categories" ("format", "name", "lower", "upper", "c0", "c1", "colors") VALUES
  ('Coriolis (temperature)', 'Missing value', 0, 0, NULL, NULL, NULL),
- ('Coriolis (temperature)', 'Temperature', 1, 43001, -3.001, 0.001, 'rainbow');
+ ('Coriolis (temperature)', 'Temperature', 1, 43001, -3.001, 0.001, 'rainbow-t'),
+ ('Coriolis (salinity)',    'Missing value', 0, 0, NULL, NULL, NULL),
+ ('Coriolis (salinity)',    'Salinity', 1, 60001, -0.001, 0.001, 'rainbow');
 
 INSERT INTO "Layers" ("name", "period") VALUES
  ('Coriolis (temperature)', 7);

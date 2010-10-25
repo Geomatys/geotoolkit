@@ -50,7 +50,7 @@ import org.geotoolkit.internal.sql.table.SpatialDatabase;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Antoine Hnawia (IRD)
- * @version 3.15
+ * @version 3.16
  *
  * @since 3.12 (derived from Seagis)
  * @module
@@ -184,26 +184,25 @@ final class WritableGridCoverageTable extends GridCoverageTable {
         final int byDx = (query.dx != null) ? query.dx.indexOf(QueryType.INSERT) : 0;
         final int byDy = (query.dy != null) ? query.dy.indexOf(QueryType.INSERT) : 0;
         final boolean explicitTranslate = (byDx != 0 && byDy != 0);
-        NewGridCoverageReference entry;
-        while ((entry = entries.next()) != null) {
+        NewGridCoverageReference mainEntry;
+        while ((mainEntry = entries.next()) != null) {
             /*
              * Notifies the controller (if any), then the listeners (if any) after the
              * NewGridCoverageReference entry has been fully initialized. The controller
-             * may change the values. Then create the series if it does not exists.
+             * may change the values. Then creates the format, assuming that every entry
+             * will use the same format.
              */
-            entries.fireCoverageAdding(true, entry);
-            entry.format = formatTable.findOrCreate(entry.format, entry.bestFormat.imageFormat, entry.sampleDimensions);
-            final String directory = (entry.path != null) ? entry.path.getPath() : "";
-            final int seriesID = seriesTable.findOrCreate(directory, entry.extension, entry.format);
-            specificSeries = seriesTable.getEntry(seriesID);
+            entries.fireCoverageAdding(true, mainEntry);
+            mainEntry.format = formatTable.findOrCreate(mainEntry.format,
+                    mainEntry.bestFormat.imageFormat, mainEntry.sampleDimensions);
             /*
              * Gets the metadata of interest. The metadata should contains at least the image
              * envelope and CRS. If it doesn't, then we will use the table envelope as a fall
              * back. It defaults to the whole Earth in WGS 84 geographic coordinates, but the
-             * user can set an other value using {@link #setEnvelope}.
+             * user can set an other value using the setEnvelope(...) method.
              */
-            final Rectangle imageBounds = entry.imageBounds;
-            final AffineTransform gridToCRS = entry.gridToCRS;
+            final Rectangle imageBounds = mainEntry.imageBounds;
+            final AffineTransform gridToCRS = mainEntry.gridToCRS;
             if (!explicitTranslate && (imageBounds.x != 0 || imageBounds.y != 0)) {
                 // If the translation can not be recorded explicitly in the database, then we
                 // need to apply it on the affine transform. Note that we really want to update
@@ -212,38 +211,55 @@ final class WritableGridCoverageTable extends GridCoverageTable {
                 gridToCRS.translate(imageBounds.x, imageBounds.y);
             }
             final int extent = gridTable.findOrCreate(imageBounds.getSize(), gridToCRS,
-                    entry.horizontalSRID, entry.verticalValues, entry.verticalSRID);
+                    mainEntry.horizontalSRID, mainEntry.verticalValues, mainEntry.verticalSRID);
             /*
-             * Adds the entries for each image found in the file.
-             * There is often only one image per file, but not always.
+             * If the entry is an aggregation, actually inserts the aggregated elements instead
+             * than the aggregation. This loop assumes that all aggregated element use the same
+             * format and the same extent than the aggregation. This assumption is burned in the
+             * NewGridCoverageReference(NewGridCoverageReference, ...) constructor. If this
+             * assumption doesn't hold anymore in a future version, then the calculation of
+             * 'entry.format' and 'extent' above need to move inside the loop.
              */
-            statement.setInt   (bySeries,   specificSeries.getIdentifier());
-            statement.setString(byFilename, entry.filename);
-            statement.setInt   (byExtent,   extent);
-            if (explicitTranslate) {
-                final Rectangle translate = entry.imageBounds;
-                statement.setInt(byDx, translate.x);
-                statement.setInt(byDy, translate.y);
-            }
-            final DateRange[] dateRanges = entry.dateRanges;
-            int imageIndex = entry.imageIndex;
-            if (dateRanges == null) {
-                statement.setInt (byIndex,     ++imageIndex);
-                statement.setNull(byStartTime, Types.TIMESTAMP);
-                statement.setNull(byEndTime,   Types.TIMESTAMP);
-                if (updateSingleton(statement)) count++;
-            } else for (final DateRange dateRange : dateRanges) {
-                final Date startTime = dateRange.getMinValue();
-                final Date   endTime = dateRange.getMaxValue();
-                statement.setInt      (byIndex,     ++imageIndex);
-                statement.setTimestamp(byStartTime, new Timestamp(startTime.getTime()), calendar);
-                statement.setTimestamp(byEndTime,   new Timestamp(endTime  .getTime()), calendar);
-                if (updateSingleton(statement)) count++;
+            for (final NewGridCoverageReference entry : entries.aggregation(mainEntry)) {
+                /*
+                 * Create the series if it does not exist. Note that new series
+                 * may be created if the entries are in different directories.
+                 */
+                final String directory = (entry.path != null) ? entry.path.getPath() : "";
+                final int seriesID = seriesTable.findOrCreate(directory, entry.extension, entry.format);
+                specificSeries = seriesTable.getEntry(seriesID);
+                /*
+                 * Adds the entries for each image found in the file.
+                 * There is often only one image per file, but not always.
+                 */
+                statement.setInt   (bySeries,   specificSeries.getIdentifier());
+                statement.setString(byFilename, entry.filename);
+                statement.setInt   (byExtent,   extent);
+                if (explicitTranslate) {
+                    final Rectangle translate = entry.imageBounds;
+                    statement.setInt(byDx, translate.x);
+                    statement.setInt(byDy, translate.y);
+                }
+                final DateRange[] dateRanges = entry.dateRanges;
+                int imageIndex = entry.imageIndex;
+                if (dateRanges == null) {
+                    statement.setInt (byIndex,     ++imageIndex);
+                    statement.setNull(byStartTime, Types.TIMESTAMP);
+                    statement.setNull(byEndTime,   Types.TIMESTAMP);
+                    if (updateSingleton(statement)) count++;
+                } else for (final DateRange dateRange : dateRanges) {
+                    final Date startTime = dateRange.getMinValue();
+                    final Date   endTime = dateRange.getMaxValue();
+                    statement.setInt      (byIndex,     ++imageIndex);
+                    statement.setTimestamp(byStartTime, new Timestamp(startTime.getTime()), calendar);
+                    statement.setTimestamp(byEndTime,   new Timestamp(endTime  .getTime()), calendar);
+                    if (updateSingleton(statement)) count++;
+                }
             }
             /*
              * Notifies the listeners that the entries have been added.
              */
-            entries.fireCoverageAdding(false, entry);
+            entries.fireCoverageAdding(false, mainEntry);
         }
         seriesTable.release();
         formatTable.release();

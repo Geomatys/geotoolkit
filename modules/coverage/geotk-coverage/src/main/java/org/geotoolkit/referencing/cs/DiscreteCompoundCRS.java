@@ -23,9 +23,11 @@ import java.util.Arrays;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.CompoundCRS;
+import org.opengis.referencing.operation.MathTransform;
 
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 
@@ -34,7 +36,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  * except the coordinate system.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @since 3.15
  * @module
@@ -54,7 +56,9 @@ final class DiscreteCompoundCRS extends DiscreteCRS<CompoundCRS> implements Comp
     /**
      * Creates a new compound CRS wrapping the given CRS with the given components.
      */
-    private DiscreteCompoundCRS(final CompoundCRS crs, final DiscreteCS cs, final CoordinateReferenceSystem[] components) {
+    private DiscreteCompoundCRS(final CompoundCRS crs, final DiscreteCS cs,
+            final CoordinateReferenceSystem[] components)
+    {
         super(crs, cs);
         this.components = UnmodifiableArrayList.wrap(components);
     }
@@ -141,5 +145,21 @@ final class DiscreteCompoundCRS extends DiscreteCRS<CompoundCRS> implements Comp
                     Errors.Keys.MISMATCHED_DIMENSION_$2, axes.length, count));
         }
         return new DiscreteCompoundCRS(crs, new DiscreteCS(cs, axes), components);
+    }
+
+    /**
+     * Returns the transform from grid coordinates to CRS coordinates mapping pixel center.
+     * This method delegates to each component, because some component may compute their own
+     * transform in a different way than {@link DiscreteReferencingFactory#getAffineTransform}.
+     * For example {@link org.geotoolkit.referencing.adapters.NetcdfCRS} returns {@code null}
+     * if an axis is irregular.
+     */
+    @Override
+    public synchronized MathTransform getGridToCRS() {
+        if (gridToCRS == null) {
+            gridToCRS = ProjectiveTransform.create(
+                    DiscreteReferencingFactory.getAffineTransform(this, cs.axes));
+        }
+        return gridToCRS;
     }
 }

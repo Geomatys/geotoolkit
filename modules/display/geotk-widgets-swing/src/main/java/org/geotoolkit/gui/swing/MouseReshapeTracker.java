@@ -54,6 +54,7 @@ import java.io.ObjectInputStream;
 
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
@@ -1209,7 +1210,7 @@ class MouseReshapeTracker extends MouseInputAdapter implements Shape {
                 try {
                     setFrame(x0, y0, dx, dy);
                 } catch (RuntimeException exception) {
-                    exception.printStackTrace();
+                    Logging.unexpectedException(MouseReshapeTracker.class, "mouseDragged", exception);
                 }
                 source.repaint(x, y, width, height);
                 /*

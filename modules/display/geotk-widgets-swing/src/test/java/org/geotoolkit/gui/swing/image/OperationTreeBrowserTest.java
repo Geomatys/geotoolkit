@@ -61,7 +61,7 @@ public final class OperationTreeBrowserTest extends SwingBase<OperationTreeBrows
      * Creates the widget.
      */
     @Override
-    protected OperationTreeBrowser create() {
+    protected OperationTreeBrowser create(final int index) {
         RenderedImage image;
         image = ConstantDescriptor.create(Float.valueOf(WIDTH), Float.valueOf(HEIGHT), new Byte[] {VALUE}, null);
         image = AddDescriptor.create(createPictures(), image, null);

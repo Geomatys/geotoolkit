@@ -40,8 +40,8 @@ import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingWorker;
 
+import org.geotoolkit.util.Exceptions;
 import org.geotoolkit.gui.swing.ZoomPane;
-import org.geotoolkit.internal.GraphicsUtilities;
 import org.geotoolkit.resources.Vocabulary;
 
 
@@ -371,7 +371,7 @@ public class ImagePane extends ZoomPane {
      * @since 3.07
      */
     public void setProgress(final int percentageDone) {
-        getProgressPane().bar.setValue(Math.round(percentageDone));
+        getProgressPane().bar.setValue(percentageDone);
     }
 
     /**
@@ -455,7 +455,7 @@ public class ImagePane extends ZoomPane {
             }
         }
         graphics.setColor(getForeground());
-        GraphicsUtilities.paintStackTrace(graphics, getZoomableBounds(null), error);
+        Exceptions.paintStackTrace(graphics, getZoomableBounds(null), error);
     }
 
     /**

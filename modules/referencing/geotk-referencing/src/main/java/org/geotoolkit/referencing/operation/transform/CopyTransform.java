@@ -125,7 +125,7 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
                 }
             }
             if (!found) {
-                // Target ordinate inconditionaly set to 0 (not a copy).
+                // Target ordinate unconditionally set to 0 (not a copy).
                 return null;
             }
         }

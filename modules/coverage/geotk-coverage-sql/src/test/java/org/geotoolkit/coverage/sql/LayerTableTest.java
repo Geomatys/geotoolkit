@@ -17,14 +17,18 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.io.File;
 import java.util.Set;
 import java.util.List;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.awt.image.RenderedImage;
+import javax.imageio.ImageIO;
 
 import org.opengis.geometry.Envelope;
 
@@ -41,7 +45,7 @@ import static org.junit.Assert.*;
  * Tests {@link LayerTable}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.16
  *
  * @since 3.10 (derived from Seagis)
  */
@@ -127,15 +131,22 @@ public final class LayerTableTest extends CatalogTestBase {
      *
      * @throws SQLException If the test can't connect to the database.
      * @throws CoverageStoreException If an error occurred while querying the layer.
+     * @throws IOException If an error occurred while writing the legend to disk.
      */
     @Test
-    public void testTemperature() throws SQLException, CoverageStoreException {
+    public void testTemperature() throws SQLException, CoverageStoreException, IOException {
         final LayerTable table = getDatabase().getTable(LayerTable.class);
         final LayerEntry entry = table.getEntry(TEMPERATURE);
         assertEquals(TEMPERATURE, entry.getName());
         assertSame("Should be cached.", entry, table.getEntry(TEMPERATURE));
         assertEquals(START_TIME, entry.getTimeRange().getMinValue());
         assertEquals(END_TIME,   entry.getTimeRange().getMaxValue());
+
+        final RenderedImage legend = entry.getColorRamp(0, entry.getSampleValueRanges().get(0), null);
+        assertNotNull(legend);
+        if (false) {
+            ImageIO.write(legend, "png", new File("Legend-test.png"));
+        }
 
         final Set<LayerEntry> entries = table.getEntries();
         assertFalse(entries.isEmpty());

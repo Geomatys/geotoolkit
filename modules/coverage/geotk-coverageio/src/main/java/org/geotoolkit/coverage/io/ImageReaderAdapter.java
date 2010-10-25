@@ -306,12 +306,14 @@ public class ImageReaderAdapter extends SpatialImageReader {
             } catch (CoverageStoreException e) {
                 throw convert(e);
             }
-            final int numBands = bands.size();
-            if (bands != null && numBands > VISIBLE_BAND) {
-                final Dimension size = getSize(imageIndex);
-                final ColorModel cm = bands.get(VISIBLE_BAND).getColorModel(VISIBLE_BAND, bands.size());
-                final SampleModel sm = cm.createCompatibleSampleModel(size.width, size.height);
-                type = new ImageTypeSpecifier(cm, sm);
+            if (bands != null) {
+                final int numBands = bands.size();
+                if (numBands > VISIBLE_BAND) {
+                    final Dimension size = getSize(imageIndex);
+                    final ColorModel cm = bands.get(VISIBLE_BAND).getColorModel(VISIBLE_BAND, bands.size());
+                    final SampleModel sm = cm.createCompatibleSampleModel(size.width, size.height);
+                    type = new ImageTypeSpecifier(cm, sm);
+                }
             }
             imageTypes.put(key, type);
         }

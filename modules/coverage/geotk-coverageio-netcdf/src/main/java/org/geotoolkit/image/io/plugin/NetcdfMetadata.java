@@ -36,7 +36,6 @@ import ucar.nc2.NetcdfFile;
 import ucar.nc2.Variable;
 import ucar.nc2.VariableIF;
 import ucar.nc2.VariableSimpleIF;
-import ucar.nc2.dataset.CoordinateAxis1D;
 import ucar.nc2.dataset.CoordinateSystem;
 import ucar.nc2.dataset.CoordSysBuilderIF;
 import ucar.nc2.dataset.EnhanceScaleMissing;
@@ -44,6 +43,7 @@ import ucar.nc2.dataset.Enhancements;
 import ucar.ma2.InvalidRangeException;
 
 import org.opengis.util.FactoryException;
+import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.metadata.content.TransferFunctionType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -238,26 +238,14 @@ final class NetcdfMetadata extends SpatialMetadata {
         /*
          * The above was only a check. Now perform the metadata writing.
          */
+        final CoordinateReferenceSystem regularCRS = netcdfCRS.regularize();
         if (crs == null) {
-            crs = netcdfCRS;
+            crs = regularCRS;
         }
-        final GridDomainAccessor accessor = new GridDomainAccessor(this);
-        final ReferencingBuilder helper   = new ReferencingBuilder(this);
-        helper.setCoordinateReferenceSystem(crs);
-        final int[]    lower  = new int   [dim];
-        final int[]    upper  = new int   [dim];
-        final double[] origin = new double[dim];
-        final double[] vector = new double[dim];
-        for (int i=0; i<dim; i++) {
-            final CoordinateAxis1D axis = netcdfCRS.getAxis(i).delegate();
-            upper [i] = axis.getShape(0) - 1;
-            origin[i] = axis.getStart();
-            vector[i] = axis.isRegular() ? axis.getIncrement() : Double.NaN;
-            accessor.addOffsetVector(vector);
-            vector[i] = 0;
+        new ReferencingBuilder(this).setCoordinateReferenceSystem(crs);
+        if (regularCRS instanceof GridGeometry) {
+            new GridDomainAccessor(this).setGridGeometry((GridGeometry) regularCRS);
         }
-        accessor.setOrigin(origin);
-        accessor.setLimits(lower, upper);
     }
 
     /**

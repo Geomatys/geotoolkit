@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.coverage.sql;
 
+import java.util.Locale;
 import java.util.Date;
 import java.util.Set;
 import java.util.HashSet;
@@ -27,11 +28,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.sql.SQLException;
+import java.awt.Color;
 import java.awt.geom.Dimension2D;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.InvalidObjectException;
+import java.lang.reflect.InvocationTargetException;
+import javax.measure.converter.ConversionException;
 
 import org.opengis.util.FactoryException;
 import org.opengis.coverage.grid.GridEnvelope;
@@ -40,11 +45,14 @@ import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.DateRange;
+import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.XCollections;
@@ -56,6 +64,8 @@ import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.internal.sql.table.NoSuchRecordException;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.UnmodifiableArraySortedSet;
+import org.geotoolkit.coverage.Category;
+import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
@@ -75,7 +85,7 @@ import org.geotoolkit.resources.Errors;
  * @since 3.10 (derived from Seagis)
  * @module
  */
-final class LayerEntry extends DefaultEntry implements Layer {
+final class LayerEntry extends DefaultEntry implements Layer, Localized {
     /**
      * For cross-version compatibility.
      */
@@ -200,7 +210,7 @@ final class LayerEntry extends DefaultEntry implements Layer {
     /**
      * The geographic bounding box. Will be computed when first needed.
      */
-    private volatile GeographicBoundingBox boundingBox;
+    private GeographicBoundingBox boundingBox;
 
     /**
      * The {@link TableFactory} or the {@link CoverageDatabase} for fetching table dependencies.
@@ -273,9 +283,12 @@ final class LayerEntry extends DefaultEntry implements Layer {
     }
 
     /**
-     * Returns the ressources bundle for error messages.
+     * Returns the locale to use for formatting messages.
+     *
+     * @since 3.16
      */
-    private Errors errors() {
+    @Override
+    public Locale getLocale() {
         final TableFactory tb;
         final Object tables = this.tables;
         if (tables instanceof CoverageDatabase) {
@@ -283,7 +296,14 @@ final class LayerEntry extends DefaultEntry implements Layer {
         } else {
             tb = (TableFactory) tables;
         }
-        return Errors.getResources(tb != null ? tb.getLocale() : null);
+        return (tb != null) ? tb.getLocale() : null;
+    }
+
+    /**
+     * Returns the resources bundle for error messages.
+     */
+    private Errors errors() {
+        return Errors.getResources(getLocale());
     }
 
     /**
@@ -582,11 +602,117 @@ final class LayerEntry extends DefaultEntry implements Layer {
     }
 
     /**
+     * Creates a color ramp for the coverages in this layer.
+     * See the super class javadoc for more details.
+     * <p>
+     * This method requires the {@code geotk-display} module to be on the classpath.
+     *
+     * @since 3.16
+     */
+    @Override
+    public RenderedImage getColorRamp(final int band, final MeasurementRange<?> range, final Map<String,?> properties)
+            throws CoverageStoreException, IllegalArgumentException
+    {
+        final Collection<SeriesEntry> series;
+        try {
+            series = getSeries();
+        } catch (SQLException e) {
+            throw new CoverageStoreException(e);
+        }
+        /*
+         * Search for a suitable quantitative category. If more than one category is suitable,
+         * the one which more closely match the requested range will be selected. If no category
+         * were found because of mismatched units, the first unit exception will be rethrown.
+         */
+        Category  category        = null;
+        double    categoryFit     = 0;
+        Exception conversionError = null;
+        for (final SeriesEntry entry : series) {
+            final FormatEntry format = entry.format;
+            if (format != null) {
+                final List<GridSampleDimension> sampleDimensions = format.sampleDimensions;
+                if (sampleDimensions != null && sampleDimensions.size() > band) {
+                    final GridSampleDimension sd = sampleDimensions.get(band).geophysics(true);
+                    /*
+                     * We have found a sample dimension. Converts the requested range to
+                     * units of that sample dimension. If the conversion fails, we will
+                     * search for an other sample dimension.
+                     */
+                    final NumberRange<?> convertedRange;
+                    if (range == null) {
+                        convertedRange = sd.getRange();
+                    } else try {
+                        convertedRange = range.convertTo(sd.getUnits());
+                    } catch (ConversionException e) {
+                        if (conversionError == null) {
+                            conversionError = e;
+                        }
+                        continue;
+                    }
+                    /*
+                     * Search a category for the range. If more than one category
+                     * is found, keep the best match for the requested range.
+                     */
+                    if (convertedRange != null) {
+                        final double min    = convertedRange.getMinimum();
+                        final double max    = convertedRange.getMaximum();
+                        final double center = 0.5 * (min + max);
+                        if (!Double.isNaN(center)) {
+                            final Category candidate = sd.getCategory(center);
+                            if (candidate != null) {
+                                final NumberRange<?> r = candidate.getRange();
+                                final double cmin = r.getMinimum();
+                                final double cmax = r.getMaximum();
+                                final double fit =
+                                        (Math.min(cmax, max) - Math.max(cmin, min)) - // Intersection area
+                                        (Math.max(cmax, max) - Math.min(cmin, min) - (max - min)); // Area outside requested range.
+                                if (category == null || fit > categoryFit) {
+                                    category = candidate;
+                                    categoryFit = fit;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        /*
+         * If we found a category, now create the color ramp. We use reflection in order to avoid
+         * a direct dependency of the geotk-coverage-sql module toward the geotk-display module.
+         */
+        if (category != null) try {
+            return (RenderedImage) Class.forName("org.geotoolkit.internal.image.ColorRamp")
+                 .getMethod("paint", MeasurementRange.class, Color[].class, MathTransform1D.class, Locale.class, Map.class)
+                 .invoke(null, range, category.getColors(), category.getSampleToGeophysics(), getLocale(), properties);
+        } catch (ClassNotFoundException exception) {
+            throw new UnsupportedOperationException(errors().getString(
+                    Errors.Keys.MISSING_MODULE_$1, "geotk-display"), exception);
+        } catch (InvocationTargetException exception) {
+            final Throwable cause = exception.getCause();
+            if (cause instanceof RuntimeException) {
+                throw (RuntimeException) cause;
+            }
+            if (cause instanceof Error) {
+                throw (Error) cause;
+            }
+            throw new CoverageStoreException(exception);
+        } catch (Exception exception) {
+            // Should never happen if we didn't broke our ColorRamp helper method.
+            throw new AssertionError(exception);
+        }
+        if (conversionError != null) {
+            throw new IllegalArgumentException(errors().getString(
+                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "range", range), conversionError);
+        }
+        return null;
+    }
+
+    /**
      * Returns the typical pixel resolution in this layer. Values are in the unit of the
      * {@linkplain CoverageDatabase#getCoordinateReferenceSystem() main CRS used by the database}
      * (typically degrees of longitude and latitude for the horizontal part, and days for the
      * temporal part). Some elements of the returned array may be {@link Double#NaN NaN} if they
-     * are unnkown.
+     * are unknown.
      */
     @Override
     public synchronized double[] getTypicalResolution() throws CoverageStoreException {
@@ -763,22 +889,23 @@ final class LayerEntry extends DefaultEntry implements Layer {
     /**
      * Returns the geographic bounding box, or {@code null} if unknown. If the CRS used by
      * the database is not geographic (for example if it is a projected CRS), then this method
-     * will transform the layer envelope to a geographic CRS.
+     * will transform the layer envelope from the layer CRS to a geographic CRS.
      */
     @Override
-    public GeographicBoundingBox getGeographicBoundingBox() throws CoverageStoreException {
+    public synchronized GeographicBoundingBox getGeographicBoundingBox() throws CoverageStoreException {
         GeographicBoundingBox bbox = boundingBox;
-        if (bbox == null) { // Not a big deal if computed twice.
+        if (bbox == null) {
             final CoverageEnvelope envelope = getEnvelope(null, null);
-            if (envelope != null) {
-                try {
-                    bbox = new DefaultGeographicBoundingBox(envelope);
-                } catch (TransformException e) {
-                    throw new CoverageStoreException(e);
-                }
-                ((DefaultGeographicBoundingBox) bbox).freeze();
-                boundingBox = bbox;
+            if (envelope == null) {
+                return null;
             }
+            try {
+                bbox = new DefaultGeographicBoundingBox(envelope);
+            } catch (TransformException e) {
+                throw new CoverageStoreException(e);
+            }
+            ((DefaultGeographicBoundingBox) bbox).freeze();
+            boundingBox = bbox;
         }
         if (Double.isInfinite(bbox.getWestBoundLongitude()) &&
             Double.isInfinite(bbox.getEastBoundLongitude()) &&
@@ -791,7 +918,7 @@ final class LayerEntry extends DefaultEntry implements Layer {
     }
 
     /**
-     * Returns the envelope of this layer, optionnaly centered at the given date and
+     * Returns the envelope of this layer, optionally centered at the given date and
      * elevation. Callers are free to modify the returned instance before to pass it
      * to the {@code getCoverageReference} methods.
      */
@@ -870,7 +997,7 @@ final class LayerEntry extends DefaultEntry implements Layer {
     /**
      * Returns a reference to a coverage that intersect the given envelope. If more than one
      * coverage intersect the given envelope, then this method will select the one which seem
-     * the most repesentative.
+     * the most representative.
      */
     @Override
     public final GridCoverageEntry getCoverageReference(final CoverageEnvelope envelope)

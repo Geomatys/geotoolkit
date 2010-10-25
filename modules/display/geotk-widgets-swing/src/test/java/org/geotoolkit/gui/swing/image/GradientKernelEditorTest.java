@@ -42,7 +42,7 @@ public final class GradientKernelEditorTest extends SwingBase<GradientKernelEdit
      * Creates the widget.
      */
     @Override
-    protected GradientKernelEditor create() {
+    protected GradientKernelEditor create(final int index) {
         final GradientKernelEditor test = new GradientKernelEditor();
         test.addDefaultKernels();
         return test;

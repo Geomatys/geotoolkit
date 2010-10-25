@@ -105,7 +105,7 @@ public class DimensionIdentification implements WarningProducer {
         this.owner = owner;
         if (!api.equals(API.NONE)) {
             final int ordinal = api.ordinal();
-            final DimensionIdentification[] apiMapping = owner.apiMapping(true);
+            final DimensionIdentification[] apiMapping = owner.apiMapping();
             if (apiMapping[ordinal] != null) {
                 throw new IllegalArgumentException(getErrorResources()
                         .getString(Errors.Keys.VALUE_ALREADY_DEFINED_$1, api));

@@ -40,7 +40,7 @@ public class IIOMetadataPanelTest extends SwingBase<IIOMetadataPanel> {
      * Creates the widget.
      */
     @Override
-    protected IIOMetadataPanel create() {
+    protected IIOMetadataPanel create(final int index) {
         final IIOMetadataPanel test = new IIOMetadataPanel();
         test.addDefaultMetadataFormats();
         return test;

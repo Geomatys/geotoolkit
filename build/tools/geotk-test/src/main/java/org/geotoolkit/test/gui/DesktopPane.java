@@ -209,7 +209,9 @@ final class DesktopPane extends JDesktopPane {
      */
     private void show(final SwingBase<?> testCase) {
         try {
-            show(testCase.create());
+            for (int i=0; i<testCase.numTests; i++) {
+                show(testCase.create(i), i, testCase.numTests);
+            }
         } catch (Exception e) {
             warning(e);
         }
@@ -229,8 +231,11 @@ final class DesktopPane extends JDesktopPane {
      * @param  component The component to show.
      * @throws PropertyVetoException Should not happen.
      */
-    final void show(final JComponent component) throws PropertyVetoException {
-        final String title = getTitle(component.getClass());
+    final void show(final JComponent component, final int index, final int numTests) throws PropertyVetoException {
+        String title = getTitle(component.getClass());
+        if (numTests != 1) {
+            title = title + " (" + index + ')';
+        }
         final JInternalFrame frame = new JInternalFrame(title, true, true, true, true);
         frame.addInternalFrameListener(new InternalFrameAdapter() {
             @Override public void internalFrameActivated(final InternalFrameEvent event) {
@@ -245,7 +250,17 @@ final class DesktopPane extends JDesktopPane {
         });
         frame.add(component);
         frame.pack();
-        frame.setLocation((getWidth() - frame.getWidth()) / 2, (getHeight() - frame.getHeight()) / 2);
+        final Dimension size = frame.getMinimumSize();
+        if (size != null) {
+            frame.setSize(Math.max(frame.getWidth(),  size.width),
+                          Math.max(frame.getHeight(), size.height));
+        }
+        final int numCols = (int) Math.ceil(Math.sqrt(numTests));
+        final int numRows = (numTests + numCols - 1) / numCols;
+        final int deltaX  = getWidth()  / numCols;
+        final int deltaY  = getHeight() / numRows;
+        frame.setLocation(deltaX * (index % numRows) + (deltaX - frame.getWidth())  / 2,
+                          deltaY * (index / numRows) + (deltaY - frame.getHeight()) / 2);
         frame.setVisible(true);
         add(frame);
         frame.setSelected(true);

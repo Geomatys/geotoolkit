@@ -19,9 +19,6 @@ package org.geotoolkit.referencing.cs;
 
 import java.util.Date;
 import java.util.Arrays;
-import javax.measure.unit.Unit;
-import javax.measure.converter.UnitConverter;
-import javax.measure.quantity.Duration;
 
 import org.opengis.referencing.cs.TimeCS;
 import org.opengis.referencing.cs.VerticalCS;
@@ -35,14 +32,19 @@ import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.coverage.grid.GridGeometry;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.measure.Units;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.internal.referencing.MatrixUtilities;
+import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.referencing.operation.transform.LinearTransform;
 
 
 /**
@@ -57,7 +59,7 @@ import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
  * the ordinate arrays after they have been passed to factory methods</em>.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @since 3.15
  * @module
@@ -112,7 +114,8 @@ public final class DiscreteReferencingFactory {
      * {@section Grid geometry}
      * The instance returned by this method implements the {@link GridGeometry} interface. However
      * the <cite>grid to CRS</cite> transform is meaningful only if the ordinate values in the given
-     * arrays are regularly spaced.
+     * arrays are regularly spaced. This is not verified because the criterion for deciding if an
+     * axis is "regular" is arbitrary.
      *
      * @param  cs  The coordinate system to wrap.
      * @param  ordinates The ordinate values for each axis. The arrays are <strong>not</strong> cloned.
@@ -150,7 +153,8 @@ public final class DiscreteReferencingFactory {
      * {@section Grid geometry}
      * The instance returned by this method implements the {@link GridGeometry} interface. However
      * the <cite>grid to CRS</cite> transform is meaningful only if the ordinate values in the given
-     * arrays are regularly spaced.
+     * arrays are regularly spaced. This is not verified because the criterion for deciding if an
+     * axis is "regular" is arbitrary.
      *
      * @param  crs  The coordinate reference system to wrap.
      * @param  ordinates The ordinate values for each axis. The arrays are <strong>not</strong> cloned.
@@ -288,7 +292,7 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
     /**
      * Computes a <cite>grid to CRS</cite> affine transform for the given axes, mapping
      * {@linkplain org.opengis.referencing.datum.PixelInCell#CELL_CENTER cell center}.
-     * Caller shall ensure that the following conditions are meet (they are not verified
+     * Callers shall ensure that the following conditions are meet (they are not verified
      * by this method, because the threshold for considering an axis as "regular" is
      * arbitrary and at caller choice):
      * <p>
@@ -301,37 +305,103 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
      *
      * @param  axes The axes to use for computing the transform.
      * @return The <cite>grid to CRS</cite> transform mapping cell centers for the given axes
-     *         as a matrix, or {@code null} if none.
+     *         as a matrix, or {@code null} if such matrix can not be computed.
      */
     public static XMatrix getAffineTransform(final DiscreteCoordinateSystemAxis... axes) {
         ensureNonNull("axes", axes);
+        return getAffineTransform(null, axes);
+    }
+
+    /**
+     * Computes a <cite>grid to CRS</cite> affine transform for the given CRS, mapping
+     * {@linkplain org.opengis.referencing.datum.PixelInCell#CELL_CENTER cell center}.
+     * This method processes in two steps:
+     * <p>
+     * <ol>
+     *   <li>If the given CRS implements the {@link GridGeometry} interface, then this method
+     *       checks the value of {@link GridGeometry#getGridToCRS()}. If that value is an
+     *       affine transform, its matrix is returned.</li>
+     *   <li>Otherwise if the given CRS is an instance of {@link CompoundCRS}, then the above
+     *       check is performed for each {@linkplain CompoundCRS#getComponents() component}.</li>
+     *   <li>Otherwise this method gets the discrete axes from the given CRS, and delegates to
+     *       the {@link #getAffineTransform(DiscreteCoordinateSystemAxis[])} method. Note that
+     *       the conditions documented in the above method apply.</li>
+     * </ol>
+     *
+     * @param  crs The Coordinate Reference System for which to get the <cite>grid to CRS</cite>
+     *         affine transform.
+     * @return The <cite>grid to CRS</cite> transform mapping cell centers for the CRS axes
+     *         as a matrix, or {@code null} if such matrix can not be computed.
+     *
+     * @since 3.16
+     */
+    public static Matrix getAffineTransform(final CoordinateReferenceSystem crs) {
+        ensureNonNull("crs", crs);
+        if (crs instanceof GridGeometry) {
+            final Matrix matrix = MatrixUtilities.getMatrix(((GridGeometry) crs).getGridToCRS());
+            if (matrix != null) {
+                return matrix;
+            }
+        }
+        final CoordinateSystem cs = crs.getCoordinateSystem();
+        final DiscreteCoordinateSystemAxis[] axes = new DiscreteCoordinateSystemAxis[cs.getDimension()];
+        for (int i=0; i<axes.length; i++) {
+            final CoordinateSystemAxis axis = cs.getAxis(i);
+            if (axis instanceof DiscreteCoordinateSystemAxis) {
+                axes[i] = (DiscreteCoordinateSystemAxis) axis;
+            }
+        }
+        if (crs instanceof CompoundCRS) {
+            return getAffineTransform((CompoundCRS) crs, axes);
+        } else {
+            return getAffineTransform(crs, axes);
+        }
+    }
+
+    /**
+     * Implementation of {@link #getAffineTransform(DiscreteCoordinateSystemAxis[])} with an
+     * optional CRS. If non-null, the temporal component of the given CRS is used in order to
+     * convert dates to numerical values.
+     *
+     * @param  crs  The Coordinate Reference System object that own the given axes.
+     * @param  axes The axes to use for computing the transform.
+     * @return The <cite>grid to CRS</cite> transform mapping cell centers for the given axes
+     *         as a matrix, or {@code null} if such matrix can not be computed.
+     */
+    static XMatrix getAffineTransform(final CoordinateReferenceSystem crs,
+            final DiscreteCoordinateSystemAxis[] axes)
+    {
         final int dimension = axes.length;
         final XMatrix matrix = MatrixFactory.create(dimension + 1);
         for (int i=0; i<dimension; i++) {
             final DiscreteCoordinateSystemAxis axis = axes[i];
+            final int n;
+            if (axis == null || (n = axis.length() - 1) < 0) {
+                // No discrete values.
+                return null;
+            }
             /*
              * Compute the mean interval between ordinate values. The interval can be negative if
              * the ordinate values are decreasing. This code assumes that this axis is reasonably
              * regular (this is not verified).
              */
-            final int n = axis.length() - 1;
-            if (n < 0) {
-                return null;
-            }
             final Comparable<?> first = axis.getOrdinateAt(0);
             final Comparable<?> last  = axis.getOrdinateAt(n);
             final double start, end;
             if (first instanceof Number && last instanceof Number) {
                 start = ((Number) first).doubleValue();
                 end   = ((Number) last) .doubleValue();
-            } else if (first instanceof Date && last instanceof Date && axis instanceof CoordinateSystemAxis) {
-                final Unit<?> unit = ((CoordinateSystemAxis) axis).getUnit();
-                if (unit == null) {
+            } else if (first instanceof Date && last instanceof Date) {
+                CoordinateReferenceSystem temporalCRS = CRSUtilities.getSubCRS(crs, i, i+1);
+                if (temporalCRS instanceof DiscreteCRS<?>) {
+                    temporalCRS = ((DiscreteCRS<?>) temporalCRS).crs;
+                }
+                if (!(temporalCRS instanceof TemporalCRS)) {
                     return null;
                 }
-                final UnitConverter converter = Units.MILLISECOND.getConverterTo(unit.asType(Duration.class));
-                start = converter.convert((double) ((Date) first).getTime());
-                end   = converter.convert((double) ((Date) last) .getTime());
+                final DefaultTemporalCRS converter = DefaultTemporalCRS.wrap((TemporalCRS) temporalCRS);
+                start = converter.toValue((Date) first);
+                end   = converter.toValue((Date) last);
             } else {
                 return null;
             }
@@ -343,6 +413,74 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
                 matrix.setElement(i, i, scale);
             }
             matrix.setElement(i, dimension, start);
+        }
+        return matrix;
+    }
+
+    /**
+     * Invokes {@link #getAffineTransform(CoordinateReferenceSystem, DiscreteCoordinateSystemAxis[])},
+     * then overwrite the matrix coefficients by the ones computed by the CRS components. We process
+     * that way because:
+     * <p>
+     * <ul>
+     *   <li>Some CRS component may compute their own transform in a different way. For example
+     *       {@link org.geotoolkit.referencing.adapters.NetcdfCRS} returns {@code null} if an
+     *       axis is irregular.</li>
+     *   <li>We invoke {@code getAffineTransform(CoordinateReferenceSystem, ...)} first in order
+     *       to have at least a translation term when the component can not compute its own "grid
+     *       to CRS" transform.</li>
+     * </ul>
+     *
+     * @param  crs  The Coordinate Reference System object that own the given axes.
+     * @param  axes The axes to use for computing the transform.
+     * @return The <cite>grid to CRS</cite> transform mapping cell centers for the given axes
+     *         as a matrix, or {@code null} if such matrix can not be computed.
+     *
+     * @since 3.16
+     */
+    static XMatrix getAffineTransform(final CompoundCRS crs, final DiscreteCoordinateSystemAxis[] axes) {
+        final XMatrix matrix = getAffineTransform((CoordinateReferenceSystem) crs, axes);
+        if (matrix != null) {
+            final int lastColumn = matrix.getNumCol() - 1;
+            int lower = 0;
+            for (final CoordinateReferenceSystem component : crs.getComponents()) {
+                final int dimension = component.getCoordinateSystem().getDimension();
+                /*
+                 * If the CRS is an instance of DiscreteCRS<?>, then the grid geometry computed by
+                 * that CRS would have identical coefficients than the one computed above (because
+                 * the DiscreteCRS.getGridToCRS() delegates to getAffineTransform(...) as we did).
+                 * So it is not worth to call component.getGridToCRS() again.
+                 */
+                if (!(component instanceof DiscreteCRS<?>) && component instanceof GridGeometry) {
+                    final MathTransform tr = ((GridGeometry) component).getGridToCRS();
+                    if (tr instanceof LinearTransform) {
+                        /*
+                         * Copies the scale and translation terms from the matrix
+                         * computed by the individual component.
+                         */
+                        final Matrix sub = ((LinearTransform) tr).getMatrix();
+                        for (int j=0; j<dimension; j++) {
+                            final int dj = j + lower;
+                            for (int i=0; i<dimension; i++) {
+                                matrix.setElement(dj, i+lower, sub.getElement(j, i));
+                            }
+                            matrix.setElement(j+lower, lastColumn, sub.getElement(j, dimension));
+                        }
+                    } else {
+                        /*
+                         * If the component considers that there is no valid grid to CRS, set
+                         * the scale coefficient to NaN. The other coefficients are already 0,
+                         * which is correct. The translation term is keep unchanged, because
+                         * it still valid.
+                         */
+                        for (int j=0; j<dimension; j++) {
+                            final int dj = j + lower;
+                            matrix.setElement(dj, dj, Double.NaN);
+                        }
+                    }
+                }
+                lower += dimension;
+            }
         }
         return matrix;
     }

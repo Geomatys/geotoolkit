@@ -217,7 +217,7 @@ public class ObjectiveAnalysis {
             dest = new Point2D.Double();
         }
         dest.x = xmin + dx * (index % ny);
-        dest.y = ymax - dy * (index / ny);
+        dest.y = ymax - dy * (index / ny); // NOSONAR
         return dest;
     }
 

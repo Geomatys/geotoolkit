@@ -30,6 +30,7 @@ import ucar.nc2.dataset.VariableEnhanced;
 import ucar.nc2.dataset.EnhanceScaleMissing;
 
 import org.geotoolkit.util.XArrays;
+import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingError;
 
 
 /**
@@ -66,13 +67,6 @@ final class NetcdfVariable {
             ADD_OFFSET    = "add_offset",
             MISSING_VALUE = "missing_value",
             FILL_VALUE    = "_FillValue";
-
-    /**
-     * Small factor for rounding errors.
-     *
-     * @since 3.15
-     */
-    private static final double EPS = 1E-10;
 
     /**
      * The data type to accept in images. Used for automatic detection of which variables
@@ -186,8 +180,8 @@ final class NetcdfVariable {
         imageType  = getRawDataType(variable);
         dataType   = widestType = variable.getDataType();
         units      = variable.getUnitsString();
-        scale      = attribute(variable, SCALE_FACTOR);
-        offset     = attribute(variable, ADD_OFFSET);
+        scale      = fixRoundingError(attribute(variable, SCALE_FACTOR));
+        offset     = fixRoundingError(attribute(variable, ADD_OFFSET));
         scaleType  = widestType;
         widestType = dataType; // Reset before we scan the other attributes.
         /*
@@ -237,8 +231,8 @@ final class NetcdfVariable {
         }
         if (Double.isNaN(minimum)) minimum = Double.NEGATIVE_INFINITY;
         if (Double.isNaN(maximum)) maximum = Double.POSITIVE_INFINITY;
-        this.minimum = minimum;
-        this.maximum = maximum;
+        this.minimum = fixRoundingError(minimum);
+        this.maximum = fixRoundingError(maximum);
         /*
          * Gets fill and missing values. According UCAR documentation, they are
          * always in packed units. We keep them "as-is" (as opposed to UCAR who
@@ -280,13 +274,8 @@ scan:   for (int i=0; i<missingCount; i++) {
      * @since 3.15
      */
     final void setTransferFunction(final EnhanceScaleMissing variable) {
-        offset =  variable.convertScaleOffsetMissing(0.0);
-        scale  =  variable.convertScaleOffsetMissing(1.0) - offset;
-        // Workaround for rounding errors.
-        double c = scale * 36000;
-        if (Math.abs(c - (c = Math.rint(c))) <= EPS) {
-            scale = c / 36000;
-        }
+        offset =  fixRoundingError(variable.convertScaleOffsetMissing(0.0));
+        scale  =  fixRoundingError(variable.convertScaleOffsetMissing(1.0) - offset);
     }
 
     /**

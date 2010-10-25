@@ -94,8 +94,11 @@ public class ImageFileChooser extends JFileChooser {
     /**
      * Non-null if the list of providers should include a special entry
      * for loading a text file which contains a list of files.
+     * <p>
+     * We can not serialize this field, because {@link FileNameExtensionFilter}
+     * is not serializable.
      */
-    private FileFilter listFileFilter;
+    private transient FileFilter listFileFilter;
 
     /**
      * {@code true} if the list of providers should include a special entry

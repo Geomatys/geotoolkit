@@ -704,8 +704,10 @@ public class Category implements Serializable {
     }
 
     /**
-     * Returns the range of sample values occurring in this category. Sample values can be
-     * transformed into geophysics values using the {@link #getSampleToGeophysics} transform.
+     * Returns the range of values occurring in this category. If this category is geophysics,
+     * then the range is expressed in the units of the enclosing {@link GridSampleDimension}.
+     * Otherwise, the range are sample values than can be transformed into geophysics values
+     * using the {@link #getSampleToGeophysics()} transform.
      *
      * @return The range of sample values.
      *

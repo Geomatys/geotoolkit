@@ -33,8 +33,9 @@ import java.util.logging.Level;
 import java.util.Collection;
 import javax.imageio.ImageIO;
 
-import org.geotoolkit.internal.GraphicsUtilities;
+import org.geotoolkit.util.Exceptions;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.internal.GraphicsUtilities;
 
 
 /**
@@ -229,7 +230,7 @@ public final class MosaicImageViewer extends JPanel implements ChangeListener {
                 return;
             }
             if (toShow instanceof Throwable) {
-                GraphicsUtilities.paintStackTrace(gr, getBounds(), (Throwable) toShow);
+                Exceptions.paintStackTrace(gr, getBounds(), (Throwable) toShow);
                 return;
             }
         }

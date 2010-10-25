@@ -166,7 +166,7 @@ public class ReferenceSystemMetadata implements ReferenceSystem, Serializable {
         if (object == this) {
             return true;
         }
-        if (object.getClass().equals(getClass())) {
+        if (object != null && object.getClass().equals(getClass())) {
             final ReferenceSystemMetadata that = (ReferenceSystemMetadata) object;
             return Utilities.equals(referenceSystemIdentifier, that.referenceSystemIdentifier);
         }

@@ -331,7 +331,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
     @Immutable
     static final class Boolean extends NumberConverter<java.lang.Boolean> {
         private static final long serialVersionUID = -7522980351031833731L;
-        public static final Boolean INSTANCE = new Boolean();
+        public static final Boolean INSTANCE = new Boolean(); // NOSONAR
         private Boolean() {
         }
 

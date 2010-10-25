@@ -283,11 +283,8 @@ public abstract class Table implements Localized {
      * @param statement The statement to release.
      * @throws SQLException If an error occurred while releasing the statement.
      */
-    protected final void release(final LocalCache lc, final LocalCache.Stmt statement) throws SQLException {
-        final Database database = query.database;
-        if (database != null) {
-            database.release(lc, statement);
-        }
+    protected static void release(final LocalCache lc, final LocalCache.Stmt statement) throws SQLException {
+        Database.release(lc, statement);
     }
 
     /**

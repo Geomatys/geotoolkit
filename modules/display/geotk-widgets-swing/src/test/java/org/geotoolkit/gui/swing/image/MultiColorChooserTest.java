@@ -40,7 +40,7 @@ public class MultiColorChooserTest extends SwingBase<MultiColorChooser> {
      * Creates the widget.
      */
     @Override
-    protected MultiColorChooser create() {
+    protected MultiColorChooser create(final int index) {
         return new MultiColorChooser();
     }
 }

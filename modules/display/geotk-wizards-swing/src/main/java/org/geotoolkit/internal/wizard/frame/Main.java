@@ -20,6 +20,7 @@ package org.geotoolkit.internal.wizard.frame;
 import java.util.Locale;
 import java.awt.Desktop;
 import java.awt.Toolkit;
+import java.awt.EventQueue;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -240,10 +241,14 @@ public final class Main extends JFrame implements ActionListener {
         } else {
             GraphicsUtilities.setLookAndFeel(Main.class, "<init>");
         }
-        final JFrame frame = new Main();
-        // The line below should be after the Frame creation.
-        // See the javadoc in 'setDefaultCodecPreferences()'.
-        Setup.initialize(null);
-        frame.setVisible(true);
+        EventQueue.invokeLater(new Runnable() {
+            @Override public void run() {
+                final JFrame frame = new Main();
+                // The line below should be after the Frame creation.
+                // See the javadoc in 'setDefaultCodecPreferences()'.
+                Setup.initialize(null);
+                frame.setVisible(true);
+            }
+        });
     }
 }

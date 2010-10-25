@@ -471,7 +471,7 @@ public class XAffineTransform extends AffineTransform {
             }
             // For other rectangular shapes, we restrict to cases without
             // rotation or flip because we don't know if the shape is symetric.
-            if ((type & (TYPE_FLIP & TYPE_MASK_ROTATION)) == 0) {
+            if ((type & (TYPE_FLIP | TYPE_MASK_ROTATION)) == 0) {
                 if (shape instanceof RectangularShape) {
                     RectangularShape rect = (RectangularShape) shape;
                     if (!overwrite) {

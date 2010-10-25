@@ -304,13 +304,10 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
     }
 
     /**
-     * Returns the dimension mapped to Image I/O API, or {@code null} if none.
+     * Returns the dimension mapped to Image I/O API.
      */
-    final DimensionIdentification[] apiMapping(final boolean create) {
+    final DimensionIdentification[] apiMapping() {
         if (apiMapping == null) {
-            if (!create) {
-                return null;
-            }
             apiMapping = new APIs();
         }
         return apiMapping.dimensions;

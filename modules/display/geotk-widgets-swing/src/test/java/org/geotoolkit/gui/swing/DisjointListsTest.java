@@ -42,7 +42,7 @@ public final class DisjointListsTest extends SwingBase<DisjointLists> {
      * Creates the widget.
      */
     @Override
-    protected DisjointLists create() {
+    protected DisjointLists create(final int index) {
         final DisjointLists test = new DisjointLists();
         test.addElements(Locale.getAvailableLocales());
         return test;

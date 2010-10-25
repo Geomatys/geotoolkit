@@ -230,7 +230,7 @@ public abstract class AbstractEnvelope implements Envelope {
             }
             separator = ", ";
         }
-        if (separator == ", ") {
+        if (separator == ", ") { // NOSONAR
             buffer.append(')');
         }
         return buffer.append(')').toString();

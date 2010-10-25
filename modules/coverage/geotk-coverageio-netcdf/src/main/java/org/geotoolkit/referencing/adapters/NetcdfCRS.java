@@ -113,7 +113,9 @@ import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.16
+ *
+ * @see org.geotoolkit.image.io.plugin.NetcdfImageReader
  *
  * @since 3.08
  * @module
@@ -121,6 +123,11 @@ import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateReferenceSystem,
         org.opengis.referencing.cs.CoordinateSystem, GridGeometry
 {
+    /**
+     * Small tolerance factor for rounding error.
+     */
+    private static final double EPS = 1E-10;
+
     /**
      * The NetCDF coordinate system wrapped by this {@code NetcdfCRS} instance.
      */
@@ -359,6 +366,8 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
      *
      * @return A CRS with potentially some axes made regular, or {@code this}.
      *
+     * @see org.geotoolkit.referencing.cs.DiscreteReferencingFactory
+     *
      * @since 3.15
      */
     public CoordinateReferenceSystem regularize() {
@@ -367,21 +376,12 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
     }
 
     /**
-     * Returns the wrapped NetCDF coordinate system. Be aware that the axes of the NetCDF CS
-     * object may not be the same than the axes of this {@code NetcdfCRS} object:
-     *
-     * <ul>
-     *   <li><p>If the axes have been {@linkplain #regularize() made regular}, then the axes
-     *       of the returned coordinate system may be different than the axes returned by this
-     *       {@code NetcdfCRS} object. For example the returned CS may have (<var>longitude</var>,
-     *       <var>latitude</var>) axes while this {@code NetcdfCRS} object may have projected
-     *       axes.</p></li>
-     *
-     *   <li><p>The dimension of the returned NetCDF coordinate system may be greater than the
-     *       dimension of the GeoAPI CRS implemented by this object, because NetCDF puts all
-     *       axes in a single object while GeoAPI CRS may have separated the axes between
-     *       various kind of CRS ({@link GeographicCRS}, {@link TemporalCRS}, <i>etc</i>).</p></li>
-     * </ul>
+     * Returns the wrapped NetCDF coordinate system.
+     * <p>
+     * <b>Note:</b> The dimension of the returned NetCDF Coordinate System may be greater than the
+     * dimension of the GeoAPI CRS implemented by this object, because the NetCDF CS puts all axes
+     * in a single object while the GeoAPI CRS may splits the axes in various kind of CRS
+     * ({@link GeographicCRS}, {@link VerticalCRS}, {@link TemporalCRS}).
      */
     @Override
     public CoordinateSystem delegate() {
@@ -516,10 +516,28 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
             if (!axis.isRegular()) {
                 return null;
             }
-            matrix.setElement(i, i, axis.getIncrement());
-            matrix.setElement(i, numDimensions, axis.getStart());
+            final double scale = axis.getIncrement();
+            if (Double.isNaN(scale) || scale == 0) {
+                return null;
+            }
+            matrix.setElement(i, i, nice(scale));
+            matrix.setElement(i, numDimensions, nice(axis.getStart()));
         }
         return ProjectiveTransform.create(matrix);
+    }
+
+    /**
+     * Workaround rounding errors found in NetCDF files.
+     *
+     * @since 3.16
+     */
+    private static double nice(double value) {
+        final double tf = value * 360;
+        final double ti = Math.rint(tf);
+        if (Math.abs(tf - ti) <= EPS) {
+            value = ti / 360;
+        }
+        return value;
     }
 
     /**
@@ -780,7 +798,10 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
                     case Lon: longitude = axis; break;
                 }
             }
-            if (latitude != null && longitude != null) {
+            if (latitude != null && longitude != null &&
+                   (!latitude .delegate().isRegular() ||
+                    !longitude.delegate().isRegular()))
+            {
                 /*
                  * The 1E-4 threshold have been determined empirically from the IFREMER Coriolis
                  * data. Note that the threshold used by the NetCDF library version 4.1 in the

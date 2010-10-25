@@ -43,7 +43,11 @@ import static org.junit.Assume.*;
 
 /**
  * Base class for every tests requerying a connection to a coverage database.
- * This test requires a connection to a PostgreSQL database.
+ * This test requires a connection to a PostgreSQL database. In addition, some
+ * test suite requires the test file to be present. See the following file for
+ * more information:
+ * <p>
+ * <a href="http://hg.geotoolkit.org/geotoolkit/raw-file/tip/modules/coverage/geotk-coverage-sql/src/test/resources/Tests/README.html">About large test files</a>
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.15

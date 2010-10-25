@@ -1159,7 +1159,16 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
      * @param param     The {@code param}     argument given to {@code computeRegions}.
      * @param srcHeight The {@code srcHeight} argument given to {@code computeRegions}.
      * @param srcRegion The {@code srcRegion} argument given to {@code computeRegions}.
+     *
+     * @deprecated Experience suggests that images better to be read as they are stored in
+     *             the file, even if they appear flipped. In the case of NetCDF images, the
+     *             fact that the image is flipped appears in the image metadata, which declare
+     *             a positive scale factor for the y axis.
+     *
+     * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-117">GEOTK-117</a>
      */
+    @Deprecated
+    // TODO: Remove the special case in GridDomainAccessor after this method has been removed.
     protected static void flipVertically(final ImageReadParam param, final int srcHeight,
                                          final Rectangle srcRegion)
     {

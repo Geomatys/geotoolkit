@@ -344,7 +344,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
         if (source != target) {
             if (unmodifiable == FREEZING) {
                 @SuppressWarnings("unchecked")
-                final List<E> unmodifiable = (List<E>) source;
+                final List<E> unmodifiable = (List<E>) source; // NOSONAR
                 assert !isModifiable(unmodifiable);
                 return unmodifiable;
             }
@@ -386,7 +386,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
         if (source != target) {
             if (unmodifiable == FREEZING) {
                 @SuppressWarnings("unchecked")
-                final Set<E> unmodifiable = (Set<E>) source;
+                final Set<E> unmodifiable = (Set<E>) source; // NOSONAR
                 assert !isModifiable(unmodifiable);
                 return unmodifiable;
             }

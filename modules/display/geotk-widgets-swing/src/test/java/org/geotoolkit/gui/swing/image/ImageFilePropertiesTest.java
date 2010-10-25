@@ -48,7 +48,7 @@ public class ImageFilePropertiesTest extends SwingBase<ImageFileProperties> {
      * @throws IOException If an error occurred while reading the test file.
      */
     @Override
-    protected ImageFileProperties create() throws IOException {
+    protected ImageFileProperties create(final int index) throws IOException {
         final ImageFileProperties test = new ImageFileProperties();
         final File file;
         try {

@@ -21,7 +21,9 @@ import javax.swing.SwingConstants;
 
 import java.awt.Font;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.awt.GradientPaint;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.awt.font.FontRenderContext;
@@ -34,16 +36,19 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Arrays;
 import java.util.AbstractMap;
+import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 import javax.measure.unit.Unit;
+import javax.measure.unit.UnitFormat;
 
 import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.PaletteInterpretation;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 
+import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.display.axis.Graduation;
@@ -51,6 +56,8 @@ import org.geotoolkit.display.axis.TickIterator;
 import org.geotoolkit.display.axis.NumberGraduation;
 import org.geotoolkit.display.axis.AbstractGraduation;
 import org.geotoolkit.display.axis.LogarithmicNumberGraduation;
+import org.geotoolkit.referencing.operation.transform.LinearTransform;
+import org.geotoolkit.referencing.operation.transform.ExponentialTransform1D;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
@@ -62,7 +69,7 @@ import org.geotoolkit.resources.Errors;
  * to be leveraged in other modules without introducing a dependency to Swing widgets.
  *
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
- * @version 3.13
+ * @version 3.16
  *
  * @since 3.10 (derived from 1.1)
  * @module
@@ -77,14 +84,25 @@ public class ColorRamp implements Serializable {
     public static final int MARGIN = 10;
 
     /**
-     * Small tolerance factor ror rounding error.
+     * Small tolerance factor for rounding error.
      */
     private static final double EPS = 1E-6;
+
+    /**
+     * The locale for formatting error messages, or {@code null} for the default locale.
+     */
+    private Locale locale;
 
     /**
      * The graduation to write over the color ramp.
      */
     private Graduation graduation;
+
+    /**
+     * The object to use for creating the unit symbol.
+     * This is created when first needed.
+     */
+    private transient UnitFormat unitFormat;
 
     /**
      * Graduation units. This is constructed from {@link Graduation#getUnit()} and cached
@@ -96,6 +114,13 @@ public class ColorRamp implements Serializable {
      * The colors to paint as ARGB values (never {@code null}).
      */
     private int[] colors = new int[0];
+
+    /**
+     * {@code true} if colors should be interpolated.
+     *
+     * @since 3.16
+     */
+    public boolean interpolationEnabled = true;
 
     /**
      * {@code true} if tick labels shall be painted.
@@ -140,8 +165,34 @@ public class ColorRamp implements Serializable {
     }
 
     /**
+     * Returns the locale to use for formatting error messages and graduation labels,
+     * or {@code null} for the default locale.
+     *
+     * @return The locale to use for formatting error messages and graduation labels.
+     *
+     * @since 3.16
+     */
+    public Locale getLocale() {
+        return locale;
+    }
+
+    /**
+     * Sets the locale to use for formatting error messages and graduation labels.
+     * As an alternative, users can override the {@link #getLocale()} method instead
+     * than invoking this {@code setLocale(...)} method.
+     *
+     * @param locale The locale to use for formatting error messages and graduation labels.
+     *
+     * @since 3.16
+     */
+    public void setLocale(final Locale locale) {
+        this.locale = locale;
+        unitFormat = null;
+    }
+
+    /**
      * Returns {@code false} if the methods having a {@code Color[][]} return type are allowed
-     * to return {@code null} inconditionaly. This is more efficient for callers which are not
+     * to return {@code null} unconditionally. This is more efficient for callers which are not
      * interested to fire property change events.
      * <p>
      * The default implementation returns {@code false} in every cases. Subclasses shall
@@ -172,17 +223,32 @@ public class ColorRamp implements Serializable {
      */
     public final Graduation setGraduation(final Graduation graduation) {
         final Graduation oldGraduation = this.graduation;
-        if (graduation != oldGraduation) {
-            this.graduation = graduation;
-            units = null;
-            if (graduation != null) {
-                final Unit<?> unit = graduation.getUnit();
-                if (unit != null) {
-                    units = unit.toString();
+        this.graduation = graduation;
+        units = null;
+        if (graduation != null) {
+            final Unit<?> unit = graduation.getUnit();
+            if (unit != null) {
+                if (unitFormat == null) {
+                    unitFormat = (locale != null) ? UnitFormat.getInstance(locale) : UnitFormat.getInstance();
                 }
+                units = unitFormat.format(unit);
             }
         }
         return oldGraduation;
+    }
+
+    /**
+     * Sets the graduation to the given range of values. The {@code sampleToGeophysics} argument
+     * is used in order to determine whatever the scale is linear or logarithmic.
+     *
+     * @param range The range of values, or {@code null} for removing the graduation.
+     * @param sampleToGeophysics The <cite>sample to geophysics</cite> transform.
+     *
+     * @since 3.16
+     */
+    public final void setGraduation(final MeasurementRange<?> range, final MathTransform1D sampleToGeophysics) {
+        setGraduation(range != null ? createDefaultGraduation(graduation, sampleToGeophysics,
+                range.getMinimum(), range.getMaximum(), range.getUnits(), getLocale()) : null);
     }
 
     /**
@@ -230,7 +296,7 @@ public class ColorRamp implements Serializable {
      * @param  colors The colors to paint, or {@code null} if none.
      * @return The old and new colors, or {@code null} if there is no change.
      */
-    public final Color[][] setColors(final Color[] colors) {
+    public final Color[][] setColors(final Color... colors) {
         final Map<Integer,Color> share = new HashMap<Integer,Color>();
         int[] ARGB = null;
         if (colors != null) {
@@ -250,7 +316,7 @@ public class ColorRamp implements Serializable {
      * @param  colors The colors to paint, or {@code null} if none.
      * @return The old and new colors, or {@code null} if there is no change.
      */
-    public final Color[][] setColors(final int[] colors) {
+    public final Color[][] setColors(final int... colors) {
         return setColors((colors != null) ? colors.clone() : null, null);
     }
 
@@ -371,8 +437,7 @@ public class ColorRamp implements Serializable {
                     min = tr.transform(lower);
                     max = tr.transform(upper);
                 } catch (TransformException cause) {
-                    throw new IllegalArgumentException(Errors.format(
-                            Errors.Keys.ILLEGAL_ARGUMENT_$2, "band", band), cause);
+                    throw new IllegalArgumentException(illegalBand(band), cause);
                 }
                 if (min > max) {
                     // This case occurs typically when displaying a color ramp for
@@ -382,13 +447,19 @@ public class ColorRamp implements Serializable {
                 }
                 if (!(min <= max)) {
                     // This case occurs if one or both values is NaN.
-                    throw new IllegalArgumentException(Errors.format(
-                            Errors.Keys.ILLEGAL_ARGUMENT_$2, "band", band));
+                    throw new IllegalArgumentException(illegalBand(band));
                 }
                 graduation = createGraduation(this.graduation, band, min, max);
             }
         }
         return new AbstractMap.SimpleEntry<Graduation,Color[]>(graduation, colors);
+    }
+
+    /**
+     * Formats an error message for an illegal sample dimension.
+     */
+    private String illegalBand(final SampleDimension band) {
+        return Errors.getResources(getLocale()).getString(Errors.Keys.ILLEGAL_ARGUMENT_$2, "band", band);
     }
 
     /**
@@ -450,47 +521,82 @@ public class ColorRamp implements Serializable {
             dx = 0;
             dy = 0;
         } else {
-            dx = (double) (bounds.width  - 2*margin) / length;
-            dy = (double) (bounds.height - 2*margin) / length;
-            int i=0, lastIndex=0;
-            int color = colors[0];
-            int nextColor = color;
+            final boolean interpolate = interpolationEnabled && length >= 2 &&
+                    (horizontal ? bounds.width : bounds.height) >= length;
+            final int numSteps = interpolate ? length-1 : length;
+            dx = (bounds.width  - 2*margin) / (double) numSteps;
+            dy = (bounds.height - 2*margin) / (double) numSteps;
+            boolean paintedMargin = false;
+            int lastIndex = 0;
+            int thisARGB  = colors[0];
+            int nextARGB  = thisARGB;
+            Color thisColor = new Color(thisARGB, true);
+            Color nextColor = thisColor;
             final int ox = bounds.x + margin;
             final int oy = bounds.y + bounds.height - margin;
             final Rectangle2D.Double rect = new Rectangle2D.Double();
             rect.setRect(bounds);
-            while (++i <= length) {
+            for (int i=0; i<=length; i++) {
                 if (i != length) {
-                    nextColor = colors[i];
-                    if (nextColor == color) {
+                    nextARGB = colors[i];
+                    if (nextARGB == thisARGB && !interpolate) {
                         continue;
                     }
                 }
                 if (horizontal) {
                     rect.x      = ox + dx*lastIndex;
                     rect.width  = dx * (i-lastIndex);
-                    if (lastIndex == 0) {
+                    if (!paintedMargin) {
                         rect.x     -= margin;
                         rect.width += margin;
+                        paintedMargin = true;
                     }
                     if (i == length) {
-                        rect.width += margin;
+                        if (interpolate) {
+                            rect.width = margin;
+                        } else {
+                            rect.width += margin;
+                        }
                     }
                 } else {
                     rect.y      = oy - dy*i;
                     rect.height = dy * (i-lastIndex);
-                    if (lastIndex == 0) {
+                    if (!paintedMargin) {
                         rect.height += margin;
+                        paintedMargin = true;
                     }
                     if (i == length) {
-                        rect.y      -= margin;
-                        rect.height += margin;
+                        if (interpolate) {
+                            rect.y      = 0;
+                            rect.height = margin;
+                        } else {
+                            rect.y      -= margin;
+                            rect.height += margin;
+                        }
                     }
                 }
-                graphics.setColor(new Color(color, true));
+                nextColor = new Color(nextARGB, true);
+                if (interpolate && thisARGB != nextARGB) {
+                    final double x1, y1, x2, y2;
+                    if (horizontal) {
+                        x1 = rect.getMinX();
+                        x2 = rect.getMaxX();
+                        y1 = y2 = rect.getCenterY();
+                    } else {
+                        y1 = rect.getMaxY();
+                        y2 = rect.getMinY();
+                        x1 = x2 = rect.getCenterX();
+                    }
+                    graphics.setPaint(new GradientPaint(
+                            (float) x1, (float) y1, thisColor,
+                            (float) x2, (float) y2, nextColor));
+                } else {
+                    graphics.setColor(thisColor);
+                }
                 graphics.fill(rect);
                 lastIndex = i;
-                color = nextColor;
+                thisARGB  = nextARGB;
+                thisColor = nextColor;
             }
         }
         Rectangle2D labelBounds = null;
@@ -541,9 +647,9 @@ public class ColorRamp implements Serializable {
                     final double   position = value*scale + offset;
                     final int    colorIndex = Math.min(Math.max((int) Math.round(
                                               (value - axisMinimum)*valueToLocation),0), length-1);
-                    if (horizontal) x=position;
-                    else            y=position;
-                    rectg.setRect(x-0.5*width, y-0.5*height, width, height);
+                    if (horizontal) x = position;
+                    else            y = position;
+                    rectg.setRect(x - 0.5*width, y - 0.5*height, width, height);
                     if (autoForeground) {
                         graphics.setColor(getForeground(colorIndex));
                     }
@@ -593,75 +699,58 @@ public class ColorRamp implements Serializable {
      * method must returns a graduation of the appropriate class, usually {@link NumberGraduation}
      * or {@link LogarithmicNumberGraduation}.
      * <p>
-     * In every cases, this method must set graduations's
+     * In every cases, this method must set graduations
      * {@linkplain AbstractGraduation#setMinimum minimum},
      * {@linkplain AbstractGraduation#setMaximum maximum} and
      * {@linkplain AbstractGraduation#setUnit unit} according the values given in arguments.
      *
      * @param  reuse   The graduation to reuse if possible.
      * @param  band    The sample dimension to create graduation for.
-     * @param  minimum The minimal geophysics value to appears in the graduation.
-     * @param  maximum The maximal geophysics value to appears in the graduation.
+     * @param  minimum The minimal geophysics value to appear in the graduation.
+     * @param  maximum The maximal geophysics value to appear in the graduation.
      * @return A graduation for the supplied sample dimension.
      */
     protected Graduation createGraduation(final Graduation reuse, final SampleDimension band,
                                           final double minimum, final double maximum)
     {
-        return createDefaultGraduation(reuse, band, minimum, maximum);
+        return createDefaultGraduation(reuse, band.getSampleToGeophysics(),
+                minimum, maximum, band.getUnits(), getLocale());
     }
 
     /**
      * Default implementation of {@code createGraduation}.
      *
      * @param  reuse   The graduation to reuse if possible.
-     * @param  band    The sample dimension to create graduation for.
-     * @param  minimum The minimal geophysics value to appears in the graduation.
-     * @param  maximum The maximal geophysics value to appears in the graduation.
+     * @param  tr      The <cite>sample to geophysics</cite> transform.
+     * @param  minimum The minimal geophysics value to appear in the graduation.
+     * @param  maximum The maximal geophysics value to appear in the graduation.
+     * @param  units   The units of the minimal and maximal values.
+     * @param  locale  The locale, or {@code null} for the default locale.
      * @return A graduation for the supplied sample dimension.
      */
-    public static Graduation createDefaultGraduation(
-            final Graduation reuse, final SampleDimension band,
-            final double minimum, final double maximum)
+    public static Graduation createDefaultGraduation(final Graduation reuse, MathTransform1D tr,
+            final double minimum, final double maximum, final Unit<?> units, final Locale locale)
     {
-        MathTransform1D tr  = band.getSampleToGeophysics();
-        boolean linear      = false;
-        boolean logarithmic = false;
-        try {
-            /*
-             * An heuristic approach to determine if the transform is linear or logarithmic.
-             * We look at the derivative, which should be constant everywhere for a linear
-             * scale and be proportional to the inverse of 'x' for a logarithmic one.
-             */
-            tr = tr.inverse();
-            final double ratio = tr.derivative(minimum) / tr.derivative(maximum);
-            if (Math.abs(ratio-1) <= EPS) {
-                linear = true;
-            }
-            if (Math.abs(ratio*(minimum/maximum) - 1) <= EPS) {
-                logarithmic = true;
-            }
-        } catch (TransformException exception) {
-            // Transformation failed. We don't know if the scale is linear or logarithmic.
-            // Continue anyway. A warning will be logged later in this method.
-        }
-        final Unit<?> units = band.getUnits();
         AbstractGraduation graduation = (reuse instanceof AbstractGraduation) ?
                 (AbstractGraduation) reuse : null;
-        if (linear) {
+        if (tr instanceof LinearTransform) {
             if (graduation == null || !graduation.getClass().equals(NumberGraduation.class)) {
                 graduation = new NumberGraduation(units);
             }
-        } else if (logarithmic) {
+        } else if (tr instanceof ExponentialTransform1D) { // The *inverse* of 'tr' is logarithmic.
             if (graduation == null || !graduation.getClass().equals(LogarithmicNumberGraduation.class)) {
                 graduation = new LogarithmicNumberGraduation(units);
             }
         } else {
             final Logger logger = Logging.getLogger("org.geotoolkit.image");
-            final LogRecord record = Loggings.format(Level.WARNING,
+            final LogRecord record = Loggings.getResources(locale).getLogRecord(Level.WARNING,
                     Loggings.Keys.UNRECOGNIZED_SCALE_TYPE_$1, Classes.getShortClassName(tr));
             record.setLoggerName(logger.getName());
             logger.log(record);
             graduation = new NumberGraduation(units);
+        }
+        if (locale != null) {
+            graduation.setLocale(locale);
         }
         if (graduation == reuse) {
             graduation.setUnit(units);
@@ -669,6 +758,59 @@ public class ColorRamp implements Serializable {
         graduation.setMinimum(minimum);
         graduation.setMaximum(maximum);
         return graduation;
+    }
+
+    /**
+     * Paints a color ramp for the given range of values. This convenience method is provided
+     * mostly for {@link org.geotoolkit.coverage.sql.LayerEntry#getColorRamp} implementation,
+     * which invoke this method through reflection (not directly in order to avoid a direct
+     * dependencies of {@code geotk-coverage-sql} toward {@code geotk-display}.
+     * <p>
+     * See {@link org.geotoolkit.coverage.sql.Layer#getColorRamp(int, MeasurementRange, Map)}
+     * for a description of the expected content of the {@code properties} map.
+     *
+     * @param  range The range for the graduation, or {@code null} if no graduation should
+     *         be written.
+     * @param  properties An optional map of properties controlling the rendering.
+     * @param  colors The colors to use in the color ramp.
+     * @param  sampleToGeophysics The <cite>sample to geophysics</cite> transform,
+     *         used in order to determine if the graduation is linear or logarithmic.
+     * @param  locale The locale to use for formatting labels.
+     * @return The color ramp as an image, or {@code null} if none.
+     * @throws IllegalArgumentException If the units of the given range are incompatible
+     *         with the units of measurement found in this layer.
+     * @throws CoverageStoreException If an error occurred while creating the color ramp.
+     *
+     * @see org.geotoolkit.coverage.sql.LayerEntry#getColorRamp(int, MeasurementRange, Map)
+     *
+     * @since 3.16
+     */
+    public static BufferedImage paint(final MeasurementRange<?> range, final Color[] colors,
+            final MathTransform1D sampleToGeophysics, final Locale locale, final Map<String,?> properties)
+    {
+        Dimension  size     = null;
+        Font       font     = null;
+        Color      color    = null;
+        Graphics2D graphics = null;
+        if (properties != null) {
+            size     = (Dimension)  properties.get("size");
+            font     = (Font)       properties.get("font");
+            color    = (Color)      properties.get("foreground");
+            graphics = (Graphics2D) properties.get("graphics");
+        }
+        if (size == null) {
+            size = new Dimension(400, 20);
+        }
+        final ColorRamp cr = new ColorRamp();
+        cr.labelVisibles = (range != null);
+        cr.setLocale(locale);
+        cr.setColors(colors);
+        cr.setGraduation(range, sampleToGeophysics);
+        if (graphics != null) {
+            cr.paint(graphics, new Rectangle(size), font, color);
+            return null;
+        }
+        return cr.toImage(size.width, size.height, font, color);
     }
 
     /**
