@@ -14,7 +14,7 @@
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotk-jdbc</artifactId>
-    <version>PERF-SNAPSHOT</version>
+    <version>SNAPSHOT</version>
   </parent>
 
 

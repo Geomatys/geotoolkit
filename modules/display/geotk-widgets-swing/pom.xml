@@ -16,7 +16,7 @@
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>display</artifactId>
-    <version>PERF-SNAPSHOT</version>
+    <version>SNAPSHOT</version>
   </parent>
 
 

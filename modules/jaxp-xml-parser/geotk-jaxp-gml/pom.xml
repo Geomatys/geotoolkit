@@ -9,7 +9,7 @@
     <parent>
         <groupId>org.geotoolkit.pending</groupId>
         <artifactId>jaxp-xml-parser</artifactId>
-        <version>PERF-SNAPSHOT</version>
+        <version>SNAPSHOT</version>
     </parent>
 
 

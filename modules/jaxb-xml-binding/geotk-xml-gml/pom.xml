@@ -9,7 +9,7 @@
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>jaxb-xml-binding</artifactId>
-    <version>PERF-SNAPSHOT</version>
+    <version>SNAPSHOT</version>
   </parent>
 
 

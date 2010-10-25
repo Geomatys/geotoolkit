@@ -27,7 +27,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotoolkit</artifactId>
   <packaging>pom</packaging>
-  <version>PERF-SNAPSHOT</version>
+  <version>SNAPSHOT</version>
   <name>Geotoolkit-pending</name>
   <url>http://pending.geotoolkit.org/</url>
 
