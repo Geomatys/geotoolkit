@@ -40,7 +40,10 @@ Geotoolkit.org modules
    * {{{display/index.html}Display}}
 
       * {{{display/geotk-widgets-swing/index.html}Swing widgets}} -
-        Miscellaneous widgets
+        Miscellaneous widgets for selecting a CRS, browsing image I/O metadata, <etc.>
+
+      * {{{display/geotk-wizards-swing/index.html}Swing wizards}} -
+        Miscellaneous wizards for creating a Coverage SQL database, <etc.>
 
    * {{{analytics/index.html}Analytics}}
 

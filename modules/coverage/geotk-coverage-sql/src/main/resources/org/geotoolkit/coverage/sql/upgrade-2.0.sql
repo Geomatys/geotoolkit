@@ -3,8 +3,24 @@
 --- schema defined in the geotk-coverage-sql module version 3.16.
 ---
 --- The "pom.xml" configuration excludes this SQL script from the JAR file, because the
---- legacy PostGrid schema was not in wide use enough. This file is keept in the source
+--- legacy PostGrid schema was not in wide use enough. This file is keep in the source
 --- code repository for historical purpose.
+---
+--- ------------------------------------------------------------------------------------------------
+---
+--- USAGE:
+---
+--- 1) Create an initially empty database using the new schema, as described below:
+---    http://www.geotoolkit.org/modules/display/geotk-wizards-swing/CoverageDatabaseInstaller.html
+---
+--- 2) Copy the old data in the new database, in a schema called "postgrid". This copy can be
+---    performed by dumping the "postgrid" schema from the old database (ONLY "postgrid" schema;
+---    if the schema containing the "GridCoverages" table is not named that way, rename it), then
+---    restoring the dump in the new database.
+---
+--- 3) Execute this script.
+---
+--- 4) Delete the temporary "postgrid" schema from the new database.
 ---
 
 --- Formats ----------------------------------------------------------------------------------------
