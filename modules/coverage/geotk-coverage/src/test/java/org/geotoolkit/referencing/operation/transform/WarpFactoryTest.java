@@ -197,6 +197,7 @@ public final class WarpFactoryTest {
         assertEquals("The x dimension should be affine.",   1, ((WarpGrid) warp).getXNumCells());
         assertEquals("The y dimension can not be affine.", 18, ((WarpGrid) warp).getYStep());
         compare("Mercator using WarpGrid", tr, warp);
+        assertSame("Warp should be cached", warp, WarpFactory.DEFAULT.create(null, tr, imageBounds));
         /*
          * Try on a smaller region. Should be optimized to the affine transform case.
          */
@@ -205,6 +206,7 @@ public final class WarpFactoryTest {
         warp = WarpFactory.DEFAULT.create(null, tr, imageBounds);
         assertTrue("Expected a WarpAffine.", warp instanceof WarpAffine);
         compare("Mercator using WarpAffine", tr, warp);
+        assertSame("Warp should be cached", warp, WarpFactory.DEFAULT.create(null, tr, imageBounds));
     }
 
     /**
@@ -226,6 +228,7 @@ public final class WarpFactoryTest {
         assertEquals("The x dimension can not be affine.", 16, ((WarpGrid) warp).getXNumCells());
         assertEquals("The y dimension can not be affine.", 37, ((WarpGrid) warp).getYStep());
         compare("Lambert using WarpGrid", tr, warp);
+        assertSame("Warp should be cached", warp, WarpFactory.DEFAULT.create(null, tr, imageBounds));
         /*
          * Try on a smaller region. Should be optimized to the affine transform case.
          */
@@ -234,5 +237,6 @@ public final class WarpFactoryTest {
         warp = WarpFactory.DEFAULT.create(null, tr, imageBounds);
         assertTrue("Expected a WarpAffine.", warp instanceof WarpAffine);
         compare("Lambert using WarpAffine", tr, warp);
+        assertSame("Warp should be cached", warp, WarpFactory.DEFAULT.create(null, tr, imageBounds));
     }
 }

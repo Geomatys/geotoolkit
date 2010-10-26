@@ -105,6 +105,11 @@ public class WarpFactory {
     private final double tolerance;
 
     /**
+     * The cache of {@link Warp} objects previously created.
+     */
+    private final WarpCache cache;
+
+    /**
      * Creates a new factory.
      *
      * @param tolerance The maximal error allowed, in units of destination CRS (usually pixels).
@@ -117,6 +122,7 @@ public class WarpFactory {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.NOT_GREATER_THAN_ZERO_$1, tolerance));
         }
         this.tolerance = tolerance;
+        cache = new WarpCache();
     }
 
     /**
@@ -192,6 +198,29 @@ public class WarpFactory {
         if (transform instanceof AffineTransform) {
             return create((AffineTransform) transform);
         }
+        final WarpKey key = new WarpKey(transform, domain);
+        Warp warp = cache.peek(key);
+        if (warp == null) {
+            WarpCache.Handler<Warp> handler = cache.lock(key);
+            try {
+                warp = handler.peek();
+                if (warp == null) {
+                    warp = create(name, transform, key);
+                }
+            } finally {
+                handler.putAndUnlock(warp);
+            }
+        }
+        return warp;
+    }
+
+    /**
+     * Implementation of the public {@link #create(CharSequence name, MathTransform2D, Rectangle)}
+     * method, invoked only if the Warp object was not found in the cache.
+     */
+    private Warp create(final CharSequence name, final MathTransform2D transform, final WarpKey domain)
+            throws TransformException
+    {
         final double xmin = domain.getMinX();
         final double xmax = domain.getMaxX();
         final double ymin = domain.getMinY();
