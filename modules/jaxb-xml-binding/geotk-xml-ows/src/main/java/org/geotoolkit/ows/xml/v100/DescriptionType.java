@@ -104,6 +104,10 @@ public class DescriptionType implements AbstractDescription {
     public String getTitle() {
         return title;
     }
+    
+    public void setTitle(String title) {
+        this.title = title;
+    }
 
     public String getFirstTitle() {
         return title;
@@ -114,6 +118,10 @@ public class DescriptionType implements AbstractDescription {
      */
     public String getAbstract() {
         return _abstract;
+    }
+
+    public void setAbstract(String _abstract) {
+        this._abstract = _abstract;
     }
 
      public String getFirstAbstract() {
