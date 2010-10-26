@@ -105,6 +105,11 @@
       <version>${openoffice.version}</version>
       <scope>provided</scope>  <!-- Already included in OpenOffice runtime environment -->
     </dependency>
+    <dependency>
+      <groupId>hsqldb</groupId>
+      <artifactId>hsqldb</artifactId>
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
 
 

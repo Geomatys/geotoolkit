@@ -147,7 +147,7 @@
     <javadoc.exclude>
       org.geotoolkit.test:org.geotoolkit.demo:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.geotoolkit.metadata.fra:com
     </javadoc.exclude>
-    <derby.version>10.6.1.0</derby.version>
+    <derby.version>10.6.2.1</derby.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- TODO: Use <sourceEncoding>UTF-8</sourceEncoding> with Maven 3 -->
   </properties>
@@ -219,7 +219,7 @@
       <dependency>
         <groupId>edu.ucar</groupId>
         <artifactId>netcdf</artifactId>
-        <version>4.1</version>
+        <version>4.2</version>
       </dependency>
       <!-- Database and Server -->
       <dependency>
@@ -231,17 +231,17 @@
       <dependency>
         <groupId>hsqldb</groupId>
         <artifactId>hsqldb</artifactId>
-        <version>1.8.0.7</version>
+        <version>1.8.0.10</version>
       </dependency>
       <dependency>
         <groupId>postgresql</groupId>
         <artifactId>postgresql</artifactId>
-        <version>8.4-701.jdbc4</version>
+        <version>9.0-801.jdbc4</version>
       </dependency>
       <dependency>
         <groupId>javax.mail</groupId>
         <artifactId>mail</artifactId>
-        <version>1.4.1</version>
+        <version>1.4.3</version>
         <scope>provided</scope> <!-- Already included in JEE -->
       </dependency>
       <!-- GUI -->
@@ -261,11 +261,11 @@
         <version>1.0</version>
         <scope>runtime</scope>
       </dependency>
-      <!-- Tests or legacy -->
+      <!-- Tests -->
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.8.1</version>
+        <version>4.8.2</version>
         <scope>test</scope>
       </dependency>
     </dependencies>
@@ -480,7 +480,7 @@
             <link>http://download.java.net/media/jai/javadoc/1.1.3/jai-apidocs</link>
             <link>http://download.java.net/media/jai-imageio/javadoc/1.1</link>
             <link>http://download.java.net/media/java3d/javadoc/1.5.1</link>
-            <link>http://www.unidata.ucar.edu/software/netcdf-java/v4.1/javadoc</link>
+            <link>http://www.unidata.ucar.edu/software/netcdf-java/v4.2/javadoc</link>
        <!-- <link>http://swinglabs.org/hudson/job/SwingX%20Continuous%20Build/javadoc</link> -->
             <link>http://javadoc.geotoolkit.org/external/swingx</link>
             <link>http://jscience.org/api/</link>
