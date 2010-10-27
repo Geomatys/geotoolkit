@@ -59,6 +59,11 @@ public final class WarpFactoryTest {
     private static final boolean VERBOSE = false;
 
     /**
+     * The tolerance threshold (in pixels) used by the {@link WarpFactory} being tested.
+     */
+    private static final double TOLERANCE = 0.25;
+
+    /**
      * The location and dimension (in pixels) of a pseudo-image to be projected.
      */
     private final Rectangle imageBounds = new Rectangle(10, 20, 800, 600);
@@ -154,10 +159,10 @@ public final class WarpFactoryTest {
                 assertEquals("Expected a two-dimensional point.", 2, tstPt.length);
                 final double dx = Math.abs(expPt[0] - tstPt[0]);
                 final double dy = Math.abs(expPt[1] - tstPt[1]);
-                if (!(dx <= 0.5 && dy <= 0.5)) {
+                if (!(dx <= TOLERANCE && dy <= TOLERANCE)) {
                     fail("Error at (" + x + ',' + y + "): expected " +
                             Arrays.toString(expPt) + " but got " +
-                            Arrays.toString(tstPt));
+                            Arrays.toString(tstPt) + ". Error is (" + dx + ", " + dy + ')');
                 }
                 sx.add(dx);
                 sy.add(dy);

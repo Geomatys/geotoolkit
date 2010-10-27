@@ -34,8 +34,8 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.internal.referencing.MatrixUtilities;
-import org.geotoolkit.referencing.operation.matrix.XMatrix;
+import org.geotoolkit.display.shape.DoubleDimension2D;
+import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
@@ -226,12 +226,12 @@ public class WarpFactory {
         final double ymin = domain.getMinY();
         final double ymax = domain.getMaxY();
         final Point2D.Double point = new Point2D.Double(); // Multi-purpose buffer.
-        final Matrix upperLeft, upperRight, lowerLeft, lowerRight;
+        final Matrix2 upperLeft, upperRight, lowerLeft, lowerRight;
         try {
-            point.x = xmin; point.y = ymax; upperLeft  = transform.derivative(point);
-            point.x = xmax; point.y = ymax; upperRight = transform.derivative(point);
-            point.x = xmin; point.y = ymin; lowerLeft  = transform.derivative(point);
-            point.x = xmax; point.y = ymin; lowerRight = transform.derivative(point);
+            point.x = xmin; point.y = ymax; upperLeft  = derivative(transform, point);
+            point.x = xmax; point.y = ymax; upperRight = derivative(transform, point);
+            point.x = xmin; point.y = ymin; lowerLeft  = derivative(transform, point);
+            point.x = xmax; point.y = ymin; lowerRight = derivative(transform, point);
         } catch (TransformException e) {
             /*
              * Typically happen when the transform does not support the derivative function,
@@ -245,36 +245,47 @@ public class WarpFactory {
          * a one-dimensional case,  but the two dimensional case works on the same
          * principle.
          *
-         * Let assume that we computed the derivative at two locations: P₁ and P₃.
-         * The derivative values (the slopes of a x'=f(x) function) are m₁ and m₃.
-         * The illustration below shows two straight lines with different slope at
-         * P₁ and P₃ (the slope at P₂ is discussed later).
+         * Let assume that we computed the derivative of y=f(x) at two locations: x₁ and x₃.
+         * The derivative values (the slopes of the y=f(x) function) at those locations are
+         * m₁ and m₃.
          *
          *          /          _/
-         *         / P₁      _/ P₂      ─── P₃
-         *        / m₁=1    /  m₂=½        m₃=0
+         *         / x₁      _/ x₂      ─── x₃
+         *        / m₁=1    /  m₂≈½        m₃=0
          *
-         * WarpGrid will interpolate the values between P₁ and P₃. The value at those locations
-         * should be exact.  We presume that the greatest error will be located mid-way between
-         * P₁ and P₃. The P₂ point above represents that location, and its derivative is
-         * interpolated as m₂ = (m₁ + m₃) / 2.
+         * WarpGrid will interpolate the y values between x₁ and x₃. The interpolated results
+         * should be exact at locations x₁ and x₃ and have some errors between those two end
+         * points.
          *
-         * Given f₁(x) = x₁ + (x - P₁)*m₁
-         *   and f₂(x) = x₁ + (x - P₁)*m₂
+         * HYPOTHESIS:
+         *  1) We presume that the greatest error will be located mid-way between x₁ and x₃.
+         *     The x₂ point above represents that location.
+         *  2) We presume that the derivative between x₁ and x₃ varies continuously from m₁ to m₃.
+         *     The derivative at x₂ may be something close to m₂ ≈ (m₁ + m₃) / 2, but we don't
+         *     actually known.
          *
-         * then the error ε = f₂(x) - f₁(x) at location x=P₂ is (P₂-P₁) * (m₂-m₁).
-         * Given P₂ = (P₁+P₃)/2, we get ε = (P₃-P₁)/2 * (m₃-m₁)/2.
+         * Let compute linear approximations of y=f(x) using the two slopes m₁ and m₃. If
+         * the hypothesis #2 is true, then the real y values are somewhere between the two
+         * approximations. The formulas below use the x₁ point, but we would get the same
+         * final equation if we used the x₃ instead (we don't use both x₁ and x₃ since
+         * solving such equation produce 0=0).
          *
-         * If we rearange the terms, we get:  (m₃-m₁) = 4*ε / (P₃-P₁).
+         * Given f₁(x) = y₁ + (x - x₁)*m₁
+         *   and f₃(x) = y₁ + (x - x₁)*m₃
+         *
+         * then the error ε = f₃(x) - f₁(x) at location x=x₂ is (x₂-x₁) * (m₃-m₁).
+         * Given x₂ = (x₁+x₃)/2, we get ε = (x₃-x₁)/2 * (m₃-m₁).
+         *
+         * If we rearange the terms, we get:  (m₃-m₁) = 2*ε / (x₃-x₁).
          * The (m₃ - m₁) value is the maximal difference to be accepted
          * in the coefficients of the derivative matrix to be compared.
          */
         final Dimension depth;
         try {
+            final double tol = 2 * tolerance;
             depth = depth(transform, point,
-                        (4 * tolerance) / Math.max(xmax - xmin, ymax - ymin),
-                        xmin, xmax, ymin, ymax,
-                        upperLeft, upperRight, lowerLeft, lowerRight);
+                    new DoubleDimension2D(tol / (xmax - xmin), tol / (ymax - ymin)),
+                    xmin, xmax, ymin, ymax, upperLeft, upperRight, lowerLeft, lowerRight);
         } catch (ArithmeticException e) {
             /*
              * The method does not converge.
@@ -358,9 +369,9 @@ public class WarpFactory {
      * @param transform The transform for which to compute the depth.
      * @param point Any {@code Point2D.Double} instance, to be overwritten by this method.
      *        This is provided in argument only to reduce the amount of object allocations.
-     * @param tolerance The tolerance value to use in comparisons of matrix coefficients.
-     *        The distance between matrix being compared is half the size of the region
-     *        of interest.
+     * @param tolerance The tolerance value to use in comparisons of matrix coefficients,
+     *        along the X axis and along the Y axis. The distance between the location of
+     *        the matrix being compared is half the size of the region of interest.
      * @param xmin The minimal <var>x</var> ordinate.
      * @param xmax The maximal <var>x</var> ordinate.
      * @param ymin The minimal <var>y</var> ordinate.
@@ -373,11 +384,12 @@ public class WarpFactory {
      * @throws TransformException If a derivative can not be computed.
      * @throws ArithmeticException If this method does not converge.
      */
-    private static Dimension depth(final MathTransform2D transform, final Point2D.Double point, double tolerance,
-            final double xmin,      final double xmax,
-            final double ymin,      final double ymax,
-            final Matrix upperLeft, final Matrix upperRight,
-            final Matrix lowerLeft, final Matrix lowerRight)
+    private static Dimension depth(final MathTransform2D transform, final Point2D.Double point,
+            final DoubleDimension2D tolerance,
+            final double xmin,       final double xmax,
+            final double ymin,       final double ymax,
+            final Matrix2 upperLeft, final Matrix2 upperRight,
+            final Matrix2 lowerLeft, final Matrix2 lowerRight)
             throws TransformException, ArithmeticException
     {
         if (!(xmax - xmin >= MIN_SIZE) || !(ymax - ymin >= MIN_SIZE)) { // Use ! for catching NaN.
@@ -389,25 +401,28 @@ public class WarpFactory {
          * between [x|y]min and [x|y]max (approximatively - we ignore the diagonal).
          * Consequently, the tolerance threshold can be augmented by the same factor.
          */
-        tolerance *= 2;
+        final double oldTolX = tolerance.width;
+        final double oldTolY = tolerance.height;
+        tolerance.width  *= 2;
+        tolerance.height *= 2;
         final double centerX = point.x = 0.5 * (xmin + xmax);
         final double centerY = point.y = 0.5 * (ymin + ymax);
-        final XMatrix center = MatrixUtilities.toXMatrix(transform.derivative(point));
-        point.x = xmin;    point.y = centerY; final Matrix centerLeft  = transform.derivative(point);
-        point.x = xmax;    point.y = centerY; final Matrix centerRight = transform.derivative(point);
-        point.x = centerX; point.y = ymin;    final Matrix centerLower = transform.derivative(point);
-        point.x = centerX; point.y = ymax;    final Matrix centerUpper = transform.derivative(point);
-        final boolean cl = center.equals(centerLeft,  tolerance);
-        final boolean cr = center.equals(centerRight, tolerance);
-        final boolean cb = center.equals(centerLower, tolerance);
-        final boolean cu = center.equals(centerUpper, tolerance);
+        final Matrix2 center = derivative(transform, point);
+        point.x = xmin;    point.y = centerY; final Matrix2 centerLeft  = derivative(transform, point);
+        point.x = xmax;    point.y = centerY; final Matrix2 centerRight = derivative(transform, point);
+        point.x = centerX; point.y = ymin;    final Matrix2 centerLower = derivative(transform, point);
+        point.x = centerX; point.y = ymax;    final Matrix2 centerUpper = derivative(transform, point);
+        final boolean cl = equals(center, centerLeft,  tolerance);
+        final boolean cr = equals(center, centerRight, tolerance);
+        final boolean cb = equals(center, centerLower, tolerance);
+        final boolean cu = equals(center, centerUpper, tolerance);
         int nx=0, ny=0;
         /*
          *   upperLeft  ┌──────┬─ centerUpper
          *              │      │
          *   centerLeft ├──────┼─ center
          */
-        if (!cl || !cu || !center.equals(upperLeft, tolerance)) {
+        if (!cl || !cu || !equals(center, upperLeft, tolerance)) {
             final Dimension depth = depth(transform, point, tolerance,
                     xmin, centerX, centerY, ymax,
                     upperLeft, centerUpper, centerLeft, center);
@@ -420,7 +435,7 @@ public class WarpFactory {
          *                │      │
          *   center      ─┼──────┤ centerRight
          */
-        if (!cr || !cu || !center.equals(upperRight, tolerance)) {
+        if (!cr || !cu || !equals(center, upperRight, tolerance)) {
             final Dimension depth = depth(transform, point, tolerance,
                     centerX, xmax, centerY, ymax,
                     centerUpper, upperRight, center, centerRight);
@@ -433,7 +448,7 @@ public class WarpFactory {
          *              │      │
          *   lowerLeft  └──────┴─ centerLower
          */
-        if (!cl || !cb || !center.equals(lowerLeft, tolerance)) {
+        if (!cl || !cb || !equals(center, lowerLeft, tolerance)) {
             final Dimension depth = depth(transform, point, tolerance,
                     xmin, centerX, ymin, centerY,
                     centerLeft, center, lowerLeft, centerLower);
@@ -446,7 +461,7 @@ public class WarpFactory {
          *                │      │
          *   centerLower ─┴──────┘ lowerRight
          */
-        if (!cr || !cb || !center.equals(lowerRight, tolerance)) {
+        if (!cr || !cb || !equals(center, lowerRight, tolerance)) {
             final Dimension depth = depth(transform, point, tolerance,
                     centerX, xmax, ymin, centerY,
                     center, centerRight, centerLower, lowerRight);
@@ -454,6 +469,8 @@ public class WarpFactory {
             nx = Math.max(nx, depth.width);
             ny = Math.max(ny, depth.height);
         }
+        tolerance.width  = oldTolX;
+        tolerance.height = oldTolY;
         return new Dimension(nx, ny);
     }
 
@@ -490,5 +507,38 @@ public class WarpFactory {
             // Implies (he == true): horizontal dimension is affine, don't touch it.
             depth.height++;
         }
+    }
+
+    /**
+     * Computes the derivative of the given transform at the given location, and returns the result
+     * as a 2&times;2 matrix. This method invokes the {@link MathTransform2D#derivative(Point2D)}
+     * and convert or cast the result to a {@link Matrix2} instance.
+     * <p>
+     * In the Geotk implementation, the matrix returned by the {@code derivative(Point2D)} methods
+     * are already instances of {@link Matrix2}. Consequently in most cases this method will just
+     * cast the result.
+     *
+     * @param  transform The transform for which to compute the derivative.
+     * @param  point     The location where to compute the derivative.
+     * @return The derivative at the given location as a 2&times;2 matrix.
+     * @throws TransformException If the derivative can not be computed.
+     */
+    private static Matrix2 derivative(final MathTransform2D transform, final Point2D point)
+            throws TransformException
+    {
+        final Matrix matrix = transform.derivative(point);
+        return (matrix instanceof Matrix2) ? (Matrix2) matrix : new Matrix2(matrix);
+    }
+
+    /**
+     * Returns {@code true} if the given matrix are equals, up to the given tolerance threshold.
+     * The threshold can be different for the X and Y axis. This allows the condition to break
+     * the loop sooner (resulting in smaller grids) inside the {@code depth} method.
+     */
+    private static boolean equals(final Matrix2 center, final Matrix2 corner, final DoubleDimension2D tolerance) {
+        return Math.abs(center.m00 - corner.m00) <= tolerance.width  &&
+               Math.abs(center.m01 - corner.m01) <= tolerance.width  &&
+               Math.abs(center.m10 - corner.m10) <= tolerance.height &&
+               Math.abs(center.m11 - corner.m11) <= tolerance.height;
     }
 }
