@@ -53,7 +53,7 @@ import org.geotoolkit.lang.Static;
  * @module
  */
 @Static
-public class Ranks {
+public class Ranks { // NOSONAR: intentionally not final.
     /**
      * The index in the array before it has been sorted.
      */
@@ -113,7 +113,7 @@ public class Ranks {
         }
         final Double[] entries = new Double[source.length];
         for (int i=0; i<entries.length; i++) {
-            entries[i] = new Double(i, source[i]);
+            entries[i] = new Double(i, source[i]); // NOSONAR: This is not java.lang.Double
         }
         final int[] ranks = ranks(entries);
         if (target != null) {
@@ -141,7 +141,7 @@ public class Ranks {
         }
         final Float[] entries = new Float[source.length];
         for (int i=0; i<entries.length; i++) {
-            entries[i] = new Float(i, source[i]);
+            entries[i] = new Float(i, source[i]); // NOSONAR: This is not java.lang.Float
         }
         final int[] ranks = ranks(entries);
         if (target != null) {
@@ -169,7 +169,7 @@ public class Ranks {
         }
         final Long[] entries = new Long[source.length];
         for (int i=0; i<entries.length; i++) {
-            entries[i] = new Long(i, source[i]);
+            entries[i] = new Long(i, source[i]); // NOSONAR: This is not java.lang.Long
         }
         final int[] ranks = ranks(entries);
         if (target != null) {
@@ -197,7 +197,7 @@ public class Ranks {
         }
         final Integer[] entries = new Integer[source.length];
         for (int i=0; i<entries.length; i++) {
-            entries[i] = new Integer(i, source[i]);
+            entries[i] = new Integer(i, source[i]); // NOSONAR: This is not java.lang.Integer
         }
         final int[] ranks = ranks(entries);
         if (target != null) {
@@ -225,7 +225,7 @@ public class Ranks {
         }
         final Short[] entries = new Short[source.length];
         for (int i=0; i<entries.length; i++) {
-            entries[i] = new Short(i, source[i]);
+            entries[i] = new Short(i, source[i]); // NOSONAR: This is not java.lang.Short
         }
         final int[] ranks = ranks(entries);
         if (target != null) {
@@ -253,7 +253,7 @@ public class Ranks {
         }
         final Byte[] entries = new Byte[source.length];
         for (int i=0; i<entries.length; i++) {
-            entries[i] = new Byte(i, source[i]);
+            entries[i] = new Byte(i, source[i]); // NOSONAR: This is not java.lang.Byte
         }
         final int[] ranks = ranks(entries);
         if (target != null) {

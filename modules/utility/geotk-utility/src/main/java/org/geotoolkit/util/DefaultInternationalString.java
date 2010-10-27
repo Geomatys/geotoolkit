@@ -107,7 +107,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
             localMap = Collections.emptyMap();
         } else {
             final Iterator<Map.Entry<Locale,String>> it = strings.entrySet().iterator();
-            Map.Entry<Locale,String> entry = it.next();
+            final Map.Entry<Locale,String> entry = it.next();
             if (!it.hasNext()) {
                 localMap = Collections.singletonMap(entry.getKey(), entry.getValue());
             } else {
@@ -139,7 +139,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
                     break;
                 }
             }
-            String old = localMap.get(locale);
+            final String old = localMap.get(locale);
             if (old != null) {
                 if (string.equals(old)) {
                     return;
@@ -354,7 +354,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
      */
     @Override
     public boolean equals(final Object object) {
-        if (object!=null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass().equals(getClass())) {
             final DefaultInternationalString that = (DefaultInternationalString) object;
             return Utilities.equals(this.localMap, that.localMap);
         }
@@ -365,7 +365,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
      * Returns a hash code value for this international text.
      */
     @Override
-    public int hashCode() {
+    public synchronized int hashCode() {
         return (int)serialVersionUID ^ localMap.hashCode();
     }
 

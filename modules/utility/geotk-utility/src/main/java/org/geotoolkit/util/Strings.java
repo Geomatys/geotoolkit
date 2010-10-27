@@ -45,16 +45,16 @@ import org.geotoolkit.resources.Errors;
 @Static
 public final class Strings {
     /**
-     * An array of strings containing only white spaces. Strings' lengths are equal to their
+     * An array of strings containing only white spaces. String lengths are equal to their
      * index in the {@code spaces} array. For example, {@code spaces[4]} contains a string of
      * length 4. Strings are constructed only when first needed.
      */
-    private static final String[] spaces = new String[21];
+    private static final String[] SPACES = new String[21];
     static {
-        final int last = spaces.length - 1;
+        final int last = SPACES.length - 1;
         final char[] blancs = new char[last];
         Arrays.fill(blancs, ' ');
-        spaces[last] = new String(blancs).intern();
+        SPACES[last] = new String(blancs).intern();
     }
 
     /**
@@ -80,14 +80,14 @@ public final class Strings {
             length = 0;
         }
         String s;
-        if (length < spaces.length) {
-            s = spaces[length];
+        if (length < SPACES.length) {
+            s = SPACES[length];
             if (s == null) {
-                s = spaces[spaces.length - 1].substring(0, length).intern();
-                spaces[length] = s;
+                s = SPACES[SPACES.length - 1].substring(0, length).intern();
+                SPACES[length] = s;
             }
         } else {
-            char[] blancs = new char[length];
+            final char[] blancs = new char[length];
             Arrays.fill(blancs, ' ');
             s = new String(blancs);
         }
