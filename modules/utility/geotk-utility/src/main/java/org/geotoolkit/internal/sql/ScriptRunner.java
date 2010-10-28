@@ -55,12 +55,20 @@ import org.geotoolkit.resources.Vocabulary;
  * is used at the end for every SQL statement.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @since 3.00
  * @module
  */
 public class ScriptRunner implements FilenameFilter {
+    /**
+     * The sequence for SQL comments. Leading lines starting by those characters
+     * will be ignored.
+     *
+     * @since 3.16
+     */
+    private static final String COMMENT = "--";
+
     /**
      * The character at the end of statements.
      */
@@ -375,6 +383,12 @@ public class ScriptRunner implements FilenameFilter {
         while ((line = in.readLine()) != null) {
             int i = buffer.length();
             if (i == 0) {
+                final String trimed = line.trim();
+                if (trimed.length() == 0 || trimed.startsWith(COMMENT)) {
+                    // Ignore empty lines and comment lines, but only if they appear before any
+                    // other kind of line (i.e. before the begining of the real SQL statement).
+                    continue;
+                }
                 currentLine = in.getLineNumber();
             } else {
                 i++;

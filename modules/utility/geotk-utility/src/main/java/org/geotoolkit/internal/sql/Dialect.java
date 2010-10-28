@@ -31,7 +31,7 @@ import org.geotoolkit.util.XArrays;
  * The SQL dialect used by a connection.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.16
  *
  * @since 3.00
  * @module
@@ -66,9 +66,15 @@ public enum Dialect {
      * because we need the {@code CAST ... WITH INOUT} feature.
      */
     POSTGRESQL("org.postgresql.", "jdbc:postgresql:") {
-        @Override public boolean isEnumSupported(final DatabaseMetaData metadata) throws SQLException {
-            return metadata.getDatabaseMajorVersion() >= 8 &&
-                   metadata.getDatabaseMinorVersion() >= 4;
+        @Override
+        public boolean isEnumSupported(final DatabaseMetaData metadata) throws SQLException {
+            final int version = metadata.getDatabaseMajorVersion();
+            return (version == 8) ? metadata.getDatabaseMinorVersion() >= 4 : version >= 8;
+        }
+
+        @Override
+        public boolean needsCreateLanguage(final DatabaseMetaData metadata) throws SQLException {
+            return metadata.getDatabaseMajorVersion() < 9;
         }
     },
 
@@ -154,6 +160,29 @@ public enum Dialect {
      * @since 3.14
      */
     public boolean isEnumSupported(final DatabaseMetaData metadata) throws SQLException {
+        return false;
+    }
+
+    /**
+     * Returns {@code true} if the following instruction shall be executed (assuming that
+     * the PostgreSQL {@code "plpgsql"} language is desired):
+     *
+     * {@code sql
+     *   CREATE TRUSTED PROCEDURAL LANGUAGE 'plpgsql'
+     *     HANDLER plpgsql_call_handler
+     *     VALIDATOR plpgsql_validator;
+     * }
+     *
+     * This method returns {@code true} only for PostgreSQL dialect on database prior
+     * to version 9. Starting at version 9, the language is installed by default.
+     *
+     * @param  metadata The database metadata
+     * @return {@code true} if the language shall be created explicitly.
+     * @throws SQLException If an error occurred while querying the metadata.
+     *
+     * @since 3.16
+     */
+    public boolean needsCreateLanguage(final DatabaseMetaData metadata) throws SQLException {
         return false;
     }
 

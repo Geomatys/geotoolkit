@@ -28,7 +28,7 @@ import static org.geotoolkit.util.Strings.*;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.10
+ * @version 3.16
  *
  * @since 3.09 (derived from 3.00).
  */
@@ -51,6 +51,31 @@ public final class StringsTest {
         assertEquals(0, count("An ordinary sentence.",   '-'));
         assertEquals(4, count("- this one has -dashs--", '-'));
         assertEquals(2, count("An ordinary sentence.",  "en"));
+    }
+
+    /**
+     * Tests the {@link Strings#indexOf} method. We test four time with
+     * different kind of character sequences.
+     *
+     * @since 3.16
+     */
+    @Test
+    public void testIndexOf() {
+        for (int i=0; i<4; i++) {
+            CharSequence string = "An ordinary sentence.";
+            switch (i) {
+                case 0:  /* Test directly on the String instance. */              break;
+                case 1:  string = new StringBuilder            ((String) string); break;
+                case 2:  string = new StringBuffer             ((String) string); break;
+                case 3:  string = new SimpleInternationalString((String) string); break;
+                default: throw new AssertionError(i);
+            }
+            assertEquals(-1, indexOf(string, "dummy",        0));
+            assertEquals( 0, indexOf(string, "An",           0));
+            assertEquals(-1, indexOf(string, "An",           1));
+            assertEquals(12, indexOf(string, "sentence.",    0));
+            assertEquals(-1, indexOf(string, "sentence;",    0));
+        }
     }
 
     /**

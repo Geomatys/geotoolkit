@@ -296,7 +296,7 @@ final class EpsgScriptRunner extends ScriptRunner {
              * embedded in the geotk-epsg module.
              */
             int position = sql.indexOf("\n");
-            if (position >= 0) {
+            if (position >= 0 && Strings.regionMatches(sql, position-6, "VALUES")) {
                 /*
                  * Fetch the "INSERT INTO" part, which is expected to be on its own line.
                  * We will left this part of the buffer unchanged, and write only after

@@ -37,7 +37,7 @@ import org.geotoolkit.resources.Errors;
  * explicitly documented as throwing a {@link NullPointerException}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.16
  *
  * @since 3.09 (derived from 3.00)
  * @module
@@ -95,13 +95,13 @@ public final class Strings {
     }
 
     /**
-     * Returns the number of occurences of the {@code toSearch} string in the given {@code text}.
+     * Returns the number of occurrences of the {@code toSearch} string in the given {@code text}.
      * The search is case-sensitive.
      *
      * @param  text String to search in, or {@code null}.
      * @param  toSearch The string to search in the given {@code text}.
      *         Must contain at least one character.
-     * @return The number of occurence of {@code toSearch} in {@code text},
+     * @return The number of occurrence of {@code toSearch} in {@code text},
      *         or 0 if {@code text} was null or empty.
      * @throws IllegalArgumentException If the {@code toSearch} array is null or empty.
      *
@@ -126,12 +126,12 @@ public final class Strings {
     }
 
     /**
-     * Counts the number of occurence of the given character in the given string. This
+     * Counts the number of occurrence of the given character in the given string. This
      * method performs the same work than {@link #count(CharSequence, char)}, but is faster.
      *
-     * @param  text The text in which to count the number of occurence.
+     * @param  text The text in which to count the number of occurrence.
      * @param  c The character to count, or 0 if {@code text} was null.
-     * @return The number of occurences of the given character.
+     * @return The number of occurrences of the given character.
      */
     public static int count(final String text, final char c) {
         int n = 0;
@@ -144,13 +144,13 @@ public final class Strings {
     }
 
     /**
-     * Counts the number of occurence of the given character in the given character sequence.
+     * Counts the number of occurrence of the given character in the given character sequence.
      * This method performs the same work than {@link #count(String, char)}, but on a more
      * generic interface.
      *
-     * @param  text The text in which to count the number of occurence.
+     * @param  text The text in which to count the number of occurrence.
      * @param  c The character to count, or 0 if {@code text} was null.
-     * @return The number of occurences of the given character.
+     * @return The number of occurrences of the given character.
      */
     public static int count(final CharSequence text, final char c) {
         if (text instanceof String) {
@@ -168,9 +168,9 @@ public final class Strings {
     }
 
     /**
-     * Replaces every occurences of the given string in the given buffer.
+     * Replaces every occurrences of the given string in the given buffer.
      * This method invokes {@link StringBuilder#replace(int, int, String)}
-     * for each occurence of {@code search} found in the buffer.
+     * for each occurrence of {@code search} found in the buffer.
      *
      * @param buffer The string in which to perform the replacements.
      * @param search The string to replace.
@@ -193,8 +193,8 @@ public final class Strings {
     }
 
     /**
-     * Removes every occurences of the given string in the given buffer. This method invokes
-     * {@link StringBuilder#delete(int, int)} for each occurence of {@code search} found in
+     * Removes every occurrences of the given string in the given buffer. This method invokes
+     * {@link StringBuilder#delete(int, int)} for each occurrence of {@code search} found in
      * the buffer.
      *
      * @param buffer The string in which to perform the removals.
@@ -211,7 +211,7 @@ public final class Strings {
     }
 
     /**
-     * Returns a string with leading and trailing whitespaces omitted. Whitespaces are identified
+     * Returns a string with leading and trailing white spaces omitted. White spaces are identified
      * by the {@link Character#isWhitespace(char)} method.
      * <p>
      * This method is similar in purpose to {@link String#trim()}, except that the later considers
@@ -219,8 +219,8 @@ public final class Strings {
      * {@linkplain org.geotoolkit.io.X364 X3.64} escape sequences as well. Users should invoke
      * this {@code Strings.trim} method instead if they need to preserve X3.64 escape sequences.
      *
-     * @param text The string from which to remove leading and trailing whitespaces.
-     * @return A string with leading and trailing whitespaces removed.
+     * @param text The string from which to remove leading and trailing white spaces.
+     * @return A string with leading and trailing white spaces removed.
      *
      * @see String#trim()
      */
@@ -252,7 +252,7 @@ public final class Strings {
      *
      * {@section Use case}
      * This method is useful before to {@linkplain Integer#parseInt(String) parse a number}
-     * if that number should preferrably be parsed as an integer before attempting to parse
+     * if that number should preferably be parsed as an integer before attempting to parse
      * it as a floating point number.
      *
      * @param  value The value to trim if possible, or {@code null}.
@@ -305,15 +305,15 @@ public final class Strings {
      * If {@code toLowerCase} is {@code false}, then this method inserts spaces but does not change
      * the case of characters. If {@code toLowerCase} is {@code true}, then this method changes
      * {@linkplain Character#toLowerCase(char) to lower case} the first character after each spaces
-     * inserted by this method (note that this intentionnaly exclude the very first character in
+     * inserted by this method (note that this intentionally exclude the very first character in
      * the given string), except if the second character {@linkplain Character#isUpperCase(char)
-     * is upper case}, in which case the words is assumed an accronym.
+     * is upper case}, in which case the words is assumed an acronym.
      * <p>
      * The given string is usually a programmatic identifier like a class name or a method name.
      *
      * @param  identifier An identifier with no space, words begin with an upper-case character.
      * @param  toLowerCase {@code true} for changing the first character of words to lower case,
-     *         except for the first word and accronyms.
+     *         except for the first word and acronyms.
      * @return The identifier with spaces inserted after what looks like words.
      * @throws NullPointerException if the {@code identifier} argument is null.
      */
@@ -346,7 +346,7 @@ public final class Strings {
 
     /**
      * Creates an acronym from the given text. If every characters in the given text are upper
-     * case, then the text is returned unchanged on the assumption that it is already an accronym.
+     * case, then the text is returned unchanged on the assumption that it is already an acronym.
      * Otherwise this method returns a string containing the first character of each word, where
      * the words are separated by the camel case convention, the {@code '_'} character, or any
      * character which is not a {@linkplain Character#isJavaIdentifierPart(char) java identifier
@@ -505,14 +505,18 @@ cmp:    while (ia < lga) {
     }
 
     /**
-     * Returns {@code true} if the given string at the given offset contains the given part.
-     * The comparison is case-sensitive.
-     * <p>
-     * This method is similar in purpose to {@link String#regionMatches(int, String, int, int)},
-     * but works on arbitrary {@link CharSequence} objects instead than {@link String} objects.
+     * Returns {@code true} if the given string at the given offset contains the given part,
+     * in a case-sensitive comparison. This method is equivalent to the following code:
      *
-     * @param string The string for which to tests for the presense of {@code part}.
-     * @param offset The offset at which {@code part} is to be tested.
+     * {@preformat java
+     *     return string.regionMatches(offset, part, 0, part.length());
+     * }
+     *
+     * Except that this method works on arbitrary {@link CharSequence} objects instead than
+     * {@link String}s only.
+     *
+     * @param string The string for which to tests for the presence of {@code part}.
+     * @param offset The offset in {@code string} where to test for the presence of {@code part}.
      * @param part   The part which may be present in {@code string}.
      * @return {@code true} if {@code string} contains {@code part} at the given {@code offset}.
      * @throws NullPointerException if any of the arguments is null.
@@ -520,6 +524,9 @@ cmp:    while (ia < lga) {
      * @see String#regionMatches(int, String, int, int)
      */
     public static boolean regionMatches(final CharSequence string, final int offset, final CharSequence part) {
+        if (string instanceof String && part instanceof String) {
+            return ((String) string).regionMatches(offset, (String) part, 0, part.length());
+        }
         final int length = part.length();
         if (offset + length > string.length()) {
             return false;
@@ -530,6 +537,54 @@ cmp:    while (ia < lga) {
             }
         }
         return true;
+    }
+
+    /**
+     * Returns the index within the given strings of the first occurrence of the specified part,
+     * starting at the specified index. This method is equivalent to the following code:
+     *
+     * {@preformat java
+     *     return string.indexOf(part, fromIndex);
+     * }
+     *
+     * Except that this method works on arbitrary {@link CharSequence} objects instead than
+     * {@link String}s only.
+     *
+     * @param  string    The string in which to perform the search.
+     * @param  part      The substring for which to search.
+     * @param  fromIndex The index from which to start the search.
+     * @return The index within the string of the first occurrence of the specified part,
+     *         starting at the specified index, or -1 if none.
+     *
+     * @see String#indexOf(String, int)
+     * @see StringBuilder#indexOf(String, int)
+     * @see StringBuffer#indexOf(String, int)
+     *
+     * @since 3.16
+     */
+    public static int indexOf(final CharSequence string, final CharSequence part, int fromIndex) {
+        if (part instanceof String) {
+            if (string instanceof String) {
+                return ((String) string).indexOf((String) part, fromIndex);
+            }
+            if (string instanceof StringBuilder) {
+                return ((StringBuilder) string).indexOf((String) part, fromIndex);
+            }
+            if (string instanceof StringBuffer) {
+                return ((StringBuffer) string).indexOf((String) part, fromIndex);
+            }
+        }
+        final int length = part.length();
+        final int stopAt = string.length() - length;
+search: for (; fromIndex <= stopAt; fromIndex++) {
+            for (int i=0; i<length; i++) {
+                if (string.charAt(fromIndex + i) != part.charAt(i)) {
+                    continue search;
+                }
+            }
+            return fromIndex;
+        }
+        return -1;
     }
 
     /**
@@ -690,10 +745,10 @@ cmp:    while (ia < lga) {
 
     /**
      * Returns the index of the first character after the given number of lines.
-     * This method counts the number of occurence of {@code '\n'}, {@code '\r'}
+     * This method counts the number of occurrence of {@code '\n'}, {@code '\r'}
      * or {@code "\r\n"} starting from the given position. When {@code numToSkip}
-     * occurences have been found, the index of the first character after the last
-     * occurence is returned.
+     * occurrences have been found, the index of the first character after the last
+     * occurrence is returned.
      *
      * @param string    The string in which to skip a determined amount of lines.
      * @param numToSkip The number of lines to skip. Can be positive, zero or negative.

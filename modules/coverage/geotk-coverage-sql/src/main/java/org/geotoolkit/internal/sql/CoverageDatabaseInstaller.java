@@ -43,7 +43,7 @@ import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
  * invoke {@link #install()}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.16
  *
  * @since 3.11
  * @module
@@ -90,9 +90,12 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
     private final boolean supportsEnum;
 
     /**
-     * The directory of PostGIS installation scripts, or {@code null} if none.
+     * {@code true} if the {@code CREATE TRUSTED PROCEDURAL LANGUAGE 'plpgsql'}
+     * instruction needs to be executed.
+     *
+     * @since 3.16
      */
-    public File postgisDir;
+    private final boolean createLanguage;
 
     /**
      * {@code true} if the "geoadmin" and "geouser" roles should be created.
@@ -103,6 +106,11 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
      * {@code true} if the EPSG database should be copied.
      */
     public boolean createEPSG;
+
+    /**
+     * The directory of PostGIS installation scripts, or {@code null} if none.
+     */
+    public File postgisDir;
 
     /**
      * The coverages schema.
@@ -138,6 +146,7 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
             throw new UnsupportedOperationException(dialect.toString());
         }
         final DatabaseMetaData metadata = connection.getMetaData();
+        createLanguage = dialect.needsCreateLanguage(metadata);
         supportsEnum = dialect.isEnumSupported(metadata);
         setEncoding("UTF-8");
     }
@@ -175,6 +184,9 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
         user   = ensureNonNull(user,   USER);
         admin  = ensureNonNull(admin,  ADMINISTRATOR);
         schema = ensureNonNull(schema, SCHEMA);
+        /*
+         * Creates users and language.
+         */
         progress(0, null);
         int n = run("prepare.sql");
         /*
@@ -247,7 +259,10 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
     }
 
     /**
-     * Executes the given SQL statement.
+     * Executes the given SQL statement. This method may modifies the SQL script if enums, roles
+     * or languages should not be created. Note that this method is invoked only for the scripts
+     * provided in the {@code geotk-coverage-sql} package; the PostGIS and EPSG scripts use their
+     * one installer and consequently are unaffected by the changes performed by this method.
      *
      * @param  sql The SQL statement to execute.
      * @return The number of rows added or modified as a result of the statement execution.
@@ -256,22 +271,26 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
      */
     @Override
     protected int execute(final StringBuilder sql) throws SQLException, IOException {
-        if (!supportsEnum) {
-            for (final String e : ENUMS) {
-                final int i = sql.indexOf(e);
-                if (i >= 0) {
-                    if (sql.indexOf("CREATE TABLE") >= 0) {
-                        sql.replace(i, i + e.length(), "varchar");
-                    } else {
-                        return 0;
+        final CreateStatement create = CreateStatement.parse(sql);
+        if (create != null) switch (create) {
+            case ROLE:     if (!createRoles)    return 0; else break;
+            case LANGUAGE: if (!createLanguage) return 0; else break;
+            case CAST:     // Fall through
+            case ENUM:     if (!supportsEnum)   return 0; else break;
+            case TABLE: {
+                if (!supportsEnum) {
+                    for (final String e : ENUMS) {
+                        Strings.replace(sql, e, "varchar");
                     }
                 }
+                break;
             }
         }
-        if (!createRoles) {
-            if (sql.indexOf("CREATE ROLE") >= 0) {
-                return 0;
-            }
+        /*
+         * We can't add comments on enum, since they were not created.
+         */
+        if (!supportsEnum && Strings.regionMatches(sql, 0, "COMMENT ON TYPE")) {
+            return 0;
         }
         Strings.replace(sql, USER,          user);
         Strings.replace(sql, ADMINISTRATOR, admin);

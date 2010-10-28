@@ -97,7 +97,7 @@ public final class EpsgInstallerTest {
     @Test
     public void testCreationOnHSQL() throws FactoryException, SQLException, IOException {
         try {
-            // Need explicit registration as of HSQL 1.8.0.7.
+            // Need explicit registration as of HSQL 1.8.0.10.
             Class.forName(HSQL.DRIVER_CLASS);
         } catch (ClassNotFoundException e) {
             throw new SQLException(e);

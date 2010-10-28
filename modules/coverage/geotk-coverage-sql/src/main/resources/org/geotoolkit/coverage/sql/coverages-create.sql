@@ -490,7 +490,6 @@ CREATE TABLE "GridCoverages" (
     "endTime"   timestamp without time zone,
     "extent"    integer           NOT NULL REFERENCES "GridGeometries" ON UPDATE CASCADE ON DELETE RESTRICT,
     PRIMARY KEY ("series", "filename", "index"),
-    UNIQUE ("series", "endTime", "startTime"),  -- Same order than the index.
     CHECK ((("startTime" IS     NULL) AND ("endTime" IS     NULL)) OR
            (("startTime" IS NOT NULL) AND ("endTime" IS NOT NULL) AND ("startTime" <= "endTime")))
 );
@@ -498,6 +497,10 @@ CREATE TABLE "GridCoverages" (
 ALTER TABLE "GridCoverages" OWNER TO geoadmin;
 GRANT ALL ON TABLE "GridCoverages" TO geoadmin;
 GRANT SELECT ON TABLE "GridCoverages" TO PUBLIC;
+
+-- The unique constraint shall use the same order than the index.
+ALTER TABLE coverages."GridCoverages"
+  ADD CONSTRAINT "GridCoverages_series_key" UNIQUE(series, "endTime", "startTime");
 
 -- Index "endTime" before "startTime" because we most frequently sort by
 -- end time, since we are often interrested in the latest image available.
@@ -555,6 +558,8 @@ GRANT SELECT ON TABLE "Tiles" TO PUBLIC;
 
 CREATE INDEX "Tiles_index" ON "Tiles" ("series", "endTime", "startTime");
 
+COMMENT ON TABLE "Tiles" IS
+    'List of all images that are actually tiles in a image mosaic.';
 COMMENT ON COLUMN "Tiles"."dx" IS 'Amount of pixels to translate along the x axis before to apply the affine transform.';
 COMMENT ON COLUMN "Tiles"."dy" IS 'Amount of pixels to translate along the y axis before to apply the affine transform.';
 

@@ -10,6 +10,7 @@ CREATE ROLE geoadmin LOGIN
 CREATE ROLE geouser LOGIN
   NOSUPERUSER NOINHERIT NOCREATEDB NOCREATEROLE;
 
+-- Following instruction shall be executed only on PostgreSQL prior version 9.
 CREATE TRUSTED PROCEDURAL LANGUAGE 'plpgsql'
   HANDLER plpgsql_call_handler
   VALIDATOR plpgsql_validator;
