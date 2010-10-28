@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
-    <artifactId>osm</artifactId>
+    <artifactId>clients</artifactId>
     <version>SNAPSHOT</version>
   </parent>
 
