@@ -44,6 +44,7 @@ import org.jdesktop.swingx.JXLabel;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 
+import org.opengis.util.InternationalString;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.GeographicCRS;
@@ -51,8 +52,10 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 
 import org.geotoolkit.resources.Widgets;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.sql.CoverageDatabaseEvent;
@@ -69,7 +72,7 @@ import org.geotoolkit.internal.swing.SwingUtilities;
  * Users can verify and modify those information before they are written in the database.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @since 3.12
  * @module
@@ -109,6 +112,15 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
     private final JLabel formatNote;
 
     /**
+     * An item in the {@link #format} combo box with the "New format" label.
+     * The type is {@link InternationalString} because it is used as a sentinel
+     * type to be replaced by {@link #defaultFormatName}.
+     *
+     * @since 3.16
+     */
+    private final InternationalString newFormat;
+
+    /**
      * {@code true} if the format describe geophysics values, or {@code false} for packed values.
      */
     private final JCheckBox isGeophysics;
@@ -141,6 +153,14 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
     private transient NewGridCoverageReference reference;
 
     /**
+     * The default format name of the new {@linkplain #reference}. This is the format to be given
+     * to {@link NewGridCoverageReference} when the user select "New format" in the combo box.
+     *
+     * @since 3.16
+     */
+    private transient String defaultFormatName;
+
+    /**
      * Creates a new panel.
      *
      * @param owner The {@link CoverageList} that created this panel.
@@ -153,6 +173,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
         final Locale     locale    = getLocale();
         final Widgets    guires    = Widgets.getResources(locale);
         final Vocabulary resources = Vocabulary.getResources(locale);
+        newFormat     = new SimpleInternationalString("<html><i>" + resources .getString(Vocabulary.Keys.NEW_FORMAT) + "</i></html>");
         filename      = new JTextField();
         format        = new JComboBox();
         formatNote    = new JLabel();
@@ -270,17 +291,41 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
     }
 
     /**
+     * Sets a reference to the new coverage in process of being added to the database.
+     * This method is invoked in the Swing thread by {@link #coverageAdding}, which is
+     * a callback method invoked when a new coverage has been found.
+     */
+    final void setReference(final NewGridCoverageReference newReference) {
+        reference = newReference;
+        defaultFormatName = newReference.format;
+    }
+
+    /**
+     * Returns the name of the currently selected format.
+     */
+    final String getSelectedFormat() {
+        final Object formatName = format.getSelectedItem();
+        if (formatName instanceof InternationalString) {
+            // InternationalString is used as a special value for "New format".
+            return defaultFormatName;
+        } else {
+            return (String) formatName;
+        }
+    }
+
+    /**
      * Invoked when the user selected a format in the {@link JComboBox}, or when the format
      * changed programmatically. If the format changed, get the {@link GridSampleDimension}s
      * and updates the field with the new values.
      */
     private void formatSelected() {
-        final String formatName = (String) format.getSelectedItem();
+        final String formatName = getSelectedFormat();
         if (!Utilities.equals(formatName, selectedFormat)) {
             selectedFormat = formatName;
             List<GridSampleDimension> bands = null;
             CoverageStoreException failure = null;
             boolean editable = false;
+            final NewGridCoverageReference reference = this.reference;
             if (reference != null) try {
                 reference.format = formatName;
                 reference.refresh();
@@ -321,6 +366,13 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
             if (failure != null) {
                 owner.exceptionOccured(failure);
             }
+        }
+        /*
+         * Replaces the "{@code <html><i>New Format</i></html>} value in the combo box field
+         * by the actual value.
+         */
+        if (format.getSelectedItem() instanceof InternationalString) {
+            format.setSelectedItem(defaultFormatName);
         }
     }
 
@@ -375,8 +427,8 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
      * @throws DatabaseVetoException If the user clicked on the "Cancel" button.
      */
     @Override
-    public synchronized void coverageAdding(final CoverageDatabaseEvent event, final NewGridCoverageReference reference)
-            throws DatabaseVetoException
+    public synchronized void coverageAdding(final CoverageDatabaseEvent event,
+            final NewGridCoverageReference newReference) throws DatabaseVetoException
     {
         assert !EventQueue.isDispatchThread();
         /*
@@ -389,21 +441,31 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
         /*
          * Copies the information from the given reference to the fields in this widget.
          */
-        final File file = reference.getFile();
+        final File file = newReference.getFile();
         SwingUtilities.invokeAndWait(new Runnable() {
             @Override public void run() {
-                NewGridCoverageDetails.this.reference = reference; // Must be set first.
+                setReference(newReference); // Must be set first.
                 selectedFormat = null; // Must be before the change of format choices.
                 try {
-                    format.setModel(new DefaultComboBoxModel(reference.getAlternativeFormats()));
+                    final String[] alternatives = newReference.getAlternativeFormats();
+                    final DefaultComboBoxModel model = new DefaultComboBoxModel(alternatives);
+                    if (!XArrays.contains(alternatives, newReference.format)) {
+                        /*
+                         * InternationalString is used as a sentinal value meaning "New Format",
+                         * to be replaced by NewGridCoverageDetails.this.defaultFormatName when
+                         * needed.
+                         */
+                        model.insertElementAt(newFormat, 0);
+                    }
+                    format.setModel(model);
                 } catch (CoverageStoreException e) {
                     Logging.unexpectedException(NewGridCoverageReference.class, "getAlternativeFormats", e);
                     // Keep the current combo box content unchanged.
                 }
                 filename.setText(file.getName());
-                format.setSelectedItem(reference.format);
-                setSelectedCode(horizontalCRS, reference.horizontalSRID);
-                setSelectedCode(verticalCRS,   reference.verticalSRID);
+                format.setSelectedItem(newReference.format);
+                setSelectedCode(horizontalCRS, newReference.horizontalSRID);
+                setSelectedCode(verticalCRS,   newReference.verticalSRID);
                 owner.setSelectionPanel(CoverageList.CONTROLLER);
                 owner.properties.setImageLater(file);
             }
@@ -421,7 +483,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
          * actionPerformed method below). If it was the "Cancel" button, then
          * the reference has been set to null.
          */
-        if (this.reference == null) {
+        if (reference == null) {
             throw new DatabaseVetoException();
         }
     }
@@ -436,8 +498,9 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
     private synchronized void actionPerformed(final int action) {
         switch (action) {
             case 0: { // Cancel
+                reference         = null;
+                defaultFormatName = null;
                 selectedVariables = null;
-                reference = null;
                 break;
             }
             case 1: { // Confirm variable selection
@@ -447,7 +510,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
             case 2: { // Confirm coverage insertion
                 final NewGridCoverageReference reference = this.reference;
                 if (reference != null) try {
-                    reference.format = (String) format.getSelectedItem();
+                    reference.format         = getSelectedFormat();
                     reference.horizontalSRID = getSelectedCode(horizontalCRS);
                     reference.verticalSRID   = getSelectedCode(verticalCRS);
                     reference.sampleDimensions.clear();

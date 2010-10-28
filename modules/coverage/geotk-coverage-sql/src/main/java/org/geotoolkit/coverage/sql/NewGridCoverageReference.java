@@ -45,6 +45,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 import org.geotoolkit.util.Range;
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.NumberRange;
@@ -751,15 +752,41 @@ public final class NewGridCoverageReference {
      * @since 3.13
      */
     public String[] getAlternativeFormats() throws CoverageStoreException {
-        if (alternativeFormats == null) try {
-            final FormatTable table = database.getTable(FormatTable.class);
-            table.setImageFormats(bestFormat.getImageFormats());
-            final Collection<FormatEntry> formats = table.getEntries();
-            table.release();
+        FormatEntry[] alternativeFormats = this.alternativeFormats;
+        if (alternativeFormats == null) {
+            /*
+             * Fetch the alternative formats from the database when first needed.
+             */
+            final Collection<FormatEntry> formats;
+            try {
+                final FormatTable table = database.getTable(FormatTable.class);
+                table.setImageFormats(bestFormat.getImageFormats());
+                formats = table.getEntries();
+                table.release();
+            } catch (SQLException e) {
+                throw new CoverageStoreException(e);
+            }
             alternativeFormats = formats.toArray(new FormatEntry[formats.size()]);
-        } catch (SQLException e) {
-            throw new CoverageStoreException(e);
+            /*
+             * Retain only the formats having the same number of bands.
+             */
+            final int numBands = sampleDimensions.size();
+            if (numBands != 0) {
+                int count = 0;
+                for (int i=0; i<alternativeFormats.length; i++) {
+                    final FormatEntry candidate = alternativeFormats[i];
+                    final List<GridSampleDimension> cb = candidate.sampleDimensions;
+                    if (cb == null || cb.size() == numBands) {
+                        alternativeFormats[count++] = candidate;
+                    }
+                }
+                alternativeFormats = XArrays.resize(alternativeFormats, count);
+            }
+            this.alternativeFormats = alternativeFormats;
         }
+        /*
+         * Return the format names (not the format entries, which are not public API).
+         */
         final String[] names = new String[alternativeFormats.length];
         for (int i=0; i<names.length; i++) {
             names[i] = alternativeFormats[i].identifier.toString();

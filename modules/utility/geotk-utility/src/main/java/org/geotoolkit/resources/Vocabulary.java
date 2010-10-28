@@ -1095,6 +1095,11 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int NAVIGATE = 201;
 
         /**
+         * New format
+         */
+        public static final int NEW_FORMAT = 353;
+
+        /**
          * New layer
          */
         public static final int NEW_LAYER = 341;
