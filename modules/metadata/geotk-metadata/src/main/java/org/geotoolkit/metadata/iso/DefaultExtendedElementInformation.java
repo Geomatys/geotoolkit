@@ -352,7 +352,7 @@ public class DefaultExtendedElementInformation extends MetadataEntity
     /**
      * Sets the maximum occurrence of the extended element.
      *
-     * @param newValue The new maximum occurence.
+     * @param newValue The new maximum occurrence.
      */
     public synchronized void setMaximumOccurrence(final Integer newValue) {
         checkWritePermission();

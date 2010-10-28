@@ -31,7 +31,7 @@ import org.geotoolkit.util.NumberRange;
  * describes specifically the range of wavelengths in the electromagnetic spectrum, while
  * {@code SampleDimension} allows any kind of physical measurements.
  * <p>
- * The {@code SampleDimension} API is intentionnaly identical to the {@code Band} API with
+ * The {@code SampleDimension} API is intentionally identical to the {@code Band} API with
  * the restriction to wavelengths removed, some methods omitted and the following method
  * added:
  * <p>

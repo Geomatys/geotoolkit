@@ -197,7 +197,7 @@ public class MonolineFormatter extends Formatter {
 
     /**
      * The line writer. This object transforms all {@code "\r"}, {@code "\n"} or {@code "\r\n"}
-     * occurences into a single line separator. This line separator will include space for the
+     * occurrences into a single line separator. This line separator will include space for the
      * marging, if needed.
      */
     private final LineWriter writer;

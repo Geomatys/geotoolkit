@@ -285,8 +285,8 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
             int index = (buffer != null) ? buffer.indexOf(name) : text.indexOf(name);
             while (index >= 0) {
                 /*
-                 * An occurence of the text to substitute was found. First, make sure
-                 * that the occurence found is a full word  (e.g. if the occurence to
+                 * An occurrence of the text to substitute was found. First, make sure
+                 * that the occurrence found is a full word  (e.g. if the occurrence to
                  * search is "WGS84", do not accept "TOWGS84").
                  */
                 final int upper = index + name.length();
@@ -331,7 +331,7 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
                 }
                 /*
                  * The substitution was not performed because the text found was not a word,
-                 * or was between quotes. Search the next occurence.
+                 * or was between quotes. Search the next occurrence.
                  */
                 index += name.length();
                 index = (buffer != null) ? buffer.indexOf(name, index)

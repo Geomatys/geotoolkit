@@ -154,7 +154,7 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
          * is especially important for Citation because they appear in many different places with
          * the same name ("citation"),  while Image I/O does not allow many element nodes to have
          * the same name (this is not strictly forbidden, but the getter methods return information
-         * only about the first occurence of the given name. Note however that having the same name
+         * only about the first occurrence of the given name. Note however that having the same name
          * under different element node is not an issue for attributes). In addition, the Citation
          * sub-tree is very large and we don't want to allow the tree to growth that big.
          */
@@ -196,7 +196,7 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
         /*
          * Add by hand a node in the place where it would have been added if we didn't
          * excluded it. We do this addition because Instruments appear in two places,
-         * while we want only the occurence that appear under the "Platform" node.
+         * while we want only the occurrence that appear under the "Platform" node.
          */
         substitution.put(Platform.class, null);
         substitution.remove(Identifier.class); // Allow full expansion.

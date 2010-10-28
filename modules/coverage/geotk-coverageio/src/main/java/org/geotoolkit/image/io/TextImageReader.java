@@ -379,7 +379,7 @@ public abstract class TextImageReader extends StreamImageReader {
         protected Locale locale;
 
         /**
-         * The pad value, or {@link Double#NaN} if none. Every occurences of pixel value equals
+         * The pad value, or {@link Double#NaN} if none. Every occurrences of pixel value equals
          * to this pad value will be replaced by {@link Double#NaN} during the read operation.
          * Note that this replacement doesn't apply to non-pixel values (for example <var>x</var>,
          * <var>y</var> coordinates in the format read by

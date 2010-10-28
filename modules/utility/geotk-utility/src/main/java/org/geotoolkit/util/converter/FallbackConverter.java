@@ -120,7 +120,7 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
             if (it.hasNext()) {
                 /*
                  * Arbitrarily retains the first interfaces. At this point there is hopefully
-                 * only one occurence anyway. If there is more than one interface, they appear
+                 * only one occurrence anyway. If there is more than one interface, they appear
                  * in declaration order so the first one is assumed the "main" interface.
                  */
                 type = it.next();

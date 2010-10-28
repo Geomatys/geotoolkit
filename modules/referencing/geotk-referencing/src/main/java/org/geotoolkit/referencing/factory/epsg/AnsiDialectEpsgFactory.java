@@ -353,7 +353,7 @@ public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
             final String oldName = entry.getKey();
             final String newName = entry.getValue();
             /*
-             * Replaces all occurences of 'oldName' by 'newName'.
+             * Replaces all occurrences of 'oldName' by 'newName'.
              */
             int start = 0;
             while ((start=modified.indexOf(oldName, start)) >= 0) {

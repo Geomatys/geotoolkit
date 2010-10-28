@@ -559,7 +559,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
         if (patterns != null) {
             count = nx * ny;
             if (patternUsed != null) {
-                count -= patternUsed.occurence(0);
+                count -= patternUsed.occurrence(0);
             }
         } else if (tiles != null) {
             for (final Tile tile : tiles) {
@@ -783,7 +783,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
         if (patterns != null) {
             for (int p=0; p<patterns.length;) {
                 final Tile tile = patterns[p++];
-                final int n = (patternUsed != null) ? patternUsed.occurence(p) : nx*ny - count;
+                final int n = (patternUsed != null) ? patternUsed.occurrence(p) : nx*ny - count;
                 addTo.add(tile, n);
             }
         }

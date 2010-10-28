@@ -24,7 +24,7 @@
  * Many {@code Writers} defined in this package are actually {@link java.io.FilterWriter}
  * used for applying on-the-fly formatting while writing text to the output device. For
  * example {@link org.geotoolkit.io.IndentedLineWriter} adds intendation at the beginning
- * of every new line, and {@link org.geotoolkit.io.TableWriter} replaces all occurence of
+ * of every new line, and {@link org.geotoolkit.io.TableWriter} replaces all occurrence of
  * {@code '\t'} by the amount of spaces needed for producing a tabular output.
  *
  * @author Martin Desruisseaux (IRD)

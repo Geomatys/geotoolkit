@@ -36,9 +36,9 @@ final class Dimensions {
     Integer sourceDimensions, targetDimensions;
 
     /**
-     * The occurences of this pair of dimensions.
+     * The occurrences of this pair of dimensions.
      */
-    int occurences;
+    int occurrences;
 
     /**
      * Creates an uninitialized {@code Dimensions}.
@@ -59,7 +59,7 @@ final class Dimensions {
      */
     @Override
     public int hashCode() {
-        // MUST ignore 'occurences'.
+        // MUST ignore 'occurrences'.
         int code = 0;
         if (sourceDimensions != null) code  = sourceDimensions;
         if (targetDimensions != null) code += targetDimensions * 31;
@@ -71,7 +71,7 @@ final class Dimensions {
      */
     @Override
     public boolean equals(final Object object) {
-        // MUST ignore 'occurences'.
+        // MUST ignore 'occurrences'.
         if (object instanceof Dimensions) {
             final Dimensions that = (Dimensions) object;
             return Utilities.equals(sourceDimensions, that.sourceDimensions) &&
@@ -85,6 +85,6 @@ final class Dimensions {
      */
     @Override
     public String toString() {
-        return "[(" + sourceDimensions + ',' + targetDimensions + ")\u00D7" + occurences + ']';
+        return "[(" + sourceDimensions + ',' + targetDimensions + ")\u00D7" + occurrences + ']';
     }
 }

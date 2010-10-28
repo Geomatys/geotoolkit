@@ -48,7 +48,7 @@ import org.geotoolkit.util.NullArgumentException;
 public class DefaultDataSource implements DataSource {
     /**
      * The logger where to report the JDBC driver version. Note that the logger
-     * name intentionnaly hides the {@code "internal"} part of the package name.
+     * name intentionally hides the {@code "internal"} part of the package name.
      */
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.jdbc");
 

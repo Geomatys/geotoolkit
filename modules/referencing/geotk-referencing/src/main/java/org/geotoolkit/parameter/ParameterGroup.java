@@ -118,7 +118,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
      * @param  descriptor The descriptor for this group.
      * @param  values The list of parameter values.
      * @throws IllegalStateException If the number of parameter values is not in the
-     *         range of minimum and maximum occurences declared in the descriptor.
+     *         range of minimum and maximum occurrences declared in the descriptor.
      */
     public ParameterGroup(final ParameterDescriptorGroup descriptor,
                           final GeneralParameterValue[]  values)
@@ -130,14 +130,14 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
             this.values.add(values[i]);
         }
         final List<GeneralParameterDescriptor> parameters = descriptor.descriptors();
-        final Map<GeneralParameterDescriptor,int[]> occurences =
+        final Map<GeneralParameterDescriptor,int[]> occurrences =
                 new LinkedHashMap<GeneralParameterDescriptor,int[]>(XCollections.hashMapCapacity(parameters.size()));
         for (final GeneralParameterDescriptor param : parameters) {
             ensureNonNull("parameters", param);
-            occurences.put(param, new int[1]);
+            occurrences.put(param, new int[1]);
             // The value 'int[1]' will be used by 'ensureValidOccurs'
         }
-        ensureValidOccurs(values, occurences);
+        ensureValidOccurs(values, occurrences);
     }
 
     /**
@@ -147,7 +147,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
      *         operation parameter group} to construct from the list of parameters.
      * @param  values The list of parameter values.
      * @throws IllegalStateException If the number of parameter values is not in the
-     *         range of minimum and maximum occurences declared in the descriptor.
+     *         range of minimum and maximum occurrences declared in the descriptor.
      */
     public ParameterGroup(final Map<String,?> properties, final GeneralParameterValue[] values) {
         super(createDescriptor(properties, values));
@@ -162,45 +162,45 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
      * ("Relax constraint on placement of this()/super() call in constructors").
      *
      * @throws IllegalStateException If the number of parameter values is not in the
-     *         range of minimum and maximum occurences declared in the descriptor.
+     *         range of minimum and maximum occurrences declared in the descriptor.
      */
     private static ParameterDescriptorGroup createDescriptor(
             final Map<String,?> properties, final GeneralParameterValue[] values)
     {
         ensureNonNull("values", values);
-        final Map<GeneralParameterDescriptor,int[]> occurences =
+        final Map<GeneralParameterDescriptor,int[]> occurrences =
                 new LinkedHashMap<GeneralParameterDescriptor,int[]>(XCollections.hashMapCapacity(values.length));
         for (int i=0; i<values.length; i++) {
             ensureNonNull("values", values, i);
-            occurences.put(values[i].getDescriptor(), new int[1]);
+            occurrences.put(values[i].getDescriptor(), new int[1]);
             // The value 'int[1]' will be used by 'ensureValidOccurs'
         }
-        ensureValidOccurs(values, occurences);
-        final Set<GeneralParameterDescriptor> descriptors = occurences.keySet();
+        ensureValidOccurs(values, occurrences);
+        final Set<GeneralParameterDescriptor> descriptors = occurrences.keySet();
         return new DefaultParameterDescriptorGroup(properties,
                 descriptors.toArray(new GeneralParameterDescriptor[descriptors.size()]));
     }
 
     /**
-     * Makes sure that the number of occurences of each values is inside the expected range.
+     * Makes sure that the number of occurrences of each values is inside the expected range.
      *
      * @param  values The list of parameter values.
-     * @param  occurences A map of the number of occurences of a value for each descriptor.
+     * @param  occurrences A map of the number of occurrences of a value for each descriptor.
      *         The key must be {@link GeneralParameterDescriptor} instances and the values
      *         must be {@code int[]} array of length 1 initialized with the 0 value.
      * @throws IllegalStateException If the number of parameter values is not in the
-     *         range of minimum and maximum occurences declared in the descriptor.
+     *         range of minimum and maximum occurrences declared in the descriptor.
      */
     private static void ensureValidOccurs(final GeneralParameterValue[] values,
-                                          final Map<GeneralParameterDescriptor,int[]> occurences)
+                                          final Map<GeneralParameterDescriptor,int[]> occurrences)
     {
         /*
-         * Count the parameters occurences.
+         * Count the parameters occurrences.
          */
         for (int i=0; i<values.length; i++) {
             ensureNonNull("values", values, i);
             final GeneralParameterDescriptor descriptor = values[i].getDescriptor();
-            final int[] count = occurences.get(descriptor);
+            final int[] count = occurrences.get(descriptor);
             if (count == null) {
                 final String name = getName(descriptor);
                 throw new InvalidParameterTypeException(Errors.format(
@@ -209,9 +209,9 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
             count[0]++;
         }
         /*
-         * Now check if the occurences are in the expected ranges.
+         * Now check if the occurrences are in the expected ranges.
          */
-        for (final Map.Entry<GeneralParameterDescriptor,int[]> entry : occurences.entrySet()) {
+        for (final Map.Entry<GeneralParameterDescriptor,int[]> entry : occurrences.entrySet()) {
             final GeneralParameterDescriptor descriptor = entry.getKey();
             final int count = entry.getValue()[0];
             final int min   = descriptor.getMinimumOccurs();
@@ -361,7 +361,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
      * @throws ParameterNotFoundException If no {@linkplain ParameterDescriptorGroup descriptor}
      *         was found for the given name.
      * @throws InvalidParameterCardinalityException If this parameter group already contains the
-     *         {@linkplain ParameterDescriptorGroup#getMaximumOccurs maximum number of occurences}
+     *         {@linkplain ParameterDescriptorGroup#getMaximumOccurs maximum number of occurrences}
      *         of subgroups of the given name.
      */
     @Override

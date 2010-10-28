@@ -1914,7 +1914,7 @@ public final class Vocabulary extends IndexedResourceBundle {
     }
 
     /**
-     * Gets a string for the given key are replace all occurence of "{0}"
+     * Gets a string for the given key are replace all occurrence of "{0}"
      * with values of {@code arg0}.
      *
      * @param  key The key for the desired string.
@@ -1929,7 +1929,7 @@ public final class Vocabulary extends IndexedResourceBundle {
     }
 
     /**
-     * Gets a string for the given key are replace all occurence of "{0}",
+     * Gets a string for the given key are replace all occurrence of "{0}",
      * "{1}", with values of {@code arg0}, {@code arg1}.
      *
      * @param  key The key for the desired string.
@@ -1946,7 +1946,7 @@ public final class Vocabulary extends IndexedResourceBundle {
     }
 
     /**
-     * Gets a string for the given key are replace all occurence of "{0}",
+     * Gets a string for the given key are replace all occurrence of "{0}",
      * "{1}", with values of {@code arg0}, {@code arg1}, etc.
      *
      * @param  key The key for the desired string.

@@ -533,9 +533,9 @@ public class Cache<K,V> extends AbstractMap<K,V> {
                      * 8653 ("ED50 to WGS84" using polynomial equations).  The EPSG factory sets a
                      * lock for this code, then searches for OperationParameters associated to this
                      * operation. One of those parameters ("Bu0v4") has the same key (EPSG:8653).
-                     * So we get a key collision. If we ignore the second occurence, its value will
+                     * So we get a key collision. If we ignore the second occurrence, its value will
                      * not be cached. This is okay since the value that we really want to cache
-                     * CoordinateOperation, which is associated to the first occurence of that key.
+                     * CoordinateOperation, which is associated to the first occurrence of that key.
                      */
                     return new Simple<V>(null);
                 }

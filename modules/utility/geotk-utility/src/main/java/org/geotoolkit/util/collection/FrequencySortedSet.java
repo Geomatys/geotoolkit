@@ -60,7 +60,7 @@ public class FrequencySortedSet<E> extends AbstractSet<E> implements SortedSet<E
     private static final long serialVersionUID = 6034102231354388179L;
 
     /**
-     * The frequency of occurence for each element. We must use a linked hash map instead of an
+     * The frequency of occurrence for each element. We must use a linked hash map instead of an
      * ordinary hash map because we want to preserve insertion order for elements that occur at
      * the same frequency.
      */
@@ -134,23 +134,23 @@ public class FrequencySortedSet<E> extends AbstractSet<E> implements SortedSet<E
      * value.
      *
      * @param element The element to add.
-     * @param occurence The number of time to add the given elements. The default value is 1.
+     * @param occurrence The number of time to add the given elements. The default value is 1.
      * @return {@code true} if this set changed as a result of this operation.
-     * @throws IllegalArgumentException If {@code occurence} is negative.
+     * @throws IllegalArgumentException If {@code occurrence} is negative.
      */
-    public boolean add(final E element, int occurence) throws IllegalArgumentException {
-        if (occurence != 0) {
-            if (occurence < 0) {
+    public boolean add(final E element, int occurrence) throws IllegalArgumentException {
+        if (occurrence != 0) {
+            if (occurrence < 0) {
                 throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.NOT_GREATER_THAN_ZERO_$1, occurence));
+                        Errors.Keys.NOT_GREATER_THAN_ZERO_$1, occurrence));
             }
             sorted = null;
-            occurence *= order;
-            final Integer n = count.put(element, occurence);
+            occurrence *= order;
+            final Integer n = count.put(element, occurrence);
             if (n == null) {
                 return true;
             }
-            count.put(element, n + occurence);
+            count.put(element, n + occurrence);
         }
         return false;
     }

@@ -134,10 +134,10 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
     private transient Class<?> valueType;
 
     /**
-     * The minimum and maximum occurences of children in this node,
+     * The minimum and maximum occurrences of children in this node,
      * or {@code null} if not yet determined.
      */
-    private transient NumberRange<Integer> occurences;
+    private transient NumberRange<Integer> occurrences;
 
     /**
      * The valid values as a range or a comma-separated list, or {@code null} if not yet
@@ -247,14 +247,14 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
     }
 
     /**
-     * Returns the range of occurences that are valid for this node. This method never returns
-     * {@code null} since the {@linkplain NumberRange#getMinValue() minimum value} of occurences
+     * Returns the range of occurrences that are valid for this node. This method never returns
+     * {@code null} since the {@linkplain NumberRange#getMinValue() minimum value} of occurrences
      * is at least 0.
      *
-     * @return The range of occurences (never null).
+     * @return The range of occurrences (never null).
      */
     public NumberRange<Integer> getOccurences() {
-        if (occurences == null) {
+        if (occurrences == null) {
             Integer min=0, max=1;
             final IIOMetadataFormat format = tree.format;
             if (attribute == null) {
@@ -294,9 +294,9 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
             // Consider MIN|MAX_VALUE as unbounded.
             if (min == Integer.MIN_VALUE) min = null;
             if (max == Integer.MAX_VALUE) max = null;
-            occurences = new NumberRange<Integer>(Integer.class, min, max);
+            occurrences = new NumberRange<Integer>(Integer.class, min, max);
         }
-        return occurences;
+        return occurrences;
     }
 
     /**
@@ -540,8 +540,8 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
                 parent.setUserObjectUnsafe(super.getUserObject());
                 /*
                  * The getter methods below are mostly for forcing computation.
-                 * Note that we don't change the occurence on purpose, since the
-                 * occurence of attribute is always 1 while the occurence of the
+                 * Note that we don't change the occurrence on purpose, since the
+                 * occurrence of attribute is always 1 while the occurrence of the
                  * parent name is more informatives (e.g. [0..1] is the element
                  * is optional).
                  */
@@ -600,7 +600,7 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
             case 0:                                 // The label.
             case 1:  return String.class;           // The description.
             case 2:  return Class.class;            // The base type of values.
-            case 3:  return NumberRange.class;      // The range of occurences
+            case 3:  return NumberRange.class;      // The range of occurrences
             case 6:  return ValueRestriction.class; // The restrictions on valid values.
             case 5:                                 // The default value.
             case VALUE_COLUMN: {                    // The actual value.

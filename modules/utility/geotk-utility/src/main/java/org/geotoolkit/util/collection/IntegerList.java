@@ -445,12 +445,12 @@ public class IntegerList extends AbstractList<Integer> implements RandomAccess, 
     }
 
     /**
-     * Returns the occurence of the given value in this list.
+     * Returns the occurrence of the given value in this list.
      *
      * @param value The value to search for.
      * @return The number of time the given value occurs in this list.
      */
-    public int occurence(final int value) {
+    public int occurrence(final int value) {
         int count = 0;
         final int size = this.size;
         for (int i=0; i<size; i++) {

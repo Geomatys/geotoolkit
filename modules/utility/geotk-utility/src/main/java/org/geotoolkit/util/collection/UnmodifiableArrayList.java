@@ -171,11 +171,11 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
     }
 
     /**
-     * Returns the index in this list of the first occurence of the specified
+     * Returns the index in this list of the first occurrence of the specified
      * element, or -1 if the list does not contain this element.
      *
      * @param object The element to search for.
-     * @return The index of the first occurence of the given object, or {@code -1}.
+     * @return The index of the first occurrence of the given object, or {@code -1}.
      */
     @Override
     public int indexOf(final Object object) {
@@ -198,11 +198,11 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
     }
 
     /**
-     * Returns the index in this list of the last occurence of the specified
+     * Returns the index in this list of the last occurrence of the specified
      * element, or -1 if the list does not contain this element.
      *
      * @param object The element to searcch for.
-     * @return The index of the last occurence of the given object, or {@code -1}.
+     * @return The index of the last occurrence of the given object, or {@code -1}.
      */
     @Override
     public int lastIndexOf(final Object object) {

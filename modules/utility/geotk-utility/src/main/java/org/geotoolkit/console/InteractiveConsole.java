@@ -262,7 +262,7 @@ public abstract class InteractiveConsole implements Runnable {
      * <ul>
      *   <li>If a line has an opening bracket but no matching closing bracket, then this class
      *       will ask for more lines until all brackets are closed.</li>
-     *   <li>The above rule do not apply to occurences of brackets inside quoted texts.</li>
+     *   <li>The above rule do not apply to occurrences of brackets inside quoted texts.</li>
      * </ul>
      *
      * @param openingBrackets List of caracters acceptable as opening bracket. The closing bracket

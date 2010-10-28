@@ -227,7 +227,7 @@ public class DefaultObjective extends MetadataEntity implements Objective {
     /**
      * Sets the event or events associated with objective completion.
      *
-     * @param newValues The new objective occurences values.
+     * @param newValues The new objective occurrences values.
      */
     public synchronized void setObjectiveOccurences(final Collection<? extends Event> newValues) {
         objectiveOccurences = copyCollection(newValues, objectiveOccurences, Event.class);

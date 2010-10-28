@@ -88,7 +88,7 @@ import org.geotoolkit.io.X364;
  *
  *   <tr><td nowrap valign="top" bgcolor="#EEEEFF">{@code tolerance forward = } <var>vector</var></td><td>
  *   Set the maximum difference between the transformed source point and the target point. Once this
- *   value is set, every occurence of the {@code target pt} instruction will trig this comparison.
+ *   value is set, every occurrence of the {@code target pt} instruction will trig this comparison.
  *   If a greater difference is found, an exception is thrown or a message is printed to the error
  *   stream.</td></tr>
  *

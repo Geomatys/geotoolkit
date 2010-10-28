@@ -5,7 +5,7 @@ Migrate from GeoTools to Geotoolkit
   renames classes and packages but does not handle changes in method signature. Once this tool is
   run, there will likely be remaining changes which will have to be ported by hand.
 
-  The tool makes the following changes. For every occurence of:
+  The tool makes the following changes. For every occurrence of:
 
    * <<<import org.geotools.gt.GT>>>
 
@@ -21,7 +21,7 @@ Migrate from GeoTools to Geotoolkit
          and <<<GT>>> respectively), but not always. For example the package of <<<WeakHashMap>>>
          is <<<org.geotools.util>>> in GeoTools, but <<<org.geotoolkit.util.collection>>> in Geotk.
 
-   [[2]] Every occurence of the <<<GT>>> class name are replaced by the <<<GTO>>> class name in the
+   [[2]] Every occurrence of the <<<GT>>> class name are replaced by the <<<GTO>>> class name in the
          source file. This operation does nothing in the common case where the class name is the same
          in Geotoolkit than in GeoTools.
 

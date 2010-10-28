@@ -172,7 +172,7 @@ public final class TreeNodeTest extends TestBase {
         int[] subsamplings;
         /*
          * Subsampling 15 in the first series and subsampling 9 in the second series are repeated
-         * twice because the last occurence is a "virtual tile" generated in order to separate
+         * twice because the last occurrence is a "virtual tile" generated in order to separate
          * tiles that would otherwise overlap. In the schema below, the tree on the left side is
          * what we get before overlapping tiles are separated. Tiles with subsamplings 15 and 9
          * are mixed in the same level because both of them are divisors of 45 while none of them

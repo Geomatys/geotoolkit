@@ -107,7 +107,7 @@ java -Xmx1G -jar geotk.jar
 
     * For each corner in the input tile:
 
-      * Replace every consecutive occurence of a specified opaque color by a transparent color.
+      * Replace every consecutive occurrence of a specified opaque color by a transparent color.
 
       * Stop the search at the first pixel which was not specified in the list of opaque colors to replace.\
         This prevent the algorithm to replace opaque colors that may appear in the middle of the tile.

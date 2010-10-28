@@ -46,7 +46,7 @@ import org.geotoolkit.util.converter.NonconvertibleObjectException;
  *   <li>A human-readeable name of the nodes.</li>
  *   <li>A description of the node.</li>
  *   <li>The {@linkplain Class#getSimpleName() simple class names} of values.</li>
- *   <li>The range of occurences (how many time the node can be repeated).</li>
+ *   <li>The range of occurrences (how many time the node can be repeated).</li>
  *   <li>The node value (this column is omitted if the tree is for
  *       {@link IIOMetadataFormat} instead than {@link IIOMetadata}).</li>
  *   <li>The default value.</li>

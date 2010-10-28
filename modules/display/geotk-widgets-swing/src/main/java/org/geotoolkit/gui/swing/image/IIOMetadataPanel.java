@@ -324,9 +324,9 @@ public class IIOMetadataPanel extends JComponent {
                         type = type.getComponentType();
                     }
                     StringBuilder buffer = new StringBuilder(Classes.getShortName(type));
-                    final NumberRange<Integer> occurences = node.getOccurences();
-                    if (occurences != null) {
-                        final String s = occurences.toString();
+                    final NumberRange<Integer> occurrences = node.getOccurences();
+                    if (occurrences != null) {
+                        final String s = occurrences.toString();
                         if (s.startsWith("[")) {
                             buffer.append(s);
                         } else {

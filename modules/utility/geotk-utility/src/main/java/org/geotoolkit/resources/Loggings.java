@@ -413,7 +413,7 @@ public final class Loggings extends IndexedResourceBundle {
     }
 
     /**
-     * Gets a log record for the given key. Replaces all occurence of "{0}"
+     * Gets a log record for the given key. Replaces all occurrence of "{0}"
      * with values of {@code arg0}.
      *
      * @param  level The log record level.
@@ -430,7 +430,7 @@ public final class Loggings extends IndexedResourceBundle {
     }
 
     /**
-     * Gets a log record for the given key. Replaces all occurence of "{0}",
+     * Gets a log record for the given key. Replaces all occurrence of "{0}",
      * "{1}", with values of {@code arg0}, {@code arg1}.
      *
      * @param  level The log record level.
@@ -449,7 +449,7 @@ public final class Loggings extends IndexedResourceBundle {
     }
 
     /**
-     * Gets a log record for the given key. Replaces all occurence of "{0}",
+     * Gets a log record for the given key. Replaces all occurrence of "{0}",
      * "{1}", with values of {@code arg0}, {@code arg1}, etc.
      *
      * @param  level The log record level.
@@ -470,7 +470,7 @@ public final class Loggings extends IndexedResourceBundle {
     }
 
     /**
-     * Gets a log record for the given key. Replaces all occurence of "{0}",
+     * Gets a log record for the given key. Replaces all occurrence of "{0}",
      * "{1}", with values of {@code arg0}, {@code arg1}, etc.
      *
      * @param  level The log record level.

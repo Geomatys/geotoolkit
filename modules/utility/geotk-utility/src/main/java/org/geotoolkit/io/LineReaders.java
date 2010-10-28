@@ -46,7 +46,7 @@ public final class LineReaders {
     }
 
     /**
-     * Wraps the given multi-lines text in a {@code LineReader}. Each occurence of {@code '\r'},
+     * Wraps the given multi-lines text in a {@code LineReader}. Each occurrence of {@code '\r'},
      * {@code '\n'} or {@code "\r\n"} in the text mark an <cite>End Of Line</cite> (EOL).
      *
      * @param text The multi-lines text to wrap.

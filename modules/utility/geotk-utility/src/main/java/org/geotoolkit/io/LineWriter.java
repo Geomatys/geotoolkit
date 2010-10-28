@@ -104,7 +104,7 @@ public class LineWriter extends FilterWriter {
     }
 
     /**
-     * Changes the line separator. This is the string to insert in place of every occurences of
+     * Changes the line separator. This is the string to insert in place of every occurrences of
      * {@code "\r"}, {@code "\n"} or {@code "\r\n"}.
      *
      * @param  lineSeparator The new line separator.

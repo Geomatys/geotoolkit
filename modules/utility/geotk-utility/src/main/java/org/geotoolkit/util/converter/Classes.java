@@ -1022,7 +1022,7 @@ compare:for (int i=0; i<c1.length; i++) {
      *   <li>And likewise for all remaining known types.</li>
      * </ul>
      *
-     * {@note This method is intentionnaly restricted to primitive types. Other types
+     * {@note This method is intentionally restricted to primitive types. Other types
      *        like <code>BigDecimal</code> are not the purpose of this method. See the
      *        <code>ConverterRegistry</code> class for a more generic method.}
      *
@@ -1064,7 +1064,7 @@ compare:for (int i=0; i<c1.length; i++) {
      *   <li>And likewise for all remaining known types.</li>
      * </ul>
      *
-     * {@note This method is intentionnaly restricted to primitive types, with the addition of
+     * {@note This method is intentionally restricted to primitive types, with the addition of
      *        <code>String</code> which can be though as an identity operation.. Other types
      *        like <code>BigDecimal</code> are not the purpose of this method. See the
      *        <code>ConverterRegistry</code> class for a more generic method.}

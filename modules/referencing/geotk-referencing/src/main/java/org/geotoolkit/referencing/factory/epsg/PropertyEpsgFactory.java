@@ -122,7 +122,7 @@ import org.geotoolkit.lang.ThreadSafe;
 public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRSAuthorityFactory {
     /**
      * The default filename to read, which is {@value}. The default
-     * {@code PropertyEpsgFactory} implementation will search for every occurences of
+     * {@code PropertyEpsgFactory} implementation will search for every occurrences of
      * {@code org/geotoolkit/referencing/factory/espg/epsg.properties} on the classpath.
      * However a different directory for this filename can be specified using
      * {@link Hints#CRS_AUTHORITY_EXTRA_DIRECTORY}.

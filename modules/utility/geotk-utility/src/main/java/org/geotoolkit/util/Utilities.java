@@ -309,7 +309,7 @@ public final class Utilities {
      *
      * @param  value The value whose hash code to compute.
      * @param  seed  The hash code value computed so far. If this method is invoked for the first
-     *               field, then any arbitrary value (preferrably different for each class) is okay.
+     *               field, then any arbitrary value (preferably different for each class) is okay.
      * @return An updated hash code value.
      */
     public static int hash(boolean value, int seed) {

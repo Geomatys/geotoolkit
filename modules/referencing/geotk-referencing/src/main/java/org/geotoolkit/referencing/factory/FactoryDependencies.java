@@ -210,10 +210,10 @@ public class FactoryDependencies {
     /**
      * Returns {@code true} if only the first node of duplicated factories will be reported.
      * The default value is {@code false}, which means that the full branch will be expanded
-     * on every occurence of a factory in the dependency graph.
+     * on every occurrence of a factory in the dependency graph.
      *
      * @return {@code true} if only the first node of duplicated factories will be reported,
-     *         except for the first occurence.
+     *         except for the first occurrence.
      *
      * @since 3.00
      */
@@ -223,7 +223,7 @@ public class FactoryDependencies {
 
     /**
      * Sets whetever the tree should be abridged. If {@code true}, only the first node of
-     * duplicated factories will be reported (except the first occurence which is expanded
+     * duplicated factories will be reported (except the first occurrence which is expanded
      * like usual).
      *
      * @param abridged {@code true} for an abridged tree, or {@code false} for expanding
@@ -322,7 +322,7 @@ public class FactoryDependencies {
      * Creates a single node for the specified factory.
      *
      * @param  factory The factory for which to create a node.
-     * @param  isFirst {@code true} if this is the first occurence of this factory.
+     * @param  isFirst {@code true} if this is the first occurrence of this factory.
      * @return The created node.
      */
     private DefaultMutableTreeNode createNode(final Factory factory, final boolean isFirst) {

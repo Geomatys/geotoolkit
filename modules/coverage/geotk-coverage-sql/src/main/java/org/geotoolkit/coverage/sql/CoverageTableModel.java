@@ -441,9 +441,9 @@ public class CoverageTableModel extends AbstractTableModel {
                 for (int j=0; j<index.length; j++) {
                     rows[index[j]] = i;
                 }
-                // If the same name has been requested more than once, then the next occurences
-                // of this name will leave the index of the previous occurence unchanged, and
-                // update the indices of the other occurences.
+                // If the same name has been requested more than once, then the next occurrences
+                // of this name will leave the index of the previous occurrence unchanged, and
+                // update the indices of the other occurrences.
                 if (index.length > 1) {
                     map.put(name, XArrays.remove(index, 0, 1));
                 }

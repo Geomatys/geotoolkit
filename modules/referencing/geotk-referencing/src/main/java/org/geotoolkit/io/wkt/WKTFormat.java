@@ -58,12 +58,12 @@ import org.geotoolkit.resources.Errors;
  * substrings, {@code WKTFormat} provides a mechanism for performing string substitutions
  * before the parsing take place. Long strings can be assigned short names by calls to the
  * <code>{@linkplain #definitions()}.put(<var>key</var>,<var>value</var>)</code> method.
- * After definitions have been added, any call to a parsing method will replace all occurences
+ * After definitions have been added, any call to a parsing method will replace all occurrences
  * of a short name by the associated long string.
  * <p>
  * The short names must comply with the rules of Java identifiers. It is recommended, but not
  * required, to prefix the names by some symbol like {@code "$"} in order to avoid ambiguity.
- * Note however that this class doesn't replace occurences between quoted text, so string
+ * Note however that this class doesn't replace occurrences between quoted text, so string
  * expansion still relatively safe even when used with non-prefixed identifiers.
  * <p>
  * In the example below, the {@code $WGS84} substring which appear in the argument given to the

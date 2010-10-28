@@ -1369,7 +1369,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      * <p>
      * This method is consistent with {@link #equals} in the most common case where every
      * tiles to be compared (typically every tiles given to a {@link TileManager} instance)
-     * have inputs of the same kind (preferrably {@link File}, {@link URL}, {@link URI} or
+     * have inputs of the same kind (preferably {@link File}, {@link URL}, {@link URI} or
      * {@link String}), and there is no duplicated ({@linkplain #getInput input},
      * {@linkplain #getImageIndex image index}) pair.
      *

@@ -480,7 +480,7 @@ public final class Errors extends IndexedResourceBundle {
         public static final int ILLEGAL_MATRIX_SIZE = 85;
 
         /**
-         * Parameter "{0}" occurs {1} time, while the expected range of occurences was [{2} … {3}].
+         * Parameter "{0}" occurs {1} time, while the expected range of occurrences was [{2} … {3}].
          */
         public static final int ILLEGAL_OCCURS_FOR_PARAMETER_$4 = 86;
 
@@ -1070,7 +1070,7 @@ public final class Errors extends IndexedResourceBundle {
         public static final int TOO_MANY_ARGUMENTS_$2 = 201;
 
         /**
-         * Too many occurences of "{0}". There is already {1} of them.
+         * Too many occurrences of "{0}". There is already {1} of them.
          */
         public static final int TOO_MANY_OCCURENCES_$2 = 202;
 
@@ -1431,7 +1431,7 @@ public final class Errors extends IndexedResourceBundle {
     }
 
     /**
-     * Gets a string for the given key are replace all occurence of "{0}"
+     * Gets a string for the given key are replace all occurrence of "{0}"
      * with values of {@code arg0}.
      *
      * @param  key The key for the desired string.
@@ -1446,7 +1446,7 @@ public final class Errors extends IndexedResourceBundle {
     }
 
     /**
-     * Gets a string for the given key are replace all occurence of "{0}",
+     * Gets a string for the given key are replace all occurrence of "{0}",
      * "{1}", with values of {@code arg0}, {@code arg1}.
      *
      * @param  key The key for the desired string.
@@ -1463,7 +1463,7 @@ public final class Errors extends IndexedResourceBundle {
     }
 
     /**
-     * Gets a string for the given key are replace all occurence of "{0}",
+     * Gets a string for the given key are replace all occurrence of "{0}",
      * "{1}", with values of {@code arg0}, {@code arg1}, etc.
      *
      * @param  key The key for the desired string.
@@ -1482,7 +1482,7 @@ public final class Errors extends IndexedResourceBundle {
     }
 
     /**
-     * Gets a string for the given key are replace all occurence of "{0}",
+     * Gets a string for the given key are replace all occurrence of "{0}",
      * "{1}", with values of {@code arg0}, {@code arg1}, etc.
      *
      * @param  key The key for the desired string.

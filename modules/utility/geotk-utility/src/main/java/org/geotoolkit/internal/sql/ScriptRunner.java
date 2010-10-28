@@ -396,7 +396,7 @@ public class ScriptRunner implements FilenameFilter {
             }
             /*
              * If we find the "$$" string, copy verbatism (without any attempt to parse the
-             * lines) until the next occurence of "$$". This simple algorithm does not allow
+             * lines) until the next occurrence of "$$". This simple algorithm does not allow
              * more than one block of "$$ ... $$" on the same line.
              */
             for (final String escape : ESCAPES) {

@@ -315,7 +315,7 @@ header: for (int i=0; ; i++) {
             }
             /*
              * In the vast majority of cases, there is only one value for each parameter. However
-             * if we find more than one value, we will append all extra occurences in a "multiple
+             * if we find more than one value, we will append all extra occurrences in a "multiple
              * values" list to be formatted in the same row.
              */
             Object value = null;

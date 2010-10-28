@@ -145,7 +145,7 @@ final class IIOMetadataTreeTable extends JXTreeTable implements StringValue {
          * Shall be consistent with {@link #getColumnName}.
          */
         static final String[] IDENTIFIERS = {
-            "name", "description", "type", "occurence", "value", "default", "validValues"
+            "name", "description", "type", "occurrence", "value", "default", "validValues"
         };
 
         /**

@@ -198,7 +198,7 @@ public final class AbstractMathTransformTest {
                     /*
                      * This is the expected path for this test. The transform may have completed its
                      * work despite the exception, or may have given up, depending on the frequency
-                     * of exception occurences. We check if the transform has completed its work and
+                     * of exception occurrences. We check if the transform has completed its work and
                      * compare with the expected behavior for the statistical frequency in this run.
                      */
                     final boolean completed = (exception.getLastCompletedTransform() == tr);

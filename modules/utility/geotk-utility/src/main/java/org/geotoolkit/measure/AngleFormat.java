@@ -408,7 +408,7 @@ public class AngleFormat extends Format {
                         /*
                          * Si le caractère est une minuscule, ce qui le précédait sera le
                          * séparateur décimal plutôt qu'un suffix. On comptera le nombre
-                         * d'occurences du caractères pour obtenir la précision.
+                         * d'occurrences du caractères pour obtenir la précision.
                          */
                         switch (i - startPrefix) {
                             case 0: {

@@ -336,7 +336,7 @@ public final class Parameters {
                     if (failure != null) {
                         return failure;
                     }
-                    // Count the occurence of parameters.
+                    // Count the occurrence of parameters.
                     Integer old = count.put(desc, 1);
                     if (old != null) {
                         count.put(desc, old + 1);

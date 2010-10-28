@@ -75,7 +75,7 @@ public final class SupportFiles {
      * which has been replaced by the given one. If the file already has this extension
      * (according a case-insensitive comparison), then it is returned unchanged.
      * <p>
-     * This method returns preferrably a file with lower case extension. However if no
+     * This method returns preferably a file with lower case extension. However if no
      * such file exists but a file of the same name with upper case extension exists,
      * then the later is returned.
      * <p>

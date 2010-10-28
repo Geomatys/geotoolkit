@@ -412,7 +412,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * {@linkplain #addAttribute(String,String,int,boolean,String) added as an attribute}.
      * <p>
      * This method can be given an optional <cite>substitution map</cite>. If this map is non
-     * null, then every occurence of a class in the set of keys is replaced by the associated
+     * null, then every occurrence of a class in the set of keys is replaced by the associated
      * class in the collection of values. The purpose of this map is to:
      *
      * <ul>
@@ -432,7 +432,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      *   This simplification is especially useful for {@code Citation} because they typically appear
      *   in many different places with the same name ("<cite>citation</cite>"), while Image I/O does
      *   not allow many elements to have the same name (actually this is not strictly forbidden, but
-     *   the getter methods return information only about the first occurence of a given name).
+     *   the getter methods return information only about the first occurrence of a given name).
      *   Converting an element to an attribute allow it to appear with the same name under different
      *   nodes, and can make the tree considerably simplier (at the cost of losing all the sub-tree
      *   below the converted element). Example:</p>
@@ -547,8 +547,8 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * @param identifier   The UML identifier, or {@code null} if unknown.
      * @param elementName  The name of the element or attribute node to be added.
      * @param parentName   The name of the parent node to where to add the child.
-     * @param minOccurence Minimal occurence of the element or attribute in the parent node.
-     * @param maxOccurence Maximal occurence of the element or attribute in the parent node.
+     * @param minOccurence Minimal occurrence of the element or attribute in the parent node.
+     * @param maxOccurence Maximal occurrence of the element or attribute in the parent node.
      * @param restriction  The restriction on the valid values, or {@code null} if none.
      * @param exclude      The attribute types to exclude. This set will be modified.
      * @param substitution The classes to substitute by other classes. Applies only to childs.
@@ -646,7 +646,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
          *
          * The 'elementName' is inferred from the method name and is typically in plural
          * form (at least in GeoAPI interfaces).  We add a node for 'elementName', which
-         * can contain many occurences of the actual metadata structure. The new node is
+         * can contain many occurrences of the actual metadata structure. The new node is
          * set as the parent of the actual metadata structure. The name of that metadata
          * structure is set to the UML identifier, which is typically the same name than
          * 'elementName' except that it is in singular form.

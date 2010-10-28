@@ -110,7 +110,7 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
      * Creates a factory for the specified authorities using the definitions declared in the given
      * property files. There is usually only one file, but more are allowed. If there is more than
      * one file, their content will be merged. If the same key appears in more than one file, the
-     * first occurence is used. This is consistent with the usual rule saying that the first item
+     * first occurrence is used. This is consistent with the usual rule saying that the first item
      * in a class-path has precedence.
      *
      * @param userHints
@@ -228,7 +228,7 @@ public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
             } catch (SecurityException exception) {
                 // Not considered "unexpected" because this error is actually common in server
                 // environment. The Class.getResource(...) method is the recommended method,
-                // but has no API returning the enumeration of all occurence of the file.
+                // but has no API returning the enumeration of all occurrence of the file.
                 Logging.recoverableException(LOGGER, PropertyAuthorityFactory.class, "<init>", exception);
             }
             definitionFiles.addAll(more);

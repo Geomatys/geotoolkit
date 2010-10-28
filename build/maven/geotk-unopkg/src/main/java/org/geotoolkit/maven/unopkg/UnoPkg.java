@@ -71,7 +71,7 @@ public class UnoPkg extends AbstractMojo implements FilenameFilter {
     private String outputDirectory;
 
     /**
-     * In <code>META-INF/manifest.xml</code>, replaces all occurences of
+     * In <code>META-INF/manifest.xml</code>, replaces all occurrences of
      * <code>${project.build.finalName}</code> by this value.
      *
      * @parameter expression="${project.build.finalName}"

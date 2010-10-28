@@ -307,7 +307,7 @@ public final class MosaicReadWriteTest {
     public void testTransparency() throws IOException {
         final TileManager targetMosaic = builder(1, 6).createTileManager();
         /*
-         * The colors to replace by transparent pixels. There is a few occurences of this color
+         * The colors to replace by transparent pixels. There is a few occurrences of this color
          * on the last row of the source image. This artifact provides a convenient opportunity
          * for testing this operation. Note only a few black strips on the last row will be made
          * transparent - some will not be changed if they do not appear on a corner of a source

@@ -405,7 +405,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
      * included. For a {@linkplain DefaultParameterDescriptor single parameter}, the value
      * is always 1.
      *
-     * @return The maximum occurence.
+     * @return The maximum occurrence.
      *
      * @see #getMinimumOccurs
      */

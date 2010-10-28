@@ -2326,7 +2326,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 candidate = new Dimensions(temp);
                 dimensions.put(candidate, candidate);
             }
-            if (++candidate.occurences > max.occurences) {
+            if (++candidate.occurrences > max.occurrences) {
                 max = candidate;
             }
         }

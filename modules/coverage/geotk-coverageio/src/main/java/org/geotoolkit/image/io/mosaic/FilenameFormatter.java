@@ -253,7 +253,7 @@ loop:   for (int fieldNumber=0; ;fieldNumber++) {
                 format10(buffer, fieldValue, 0);
             }
             /*
-             * For a given field (row, column or level), searches the last occurence of this
+             * For a given field (row, column or level), searches the last occurrence of this
              * field in the filename, starting just before the field processed in the previous loop
              * iteration (if any). If the field is not found, or if it not bounded by a different
              * character than the ones used for formatting the field value (digits or letters),

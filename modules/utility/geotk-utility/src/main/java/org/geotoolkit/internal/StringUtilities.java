@@ -46,7 +46,7 @@ public final class StringUtilities {
 
     /**
      * Reformats a multi-line text as a single line text. More specifically, for each
-     * occurence of line feed (the {@code '\n'} character) found in the given buffer,
+     * occurrence of line feed (the {@code '\n'} character) found in the given buffer,
      * this method performs the following steps:
      * <p>
      * <ol>
