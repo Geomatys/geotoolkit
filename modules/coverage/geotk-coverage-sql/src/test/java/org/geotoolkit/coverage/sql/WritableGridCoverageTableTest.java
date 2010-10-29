@@ -97,6 +97,13 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
     }
 
     /**
+     * Creates a new test suite.
+     */
+    public WritableGridCoverageTableTest() {
+        super(WritableGridCoverageTable.class);
+    }
+
+    /**
      * Creates a new temporary layer in which to insert the new images.
      *
      * @throws SQLException If an error occurred while creating the temporary layer.

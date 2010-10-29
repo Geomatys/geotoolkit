@@ -50,6 +50,13 @@ public final class SeriesTableTest extends CatalogTestBase {
     public static final String TEMPERATURE_PATH = "World/SST/8-days";
 
     /**
+     * Creates a new test suite.
+     */
+    public SeriesTableTest() {
+        super(SeriesTable.class);
+    }
+
+    /**
      * Tests the {@link SeriesTable#getEntry} and {@link SeriesTable#getEntries} methods.
      *
      * @throws SQLException If the test can't connect to the database.

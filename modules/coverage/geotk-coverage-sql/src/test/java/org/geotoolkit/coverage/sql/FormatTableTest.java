@@ -53,6 +53,13 @@ public class FormatTableTest extends CatalogTestBase {
     public static final String CURRENT = "Mars (u,v)";
 
     /**
+     * Creates a new test suite.
+     */
+    public FormatTableTest() {
+        super(FormatTable.class);
+    }
+
+    /**
      * Tests the list of identifiers.
      *
      * @throws SQLException If the test can't connect to the database.

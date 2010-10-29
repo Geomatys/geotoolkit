@@ -46,6 +46,13 @@ import static org.geotoolkit.test.Commons.*;
  */
 public final class TextRecordImageReaderTest extends TextImageReaderTestBase {
     /**
+     * Creates a new test suite.
+     */
+    public TextRecordImageReaderTest() {
+        super(TextRecordImageReader.class);
+    }
+
+    /**
      * The provider for the format to be tested.
      */
     private static final class Spi extends TextRecordImageReader.Spi {

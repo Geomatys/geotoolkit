@@ -111,6 +111,13 @@ public final class LayerTableTest extends CatalogTestBase {
     static final double EPS = 1E-8;
 
     /**
+     * Creates a new test suite.
+     */
+    public LayerTableTest() {
+        super(LayerTable.class);
+    }
+
+    /**
      * Tests the {@link LayerTableTest#getIdentifiers()} method.
      *
      * @throws SQLException If the test can't connect to the database.

@@ -37,6 +37,13 @@ import static org.junit.Assert.*;
  */
 public class CategoryTableTest extends CatalogTestBase {
     /**
+     * Creates a new test suite.
+     */
+    public CategoryTableTest() {
+        super(CategoryTable.class);
+    }
+
+    /**
      * Tests the {@link CategoryTable#getCategories} method.
      *
      * @throws SQLException If the test can't connect to the database.

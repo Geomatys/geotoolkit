@@ -48,6 +48,13 @@ import static org.geotoolkit.test.Commons.*;
 @Depend(TextMatrixImageReader.class)
 public final class WorldFileImageReaderTest extends TextImageReaderTestBase {
     /**
+     * Creates a new test suite.
+     */
+    public WorldFileImageReaderTest() {
+        super(WorldFileImageReader.class);
+    }
+
+    /**
      * Creates a reader.
      */
     @Override

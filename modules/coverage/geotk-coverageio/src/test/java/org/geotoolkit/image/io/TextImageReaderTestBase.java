@@ -25,6 +25,9 @@ import java.awt.image.DataBuffer;
 import java.awt.image.BufferedImage;
 import java.awt.image.IndexColorModel;
 import javax.imageio.ImageTypeSpecifier;
+import javax.imageio.ImageReader;
+
+import org.geotoolkit.test.image.ImageReaderTestBase;
 
 import org.junit.*;
 import static java.lang.Float.NaN;
@@ -35,7 +38,7 @@ import static org.junit.Assert.*;
  * The base class for {@link TextImageReader} tests.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.16
  *
  * @since 3.06
  */
@@ -45,6 +48,15 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
      * in this package have 3 significant digits, so the precision is set to the next digit.
      */
     protected static final float EPS = 0.0001f;
+
+    /**
+     * Creates a new test suite for the given class.
+     *
+     * @param testing The class to be tested.
+     */
+    protected TextImageReaderTestBase(final Class<? extends ImageReader> testing) {
+        super(testing);
+    }
 
     /**
      * Creates the image reader initialized to the input to read. The input
@@ -70,6 +82,9 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
          */
         final BufferedImage image = reader.read(0);
         reader.dispose();
+        this.image = image;
+        view("testCanRead");
+
         assertEquals(20, image.getWidth());
         assertEquals(42, image.getHeight());
         final Raster raster = image.getRaster();
@@ -88,6 +103,10 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
         param.setSampleConversionAllowed(SampleConversionType.REPLACE_FILL_VALUES, true);
         final BufferedImage image = reader.read(0, param);
         reader.dispose();
+
+        this.image = image;
+        view("testReadFile");
+
         assertEquals(20, image.getWidth());
         assertEquals(42, image.getHeight());
         assertEquals(DataBuffer.TYPE_FLOAT, image.getSampleModel().getDataType());
@@ -119,6 +138,9 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
         param.setSourceSubsampling(2, 3, 1, 2);
         final BufferedImage image = reader.read(0, param);
         reader.dispose();
+
+        this.image = image;
+        view("testSubRegion");
 
         assertEquals(5, image.getWidth());
         assertEquals(6, image.getHeight());
@@ -156,6 +178,10 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
         param.setDestinationType(null);
         final BufferedImage original = reader.read(0, param);
         reader.dispose();
+
+        this.image = image;
+        view("testByteType");
+
         assertEquals(IndexColorModel.class, image.getColorModel().getClass());
         assertEquals(DataBuffer.TYPE_BYTE,  image   .getSampleModel().getDataType());
         assertEquals(DataBuffer.TYPE_FLOAT, original.getSampleModel().getDataType());

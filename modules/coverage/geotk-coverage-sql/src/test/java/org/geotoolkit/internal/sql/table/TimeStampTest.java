@@ -42,6 +42,13 @@ import static org.junit.Assert.*;
  */
 public final class TimeStampTest extends CatalogTestBase {
     /**
+     * Creates a new test suite.
+     */
+    public TimeStampTest() {
+        super(Table.class);
+    }
+
+    /**
      * Tests {@link ResultSet#getTimestamp(int,Calendar)}.
      *
      * @throws SQLException if an SQL error occurred.

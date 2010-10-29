@@ -58,6 +58,13 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
     private static final boolean SHOW = false;
 
     /**
+     * Creates a new test suite.
+     */
+    public GridCoverageLoaderTest() {
+        super(GridCoverageLoader.class);
+    }
+
+    /**
      * Tests loading an image of temperature data in WGS84 CRS.
      *
      * @throws SQLException If the test can't connect to the database.

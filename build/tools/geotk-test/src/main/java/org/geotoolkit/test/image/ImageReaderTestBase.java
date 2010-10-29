@@ -39,16 +39,25 @@ import static org.junit.Assert.*;
  * The base class for {@link ImageReader} tests.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.16
  *
  * @since 3.08 (derived from 3.06)
  */
-public abstract class ImageReaderTestBase {
+public abstract class ImageReaderTestBase extends ImageTestBase {
     /**
      * The precision for comparison of sample values. The values in the test files provided
      * in this package have 3 significant digits, so the precision is set to the next digit.
      */
     protected static final float EPS = 0.0001f;
+
+    /**
+     * Creates a new test suite for the given class.
+     *
+     * @param testing The class to be tested.
+     */
+    protected ImageReaderTestBase(final Class<? extends ImageReader> testing) {
+        super(testing);
+    }
 
     /**
      * Creates the image reader initialized to the input to read.
@@ -217,5 +226,21 @@ public abstract class ImageReaderTestBase {
             }
         }
         assertTrue(ImageIO.write(image, "png", file));
+    }
+
+    /**
+     * Checks in a "best effort" way if the {@linkplain javax.imageio.stream.ImageInputStream}s
+     * have been closed. This method relies on the {@code finalize()} method declared in the
+     * {@link org.geotoolkit.internal.image.io.CheckedImageInputStream} class.
+     * <p>
+     * This method is invoked automatically by JUnit after each test and doesn't need to be
+     * invoked explicitly.
+     *
+     * @since 3.14
+     */
+    @After
+    public final void ensureStreamAreClosed() {
+        System.gc();
+        System.runFinalization();
     }
 }

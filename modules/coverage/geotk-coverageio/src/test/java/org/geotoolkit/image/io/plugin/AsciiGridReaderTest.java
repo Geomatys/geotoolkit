@@ -51,6 +51,13 @@ import static org.geotoolkit.test.Commons.*;
  */
 public class AsciiGridReaderTest extends TextImageReaderTestBase {
     /**
+     * Creates a new test suite.
+     */
+    public AsciiGridReaderTest() {
+        super(AsciiGridReader.class);
+    }
+
+    /**
      * Creates a reader.
      */
     @Override

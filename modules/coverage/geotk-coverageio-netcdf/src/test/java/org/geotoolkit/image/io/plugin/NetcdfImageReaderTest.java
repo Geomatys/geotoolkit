@@ -27,6 +27,7 @@ import java.awt.image.Raster;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import java.awt.image.DataBuffer;
+import java.awt.image.BufferedImage;
 
 import org.geotoolkit.image.io.DimensionSlice;
 import org.geotoolkit.image.io.SpatialImageReadParam;
@@ -49,6 +50,13 @@ import static org.geotoolkit.test.Commons.*;
  * @since 3.08
  */
 public final class NetcdfImageReaderTest extends ImageReaderTestBase {
+    /**
+     * Creates a new test suite.
+     */
+    public NetcdfImageReaderTest() {
+        super(NetcdfImageReader.class);
+    }
+
     /**
      * Creates a reader.
      */
@@ -211,6 +219,20 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
     }
 
     /**
+     * Reads the image using the given image reader, and returns the data as a single raster.
+     * The image is optionally shown in a widget if the {@link #viewEnabled} field is set to
+     * {@code true}.
+     */
+    private Raster read(final String method, final NetcdfImageReader reader, final int imageIndex,
+            final SpatialImageReadParam param) throws IOException
+    {
+        final BufferedImage image = reader.read(imageIndex, param);
+        this.image = image;
+        view(method);
+        return image.getRaster();
+    }
+
+    /**
      * Tests reading a few sample values at different slices, selected as band index.
      *
      * @throws IOException if an error occurred while reading the file.
@@ -238,7 +260,7 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
          * Read data at the default band index, which is 0.
          */
         assertArrayEquals(new int[] {0}, param.getSourceBands());
-        data = reader.read(0, param).getRaster();
+        data = read("testReadSliceThroughBandAPI(0)", reader, 0, param);
         assertEquals(2, data.getWidth());
         assertEquals(3, data.getHeight());
         assertEquals(1, data.getNumBands());
@@ -248,7 +270,7 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
          * Select a band and read data again.
          */
         param.setSourceBands(new int[] {1});
-        data = reader.read(0, param).getRaster();
+        data = read("testReadSliceThroughBandAPI(1)", reader, 0, param);
         assertEquals(2, data.getWidth());
         assertEquals(3, data.getHeight());
         assertEquals(1, data.getNumBands());
@@ -285,7 +307,7 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
         /*
          * Read data in the slice z0.
          */
-        data = reader.read(0, param).getRaster();
+        data = read("testReadSliceThroughImageAPI(0)", reader, 0, param);
         assertEquals(2, data.getWidth());
         assertEquals(3, data.getHeight());
         assertEquals(1, data.getNumBands());
@@ -294,7 +316,7 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
         /*
          * Read data in the slice z1.
          */
-        data = reader.read(1, param).getRaster();
+        data = read("testReadSliceThroughImageAPI(1)", reader, 1, param);
         assertEquals(2, data.getWidth());
         assertEquals(3, data.getHeight());
         assertEquals(1, data.getNumBands());

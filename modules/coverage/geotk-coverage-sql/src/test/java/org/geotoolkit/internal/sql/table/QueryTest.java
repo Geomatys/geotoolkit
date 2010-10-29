@@ -39,6 +39,13 @@ import static org.geotoolkit.internal.sql.table.QueryType.*;
  */
 public final class QueryTest extends CatalogTestBase {
     /**
+     * Creates a new test suite.
+     */
+    public QueryTest() {
+        super(Query.class);
+    }
+
+    /**
      * Tests a case similar to the SQL query used in the format table.
      * This is a relatively simple case.
      *

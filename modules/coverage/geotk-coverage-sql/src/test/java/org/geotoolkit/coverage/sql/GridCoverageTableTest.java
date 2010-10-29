@@ -63,6 +63,13 @@ public final class GridCoverageTableTest extends CatalogTestBase {
     private static final double EPS = 1E-8;
 
     /**
+     * Creates a new test suite.
+     */
+    public GridCoverageTableTest() {
+        super(GridCoverageTable.class);
+    }
+
+    /**
      * Tests the {@link GridCoverageTable#getAvailableTimes()} method.
      *
      * @throws SQLException If the test can't connect to the database.

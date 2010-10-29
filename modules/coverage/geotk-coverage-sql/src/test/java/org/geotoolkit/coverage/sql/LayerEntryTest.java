@@ -52,6 +52,13 @@ import static org.geotoolkit.coverage.sql.LayerTableTest.*;
 @Depend(LayerTableTest.class)
 public final class LayerEntryTest extends CatalogTestBase {
     /**
+     * Creates a new test suite.
+     */
+    public LayerEntryTest() {
+        super(LayerEntry.class);
+    }
+
+    /**
      * Returns the later entry used for the test.
      */
     private static LayerEntry getLayer(final String name) throws SQLException {

@@ -45,6 +45,13 @@ import static org.geotoolkit.coverage.sql.LayerTableTest.*;
 @Depend(GridCoverageLoaderTest.class)
 public final class CoverageDatabaseTest extends CatalogTestBase {
     /**
+     * Creates a new test suite.
+     */
+    public CoverageDatabaseTest() {
+        super(CoverageDatabase.class);
+    }
+
+    /**
      * Small tolerance factor for comparison of floating point numbers.
      */
     private static final double EPS = 1E-8;

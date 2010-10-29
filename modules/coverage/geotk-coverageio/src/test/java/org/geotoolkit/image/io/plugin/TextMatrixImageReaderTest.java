@@ -45,6 +45,13 @@ import static org.geotoolkit.test.Commons.*;
  */
 public final class TextMatrixImageReaderTest extends TextImageReaderTestBase {
     /**
+     * Creates a new test suite.
+     */
+    public TextMatrixImageReaderTest() {
+        super(TextMatrixImageReader.class);
+    }
+
+    /**
      * The provider for the format to be tested.
      */
     public static final class Spi extends TextMatrixImageReader.Spi {

@@ -56,6 +56,13 @@ public final class GridGeometryTableTest extends CatalogTestBase {
     public static final Integer BLUEMARBLE_ID = 333;
 
     /**
+     * Creates a new test suite.
+     */
+    public GridGeometryTableTest() {
+        super(GridGeometryTable.class);
+    }
+
+    /**
      * Gets the BlueMarble geometry and check its envelope.
      *
      * @throws SQLException If the test can't connect to the database.

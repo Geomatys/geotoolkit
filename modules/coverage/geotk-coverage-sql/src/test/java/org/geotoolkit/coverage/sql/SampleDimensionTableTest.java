@@ -40,6 +40,13 @@ import static org.junit.Assert.*;
 @Depend(CategoryTableTest.class)
 public class SampleDimensionTableTest extends CatalogTestBase {
     /**
+     * Creates a new test suite.
+     */
+    public SampleDimensionTableTest() {
+        super(SampleDimensionTable.class);
+    }
+
+    /**
      * Tests the {@link SampleDimensionTable#getSampleDimensions} method.
      *
      * @throws SQLException If the test can't connect to the database.

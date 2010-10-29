@@ -17,10 +17,10 @@
  */
 
 /**
- * Tools for Geotk test suites on imagess.
+ * Tools for Geotk test suites on images.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.08
+ * @version 3.16
  *
  * @since 3.08
  */

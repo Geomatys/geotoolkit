@@ -35,6 +35,7 @@ import org.geotoolkit.test.TestData;
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.test.image.ImageTestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -48,13 +49,19 @@ import static org.junit.Assume.*;
  * more information:
  * <p>
  * <a href="http://hg.geotoolkit.org/geotoolkit/raw-file/tip/modules/coverage/geotk-coverage-sql/src/test/resources/Tests/README.html">About large test files</a>
+ * <p>
+ * This class inherits {@link ImageTestBase} for allowing the display of images
+ * by the {@link #view(String)} method if the {@link #viewEnabled} field is set
+ * to {@code true}. Most subclasses does not need this feature. However since
+ * coverages are the final purpose of {@code geotk-coverage-sql}, this functionality
+ * is provided here.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @since 3.09 (derived from Seagis)
  */
-public class CatalogTestBase {
+public class CatalogTestBase extends ImageTestBase {
     /**
      * The connection to the database.
      */
@@ -72,8 +79,11 @@ public class CatalogTestBase {
 
     /**
      * For subclass constructors only.
+     *
+     * @param testing The class to be tested.
      */
-    protected CatalogTestBase() {
+    protected CatalogTestBase(final Class<?> testing) {
+        super(testing);
     }
 
     /**

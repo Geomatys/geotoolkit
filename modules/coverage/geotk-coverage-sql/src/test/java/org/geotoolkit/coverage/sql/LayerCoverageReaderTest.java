@@ -42,6 +42,13 @@ import static org.junit.Assert.*;
 @Depend(CoverageDatabaseTest.class)
 public final class LayerCoverageReaderTest extends CatalogTestBase {
     /**
+     * Creates a new test suite.
+     */
+    public LayerCoverageReaderTest() {
+        super(LayerCoverageReader.class);
+    }
+
+    /**
      * Whatever we should show the image in images (for debugging purpose only).
      */
     private static final boolean SHOW = false;
