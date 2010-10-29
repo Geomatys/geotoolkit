@@ -32,4 +32,6 @@ public abstract class AbstractRequest {
      
      public abstract AbstractOperation getGetFeatureInfo();
 
+     public abstract void updateURL(String url);
+
 }

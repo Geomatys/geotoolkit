@@ -76,6 +76,15 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
         this.geometryOperands = new GeometryOperandsType(geometryOperands);
         this.spatialOperators = (SpatialOperatorsType) spatial;
     }
+
+    /**
+     * Build a new SpatialCapabilities
+     */
+    public SpatialCapabilitiesType(GeometryOperandsType geometryOperands, SpatialOperators spatial) {
+        this.geometryOperands = geometryOperands;
+        this.spatialOperators = (SpatialOperatorsType) spatial;
+    }
+
     /**
      * Gets the value of the geometryOperands property.
      */

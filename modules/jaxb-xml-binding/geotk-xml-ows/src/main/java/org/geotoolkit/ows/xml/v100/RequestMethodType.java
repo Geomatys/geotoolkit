@@ -62,7 +62,14 @@ public class RequestMethodType extends OnlineResourceType {
      */
     RequestMethodType(){
     }
-    
+
+    /**
+     * Build a new Request method.
+     */
+    public RequestMethodType(String href){
+        super(href);
+    }
+
     /**
      * Build a new Request method.
      */

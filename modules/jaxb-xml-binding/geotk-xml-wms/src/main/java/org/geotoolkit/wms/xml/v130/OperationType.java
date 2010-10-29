@@ -94,4 +94,26 @@ public class OperationType extends AbstractOperation {
         return Collections.unmodifiableList(dcpType);
     }
 
+    public void updateURL(String url) {
+        for (DCPType dcp : dcpType) {
+            final HTTP http = dcp.getHTTP();
+            if (http != null) {
+                final Get get = http.getGet();
+                if (get != null) {
+                    OnlineResource or = get.getOnlineResource();
+                    if (or != null) {
+                        or.setHref(url);
+                    }
+                }
+                final Post post = http.getPost();
+                if (post != null) {
+                    OnlineResource or = post.getOnlineResource();
+                    if (or != null) {
+                        or.setHref(url);
+                    }
+                }
+            }
+        }
+    }
+
 }

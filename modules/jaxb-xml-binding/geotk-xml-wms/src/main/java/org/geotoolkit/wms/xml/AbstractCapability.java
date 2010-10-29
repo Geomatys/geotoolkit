@@ -33,4 +33,6 @@ public abstract class AbstractCapability {
 
      public abstract void setLayer(AbstractLayer layer);
 
+     public abstract void setRequest(AbstractRequest request);
+
 }

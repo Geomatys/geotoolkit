@@ -29,6 +29,7 @@ import org.geotoolkit.inspire.xml.vs.ExtendedCapabilitiesType;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wms.xml.AbstractCapability;
 import org.geotoolkit.wms.xml.AbstractLayer;
+import org.geotoolkit.wms.xml.AbstractRequest;
 
 
 /**
@@ -102,11 +103,23 @@ public class Capability extends AbstractCapability {
         return request;
     }
 
+    public void setRequest(AbstractRequest request) {
+        if (request instanceof Request) {
+            this.request = (Request)request;
+        } else {
+            throw new IllegalArgumentException("not good version of request. expected 1.3.0");
+        }
+    }
+
     /**
      * Gets the value of the exception property.
      */
     public Exception getException() {
         return exception;
+    }
+
+    public void setException(Exception exception) {
+        this.exception = exception;
     }
 
     /**

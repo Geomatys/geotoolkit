@@ -17,7 +17,6 @@
 package org.geotoolkit.wms.xml.v130;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -118,7 +117,27 @@ public class Request extends AbstractRequest {
      * Gets the value of the extendedOperation property.
      */
     public List<JAXBElement<OperationType>> getExtendedOperation() {
-        return Collections.unmodifiableList(extendedOperation);
+        return extendedOperation;
+    }
+
+    /**
+     * update all the dcp ur with the specified one.
+     */
+    public void updateURL(String url) {
+        if (getCapabilities != null) {
+            getCapabilities.updateURL(url);
+        }
+        if (getFeatureInfo != null) {
+            getFeatureInfo.updateURL(url);
+        }
+        if (getMap != null) {
+            getMap.updateURL(url);
+        }
+        for (JAXBElement<OperationType> jbOp : extendedOperation) {
+            if (jbOp.getValue() != null) {
+                jbOp.getValue().updateURL(url);
+            }
+        }
     }
 
     @Override

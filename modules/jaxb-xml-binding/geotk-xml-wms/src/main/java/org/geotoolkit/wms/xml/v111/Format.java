@@ -37,6 +37,13 @@ public class Format {
     @XmlValue
     private String value;
 
+    public Format() {
+
+    }
+
+    public Format(String value) {
+        this.value = value;
+    }
     /**
      * Gets the value of the value property.
      * 

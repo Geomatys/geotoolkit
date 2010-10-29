@@ -55,6 +55,21 @@ public class Request extends AbstractRequest {
     @XmlElement(name = "PutStyles")
     private PutStyles putStyles;
 
+    public Request() {
+
+    }
+
+    public Request(GetCapabilities getCapabilities, GetMap getMap, GetFeatureInfo getFeatureInfo, DescribeLayer describeLayer, GetLegendGraphic getLegendGraphic,
+            GetStyles getStyles, PutStyles putStyles) {
+        this.describeLayer    = describeLayer;
+        this.getCapabilities  = getCapabilities;
+        this.getFeatureInfo   = getFeatureInfo;
+        this.getLegendGraphic = getLegendGraphic;
+        this.getMap           = getMap;
+        this.getStyles        = getStyles;
+        this.putStyles        = putStyles;
+    }
+
     /**
      * Gets the value of the getCapabilities property.
      */
@@ -111,5 +126,32 @@ public class Request extends AbstractRequest {
      */
     public PutStyles getPutStyles() {
         return putStyles;
+    }
+
+    /**
+     * update all the dcp ur with the specified one.
+     */
+    public void updateURL(String url) {
+        if (getCapabilities != null) {
+            getCapabilities.updateURL(url);
+        }
+        if (getFeatureInfo != null) {
+            getFeatureInfo.updateURL(url);
+        }
+        if (describeLayer != null) {
+            describeLayer.updateURL(url);
+        }
+        if (getLegendGraphic != null) {
+            getLegendGraphic.updateURL(url);
+        }
+        if (getStyles != null) {
+            getStyles.updateURL(url);
+        }
+        if (getMap != null) {
+            getMap.updateURL(url);
+        }
+        if (putStyles != null) {
+            putStyles.updateURL(url);
+        }
     }
 }

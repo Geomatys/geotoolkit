@@ -71,7 +71,9 @@ public class ArithmeticOperatorsType implements ArithmeticOperators {
         if (simple) {
             this.simpleArithmetic = new SimpleArithmetic();
         }
-        this.functions = new FunctionType(functions);
+        if (functions != null) {
+            this.functions = new FunctionType(functions);
+        }
     }
 
     /**

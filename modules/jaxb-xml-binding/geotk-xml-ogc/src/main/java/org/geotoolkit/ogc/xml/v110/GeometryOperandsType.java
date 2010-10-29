@@ -75,6 +75,16 @@ public class GeometryOperandsType {
             geometryOperand.add(new QName(g.getNamespaceURI(), g.getLocalPart()));
         }
     }
+
+    /**
+     * build a new geometry Operands object with the specified array of GeometryOperand (from geoAPI)
+     */
+    public GeometryOperandsType(List<QName> geometryOperands) {
+        if (geometryOperands == null) {
+            geometryOperands = new ArrayList<QName>();
+        }
+        this.geometryOperand = geometryOperands;
+    }
     
     /**
      * Gets the value of the geometryOperand property.

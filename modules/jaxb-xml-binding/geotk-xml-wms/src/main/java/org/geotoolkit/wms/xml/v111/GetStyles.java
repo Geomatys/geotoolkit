@@ -17,6 +17,7 @@
 package org.geotoolkit.wms.xml.v111;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -43,6 +44,23 @@ public class GetStyles extends AbstractOperation {
     @XmlElement(name = "DCPType", required = true)
     private List<DCPType> dcpType;
 
+    public GetStyles() {
+
+    }
+
+    public GetStyles(List<String> formats, DCPType... dcpList) {
+        if (formats != null) {
+            this.format = new ArrayList<Format>();
+            for (String f : formats) {
+                this.format.add(new Format(f));
+            }
+        }
+        if (dcpList != null) {
+            this.dcpType = new ArrayList<DCPType>();
+            this.dcpType.addAll(Arrays.asList(dcpList));
+        }
+    }
+    
     /**
      * Gets the value of the format property.
      * 
@@ -64,4 +82,25 @@ public class GetStyles extends AbstractOperation {
         return this.dcpType;
     }
 
+    public void updateURL(String url) {
+        for (DCPType dcp : dcpType) {
+            final HTTP http = dcp.getHTTP();
+            if (http != null) {
+                final Get get = http.getGet();
+                if (get != null) {
+                    OnlineResource or = get.getOnlineResource();
+                    if (or != null) {
+                        or.setHref(url);
+                    }
+                }
+                final Post post = http.getPost();
+                if (post != null) {
+                    OnlineResource or = post.getOnlineResource();
+                    if (or != null) {
+                        or.setHref(url);
+                    }
+                }
+            }
+        }
+    }
 }

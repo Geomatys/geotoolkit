@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.wms.xml.AbstractCapability;
 import org.geotoolkit.wms.xml.AbstractLayer;
+import org.geotoolkit.wms.xml.AbstractRequest;
 
 
 /**
@@ -74,6 +75,14 @@ public class Capability extends AbstractCapability {
     @Override
     public Request getRequest() {
         return request;
+    }
+
+    public void setRequest(AbstractRequest request) {
+        if (request instanceof Request) {
+            this.request = (Request)request;
+        } else {
+            throw new IllegalArgumentException("not good version of request. expected 1.1.1");
+        }
     }
 
     /**

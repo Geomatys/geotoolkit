@@ -72,7 +72,9 @@ public class SpatialOperatorType implements SpatialOperator {
      */
     public SpatialOperatorType(String name, GeometryOperand[] geometryOperands) {
         this.name = SpatialOperatorNameType.valueOf(name);
-        this.geometryOperands = new GeometryOperandsType(geometryOperands);
+        if (geometryOperands != null) {
+            this.geometryOperands = new GeometryOperandsType(geometryOperands);
+        }
         
     }
     

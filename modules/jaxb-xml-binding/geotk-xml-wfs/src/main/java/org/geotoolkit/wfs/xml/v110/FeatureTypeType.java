@@ -30,11 +30,8 @@ import org.geotoolkit.util.Utilities;
 
 
 /**
- * 
- *             An element of this type that describes a feature in an application
- *             namespace shall have an xml xmlns specifier, e.g.
- *             xmlns:bo="http://www.BlueOx.org/BlueOx"
- *          
+ * An element of this type that describes a feature in an application
+ * namespace shall have an xml xmlns specifier, e.g. xmlns:bo="http://www.BlueOx.org/BlueOx"
  * 
  * <p>Java class for FeatureTypeType complex type.
  * 
