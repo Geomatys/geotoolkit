@@ -35,6 +35,7 @@ import javax.imageio.ImageIO;
 import java.util.concurrent.CountDownLatch;
 
 import org.geotoolkit.test.Commons;
+import org.geotoolkit.test.gui.SwingBase;
 
 import org.junit.After;
 import static org.junit.Assert.*;
@@ -58,6 +59,13 @@ public abstract class ImageTestBase {
 
     /**
      * Set to {@code true} for enabling the display of test images.
+     * The default value is determined by:
+     *
+     * {@preformat java
+     *     Boolean.getBoolean(SHOW_PROPERTY_KEY);
+     * }
+     *
+     * @see SwingBase#SHOW_PROPERTY_KEY
      */
     protected boolean viewEnabled;
 
@@ -73,6 +81,7 @@ public abstract class ImageTestBase {
      */
     protected ImageTestBase(final Class<?> testing) {
         assertTrue(testing.desiredAssertionStatus());
+        viewEnabled = Boolean.getBoolean(SwingBase.SHOW_PROPERTY_KEY);
     }
 
     /**

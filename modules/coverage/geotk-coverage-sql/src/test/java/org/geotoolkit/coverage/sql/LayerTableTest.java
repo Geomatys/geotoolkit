@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.coverage.sql;
 
-import java.io.File;
 import java.util.Set;
 import java.util.List;
 import java.util.Date;
@@ -27,8 +26,6 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.awt.image.RenderedImage;
-import javax.imageio.ImageIO;
 
 import org.opengis.geometry.Envelope;
 
@@ -149,11 +146,9 @@ public final class LayerTableTest extends CatalogTestBase {
         assertEquals(START_TIME, entry.getTimeRange().getMinValue());
         assertEquals(END_TIME,   entry.getTimeRange().getMaxValue());
 
-        final RenderedImage legend = entry.getColorRamp(0, entry.getSampleValueRanges().get(0), null);
-        assertNotNull(legend);
-        if (false) {
-            ImageIO.write(legend, "png", new File("Legend-test.png"));
-        }
+        image = entry.getColorRamp(0, entry.getSampleValueRanges().get(0), null);
+        assertNotNull(image);
+        view("testTemperature");
 
         final Set<LayerEntry> entries = table.getEntries();
         assertFalse(entries.isEmpty());
@@ -177,6 +172,10 @@ public final class LayerTableTest extends CatalogTestBase {
         assertEquals(+180, envelope.getMaximum(0), EPS);
         assertEquals( -90, envelope.getMinimum(1), EPS);
         assertEquals( +90, envelope.getMaximum(1), EPS);
+
+        image = entry.getColorRamp(0, null, null);
+        assertNull(image);
+
         table.release();
     }
 

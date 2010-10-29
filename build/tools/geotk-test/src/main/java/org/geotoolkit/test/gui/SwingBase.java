@@ -53,6 +53,19 @@ import static org.junit.Assume.*;
 @SuppressWarnings("serial")
 public abstract class SwingBase<T extends JComponent> {
     /**
+     * The name of a system property for setting whatever the widget should be show.
+     * If the value returned by the following is {@code true}, then the widgets will
+     * be shown:
+     *
+     * {@preformat java
+     *     Boolean.getBoolean(SHOW_PROPERTY_KEY);
+     * }
+     *
+     * The value of this property key is {@value}.
+     */
+    public static final String SHOW_PROPERTY_KEY = "org.geotoolkit.showWidgetTests";
+
+    /**
      * The desktop which contain the internal frame for each widget. Will be created only if
      * the "{@code org.geotoolkit.showWidgetTests}" system property is set to {@code true}.
      */
@@ -101,7 +114,7 @@ public abstract class SwingBase<T extends JComponent> {
     @BeforeClass
     public static synchronized void prepareDesktop() throws HeadlessException {
         desktop = null; // Safety in case of failures in previous tests.
-        if (Boolean.getBoolean("org.geotoolkit.showWidgetTests")) {
+        if (Boolean.getBoolean(SHOW_PROPERTY_KEY)) {
             desktop = new DesktopPane();
             desktop.createFrame().setVisible(true);
         }
