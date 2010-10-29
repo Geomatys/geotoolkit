@@ -178,7 +178,7 @@ final class IIOMetadataTreeTable extends JXTreeTable implements StringValue {
                 case 0:            key = Vocabulary.Keys.NAME;         break;
                 case 1:            key = Vocabulary.Keys.DESCRIPTION;  break;
                 case 2:            key = Vocabulary.Keys.TYPE;         break;
-                case 3:            key = Vocabulary.Keys.OCCURENCE;    break;
+                case 3:            key = Vocabulary.Keys.OCCURRENCE;   break;
                 case VALUE_COLUMN: key = Vocabulary.Keys.VALUE;        break;
                 case 5:            key = Vocabulary.Keys.DEFAULT;      break;
                 case 6:            key = Vocabulary.Keys.VALID_VALUES; break;

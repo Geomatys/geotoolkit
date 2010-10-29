@@ -1072,7 +1072,7 @@ public final class Errors extends IndexedResourceBundle {
         /**
          * Too many occurrences of "{0}". There is already {1} of them.
          */
-        public static final int TOO_MANY_OCCURENCES_$2 = 202;
+        public static final int TOO_MANY_OCCURRENCES_$2 = 202;
 
         /**
          * Undefined format.

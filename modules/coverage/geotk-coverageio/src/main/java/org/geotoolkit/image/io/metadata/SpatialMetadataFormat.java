@@ -542,30 +542,30 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * to exclude. This method invokes itself recursively. The given set will be modified in order
      * to avoid infinite recursivity (e.g. {@code Identifier.getAuthority().getIdentifiers()}).
      *
-     * @param standard     The metadata standard of the element or attribute to be added.
-     * @param type         The type of the element or attribute to be added.
-     * @param identifier   The UML identifier, or {@code null} if unknown.
-     * @param elementName  The name of the element or attribute node to be added.
-     * @param parentName   The name of the parent node to where to add the child.
-     * @param minOccurence Minimal occurrence of the element or attribute in the parent node.
-     * @param maxOccurence Maximal occurrence of the element or attribute in the parent node.
-     * @param restriction  The restriction on the valid values, or {@code null} if none.
-     * @param exclude      The attribute types to exclude. This set will be modified.
-     * @param substitution The classes to substitute by other classes. Applies only to childs.
-     * @param incomplete   Set of types that we plan to complete manually later, or {@code null} for all.
+     * @param standard      The metadata standard of the element or attribute to be added.
+     * @param type          The type of the element or attribute to be added.
+     * @param identifier    The UML identifier, or {@code null} if unknown.
+     * @param elementName   The name of the element or attribute node to be added.
+     * @param parentName    The name of the parent node to where to add the child.
+     * @param minOccurrence Minimal occurrence of the element or attribute in the parent node.
+     * @param maxOccurrence Maximal occurrence of the element or attribute in the parent node.
+     * @param restriction   The restriction on the valid values, or {@code null} if none.
+     * @param exclude       The attribute types to exclude. This set will be modified.
+     * @param substitution  The classes to substitute by other classes. Applies only to childs.
+     * @param incomplete    Set of types that we plan to complete manually later, or {@code null} for all.
      * @return The {@code elementName}, or a modified version of it if that method
      *         modified the case, or {@code null} if it has not been added.
      */
     private String addTree(final MetadataStandard standard, final Class<?> type,
             String identifier, String elementName, String parentName,
-            final int minOccurence, final int maxOccurence, final ValueRestriction restriction,
+            final int minOccurrence, final int maxOccurrence, final ValueRestriction restriction,
             final Set<Class<?>> exclude, final Map<Class<?>,Class<?>> substitution,
             final Set<Class<?>> incomplete)
     {
-        if (maxOccurence == 0) {
+        if (maxOccurrence == 0) {
             return null;
         }
-        final boolean mandatory = (minOccurence != 0);
+        final boolean mandatory = (minOccurrence != 0);
          /*
          * CodeList    ⇒    Attribute VALUE_ENUMERATION
          *
@@ -588,7 +588,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
         if (!standard.isMetadata(type)) {
             String containerName = elementName;
             int dataType = typeOf(type);
-            if (maxOccurence != 1) {
+            if (maxOccurrence != 1) {
                 /*
                  * Collection  ⇒  Attribute VALUE_LIST
                  *
@@ -600,7 +600,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
                 if (componentType != null) {
                     // The container for the repeated elements (CHILD_POLICY_REPEAT)
                     containerName = elementName = toElementName(elementName);
-                    addElement(elementName, parentName, minOccurence, maxOccurence);
+                    addElement(elementName, parentName, minOccurrence, maxOccurrence);
                     standards.put(elementName, standard);
 
                     // The repeated element with no child, only a single attribute.
@@ -615,7 +615,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
                     elementName = ARRAY_ATTRIBUTE_NAME;
                     dataType    = typeOf(componentType);
                 }
-                addAttribute(parentName, elementName, dataType, mandatory, minOccurence, maxOccurence);
+                addAttribute(parentName, elementName, dataType, mandatory, minOccurrence, maxOccurrence);
             } else if (dataType == IIOMetadataFormat.DATATYPE_BOOLEAN) {
                 /*
                  * Boolean  ⇒  Attribute VALUE_ENUMERATION
@@ -653,8 +653,8 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
          */
         elementName = toElementName(elementName);
         final String containerName = elementName;
-        if (maxOccurence != 1) {
-            addElement(elementName, parentName, minOccurence, maxOccurence);
+        if (maxOccurrence != 1) {
+            addElement(elementName, parentName, minOccurrence, maxOccurrence);
             standards.put(elementName, standard);
             parentName  = elementName;
             identifier  = toElementName(identifier);

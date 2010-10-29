@@ -49,7 +49,7 @@ import static org.geotoolkit.image.io.metadata.MetadataTreeTable.VALUE_COLUMN;
  *   <li>{@link #getLabel()}</li>
  *   <li>{@link #getDescription()}</li>
  *   <li>{@link #getValueType()}</li>
- *   <li>{@link #getOccurences()}</li>
+ *   <li>{@link #getOccurrences()}</li>
  *   <li>{@link #getUserObject()} (this column may be omitted - see {@link MetadataTreeTable})</li>
  *   <li>{@link #getDefaultValue()}</li>
  *   <li>{@link #getValueRestriction()}</li>
@@ -243,7 +243,17 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
             }
             this.description = description;
         }
-        return description.equals("") ? null : description;
+        return description.length() == 0 ? null : description;
+    }
+
+    /**
+     * @deprecated Renamed {@link #getOccurrences()}.
+     *
+     * @return The range of occurrences (never null).
+     */
+    @Deprecated
+    public NumberRange<Integer> getOccurences() {
+        return getOccurrences();
     }
 
     /**
@@ -253,7 +263,7 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
      *
      * @return The range of occurrences (never null).
      */
-    public NumberRange<Integer> getOccurences() {
+    public NumberRange<Integer> getOccurrences() {
         if (occurrences == null) {
             Integer min=0, max=1;
             final IIOMetadataFormat format = tree.format;
@@ -623,7 +633,7 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
      *   <li>{@link #getLabel()}</li>
      *   <li>{@link #getDescription()}</li>
      *   <li>{@link #getValueType()}</li>
-     *   <li>{@link #getOccurences()}</li>
+     *   <li>{@link #getOccurrences()}</li>
      *   <li>{@link #getUserObject()} (this column may be omitted - see below)</li>
      *   <li>{@link #getDefaultValue()}</li>
      *   <li>{@link #getValueRestriction()}</li>
@@ -645,7 +655,7 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
             case 0:            return getLabel();
             case 1:            return getDescription();
             case 2:            return getValueType();
-            case 3:            return getOccurences();
+            case 3:            return getOccurrences();
             case VALUE_COLUMN: return getUserObject();
             case 5:            return getDefaultValue();
             case 6:            return getValueRestriction();

@@ -1155,9 +1155,9 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int OBLIQUE_MERCATOR_PROJECTION = 211;
 
         /**
-         * Occurence
+         * Occurrence
          */
-        public static final int OCCURENCE = 212;
+        public static final int OCCURRENCE = 212;
 
         /**
          * Offset

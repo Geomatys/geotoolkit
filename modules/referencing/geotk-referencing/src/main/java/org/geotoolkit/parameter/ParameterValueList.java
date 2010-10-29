@@ -173,7 +173,7 @@ final class ParameterValueList extends AbstractList<GeneralParameterValue>
             }
             if (count >= max) {
                 throw new InvalidParameterCardinalityException(Errors.format(
-                        Errors.Keys.TOO_MANY_OCCURENCES_$2, name, count), name);
+                        Errors.Keys.TOO_MANY_OCCURRENCES_$2, name, count), name);
             }
         }
         values.add(parameter);

@@ -499,7 +499,7 @@ public class MetadataAccessor implements WarningProducer {
             final int count = childs.size();
             switch (count) {
                 default: {
-                    warning("<init>", Errors.Keys.TOO_MANY_OCCURENCES_$2, parentPath, count);
+                    warning("<init>", Errors.Keys.TOO_MANY_OCCURRENCES_$2, parentPath, count);
                     // Fall through for picking the first node.
                 }
                 case 1: {

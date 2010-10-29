@@ -382,7 +382,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
         }
         if (count >= check.getMaximumOccurs()) {
             throw new InvalidParameterCardinalityException(Errors.format(
-                    Errors.Keys.TOO_MANY_OCCURENCES_$2, name, count), name);
+                    Errors.Keys.TOO_MANY_OCCURRENCES_$2, name, count), name);
         }
         final ParameterValueGroup value = ((ParameterDescriptorGroup) check).createValue();
         values.add(value);

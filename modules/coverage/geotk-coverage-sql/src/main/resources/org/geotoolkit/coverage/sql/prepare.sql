@@ -1,6 +1,6 @@
 --
 -- Creates standard users expected by the "coverages" schema.  Those names can be changed
--- by searching and replacing every occurences of 'geoadmin' and 'geouser' in prepare.sql,
+-- by searching and replacing every occurrences of 'geoadmin' and 'geouser' in prepare.sql,
 -- postgis-update.sql and coverages-create.sql.
 --
 
