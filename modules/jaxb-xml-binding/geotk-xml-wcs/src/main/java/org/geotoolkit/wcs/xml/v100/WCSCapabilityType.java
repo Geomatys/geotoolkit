@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wcs.xml.v100.DCPTypeType.HTTP;
 
 
 /**
@@ -143,6 +144,10 @@ public class WCSCapabilityType {
      */
     public WCSCapabilityType.Request getRequest() {
         return request;
+    }
+
+    public void setRequest(WCSCapabilityType.Request request) {
+        this.request = request;
     }
 
     /**
@@ -332,6 +337,22 @@ public class WCSCapabilityType {
             this.getCoverage = value;
         }
 
+        /**
+         * 
+         * @param url
+         */
+        public void updateURL(String url) {
+            if (describeCoverage != null) {
+                describeCoverage.updateURL(url);
+            }
+            if (getCapabilities != null) {
+                getCapabilities.updateURL(url);
+            }
+            if (getCoverage != null) {
+                getCoverage.updateURL(url);
+            }
+        }
+
 
         /**
          * <p>Java class for anonymous complex type.
@@ -361,6 +382,14 @@ public class WCSCapabilityType {
             @XmlElement(name = "DCPType", required = true)
             private List<DCPTypeType> dcpType;
 
+            public DescribeCoverage() {
+
+            }
+
+            public DescribeCoverage(List<DCPTypeType> dcp) {
+                this.dcpType = dcp;
+            }
+
             /**
              * Gets the value of the dcpType property.
              * 
@@ -370,6 +399,14 @@ public class WCSCapabilityType {
                     dcpType = new ArrayList<DCPTypeType>();
                 }
                 return this.dcpType;
+            }
+
+            public void updateURL(String url) {
+                if (this.dcpType != null) {
+                    for (DCPTypeType dcp : dcpType) {
+                        dcp.updateURL(url);
+                    }
+                }
             }
 
         }
@@ -403,6 +440,14 @@ public class WCSCapabilityType {
             @XmlElement(name = "DCPType", required = true)
             private List<DCPTypeType> dcpType;
 
+            public GetCapabilities() {
+
+            }
+
+            public GetCapabilities(List<DCPTypeType> dcp) {
+                this.dcpType = dcp;
+            }
+            
             /**
              * Gets the value of the dcpType property.
              * 
@@ -412,6 +457,14 @@ public class WCSCapabilityType {
                     dcpType = new ArrayList<DCPTypeType>();
                 }
                 return this.dcpType;
+            }
+
+            public void updateURL(String url) {
+                if (this.dcpType != null) {
+                    for (DCPTypeType dcp : dcpType) {
+                        dcp.updateURL(url);
+                    }
+                }
             }
 
         }
@@ -445,26 +498,16 @@ public class WCSCapabilityType {
             @XmlElement(name = "DCPType", required = true)
             private List<DCPTypeType> dcpType;
 
+            public GetCoverage() {
+
+            }
+
+            public GetCoverage(List<DCPTypeType> dcp) {
+                this.dcpType = dcp;
+            }
+
             /**
              * Gets the value of the dcpType property.
-             * 
-             * <p>
-             * This accessor method returns a reference to the live list,
-             * not a snapshot. Therefore any modification you make to the
-             * returned list will be present inside the JAXB object.
-             * This is why there is not a <CODE>set</CODE> method for the dcpType property.
-             * 
-             * <p>
-             * For example, to add a new item, do as follows:
-             * <pre>
-             *    getDCPType().add(newItem);
-             * </pre>
-             * 
-             * 
-             * <p>
-             * Objects of the following type(s) are allowed in the list
-             * {@link DCPTypeType }
-             * 
              * 
              */
             public List<DCPTypeType> getDCPType() {
@@ -472,6 +515,14 @@ public class WCSCapabilityType {
                     dcpType = new ArrayList<DCPTypeType>();
                 }
                 return this.dcpType;
+            }
+
+            public void updateURL(String url) {
+                if (this.dcpType != null) {
+                    for (DCPTypeType dcp : dcpType) {
+                        dcp.updateURL(url);
+                    }
+                }
             }
 
         }

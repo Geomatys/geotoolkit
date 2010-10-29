@@ -91,11 +91,25 @@ public class DCPTypeType {
     @XmlElement(name = "HTTP", required = true)
     private DCPTypeType.HTTP http;
 
+    public DCPTypeType() {
+
+    }
+
+    public DCPTypeType(HTTP http) {
+        this.http = http;
+    }
+
     /**
      * Gets the value of the http property.
      */
     public DCPTypeType.HTTP getHTTP() {
         return http;
+    }
+
+    public void updateURL(String url) {
+        if (http != null) {
+            http.updateURL(url);
+        }
     }
 
    /**
@@ -150,6 +164,20 @@ public class DCPTypeType {
         })
         private List<Object> getOrPost;
 
+        public HTTP() {
+
+        }
+
+        public HTTP(Get get, Post post) {
+            this.getOrPost = new ArrayList<Object>();
+            if (get != null) {
+                this.getOrPost.add(get);
+            }
+            if (post != null) {
+                this.getOrPost.add(post);
+            }
+        }
+
         /**
          * Gets the value of the getOrPost property.
          * 
@@ -159,6 +187,20 @@ public class DCPTypeType {
                 getOrPost = new ArrayList<Object>();
             }
             return this.getOrPost;
+        }
+
+        public void updateURL(String url) {
+            if (this.getOrPost != null) {
+                for (Object prot : getOrPost) {
+                    if (prot instanceof Get) {
+                        Get get = (Get) prot;
+                        get.onlineResource.setHref(url);
+                    } else if (prot instanceof Post) {
+                        Post post = (Post) prot;
+                        post.onlineResource.setHref(url);
+                    }
+                }
+            }
         }
 
 
@@ -189,6 +231,14 @@ public class DCPTypeType {
 
             @XmlElement(name = "OnlineResource", required = true)
             private OnlineResourceType onlineResource;
+
+            public Get() {
+
+            }
+
+            public Get(OnlineResourceType or) {
+                this.onlineResource = or;
+            }
 
             /**
              * Gets the value of the onlineResource property.
@@ -223,6 +273,14 @@ public class DCPTypeType {
             "onlineResource"
         })
         public static class Post {
+
+            public Post() {
+
+            }
+
+            public Post(OnlineResourceType or) {
+                this.onlineResource = or;
+            }
 
             @XmlElement(name = "OnlineResource", required = true)
             private OnlineResourceType onlineResource;

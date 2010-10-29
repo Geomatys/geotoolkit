@@ -86,7 +86,7 @@ public class HTTP implements AbstractHTTP {
             this.getOrPost.add(factory.createHTTPGet(get));
         }
         if (post != null) {
-            this.getOrPost.add(factory.createHTTPGet(post));
+            this.getOrPost.add(factory.createHTTPPost(post));
         }
     }
     

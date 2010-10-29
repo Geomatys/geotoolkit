@@ -78,7 +78,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
     /**
      * Build a new operation metadata.
      */
-    OperationsMetadata(List<Operation> operation, List<DomainType> parameter, List<DomainType> constraint,
+    public OperationsMetadata(List<Operation> operation, List<DomainType> parameter, List<DomainType> constraint,
             Object extendedCapabilities){
         
         this.constraint           = constraint;

@@ -109,6 +109,13 @@ public class UnNamedDomainType {
             this.anyValue = anyValue;
         }
     }
+
+    /**
+     * Empty constructor used by JAXB.
+     */
+    public UnNamedDomainType(AllowedValues value) {
+        this.allowedValues = value;
+    }
     
     
     /**

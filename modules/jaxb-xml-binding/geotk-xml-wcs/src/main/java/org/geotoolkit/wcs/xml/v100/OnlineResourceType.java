@@ -65,6 +65,14 @@ public class OnlineResourceType {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
+    public OnlineResourceType() {
+
+    }
+
+    public OnlineResourceType(String href) {
+        this.href = href;
+    }
+
     /**
      * Gets the value of the type property.
      */
