@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
+import java.sql.SQLNonTransientException;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
@@ -255,12 +256,13 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
      * @throws SQLException if an error occurred while reading from or writing to the database.
      */
     int findOrCreate(final String path, final String extension, final String format) throws SQLException {
+        Integer id;
         final LocalCache lc = getLocalCache();
         synchronized (lc) {
             boolean success = false;
             transactionBegin(lc);
             try {
-                Integer id = find(path, extension, format);
+                id = find(path, extension, format);
                 if (id == null) {
                     /*
                      * No match found. Adds a new record in the database.
@@ -277,17 +279,23 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
                      * Get the identifier of the entry that we just generated.
                      */
                     final ResultSet keys = statement.getGeneratedKeys();
-                    if (keys.next()) {
+                    while (keys.next()) {
                         id = keys.getInt(query.identifier.name);
+                        if (!keys.wasNull()) break;
+                        id = null; // Should never reach this point, but I'm paranoiac.
                     }
                     keys.close();
                     release(lc, ce);
                 }
-                return id;
             } finally {
                 transactionEnd(lc, success);
             }
         }
+        if (id == null) {
+            // Should never occur, but I'm paranoiac.
+            throw new SQLNonTransientException();
+        }
+        return id;
     }
 
     /**

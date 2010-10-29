@@ -509,7 +509,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
             }
             case 2: { // Confirm coverage insertion
                 final NewGridCoverageReference reference = this.reference;
-                if (reference != null) try {
+                try {
                     reference.format         = getSelectedFormat();
                     reference.horizontalSRID = getSelectedCode(horizontalCRS);
                     reference.verticalSRID   = getSelectedCode(verticalCRS);

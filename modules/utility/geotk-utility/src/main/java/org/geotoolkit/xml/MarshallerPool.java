@@ -211,7 +211,7 @@ public class MarshallerPool {
          */
         try {
             mapper = Class.forName(type).getConstructor(String.class).newInstance(rootNamespace);
-        } catch (Throwable exception) {
+        } catch (Throwable exception) { // NOSONAR (TODO: revisit with Java 7)
             // There is a lot of checked and unchecked exceptions that may be thrown above,
             // including NoClassDefFoundError because of our trick using "geotk-provided".
             // This is why we use such an extrem catch as "Throwable".

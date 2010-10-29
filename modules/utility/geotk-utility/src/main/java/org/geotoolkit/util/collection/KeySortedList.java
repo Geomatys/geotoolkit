@@ -245,7 +245,7 @@ public class KeySortedList<K extends Comparable<K>,V> extends AbstractSequential
                 values = entry.getValue();
                 if (fromKey.compareTo(key) <= 0) {
                     valuesIter = values.listIterator();
-                    assert equals(new Iter(base));
+                    assert equivalent(new Iter(base));
                     return;
                 }
                 base += values.size();
@@ -399,7 +399,7 @@ public class KeySortedList<K extends Comparable<K>,V> extends AbstractSequential
          * Compares two iterators for equality, assuming that they are iterator for the same
          * {@link KeySortedList} (this is not verified). This method is used for assertions only.
          */
-        private boolean equals(final Iter that) {
+        private boolean equivalent(final Iter that) {
             return this.key                    == that.key    &&
                    this.values                 == that.values &&
                    this.base                   == that.base   &&

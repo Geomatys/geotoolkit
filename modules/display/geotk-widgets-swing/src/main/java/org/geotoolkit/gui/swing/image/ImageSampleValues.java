@@ -52,7 +52,7 @@ import org.geotoolkit.internal.swing.SwingUtilities;
  * and scroll bars for the table.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.16
  *
  * @see ImageTableModel
  * @see ImageProperties
@@ -260,7 +260,7 @@ public class ImageSampleValues extends JComponent {
     /**
      * Creates a new table that will display the sample values for the specified image.
      *
-     * @param image The image for which to display sample values.
+     * @param image The image for which to display sample values, or {@code null} if none.
      */
     public ImageSampleValues(final RenderedImage image) {
         this();
@@ -270,30 +270,32 @@ public class ImageSampleValues extends JComponent {
     /**
      * Sets the rendered image to display.
      *
-     * @param image The image for which to display sample values.
+     * @param image The image for which to display sample values, or {@code null} if none.
      */
     public void setImage(final RenderedImage image) {
         final ImageTableModel samples = (ImageTableModel) table.getModel();
         final boolean isFirst = (samples.getRenderedImage() == null);
         samples.setRenderedImage(image);
         renderer.formatter = samples.getNumberFormat();
-        final SampleModel model = image.getSampleModel();
-        final int      numBands = model.getNumBands();
-        final Integer  maximum  = new Integer(numBands);
-        if (band.getNumber().intValue() >= numBands) {
-            band.setValue(maximum);
-        }
-        band.setMaximum(maximum);
-        /*
-         * Once the spinner is updated, adjusts the columns width. However, we will perform this
-         * task only for the first image to be displayed. For all others, we will preserve the
-         * previous widths (which may have been adjusted by the user).
-         */
-        if (isFirst && model.getDataType() == DataBuffer.TYPE_BYTE) {
-            final TableColumnModel columns = table.getColumnModel();
-            for (int i=columns.getColumnCount(); --i>=0;) {
-                final TableColumn column = columns.getColumn(i);
-                column.setPreferredWidth(40);
+        if (image != null) {
+            final SampleModel model = image.getSampleModel();
+            final int      numBands = model.getNumBands();
+            final Integer  maximum  = new Integer(numBands);
+            if (band.getNumber().intValue() >= numBands) {
+                band.setValue(maximum);
+            }
+            band.setMaximum(maximum);
+            /*
+             * Once the spinner is updated, adjusts the columns width. However, we will perform this
+             * task only for the first image to be displayed. For all others, we will preserve the
+             * previous widths (which may have been adjusted by the user).
+             */
+            if (isFirst && model.getDataType() == DataBuffer.TYPE_BYTE) {
+                final TableColumnModel columns = table.getColumnModel();
+                for (int i=columns.getColumnCount(); --i>=0;) {
+                    final TableColumn column = columns.getColumn(i);
+                    column.setPreferredWidth(40);
+                }
             }
         }
     }

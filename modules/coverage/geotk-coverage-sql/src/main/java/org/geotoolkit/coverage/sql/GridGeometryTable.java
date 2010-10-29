@@ -22,6 +22,7 @@ import java.sql.Types;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
+import java.sql.SQLNonTransientException;
 import java.awt.Dimension;
 import java.awt.geom.AffineTransform;
 import java.util.Arrays;
@@ -362,12 +363,13 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
                      final double[] verticalOrdinates, final int verticalSRID)
             throws SQLException
     {
+        Integer id;
         final LocalCache lc = getLocalCache();
         synchronized (lc) {
             boolean success = false;
             transactionBegin(lc);
             try {
-                Integer id = find(size, gridToCRS, horizontalSRID, verticalOrdinates, verticalSRID);
+                id = find(size, gridToCRS, horizontalSRID, verticalOrdinates, verticalSRID);
                 if (id == null) {
                     /*
                      * No match found. Add a new record in the database.
@@ -403,16 +405,22 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
                      * Get the identifier of the entry that we just generated.
                      */
                     final ResultSet keys = statement.getGeneratedKeys();
-                    if (keys.next()) {
+                    while (keys.next()) {
                         id = keys.getInt(query.identifier.name);
+                        if (!keys.wasNull()) break;
+                        id = null; // Should never reach this point, but I'm paranoiac.
                     }
                     keys.close();
                     release(lc, ce);
                 }
-                return id;
             } finally {
                 transactionEnd(lc, success);
             }
         }
+        if (id == null) {
+            // Should never occur, but I'm paranoiac.
+            throw new SQLNonTransientException();
+        }
+        return id;
     }
 }

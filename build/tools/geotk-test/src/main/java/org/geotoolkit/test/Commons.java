@@ -47,7 +47,7 @@ public final class Commons {
      *
      * @since 3.11
      */
-    public static final String EPSG_VERSION = "7.5.0.1";
+    public static final String EPSG_VERSION = "7.5.0.1"; // NOSONAR: This is not an IP address.
 
     /**
      * Do not allows instantiation of this class.

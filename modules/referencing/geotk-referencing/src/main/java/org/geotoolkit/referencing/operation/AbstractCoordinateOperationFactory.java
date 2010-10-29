@@ -450,7 +450,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
      */
     @Override
     public CoordinateOperation createConcatenatedOperation(final Map<String,?> properties,
-            final CoordinateOperation[] operations) throws FactoryException
+            final CoordinateOperation... operations) throws FactoryException
     {
         CoordinateOperation operation;
         operation = new DefaultConcatenatedOperation(properties, operations, getMathTransformFactory());
@@ -503,8 +503,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
                    sourceCRS, targetCRS, mtFactory.createConcatenatedTransform(mt1, mt2),
                    ((SingleOperation) step).getMethod(), CoordinateOperation.class);
         }
-        return createConcatenatedOperation(getTemporaryName(sourceCRS, targetCRS),
-                new CoordinateOperation[] {step1, step2});
+        return createConcatenatedOperation(getTemporaryName(sourceCRS, targetCRS), step1, step2);
     }
 
     /**
@@ -537,8 +536,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
         if (step3.getName() == AXIS_CHANGES) return concatenate(step1, concatenate(step2, step3));
         final CoordinateReferenceSystem sourceCRS = step1.getSourceCRS();
         final CoordinateReferenceSystem targetCRS = step3.getTargetCRS();
-        return createConcatenatedOperation(getTemporaryName(sourceCRS, targetCRS),
-                new CoordinateOperation[] {step1, step2, step3});
+        return createConcatenatedOperation(getTemporaryName(sourceCRS, targetCRS), step1, step2, step3);
     }
 
     /**

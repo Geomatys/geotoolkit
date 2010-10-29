@@ -56,7 +56,7 @@ public class ImageTableModel extends AbstractTableModel {
     private static final long serialVersionUID = -408603520054548181L;
 
     /**
-     * The image to display.
+     * The image to display, or {@code null} if none.
      */
     private RenderedImage image;
 
@@ -76,7 +76,7 @@ public class ImageTableModel extends AbstractTableModel {
     private int band;
 
     /**
-     * Image properites computed by {@link #update}. Those properties are used everytime
+     * Image properties computed by {@link #update}. Those properties are used every time
      * {@link #getValueAt} is invoked, which is why we cache them.
      */
     private transient int minX, minY, maxX, maxY,
@@ -93,13 +93,13 @@ public class ImageTableModel extends AbstractTableModel {
     private transient String[] rowNames, columnNames;
 
     /**
-     * The pixel values as an object of the color model transfert type.
+     * The pixel values as an object of the color model transfer type.
      * Cached for avoiding to much creation of the same object.
      */
     private transient Object pixel;
 
     /**
-     * Creates a new table model.
+     * Creates a new table model with no image.
      */
     public ImageTableModel() {
     }
@@ -107,7 +107,7 @@ public class ImageTableModel extends AbstractTableModel {
     /**
      * Creates a new table model for the specified image.
      *
-     * @param image The image for which to create a table model.
+     * @param image The image for which to create a table model, or {@code null} if none.
      */
     public ImageTableModel(final RenderedImage image) {
         setRenderedImage(image);
@@ -116,7 +116,7 @@ public class ImageTableModel extends AbstractTableModel {
     /**
      * Sets the image to display.
      *
-     * @param image The new image for this table model.
+     * @param image The new image for this table model, or {@code null} if none.
      */
     public void setRenderedImage(final RenderedImage image) {
         this.image = image;
@@ -132,7 +132,7 @@ public class ImageTableModel extends AbstractTableModel {
     /**
      * Returns the image to display, or {@code null} if none.
      *
-     * @return The image which is backing this table model.
+     * @return The image which is backing this table model, or {@code null} if none.
      */
     public RenderedImage getRenderedImage() {
         return image;
@@ -193,7 +193,7 @@ public class ImageTableModel extends AbstractTableModel {
      * @param band The band where this table model should take its values.
      */
     public void setBand(final int band) {
-        if (band<0 || (image!=null && band>=image.getSampleModel().getNumBands())) {
+        if (band < 0 || (image != null && band >= image.getSampleModel().getNumBands())) {
             throw new IndexOutOfBoundsException();
         }
         this.band = band;
@@ -223,22 +223,22 @@ public class ImageTableModel extends AbstractTableModel {
      * Returns the number of rows in the model, which is
      * the {@linkplain RenderedImage#getHeight image height}.
      *
-     * @return The image height.
+     * @return The image height, or 0 if there is no image.
      */
     @Override
     public int getRowCount() {
-        return (image!=null) ? image.getHeight() : 0;
+        return (image != null) ? image.getHeight() : 0;
     }
 
     /**
      * Returns the number of columns in the model, which is
      * the {@linkplain RenderedImage#getWidth image width}.
      *
-     * @return The image width.
+     * @return The image width, or 0 if there is no image.
      */
     @Override
     public int getColumnCount() {
-        return (image!=null) ? image.getWidth() : 0;
+        return (image != null) ? image.getWidth() : 0;
     }
 
     /**
@@ -247,10 +247,12 @@ public class ImageTableModel extends AbstractTableModel {
      *
      * @param  row The row for which to get the name.
      * @return The name for the requested row.
+     * @throws IndexOutOfBoundsException If the given index is not a positive number smaller
+     *         than {@link #getRowCount()}.
      */
-    public String getRowName(final int row) {
+    public String getRowName(final int row) throws IndexOutOfBoundsException {
         if (rowNames == null) {
-            rowNames = new String[image.getHeight()];
+            rowNames = new String[getRowCount()];
         }
         String candidate = rowNames[row];
         if (candidate == null) {
@@ -266,14 +268,13 @@ public class ImageTableModel extends AbstractTableModel {
      *
      * @param  column The column for which to get the name.
      * @return The name for the requested column.
+     * @throws IndexOutOfBoundsException If the given index is not a positive number smaller
+     *         than {@link #getColumnCount()}.
      */
     @Override
-    public String getColumnName(final int column) {
+    public String getColumnName(final int column) throws IndexOutOfBoundsException {
         if (columnNames == null) {
-            if (image == null) {
-                return super.getColumnName(column);
-            }
-            columnNames = new String[image.getWidth()];
+            columnNames = new String[getColumnCount()];
         }
         String candidate = columnNames[column];
         if (candidate == null) {
@@ -291,7 +292,7 @@ public class ImageTableModel extends AbstractTableModel {
      */
     @Override
     public int findColumn(final String name) {
-        if (image!=null) try {
+        if (image != null) try {
             return titleFormat.parse(name).intValue() - minX;
         } catch (ParseException exception) {
             // Ignore; fallback on the default algorithm.
@@ -312,10 +313,10 @@ public class ImageTableModel extends AbstractTableModel {
 
     /**
      * Returns the raster at the specified pixel location, or {@code null} if none.
-     * The (<var>x</var>, <var>y</var>) <strong>must</strong> be additionned with
+     * The (<var>x</var>, <var>y</var>) <strong>must</strong> be added with
      * {@link #minX} and {@link #minY}.
      */
-    private final Raster getRasterAt(final int y, final int x) {
+    private Raster getRasterAt(final int y, final int x) {
         if (x < minX || x >= maxX || y < minY || y >= maxY) {
             return null;
         }

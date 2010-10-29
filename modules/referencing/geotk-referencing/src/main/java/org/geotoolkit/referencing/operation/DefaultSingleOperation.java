@@ -147,7 +147,9 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
                 final Class<? extends SingleOperation> candidate =
                         ((MathTransformProvider) method).getOperationType();
                 if (candidate != null) {
-                    if (type==null || type.isAssignableFrom(candidate)) {
+                    if (type == null) {
+                        type = candidate;
+                    } else if (type.isAssignableFrom(candidate)) {
                         type = candidate.asSubclass(type);
                     }
                 }
@@ -227,10 +229,10 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
             if (mt instanceof PassThroughTransform) {
                 mt = ((PassThroughTransform) mt).getSubTransform();
             } else {
-                break;
+                throw new UnsupportedImplementationException(mt.getClass());
             }
         }
-        throw new UnsupportedImplementationException(mt.getClass());
+        throw new IllegalStateException();
     }
 
     /**

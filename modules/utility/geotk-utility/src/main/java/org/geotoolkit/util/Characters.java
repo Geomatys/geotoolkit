@@ -92,20 +92,23 @@ public final class Characters {
      * @return The given digit as a superscript, or {@code c} if the
      *         given character was not a digit.
      */
-    public static char toSuperScript(final char c) {
+    public static char toSuperScript(char c) {
         switch (c) {
-            case '1': return '\u00B9';
-            case '2': return '\u00B2';
-            case '3': return '\u00B3';
-            case '+': return '\u207A';
-            case '-': return '\u207B';
-            case '=': return '\u207C';
-            case '(': return '\u207D';
-            case ')': return '\u207E';
-            case 'n': return '\u207F';
-        }
-        if (c>='0' && c<='9') {
-            return (char) (c+('\u2070'-'0'));
+            case '1': c = '\u00B9'; break;
+            case '2': c = '\u00B2'; break;
+            case '3': c = '\u00B3'; break;
+            case '+': c = '\u207A'; break;
+            case '-': c = '\u207B'; break;
+            case '=': c = '\u207C'; break;
+            case '(': c = '\u207D'; break;
+            case ')': c = '\u207E'; break;
+            case 'n': c = '\u207F'; break;
+            default: {
+                if (c >= '0' && c <= '9') {
+                    c += ('\u2070' - '0');
+                }
+                break;
+            }
         }
         return c;
     }
@@ -123,16 +126,19 @@ public final class Characters {
      * @return The given digit as a subscript, or {@code c} if the
      *         given character was not a digit.
      */
-    public static char toSubScript(final char c) {
+    public static char toSubScript(char c) {
         switch (c) {
-            case '+': return '\u208A';
-            case '-': return '\u208B';
-            case '=': return '\u208C';
-            case '(': return '\u208D';
-            case ')': return '\u208E';
-        }
-        if (c>='0' && c<='9') {
-            return (char) (c+('\u2080'-'0'));
+            case '+': c = '\u208A'; break;
+            case '-': c = '\u208B'; break;
+            case '=': c = '\u208C'; break;
+            case '(': c = '\u208D'; break;
+            case ')': c = '\u208E'; break;
+            default: {
+                if (c >= '0' && c <= '9') {
+                    c += ('\u2080' - '0');
+                }
+                break;
+            }
         }
         return c;
     }
@@ -144,28 +150,34 @@ public final class Characters {
      * @return The given digit as a normal digit, or {@code c} if the
      *         given character was not a superscript or a subscript.
      */
-    public static char toNormalScript(final char c) {
+    public static char toNormalScript(char c) {
         switch (c) {
-            case '\u00B9': return '1';
-            case '\u00B2': return '2';
-            case '\u00B3': return '3';
-            case '\u2071': return c;
-            case '\u2072': return c;
-            case '\u2073': return c;
-            case '\u207A': return '+';
-            case '\u207B': return '-';
-            case '\u207C': return '=';
-            case '\u207D': return '(';
-            case '\u207E': return ')';
-            case '\u207F': return 'n';
-            case '\u208A': return '+';
-            case '\u208B': return '-';
-            case '\u208C': return '=';
-            case '\u208D': return '(';
-            case '\u208E': return ')';
+            case '\u00B9': c = '1'; break;
+            case '\u00B2': c = '2'; break;
+            case '\u00B3': c = '3'; break;
+            case '\u2071':
+            case '\u2072':
+            case '\u2073':          break;
+            case '\u207A': c = '+'; break;
+            case '\u207B': c = '-'; break;
+            case '\u207C': c = '='; break;
+            case '\u207D': c = '('; break;
+            case '\u207E': c = ')'; break;
+            case '\u207F': c = 'n'; break;
+            case '\u208A': c = '+'; break;
+            case '\u208B': c = '-'; break;
+            case '\u208C': c = '='; break;
+            case '\u208D': c = '('; break;
+            case '\u208E': c = ')'; break;
+            default: {
+                if (c >= '\u2070' && c <= '\u2079') {
+                    c -= ('\u2070' - '0');
+                } else if (c >= '\u2080' && c <= '\u2089') {
+                    c -= ('\u2080'-'0');
+                }
+                break;
+            }
         }
-        if (c>='\u2070' && c<='\u2079') return (char) (c-('\u2070'-'0'));
-        if (c>='\u2080' && c<='\u2089') return (char) (c-('\u2080'-'0'));
         return c;
     }
 }

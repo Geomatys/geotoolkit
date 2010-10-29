@@ -238,7 +238,7 @@ sleep:  while (true) {
              */
             try {
                 monitorExit(false);
-            } catch (Throwable e) {
+            } catch (Throwable e) { // NOSONAR: See above comment.
                 Logging.unexpectedException(Logging.getLogger(StatementPool.class), getClass(), "monitorExit", e);
             }
             /*

@@ -895,8 +895,9 @@ public class RawTiffImageReader extends SpatialImageReader {
         selectImage(imageIndex);
         if (rawImageType == null) {
             final ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
-            int type = DataBuffer.TYPE_BYTE;
-            int[] bits = null;
+            final int type;
+            final int[] bits;
+            final long[] bitsPerSample = this.bitsPerSample;
             if (bitsPerSample != null) {
                 int size = 0;
                 bits = new int[bitsPerSample.length];
@@ -926,6 +927,13 @@ public class RawTiffImageReader extends SpatialImageReader {
                                 Errors.Keys.BAD_PARAMETER_$2, "bitsPerSample", size));
                     }
                 }
+            } else {
+                /*
+                 * If the bitsPerSample field were not specified, assume bytes.
+                 */
+                type = DataBuffer.TYPE_BYTE;
+                bits = new int[(samplesPerPixel != 0) ? samplesPerPixel : cs.getNumComponents()];
+                Arrays.fill(bits, 8);
             }
             final boolean hasAlpha = bits.length > cs.getNumComponents();
             final ColorModel cm = new ComponentColorModel(cs, bits, hasAlpha, false,
@@ -1264,7 +1272,7 @@ public class RawTiffImageReader extends SpatialImageReader {
         /**
          * Default list of file extensions.
          */
-        private static final String[] SUFFIXES = new String[] {"raw"};
+        private static final String[] SUFFIXES = new String[] {"tiff", "tif"};
 
         /**
          * The mime types for the {@link RawTiffImageReader}.
