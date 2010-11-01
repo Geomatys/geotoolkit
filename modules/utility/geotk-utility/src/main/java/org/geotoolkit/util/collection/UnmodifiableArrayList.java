@@ -63,7 +63,7 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
     /**
      * Creates a new instance of an array list. A direct reference to the given array is retained
      * (i.e. the array is <strong>not</strong> cloned). Consequently the given array should not
-     * be modified after construction if this list is intented to be immutable.
+     * be modified after construction if this list is intended to be immutable.
      * <p>
      * This constructor is for subclassing only. Users should invoke the {@link #wrap} static
      * factory method, which provides more convenient handling of parameterized types.
@@ -80,7 +80,7 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
     /**
      * Creates a new instance of an array list. A direct reference to the given array is retained
      * (i.e. the array is <strong>not</strong> cloned). Consequently the given array should not
-     * be modified after construction if this list is intented to be immutable.
+     * be modified after construction if this list is intended to be immutable.
      *
      * @param  <E> The type of elements in the list.
      * @param  array The array to wrap, or {@code null} if none.
@@ -97,7 +97,7 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
      * Creates a new instance of an array list over a subregion of the given array. A direct
      * reference to the given array is retained (i.e. the array is <strong>not</strong> cloned).
      * Consequently the given array should not be modified after construction if this list is
-     * intented to be immutable.
+     * intended to be immutable.
      *
      * @param  <E> The type of elements in the list.
      * @param  array The array to wrap.
@@ -201,7 +201,7 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
      * Returns the index in this list of the last occurrence of the specified
      * element, or -1 if the list does not contain this element.
      *
-     * @param object The element to searcch for.
+     * @param object The element to search for.
      * @return The index of the last occurrence of the given object, or {@code -1}.
      */
     @Override
@@ -280,9 +280,9 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
      * @since 3.00
      * @module
      */
-    private final static class SubList<E> extends UnmodifiableArrayList<E> {
+    private static final class SubList<E> extends UnmodifiableArrayList<E> {
         /**
-         * For cros-version compatibility.
+         * For cross-version compatibility.
          */
         private static final long serialVersionUID = -6297280390649627532L;
 

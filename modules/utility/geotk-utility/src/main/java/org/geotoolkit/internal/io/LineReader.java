@@ -99,7 +99,7 @@ public final class LineReader extends LineNumberReader {
      * @throws IOException If an I/O error occurs.
      */
     @Override
-    public int read(final char cbuf[], final int off, final int len) throws IOException {
+    public int read(final char[] cbuf, final int off, final int len) throws IOException {
         synchronized (lock) {
             final int n = super.read(cbuf, off, len);
             if (n >= 0) {

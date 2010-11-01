@@ -205,7 +205,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
 
     /**
      * Invoked automatically when the {@linkplain #main} writer has been given a new output.
-     * When this method is invoked, the main writer output has alwrity been set to the value
+     * When this method is invoked, the main writer output has already been set to the value
      * returned by <code>{@linkplain #createOutput(String) createOutput}("main")</code>.
      * <p>
      * The default implementation does nothing. Subclasses can override this method
@@ -333,7 +333,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
 
     /**
      * Returns {@code true} if the writer is able to append an image to an image stream that
-     * alwrity contains header information and possibly prior images. The default implementation
+     * already contains header information and possibly prior images. The default implementation
      * delegates to the {@linkplain #main} writer. No output needs to be set for this method.
      */
     @Override
@@ -411,7 +411,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
     }
 
     /**
-     * Replaces a portion of an image alwrity present in the output with a portion of the
+     * Replaces a portion of an image already present in the output with a portion of the
      * given image. The default implementation delegates to the {@linkplain #main} writer.
      */
     @Override
@@ -420,7 +420,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
     }
 
     /**
-     * Replaces a portion of an image alwrity present in the output with a portion of the
+     * Replaces a portion of an image already present in the output with a portion of the
      * given raster. The default implementation delegates to the {@linkplain #main} writer.
      */
     @Override
@@ -662,7 +662,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
      * @since 3.07
      * @module
      */
-    public static abstract class Spi extends SpatialImageWriter.Spi {
+    public abstract static class Spi extends SpatialImageWriter.Spi {
         /**
          * List of legal input and output types for {@link ImageWriterAdapter}.
          * The {@link ImageOutputStream} type is mandatory even if the adapter

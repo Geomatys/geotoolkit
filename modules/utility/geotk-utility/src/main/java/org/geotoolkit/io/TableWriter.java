@@ -35,10 +35,10 @@ import org.geotoolkit.lang.ThreadSafe;
 /**
  * A character stream that can be used to format tables. Columns are separated by tabulations
  * ({@code '\t'}) and rows are separated by line terminators ({@code '\r'}, {@code '\n'} or
- * {@code "\r\n"}). Every table's cells are stored in memory until {@link #flush()} is invoked.
- * When invoked, {@link #flush()} copy cell's contents to the underlying stream while replacing
- * tabulations by some amount of spaces. The exact number of spaces is computed from cell's widths.
- * {@code TableWriter} produces correct output when displayed with a monospace font.
+ * {@code "\r\n"}). Every table cells are stored in memory until {@link #flush()} is invoked.
+ * When invoked, {@link #flush()} copy cell contents to the underlying stream while replacing
+ * tabulations by some amount of spaces. The exact number of spaces is computed from cell widths.
+ * {@code TableWriter} produces correct output when displayed with a monospaced font.
  * <p>
  * For example, the following code...
  *
@@ -158,7 +158,7 @@ public class TableWriter extends FilterWriter {
     private static final char SPACE = ' ';
 
     /**
-     * Temporary string buffer. This buffer contains only one cell's content.
+     * Temporary string buffer. This buffer contains only one cell content.
      */
     private final StringBuilder buffer = new StringBuilder();
 
@@ -187,10 +187,10 @@ public class TableWriter extends FilterWriter {
     private int row;
 
     /**
-     * Maximum width for each columns. This array's length must
+     * Maximum width for each columns. This array length must
      * be equal to the number of columns in this table.
      */
-    private int width[] = new int[0];
+    private int[] width = new int[0];
 
     /**
      * The column separator.
@@ -210,7 +210,7 @@ public class TableWriter extends FilterWriter {
     /**
      * Tells if cells can span more than one line. If {@code true}, then EOL characters likes
      * {@code '\n'} move to the next line <em>inside</em> the current cell. If {@code false},
-     * then EOL characters move to the next table's row. Default value is {@code false}.
+     * then EOL characters move to the next table row. Default value is {@code false}.
      */
     private boolean multiLinesCells;
 
@@ -220,7 +220,7 @@ public class TableWriter extends FilterWriter {
     private final boolean stringOnly;
 
     /**
-     * Tells if the next '\n' character must be ignored. This field is
+     * Tells if the next {@code '\n'} character must be ignored. This field is
      * used in order to avoid writing two EOL in place of {@code "\r\n"}.
      */
     private boolean skipCR;
@@ -582,7 +582,7 @@ public class TableWriter extends FilterWriter {
      * @param cbuf Array of characters to be written.
      */
     @Override
-    public void write(final char cbuf[]) {
+    public void write(final char[] cbuf) {
         write(cbuf, 0, cbuf.length);
     }
 
@@ -595,7 +595,7 @@ public class TableWriter extends FilterWriter {
      * @param length Number of characters to write.
      */
     @Override
-    public void write(final char cbuf[], int offset, int length) {
+    public void write(final char[] cbuf, int offset, int length) {
         if (offset<0 || length<0 || (offset+length)>cbuf.length) {
             throw new IndexOutOfBoundsException();
         }

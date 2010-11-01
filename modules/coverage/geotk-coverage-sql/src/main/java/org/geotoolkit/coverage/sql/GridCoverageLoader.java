@@ -336,7 +336,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
                 TransferFunction tf = null;
                 band = band.geophysics(false);
                 NumberRange<?> range = null;
-                int fillValues[] = new int[8];
+                int[] fillValues = new int[8];
                 int fillValuesCount = 0;
                 for (final Category category : band.getCategories()) {
                     final NumberRange<?> r = category.getRange();

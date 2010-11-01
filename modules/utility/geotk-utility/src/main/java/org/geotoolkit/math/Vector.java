@@ -194,7 +194,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
     /**
      * Returns the value at the given index as a {@code long}.
      * If this vector uses internally a wider type, then this method may cast the value
-     * or throw an exception according the same guidlines than {@link #floatValue}.
+     * or throw an exception according the same guidelines than {@link #floatValue}.
      *
      * @param  index The index in the [0 &hellip; {@linkplain #size size}-1] range.
      * @return The value at the given index.
@@ -207,7 +207,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
     /**
      * Returns the value at the given index as an {@code int}.
      * If this vector uses internally a wider type, then this method may cast the value
-     * or throw an exception according the same guidlines than {@link #floatValue}.
+     * or throw an exception according the same guidelines than {@link #floatValue}.
      *
      * @param  index The index in the [0 &hellip; {@linkplain #size size}-1] range.
      * @return The value at the given index.
@@ -220,7 +220,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
     /**
      * Returns the value at the given index as a {@code short}.
      * If this vector uses internally a wider type, then this method may cast the value
-     * or throw an exception according the same guidlines than {@link #floatValue}.
+     * or throw an exception according the same guidelines than {@link #floatValue}.
      *
      * @param  index The index in the [0 &hellip; {@linkplain #size size}-1] range.
      * @return The value at the given index.
@@ -233,7 +233,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
     /**
      * Returns the value at the given index as a {@code byte}.
      * If this vector uses internally a wider type, then this method may cast the value
-     * or throw an exception according the same guidlines than {@link #floatValue}.
+     * or throw an exception according the same guidelines than {@link #floatValue}.
      *
      * @param  index The index in the [0 &hellip; {@linkplain #size size}-1] range.
      * @return The value at the given index.
@@ -420,10 +420,10 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
      * @return The concatenation of this vector with the given vector.
      */
     public Vector concatenate(final Vector toAppend) {
-        if (toAppend.size() == 0) {
+        if (toAppend.isEmpty()) {
             return this;
         }
-        if (size() == 0) {
+        if (isEmpty()) {
             return toAppend;
         }
         return createConcatenate(toAppend);
@@ -536,7 +536,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
         /** Delegates to the enclosing vector. */
         @Override Vector createSubList(int first, final int step, final int length) {
             ensureValid(first, step, length);
-            final int ni[] = new int[length];
+            final int[] ni = new int[length];
             for (int j=0; j<length; j++) {
                 ni[j] = index[first];
                 first += step;

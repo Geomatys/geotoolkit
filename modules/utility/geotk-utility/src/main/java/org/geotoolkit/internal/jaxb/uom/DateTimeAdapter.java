@@ -75,9 +75,9 @@ public final class DateTimeAdapter extends XmlAdapter<DateTimeAdapter, Date> {
             return null;
         }
         if (value.dateTime != null) {
-           return value.dateTime;
+            return value.dateTime;
         } else {
-            return value.date;
+            return value.date; // NOSONAR: field is initialized by JAXB.
         }
     }
 

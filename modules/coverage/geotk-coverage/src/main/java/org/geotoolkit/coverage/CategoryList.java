@@ -482,8 +482,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
             } else {
                 buffer.append('(').append(Vocabulary.getResources(locale).getString(Vocabulary.Keys.UNTITLED)).append(')');
             }
-            buffer.append(' ');
-            return String.valueOf(geophysics(true).formatRange(buffer, locale));
+            return geophysics(true).formatRange(buffer.append(' '), locale).toString();
         }
 
         /** Returns the name in the default locale. */
@@ -559,8 +558,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
         final NumberRange<?> range = getRange();
         buffer.append('[');
         if (range != null) {
-            buffer = format(range.getMinimum(), false, locale, buffer);
-            buffer.append(" ... ");
+            buffer = format(range.getMinimum(), false, locale, buffer).append(" \u2026 "); // " ... "
             buffer = format(range.getMaximum(), true,  locale, buffer);
         } else {
             final Unit<?> unit = getUnits();
@@ -568,8 +566,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
                 buffer.append(unit);
             }
         }
-        buffer.append(']');
-        return buffer;
+        return buffer.append(']');
     }
 
     /**
@@ -777,13 +774,14 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
     }
 
     /**
-     * Returns a string representation of this category list. The {@code owner}
-     * argument allow for a different class name to be formatted.
+     * Returns a string representation of this category list. The {@code owner} argument allows
+     * for a different class name to be formatted: either {@link CategoryList} or its subclass,
+     * or either {@link GridSampleDimension}.
      */
     final String toString(final Object owner, final InternationalString description) {
         final String lineSeparator = System.getProperty("line.separator", "\n");
-        StringBuffer buffer = new StringBuffer(Classes.getShortClassName(owner));
-        buffer.append('(');
+        StringBuffer buffer = new StringBuffer(64);
+        buffer.append(Classes.getShortClassName(owner)).append('(');
         if (description != null && description != name) {
             buffer.append('"').append(description).append("\":");
         }

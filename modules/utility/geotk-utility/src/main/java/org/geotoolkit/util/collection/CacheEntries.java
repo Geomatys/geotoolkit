@@ -87,7 +87,7 @@ final class CacheEntries<K,V> extends AbstractSet<Map.Entry<K,V>> {
      * An iterator over the entries in the {@link Cache#map}. Handlers will be skipped and the
      * values of weak references are returned instead of the {@link Reference} object.
      */
-    private final static class Iter<K,V> implements Iterator<Map.Entry<K,V>> {
+    private static final class Iter<K,V> implements Iterator<Map.Entry<K,V>> {
         /**
          * The iterator over the entries wrapped by {@link CacheEntries}.
          */

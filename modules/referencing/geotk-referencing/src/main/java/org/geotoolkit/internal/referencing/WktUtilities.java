@@ -39,7 +39,7 @@ import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
  * @module
  */
 @Static
-public class WktUtilities {
+public final class WktUtilities {
     /**
      * A three-dimensional cartesian CS with the legacy set of geocentric axes.
      * Those axes were defined in OGC 01-009 as <var>Other</var>,

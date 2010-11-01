@@ -384,7 +384,7 @@ public class MetadataHelper implements Localized {
         if (dimTarget < 2 || !isSeparable(vectors)) {
             ensureDimensionMatch("origin", -1, dimTarget, 2);
         }
-        final double matrix[] = new double[6];
+        final double[] matrix = new double[6];
         for (int i=0; i<=1; i++) {
             final double[] v = vectors.get(i);
             ensureMetadataExists("OffsetVector", i, v);

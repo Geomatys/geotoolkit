@@ -274,7 +274,7 @@ public abstract class TextImageReader extends StreamImageReader {
 
     /**
      * Service provider interface (SPI) for {@link TextImageReader}s. This SPI provides additional
-     * fields controling the character encoding ({@link #charset}), the local to use for parsing
+     * fields controlling the character encoding ({@link #charset}), the local to use for parsing
      * numbers, dates or other objects ({@link #locale}) and the value used in place of missing
      * pixel values ({@link #padValue}).
      * <p>
@@ -335,7 +335,7 @@ public abstract class TextImageReader extends StreamImageReader {
      * @since 3.08 (derived from 2.4)
      * @module
      */
-    protected static abstract class Spi extends StreamImageReader.Spi {
+    protected abstract static class Spi extends StreamImageReader.Spi {
         /**
          * List of legal input types for {@link TextImageReader}.
          */

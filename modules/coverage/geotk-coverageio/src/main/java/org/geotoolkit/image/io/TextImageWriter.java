@@ -378,7 +378,7 @@ public abstract class TextImageWriter extends StreamImageWriter {
      * @since 3.08 (derived from 2.4)
      * @module
      */
-    protected static abstract class Spi extends StreamImageWriter.Spi {
+    protected abstract static class Spi extends StreamImageWriter.Spi {
         /**
          * List of legal output types for {@link TextImageWriter}.
          */

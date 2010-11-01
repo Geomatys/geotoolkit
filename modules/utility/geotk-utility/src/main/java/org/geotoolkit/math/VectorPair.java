@@ -131,7 +131,7 @@ public class VectorPair implements Serializable {
         if (!Double.isNaN(ratio)) {
             final Vector X = this.X;
             final Vector Y = this.Y;
-            int indices[] = null;
+            int[] indices  = null;
             int count = 0;
             if (length >= 3) {
                 yTolerance *= yTolerance;

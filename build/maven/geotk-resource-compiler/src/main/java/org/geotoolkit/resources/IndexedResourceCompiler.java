@@ -71,7 +71,7 @@ public class IndexedResourceCompiler implements FilenameFilter, Comparator<Objec
     private static final String JAVA_ENCODING = "UTF-8";
 
     /**
-     * The Java modifiers applies on the key constans to be generated.
+     * The Java modifiers applies on the key constants to be generated.
      */
     private static final String KEY_MODIFIERS = "public static final int ";
 
@@ -185,7 +185,7 @@ public class IndexedResourceCompiler implements FilenameFilter, Comparator<Objec
     /**
      * Returns the path of the given file relative to the given directory.
      */
-    private static final String relative(final File directory, final File file) throws IOException {
+    private static String relative(final File directory, final File file) throws IOException {
         String path = file.getPath();
         final String expected = directory.getPath();
         if (!path.startsWith(expected)) {
@@ -492,6 +492,7 @@ search: for (int i=0; i<buffer.length(); i++) { // Length of 'buffer' will vary.
             final String ID  = entries[i].getKey().toString();
             String message = (String) resources.get(key);
             if (message != null) {
+                message = message.replace('\t', ' ');
                 buffer.append(margin).append("/**").append(lineSeparator);
                 while (((message=message.trim()).length()) != 0) {
                     buffer.append(margin).append(" * ");
@@ -515,7 +516,7 @@ search: for (int i=0; i<buffer.length(); i++) { // Length of 'buffer' will vary.
         }
         /*
          * Continue reading the input file, skipping the old key values.
-         * Once we have reached the closin bracket, copies all remaining lines.
+         * Once we have reached the closing bracket, copies all remaining lines.
          */
         int brackets = 1;
         do {

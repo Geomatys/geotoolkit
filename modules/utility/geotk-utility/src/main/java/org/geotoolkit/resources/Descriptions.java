@@ -113,12 +113,12 @@ public final class Descriptions extends IndexedResourceBundle {
         public static final int PASSWORD_NOT_ENCRYPTED = 11;
 
         /**
-         * Count:	{0}
-         * Minimum:	{1}
-         * Maximum:	{2}
-         * Mean:	{3}
-         * RMS:	{4}
-         * Standard deviation:	{5}
+         * Count: {0}
+         * Minimum: {1}
+         * Maximum: {2}
+         * Mean: {3}
+         * RMS: {4}
+         * Standard deviation: {5}
          */
         public static final int STATISTICS_TO_STRING_$6 = 12;
 

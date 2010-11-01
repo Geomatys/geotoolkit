@@ -471,7 +471,7 @@ public class ColorMap implements Serializable {
 
     /**
      * Applies to the specified sample dimension the colors given to this color map. This method
-     * iterates throug every {@linkplain Category categories} in the given sample dimension. For
+     * iterates through every {@linkplain Category categories} in the given sample dimension. For
      * each category with a {@linkplain Category#getName name} matching one of the (<var>name</var>,
      * <var>colors</var>) or (<var>name</var>, <var>range</var>) entries given to this color map,
      * the {@link Category#recolor recolor} method is invoked on that category and the result
@@ -497,7 +497,7 @@ public class ColorMap implements Serializable {
     public GridSampleDimension recolor(final GridSampleDimension sampleDimension, final int[] ARGB) {
         final GridSampleDimension displayDimension = sampleDimension.geophysics(false);
         boolean changed = false;
-        final Category categories[] = (Category[]) displayDimension.getCategories().toArray();
+        final Category[] categories = (Category[]) displayDimension.getCategories().toArray();
         for (int i=0; i<categories.length; i++) {
             Category category = categories[i];
             Color[] colors = getColors(category.getName());

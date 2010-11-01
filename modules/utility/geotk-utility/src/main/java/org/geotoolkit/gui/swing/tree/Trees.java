@@ -71,9 +71,9 @@ public final class Trees {
 
     /**
      * Returns the user object from the given tree node. If the given node is an
-     * instance of Geotk's {@link org.geotoolkit.gui.swing.tree.TreeNode}, then its
+     * instance of Geotk {@link org.geotoolkit.gui.swing.tree.TreeNode}, then its
      * {@link org.geotoolkit.gui.swing.tree.TreeNode#getUserObject() getUserObject()}
-     * method is invoked. Otherwise if the given node is an instance of Java's
+     * method is invoked. Otherwise if the given node is an instance of Java
      * {@link javax.swing.tree.DefaultMutableTreeNode}, then its {@link
      * javax.swing.tree.DefaultMutableTreeNode#getUserObject() getUserObject()}
      * method is invoked. Otherwise this method returns {@code null}.
@@ -272,7 +272,7 @@ public final class Trees {
          * date. It has 'indentation[level]' spaces or drawing characters before its content.
          */
         int level = 0;
-        int indentation[] = new int[16];
+        int[] indentation = new int[16];
         DefaultMutableTreeNode root = null;
         DefaultMutableTreeNode lastNode = null;
         String line;

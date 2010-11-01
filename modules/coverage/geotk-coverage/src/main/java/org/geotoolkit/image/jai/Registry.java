@@ -139,7 +139,7 @@ public final class Registry {
      */
     @Configuration
     @Workaround(library="JAI", version="1.1.2")
-    public synchronized static void setNativeAccelerationAllowed(final String operation,
+    public static synchronized void setNativeAccelerationAllowed(final String operation,
             final boolean allowed, final JAI jai)
     {
         final String product = "com.sun.media.jai";

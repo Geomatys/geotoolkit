@@ -222,7 +222,7 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
      * @level advanced
      * @module
      */
-    protected static abstract class Parameters implements Parameterized, Serializable {
+    protected abstract static class Parameters implements Parameterized, Serializable {
         /**
          * For cross-version compatibility.
          */

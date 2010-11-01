@@ -548,11 +548,11 @@ public class Statistics implements Cloneable, Serializable {
             table.nextLine();
             table.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
         }
-        final NumberFormat  countFormat = NumberFormat.getIntegerInstance(locale);
-        final NumberFormat  formats[]   = new NumberFormat[statistics.length];
-        final StringBuffer  buffer      = new StringBuffer();
-        final FieldPosition dummy       = new FieldPosition(0);
-        final String[]      rows        = new String[6];
+        final NumberFormat   countFormat = NumberFormat.getIntegerInstance(locale);
+        final NumberFormat[] formats     = new NumberFormat[statistics.length];
+        final StringBuffer   buffer      = new StringBuffer();
+        final FieldPosition  dummy       = new FieldPosition(0);
+        final String[]       rows        = new String[6];
         for (int j=0; j<rows.length; j++) {
             for (int i=0; i<statistics.length; i++) {
                 final Statistics stats = statistics[i];

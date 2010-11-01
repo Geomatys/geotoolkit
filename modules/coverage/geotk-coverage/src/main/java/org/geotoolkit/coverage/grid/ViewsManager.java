@@ -247,7 +247,7 @@ scan:   for (int i=0; i<numBands; i++) {
         if (cm instanceof IndexColorModel) {
             final IndexColorModel icm = (IndexColorModel) cm;
             final int mapSize = icm.getMapSize();
-            final byte data[][];
+            final byte[][] data;
             if (ColorUtilities.isGrayPalette(icm, false)) {
                 final byte[] gray = new byte[mapSize];
                 icm.getGreens(gray);

@@ -63,7 +63,7 @@ abstract class AbstractAuthorityFactoryProxy<T> {
     /**
      * Creates a new proxy for objects of the given type.
      */
-    private AbstractAuthorityFactoryProxy(final Class<T> type) {
+    AbstractAuthorityFactoryProxy(final Class<T> type) {
         this.type = type;
     }
 

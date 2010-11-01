@@ -33,9 +33,9 @@ import org.geotoolkit.util.Disposable;
 
 
 /**
- * Prints progress report of a lengtly operation to an output stream. Progress are reported
+ * Prints progress report of a lengthly operation to an output stream. Progress are reported
  * as percentage on a single line. This class can also prints warning, which is useful for
- * notifications without stoping the lenghtly task.
+ * notifications without stopping the lengthly task.
  *
  * @author Martin Desruisseaux (MPO, IRD)
  * @version 3.00
@@ -325,7 +325,7 @@ public class ProgressPrinter implements ProgressListener, Disposable {
     }
 
     /**
-     * Indicates that task should be cancelled.
+     * Indicates that task should be canceled.
      *
      * @since 2.3
      */
@@ -335,7 +335,7 @@ public class ProgressPrinter implements ProgressListener, Disposable {
     }
 
     /**
-     * Returns {@code true} if this job is cancelled.
+     * Returns {@code true} if this job is canceled.
      *
      * @since 2.3
      */
@@ -347,7 +347,7 @@ public class ProgressPrinter implements ProgressListener, Disposable {
     /**
      * Prints a warning. The first time this method is invoked, the localized word "WARNING" will
      * be printed in the middle of a box. If a source is specified, it will be printed only if it
-     * is not the same one than the source of the last warning. If a marging is specified, it will
+     * is not the same one than the source of the last warning. If a margin is specified, it will
      * be printed of the left side of the first line of the warning message.
      *
      * @param source The source of the warning, or {@code null} if none. This is typically the
@@ -356,7 +356,7 @@ public class ProgressPrinter implements ProgressListener, Disposable {
      *        This is typically the line number where the error occurred in the {@code source} file.
      * @param warning The warning message. If this string is longer than the maximal length
      *        specified at construction time (80 characters by default), then it will be splitted
-     *        in as many lines as needed and indented according the marging width.
+     *        in as many lines as needed and indented according the margin width.
      */
     @Override
     public synchronized void warningOccurred(final String source, String margin, final String warning) {
@@ -447,19 +447,25 @@ public class ProgressPrinter implements ProgressListener, Disposable {
         int length = text.length();
         for (int pass=-2; pass<=2; pass++) {
             switch (Math.abs(pass)) {
-                case 2: for (int j=-10; j<length; j++) out.print('*');
-                        out.println();
-                        break;
-
-                case 1: out.print("**");
-                        for (int j=-6; j<length; j++) out.print(' ');
-                        out.println("**");
-                        break;
-
-                case 0: out.print("**   ");
-                        out.print(text);
-                        out.println("   **");
-                        break;
+                case 2: {
+                    for (int j=-10; j<length; j++) {
+                        out.print('*');
+                    }
+                    out.println();
+                    break;
+                }
+                case 1: {
+                    out.print("**");
+                    out.print(Strings.spaces(length + 6));
+                    out.println("**");
+                    break;
+                }
+                case 0: {
+                    out.print("**   ");
+                    out.print(text);
+                    out.println("   **");
+                    break;
+                }
             }
         }
     }

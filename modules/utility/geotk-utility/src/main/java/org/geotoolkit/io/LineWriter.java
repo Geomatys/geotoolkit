@@ -49,7 +49,7 @@ public class LineWriter extends FilterWriter {
     private String lineSeparator;
 
     /**
-     * Tells if the next '\n' character must be ignored. This field
+     * Tells if the next {@code '\n'} character must be ignored. This field
      * is used in order to avoid writing two EOL in place of "\r\n".
      */
     private boolean skipCR;
@@ -144,7 +144,7 @@ public class LineWriter extends FilterWriter {
     }
 
     /**
-     * Flushs the content of {@link #buffer} to the underlying stream.
+     * Flushes the content of {@link #buffer} to the underlying stream.
      *
      * @throws IOException If an I/O error occurs.
      */
@@ -247,7 +247,7 @@ public class LineWriter extends FilterWriter {
      * @throws IOException If an I/O error occurs.
      */
     @Override
-    public void write(final char cbuf[], int offset, int length) throws IOException {
+    public void write(final char[] cbuf, int offset, int length) throws IOException {
         if (offset<0 || length<0 || (offset + length) > cbuf.length) {
             throw new IndexOutOfBoundsException();
         }
@@ -365,7 +365,7 @@ public class LineWriter extends FilterWriter {
     }
 
     /**
-     * Flushs the stream's content to the underlying stream. This method flush completely
+     * Flushes the stream content to the underlying stream. This method flush completely
      * all internal buffers, including any whitespace characters that should have been
      * skipped if the next non-blank character is a line separator.
      *

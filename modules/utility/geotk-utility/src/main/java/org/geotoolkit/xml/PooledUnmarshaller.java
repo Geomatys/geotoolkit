@@ -319,6 +319,8 @@ final class PooledUnmarshaller extends Pooled implements Catching.Unmarshaller {
     /**
      * Delegates to the wrapped unmarshaller. The initial state will be saved
      * if it was not already done, for future restoration by {@link #reset()}.
+     *
+     * @deprecated Replaced by {@link #setSchema(javax.xml.validation.Schema)} in JAXB 2.0.
      */
     @Override
     @Deprecated
@@ -331,6 +333,8 @@ final class PooledUnmarshaller extends Pooled implements Catching.Unmarshaller {
 
     /**
      * Delegates to the wrapped unmarshaller.
+     *
+     * @deprecated Replaced by {@link #getSchema()} in JAXB 2.0.
      */
     @Override
     @Deprecated

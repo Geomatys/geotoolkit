@@ -98,8 +98,8 @@ public class EpsgCreatorCommands extends CommandLine {
         }
         final EpsgInstaller installer = new EpsgInstaller();
         installer.setDatabase(database, user, password);
-        installer.setScriptDirectory(scripts);
-        if (schema != null || scripts != null) {
+        installer.setScriptDirectory(scripts);    // NOSONAR (see below)
+        if (schema != null || scripts != null) {  // NOSONAR: Fields are initialized by reflection.
             installer.setSchema(schema);
         }
         final EpsgInstaller.Result result;

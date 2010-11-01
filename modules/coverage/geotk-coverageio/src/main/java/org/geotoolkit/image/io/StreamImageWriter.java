@@ -231,7 +231,7 @@ public abstract class StreamImageWriter extends SpatialImageWriter {
      * @since 2.4
      * @module
      */
-    protected static abstract class Spi extends SpatialImageWriter.Spi {
+    protected abstract static class Spi extends SpatialImageWriter.Spi {
         /**
          * List of legal output types for {@link StreamImageWriter}.
          */

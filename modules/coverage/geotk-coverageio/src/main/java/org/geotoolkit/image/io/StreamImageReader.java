@@ -330,7 +330,7 @@ public abstract class StreamImageReader extends SpatialImageReader {
      * @since 2.4
      * @module
      */
-    protected static abstract class Spi extends SpatialImageReader.Spi {
+    protected abstract static class Spi extends SpatialImageReader.Spi {
         /**
          * List of legal input types for {@link StreamImageReader}.
          */

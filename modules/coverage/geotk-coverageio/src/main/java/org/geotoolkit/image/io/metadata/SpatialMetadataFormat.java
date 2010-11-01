@@ -361,7 +361,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * that the description of different attributes of the same element are likely
      * to be asked a few consecutive time.
      */
-    private volatile transient MetadataDescriptions descriptions;
+    private transient volatile MetadataDescriptions descriptions;
 
     /**
      * Creates an initially empty format. Subclasses shall invoke the various
@@ -418,7 +418,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * <ul>
      *   <li><p>Replace a base class by some specialized subclass. Since {@code IIOMetadata} are
      *   about grided data (not generic {@code Feature}s), the exact subtype is often known and
-     *   we want the additional attributes to be declared inconditionnaly. Example:</p>
+     *   we want the additional attributes to be declared unconditionally. Example:</p>
      *
      * <blockquote><pre>substitution.put({@linkplain RangeDimension}.class, {@linkplain Band}.class);</pre></blockquote></li>
      *
@@ -447,7 +447,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * <blockquote><pre>substitution.put({@linkplain Identification}[].class, {@linkplain Identification}.class);</pre></blockquote></li>
      * </ul>
      *
-     * The substitution map applies only to childs (if any), not to the type given directly to this
+     * The substitution map applies only to children (if any), not to the type given directly to this
      * method.
      *
      * @param standard      The metadata standard of the element or attribute to be added.
@@ -844,7 +844,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     /**
      * Returns the default value for an object reference of the given type.
      * The default implementation returns {@code null} in all cases. However
-     * the {@link PredefinedMetadataFormat} subclasse will override this method.
+     * the {@link PredefinedMetadataFormat} subclasses will override this method.
      *
      * @param  <T> The compile-time type of {@code classType}.
      * @param  classType The class type of the object for which to get a default value.
@@ -1124,7 +1124,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
     }
 
     /**
-     * Returns a description of the named element, or {@code null}. The desciption will be
+     * Returns a description of the named element, or {@code null}. The description will be
      * localized for the supplied locale if possible.
      * <p>
      * The default implementation first queries the

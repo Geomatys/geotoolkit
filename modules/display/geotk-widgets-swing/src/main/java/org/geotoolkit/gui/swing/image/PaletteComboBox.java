@@ -292,8 +292,8 @@ public class PaletteComboBox extends JComponent {
          */
         @Override
         public boolean isCellEditable(final EventObject event) {
-	    return !(event instanceof MouseEvent) || ((MouseEvent) event).getClickCount() >= 2;
-	}
+            return !(event instanceof MouseEvent) || ((MouseEvent) event).getClickCount() >= 2;
+        }
 
         /**
          * Gets the name of the selected palette, or the opaque color code.

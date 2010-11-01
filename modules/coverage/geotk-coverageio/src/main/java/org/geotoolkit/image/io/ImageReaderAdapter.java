@@ -986,7 +986,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      * @since 3.07
      * @module
      */
-    public static abstract class Spi extends SpatialImageReader.Spi {
+    public abstract static class Spi extends SpatialImageReader.Spi {
         /**
          * The {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME} value
          * in an array, for assignment to {@code extra[Stream|Image]MetadataFormatNames} fields.

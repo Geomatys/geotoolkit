@@ -115,7 +115,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
     /**
      * The raster data.
      */
-    protected transient final PlanarImage image;
+    protected final transient PlanarImage image;
 
     /**
      * The serialized image, as an instance of {@link SerializableRenderedImage}.

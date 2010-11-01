@@ -425,7 +425,7 @@ public class ImageWorker extends ImageInspector {
             final boolean isGrayScale = ColorUtilities.isGrayPalette(icm, ignoreTransparents);
             final boolean hasAlpha = icm.hasAlpha();
             final int numColorBands = isGrayScale ? 1 : 3;
-            final byte data[][] = new byte[hasAlpha ? numColorBands + 1 : numColorBands][icm.getMapSize()];
+            final byte[][] data = new byte[hasAlpha ? numColorBands + 1 : numColorBands][icm.getMapSize()];
             switch (numColorBands) {
                 default: // Fallthrough in all cases.
                 case 3:  icm.getBlues (data[2]);
@@ -592,7 +592,7 @@ public class ImageWorker extends ImageInspector {
                 false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE));
         if (cm instanceof IndexColorModel) {
             final IndexColorModel icm = (IndexColorModel) cm;
-            final byte data[] = new byte[icm.getMapSize()];
+            final byte[] data = new byte[icm.getMapSize()];
             for (int i=0; i<data.length; i++) {
                 final int RGB = icm.getRGB(i) & 0xFFFFFF;
                 data[i] = (byte) (((RGB & 0xFF) + ((RGB >>> 8) & 0xFF) + ((RGB >>> 16) & 0xFF)) / 3);

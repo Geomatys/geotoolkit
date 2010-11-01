@@ -80,7 +80,7 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  *  </table></blockquote>
  *
  * {@section Adding custom palettes}
- * To add custum palettes, create a subclass of {@code PaletteFactory} like below:
+ * To add custom palettes, create a subclass of {@code PaletteFactory} like below:
  *
  * {@preformat java
  *     public class MyPalettes extends PaletteFactory {
@@ -282,7 +282,7 @@ public class PaletteFactory {
      * and the locale is {@linkplain Locale#US US}.
      * <p>
      * This constructor is protected because is it merely a convenience for subclasses registering
-     * themself as a service in the following file (see <a href="#skip-navbar_top">class javadoc</a>
+     * themselves as a service in the following file (see <a href="#skip-navbar_top">class javadoc</a>
      * for more details):
      *
      * {@preformat text
@@ -697,7 +697,7 @@ public class PaletteFactory {
      */
     @SuppressWarnings("fallthrough")
     private Color[] getColors(final LineNumberReader input, final String name) throws IOException {
-        int values[] = null;
+        int[] values = null;
         final LineFormat reader = (locale!=null) ? new LineFormat(locale) : new LineFormat();
         final List<Color> colors = new ArrayList<Color>();
         String line; while ((line=input.readLine()) != null) try {
