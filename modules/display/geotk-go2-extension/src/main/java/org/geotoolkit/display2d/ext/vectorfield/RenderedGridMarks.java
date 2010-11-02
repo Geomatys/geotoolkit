@@ -747,6 +747,15 @@ public class RenderedGridMarks extends RenderedMarks {
     }
 
     /**
+     * {@inheritDoc }
+     */
+     @Override
+    public List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, VisitFilter filter, List<Graphic> graphics) {
+        //not selectable graphic
+        return graphics;
+    }
+
+    /**
      * Iterates through all marks in a {@link RenderedGridMarks}.
      *
      * @version $Id$
@@ -968,15 +977,6 @@ public class RenderedGridMarks extends RenderedMarks {
             return markPaint;
         }
         
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-     @Override
-    public List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, VisitFilter filter, List<Graphic> graphics) {
-        //not selectable graphic
-        return graphics;
     }
 
 }

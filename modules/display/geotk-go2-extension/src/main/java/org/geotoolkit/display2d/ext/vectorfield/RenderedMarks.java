@@ -46,7 +46,6 @@ import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.util.XArrays;
 
-import org.geotoolkit.util.logging.Logging;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.util.FactoryException;
@@ -319,22 +318,17 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
             g2.setStroke(DEFAULT_STROKE);
 
             
-            AffineTransform objectiveToDisplay = null;
-            try {
-                objectiveToDisplay = context.getAffineTransform(context.getObjectiveCRS(), context.getDisplayCRS());
-            } catch (FactoryException ex) {
-                Logging.getLogger(RenderedMarks.class).log(Level.WARNING, null, ex);
-            }
+            final AffineTransform objectiveToDisplay = context.getObjectiveToDisplay();
                         
             MathTransform2D coverageToObjective = null;
             try {
-                coverageToObjective = (MathTransform2D) context.getMathTransform(getEnvelope().getCoordinateReferenceSystem(),
-                                                                                 CRSUtilities.getCRS2D(context.getObjectiveCRS()));
+                coverageToObjective = (MathTransform2D) context.getMathTransform(
+                            getEnvelope().getCoordinateReferenceSystem(),
+                            context.getObjectiveCRS2D());
             } catch (FactoryException ex) {
-                Logging.getLogger(RenderedMarks.class).log(Level.WARNING, null, ex);
-            } catch (TransformException ex) {
-                Logging.getLogger(RenderedMarks.class).log(Level.WARNING, null, ex);
+                getLogger().log(Level.WARNING, null, ex);
             }
+
             /*
              * If the transforms are not valids, compute them now. We will compute one affine
              * transform for each mark to be rendered. Affine transforms will be used for all
@@ -838,13 +832,10 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
         typicalAmplitude = Double.NaN;
     }
 
-    /////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////    EVENTS (note: may be moved out of this class in a future version)    ////////
-    /////////////////////////////////////////////////////////////////////////////////////////////
-    
-    /**
-     * Temporary point for mouse events.
-     */
-    private transient Point2D point;
+    @Override
+    public void dispose() {
+        super.dispose();
+        clearCache();
+    }
     
 }

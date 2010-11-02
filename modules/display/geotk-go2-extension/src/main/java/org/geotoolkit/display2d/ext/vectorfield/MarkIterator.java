@@ -315,35 +315,4 @@ public abstract class MarkIterator {
         }
     }
     
-//
-//    /**
-//     * Returns a tooltip text for the current mark, or <code>null</code> if none.
-//     * The default implementation returns always <code>null</code>.
-//     *
-//     * <strong>Note: This method is not a commited part of the API.
-//     *         It may moves elsewhere in a future version.</strong>
-//     *
-//     * @param  event The mouse event.
-//     * @return The tool tip text for the current mark, or <code>null</code> if none.
-//     */
-//    protected String getToolTipText(GeoMouseEvent event) {
-//        return null;
-//    }
-//
-//    /**
-//     * Returns an action text for the current mark, or <code>null</code> if none.
-//     * This method may be call for example on mouse click. The action doesn't need
-//     * to be executed immediately. For example it may be put in a tool bar, or saved
-//     * in a macro recorder. The default implementation returns always <code>null</code>.
-//     *
-//     * <strong>Note: This method is not a commited part of the API.
-//     *         It may moves elsewhere in a future version.</strong>
-//     *
-//     * @param  event The mouse event.
-//     * @return The action for the current mark, or <code>null</code> if none.
-//     */
-//    protected Action getAction(GeoMouseEvent event) {
-//        return null;
-//    }
-    
 }
