@@ -521,7 +521,9 @@ public class PostGISDialect extends AbstractSQLDialect {
                     st.execute(sql);
                 }
             }
-            cx.commit();
+            if(!cx.getAutoCommit()){
+                cx.commit();
+            }
         } finally {
             dataStore.closeSafe(st);
         }
