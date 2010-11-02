@@ -21,11 +21,11 @@ import java.beans.PropertyChangeListener;
 import java.util.Collection;
 import java.util.List;
 import javax.swing.event.EventListenerList;
-import org.geotoolkit.gui.swing.tree.Trees;
 
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.geotoolkit.util.converter.Classes;
 

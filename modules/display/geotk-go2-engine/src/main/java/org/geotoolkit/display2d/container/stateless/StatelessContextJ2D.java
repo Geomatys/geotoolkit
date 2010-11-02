@@ -40,7 +40,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.style.CollectionChangeEvent;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.display.primitive.Graphic;

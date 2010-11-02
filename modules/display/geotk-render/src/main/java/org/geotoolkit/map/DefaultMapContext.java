@@ -22,14 +22,13 @@ import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.style.CollectionChangeEvent;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.util.NumberRange;
 

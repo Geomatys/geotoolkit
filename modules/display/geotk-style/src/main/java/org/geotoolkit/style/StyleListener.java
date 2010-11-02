@@ -24,6 +24,7 @@ import java.util.Collection;
 
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 import org.geotoolkit.sld.MutableLayerStyle;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.Disposable;
 
 

@@ -22,14 +22,14 @@ import java.util.EventObject;
 import java.util.List;
 import javax.swing.event.EventListenerList;
 
-import org.geotoolkit.style.CollectionChangeEvent;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.StringUtilities;
-
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.geotoolkit.util.converter.Classes;
+
 import org.opengis.sld.Constraint;
 import org.opengis.sld.SLDLibrary;
 import org.opengis.sld.SLDVisitor;

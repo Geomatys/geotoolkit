@@ -70,7 +70,7 @@ import org.geotoolkit.map.ContextListener;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.style.CollectionChangeEvent;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.style.DefaultStyleFactory;

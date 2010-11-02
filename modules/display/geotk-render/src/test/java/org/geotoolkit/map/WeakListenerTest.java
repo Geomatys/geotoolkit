@@ -21,7 +21,7 @@ import java.util.EventObject;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.style.CollectionChangeEvent;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 

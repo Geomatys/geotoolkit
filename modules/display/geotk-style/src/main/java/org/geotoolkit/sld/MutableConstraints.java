@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.sld;
 
-import org.geotoolkit.style.CollectionChangeListener;
+import org.geotoolkit.util.collection.CollectionChangeListener;
 import org.opengis.sld.Constraint;
 import org.opengis.sld.Constraints;
 

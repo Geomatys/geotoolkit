@@ -18,7 +18,7 @@ package org.geotoolkit.sld;
 
 import java.beans.PropertyChangeListener;
 
-import org.geotoolkit.style.CollectionChangeEvent;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.opengis.sld.Constraint;
 
 /**

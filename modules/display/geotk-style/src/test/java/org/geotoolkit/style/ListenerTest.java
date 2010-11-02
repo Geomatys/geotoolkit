@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.style;
 
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import java.beans.PropertyChangeEvent;
 import java.net.URI;
 import java.net.URISyntaxException;

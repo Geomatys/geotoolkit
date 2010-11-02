@@ -27,6 +27,7 @@ import javax.swing.event.EventListenerList;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.geotoolkit.util.collection.NotifiedCheckedSet;
 import org.geotoolkit.util.converter.Classes;

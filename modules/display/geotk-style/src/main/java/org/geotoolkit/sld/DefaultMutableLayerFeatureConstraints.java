@@ -21,11 +21,11 @@ import java.util.EventObject;
 import java.util.List;
 import javax.swing.event.EventListenerList;
 
-import org.geotoolkit.style.CollectionChangeEvent;
-import org.geotoolkit.style.CollectionChangeListener;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
+import org.geotoolkit.util.collection.CollectionChangeListener;
 import org.geotoolkit.util.NumberRange;
-
 import org.geotoolkit.util.collection.NotifiedCheckedList;
+
 import org.opengis.sld.Constraint;
 import org.opengis.sld.FeatureTypeConstraint;
 import org.opengis.sld.SLDVisitor;

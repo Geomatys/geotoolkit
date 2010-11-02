@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.style;
 
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import java.beans.PropertyChangeEvent;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
