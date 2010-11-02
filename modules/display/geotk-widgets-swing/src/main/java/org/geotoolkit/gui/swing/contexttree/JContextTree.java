@@ -62,11 +62,12 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.gui.swing.style.JOpacitySlider;
 import org.geotoolkit.map.ContextListener;
-import org.geotoolkit.map.DynamicMapLayer;
+import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.CollectionChangeEvent;
@@ -219,11 +220,12 @@ public class JContextTree extends JScrollPane implements ContextListener {
 
         final DefaultMutableTreeNode layerNode = new DefaultMutableTreeNode(layer);
 
-        if(layer instanceof DynamicMapLayer){
+        final GraphicBuilder gb = layer.getGraphicBuilder(GraphicJ2D.class);
+
+        if(gb != null){
             //this kind of layer have there own style systems we rely on it
-            final DynamicMapLayer dynlayer = (DynamicMapLayer) layer;
             try {
-                final Image img = dynlayer.getLegend();
+                final Image img = gb.getLegend(layer);
                 final DefaultMutableTreeNode imgNode = new DefaultMutableTreeNode(img);
                 layerNode.add(imgNode);
             } catch (PortrayalException ex) {

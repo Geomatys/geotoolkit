@@ -40,6 +40,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.RenderedImage;
 import java.awt.image.renderable.RenderedImageFactory;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,6 +51,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.Set;
+import java.util.logging.Level;
 import javax.measure.converter.LinearConverter;
 import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Length;
@@ -66,11 +68,13 @@ import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.coverage.processing.CoverageProcessingException;
 import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.collection.Cache;
 import org.geotoolkit.display.canvas.VisitFilter;
+import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.primitive.jts.JTSGeometryJ2D;
@@ -96,9 +100,11 @@ import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.renderer.style.WellKnownMarkFactory;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
+import org.geotoolkit.util.NullArgumentException;
 
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.Feature;
@@ -113,6 +119,7 @@ import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.geometry.Envelope;
+import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
@@ -121,6 +128,7 @@ import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Fill;
@@ -246,6 +254,60 @@ public final class GO2Utilities {
         if(renderer != null){
             renderer.portray(graphic, symbol, context);
         }
+    }
+
+    public static void portray(RenderingContext2D renderingContext, GridCoverage2D dataCoverage) throws PortrayalException{
+        final CanvasMonitor monitor = renderingContext.getMonitor();
+        final Graphics2D g2d = renderingContext.getGraphics();
+
+        final CoordinateReferenceSystem coverageCRS = dataCoverage.getCoordinateReferenceSystem();
+        try{
+            final CoordinateReferenceSystem candidate2D = CRSUtilities.getCRS2D(coverageCRS);
+            if(!CRS.equalsIgnoreMetadata(candidate2D,renderingContext.getObjectiveCRS2D()) ){
+
+                dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage.view(ViewType.NATIVE), renderingContext.getObjectiveCRS2D());
+
+                if(dataCoverage != null){
+                    dataCoverage = dataCoverage.view(ViewType.RENDERED);
+                }
+            }
+        } catch (CoverageProcessingException ex) {
+            monitor.exceptionOccured(ex, Level.WARNING);
+            return;
+        } catch(Exception ex){
+            //several kind of errors can happen here, we catch anything to avoid blocking the map component.
+            monitor.exceptionOccured(
+                new IllegalStateException("Coverage is not in the requested CRS, found : " +
+                "\n"+ coverageCRS +
+                " was expecting : \n" +
+                renderingContext.getObjectiveCRS() +
+                "\nOriginal Cause:"+ ex.getMessage(), ex), Level.WARNING);
+            return;
+        }
+
+        if(dataCoverage == null){
+            monitor.exceptionOccured(new NullArgumentException("Reprojected coverage is null."),Level.WARNING);
+            return;
+        }
+
+        //we must switch to objectiveCRS for grid coverage
+        renderingContext.switchToObjectiveCRS();
+
+        final RenderedImage img = dataCoverage.getRenderedImage();
+        final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
+        if(trs2D instanceof AffineTransform){
+            g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
+            g2d.drawRenderedImage(img, (AffineTransform)trs2D);
+        }else if (trs2D instanceof LinearTransform) {
+            final LinearTransform lt = (LinearTransform) trs2D;
+            final int col = lt.getMatrix().getNumCol();
+            final int row = lt.getMatrix().getNumRow();
+            //TODO using only the first parameters of the linear transform
+            throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass());
+        }else{
+            throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass() );
+        }
+
     }
 
     public static boolean hit(final ProjectedFeature graphic, final CachedSymbolizer symbol,

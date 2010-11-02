@@ -37,7 +37,6 @@ import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.map.ContextListener;
 import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.map.DynamicMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -118,13 +117,7 @@ public class StatefullContextJ2D extends AbstractGraphicJ2D implements ContextLi
 
     private GraphicJ2D parseLayer(final MapLayer layer,int index){
 
-        if(layer instanceof DynamicMapLayer){
-            final StatelessDynamicLayerJ2D g2d = new StatelessDynamicLayerJ2D(getCanvas(), (DynamicMapLayer)layer);
-            g2d.setParent(this);
-            g2d.setZOrderHint(index);
-            layerGraphics.put(layer, g2d);
-            return g2d;
-        }else if (layer instanceof FeatureMapLayer){
+        if (layer instanceof FeatureMapLayer){
             final StatefullFeatureLayerJ2D g2d = new StatefullFeatureLayerJ2D(getCanvas(), (FeatureMapLayer)layer);
             g2d.setParent(this);
             g2d.setZOrderHint(index);
@@ -137,7 +130,11 @@ public class StatefullContextJ2D extends AbstractGraphicJ2D implements ContextLi
             layerGraphics.put(layer, g2d);
             return g2d;
         }else{
-            return null;
+            final StatelessDynamicLayerJ2D g2d = new StatelessDynamicLayerJ2D(getCanvas(), layer);
+            g2d.setParent(this);
+            g2d.setZOrderHint(index);
+            layerGraphics.put(layer, g2d);
+            return g2d;
         }
 
     }
@@ -163,7 +160,7 @@ public class StatefullContextJ2D extends AbstractGraphicJ2D implements ContextLi
                 if(gra != null){
                     layerGraphics.get(layer).paint(renderingContext);
                 }else{
-                    LOGGER.log(Level.WARNING, "GrahicContextJ2D, paint method : strange, no graphic object affected to layer :" + layer.getName());
+                    LOGGER.log(Level.WARNING, "GrahicContextJ2D, paint method : strange, no graphic object affected to layer :{0}", layer.getName());
                 }
                 
             }

@@ -37,7 +37,6 @@ import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.ContextListener;
 import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.map.DynamicMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -117,13 +116,7 @@ public class StatelessContextJ2D extends AbstractGraphicJ2D implements ContextLi
 
     private GraphicJ2D parseLayer(final MapLayer layer,int index){
 
-        if(layer instanceof DynamicMapLayer){
-            final StatelessDynamicLayerJ2D g2d = new StatelessDynamicLayerJ2D(getCanvas(), (DynamicMapLayer)layer);
-            g2d.setParent(this);
-            g2d.setZOrderHint(index);
-            layerGraphics.put(layer, g2d);
-            return g2d;
-        }else if (layer instanceof FeatureMapLayer){
+        if (layer instanceof FeatureMapLayer){
             final StatelessFeatureLayerJ2D g2d = new StatelessFeatureLayerJ2D(getCanvas(), (FeatureMapLayer)layer);
             g2d.setParent(this);
             g2d.setZOrderHint(index);
@@ -136,7 +129,12 @@ public class StatelessContextJ2D extends AbstractGraphicJ2D implements ContextLi
             layerGraphics.put(layer, g2d);
             return g2d;
         }else{
-            return null;
+            //custom layer
+            final StatelessDynamicLayerJ2D g2d = new StatelessDynamicLayerJ2D(getCanvas(), layer);
+            g2d.setParent(this);
+            g2d.setZOrderHint(index);
+            layerGraphics.put(layer, g2d);
+            return g2d;
         }
 
     }

@@ -23,7 +23,6 @@ import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.display3d.primitive.A3DGraphic;
 import org.geotoolkit.map.CoverageMapLayer;
-import org.geotoolkit.map.DynamicMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
@@ -51,8 +50,6 @@ public class ProgressiveA3DGraphicBuilder implements GraphicBuilder<A3DGraphic>{
             graphics.add(new FeatureLayerNode(a3dcanvas, (FeatureMapLayer)layer));
         }else if(layer instanceof CoverageMapLayer){
             graphics.add(new CoverageLayerNode(a3dcanvas, (CoverageMapLayer)layer));
-        }else if(layer instanceof DynamicMapLayer){
-            //TODO not handle yet
         }
 
         return graphics;

@@ -17,16 +17,17 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
+import java.util.Collection;
 import java.util.List;
-import java.util.logging.Level;
 
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
-import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.map.DynamicMapLayer;
+import org.geotoolkit.display2d.primitive.GraphicJ2D;
+import org.geotoolkit.map.GraphicBuilder;
+import org.geotoolkit.map.MapLayer;
 
 import org.opengis.display.primitive.Graphic;
 
@@ -37,22 +38,13 @@ import org.opengis.display.primitive.Graphic;
  * @author johann sorel (Geomatys)
  * @module pending
  */
-public class StatelessDynamicLayerJ2D extends AbstractLayerJ2D<DynamicMapLayer>{
+public class StatelessDynamicLayerJ2D extends AbstractLayerJ2D<MapLayer>{
     
     
-    public StatelessDynamicLayerJ2D(final ReferencedCanvas2D canvas, final DynamicMapLayer layer){
+    public StatelessDynamicLayerJ2D(final ReferencedCanvas2D canvas, final MapLayer layer){
         super(canvas, layer);
     }
-    
-    /**
-     * We asume the visibility test is already done when you call this method
-     * This method is made for use in mutlithread.
-     */
-    public Object query(final RenderingContext2D renderingContext) throws PortrayalException{
-        //we do not handle dynamic layers, the distant server does it
-        return layer.query(renderingContext);
-    }
-    
+        
     /**
      * {@inheritDoc }
      */
@@ -60,12 +52,15 @@ public class StatelessDynamicLayerJ2D extends AbstractLayerJ2D<DynamicMapLayer>{
     public void paint(final RenderingContext2D renderingContext) {
                 
         //we abort painting if the layer is not visible.
-        if (!layer.isVisible()) return;        
-        try {
-            //we do not handle dynamic layers, the distant server does it
-            layer.portray(renderingContext);
-        } catch (PortrayalException ex) {
-            renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
+        if (!layer.isVisible()) return;
+
+        final GraphicBuilder<? extends GraphicJ2D> gb = layer.getGraphicBuilder(GraphicJ2D.class);
+
+        if(gb != null){
+            final Collection<? extends GraphicJ2D> graphics = gb.createGraphics(layer, canvas);
+            for(GraphicJ2D g : graphics){
+                g.paint(renderingContext);
+            }
         }
     }
         

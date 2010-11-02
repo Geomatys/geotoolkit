@@ -17,44 +17,17 @@
 package org.geotoolkit.wcs.map;
 
 import java.awt.Dimension;
-import java.awt.Image;
-import java.util.logging.Level;
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import javax.imageio.ImageIO;
 
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageFactory;
-import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.processing.CoverageProcessingException;
-import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.display.canvas.RenderingContext;
-import org.geotoolkit.display.canvas.control.CanvasMonitor;
-import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.geometry.Envelope2D;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.AbstractMapLayer;
-import org.geotoolkit.map.DynamicMapLayer;
-import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.wcs.GetCoverageRequest;
 import org.geotoolkit.wcs.WebCoverageServer;
 
 import org.opengis.geometry.Envelope;
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.util.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform2D;
 
 
 /**
@@ -63,24 +36,7 @@ import org.opengis.referencing.operation.MathTransform2D;
  * @author Johann Sorel
  * @module pending
  */
-public class WCSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
-
-    /**
-     * EPSG:4326 object.
-     */
-    private static final CoordinateReferenceSystem EPSG_4326;
-    static {
-        CoordinateReferenceSystem crs = null;
-        try {
-            crs = CRS.decode("EPSG:4326");
-        } catch (NoSuchAuthorityCodeException ex) {
-            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
-        } catch (FactoryException ex) {
-            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
-        }
-        EPSG_4326 = crs;
-    }
-
+public class WCSMapLayer extends AbstractMapLayer {
 
     //TODO : we should use the envelope provided by the wms capabilities
     private static final Envelope MAXEXTEND_ENV = new Envelope2D(DefaultGeographicCRS.WGS84, -180, -90, 360, 180);
@@ -104,6 +60,9 @@ public class WCSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         super(new DefaultStyleFactory().style());
         this.server = server;
         this.layer = layer;
+
+        //register the default graphic builder for geotk 2D engine.
+        graphicBuilders().add(WCSGraphicBuilder.INSTANCE);
     }
 
     /**
@@ -133,15 +92,7 @@ public class WCSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         return request;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public URL query(final RenderingContext context) throws PortrayalException {
-        return null;
-    }
-
-    private URL query(Envelope env, Dimension dim) throws MalformedURLException {
+    URL query(Envelope env, Dimension dim) throws MalformedURLException {
 
         final GetCoverageRequest request = server.createGetCoverage();
         request.setEnvelope(env);
@@ -150,110 +101,6 @@ public class WCSMapLayer extends AbstractMapLayer implements DynamicMapLayer {
         request.setResponseCRS(env.getCoordinateReferenceSystem());
         request.setFormat(format);
         return request.getURL();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void portray(RenderingContext context) throws PortrayalException {
-        if (!(context instanceof RenderingContext2D)) {
-            throw new PortrayalException("WCSMapLayer only support rendering for RenderingContext2D");
-        }
-
-        final RenderingContext2D context2D = (RenderingContext2D) context;
-
-        CoordinateReferenceSystem queryCrs = context.getObjectiveCRS2D();
-        Envelope env = context2D.getCanvasObjectiveBounds();
-
-        final Dimension dim = context2D.getCanvasDisplayBounds().getSize();
-        final URL url;
-        try {
-            url = query(env, dim);
-        } catch (Exception ex) {
-            System.out.println(ex);
-            throw new PortrayalException(ex);
-        }
-
-        LOGGER.log(Level.WARNING, "[WCSMapLayer] : GETCOVERAGE request : {0}", url);
-
-        final BufferedImage image;
-        try {
-            image = ImageIO.read(url);
-        } catch (IOException io) {
-            throw new PortrayalException(io);
-        }
-
-        if (image == null) {
-            throw new PortrayalException("WMS server didn't return an image.");
-        }
-
-        final GridCoverageFactory gc = new GridCoverageFactory();
-        final GridCoverage2D coverage = gc.create("wcs", image, env);
-        portray(context2D, coverage);
-
-    }
-
-    private static void portray(RenderingContext2D renderingContext, GridCoverage2D dataCoverage) throws PortrayalException{
-        final CanvasMonitor monitor = renderingContext.getMonitor();
-        final Graphics2D g2d = renderingContext.getGraphics();
-
-        final CoordinateReferenceSystem coverageCRS = dataCoverage.getCoordinateReferenceSystem();
-        try{
-            final CoordinateReferenceSystem candidate2D = CRSUtilities.getCRS2D(coverageCRS);
-            if(!CRS.equalsIgnoreMetadata(candidate2D,renderingContext.getObjectiveCRS2D()) ){
-
-                dataCoverage = (GridCoverage2D) Operations.DEFAULT.resample(dataCoverage.view(ViewType.NATIVE), renderingContext.getObjectiveCRS2D());
-
-                if(dataCoverage != null){
-                    dataCoverage = dataCoverage.view(ViewType.RENDERED);
-                }
-            }
-        } catch (CoverageProcessingException ex) {
-            monitor.exceptionOccured(ex, Level.WARNING);
-            return;
-        } catch(Exception ex){
-            //several kind of errors can happen here, we catch anything to avoid blocking the map component.
-            monitor.exceptionOccured(
-                new IllegalStateException("Coverage is not in the requested CRS, found : " +
-                "\n"+ coverageCRS +
-                " was expecting : \n" +
-                renderingContext.getObjectiveCRS() +
-                "\nOriginal Cause:"+ ex.getMessage(), ex), Level.WARNING);
-            return;
-        }
-
-        if(dataCoverage == null){
-            LOGGER.log(Level.WARNING, "Reprojected coverage is null.");
-            return;
-        }
-
-        //we must switch to objectiveCRS for grid coverage
-        renderingContext.switchToObjectiveCRS();
-
-        final RenderedImage img = dataCoverage.getRenderedImage();
-        final MathTransform2D trs2D = dataCoverage.getGridGeometry().getGridToCRS2D(PixelOrientation.UPPER_LEFT);
-        if(trs2D instanceof AffineTransform){
-            g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
-            g2d.drawRenderedImage(img, (AffineTransform)trs2D);
-        }else if (trs2D instanceof LinearTransform) {
-            final LinearTransform lt = (LinearTransform) trs2D;
-            final int col = lt.getMatrix().getNumCol();
-            final int row = lt.getMatrix().getNumRow();
-            //TODO using only the first parameters of the linear transform
-            throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass());
-        }else{
-            throw new PortrayalException("Could not render image, GridToCRS is a not an AffineTransform, found a " + trs2D.getClass() );
-        }
-
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Image getLegend() throws PortrayalException {
-        return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
     }
 
     /**

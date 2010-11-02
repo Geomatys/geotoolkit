@@ -44,7 +44,6 @@ import org.geotoolkit.display2d.container.statefull.StatefullContextJ2D;
 import org.geotoolkit.display2d.container.stateless.StatelessContextJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.internal.image.ColorUtilities;
-import org.geotoolkit.map.DynamicMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -349,9 +348,6 @@ public class J2DCanvasBuffered extends J2DCanvas{
 
         if(customBuilder != null){
             //this layer has a custom graphic builder, colors are unpredictable.
-            return null;
-        }else if(layer instanceof DynamicMapLayer){
-            //this layer has a custom renderer.
             return null;
         }
 
