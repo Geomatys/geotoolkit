@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2003 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,26 +21,21 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
-import java.util.logging.Logger;
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
-import javax.swing.event.EventListenerList;
 
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.style.CollectionChangeEvent;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.Utilities;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.style.Description;
 
 
 /**
@@ -50,9 +45,7 @@ import org.opengis.style.Description;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-final class DefaultMapContext implements MapContext, LayerListener {
-
-    private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.map");
+final class DefaultMapContext extends AbstractMapItem implements MapContext, LayerListener {
 
     private final List<MapLayer> layers = new CopyOnWriteArrayList<MapLayer>() {
 
@@ -164,14 +157,6 @@ final class DefaultMapContext implements MapContext, LayerListener {
 
     private final LayerListener.Weak layerListener = new LayerListener.Weak(this);
 
-    private final Map<String,Object> parameters = new HashMap<String,Object>();
-
-    private final EventListenerList listeners = new EventListenerList();
-
-    private String name = null;
-
-    private Description desc = null;
-
     private CoordinateReferenceSystem crs = null;
     private Envelope area = null;
 
@@ -182,62 +167,6 @@ final class DefaultMapContext implements MapContext, LayerListener {
 
         this.crs = crs;
         desc = StyleConstants.DEFAULT_DESCRIPTION;
-    }
-
-    /**
-     * {@inheritDoc }
-     * This method is thread safe.
-     */
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    /**
-     * {@inheritDoc }
-     * This method is thread safe.
-     */
-    @Override
-    public void setName(String name) {
-        final String oldName;
-        synchronized (this) {
-            oldName = this.name;
-            if (Utilities.equals(oldName, name)) {
-                return;
-            }
-            this.name = name;
-        }
-        firePropertyChange(NAME_PROPERTY, oldName, this.name);
-    }
-
-    /**
-     * {@inheritDoc }
-     * This method is thread safe.
-     */
-    @Override
-    public Description getDescription() {
-        return desc;
-    }
-
-    /**
-     * {@inheritDoc }
-     * @param desc : Description can't be null
-     */
-    @Override
-    public void setDescription(Description desc){
-        if (desc == null) {
-            throw new NullPointerException("description can't be null");
-        }
-
-        final Description oldDesc;
-        synchronized (this) {
-            oldDesc = this.desc;
-            if(oldDesc.equals(desc)){
-                return;
-            }
-            this.desc = desc;
-        }
-        firePropertyChange(DESCRIPTION_PROPERTY, oldDesc, this.desc);
     }
 
     /**
@@ -340,18 +269,6 @@ final class DefaultMapContext implements MapContext, LayerListener {
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
 
-    protected void firePropertyChange(String propertyName, Object oldValue, Object newValue){
-        //TODO make fire property change thread safe, preserve fire order
-
-        final PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);
-        final ContextListener[] lists = listeners.getListeners(ContextListener.class);
-
-        for(ContextListener listener : lists){
-            listener.propertyChange(event);
-        }
-
-    }
-
     protected void fireLayerChange(int type, MapLayer layer, NumberRange<Integer> range, EventObject orig) {
         //TODO make fire property change thread safe, preserve fire order
 
@@ -398,6 +315,7 @@ final class DefaultMapContext implements MapContext, LayerListener {
     @Override
     public void addContextListener(ContextListener listener){
         listeners.add(ContextListener.class, listener);
+        addPropertyChangeListener(listener);
     }
 
     /**
@@ -406,6 +324,7 @@ final class DefaultMapContext implements MapContext, LayerListener {
     @Override
     public void removeContextListener(ContextListener listener){
         listeners.remove(ContextListener.class, listener);
+        removePropertyChangeListener(listener);
     }
 
     /**
@@ -456,22 +375,6 @@ final class DefaultMapContext implements MapContext, LayerListener {
             this.area = aoi;
         }
         firePropertyChange(AREA_OF_INTEREST_PROPERTY, oldEnv, this.area);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void setUserPropertie(String key,Object value){
-        parameters.put(key, value);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Object getUserPropertie(String key){
-        return parameters.get(key);
     }
 
 }

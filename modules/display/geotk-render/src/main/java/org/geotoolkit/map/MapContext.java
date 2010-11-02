@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.style.Description;
 
 
 /**
@@ -32,86 +31,61 @@ import org.opengis.style.Description;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface MapContext {
+public interface MapContext extends MapItem{
 
-    public static final String NAME_PROPERTY = "name";
-    public static final String DESCRIPTION_PROPERTY = "description";
     public static final String AREA_OF_INTEREST_PROPERTY = "areaOfInterest";
     public static final String BOUNDS_PROPERTY = "bounds";
 
-	/**
-     * Set the context name, this should be used as an
-     * identifier. Use getdescription for UI needs.
-	 */
-    void setName(String name);
-
-	/**
-     * Get the context name. Use getdescription for UI needs.
-	 */
-    String getName();
-
-	/**
-     * Set the context description. this holds a title and an abstract summary
-     * used for user interfaces.
-	 */
-    void setDescription(Description desc);
-
-	/**
-     * Returns the description of the context.this holds a title and an abstract summary
-     * used for user interfaces.
-	 */
-    Description getDescription();
-
-	/**
+    /**
      * Set the context crs. This is used when asking for the bounds property.
      * This reproject the area of interest to the new crs.
-	 */
+     */
     void setCoordinateReferenceSystem(CoordinateReferenceSystem crs);
 
-	/**
+    /**
      * Get the context crs. This is used when asking for the bounds property.
-	 */
-	CoordinateReferenceSystem getCoordinateReferenceSystem();
+     */
+    CoordinateReferenceSystem getCoordinateReferenceSystem();
 
-	/**
+    /**
      * Get the favorite visible area.
-	 */
+     */
     Envelope getAreaOfInterest();
 
-	/**
+    /**
      * Set the favorite visible area.
-	 */
+     */
     void setAreaOfInterest(Envelope aoi);
 
-	/**
+    /**
      * Returns the living list of all layers. You may add, remove or change layers
      * of this list.
      * @return the live list
-	 */
+     */
     List<MapLayer> layers();
 
-	/**
+    /**
      * convinient method to move a layer in the list from indexes.
-	 */
+     */
     void moveLayer(int begin,int end);
 
-	/**
+    /**
      * Return the enveloppe of all layers.
-	 */
+     */
     Envelope getBounds() throws IOException;
 
+    /**
+     * Register a context listener, this listener will be registered
+     * also as a property change listener.
+     * @param listener Context listener to register
+     */
     void addContextListener(ContextListener listener);
 
+    /**
+     * Unregister a context listener, this listener will be registered
+     * also as a property change listener.
+     * @param listener Context listener to unregister
+     */
     void removeContextListener(ContextListener listener);
-
-	/**
-     * Store a value for this maplayer in a hashmap using the given key.
-	 */
-    void setUserPropertie(String key,Object value);
-
-	/**
-     * Get a stored value knowing the key.
-	 */
-    Object getUserPropertie(String key);
 
 }

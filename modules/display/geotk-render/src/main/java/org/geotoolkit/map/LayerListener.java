@@ -18,11 +18,12 @@
 package org.geotoolkit.map;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.EventListener;
 import java.util.EventObject;
+
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 import org.geotoolkit.util.Disposable;
 
@@ -32,13 +33,7 @@ import org.geotoolkit.util.Disposable;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface LayerListener extends EventListener {
-
-    /**
-     * Called when a property change.
-     * Same as a bean property change.
-     */
-    void propertyChange(PropertyChangeEvent event);
+public interface LayerListener extends PropertyChangeListener {
     
     /**
      * Called when a change occurs in the layer style.

@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2003 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,12 +18,9 @@
 package org.geotoolkit.map;
 
 import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.util.EventObject;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.logging.Logger;
-import javax.swing.event.EventListenerList;
 
 import org.geotoolkit.style.CollectionChangeEvent;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
@@ -32,11 +29,8 @@ import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.StyleListener;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.collection.CheckedArrayList;
-import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.display.primitive.Graphic;
-import org.opengis.style.Description;
 
 /**
  * Abstract implementation of the MapLayer.
@@ -44,27 +38,17 @@ import org.opengis.style.Description;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractMapLayer implements MapLayer,StyleListener {
-
-    protected static final Logger LOGGER = Logging.getLogger(MapLayer.class);
+public abstract class AbstractMapLayer extends AbstractMapItem implements MapLayer,StyleListener {
     
     private final List<GraphicBuilder> builders = new CheckedArrayList<GraphicBuilder>(GraphicBuilder.class);
     
-    private final EventListenerList listeners = new EventListenerList();
-
     private final StyleListener.Weak styleListener = new StyleListener.Weak(null,this);
     
-    private final Map<String,Object> parameters = new HashMap<String,Object>();
-
     protected MutableStyle style;
 
     protected MutableStyle selectionStyle;
 
     protected ElevationModel elevation = null;
-
-    protected String name = null;
-
-    protected Description desc = null;
 
     protected boolean visible = true;
 
@@ -86,60 +70,12 @@ public abstract class AbstractMapLayer implements MapLayer,StyleListener {
     
     /**
      * {@inheritDoc }
-     * This method is thread safe.
      */
     @Override
-    public String getName() {
-        return name;
+    public final boolean isWellKnownedType() {
+        return this instanceof FeatureMapLayer || this instanceof CoverageMapLayer;
     }
 
-    /**
-     * {@inheritDoc }
-     * This method is thread safe.
-     */
-    @Override
-    public void setName(String name) {
-        final String oldName;
-        synchronized (this) {
-            oldName = this.name;
-            if (Utilities.equals(oldName, name)) {
-                return;
-            }
-            this.name = name;
-        }
-        firePropertyChange(NAME_PROPERTY, oldName, this.name);
-    }
-    
-    /**
-     * {@inheritDoc }
-     * This method is thread safe.
-     */
-    @Override
-    public Description getDescription() {
-        return desc;
-    }
-
-    /**
-     * {@inheritDoc }
-     * @param desc : Description can't be null
-     */
-    @Override
-    public void setDescription(Description desc){
-        if (desc == null) {
-            throw new NullPointerException("description can't be null");
-        }
-        
-        final Description oldDesc;
-        synchronized (this) {
-            oldDesc = this.desc;
-            if(oldDesc.equals(desc)){
-                return;
-            }
-            this.desc = desc;
-        }
-        firePropertyChange(DESCRIPTION_PROPERTY, oldDesc, this.desc);
-    }
-        
     /**
      * Getter for property style.
      * 
@@ -329,38 +265,11 @@ public abstract class AbstractMapLayer implements MapLayer,StyleListener {
         
         return null;
     }
-    
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void setUserPropertie(String key,Object value){
-        parameters.put(key, value);
-    }
-    
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Object getUserPropertie(String key){
-        return parameters.get(key);
-    }
-    
+        
     //--------------------------------------------------------------------------
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
-    
-    protected void firePropertyChange(String propertyName, Object oldValue, Object newValue){
-        //TODO make fire property change thread safe, preserve fire order
         
-        final PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);
-        final LayerListener[] lists = listeners.getListeners(LayerListener.class);
-        
-        for(LayerListener listener : lists){
-            listener.propertyChange(event);
-        }
-    }
-    
     protected void fireStyleChange(EventObject event){
         //TODO make fire property change thread safe, preserve fire order
         
@@ -387,17 +296,17 @@ public abstract class AbstractMapLayer implements MapLayer,StyleListener {
 
     @Override
     public void addLayerListener(LayerListener listener){
-
         synchronized(listeners){
             listeners.add(LayerListener.class, listener);
+            addPropertyChangeListener(listener);
         }
     }
 
     @Override
     public void removeLayerListener(LayerListener listener){
-
         synchronized(listeners){
             listeners.remove(LayerListener.class, listener);
+            removePropertyChangeListener(listener);
         }
     }
     

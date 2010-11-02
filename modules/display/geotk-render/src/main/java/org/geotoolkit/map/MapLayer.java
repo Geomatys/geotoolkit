@@ -24,7 +24,6 @@ import org.geotoolkit.style.MutableStyle;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
-import org.opengis.style.Description;
 
 /**
  * A layer to be rendered. A layer is an aggregation of both a
@@ -34,10 +33,8 @@ import org.opengis.style.Description;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface MapLayer {
+public interface MapLayer extends MapItem {
     
-    public static final String NAME_PROPERTY = "name";
-    public static final String DESCRIPTION_PROPERTY = "description";
     public static final String STYLE_PROPERTY = "style";
     public static final String VISIBILITY_PROPERTY = "visibility";
     public static final String OPACITY_PROPERTY = "opacity";
@@ -49,27 +46,13 @@ public interface MapLayer {
     public static final String SELECTION_STYLE_PROPERTY = "selection_style";
     
     /**
-     * Set the layer name, this should be used as an
-     * identifier. Use getdescription for UI needs.
+     * Convinient method to test if the current layer is well knowned, it means
+     * using conventional types : Features or Coverages. Other layer types
+     * like WMS or KML are unusual types.
+     * 
+     * @return true if the layer is a FeatureMapLayer or CoverageMapLayer
      */
-    void setName(String name);
-
-    /**
-     * Get the layer name. Use getdescription for UI needs.
-     */
-    String getName();
-    
-    /**
-     * Set the layer description. this holds a title and an abstract summary
-     * used for user interfaces.
-     */
-    void setDescription(Description desc);
-
-    /**
-     * Returns the description of the layer.this holds a title and an abstract summary
-     * used for user interfaces.
-     */
-    Description getDescription();
+    boolean isWellKnownedType();
 
     /**
      * Get the style for this layer.  If style has not been set, then null is
@@ -193,20 +176,19 @@ public interface MapLayer {
      * @return graphicBuilder<? extends type> or null
      */
     <T extends Graphic> GraphicBuilder<? extends T> getGraphicBuilder(Class<T> type);
-    
+
+    /**
+     * Register a layer listener, this listener will be registered
+     * also as a property change listener.
+     * @param listener Layer listener to register
+     */
     void addLayerListener(LayerListener listener);
 
+    /**
+     * Unregister a layer listener, this listener will be unregistered
+     * also as a property change listener.
+     * @param listener Layer listener to unregister
+     */
     void removeLayerListener(LayerListener listener);
-
-    /**
-     * Store a value for this maplayer in a hashmap using the given key.
-     */
-    void setUserPropertie(String key,Object value);
-    
-    /**
-     * Get a stored value knowing the key.
-     */
-    Object getUserPropertie(String key);
-    
     
 }
