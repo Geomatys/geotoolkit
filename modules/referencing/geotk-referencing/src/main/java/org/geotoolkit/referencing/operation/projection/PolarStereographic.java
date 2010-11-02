@@ -401,12 +401,12 @@ public class PolarStereographic extends Stereographic {
         /**
          * Constants used for the inverse polar series
          */
-        private final double A, B;
+        private final double a, b;
 
         /**
          * Constants used for the inverse polar series
          */
-        private double C, D;
+        private final double c, d;
 
         /**
          * Constructs a polar stereographic projection (series inverse equations).
@@ -424,12 +424,12 @@ public class PolarStereographic extends Stereographic {
             final double e4 = excentricitySquared * excentricitySquared;
             final double e6 = e4 * excentricitySquared;
             final double e8 = e4 * e4;
-            C = 7/120.0 * e6 + 81/1120.0 * e8;
-            D = 4279/161280.0 * e8;
-            A = excentricitySquared*0.5 + 5/24.0*e4 + e6/12.0 + 13/360.0*e8 - C;
-            B = 2 * (7/48.0*e4 + 29/240.0*e6 + 811/11520.0*e8) - 4*D;
-            C *= 4;
-            D *= 8;
+            final double ci = 7/120.0 * e6 + 81/1120.0 * e8;
+            final double di = 4279/161280.0 * e8;
+            a = excentricitySquared*0.5 + 5/24.0*e4 + e6/12.0 + 13/360.0*e8 - ci;
+            b = 2 * (7/48.0*e4 + 29/240.0*e6 + 811/11520.0*e8) - 4*di;
+            c = ci * 4;
+            d = di * 8;
             /*
              * Proj4 was calculating a k0 constant here. This constant divised by the one calculated
              * by the super-class (this division was required because the k0 calculated by the super-
@@ -461,7 +461,7 @@ public class PolarStereographic extends Stereographic {
             // See Snyde P. 19, "Computation of Series"
             final double sin2chi = sin(2 * chi);
             final double cos2chi = cos(2 * chi);
-            y = chi + sin2chi*(A + cos2chi*(B + cos2chi*(C + D*cos2chi)));
+            y = chi + sin2chi*(a + cos2chi*(b + cos2chi*(c + d*cos2chi)));
             assert checkInverseTransform(srcPts, srcOff, dstPts, dstOff, x, y);
             dstPts[dstOff]   = x;
             dstPts[dstOff+1] = y;

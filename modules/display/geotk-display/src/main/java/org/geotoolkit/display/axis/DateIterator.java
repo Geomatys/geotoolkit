@@ -282,7 +282,7 @@ final class DateIterator implements TickIterator {
     /**
      * Conventions à utiliser pour le formatage des nombres.
      */
-    private Locale locale;
+    private final Locale locale;
 
     /**
      * Construit un itérateur pour la graduation d'un axe du temps. La méthode {@link #init}
@@ -294,7 +294,7 @@ final class DateIterator implements TickIterator {
     protected DateIterator(final TimeZone timezone, final Locale locale) {
         assert INTERVAL.length*ROLL_WIDTH == ROLL.length;
         calendar = Calendar.getInstance(timezone, locale);
-        this.locale=locale;
+        this.locale = locale;
     }
 
     /**

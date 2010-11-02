@@ -473,8 +473,8 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
                                 final float[] dstPts1, final double[] dstPts2, int dstOff,
                                 int numPts, final boolean hasHeight, final boolean descending)
     {
-        boolean computeHeight = hasHeight;
-        assert (computeHeight=true) == true; // Force computeHeight to true if assertions are enabled.
+        boolean computeHeight = hasHeight;     // NOSONAR: modified if assertions are enabled.
+        assert (computeHeight = true) == true; // Force computeHeight to true if assertions are enabled.
         if (descending) {
             final int n = (numPts - 1) * 3;
             srcOff += n;

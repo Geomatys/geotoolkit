@@ -980,7 +980,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
             direction = +1;
         } else {
             direction = -1;
-            dstOff += numPts-1;
+            dstOff += numPts-1; // NOSONAR: Updated for safety, but not used.
             srcOff += numPts-1;
         }
         /*

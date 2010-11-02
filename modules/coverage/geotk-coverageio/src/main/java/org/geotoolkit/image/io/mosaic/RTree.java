@@ -68,25 +68,25 @@ final class RTree implements Cloneable {
     /**
      * The root of the tree.
      */
-    protected final TreeNode root;
+    final TreeNode root;
 
     /**
      * The requested region. This field must be set before {@link #searchTiles} is invoked.
      */
-    protected Rectangle regionOfInterest;
+    Rectangle regionOfInterest;
 
     /**
      * The subsampling. Before the search, must be set to the requested subsampling.
      * After the search, this is set to the subsampling of the best set of tiles found.
      * This field must be set before {@link #searchTiles} is invoked.
      */
-    protected Dimension subsampling;
+    Dimension subsampling;
 
     /**
      * {@code true} if the search is allowed to look for tiles with finer subsampling than the
      * specified one. This field must be set before {@link #searchTiles} is invoked.
      */
-    protected boolean subsamplingChangeAllowed;
+    boolean subsamplingChangeAllowed;
 
     /**
      * Initialized to {@link #subsampling} at the beginning of a search,

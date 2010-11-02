@@ -435,7 +435,7 @@ public class SunRelativePosition {
         // the end of this method, local variables are always in
         // radians. Output variables ('azimuth' and 'elevation')
         // will still computed in degrees.
-        longitude = toRadians(longitude);
+        longitude = toRadians(longitude); // NOSONAR: Converted for safety, but not used.
         latitude  = toRadians(latitude );
         solarDec  = toRadians(solarDec );
 

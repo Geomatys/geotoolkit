@@ -91,7 +91,7 @@ final class LoggingTableModel extends Handler implements TableModel {
          * The message. If there is log message has more than one line, then this
          * will contains only one line of that message.
          */
-        private String line;
+        private final String line;
 
         /**
          * The time. Will be created when first needed. The {@value #ADDITIONAL_LINES}

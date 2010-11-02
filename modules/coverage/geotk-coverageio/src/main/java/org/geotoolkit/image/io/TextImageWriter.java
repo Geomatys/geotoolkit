@@ -293,7 +293,7 @@ public abstract class TextImageWriter extends StreamImageWriter {
         }
         final FieldPosition position = new FieldPosition(NumberFormat.FRACTION_FIELD);
         position.setBeginIndex(width);
-        position.setEndIndex(width += digits);
+        position.setEndIndex(width += digits); // NOSONAR (see below)
         // 'width' is now the full width. We don't do anything with it at this time,
         // but maybe in some future version...
         return position;

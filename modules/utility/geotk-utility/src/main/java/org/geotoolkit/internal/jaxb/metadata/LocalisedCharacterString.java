@@ -65,7 +65,7 @@ final class LocalisedCharacterString {
     }
 
     /**
-     * Constructs a localised string for the given locale and text.
+     * Constructs a localized string for the given locale and text.
      *
      * @param locale The string language.
      * @param text The string.

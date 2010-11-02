@@ -63,12 +63,12 @@ public class ImageTableModel extends AbstractTableModel {
     /**
      * The format to use for formatting sample values.
      */
-    private NumberFormat format = NumberFormat.getNumberInstance();
+    private NumberFormat format;
 
     /**
      * The format to use for formatting line and column labels.
      */
-    private NumberFormat titleFormat = NumberFormat.getIntegerInstance();
+    private final NumberFormat titleFormat;
 
     /**
      * The band to show.
@@ -102,6 +102,8 @@ public class ImageTableModel extends AbstractTableModel {
      * Creates a new table model with no image.
      */
     public ImageTableModel() {
+        format      = NumberFormat.getNumberInstance();
+        titleFormat = NumberFormat.getIntegerInstance();
     }
 
     /**
@@ -110,6 +112,7 @@ public class ImageTableModel extends AbstractTableModel {
      * @param image The image for which to create a table model, or {@code null} if none.
      */
     public ImageTableModel(final RenderedImage image) {
+        this();
         setRenderedImage(image);
     }
 

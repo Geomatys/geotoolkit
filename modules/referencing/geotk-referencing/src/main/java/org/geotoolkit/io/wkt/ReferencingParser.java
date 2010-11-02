@@ -426,7 +426,7 @@ public class ReferencingParser extends MathTransformParser {
         final Element element = parent.pullElement("UNIT");
         final String     name = element.pullString("name");
         final double   factor = element.pullDouble("factor");
-        final Map<String,?> properties = parseAuthority(element, name); // Ignored for now.
+        final Map<String,?> properties = parseAuthority(element, name); // NOSONAR: Ignored for now.
         element.close();
         return Units.multiply(unit, factor);
     }
@@ -624,7 +624,7 @@ public class ReferencingParser extends MathTransformParser {
     {
         final Element          element = parent.pullElement("PROJECTION");
         final String    classification = element.pullString("name");
-        final Map<String,?> properties = parseAuthority(element, classification);
+        final Map<String,?> properties = parseAuthority(element, classification); // NOSONAR: Ignored for now.
         element.close();
         /*
          * Set the list of parameters.  NOTE: Parameters are defined in
@@ -762,7 +762,7 @@ public class ReferencingParser extends MathTransformParser {
     private EngineeringDatum parseLocalDatum(final Element parent) throws ParseException {
         final Element element = parent.pullElement("LOCAL_DATUM");
         final String     name = element.pullString ("name");
-        final int       datum = element.pullInteger("datum");
+        final int       datum = element.pullInteger("datum"); // NOSONAR: Ignored for now.
         final Map<String,?> properties = parseAuthority(element, name);
         element.close();
         try {

@@ -265,7 +265,7 @@ abstract class NadconLoader extends GridLoader {
      * of {@link NadconLoader#NADCON}.
      * <p>
      * Shift data values follow this and are also separated by spaces. Row records are organized
-     * from low y (latitude) to high and columns are orderd from low longitude to high.
+     * from low y (latitude) to high and columns are ordered from low longitude to high.
      *
      * @author Rueben Schulz (UBC)
      * @author Martin Desruisseaux (Geomatys)
@@ -283,8 +283,8 @@ abstract class NadconLoader extends GridLoader {
          * @throws IOException if the data files cannot be read.
          */
         private static Number[] readHeader(final BufferedReader in) throws IOException {
-            String line = in.readLine(); // Skip header description.
-            line = in.readLine();
+            in.readLine(); // Skip header description.
+            String line = in.readLine();
             if (line == null) {
                 throw new EOFException(Errors.format(Errors.Keys.END_OF_DATA_FILE));
             }
@@ -297,14 +297,14 @@ abstract class NadconLoader extends GridLoader {
             String n = null;
             try {
                 return new Number[] {
-                    Integer.parseInt(n=tokens.nextToken()),
-                    Integer.parseInt(n=tokens.nextToken()),
-                    Integer.parseInt(n=tokens.nextToken()),
-                    Float.parseFloat(n=tokens.nextToken()),
-                    Float.parseFloat(n=tokens.nextToken()),
-                    Float.parseFloat(n=tokens.nextToken()),
-                    Float.parseFloat(n=tokens.nextToken()),
-                    Float.parseFloat(n=tokens.nextToken())
+                    Integer.parseInt(n = tokens.nextToken()),
+                    Integer.parseInt(n = tokens.nextToken()),
+                    Integer.parseInt(n = tokens.nextToken()),
+                    Float.parseFloat(n = tokens.nextToken()),
+                    Float.parseFloat(n = tokens.nextToken()),
+                    Float.parseFloat(n = tokens.nextToken()),
+                    Float.parseFloat(n = tokens.nextToken()),
+                    Float.parseFloat(n = tokens.nextToken())
                 };
             } catch (NumberFormatException e) {
                 throw new ContentFormatException(Errors.format(Errors.Keys.UNPARSABLE_NUMBER_$1, n), e);

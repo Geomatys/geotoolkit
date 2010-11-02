@@ -269,7 +269,8 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
      */
     public void resolve(int n) throws FactoryException {
         if (n > 0) try {
-            for (final T ignore : this) {
+            for (final Iterator<T> it=iterator(); it.hasNext();) {
+                it.next();
                 if (--n == 0) {
                     break;
                 }

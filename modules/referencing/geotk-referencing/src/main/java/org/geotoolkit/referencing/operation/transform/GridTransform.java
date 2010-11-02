@@ -336,7 +336,7 @@ public class GridTransform extends AbstractMathTransform implements Serializable
          * invoked often during inverse transformations.
          */
         final double x = srcPts[srcOff++];
-        final double y = srcPts[srcOff++];
+        final double y = srcPts[srcOff++]; // NOSONAR: index incremented for safety, but not used.
         final double xi = (x - xOrigin) * scaleX;
         final double yi = (y - yOrigin) * scaleY;
         final int col = Math.max(Math.min((int) xi, width  - 2), 0);

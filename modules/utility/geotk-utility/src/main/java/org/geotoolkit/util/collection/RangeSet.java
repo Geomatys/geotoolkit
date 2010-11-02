@@ -496,12 +496,19 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
             i1 |= 1;
         }
         /*
+         * At this point, 'lower' and 'upper' are the bounds of the range in this
+         * RangeSet which contains the range given in argument to this method. For
+         * now we do nothing with this range. A future version could notify some
+         * listeners...
+         */
+        assert compare(lower, upper) <= 0;
+        /*
          * A ce stade, on est certain que 'i1' est impair et pointe vers la fin
          * de la plage dans le tableau. On va maintenant supprimer tout ce qui
          * se trouve entre 'i0' et 'i1', à l'exclusion de 'i0' et 'i1'.
          */
-        assert (i0 & 1)==0 : i0;
-        assert (i1 & 1)!=0 : i1;
+        assert (i0 & 1) == 0 : i0;
+        assert (i1 & 1) != 0 : i1;
         final int n = i1 - (++i0);
         if (n > 0) {
             modCount++;

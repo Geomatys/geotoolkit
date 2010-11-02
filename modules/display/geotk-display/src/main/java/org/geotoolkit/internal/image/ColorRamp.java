@@ -531,7 +531,6 @@ public class ColorRamp implements Serializable {
             int thisARGB  = colors[0];
             int nextARGB  = thisARGB;
             Color thisColor = new Color(thisARGB, true);
-            Color nextColor = thisColor;
             final int ox = bounds.x + margin;
             final int oy = bounds.y + bounds.height - margin;
             final Rectangle2D.Double rect = new Rectangle2D.Double();
@@ -575,7 +574,7 @@ public class ColorRamp implements Serializable {
                         }
                     }
                 }
-                nextColor = new Color(nextARGB, true);
+                final Color nextColor = new Color(nextARGB, true);
                 if (interpolate && thisARGB != nextARGB) {
                     final double x1, y1, x2, y2;
                     if (horizontal) {

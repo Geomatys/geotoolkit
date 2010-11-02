@@ -62,9 +62,8 @@ import static java.lang.Double.NaN;
 final class GridCoverageComparator extends XRectangle2D implements Comparator<GridCoverageReference> {
     /**
      * The minimal and maximal values along the <var>z</var> dimension.
-     * Those values shall not be modified anymore after construction.
      */
-    private double zmin, zmax;
+    private final double zmin, zmax;
 
     /**
      * The minimal and maximal values along the <var>t</var> dimension.
@@ -74,10 +73,9 @@ final class GridCoverageComparator extends XRectangle2D implements Comparator<Gr
 
     /**
      * An estimation of the resolution. This is approximative (not really calculated from the
-     * {@code gridToCRS} transform). This is left to NaN if not applicable. Those values shall
-     * not be modified anymore after construction.
+     * {@code gridToCRS} transform). This is left to NaN if not applicable.
      */
-    private double scaleX, scaleY;
+    private final double scaleX, scaleY;
 
     /**
      * Creates a new instance for the given region of interest.
