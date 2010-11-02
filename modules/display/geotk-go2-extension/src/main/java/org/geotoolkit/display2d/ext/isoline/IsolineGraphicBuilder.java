@@ -17,11 +17,13 @@
 
 package org.geotoolkit.display2d.ext.isoline;
 
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
@@ -102,6 +104,11 @@ public class IsolineGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
     @Override
     public Class<GraphicJ2D> getGraphicType() {
         return GraphicJ2D.class;
+    }
+
+    @Override
+    public Image getLegend(MapLayer layer) throws PortrayalException {
+        return null;
     }
 
 }

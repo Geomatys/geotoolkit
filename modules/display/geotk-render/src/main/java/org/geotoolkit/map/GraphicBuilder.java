@@ -16,7 +16,11 @@
  */
 package org.geotoolkit.map;
 
+import java.awt.Image;
 import java.util.Collection;
+
+import org.geotoolkit.display.exception.PortrayalException;
+
 import org.opengis.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;
 
@@ -46,5 +50,14 @@ public interface GraphicBuilder<T extends Graphic> {
      * return class extends Graphic.
      */
     Class<T> getGraphicType();
-    
+
+    /**
+     * Ask the distant layer to provide a legend.
+     * It might not be always possible but at least we can try.
+     *
+     * @return image legend or null.
+     * @throws PortrayalException
+     */
+    public Image getLegend(MapLayer layer) throws PortrayalException;
+
 }

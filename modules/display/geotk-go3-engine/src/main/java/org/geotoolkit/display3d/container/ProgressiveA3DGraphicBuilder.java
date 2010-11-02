@@ -16,8 +16,10 @@
  */
 package org.geotoolkit.display3d.container;
 
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.Collection;
+import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display3d.canvas.A3DCanvas;
 import org.geotoolkit.display3d.primitive.A3DGraphic;
 import org.geotoolkit.map.CoverageMapLayer;
@@ -59,6 +61,11 @@ public class ProgressiveA3DGraphicBuilder implements GraphicBuilder<A3DGraphic>{
     @Override
     public Class<A3DGraphic> getGraphicType() {
         return A3DGraphic.class;
+    }
+
+    @Override
+    public Image getLegend(MapLayer layer) throws PortrayalException {
+        return null;
     }
 
 }
