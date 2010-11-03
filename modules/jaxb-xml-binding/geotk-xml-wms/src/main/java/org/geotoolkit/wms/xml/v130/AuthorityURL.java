@@ -64,15 +64,23 @@ public class AuthorityURL {
     /**
      * An empty constructor used by JAXB.
      */
-    AuthorityURL() {
+    public AuthorityURL() {
     }
 
     /**
-     * An empty constructor used by JAXB.
+     *
      */
     public AuthorityURL(final String name, OnlineResource onlineResource) {
         this.name = name;
         this.onlineResource = onlineResource;
+    }
+
+    /**
+     *
+     */
+    public AuthorityURL(final String name, String href) {
+        this.name = name;
+        this.onlineResource = new OnlineResource(href);
     }
 
     /**

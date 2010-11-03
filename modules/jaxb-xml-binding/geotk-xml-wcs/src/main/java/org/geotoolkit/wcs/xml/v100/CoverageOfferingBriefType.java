@@ -86,4 +86,8 @@ public class CoverageOfferingBriefType extends AbstractDescriptionType implement
         return this.keywords;
     }
 
+    public void setKeywords(Keywords keywords) {
+        this.keywords = keywords;
+    }
+
 }

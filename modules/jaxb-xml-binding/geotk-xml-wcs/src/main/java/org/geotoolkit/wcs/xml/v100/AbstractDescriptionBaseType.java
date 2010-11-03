@@ -96,4 +96,12 @@ public abstract class AbstractDescriptionBaseType {
         return this.metadataLink;
     }
 
+    /**
+     * Gets the value of the metadataLink property.
+     *
+     */
+    public void setMetadataLink(List<MetadataLinkType> ml) {
+        this.metadataLink = ml;
+    }
+
 }

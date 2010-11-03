@@ -66,6 +66,16 @@ public class MetadataURL {
         this.onlineResource = onlineResource;
         this.type           = type;
     }
+
+    /**
+     * Build a new MetadataURL object.
+     */
+    public MetadataURL(final String format, final String href, final String type) {
+        this.format         = format;
+        this.onlineResource = new OnlineResource(href);
+        this.type           = type;
+    }
+    
     /**
      * Gets the value of the format property.
      * 

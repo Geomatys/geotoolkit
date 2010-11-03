@@ -90,6 +90,78 @@ public abstract class AbstractDescriptionType extends AbstractDescriptionBaseTyp
         if (label != null)
             rest.add(factory.createLabel(label));
     }
+
+    public String getLabel() {
+        for (JAXBElement<String> jb : rest) {
+            if ("label".equals(jb.getName().getLocalPart())) {
+                return jb.getValue();
+            }
+        }
+        return null;
+    }
+
+    public void setLabel(String label) {
+        //first we erase the old one.
+        for (int i = 0; i < rest.size(); i++) {
+            JAXBElement<String> jb = rest.get(i);
+            if ("label".equals(jb.getName().getLocalPart())) {
+                rest.remove(i);
+                break;
+            }
+        }
+        if (label != null) {
+            ObjectFactory factory = new ObjectFactory();
+            rest.add(factory.createLabel(label));
+        }
+    }
+
+    public String getName() {
+        for (JAXBElement<String> jb : rest) {
+            if ("name".equals(jb.getName().getLocalPart())) {
+                return jb.getValue();
+            }
+        }
+        return null;
+    }
+
+    public void setName(String name) {
+        //first we erase the old one.
+        for (int i = 0; i < rest.size(); i++) {
+            JAXBElement<String> jb = rest.get(i);
+            if ("name".equals(jb.getName().getLocalPart())) {
+                rest.remove(i);
+                break;
+            }
+        }
+        if (name != null) {
+            ObjectFactory factory = new ObjectFactory();
+            rest.add(factory.createName(name));
+        }
+    }
+
+    public String getDescription() {
+        for (JAXBElement<String> jb : rest) {
+            if ("description".equals(jb.getName().getLocalPart())) {
+                return jb.getValue();
+            }
+        }
+        return null;
+    }
+
+    public void setDescription(String description) {
+        //first we erase the old one.
+        for (int i = 0; i < rest.size(); i++) {
+            JAXBElement<String> jb = rest.get(i);
+            if ("description".equals(jb.getName().getLocalPart())) {
+                rest.remove(i);
+                break;
+            }
+        }
+        if (description != null) {
+            ObjectFactory factory = new ObjectFactory();
+            rest.add(factory.createDescription(description));
+        }
+    }
     
     /**
      * Gets the rest of the content model. 

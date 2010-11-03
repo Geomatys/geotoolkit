@@ -66,10 +66,14 @@ public abstract class AbstractLayer {
      */
     public abstract String getName();
 
+    public abstract void setName(String name);
+    
     /**
      * Gets the title for this layer.
      */
     public abstract String getTitle();
+
+    public abstract void setTitle(String title);
 
     public abstract Envelope getEnvelope();
 

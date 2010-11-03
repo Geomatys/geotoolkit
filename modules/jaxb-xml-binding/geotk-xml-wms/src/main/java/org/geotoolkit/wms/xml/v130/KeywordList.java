@@ -70,7 +70,7 @@ public class KeywordList implements AbstractKeywordList{
         this.keyword = keyword;
         
     }
-    
+
     /**
      * Build a new Contact person primary object.
      */

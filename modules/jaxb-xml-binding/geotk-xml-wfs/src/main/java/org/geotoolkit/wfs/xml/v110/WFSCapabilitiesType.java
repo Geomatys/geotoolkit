@@ -23,6 +23,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ogc.xml.v110.FilterCapabilities;
 import org.geotoolkit.ows.xml.v100.CapabilitiesBaseType;
+import org.geotoolkit.ows.xml.v100.OperationsMetadata;
+import org.geotoolkit.ows.xml.v100.ServiceIdentification;
+import org.geotoolkit.ows.xml.v100.ServiceProvider;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wfs.xml.WFSResponse;
 
@@ -88,6 +91,14 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
     public WFSCapabilitiesType(String version) {
         super(version);
     }
+
+    public WFSCapabilitiesType(String version, ServiceIdentification si, ServiceProvider sp, OperationsMetadata om, 
+            FeatureTypeListType ft, FilterCapabilities fc) {
+        super(si, sp, om, version, null);
+        this.featureTypeList = ft;
+        this.filterCapabilities = fc;
+    }
+
     /**
      * Gets the value of the featureTypeList property.
      * 

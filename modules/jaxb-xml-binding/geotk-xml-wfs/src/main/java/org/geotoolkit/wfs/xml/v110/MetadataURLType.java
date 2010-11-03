@@ -84,6 +84,16 @@ public class MetadataURLType {
     @XmlAttribute(required = true)
     private String format;
 
+    public MetadataURLType() {
+
+    }
+
+    public MetadataURLType(String value, String type, String format) {
+        this.format = format;
+        this.value  = value;
+        this.type   = type;
+    }
+    
     /**
      * Gets the value of the value property.
      * 

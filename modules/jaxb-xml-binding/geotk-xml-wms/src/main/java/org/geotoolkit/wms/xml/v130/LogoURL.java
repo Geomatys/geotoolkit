@@ -83,6 +83,17 @@ public class LogoURL {
         this.onlineResource = onlineResource;
         this.width          = width;
     }
+
+    /**
+     * Build a new LogoURL object.
+     */
+    public LogoURL(final String format, final String href,
+            final Integer width, final Integer height ) {
+        this.format         = format;
+        this.height         = height;
+        this.onlineResource = new OnlineResource(href);
+        this.width          = width;
+    }
     
     
     /**

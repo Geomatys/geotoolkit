@@ -62,6 +62,15 @@ public class AuthorityURL {
     }
 
     /**
+     *
+     */
+    public AuthorityURL(final String name, String href) {
+        this.name = name;
+        this.onlineResource = new OnlineResource(href);
+    }
+
+    
+    /**
      * Gets the value of the onlineResource property.
      * 
      */

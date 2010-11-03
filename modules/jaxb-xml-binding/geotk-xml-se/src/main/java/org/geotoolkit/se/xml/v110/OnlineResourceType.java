@@ -46,22 +46,30 @@ import javax.xml.bind.annotation.XmlType;
 public class OnlineResourceType {
 
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    protected String type;
+    private String type;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     @XmlSchemaType(name = "anyURI")
-    protected String href;
+    private String href;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     @XmlSchemaType(name = "anyURI")
-    protected String role;
+    private String role;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     @XmlSchemaType(name = "anyURI")
-    protected String arcrole;
+    private String arcrole;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    protected String title;
+    private String title;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    protected String show;
+    private String show;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    protected String actuate;
+    private String actuate;
+
+    public OnlineResourceType() {
+
+    }
+
+    public OnlineResourceType(String href) {
+        this.href = href;
+    }
 
     /**
      * Gets the value of the type property.

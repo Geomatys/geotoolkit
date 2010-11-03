@@ -83,7 +83,13 @@ public class MetadataType implements AbstractMetadata {
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     private String actuate;
 
-    // TODO make constructor
+    public MetadataType() {
+
+    }
+
+    public MetadataType(String href) {
+        this.href = href;
+    }
     
     /**
      * Gets the value of the abstractMetaData property.

@@ -17,7 +17,6 @@
 package org.geotoolkit.ows.xml.v110;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -67,7 +66,19 @@ public class KeywordsType implements AbstractKeywords {
      */
     KeywordsType(){
     }
-    
+
+    /**
+     * Build a new list of keywords.
+     */
+    public KeywordsType(List<String> keyword){
+        this.keyword = new ArrayList<LanguageStringType>();
+        if (keyword != null) {
+            for (String k : keyword){
+                this.keyword.add(new LanguageStringType(k));
+            }
+        }
+    }
+
     /**
      * Build a new list of keywords.
      */
@@ -94,7 +105,7 @@ public class KeywordsType implements AbstractKeywords {
         if (keyword == null) {
             keyword = new ArrayList<LanguageStringType>();
         }
-        return Collections.unmodifiableList(keyword);
+        return keyword;
     }
 
     public List<String> getKeywordList() {
@@ -114,6 +125,10 @@ public class KeywordsType implements AbstractKeywords {
      */
     public CodeType getType() {
         return type;
+    }
+
+    public void setType(CodeType code) {
+        this.type = code;
     }
     
     /**

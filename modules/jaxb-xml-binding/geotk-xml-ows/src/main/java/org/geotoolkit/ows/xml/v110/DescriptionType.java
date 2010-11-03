@@ -17,7 +17,6 @@
 package org.geotoolkit.ows.xml.v110;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -112,7 +111,29 @@ public class DescriptionType implements AbstractDescription {
         if (title == null) {
             title = new ArrayList<LanguageStringType>();
         }
-        return Collections.unmodifiableList(title);
+        return title;
+    }
+
+    public void setTitle(List<LanguageStringType> titles) {
+        this.title = titles;
+    }
+
+    public void setTitle(LanguageStringType title) {
+        if (this.title == null) {
+            this.title = new ArrayList<LanguageStringType>();
+        }
+        if (title != null) {
+            this.title.add(title);
+        }
+    }
+
+    public void setTitle(String title) {
+        if (this.title == null) {
+            this.title = new ArrayList<LanguageStringType>();
+        }
+        if (title != null) {
+            this.title.add(new LanguageStringType(title));
+        }
     }
 
     public String getFirstTitle() {
@@ -129,7 +150,29 @@ public class DescriptionType implements AbstractDescription {
         if (_abstract == null) {
             _abstract = new ArrayList<LanguageStringType>();
         }
-        return Collections.unmodifiableList(_abstract);
+        return _abstract;
+    }
+
+    public void setAbstract(List<LanguageStringType> abstracts) {
+        this._abstract = abstracts;
+    }
+
+    public void setAbstract(LanguageStringType _abstract) {
+        if (this._abstract == null) {
+            this._abstract = new ArrayList<LanguageStringType>();
+        }
+        if (_abstract != null) {
+            this._abstract.add(_abstract);
+        }
+    }
+
+    public void setAbstract(String _abstract) {
+        if (this._abstract == null) {
+            this._abstract = new ArrayList<LanguageStringType>();
+        }
+        if (_abstract != null) {
+            this._abstract.add(new LanguageStringType(_abstract));
+        }
     }
 
     public String getFirstAbstract() {
@@ -146,7 +189,14 @@ public class DescriptionType implements AbstractDescription {
         if (keywords == null) {
             keywords = new ArrayList<KeywordsType>();
         }
-        return Collections.unmodifiableList(keywords);
+        return keywords;
+    }
+
+    /**
+     * Gets the value of the keywords property.
+     */
+    public void setKeywords(List<KeywordsType> keywords) {
+        this.keywords = keywords;
     }
     
     /**

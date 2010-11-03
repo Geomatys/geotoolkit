@@ -75,6 +75,15 @@ public class Attribution {
         this.onlineResource = onlineResource;
         this.logoURL        = logoURL;
     }
+
+    /**
+     * Build a new Attribution.
+     */
+    public Attribution(final String title, String href, LogoURL logoURL) {
+        this.title          = title;
+        this.onlineResource = new OnlineResource(href);
+        this.logoURL        = logoURL;
+    }
     
     /**
      * Gets the value of the title property.

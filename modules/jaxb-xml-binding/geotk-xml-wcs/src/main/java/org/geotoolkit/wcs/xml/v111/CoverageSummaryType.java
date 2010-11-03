@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.DescriptionType;
 import org.geotoolkit.ows.xml.v110.KeywordsType;
 import org.geotoolkit.ows.xml.v110.LanguageStringType;
+import org.geotoolkit.ows.xml.v110.MetadataType;
 import org.geotoolkit.wcs.xml.CoverageInfo;
 import org.opengis.geometry.Envelope;
 
@@ -103,7 +104,29 @@ public class CoverageSummaryType extends DescriptionType implements CoverageInfo
         this.rest = rest;
     }
     
-    
+    public MetadataType getMetadata() {
+        for (JAXBElement<?> jb : rest) {
+            if ("Metadata".equals(jb.getName().getLocalPart())) {
+                return (MetadataType) jb.getValue();
+            }
+        }
+        return null;
+    }
+
+    public void setMetadata(MetadataType metadata) {
+        // first we remove the old one
+        for (int i = 0; i < rest.size(); i++) {
+            JAXBElement<?> jb  = rest.get(i);
+            if ("Metadata".equals(jb.getName().getLocalPart())) {
+                rest.remove(i);
+                break;
+            }
+        }
+        if (metadata != null) {
+            org.geotoolkit.ows.xml.v110.ObjectFactory factory = new org.geotoolkit.ows.xml.v110.ObjectFactory();
+            this.rest.add(factory.createMetadata(metadata));
+        }
+    }
             
     /**
      * Gets the rest of the content model. 

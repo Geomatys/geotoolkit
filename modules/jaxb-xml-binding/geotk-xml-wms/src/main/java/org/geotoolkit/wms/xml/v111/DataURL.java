@@ -55,6 +55,15 @@ public class DataURL {
         this.format         = format;
         this.onlineResource = onlineResource;
     }
+
+    /**
+     * Build a new Data URL object.
+     */
+    public DataURL(final String format, final String href) {
+        this.format         = format;
+        this.onlineResource = new OnlineResource(href);
+    }
+    
     /**
      * Gets the value of the format property.
      * 

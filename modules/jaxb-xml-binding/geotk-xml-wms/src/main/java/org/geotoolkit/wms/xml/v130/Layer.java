@@ -17,7 +17,6 @@
 package org.geotoolkit.wms.xml.v130;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -316,7 +315,7 @@ public class Layer extends AbstractLayer {
      */
     @Override
     public List<String> getCRS() {
-        return Collections.unmodifiableList(crs);
+        return crs;
     }
     
 
@@ -333,7 +332,7 @@ public class Layer extends AbstractLayer {
      * 
      */
     public List<BoundingBox> getBoundingBox() {
-        return Collections.unmodifiableList(boundingBox);
+        return boundingBox;
     }
 
     /**
@@ -342,7 +341,7 @@ public class Layer extends AbstractLayer {
      */
     @Override
     public List<Dimension> getDimension() {
-        return Collections.unmodifiableList(dimension);
+        return dimension;
     }
     
     /**
@@ -358,28 +357,28 @@ public class Layer extends AbstractLayer {
      * 
      */
     public List<AuthorityURL> getAuthorityURL() {
-        return Collections.unmodifiableList(authorityURL);
+        return authorityURL;
     }
 
     /**
      * Gets the value of the identifier property.
      */
     public List<Identifier> getIdentifier() {
-        return Collections.unmodifiableList(identifier);
+        return identifier;
     }
 
     /**
      * Gets the value of the metadataURL property.
      */
     public List<MetadataURL> getMetadataURL() {
-        return Collections.unmodifiableList(metadataURL);
+        return metadataURL;
     }
 
     /**
      * Gets the value of the dataURL property.
       */
     public List<DataURL> getDataURL() {
-        return Collections.unmodifiableList(dataURL);
+        return dataURL;
     }
 
     /**
@@ -387,7 +386,7 @@ public class Layer extends AbstractLayer {
      * 
      */
     public List<FeatureListURL> getFeatureListURL() {
-        return Collections.unmodifiableList(featureListURL);
+        return featureListURL;
     }
 
     /**
@@ -395,7 +394,7 @@ public class Layer extends AbstractLayer {
      */
     @Override
     public List<Style> getStyle() {
-        return Collections.unmodifiableList(style);
+        return style;
     }
 
     /**
@@ -417,7 +416,7 @@ public class Layer extends AbstractLayer {
      */
     @Override
     public List<Layer> getLayer() {
-        return Collections.unmodifiableList(layer);
+        return layer;
     }
 
     /**
@@ -492,5 +491,173 @@ public class Layer extends AbstractLayer {
             return new GeneralEnvelope(bbox);
         }
         return null;
+    }
+
+    /**
+     * @param name
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
+     * @param title the title to set
+     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    /**
+     * @param abstract the _abstract to set
+     */
+    public void setAbstract(String abstrac) {
+        this._abstract = abstrac;
+    }
+
+    /**
+     * @param keywordList the keywordList to set
+     */
+    public void setKeywordList(KeywordList keywordList) {
+        this.keywordList = keywordList;
+    }
+
+    /**
+     * @param crs the crs to set
+     */
+    public void setCrs(List<String> crs) {
+        this.crs = crs;
+    }
+
+    /**
+     * @param exGeographicBoundingBox the exGeographicBoundingBox to set
+     */
+    public void setExGeographicBoundingBox(EXGeographicBoundingBox exGeographicBoundingBox) {
+        this.exGeographicBoundingBox = exGeographicBoundingBox;
+    }
+
+    /**
+     * @param dimension the dimension to set
+     */
+    public void setDimension(List<Dimension> dimension) {
+        this.dimension = dimension;
+    }
+
+    /**
+     * @param boundingBox the boundingBox to set
+     */
+    public void setBoundingBox(List<BoundingBox> boundingBox) {
+        this.boundingBox = boundingBox;
+    }
+
+    /**
+     * @param attribution the attribution to set
+     */
+    public void setAttribution(Attribution attribution) {
+        this.attribution = attribution;
+    }
+
+    /**
+     * @param authorityURL the authorityURL to set
+     */
+    public void setAuthorityURL(List<AuthorityURL> authorityURL) {
+        this.authorityURL = authorityURL;
+    }
+
+    /**
+     * @param identifier the identifier to set
+     */
+    public void setIdentifier(List<Identifier> identifier) {
+        this.identifier = identifier;
+    }
+
+    /**
+     * @param metadataURL the metadataURL to set
+     */
+    public void setMetadataURL(List<MetadataURL> metadataURL) {
+        this.metadataURL = metadataURL;
+    }
+
+    /**
+     * @param dataURL the dataURL to set
+     */
+    public void setDataURL(List<DataURL> dataURL) {
+        this.dataURL = dataURL;
+    }
+
+    /**
+     * @param featureListURL the featureListURL to set
+     */
+    public void setFeatureListURL(List<FeatureListURL> featureListURL) {
+        this.featureListURL = featureListURL;
+    }
+
+    /**
+     * @param style the style to set
+     */
+    public void setStyle(List<Style> style) {
+        this.style = style;
+    }
+
+    /**
+     * @param minScaleDenominator the minScaleDenominator to set
+     */
+    public void setMinScaleDenominator(Double minScaleDenominator) {
+        this.minScaleDenominator = minScaleDenominator;
+    }
+
+    /**
+     * @param maxScaleDenominator the maxScaleDenominator to set
+     */
+    public void setMaxScaleDenominator(Double maxScaleDenominator) {
+        this.maxScaleDenominator = maxScaleDenominator;
+    }
+
+    /**
+     * @param layer the layer to set
+     */
+    public void setLayer(List<Layer> layer) {
+        this.layer = layer;
+    }
+
+    /**
+     * @param queryable the queryable to set
+     */
+    public void setQueryable(String queryable) {
+        this.queryable = queryable;
+    }
+
+    /**
+     * @param cascaded the cascaded to set
+     */
+    public void setCascaded(Integer cascaded) {
+        this.cascaded = cascaded;
+    }
+
+    /**
+     * @param opaque the opaque to set
+     */
+    public void setOpaque(Integer opaque) {
+        this.opaque = opaque;
+    }
+
+    /**
+     * @param noSubsets the noSubsets to set
+     */
+    public void setNoSubsets(Integer noSubsets) {
+        this.noSubsets = noSubsets;
+    }
+
+    /**
+     * @param fixedWidth the fixedWidth to set
+     */
+    public void setFixedWidth(Integer fixedWidth) {
+        this.fixedWidth = fixedWidth;
+    }
+
+    /**
+     * @param fixedHeight the fixedHeight to set
+     */
+    public void setFixedHeight(Integer fixedHeight) {
+        this.fixedHeight = fixedHeight;
     }
 }
