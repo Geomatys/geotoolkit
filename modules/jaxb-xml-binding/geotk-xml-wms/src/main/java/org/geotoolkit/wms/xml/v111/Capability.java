@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wms.xml.v111;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -90,6 +91,15 @@ public class Capability extends AbstractCapability {
      */
     public Exception getException() {
         return exception;
+    }
+
+    /**
+     * Gets the list of exception formats available.
+     * @return
+     */
+    @Override
+    public List<String> getExceptionFormats() {
+        return getException().getFormat();
     }
 
     /**

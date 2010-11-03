@@ -129,7 +129,7 @@ public interface GetMapRequest extends Request {
     /**
      * Sets if a layer is transparent or not.
      */
-    void setTransparent(boolean transparent);
+    void setTransparent(Boolean transparent);
 
     /**
      * Returns additional dimensions.

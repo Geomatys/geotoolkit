@@ -118,6 +118,15 @@ public class Capability extends AbstractCapability {
         return exception;
     }
 
+    /**
+     * Gets the list of exception formats available.
+     * @return
+     */
+    @Override
+    public List<String> getExceptionFormats() {
+        return getException().getFormat();
+    }
+
     public void setException(Exception exception) {
         this.exception = exception;
     }

@@ -33,7 +33,6 @@ import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
-
 /**
  * Abstract implementation of {@link GetMapRequest}, which defines the parameters for
  * a GetMap request.
@@ -41,33 +40,32 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractGetMap extends AbstractRequest implements GetMapRequest{
+public abstract class AbstractGetMap extends AbstractRequest implements GetMapRequest {
 
     private static final SimpleDateFormat ISO_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS'Z'");
+
     static {
         ISO_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT+0"));
     }
-    
     /**
      * Default logger for all GetMap requests.
      */
     protected static final Logger LOGGER = Logging.getLogger(AbstractGetMap.class);
-
     /**
      * The version to use for this webservice request.
      */
     protected final String version;
-    protected final Map<String,String> dims = new HashMap<String, String>();
+    protected final Map<String, String> dims = new HashMap<String, String>();
     protected String format = "image/png";
-    protected String exception = "application/vnd.ogc.se_inimage";
+    protected String exceptions = null;
     protected String[] layers = null;
     protected String[] styles = null;
-    protected Envelope enveloppe = null;
+    protected Envelope envelope = null;
     protected Dimension dimension = null;
     protected String sld = null;
     protected String sldVersion = null;
     protected String sldBody = null;
-    protected Boolean transparent = true;
+    protected Boolean transparent = null;
 
     /**
      * Defines the server url and the service version for this kind of request.
@@ -75,13 +73,14 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * @param serverURL The server url.
      * @param version The version of the request.
      */
-    protected AbstractGetMap(String serverURL,String version){
+    protected AbstractGetMap(String serverURL, String version) {
         super(serverURL);
         this.version = version;
     }
 
     /**
      * {@inheritDoc }
+     * @return
      */
     @Override
     public String[] getLayers() {
@@ -101,7 +100,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      */
     @Override
     public Envelope getEnvelope() {
-        return enveloppe;
+        return envelope;
     }
 
     /**
@@ -109,7 +108,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      */
     @Override
     public void setEnvelope(Envelope env) {
-        this.enveloppe = env;
+        this.envelope = env;
     }
 
     /**
@@ -149,7 +148,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      */
     @Override
     public String getExceptions() {
-        return exception;
+        return exceptions;
     }
 
     /**
@@ -157,7 +156,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      */
     @Override
     public void setExceptions(String ex) {
-        this.exception = ex;
+        this.exceptions = ex;
     }
 
     /**
@@ -180,7 +179,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * {@inheritDoc }
      */
     @Override
-    public String getSld(){
+    public String getSld() {
         return sld;
     }
 
@@ -188,7 +187,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * {@inheritDoc }
      */
     @Override
-    public void setSld(String sld){
+    public void setSld(String sld) {
         this.sld = sld;
     }
 
@@ -196,7 +195,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * {@inheritDoc }
      */
     @Override
-    public String getSldBody(){
+    public String getSldBody() {
         return sldBody;
     }
 
@@ -204,7 +203,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * {@inheritDoc }
      */
     @Override
-    public void setSldBody(String sldBody){
+    public void setSldBody(String sldBody) {
         this.sldBody = sldBody;
     }
 
@@ -222,7 +221,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * {@inheritDoc }
      */
     @Override
-    public boolean isTransparent(){
+    public boolean isTransparent() {
         return transparent;
     }
 
@@ -230,7 +229,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * {@inheritDoc }
      */
     @Override
-    public void setTransparent(boolean transparent){
+    public void setTransparent(Boolean transparent) {
         this.transparent = transparent;
     }
 
@@ -238,7 +237,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * {@inheritDoc }
      */
     @Override
-    public Map<String,String> dimensions(){
+    public Map<String, String> dimensions() {
         return dims;
     }
 
@@ -247,100 +246,145 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      */
     @Override
     public URL getURL() throws MalformedURLException {
-        if(layers == null || layers.length == 0){
-            throw new IllegalArgumentException("Layers are not defined");
-        }
-        if(dimension == null){
-            throw new IllegalArgumentException("Dimension is not defined");
+
+        // Tests if the mandatory parameters are available
+        if (layers == null || layers.length == 0) {
+            throw new IllegalArgumentException("LAYERS are not defined");
         }
 
-        requestParameters.put("SERVICE",    "WMS");
-        requestParameters.put("REQUEST",    "GetMap");
-        requestParameters.put("VERSION",    version);
-        requestParameters.put("EXCEPTIONS", exception);
-        requestParameters.put("FORMAT",     format);
-        requestParameters.put("WIDTH",      String.valueOf(dimension.width));
-        requestParameters.put("HEIGHT",     String.valueOf(dimension.height));
-        requestParameters.put("LAYERS",     StringUtilities.toCommaSeparatedValues(layers));
-        if(styles != null && styles.length>0 && styles[0] != null){
-            requestParameters.put("STYLES",StringUtilities.toCommaSeparatedValues(styles));
-        }else{
-            requestParameters.put("STYLES","");
+        if (version == null) {
+            throw new IllegalArgumentException("VERSION parameter is not defined");
         }
-        requestParameters.put("TRANSPARENT", Boolean.toString(transparent).toUpperCase());
+
+        if (format == null) {
+            throw new IllegalArgumentException("FORMAT parameter is not defined");
+        }
+
+        if (dimension == null) {
+            throw new IllegalArgumentException("WIDTH or HEIGHT parameter is not defined");
+        }
+
+        if (envelope == null) {
+            throw new IllegalArgumentException("Envelope is not defined");
+        }
+
+
+        // Add mandatory parameters
+        requestParameters.put("SERVICE", "WMS");
+        requestParameters.put("REQUEST", "GetMap");
+        requestParameters.put("VERSION", version);
+        requestParameters.put("FORMAT", format);
+        requestParameters.put("WIDTH", String.valueOf(dimension.width));
+        requestParameters.put("HEIGHT", String.valueOf(dimension.height));
+        requestParameters.put("LAYERS", StringUtilities.toCommaSeparatedValues(layers));
+        requestParameters.putAll(toString(envelope));
+
+        String stylesParam = "";
+
+        if (styles != null && styles.length > 0 && styles[0] != null) {
+            stylesParam = StringUtilities.toCommaSeparatedValues(styles);
+        }
+        
+        requestParameters.put("STYLES", stylesParam);
+
+
+
+        // Add optional parameters
+        if (dims != null && !dims.isEmpty()) {
+            requestParameters.putAll(dims);
+        }
+
+        if (exceptions != null) {
+            requestParameters.put("EXCEPTIONS", exceptions);
+        }
+
+        if (transparent != null) {
+            requestParameters.put("TRANSPARENT", Boolean.toString(transparent).toUpperCase());
+        }
 
         if (sld != null) {
-            requestParameters.put("SLD",sld);
-        }
-        if (sldVersion != null) {
-            requestParameters.put("SLD_VERSION",sldVersion);
-        }
-        if (sldBody != null) {
-            requestParameters.put("SLD_BODY",sldBody);
+            requestParameters.put("SLD", sld);
         }
 
-        requestParameters.putAll(dims);
-        requestParameters.putAll(toString(enveloppe));
+        if (sldVersion != null) {
+            requestParameters.put("SLD_VERSION", sldVersion);
+        }
+
+        if (sldBody != null) {
+            requestParameters.put("SLD_BODY", sldBody);
+        }
 
         return super.getURL();
     }
 
-    protected abstract Map<String,String> toString(Envelope env);
+    /**
+     * Return a map containing BBOX, SRS (or CRS), TIME and ELEVATION parameters.
+     *
+     * @param env
+     * @return 
+     */
+    protected abstract Map<String, String> toString(Envelope env);
 
-    protected void encodeTimeAndElevation(Envelope env, Map<String,String> map){
+    /**
+     * Encode TIME and ELEVATION parameters if they are defined in the envelope.
+     *
+     * @param env Current Envelope
+     * @param map map containing GetMap parameters
+     */
+    protected void encodeTimeAndElevation(Envelope env, Map<String, String> map) {
         //append time and elevation parameter
         final CoordinateSystem cs = env.getCoordinateReferenceSystem().getCoordinateSystem();
-        for(int i=0, n=cs.getDimension(); i<n; i++){
+        for (int i = 0, n = cs.getDimension(); i < n; i++) {
             final CoordinateSystemAxis axis = cs.getAxis(i);
             final AxisDirection ad = axis.getDirection();
-            if(ad.equals(AxisDirection.FUTURE) || ad.equals(AxisDirection.PAST)){
+            if (ad.equals(AxisDirection.FUTURE) || ad.equals(AxisDirection.PAST)) {
                 //found a temporal axis
                 final double minT = env.getMinimum(i);
                 final double maxT = env.getMaximum(i);
 
-                if(Double.isNaN(minT) || Double.isInfinite(minT)){
-                    if(Double.isNaN(maxT) || Double.isInfinite(maxT)){
+                if (Double.isNaN(minT) || Double.isInfinite(minT)) {
+                    if (Double.isNaN(maxT) || Double.isInfinite(maxT)) {
                         //both null, do nothing
-                    }else{
+                    } else {
                         //only max limit
                         map.put("TIME", toDateString(maxT));
                     }
-                }else if(Double.isNaN(maxT) || Double.isInfinite(maxT)){
-                    if(Double.isNaN(minT) || Double.isInfinite(minT)){
+                } else if (Double.isNaN(maxT) || Double.isInfinite(maxT)) {
+                    if (Double.isNaN(minT) || Double.isInfinite(minT)) {
                         //both null, do nothing
-                    }else{
+                    } else {
                         //only min limit
                         map.put("TIME", toDateString(minT));
                     }
-                }else{
+                } else {
                     //both ok, calculate median
-                    final double median = (minT+maxT)/2;
+                    final double median = (minT + maxT) / 2;
                     map.put("TIME", toDateString(median));
                 }
 
 
-            } else if(ad.equals(AxisDirection.UP) || ad.equals(AxisDirection.DOWN)){
+            } else if (ad.equals(AxisDirection.UP) || ad.equals(AxisDirection.DOWN)) {
                 //found a vertical axis
                 final double minV = env.getMinimum(i);
                 final double maxV = env.getMaximum(i);
 
-                if(Double.isNaN(minV) || Double.isInfinite(minV)){
-                    if(Double.isNaN(maxV) || Double.isInfinite(maxV)){
+                if (Double.isNaN(minV) || Double.isInfinite(minV)) {
+                    if (Double.isNaN(maxV) || Double.isInfinite(maxV)) {
                         //both null, do nothing
-                    }else{
+                    } else {
                         //only max limit
                         map.put("ELEVATION", String.valueOf(maxV));
                     }
-                }else if(Double.isNaN(maxV) || Double.isInfinite(maxV)){
-                    if(Double.isNaN(minV) || Double.isInfinite(minV)){
+                } else if (Double.isNaN(maxV) || Double.isInfinite(maxV)) {
+                    if (Double.isNaN(minV) || Double.isInfinite(minV)) {
                         //both null, do nothing
-                    }else{
+                    } else {
                         //only min limit
                         map.put("ELEVATION", String.valueOf(minV));
                     }
-                }else{
+                } else {
                     //both ok, calculate median
-                    final double median = (minV+maxV)/2;
+                    final double median = (minV + maxV) / 2;
                     map.put("ELEVATION", String.valueOf(median));
                 }
 
@@ -348,8 +392,10 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
         }
     }
 
-    private static String toDateString(double value){
-        return ISO_FORMAT.format(new Date((long)value));
+    /**
+     * Transform a double representing a Date to a String
+     */
+    private static String toDateString(double value) {
+        return ISO_FORMAT.format(new Date((long) value));
     }
-
 }

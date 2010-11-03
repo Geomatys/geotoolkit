@@ -136,6 +136,17 @@ public class WMSMapLayer extends AbstractMapLayer {
      */
     private String format = "image/png";
 
+    /**
+     * Transparence of the layer.
+     * WARNING: if we stictly respect the spec this value should be false.
+     */
+    private Boolean transparent = true;
+
+    /**
+     * Output format of exceptions
+     */
+    private String exceptionsFormat = null;
+
     private CRS84Politic crs84Politic = CRS84Politic.STRICT;
     private EPSG4326Politic epsg4326Politic = EPSG4326Politic.STRICT;
     private boolean useLocalReprojection = false;
@@ -302,6 +313,8 @@ public class WMSMapLayer extends AbstractMapLayer {
         request.setSldVersion(sldVersion);
         request.setSldBody(sldBody);
         request.setFormat(format);
+        request.setExceptions(exceptionsFormat);
+        request.setTransparent(transparent);
         request.dimensions().putAll(dims);
         return request.getURL();
     }
@@ -418,6 +431,34 @@ public class WMSMapLayer extends AbstractMapLayer {
 
     public Map<String, String> dimensions() {
         return dims;
+    }
+
+    /**
+     * @return the exceptionsFormat
+     */
+    public String getExceptionsFormat() {
+        return exceptionsFormat;
+    }
+
+    /**
+     * @param exceptionsFormat the exceptionsFormat to set
+     */
+    public void setExceptionsFormat(String exceptionsFormat) {
+        this.exceptionsFormat = exceptionsFormat;
+    }    
+
+    /**
+     * @return the transparent
+     */
+    public Boolean getTransparent() {
+        return transparent;
+    }
+
+    /**
+     * @param transparent the transparent to set
+     */
+    public void setTransparent(Boolean transparent) {
+        this.transparent = transparent;
     }
 
     /**

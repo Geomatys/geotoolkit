@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wms.xml;
 
+import java.util.List;
 import javax.xml.bind.annotation.XmlTransient;
 
 /**
@@ -34,5 +35,7 @@ public abstract class AbstractCapability {
      public abstract void setLayer(AbstractLayer layer);
 
      public abstract void setRequest(AbstractRequest request);
+
+     public abstract List<String> getExceptionFormats();
 
 }
