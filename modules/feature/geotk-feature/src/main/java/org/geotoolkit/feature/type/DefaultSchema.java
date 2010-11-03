@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.feature.type;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,9 +34,9 @@ import org.opengis.feature.type.Schema;
  * @author Justin Deoliveira, The Open Planning Project
  * @module pending
  */
-public class DefaultSchema implements Schema {
+public class DefaultSchema implements Schema, Serializable {
 
-    private final HashMap<Name, AttributeType> contents = new HashMap();
+    private final Map<Name, AttributeType> contents = new HashMap();
     private final String uri;
 
     /** Schema constructed w/ respect to provided URI */

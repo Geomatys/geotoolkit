@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.feature.type;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +34,7 @@ import org.opengis.feature.type.PropertyType;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultPropertyDescriptor<T extends PropertyType> implements PropertyDescriptor {
+public class DefaultPropertyDescriptor<T extends PropertyType> implements PropertyDescriptor,Serializable {
 
     protected final T type;
     protected final Name name;

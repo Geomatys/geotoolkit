@@ -18,6 +18,7 @@
 package org.geotoolkit.feature;
 
 import javax.xml.namespace.QName;
+import org.geotoolkit.test.Commons;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.opengis.feature.type.Name;
@@ -112,6 +113,12 @@ public class DefaultNameTest {
         n1 = new DefaultName("http://test.com", ":", "test");
         n2 = new DefaultName("http://test.com", "/", "test");
         assertEquals(n1, n2);
+    }
+    
+    @Test
+    public void testSerialize(){
+        Name name = DefaultName.valueOf("{geotk}test");
+        Commons.serialize(name);
     }
 
 }

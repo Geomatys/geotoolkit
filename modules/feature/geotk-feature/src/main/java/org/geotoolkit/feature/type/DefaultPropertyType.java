@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.feature.type;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -24,8 +25,8 @@ import java.util.Map;
 
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.Utilities;
-
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
+
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.Filter;
@@ -37,7 +38,7 @@ import org.opengis.util.InternationalString;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultPropertyType<T extends PropertyType> implements PropertyType {
+public class DefaultPropertyType<T extends PropertyType> implements PropertyType,Serializable {
 
     private static final List<Filter> NO_RESTRICTIONS = Collections.emptyList();
 

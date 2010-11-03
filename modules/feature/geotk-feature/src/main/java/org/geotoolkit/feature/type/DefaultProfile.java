@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.feature.type;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -45,7 +46,7 @@ import org.opengis.feature.type.Schema;
  * @author Jody Garnett, Refractions Research Inc.
  * @module pending
  */
-public class DefaultProfile implements Schema {
+public class DefaultProfile implements Schema,Serializable {
     /**
      * Parent Schema
      */
@@ -202,4 +203,37 @@ public class DefaultProfile implements Schema {
         }
         return contents;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final DefaultProfile other = (DefaultProfile) obj;
+        if (this.parent != other.parent && (this.parent == null || !this.parent.equals(other.parent))) {
+            return false;
+        }
+        if (this.profile != other.profile && (this.profile == null || !this.profile.equals(other.profile))) {
+            return false;
+        }
+        if (this.contents != other.contents && (this.contents == null || !this.contents.equals(other.contents))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 67 * hash + (this.parent != null ? this.parent.hashCode() : 0);
+        hash = 67 * hash + (this.profile != null ? this.profile.hashCode() : 0);
+        hash = 67 * hash + (this.contents != null ? this.contents.hashCode() : 0);
+        return hash;
+    }
+    
+    
+    
 }

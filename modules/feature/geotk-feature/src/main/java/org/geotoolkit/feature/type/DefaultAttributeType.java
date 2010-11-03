@@ -17,13 +17,11 @@
  */
 package org.geotoolkit.feature.type;
 
-import java.util.Collection;
 import java.util.List;
 
 import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.type.AttributeType;
-import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.util.InternationalString;

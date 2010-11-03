@@ -18,11 +18,10 @@ package org.geotoolkit.feature.type;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -167,7 +166,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
      */
     @Override
     public int hashCode() {
-        return 59 * super.hashCode() + descriptors.hashCode();
+        return 59 * super.hashCode() + Arrays.hashCode(descriptors);
     }
 
     /**

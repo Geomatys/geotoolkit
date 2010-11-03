@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.feature;
 
+import java.io.Serializable;
 import javax.xml.namespace.QName;
 import org.geotoolkit.util.Utilities;
 import org.opengis.feature.type.Name;
@@ -43,9 +44,10 @@ import org.opengis.feature.type.Name;
  * namespace and name.
  * </p>
  * @author Justin Deoliveira, The Open Planning Project, jdeolive@openplans.org
+ * @author Johann Sorel, Geomatys
  * @module pending
  */
-public class DefaultName implements Name {
+public class DefaultName implements Name,Serializable {
     /**
      * Namespace / scope
      */
