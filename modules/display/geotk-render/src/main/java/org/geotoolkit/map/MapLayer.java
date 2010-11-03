@@ -179,14 +179,14 @@ public interface MapLayer extends MapItem {
 
     /**
      * Register a layer listener, this listener will be registered
-     * also as a property change listener.
+     * also as an item listener.
      * @param listener Layer listener to register
      */
     void addLayerListener(LayerListener listener);
 
     /**
      * Unregister a layer listener, this listener will be unregistered
-     * also as a property change listener.
+     * also as an item listener.
      * @param listener Layer listener to unregister
      */
     void removeLayerListener(LayerListener listener);

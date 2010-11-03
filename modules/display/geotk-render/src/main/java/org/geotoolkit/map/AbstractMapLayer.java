@@ -18,6 +18,7 @@
 package org.geotoolkit.map;
 
 import java.beans.PropertyChangeEvent;
+import java.util.Collections;
 import java.util.EventObject;
 import java.util.List;
 
@@ -73,6 +74,11 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
     @Override
     public final boolean isWellKnownedType() {
         return this instanceof FeatureMapLayer || this instanceof CoverageMapLayer;
+    }
+
+    @Override
+    public List<MapItem> items() {
+        return Collections.EMPTY_LIST;
     }
 
     /**
@@ -293,36 +299,26 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
         fireStyleChange(event);
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void addLayerListener(LayerListener listener){
         synchronized(listeners){
             listeners.add(LayerListener.class, listener);
-            addPropertyChangeListener(listener);
+            addItemListener(listener);
         }
     }
 
+    /**
+     * {@inheritDoc }
+     */
     @Override
     public void removeLayerListener(LayerListener listener){
         synchronized(listeners){
             listeners.remove(LayerListener.class, listener);
-            removePropertyChangeListener(listener);
+            removeItemListener(listener);
         }
     }
     
-    @Override
-    public String toString() {
-        final StringBuilder buf = new StringBuilder();
-        buf.append("AbstractMapLayer[ ");
-        buf.append(desc);
-        if (visible) {
-            buf.append(", VISIBLE");
-        } else {
-            buf.append(", HIDDEN");
-        }
-        buf.append(", style=");
-        buf.append(style);
-        buf.append("]");
-        return buf.toString();
-    }
-
 }

@@ -17,7 +17,7 @@
 
 package org.geotoolkit.map;
 
-import java.beans.PropertyChangeListener;
+import java.util.List;
 import org.opengis.style.Description;
 
 /**
@@ -56,6 +56,14 @@ public interface MapItem {
     Description getDescription();
 
     /**
+     * Returns the living list of all items. You may add, remove or change items
+     * of this list. In case this object is a map layer object, this list will be empty
+     * and immutable.
+     * @return the live list
+     */
+    List<MapItem> items();
+
+    /**
      * Store a value for this maplayer in a hashmap using the given key.
      */
     void setUserPropertie(String key,Object value);
@@ -66,13 +74,15 @@ public interface MapItem {
     Object getUserPropertie(String key);
 
     /**
-     * Register a property change listener.
+     * Register an item listener.
+     * @param listener item listener to register
      */
-    void addPropertyChangeListener(PropertyChangeListener listener);
+    void addItemListener(ItemListener listener);
 
     /**
-     * Unregister a property change listener.
+     * Unregister an item listener.
+     * @param listener item listener to unregister.
      */
-    void removePropertyChangeListener(PropertyChangeListener listener);
+    void removeItemListener(ItemListener listener);
 
 }

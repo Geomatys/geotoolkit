@@ -18,13 +18,20 @@ package org.geotoolkit.map;
 
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Collection;
+import java.util.EventObject;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import javax.swing.event.EventListenerList;
 
 import org.geotoolkit.style.StyleConstants;
+import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
+import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.style.Description;
@@ -134,23 +141,47 @@ public abstract class AbstractMapItem implements MapItem {
      * {@inheritDoc }
      */
     @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener){
-        listeners.add(PropertyChangeListener.class, listener);
+    public void addItemListener(ItemListener listener){
+        listeners.add(ItemListener.class, listener);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener){
-        listeners.remove(PropertyChangeListener.class, listener);
+    public void removeItemListener(ItemListener listener){
+        listeners.remove(ItemListener.class, listener);
     }
-    
+
+    protected void fireItemChange(int type, MapItem item, NumberRange<Integer> range, EventObject orig) {
+        //TODO make fire property change thread safe, preserve fire order
+
+        final CollectionChangeEvent<MapItem> event = new CollectionChangeEvent<MapItem>(this, item, type, range, orig);
+        final ItemListener[] lists = listeners.getListeners(ItemListener.class);
+
+        for (ItemListener listener : lists){
+            listener.itemChange(event);
+        }
+
+    }
+
+    protected void fireItemChange(int type, Collection<? extends MapItem> item, NumberRange<Integer> range){
+        //TODO make fire property change thread safe, preserve fire order
+
+        final CollectionChangeEvent<MapItem> event = new CollectionChangeEvent<MapItem>(this,item,type,range, null);
+        final ItemListener[] lists = listeners.getListeners(ItemListener.class);
+
+        for(ItemListener listener : lists){
+            listener.itemChange(event);
+        }
+
+    }
+
     protected void firePropertyChange(String propertyName, Object oldValue, Object newValue){
         //TODO make fire property change thread safe, preserve fire order
         
         final PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);
-        final PropertyChangeListener[] lists = listeners.getListeners(PropertyChangeListener.class);
+        final ItemListener[] lists = listeners.getListeners(ItemListener.class);
         
         for(PropertyChangeListener listener : lists){
             listener.propertyChange(event);
@@ -160,11 +191,20 @@ public abstract class AbstractMapItem implements MapItem {
     @Override
     public String toString() {
         final StringBuilder buf = new StringBuilder();
-        buf.append("AbstractMapItem[ ");
-        buf.append(name);
-        buf.append(',');
-        buf.append(desc);
-        buf.append("]");
+        buf.append(Classes.getShortClassName(this));
+        if(name != null){
+            buf.append(" (");
+            buf.append(name);
+            buf.append(") ");
+        }        
+        if(desc != null){
+            buf.append(desc);
+        }
+        final List<MapItem> items = items();
+        if(!items.isEmpty()){
+            buf.append('\n');
+            buf.append( StringUtilities.toStringTree(items) );
+        }
         return buf.toString();
     }
 

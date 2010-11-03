@@ -17,13 +17,15 @@
  */
 package org.geotoolkit.map;
 
+import java.beans.PropertyChangeEvent;
 import java.io.IOException;
+import java.util.AbstractList;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EventObject;
 import java.util.List;
-import java.beans.PropertyChangeEvent;
-import java.util.ArrayList;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Level;
 
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -44,115 +46,9 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-final class DefaultMapContext extends AbstractMapItem implements MapContext, LayerListener {
+final class DefaultMapContext extends DefaultMapItem implements MapContext, LayerListener {
 
-    private final List<MapLayer> layers = new CopyOnWriteArrayList<MapLayer>() {
-
-        protected Object getLock() {
-            return DefaultMapContext.this;
-        }
-
-        protected void notifyAdd(final MapLayer item, final int index) {
-            fireLayerChange(CollectionChangeEvent.ITEM_ADDED, item, NumberRange.create(index, index),null);
-            layerListener.registerSource(item);
-        }
-
-        protected void notifyAdd(final Collection<? extends MapLayer> items, final NumberRange<Integer> range) {
-            fireLayerChange(CollectionChangeEvent.ITEM_ADDED, items, range);
-            for(final MapLayer layer : items){
-                layerListener.registerSource(layer);
-            }
-        }
-
-        protected void notifyRemove(final MapLayer item, final int index) {
-            fireLayerChange(CollectionChangeEvent.ITEM_REMOVED, item, NumberRange.create(index, index),null );
-            layerListener.unregisterSource(item);
-        }
-
-        protected void notifyRemove(final Collection<? extends MapLayer> items, final NumberRange<Integer> range) {
-            fireLayerChange(CollectionChangeEvent.ITEM_REMOVED, items, range );
-            for(final MapLayer layer : items){
-                layerListener.unregisterSource(layer);
-            }
-        }
-
-        @Override
-        public boolean add(final MapLayer element) throws IllegalArgumentException, UnsupportedOperationException {
-            if(element == null) return false;
-            final boolean added = super.add(element);
-            if (added) {
-                final int index = super.size() - 1;
-                notifyAdd(element, index);
-            }
-            return added;
-        }
-
-        @Override
-        public void add(final int index, final MapLayer element) throws IllegalArgumentException, UnsupportedOperationException {
-            super.add(index, element);
-            notifyAdd(element, index);
-        }
-
-        @Override
-        public boolean addAll(final Collection<? extends MapLayer> collection) throws IllegalArgumentException, UnsupportedOperationException {
-            final int startIndex = super.size();
-            final boolean added = super.addAll(collection);
-            if (added) {
-                notifyAdd(collection, NumberRange.create(startIndex, super.size()-1) );
-            }
-            return added;
-        }
-
-        @Override
-        public boolean addAll(final int index, final Collection<? extends MapLayer> collection) throws IllegalArgumentException, UnsupportedOperationException {
-            final boolean added = super.addAll(index, collection);
-            if (added) {
-                notifyAdd(collection, NumberRange.create(index, index + collection.size()) );
-            }
-            return added;
-        }
-
-        @Override
-        public boolean remove(final Object o) throws UnsupportedOperationException {
-            final int index = super.indexOf(o);
-            if (index >= 0) {
-                super.remove(index);
-                notifyRemove((MapLayer)o, index );
-                return true;
-            }
-            return false;
-        }
-
-        @Override
-        public MapLayer remove(final int index) throws UnsupportedOperationException {
-            final MapLayer removed = super.remove(index);
-            notifyRemove(removed, index );
-            return removed;
-        }
-
-        @Override
-        public boolean removeAll(final Collection<?> c) throws UnsupportedOperationException {
-            //TODO handle remove by collection events if possible
-            // to avoid several calls to remove
-            boolean valid = false;
-            for(final Object i : c){
-                final boolean val = remove(i);
-                if(val) valid = val;
-            }
-            return valid;
-        }
-
-        @Override
-        public void clear() throws UnsupportedOperationException {
-            if(!isEmpty()){
-                final Collection<MapLayer> copy = new ArrayList<MapLayer>(this);
-                final NumberRange<Integer> range = NumberRange.create(0, copy.size()-1);
-                super.clear();
-                notifyRemove(copy, range);
-            }
-        }
-
-    };
+    private final AdapterList layers = new AdapterList();
 
     private final LayerListener.Weak layerListener = new LayerListener.Weak(this);
 
@@ -220,8 +116,6 @@ final class DefaultMapContext extends AbstractMapItem implements MapContext, Lay
      *         expensive for the method to calculate. TODO: when coordinate
      *         system information will be added reproject the bounds according
      *         to the current coordinate system
-     *
-     *
      */
     @Override
     public Envelope getBounds() throws IOException {
@@ -263,87 +157,6 @@ final class DefaultMapContext extends AbstractMapItem implements MapContext, Lay
         return result;
     }
 
-
-    //--------------------------------------------------------------------------
-    // listeners management ----------------------------------------------------
-    //--------------------------------------------------------------------------
-
-    protected void fireLayerChange(int type, MapLayer layer, NumberRange<Integer> range, EventObject orig) {
-        //TODO make fire property change thread safe, preserve fire order
-
-        final CollectionChangeEvent<MapLayer> event = new CollectionChangeEvent<MapLayer>(this, layer, type, range, orig);
-        final ContextListener[] lists = listeners.getListeners(ContextListener.class);
-
-        for (ContextListener listener : lists) {
-            listener.layerChange(event);
-        }
-
-    }
-
-    protected void fireLayerChange(int type, Collection<? extends MapLayer> layer, NumberRange<Integer> range){
-        //TODO make fire property change thread safe, preserve fire order
-
-        final CollectionChangeEvent<MapLayer> event = new CollectionChangeEvent<MapLayer>(this,layer,type,range, null);
-        final ContextListener[] lists = listeners.getListeners(ContextListener.class);
-
-        for(ContextListener listener : lists){
-            listener.layerChange(event);
-        }
-
-    }
-
-    //--------------------------------------------------------------------------
-    // layer listener ----------------------------------------------------------
-    //--------------------------------------------------------------------------
-
-    @Override
-    public void propertyChange(PropertyChangeEvent event) {
-        final int number = layers.indexOf((MapLayer)event.getSource());
-        fireLayerChange(CollectionChangeEvent.ITEM_CHANGED, (MapLayer)event.getSource(), NumberRange.create(number,number),event);
-    }
-
-    @Override
-    public void styleChange(MapLayer source, EventObject event) {
-        final int number = layers.indexOf(source);
-        fireLayerChange(CollectionChangeEvent.ITEM_CHANGED, source, NumberRange.create(number,number),event);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void addContextListener(ContextListener listener){
-        listeners.add(ContextListener.class, listener);
-        addPropertyChangeListener(listener);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void removeContextListener(ContextListener listener){
-        listeners.remove(ContextListener.class, listener);
-        removePropertyChangeListener(listener);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void moveLayer(int sourcePosition, int destPosition) {
-
-        if ((sourcePosition < 0) || (sourcePosition >= layers.size())) {
-            throw new IndexOutOfBoundsException("Source position " + sourcePosition + " out of bounds");
-        }
-
-        if ((destPosition < 0) || (destPosition >= layers.size())) {
-            throw new IndexOutOfBoundsException("Destination position " + destPosition + " out of bounds");
-        }
-
-        MapLayer removedLayer = (MapLayer) layers.remove(sourcePosition);
-        layers.add(destPosition, removedLayer);
-    }
-
     /**
      * {@inheritDoc }
      */
@@ -375,5 +188,196 @@ final class DefaultMapContext extends AbstractMapItem implements MapContext, Lay
         }
         firePropertyChange(AREA_OF_INTEREST_PROPERTY, oldEnv, this.area);
     }
+
+    //--------------------------------------------------------------------------
+    // listeners management ----------------------------------------------------
+    //--------------------------------------------------------------------------
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void addContextListener(ContextListener listener){
+        listeners.add(ContextListener.class, listener);
+        addItemListener(listener);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void removeContextListener(ContextListener listener){
+        listeners.remove(ContextListener.class, listener);
+        removeItemListener(listener);
+    }
+
+    protected void fireLayerChange(int type, MapLayer layer, NumberRange<Integer> range, EventObject orig) {
+
+        //update the tree
+        final List<MapLayer> list = Collections.singletonList(layer);
+        final int startIndex = range.getMinValue();
+        for(int i=list.size()-1;i>=0;i--){
+            if(type == CollectionChangeEvent.ITEM_ADDED){
+                updateItemAdd(list.get(i), startIndex+i);
+            }else if(type == CollectionChangeEvent.ITEM_REMOVED){
+                updateItemRemove(startIndex+i);
+            }
+        }
+
+        //fire the event
+        final CollectionChangeEvent<MapLayer> event = new CollectionChangeEvent<MapLayer>(this, layer, type, range, orig);
+        final ContextListener[] lists = listeners.getListeners(ContextListener.class);
+        for (ContextListener listener : lists) {
+            listener.layerChange(event);
+        }
+
+    }
+
+    private void updateItemAdd(MapLayer layer, int index){
+        if(index==0){
+            items.add(0, layer);
+        }else{
+            final MapLayer beforeElement = layers.get(index-1);
+            final MapItem parent = findParentForLayerNumber(this, index-1, new AtomicInteger(-1));
+            final int beforeIndex = parent.items().indexOf(beforeElement);
+            parent.items().add(beforeIndex+1, layer);
+        }
+    }
+
+    private void updateItemRemove(int index){
+        findAndRemoveForLayerNumber(this, index, new AtomicInteger(-1));
+    }
+
+    private MapItem findParentForLayerNumber(MapItem root, int wishedNumber, AtomicInteger inc){
+
+        for(MapItem item : root.items()){
+            if(item instanceof MapLayer){
+                if(inc.incrementAndGet() == wishedNumber){
+                    return root;
+                }
+            }else{
+                final MapItem test = findParentForLayerNumber(item, wishedNumber, inc);
+                if(test != null){
+                    return test;
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean findAndRemoveForLayerNumber(MapItem root, int wishedNumber, AtomicInteger inc){
+
+        for(MapItem item : root.items()){
+            if(item instanceof MapLayer){
+                if(inc.incrementAndGet() == wishedNumber){
+                    root.items().remove(item);
+                    return true;
+                }
+            }else{
+                final boolean found = findAndRemoveForLayerNumber(item, wishedNumber, inc);
+                if(found){
+                    return found;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    //--------------------------------------------------------------------------
+    // layer listener ----------------------------------------------------------
+    //--------------------------------------------------------------------------
+    
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+        final int number = layers.indexOf((MapLayer)event.getSource());
+        fireLayerChange(CollectionChangeEvent.ITEM_CHANGED, (MapLayer)event.getSource(), NumberRange.create(number,number),event);
+    }
+
+    @Override
+    public void styleChange(MapLayer source, EventObject event) {
+        final int number = layers.indexOf(source);
+        fireLayerChange(CollectionChangeEvent.ITEM_CHANGED, source, NumberRange.create(number,number),event);
+    }
+
+    //--------------------------------------------------------------------------
+    // item changes, update layers list ----------------------------------------
+    //--------------------------------------------------------------------------
+
+    @Override
+    protected void fireItemChange(int type, Collection<? extends MapItem> item, NumberRange<Integer> range) {
+        super.fireItemChange(type, item, range);
+        layers.clearCache();
+    }
+
+    @Override
+    protected void fireItemChange(int type, MapItem item, NumberRange<Integer> range, EventObject orig) {
+        super.fireItemChange(type, item, range, orig);
+        layers.clearCache();
+    }
+
+    private List<MapLayer> createLayerList(MapItem item, List<MapLayer> buffer){
+        if(item instanceof MapLayer){
+            buffer.add((MapLayer) item);
+        }else{
+            for(MapItem child : item.items()){
+                createLayerList(child, buffer);
+            }
+        }
+        return buffer;
+    }
+
+    /**
+     * Special list wish only raise events on add/remove calls.
+     */
+    private final class AdapterList extends AbstractList<MapLayer> {
+
+        private MapLayer[] cache = null;
+
+        private synchronized MapLayer[] getCache(){
+            if(cache == null){
+                final List<MapLayer> layers = createLayerList(DefaultMapContext.this, new ArrayList<MapLayer>());
+                cache = layers.toArray(new MapLayer[layers.size()]);
+            }
+            return cache;
+        }
+
+        private synchronized void clearCache(){
+            cache = null;
+        }
+
+        @Override
+        public MapLayer get(int index) {
+            return getCache()[index];
+        }
+
+        @Override
+        public MapLayer set(int index, MapLayer element) {
+            final MapLayer old = remove(index);
+            add(index,element);
+            return old;
+        }
+
+        @Override
+        public void add(int index, MapLayer element) {
+            layerListener.registerSource(element);
+            fireLayerChange(CollectionChangeEvent.ITEM_ADDED, element, NumberRange.create(index, index), null);
+        }
+
+        @Override
+        public MapLayer remove(int index) {
+            final MapLayer[] array = getCache();
+            fireLayerChange(CollectionChangeEvent.ITEM_REMOVED, array[index], NumberRange.create(index, index), null);
+            final MapLayer removed = array[index];
+            layerListener.unregisterSource(removed);
+            return removed;
+        }
+
+        @Override
+        public int size() {
+            return getCache().length;
+        }
+
+    };
 
 }

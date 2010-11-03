@@ -69,7 +69,7 @@ public class MapLayerTest extends TestCase{
     }
 
     @Test
-    public void testContext() {
+    public void testContextCreation() {
 
         try{
             MapBuilder.createContext(null);
@@ -80,9 +80,7 @@ public class MapLayerTest extends TestCase{
 
         MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);
         assertNotNull(context);
-
         assertNotNull(context.getCoordinateReferenceSystem());
-
     }
 
     @Test

@@ -65,25 +65,20 @@ public interface MapContext extends MapItem{
     List<MapLayer> layers();
 
     /**
-     * convinient method to move a layer in the list from indexes.
-     */
-    void moveLayer(int begin,int end);
-
-    /**
      * Return the enveloppe of all layers.
      */
     Envelope getBounds() throws IOException;
 
     /**
      * Register a context listener, this listener will be registered
-     * also as a property change listener.
+     * also as an item listener.
      * @param listener Context listener to register
      */
     void addContextListener(ContextListener listener);
 
     /**
      * Unregister a context listener, this listener will be registered
-     * also as a property change listener.
+     * also as an item listener.
      * @param listener Context listener to unregister
      */
     void removeContextListener(ContextListener listener);

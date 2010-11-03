@@ -18,7 +18,6 @@
 package org.geotoolkit.map;
 
 import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,7 +33,7 @@ import org.geotoolkit.util.Disposable;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface ContextListener extends PropertyChangeListener {
+public interface ContextListener extends ItemListener {
         
     /**
      * Called when a change occurs in the living layer list.
@@ -99,6 +98,15 @@ public interface ContextListener extends PropertyChangeListener {
             final ContextListener listener = get();
             if (listener != null) {
                 listener.layerChange(event);
+            }
+            //if the listener is null, that means we are in the reference queue and it will be disposed soon.
+        }
+
+        @Override
+        public void itemChange(CollectionChangeEvent<MapItem> event) {
+            final ContextListener listener = get();
+            if (listener != null) {
+                listener.itemChange(event);
             }
             //if the listener is null, that means we are in the reference queue and it will be disposed soon.
         }

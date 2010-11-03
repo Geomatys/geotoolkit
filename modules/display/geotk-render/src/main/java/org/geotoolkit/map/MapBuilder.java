@@ -69,6 +69,13 @@ public final class MapBuilder {
     }
 
     /**
+     * Create a Default MapItem object. It can be used to group layers.
+     */
+    public static MapItem createItem(){
+        return new DefaultMapItem();
+    }
+
+    /**
      * Create an empty map layer without any datas. It can be usefull in different
      * kind of applications, like holding a space in the mapcontext for a layer
      * when a datastore is unavailable.

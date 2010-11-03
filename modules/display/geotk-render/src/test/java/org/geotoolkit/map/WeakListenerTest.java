@@ -65,7 +65,8 @@ public class WeakListenerTest {
      */
     @Test
     public void testWeakContextListener() {
-        final AtomicInteger count = new AtomicInteger(0);
+        final AtomicInteger countLayerChange = new AtomicInteger(0);
+        final AtomicInteger countItemChange = new AtomicInteger(0);
 
         final MapContext context = MapBuilder.createContext();
         ContextListener listener = new ContextListener() {
@@ -76,7 +77,12 @@ public class WeakListenerTest {
 
             @Override
             public void layerChange(CollectionChangeEvent<MapLayer> event) {
-                count.incrementAndGet();
+                countLayerChange.incrementAndGet();
+            }
+
+            @Override
+            public void itemChange(CollectionChangeEvent<MapItem> event) {
+                countItemChange.incrementAndGet();
             }
             
         };
@@ -85,13 +91,14 @@ public class WeakListenerTest {
         weak.registerSource(context);
 
         context.layers().add(MapBuilder.createEmptyMapLayer());
-        assertEquals(1, count.get());
+        assertEquals(1, countLayerChange.get());
+        assertEquals(1, countItemChange.get());
         listener = null;
         pause();
 
         context.layers().add(MapBuilder.createEmptyMapLayer());
         //listener should have desapear now, so the event should not have been send
-        assertEquals(1, count.get());
+        assertEquals(1, countLayerChange.get());
     }
 
     /**
@@ -110,6 +117,11 @@ public class WeakListenerTest {
 
             @Override
             public void styleChange(MapLayer source, EventObject event) {
+                fail("Should never had been called");
+            }
+
+            @Override
+            public void itemChange(CollectionChangeEvent<MapItem> event) {
                 fail("Should never had been called");
             }
         };
