@@ -89,7 +89,7 @@ public class LineWriter extends FilterWriter {
     public LineWriter(final Writer out, final String lineSeparator) {
         super(out);
         this.lineSeparator = lineSeparator;
-        if (out==null || lineSeparator==null) {
+        if (out == null || lineSeparator == null) {
             throw new NullArgumentException();
         }
     }

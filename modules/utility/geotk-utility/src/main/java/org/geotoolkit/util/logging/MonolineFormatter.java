@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.util.logging;
 
-import java.io.IOException;
+import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.FieldPosition;
 import java.text.SimpleDateFormat;
@@ -31,6 +31,7 @@ import java.util.logging.*;
 
 import org.geotoolkit.io.X364;
 import org.geotoolkit.io.LineWriter;
+import org.geotoolkit.io.ExpandedTabWriter;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.lang.ThreadSafe;
@@ -81,7 +82,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * }
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.16
  *
  * @since 2.0
  * @module
@@ -156,14 +157,7 @@ public class MonolineFormatter extends Formatter {
      * The line separator. This is the value of the {@code "line.separator"}
      * property at the time the {@code MonolineFormatter} was created.
      */
-    private final String lineSeparator = System.getProperty("line.separator", "\n");
-
-    /**
-     * The line separator for the message body. This line always begin with
-     * {@link #lineSeparator}, followed by some amount of spaces in order to
-     * align the message.
-     */
-    private String bodyLineSeparator = lineSeparator;
+    private final String lineSeparator;
 
     /**
      * The minimum amount of characters to use for writing logging level before the message.
@@ -191,16 +185,25 @@ public class MonolineFormatter extends Formatter {
 
     /**
      * Buffer for formatting messages. We will reuse this buffer in order to reduce memory
-     * allocations. This is the buffer used internaly by {@link #writer}.
+     * allocations. This is the buffer used internally by {@link #writer}.
      */
     private final StringBuffer buffer;
 
     /**
      * The line writer. This object transforms all {@code "\r"}, {@code "\n"} or {@code "\r\n"}
      * occurrences into a single line separator. This line separator will include space for the
-     * marging, if needed.
+     * margin, if needed.
      */
     private final LineWriter writer;
+
+    /**
+     * The printer wrapping the {@link #writer}. This is used in order to trap {@link IOException}
+     * (which should never happen because we are writing in the {@linkplain #buffer}) and allow
+     * {@link Throwable#printStackTrace(PrintWriter)} calls.
+     *
+     * @since 3.16
+     */
+    private final PrintWriter printer;
 
     /**
      * Constructs a default {@code MonolineFormatter}. Formatters are often associated to
@@ -238,12 +241,15 @@ loop:   for (int i=0; ; i++) {
             }
         }
         /*
-         * Creates the buffer.
+         * Creates the buffer and the printer. We will expand the tabulations with 4 characters.
+         * This apply to the stack trace formatted by Throwable.printStackTrace(PrintWriter);
+         * The default (8 characters) is a bit wide...
          */
-        StringWriter str = new StringWriter();
-        writer = new LineWriter(str);
-        buffer = str.getBuffer();
-        buffer.append(MARGIN);
+        final StringWriter str = new StringWriter();
+        writer        = new LineWriter(str);
+        buffer        = str.getBuffer().append(MARGIN);
+        printer       = new PrintWriter(new ExpandedTabWriter(writer, 4));
+        lineSeparator = writer.getLineSeparator();
         /*
          * Configures this formatter according the properties, if any.
          */
@@ -509,27 +515,49 @@ loop:   for (int i=0; ; i++) {
          * usual EOL ("\r", "\n", or "\r\n", which is plateform specific)
          * following by some amout of space in order to align message body.
          */
+        String bodyLineSeparator = writer.getLineSeparator();
         if (bodyLineSeparator.length() != lineSeparator.length() + margin) {
             bodyLineSeparator = lineSeparator + Strings.spaces(margin);
+            writer.setLineSeparator(bodyLineSeparator);
         }
         if (colors && !emphase) {
             buffer.append(X364.FAINT.sequence());
         }
-        final LineWriter writer = this.writer;
-        try {
-            writer.setLineSeparator(bodyLineSeparator);
-            writer.write(String.valueOf(formatMessage(record)));
-            writer.setLineSeparator(lineSeparator);
-            writer.write('\n');
-            writer.flush();
-        } catch (IOException exception) {
-            // Should never happen, since we are writing into a StringBuffer.
-            throw new AssertionError(exception);
+        final Throwable exception = record.getThrown();
+        String message = formatMessage(record);
+        if (message != null) {
+            message = message.substring(0, trim(message));
         }
+        if (exception != null) {
+            // If there is no message, print directly the exception.
+            if (message != null) {
+                printer.print(message);
+                printer.print('\n'); // Automatically replaced by 'bodyLineSeparator'.
+            }
+            exception.printStackTrace(printer);
+        } else {
+            // If there is no message, print "null".
+            printer.print(message);
+        }
+        printer.flush();
+        buffer.setLength(trim(buffer));
+        buffer.append(lineSeparator);
         if (colors && !emphase) {
             buffer.append(X364.NORMAL.sequence());
         }
         return buffer.toString();
+    }
+
+    /**
+     * Returns the length of the given characters sequences without the trailing spaces
+     * or line feed.
+     */
+    private static int trim(final CharSequence message) {
+        int length = message.length();
+        while (length != 0 && Character.isWhitespace(message.charAt(length-1))) {
+            length--;
+        }
+        return length;
     }
 
     /**
