@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.filter.identity;
 
+import java.io.Serializable;
 import org.opengis.feature.Feature;
 import org.opengis.filter.identity.GmlObjectId;
 
@@ -26,7 +27,7 @@ import org.opengis.filter.identity.GmlObjectId;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultGmlObjectId implements GmlObjectId {
+public class DefaultGmlObjectId implements GmlObjectId,Serializable {
 
     private final String id;
 

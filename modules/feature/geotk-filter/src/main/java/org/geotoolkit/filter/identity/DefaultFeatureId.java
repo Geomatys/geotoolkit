@@ -17,8 +17,8 @@
  */
 package org.geotoolkit.filter.identity;
 
+import java.io.Serializable;
 import org.opengis.feature.Attribute;
-import org.opengis.feature.Feature;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
 
@@ -28,7 +28,7 @@ import org.opengis.filter.identity.Identifier;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultFeatureId implements FeatureId {
+public class DefaultFeatureId implements FeatureId,Serializable {
 
     private final String id;
 

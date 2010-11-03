@@ -24,6 +24,7 @@ import com.vividsolutions.jts.geom.Point;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.test.Commons;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -93,6 +94,8 @@ public class FeatureTest {
         assertNotNull(feature.getDefaultGeometryProperty().getValue());
         assertTrue(GF.createPoint(new Coordinate(50, 60)).equalsExact((Geometry) feature.getDefaultGeometryProperty().getValue()));
 
+        //test serialize
+        Commons.serialize(feature);
     }
 
 }

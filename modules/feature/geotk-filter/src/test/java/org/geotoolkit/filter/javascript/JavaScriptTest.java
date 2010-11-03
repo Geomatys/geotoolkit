@@ -19,14 +19,18 @@ package org.geotoolkit.filter.javascript;
 
 import java.util.List;
 import javax.script.ScriptException;
+
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.filter.FilterTestConstants;
 import org.geotoolkit.filter.function.javascript.JavaScriptFunctionFactory;
+import org.geotoolkit.test.Commons;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Function;
@@ -79,6 +83,7 @@ public class JavaScriptTest {
                          "if(x<0) x = 10;" +
                          "x;");
         jsFunction = ff.function(JavaScriptFunctionFactory.JAVASCRIPT, exp);
+        Commons.serialize(jsFunction); //test serialize
 
         List<Expression> exps = jsFunction.getParameters();
         PropertyName property1 = (PropertyName) exps.get(1);

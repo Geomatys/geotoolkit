@@ -21,6 +21,7 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import org.geotoolkit.test.Commons;
 import org.junit.Test;
 
 import org.opengis.filter.Filter;
@@ -54,6 +55,9 @@ public class FilterTest {
         ids.add(FF.featureId("dummyid45"));
 
         Id id = FF.id(ids);
+        
+        //test serialize
+        Commons.serialize(id);
 
         assertFalse(id.evaluate(CANDIDATE_1));
 
@@ -67,6 +71,7 @@ public class FilterTest {
     public void testLiteral(){
         Literal literal;
         literal = FF.literal(RIGHT_GEOMETRY);
+        //we do not serialize on geometries, JTS does not provide an hashcode
         assertEquals(RIGHT_GEOMETRY, literal.getValue());
 
         assertNotNull(FF.literal(true));
@@ -74,15 +79,27 @@ public class FilterTest {
         assertNotNull(FF.literal('x'));
         assertNotNull(FF.literal(122));
         assertNotNull(FF.literal(45.56d));
+        
+        Commons.serialize(FF.literal(true));
+        Commons.serialize(FF.literal("a text string"));
+        Commons.serialize(FF.literal('x'));
+        Commons.serialize(FF.literal(122));
+        Commons.serialize(FF.literal(45.56d));
     }
 
     @Test
     public void testNot(){
         Filter filter = FF.equals(FF.property("testString"), FF.literal("test string data"));
         assertTrue(filter.evaluate(CANDIDATE_1));
+        
+        //test serialize
+        Commons.serialize(filter);
 
         Not not = FF.not(filter);
         assertFalse(not.evaluate(CANDIDATE_1));
+        
+        //test serialize
+        Commons.serialize(not);
     }
 
     @Test
@@ -94,6 +111,7 @@ public class FilterTest {
         int iafter = 250;
         PropertyIsBetween between = FF.between(property, FF.literal(ibefore), FF.literal(iafter));
         assertTrue(between.evaluate(CANDIDATE_1));
+        Commons.serialize(between); //test serialize
 
         ibefore = 112;
         iafter = 360;
@@ -113,6 +131,7 @@ public class FilterTest {
 
         between = FF.between(property, FF.literal(dbefore), FF.literal(dafter));
         assertFalse(between.evaluate(CANDIDATE_1));
+        Commons.serialize(between); //test serialize
 
         //test against strings
         between = FF.between(property, FF.literal("1850-09-01Z"), FF.literal("2210-11-01Z"));
@@ -133,11 +152,13 @@ public class FilterTest {
 
         between = FF.between(property, FF.literal(dbefore), FF.literal(dafter));
         assertTrue(between.evaluate(CANDIDATE_1));
+        Commons.serialize(between); //test serialize
 
         //test timestamp against string
         property = FF.property("datetime2");
         between = FF.between(property, FF.literal("1850-09-01Z"), FF.literal("2210-11-01Z"));
         assertTrue(between.evaluate(CANDIDATE_1));
+        Commons.serialize(between); //test serialize
 
         between = FF.between(property, FF.literal("2150-09-01Z"), FF.literal("2210-11-01Z"));
         assertFalse(between.evaluate(CANDIDATE_1));
@@ -152,6 +173,7 @@ public class FilterTest {
 
         PropertyIsLike filter = FF.like(testAttribute, "test*", "*", ".", "!");
         assertTrue(filter.evaluate(CANDIDATE_1));
+        Commons.serialize(filter); //test serialize
 
         // Test for false positive.
         filter = FF.like(testAttribute, "cows*", "*", ".", "!");
@@ -175,12 +197,14 @@ public class FilterTest {
 
         filter = FF.isNull(FF.property("testString"));
         assertFalse(filter.evaluate(CANDIDATE_1));
+        Commons.serialize(filter); //test serialize
     }
 
     @Test
     public void testPropertyName(){
         Expression exp = FF.property("testString");
         assertEquals(exp.evaluate(CANDIDATE_1), "test string data");
+        Commons.serialize(exp); //test serialize
     }
 
 }

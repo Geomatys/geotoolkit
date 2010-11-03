@@ -17,6 +17,7 @@
 
 package org.geotoolkit.filter.accessor;
 
+import java.io.Serializable;
 import java.util.Map;
 import org.geotoolkit.factory.Hints;
 
@@ -42,7 +43,7 @@ public class DummyMapAccessorFactory implements PropertyAccessorFactory{
         return 0;
     }
 
-    private static class MapAccessor implements PropertyAccessor{
+    private static class MapAccessor implements PropertyAccessor,Serializable{
 
         @Override
         public boolean canHandle(Class clazz, String xpath, Class target) {
@@ -61,6 +62,24 @@ public class DummyMapAccessorFactory implements PropertyAccessorFactory{
             map.put(xpath, value);
         }
 
+        @Override
+        public boolean equals(Object obj) {
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final MapAccessor other = (MapAccessor) obj;
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int hash = 5;
+            return hash;
+        }
+        
     }
 
 }

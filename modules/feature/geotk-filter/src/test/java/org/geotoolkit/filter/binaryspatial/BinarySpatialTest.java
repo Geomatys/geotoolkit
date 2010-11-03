@@ -132,7 +132,7 @@ public class BinarySpatialTest {
 
         contains = FF.contains(FF.literal(GEOM_DISTANCE_1),FF.property("testGeometry"));
         assertFalse(contains.evaluate(CANDIDATE_1));
-
+        
     }
 
     @Test
@@ -146,7 +146,7 @@ public class BinarySpatialTest {
 
         crosses = FF.crosses(FF.literal(GEOM_DISTANCE_1),FF.property("testGeometry"));
         assertFalse(crosses.evaluate(CANDIDATE_1));
-
+        
     }
 
     @Test
@@ -157,7 +157,7 @@ public class BinarySpatialTest {
         assertTrue(within.evaluate(CANDIDATE_1));
 
         within = FF.dwithin(FF.property("testGeometry"), FF.literal(GEOM_DISTANCE_3), 1.5d, "m");
-        assertFalse(within.evaluate(CANDIDATE_1));
+        assertFalse(within.evaluate(CANDIDATE_1));        
     }
 
     @Test

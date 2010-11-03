@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.filter;
 
+import java.io.Serializable;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsNull;
 import org.opengis.filter.expression.Expression;
@@ -27,7 +28,7 @@ import org.opengis.filter.expression.Expression;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultPropertyIsNull implements PropertyIsNull {
+public class DefaultPropertyIsNull implements PropertyIsNull,Serializable {
 
     private final Expression exp;
 

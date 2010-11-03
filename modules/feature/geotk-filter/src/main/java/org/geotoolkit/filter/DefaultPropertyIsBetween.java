@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.filter;
 
+import java.io.Serializable;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.util.StringUtilities;
 
@@ -30,7 +31,7 @@ import org.opengis.filter.expression.Expression;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultPropertyIsBetween implements PropertyIsBetween{
+public class DefaultPropertyIsBetween implements PropertyIsBetween,Serializable{
 
     private final Expression candidate;
     private final Expression lower;

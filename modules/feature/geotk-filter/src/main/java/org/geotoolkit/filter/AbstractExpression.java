@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.filter;
 
+import java.io.Serializable;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.geotoolkit.util.Converters;
@@ -30,7 +31,7 @@ import org.opengis.filter.expression.Expression;
  * @module pending
  */
 @XmlTransient
-public abstract class AbstractExpression implements Expression {
+public abstract class AbstractExpression implements Expression,Serializable {
 
     /**
      * {@inheritDoc }

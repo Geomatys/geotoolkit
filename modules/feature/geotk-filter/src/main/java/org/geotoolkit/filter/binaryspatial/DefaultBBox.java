@@ -56,7 +56,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
     private static final PreparedGeometryFactory PREPARED_FACTORY = new PreparedGeometryFactory();
 
     //cache the bbox geometry
-    protected final PreparedGeometry boundingGeometry;
+    protected transient PreparedGeometry boundingGeometry;
     protected final com.vividsolutions.jts.geom.Envelope boundingEnv;
     protected final CoordinateReferenceSystem crs;
     protected final int srid;
@@ -71,6 +71,13 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
         }else{
             this.srid = 0;
         }
+    }
+    
+    private PreparedGeometry getPreparedGeometry(){
+        if(boundingGeometry == null){
+            boundingGeometry = toGeometry(right.getValue());
+        }
+        return boundingGeometry;
     }
 
     private static PropertyName nonNullPropertyName(PropertyName proper) {
@@ -172,7 +179,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
         if(boundingEnv.contains(candidateEnv) || candidateEnv.contains(boundingEnv)) {
             return true;
         } else if(boundingEnv.intersects(candidateEnv)) {
-            return boundingGeometry.intersects(candidate);
+            return getPreparedGeometry().intersects(candidate);
         } else {
             return false;
         }

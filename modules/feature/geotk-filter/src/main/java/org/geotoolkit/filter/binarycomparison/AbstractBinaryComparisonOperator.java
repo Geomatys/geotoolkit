@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.filter.binarycomparison;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 import org.geotoolkit.util.Converters;
@@ -32,7 +33,8 @@ import org.opengis.filter.expression.Expression;
  * @param <F> Expression or subclass
  * @module pending
  */
-public abstract class AbstractBinaryComparisonOperator<E extends Expression,F extends Expression> implements BinaryComparisonOperator{
+public abstract class AbstractBinaryComparisonOperator<E extends Expression,F extends Expression> 
+                                                implements BinaryComparisonOperator,Serializable{
 
     protected final E left;
     protected final F right;

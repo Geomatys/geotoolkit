@@ -30,6 +30,7 @@ import junit.framework.TestSuite;
 
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.test.Commons;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -90,6 +91,9 @@ public class FeatureFlatTest extends TestCase {
         assertTrue(
             "string retrieval and match",
             ((String) testFeature.getAttribute("testString")).equals("test string data"));
+        
+        //test serialize
+        Commons.serialize(testFeature);
 
     }
 
@@ -163,6 +167,9 @@ public class FeatureFlatTest extends TestCase {
         assertEquals(gc.getEnvelopeInternal().getMinY(), f.getBounds().getMinY());
         assertEquals(gc.getEnvelopeInternal().getMaxX(), f.getBounds().getMaxX());
         assertEquals(gc.getEnvelopeInternal().getMaxY(), f.getBounds().getMaxY());
+        
+        //test serialize
+        Commons.serialize(f);
     }
 
     public void testClone() {

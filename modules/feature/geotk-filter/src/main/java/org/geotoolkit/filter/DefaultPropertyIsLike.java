@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.filter;
 
+import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -36,7 +37,7 @@ import org.opengis.filter.expression.Expression;
  * @version $Id$
  * @module pending
  */
-public class DefaultPropertyIsLike implements PropertyIsLike {
+public class DefaultPropertyIsLike implements PropertyIsLike,Serializable {
 
     private static final Logger LOGGER = Logging.getLogger(DefaultPropertyIsLike.class);
 
@@ -50,10 +51,8 @@ public class DefaultPropertyIsLike implements PropertyIsLike {
     private final String wildcardMulti;
     /** The escape sequence for the REGEXP pattern. */
     private final String escape;
-    /** the pattern compiled into a java regex */
-    private Pattern compPattern;
     /** The matcher to match patterns with. */
-    private Matcher match;
+    private transient Matcher match;
     /** Used to indicate if case should be ignored or not */
     private final boolean matchingCase;
 
@@ -231,7 +230,7 @@ public class DefaultPropertyIsLike implements PropertyIsLike {
 
             pattern1 = tmp.toString();
             LOGGER.log(Level.FINER, "final pattern {0}", pattern1);
-            compPattern = java.util.regex.Pattern.compile(pattern1);
+            java.util.regex.Pattern compPattern = java.util.regex.Pattern.compile(pattern1);
             match = compPattern.matcher("");
         }
         return match;
@@ -355,8 +354,6 @@ public class DefaultPropertyIsLike implements PropertyIsLike {
         hash = 59 * hash + (this.wildcardSingle != null ? this.wildcardSingle.hashCode() : 0);
         hash = 59 * hash + (this.wildcardMulti != null ? this.wildcardMulti.hashCode() : 0);
         hash = 59 * hash + (this.escape != null ? this.escape.hashCode() : 0);
-        hash = 59 * hash + (this.compPattern != null ? this.compPattern.hashCode() : 0);
-        hash = 59 * hash + (this.match != null ? this.match.hashCode() : 0);
         hash = 59 * hash + (this.matchingCase ? 1 : 0);
         return hash;
     }
@@ -385,12 +382,6 @@ public class DefaultPropertyIsLike implements PropertyIsLike {
         if ((this.escape == null) ? (other.escape != null) : !this.escape.equals(other.escape)) {
             return false;
         }
-        if (this.compPattern != other.compPattern && (this.compPattern == null || !this.compPattern.equals(other.compPattern))) {
-            return false;
-        }
-        if (this.match != other.match && (this.match == null || !this.match.equals(other.match))) {
-            return false;
-        }
         if (this.matchingCase != other.matchingCase) {
             return false;
         }
@@ -404,8 +395,6 @@ public class DefaultPropertyIsLike implements PropertyIsLike {
         sb.append("wildcardSingle=").append(wildcardSingle).append(", ");
         sb.append("wildcardMulti=").append(wildcardMulti).append(", ");
         sb.append("escape=").append(escape).append(", ");
-        sb.append("compPattern=").append(compPattern).append(", ");
-        sb.append("match=").append(match).append(", ");
         sb.append("matchingCase=").append(matchingCase);
         sb.append(")\n");
         sb.append(StringUtilities.toStringTree(attribute));

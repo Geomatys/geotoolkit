@@ -18,6 +18,7 @@
 package org.geotoolkit.filter.binaryspatial;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.io.Serializable;
 
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
@@ -42,7 +43,8 @@ import org.opengis.referencing.operation.TransformException;
  * @param <F> Expression or subclass
  * @module pending
  */
-public abstract class AbstractBinarySpatialOperator<E extends Expression,F extends Expression> implements BinarySpatialOperator {
+public abstract class AbstractBinarySpatialOperator<E extends Expression,F extends Expression> 
+                                                implements BinarySpatialOperator,Serializable {
 
     protected static final CoordinateReferenceSystem MERCATOR;
 

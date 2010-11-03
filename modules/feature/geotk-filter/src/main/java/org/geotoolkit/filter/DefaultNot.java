@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.filter;
 
+import java.io.Serializable;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.Not;
@@ -27,7 +28,7 @@ import org.opengis.filter.Not;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultNot implements Not{
+public class DefaultNot implements Not,Serializable{
 
     private final Filter filter;
 

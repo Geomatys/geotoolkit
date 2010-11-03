@@ -74,18 +74,32 @@ public class JavaScriptFunction extends AbstractFunction {
         END_CHARACTERS.add('}');
     }
 
-    private final ScriptEngine engine;
-    private final CompiledScript compiled;
+    private final String javascript;
+    private transient ScriptEngine engine;
+    private transient CompiledScript compiled = null;
 
     public JavaScriptFunction(final Expression expression) throws ScriptException {
         super(JavaScriptFunctionFactory.JAVASCRIPT, prepare(expression), null);
-
-        ScriptEngineManager manager = new ScriptEngineManager();
-        engine = manager.getEngineByName("js");
-
-        compiled = ((Compilable)engine).compile(expression.evaluate(null, String.class));
+        javascript = expression.evaluate(null, String.class);
     }
 
+    private ScriptEngine getEngine(){
+        if(engine == null){
+            ScriptEngineManager manager = new ScriptEngineManager();
+            engine = manager.getEngineByName("js");
+        }
+        return engine;
+    }
+    
+    private CompiledScript getCompiled() throws ScriptException {
+        if(compiled == null){
+            compiled = ((Compilable)getEngine()).compile(javascript);
+        }
+        
+        return compiled;
+    }
+
+    
     private static Expression[] prepare(Expression jsFunction){
         final String str = jsFunction.evaluate(null, String.class);
 
@@ -122,7 +136,7 @@ public class JavaScriptFunction extends AbstractFunction {
     @Override
     public Object evaluate(Object feature) {
 
-        final Bindings bindings = engine.createBindings();
+        final Bindings bindings = getEngine().createBindings();
 
         for(int i=1,n=parameters.size(); i<n; i++){
             final PropertyName property = (PropertyName) parameters.get(i);
@@ -131,7 +145,7 @@ public class JavaScriptFunction extends AbstractFunction {
         }
 
         try {
-            return compiled.eval(bindings);
+            return getCompiled().eval(bindings);
         } catch (ScriptException ex) {
             Logger.getLogger(JavaScriptFunction.class.getName()).log(Level.WARNING, null, ex);
         }

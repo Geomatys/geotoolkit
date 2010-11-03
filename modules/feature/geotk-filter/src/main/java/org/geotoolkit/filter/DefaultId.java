@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.filter;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,7 +37,7 @@ import org.opengis.filter.identity.Identifier;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultId implements Id{
+public class DefaultId implements Id,Serializable{
 
     private static final String XPATH_ID = "@id";
 

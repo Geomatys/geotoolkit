@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.feature;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +35,7 @@ import org.opengis.feature.type.PropertyType;
  * @author Justin Deoliveira, The Open Planning Project
  * @module pending
  */
-public class DefaultProperty<V extends Object, D extends PropertyDescriptor> implements Property {
+public class DefaultProperty<V extends Object, D extends PropertyDescriptor> implements Property,Serializable {
 
     /**
      * descriptor of the property

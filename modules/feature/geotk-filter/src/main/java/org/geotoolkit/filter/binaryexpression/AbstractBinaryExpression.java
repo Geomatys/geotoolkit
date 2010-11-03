@@ -30,7 +30,8 @@ import org.opengis.filter.expression.Expression;
  * @param <F> Expression or subclass
  * @module pending
  */
-public abstract class AbstractBinaryExpression<E extends Expression,F extends Expression> extends AbstractExpression implements BinaryExpression{
+public abstract class AbstractBinaryExpression<E extends Expression,F extends Expression> 
+                                    extends AbstractExpression implements BinaryExpression{
 
     protected final E left;
     protected final F right;

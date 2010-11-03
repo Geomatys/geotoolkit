@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.filter.binarylogic;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
@@ -30,7 +31,7 @@ import org.opengis.filter.Filter;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class AbstractBinaryLogicOperator implements BinaryLogicOperator{
+public abstract class AbstractBinaryLogicOperator implements BinaryLogicOperator,Serializable{
 
     protected final Filter[] filterArray;
     protected final List<Filter> filters;

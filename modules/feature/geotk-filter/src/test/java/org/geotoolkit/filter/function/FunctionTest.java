@@ -18,6 +18,7 @@
 package org.geotoolkit.filter.function;
 
 
+import org.geotoolkit.test.Commons;
 import org.geotoolkit.filter.function.other.LengthFunction;
 import org.geotoolkit.filter.function.other.OtherFunctionFactory;
 import org.junit.Test;
@@ -46,6 +47,7 @@ public class FunctionTest {
 
         Function f = FF.function(OtherFunctionFactory.EXPRESSION_VALUE_LENGHT, FF.property("."));
         assertTrue(f instanceof LengthFunction);
+        Commons.serialize(f); //test serialize
 
     }
 

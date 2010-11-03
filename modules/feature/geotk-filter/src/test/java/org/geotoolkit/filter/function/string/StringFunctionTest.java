@@ -18,8 +18,7 @@
 package org.geotoolkit.filter.function.string;
 
 
-import org.geotoolkit.filter.function.other.LengthFunction;
-import org.geotoolkit.filter.function.other.OtherFunctionFactory;
+import org.geotoolkit.test.Commons;
 import org.junit.Test;
 
 import org.opengis.filter.expression.Function;
@@ -60,6 +59,7 @@ public class StringFunctionTest {
 
         f = FF.function(StringFunctionFactory.TRUNCATE_FIRST, FF.literal("72"),FF.literal(3));
         assertEquals(f.evaluate(null, String.class), "72");
+        Commons.serialize(f); //test serialize
 
     }
 
@@ -83,6 +83,7 @@ public class StringFunctionTest {
 
         f = FF.function(StringFunctionFactory.TRUNCATE_LAST, FF.literal("72"),FF.literal(3));
         assertEquals(f.evaluate(null, String.class), "72");
+        Commons.serialize(f); //test serialize
 
     }
 

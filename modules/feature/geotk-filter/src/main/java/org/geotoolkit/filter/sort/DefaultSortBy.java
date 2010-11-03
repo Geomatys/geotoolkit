@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.filter.sort;
 
+import java.io.Serializable;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
@@ -27,7 +28,7 @@ import org.opengis.filter.sort.SortOrder;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultSortBy implements SortBy{
+public class DefaultSortBy implements SortBy,Serializable{
 
     private final PropertyName property;
     private final SortOrder order;
