@@ -23,7 +23,7 @@ import org.geotoolkit.lang.Static;
 
 /**
  * Extensions to the standard set of {@link VerticalDatumType}. Those constants are not in
- * public API because they were intentionaly omitted from ISO 19111, and the ISO experts
+ * public API because they were intentionally omitted from ISO 19111, and the ISO experts
  * said that they should really not be public.
  *
  * @author Martin Desruisseaux (Geomatys)

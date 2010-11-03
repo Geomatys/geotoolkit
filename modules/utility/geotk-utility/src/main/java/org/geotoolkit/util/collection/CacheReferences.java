@@ -44,7 +44,7 @@ final class CacheReferences extends DaemonThread {
      * {@link Cache}. The implementation must checks if some strong references need to be
      * replaced by weak of soft references.
      */
-    static interface Handler {
+    interface Handler {
         /**
          * Performs the replacement of strong references.
          * Will be invoked from the {@link CacheReferences} thread only.

@@ -581,7 +581,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
      * @since 3.00
      * @module
      */
-    public static interface Handler<V> {
+    public interface Handler<V> {
         /**
          * If the value is already in the cache, returns it. Otherwise returns {@code null}.
          * This method should be invoked after the {@code Handler} creation in case a value

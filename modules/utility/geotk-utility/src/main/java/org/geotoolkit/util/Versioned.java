@@ -33,5 +33,5 @@ public interface Versioned {
      *
      * @return The object or service version.
      */
-    public Version getVersion();
+    Version getVersion();
 }

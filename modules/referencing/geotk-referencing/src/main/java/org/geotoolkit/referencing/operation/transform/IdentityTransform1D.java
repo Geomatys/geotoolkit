@@ -38,14 +38,9 @@ final class IdentityTransform1D extends LinearTransform1D {
     private static final long serialVersionUID = -7378774584053573789L;
 
     /**
-     * The shared instance of the identity transform.
-     */
-    public static final LinearTransform1D ONE = new IdentityTransform1D();
-
-    /**
      * Constructs a new identity transform.
      */
-    private IdentityTransform1D() {
+    IdentityTransform1D() {
         super(1, 0);
     }
 

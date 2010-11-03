@@ -70,7 +70,7 @@ public final class Units {
      * fraction of seconds (any precision)</cite>.
      * <p>
      * This unit is non-linear and not pratical for computation. Consequently, it should be
-     * avoid as much as possible. Unfortunatly, this pseudo-unit is extensively used in the
+     * avoid as much as possible. Unfortunately, this pseudo-unit is extensively used in the
      * EPSG database (code 9110).
      *
      * @todo <a href="http://kenai.com/jira/browse/JSR_275-41">JSR-275 bug</a>
@@ -86,7 +86,7 @@ public final class Units {
      * (real, any precision)</cite>.
      * <p>
      * This unit is non-linear and not pratical for computation. Consequently, it should be
-     * avoid as much as possible. Unfortunatly, this pseudo-unit is extensively used in the
+     * avoid as much as possible. Unfortunately, this pseudo-unit is extensively used in the
      * EPSG database (code 9107).
      *
      * @todo <a href="http://kenai.com/jira/browse/JSR_275-41">JSR-275 bug</a>

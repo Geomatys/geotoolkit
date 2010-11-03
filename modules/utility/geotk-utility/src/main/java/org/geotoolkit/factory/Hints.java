@@ -293,7 +293,7 @@ public class Hints extends RenderingHints {
      * for creating {@linkplain CoordinateReferenceSystem coordinate reference system} objects
      * from <A HREF="http://www.epsg.org">EPSG</A> codes. Most {@linkplain GeographicCRS geographic
      * CRS} defined in the EPSG database use (<var>latitude</var>, <var>longitude</var>) axis order.
-     * Unfortunatly, many data sources available in the world use the opposite axis order and still
+     * Unfortunately, many data sources available in the world use the opposite axis order and still
      * claim to use a CRS described by an EPSG code. This hint allows to handle such data.
      * <p>
      * This hint can be passed to the <code>{@linkplain AuthorityFactoryFinder#getCRSAuthorityFactory
@@ -873,7 +873,7 @@ public class Hints extends RenderingHints {
             final Field f = fields[i];
             /*
              * Note: to be strict, the line below should ensure that the field is final in
-             * addition of static. Unfortunatly the JAI static fields are not final in JAI 1.1.
+             * addition of static. Unfortunately the JAI static fields are not final in JAI 1.1.
              */
             if (Modifier.isStatic(f.getModifiers())) {
                 final Object v;

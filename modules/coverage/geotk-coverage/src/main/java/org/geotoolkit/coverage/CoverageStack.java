@@ -156,7 +156,7 @@ public class CoverageStack extends AbstractCoverage {
      * @since 2.1
      * @module
      */
-    public static interface Element {
+    public interface Element {
         /**
          * Returns a name for the coverage. This method should not load a large amount of data,
          * since it may be invoked soon. This method is invoked just before {@link #getCoverage}

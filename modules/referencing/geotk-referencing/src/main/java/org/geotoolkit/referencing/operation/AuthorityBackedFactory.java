@@ -239,7 +239,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
              * NOTE: This check is mandatory because this method may be invoked in some situations
              *       where (sourceCode == targetCode) but (sourceCRS != targetCRS). Such situation
              *       should be illegal  (or at least the MathTransform from sourceCRS to targetCRS
-             *       should be the identity transform),   but unfortunatly it still happen because
+             *       should be the identity transform),  but unfortunately it still happen because
              *       EPSG defines axis order as (latitude,longitude) for geographic CRS while most
              *       softwares expect (longitude,latitude) no matter what the EPSG authority said.
              *       We will need to computes a transform from sourceCRS to targetCRS ignoring the

@@ -70,7 +70,7 @@ public final class Formats {
      * @since 3.05
      * @module
      */
-    public static interface ReadCall {
+    public interface ReadCall {
         /**
          * Invoked when a suitable image reader has been found. If the operation fails with
          * an {@link IOException}, then {@link Formats#selectImageReader selectImageReader}

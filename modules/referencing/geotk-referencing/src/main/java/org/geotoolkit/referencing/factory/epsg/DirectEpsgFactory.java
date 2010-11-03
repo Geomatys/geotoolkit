@@ -2670,7 +2670,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * @todo The ordering is not consistent among all database software, because the "accuracy"
      *       column may contains null values. When used in an "ORDER BY" clause, PostgreSQL put
      *       null values last, while Access and HSQL put them first. The PostgreSQL's behavior is
-     *       better for what we want (put operations with unknown accuracy last). Unfortunatly,
+     *       better for what we want (put operations with unknown accuracy last). Unfortunately,
      *       I don't know yet how to instruct Access to put null values last using standard SQL
      *       ("IIF" is not standard, and Access doesn't seem to understand "CASE ... THEN" clauses).
      */

@@ -38,6 +38,7 @@ import java.beans.PropertyChangeListener;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.gui.swing.event.ZoomChangeEvent;
 import org.geotoolkit.gui.swing.event.ZoomChangeListener;
 import org.geotoolkit.display.shape.DoubleDimension2D;
@@ -1097,7 +1098,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
      * @since 3.00
      */
     public AffineTransform getTransform() {
-        return (AffineTransform) zoom.clone();
+        return new AffineTransform(zoom);
     }
 
     /**
@@ -1386,7 +1387,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
          *       because certain classes use this to update scrollbars.
          */
         if (change == null) {
-            throw new NullPointerException();
+            throw new NullArgumentException();
         }
         ZoomChangeEvent event = null;
         final Object[] listeners = listenerList.getListenerList();

@@ -65,7 +65,7 @@ import org.geotoolkit.util.Cloneable;
  * @since 1.2
  * @module
  */
-@Immutable
+@Immutable // NOSONAR: clone() intentionally doesn't invoke super.clone().
 public class AffineTransform2D extends XAffineTransform
         implements MathTransform2D, LinearTransform, Parameterized, Formattable, Cloneable
 {
@@ -298,7 +298,7 @@ public class AffineTransform2D extends XAffineTransform
      * rule: if the other object is also an instance of {@code AffineTransform2D}, then the two
      * objects must be of the exact same class.
      * <p>
-     * Most Geotk implementations require that the objects being compared are inconditionnaly of
+     * Most Geotk implementations require that the objects being compared are unconditionally of
      * the same class in order to be considered equal. However many JDK implementations, including
      * {@link AffineTransform}, do not have this requirement. Consequently the above condition
      * (i.e. require the same class only if the given object is an {@code AffineTransform2D} or
@@ -350,10 +350,10 @@ public class AffineTransform2D extends XAffineTransform
     }
 
     /**
-     * Returns a new affine transform which is a modifiable copy of this transform. We override
-     * this method because it is {@linkplain AffineTransform#clone defined in the super-class}.
-     * However this implementation does not return an instance of the same class than {@code this};
-     * it returns always an instance of the {@code AffineTransform} super-class.
+     * Returns a new affine transform which is a modifiable copy of this transform. This
+     * implementation always returns an instance of {@link AffineTransform}, <strong>not</strong>
+     * {@code AffineTransform2D}, because the later is unmodifiable and cloning it make little
+     * sense.
      */
     @Override
     public AffineTransform clone() {

@@ -420,7 +420,7 @@ public final class DeferredPlanarImage extends PlanarImage
                     observers[i].tileUpdate(this, tileX, tileY, willBeWritable);
                 } catch (RuntimeException cause) {
                     /*
-                     * An exception occurred in the user code. Unfortunatly, we are probably not in
+                     * An exception occurred in the user code. Unfortunately, we are probably not in
                      * the mean user thread (e.g. the Swing thread).  This method is often invoked
                      * from some JAI's worker thread, which we don't want to corrupt. Log a warning
                      * for the user and lets the JAI's worker thread continue its work.

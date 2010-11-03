@@ -601,7 +601,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                     for (int jm=0,j=0; j<3; j++) {
                         if (j == k) {
                             matrix.setElement(j, j, 0);
-                            // Translation term intentionaly left to 0 - see method javadoc.
+                            // Translation term intentionally left to 0 - see method javadoc.
                         } else {
                             for (int i=3; --i>=0;) {
                                 matrix.setElement(jm, i, reduced.getElement(j, i));

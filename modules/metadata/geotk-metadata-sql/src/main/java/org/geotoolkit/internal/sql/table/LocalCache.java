@@ -33,8 +33,8 @@ import org.geotoolkit.internal.sql.StatementEntry;
  * is used only from the same thread.
  *
  * {@section Synchronization}
- * Every access to a method in this interface must be sychronized on {@code this}. This
- * synhronization is necessary for preventing the {@link StatementPool} cleaner background
+ * Every access to a method in this interface must be synchronized on {@code this}. This
+ * synchronization is necessary for preventing the {@link StatementPool} cleaner background
  * thread to close a statement before the caller finished to use it. The lock shall be
  * released only when the statement is no longer needed, as below:
  *
@@ -99,7 +99,7 @@ public interface LocalCache {
      * @since 3.09
      * @module
      */
-    public static final class Stmt extends StatementEntry {
+    static final class Stmt extends StatementEntry {
         /**
          * Special value for {@link #stamp} meaning that the prepared statement
          * has not yet been initialized.

@@ -223,7 +223,7 @@ public abstract class AbstractMetadata {
          * DEADLOCK WARNING: A deadlock may occur if the same pair of objects is being compared
          * in an other thread (see http://jira.codehaus.org/browse/GEOT-1777). Ideally we would
          * synchronize on 'this' and 'object' atomically (RFE #4210659). Since we can't in Java
-         * a workaround is to always get the locks in the same order. Unfortunatly we have no
+         * a workaround is to always get the locks in the same order. Unfortunately we have no
          * guarantee that the caller didn't looked the object himself. For now the safest approach
          * is to not synchronize at all.
          */

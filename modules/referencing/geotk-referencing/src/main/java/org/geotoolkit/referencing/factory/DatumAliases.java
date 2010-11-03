@@ -55,7 +55,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * <p>
  * Two datum with different names are considered incompatible, unless some datum shift method
  * are specified (e.g. {@linkplain org.geotoolkit.referencing.datum.BursaWolfParameters Bursa-Wolf
- * parameters}). Unfortunatly, different softwares often use different names for the same datum,
+ * parameters}). Unfortunately, different softwares often use different names for the same datum,
  * which result in {@link org.opengis.referencing.operation.OperationNotFoundException} when
  * attempting to convert coordinates from one
  * {@linkplain org.opengis.referencing.crs.CoordinateReferenceSystem coordinate reference system}

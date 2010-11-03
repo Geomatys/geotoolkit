@@ -167,7 +167,7 @@ public abstract class WindowCreator extends JComponent {
      * @since 3.12
      * @module
      */
-    public static interface Handler {
+    public interface Handler {
         /**
          * The default implementation. The kind of window created by this implementation depends
          * on the parent of the {@code owner} argument:

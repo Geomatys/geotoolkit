@@ -603,7 +603,7 @@ public class ParameterEditor extends JComponent {
      *
      * @todo This interface should have a {@code setEditable(boolean)} method.
      */
-    private static interface Editor {
+    private interface Editor {
         /**
          * Returns the edited value.
          */
@@ -871,7 +871,7 @@ public class ParameterEditor extends JComponent {
         @Override
         public Object getValueAt(final int row, final int column) {
             if (column == 0) {
-                return String.valueOf(row + offset) + "  ";
+                return (row + offset) + "  ";
             }
             final Object array = table[column-1];
             if (mask != 0) {

@@ -126,7 +126,7 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
     /**
      * Returns the number of images to be requested for each subsampling level.
      *
-     * @return The current number of image loadings to be done or similated per subsampling level.
+     * @return The current number of image loadings to be done or simulated per subsampling level.
      */
     public int getImagesPerSubsampling() {
         return imagesPerSubsampling;
@@ -361,7 +361,7 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
      * @since 3.00
      * @module
      */
-    public static interface Delayed {
+    public interface Delayed {
         /**
          * Returns the mosaic to profile. This method is invoked in a background
          * thread before the profiling begin.
@@ -507,7 +507,7 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
         }
 
         /**
-         * Invoked from the event dispath thread after a call to {@link #progress}.
+         * Invoked from the event dispatch thread after a call to {@link #progress}.
          * Performs the actual update of the progress bar.
          */
         @Override
@@ -522,7 +522,7 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
         }
 
         /**
-         * Executed from the event dispatch thread. Discarts the reference to the worker if it
+         * Executed from the event dispatch thread. Discards the reference to the worker if it
          * was this instance. This is needed for letting {@link MosaicPerformanceGraph#plotLater}
          * know that it can set the state of the progress bar when a new plot is requested.
          */

@@ -259,7 +259,7 @@ public class DefaultLocalName extends AbstractName implements LocalName {
      * If an instance already exists for the deserialized name, returns that instance.
      * <p>
      * Because of its private access, this method is <strong>not</strong> invoked if the
-     * deserialized class is a subclass. This is the intented behavior since we don't want
+     * deserialized class is a subclass. This is the intended behavior since we don't want
      * to replace an instance of a user-defined class.
      *
      * @return The unique instance.
@@ -267,7 +267,7 @@ public class DefaultLocalName extends AbstractName implements LocalName {
      */
     private Object readResolve() throws ObjectStreamException {
         final DefaultNameSpace ns;
-        if (scope == null) {
+        if (scope == null) { // NOSONAR: readResolve() is intentionally private.
             ns = GlobalNameSpace.GLOBAL;
         } else if (scope instanceof DefaultNameSpace) {
             ns = (DefaultNameSpace) scope;

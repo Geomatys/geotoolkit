@@ -914,7 +914,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
         }
         /*
          * Checks for broken ImageReader implementation. Following should never happen,
-         * but unfortunatly experience show that this error is not uncommon.
+         * but unfortunately experience show that this error is not uncommon.
          */
         if (rawTypes != null && rawTypes.remove(null)) {
             log(Logging.getLogger(MosaicImageReader.class), "getRawImageType",

@@ -46,7 +46,7 @@ public class DefaultMutableTreeNode extends javax.swing.tree.DefaultMutableTreeN
      * Creates a tree node that has no parent and no children, but which allows children.
      */
     public DefaultMutableTreeNode() {
-        super();
+        super(); // NOSONAR: Class name intentionally shadow superclass name.
     }
 
     /**

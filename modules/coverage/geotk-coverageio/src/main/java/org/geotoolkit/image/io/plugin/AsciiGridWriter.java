@@ -273,7 +273,7 @@ public class AsciiGridWriter extends TextImageWriter {
             out.write(Strings.spaces(2 + Math.max(0, length - key.length())));
             out.write(entry.getValue());
         }
-        // We intentionaly omit the line separator for the last line,
+        // We intentionally omit the line separator for the last line,
         // because the write(...) method below will add it itself.
     }
 

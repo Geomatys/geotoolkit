@@ -238,7 +238,7 @@ public abstract class AnnotationsTest {
                 if (name.equals("equals") || name.equals("hashCode") || name.equals("doubleValue")) {
                     /*
                      * Do not verify annotations for those methods that we know they are
-                     * intentionaly not annotated.
+                     * intentionally not annotated.
                      */
                     continue;
                 }

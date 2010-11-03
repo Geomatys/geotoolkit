@@ -358,7 +358,7 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
                  * If any kind of error occurred, restore the 'remainingBackingStores' field
                  * as if no code were executed.  This code would not have been needed if we
                  * were allowed to decrement 'remainingBackingStores' only as the very last
-                 * step (when we know that everything else succeed). Unfortunatly it needed
+                 * step (when we know that everything else succeed). Unfortunately it needed
                  * to be decremented inside the synchronized block.
                  */
                 if (factory == null) {

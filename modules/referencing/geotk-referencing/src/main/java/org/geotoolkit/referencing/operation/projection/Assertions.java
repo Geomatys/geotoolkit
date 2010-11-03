@@ -195,7 +195,7 @@ final class Assertions {
             throws ProjectionException
     {
         compare("x", expected[offset++], x, tolerance);
-        compare("y", expected[offset  ], y, tolerance);
+        compare("y", expected[offset++], y, tolerance); // NOSONAR: offset incremeted as a matter of principle.
         return tolerance < POSITIVE_INFINITY;
     }
 

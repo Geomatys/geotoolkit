@@ -109,11 +109,11 @@ public class Combine extends PointOpImage {
      * @since 2.1
      * @module
      */
-    public static interface Transform {
+    public interface Transform {
         /**
          * Transforms the sample values for one pixel before the linear combination.
          *
-         * @param values The sampel values to transformation. Transformation are performed in-place.
+         * @param values The sample values to transformation. Transformation are performed in-place.
          */
         void transformSamples(double[] values);
 

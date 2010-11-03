@@ -883,7 +883,6 @@ public class Plot2D extends ZoomPane {
         /*
          * Paints series first.
          */
-        int axisCount = 0;
         graphics.clip(bounds);
         graphics.setStroke(new BasicStroke((float) (1/getGraphicsScale())));
         final TransformedShape transformed = new TransformedShape();
@@ -900,7 +899,6 @@ public class Plot2D extends ZoomPane {
             } else {
                 graphics.draw(transformed);
             }
-            axisCount++;
         }
         /*
          * Paints axes on top of series, then paint the remainder of the box
@@ -956,7 +954,7 @@ public class Plot2D extends ZoomPane {
      * @since 1.1
      * @module
      */
-    public static interface Series {
+    public interface Series {
         /**
          * Returns the name of this series. If only one series is plotted,
          * then the name of that series will be used as the plot title.

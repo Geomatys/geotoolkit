@@ -69,7 +69,7 @@ public class FastComboBox extends JComboBox {
      * @since 3.12
      * @module
      */
-    public static interface Model extends ComboBoxModel {
+    public interface Model extends ComboBoxModel {
         /**
          * Returns the index of the currently selected element.
          *

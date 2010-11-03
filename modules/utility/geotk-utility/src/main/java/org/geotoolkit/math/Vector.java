@@ -537,7 +537,9 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
         @Override Vector createSubList(int first, final int step, final int length) {
             ensureValid(first, step, length);
             final int[] ni = new int[length];
-            for (int j=0; j<length; j++) {
+            if (step == 1) {
+                System.arraycopy(index, first, ni, 0, length);
+            } else for (int j=0; j<length; j++) {
                 ni[j] = index[first];
                 first += step;
             }

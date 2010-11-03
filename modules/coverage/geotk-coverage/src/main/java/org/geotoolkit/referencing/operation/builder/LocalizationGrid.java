@@ -507,7 +507,7 @@ public class LocalizationGrid {
             fitPlane(gridY, 1, matrix);
             global = new AffineTransform(matrix);
         }
-        return (AffineTransform) global.clone();
+        return new AffineTransform(global);
     }
 
     /**

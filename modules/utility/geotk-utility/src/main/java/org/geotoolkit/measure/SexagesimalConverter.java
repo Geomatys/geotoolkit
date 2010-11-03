@@ -32,7 +32,7 @@ import org.geotoolkit.lang.Immutable;
  * <cite>sign - degrees - decimal point - minutes (two digits) - integer seconds (two digits) -
  * fraction of seconds (any precision)</cite>.
  *
- * Unfortunatly, this pseudo-unit is extensively used in the EPSG database.
+ * Unfortunately, this pseudo-unit is extensively used in the EPSG database.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.07
@@ -40,7 +40,7 @@ import org.geotoolkit.lang.Immutable;
  * @since 2.1
  * @module
  */
-@Immutable
+@Immutable // NOSONAR: intentionally not final.
 class SexagesimalConverter extends UnitConverter {
     /**
      * Serial number for compatibility with different versions.

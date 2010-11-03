@@ -75,7 +75,7 @@ public class LinearTransform1D extends AbstractMathTransform
     /**
      * The identity transform.
      */
-    public static final LinearTransform1D IDENTITY = IdentityTransform1D.ONE;
+    public static final LinearTransform1D IDENTITY = new IdentityTransform1D();
 
     /**
      * The value which is multiplied to input values.
@@ -101,8 +101,8 @@ public class LinearTransform1D extends AbstractMathTransform
      * @param offset The {@code offset} term in the linear equation.
      */
     protected LinearTransform1D(final double scale, final double offset) {
-        this.scale   = scale;
-        this.offset  = offset;
+        this.scale  = scale;
+        this.offset = offset;
     }
 
     /**
@@ -116,7 +116,7 @@ public class LinearTransform1D extends AbstractMathTransform
         if (scale == 0) {
             return new ConstantTransform1D(offset);
         }
-        if (scale==1 && offset==0) {
+        if (scale == 1 && offset == 0) {
             return IDENTITY;
         }
         return new LinearTransform1D(scale, offset);

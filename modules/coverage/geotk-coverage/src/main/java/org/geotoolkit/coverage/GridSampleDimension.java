@@ -1492,7 +1492,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      *       JAI dependencies.  This is a pretty high overhead if JAI is not wanted
      *       right now. The correct approach is to declare the image operation into
      *       the {@code META-INF/registryFile.jai} file, which is automatically
-     *       parsed during JAI initialization. Unfortunatly, it can't access private
+     *       parsed during JAI initialization. Unfortunately, it can't access private
      *       classes and we don't want to make our registration classes public. We
      *       can't move our registration classes into a hidden "resources" package
      *       neither because we need package-private access to {@code CategoryList}.

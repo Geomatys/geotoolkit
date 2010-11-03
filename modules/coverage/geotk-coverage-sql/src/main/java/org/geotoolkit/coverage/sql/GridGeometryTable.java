@@ -174,7 +174,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
                 switch (srsEntry.uninitialized()) {
                     case 1:  column = query.horizontalSRID; break;
                     case 2:  column = query.verticalSRID;   break;
-                    default: column = query.identifier;;    break;
+                    default: column = query.identifier;     break;
                 }
                 throw new IllegalRecordException(exception, this, results, indexOf(column), identifier);
             }

@@ -66,12 +66,6 @@ public final class NullReferencingObject implements GeocentricCRS, GeographicCRS
     public static final NullReferencingObject INSTANCE = new NullReferencingObject();
 
     /**
-     * An arbitrary date to be used as the origin
-     * (for now the Unix epoch, but could change in a future version).
-     */
-    private static final Date ORIGIN = new Date(0);
-
-    /**
      * Do not allow other instantiation of {@link #INSTANCE}.
      */
     private NullReferencingObject() {
@@ -185,10 +179,10 @@ public final class NullReferencingObject implements GeocentricCRS, GeographicCRS
         return null;
     }
 
-    /** Returns an arbitrary origin in all cases. */
+    /** Returns an arbitrary origin (for now the Unix epoch) in all cases. */
     @Override
     public Date getOrigin() {
-        return ORIGIN;
+        return new Date(0);
     }
 
     /** Returns {@code null} in all cases. */
