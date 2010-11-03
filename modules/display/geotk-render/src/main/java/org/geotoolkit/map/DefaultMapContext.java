@@ -287,11 +287,38 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
     //--------------------------------------------------------------------------
     // layer listener ----------------------------------------------------------
     //--------------------------------------------------------------------------
-    
+        
+    /**
+     * In case item is a MapLayer we register it using the layer listener.
+     */
+    @Override
+    protected void registerListenerSource(MapItem item) {
+        if(item instanceof MapLayer){
+            layerListener.registerSource((MapLayer) item);
+        }else{
+            super.registerListenerSource(item);
+        }
+    }
+
+    /**
+     * In case item is a MapLayer we register it using the layer listener.
+     */
+    @Override
+    protected void unregisterListenerSource(MapItem item) {
+        if(item instanceof MapLayer){
+            layerListener.unregisterSource((MapLayer) item);
+        }else{
+            super.unregisterListenerSource(item);
+        }
+    }
+
     @Override
     public void propertyChange(PropertyChangeEvent event) {
-        final int number = layers.indexOf((MapLayer)event.getSource());
-        fireLayerChange(CollectionChangeEvent.ITEM_CHANGED, (MapLayer)event.getSource(), NumberRange.create(number,number),event);
+        super.propertyChange(event);
+        if(event.getSource() instanceof MapLayer){
+            final int number = layers.indexOf((MapLayer)event.getSource());
+            fireLayerChange(CollectionChangeEvent.ITEM_CHANGED, (MapLayer)event.getSource(), NumberRange.create(number,number),event);
+        }
     }
 
     @Override
@@ -360,7 +387,6 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
 
         @Override
         public void add(int index, MapLayer element) {
-            layerListener.registerSource(element);
             fireLayerChange(CollectionChangeEvent.ITEM_ADDED, element, NumberRange.create(index, index), null);
         }
 
@@ -369,7 +395,6 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
             final MapLayer[] array = getCache();
             fireLayerChange(CollectionChangeEvent.ITEM_REMOVED, array[index], NumberRange.create(index, index), null);
             final MapLayer removed = array[index];
-            layerListener.unregisterSource(removed);
             return removed;
         }
 

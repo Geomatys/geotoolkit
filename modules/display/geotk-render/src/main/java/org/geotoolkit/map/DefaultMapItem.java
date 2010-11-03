@@ -38,7 +38,7 @@ class DefaultMapItem extends AbstractMapItem implements ItemListener{
 
         @Override
         protected void notifyAdd(MapItem item, int index) {
-            itemListener.registerSource(item);
+            registerListenerSource(item);
             fireItemChange(CollectionChangeEvent.ITEM_ADDED,
                     Collections.singleton(item), NumberRange.create(index, index));
         }
@@ -46,14 +46,14 @@ class DefaultMapItem extends AbstractMapItem implements ItemListener{
         @Override
         protected void notifyAdd(Collection<? extends MapItem> items, NumberRange<Integer> range) {
             for(MapItem item : items){
-                itemListener.registerSource(item);
+                registerListenerSource(item);
             }
             fireItemChange(CollectionChangeEvent.ITEM_ADDED,items, range);
         }
 
         @Override
         protected void notifyRemove(MapItem item, int index) {
-            itemListener.unregisterSource(item);
+            unregisterListenerSource(item);
             fireItemChange(CollectionChangeEvent.ITEM_REMOVED,
                     Collections.singleton(item), NumberRange.create(index, index));
         }
@@ -61,7 +61,7 @@ class DefaultMapItem extends AbstractMapItem implements ItemListener{
         @Override
         protected void notifyRemove(Collection<? extends MapItem> items, NumberRange<Integer> range) {
             for(MapItem item : items){
-                itemListener.unregisterSource(item);
+                unregisterListenerSource(item);
             }
             fireItemChange(CollectionChangeEvent.ITEM_REMOVED,items, range);
         }
@@ -72,6 +72,18 @@ class DefaultMapItem extends AbstractMapItem implements ItemListener{
     @Override
     public List<MapItem> items() {
         return items;
+    }
+
+    //--------------------------------------------------------------------------
+    // item listener------------------------------------------------------------
+    //--------------------------------------------------------------------------
+
+    protected void registerListenerSource(MapItem item){
+        itemListener.registerSource(item);
+    }
+
+    protected void unregisterListenerSource(MapItem item){
+        itemListener.unregisterSource(item);
     }
 
     @Override

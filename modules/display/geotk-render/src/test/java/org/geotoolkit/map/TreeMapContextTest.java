@@ -17,15 +17,24 @@
 
 package org.geotoolkit.map;
 
+import java.beans.PropertyChangeEvent;
+import java.util.EventObject;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.style.StyleConstants;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
  *
- * @author Johann sorel (Geomatys)
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
 public class TreeMapContextTest {
+
+    private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(null);
 
     public TreeMapContextTest() {
     }
@@ -59,6 +68,151 @@ public class TreeMapContextTest {
         assertEquals(2, context.layers().size());
         assertEquals(layer1, context.layers().get(0));
         assertEquals(layer3, context.layers().get(1));
+
+    }
+
+    /**
+     * Test property change events and items add events.
+     */
+    @Test
+    public void testItemEvents(){
+
+        MapItem item = MapBuilder.createItem();
+
+        final RecordListener listener = new RecordListener();
+        item.addItemListener(listener);
+
+        //test a property event
+        item.setName("test");
+        assertEquals(0, listener.itemChangecount);
+        assertEquals(1, listener.propertyChangecount);
+        assertTrue(listener.lastEvent instanceof PropertyChangeEvent);
+        PropertyChangeEvent event = (PropertyChangeEvent) listener.lastEvent;
+        assertEquals(MapItem.NAME_PROPERTY, event.getPropertyName());
+        assertEquals(null, event.getOldValue());
+        assertEquals("test", event.getNewValue());
+        listener.reset();
+
+        //test an item add event
+        MapItem child = MapBuilder.createItem();
+        item.items().add(child);
+        assertEquals(1, listener.itemChangecount);
+        assertEquals(0, listener.propertyChangecount);
+        assertTrue(listener.lastEvent instanceof CollectionChangeEvent);
+        CollectionChangeEvent levent = (CollectionChangeEvent) listener.lastEvent;
+        assertEquals(item,levent.getSource());
+        assertEquals(CollectionChangeEvent.ITEM_ADDED,levent.getType());
+        assertEquals(0,levent.getRange().getMinValue());
+        assertEquals(0,levent.getRange().getMaxValue());
+        assertEquals(1,levent.getItems().size());
+        assertEquals(child,levent.getItems().iterator().next());
+        listener.reset();
+
+        //test an item change event
+        child.setDescription(SF.description("child0", "abstract child0"));
+        assertEquals(1, listener.itemChangecount);
+        assertEquals(0, listener.propertyChangecount);
+        assertTrue(listener.lastEvent instanceof CollectionChangeEvent);
+        levent = (CollectionChangeEvent) listener.lastEvent;
+        assertEquals(item,levent.getSource());
+        assertEquals(CollectionChangeEvent.ITEM_CHANGED,levent.getType());
+        assertEquals(0,levent.getRange().getMinValue());
+        assertEquals(0,levent.getRange().getMaxValue());
+        assertEquals(1,levent.getItems().size());
+        assertEquals(child,levent.getItems().iterator().next());
+
+        assertTrue(levent.getChangeEvent() instanceof PropertyChangeEvent);
+        PropertyChangeEvent pevent = (PropertyChangeEvent) levent.getChangeEvent();
+        assertEquals(child,pevent.getSource());
+        assertEquals(MapItem.DESCRIPTION_PROPERTY, pevent.getPropertyName());
+        assertEquals(StyleConstants.DEFAULT_DESCRIPTION, pevent.getOldValue());
+        assertEquals(SF.description("child0", "abstract child0"), pevent.getNewValue());
+        listener.reset();
+
+        //test an item remove event
+        item.items().remove(child);
+        assertEquals(1, listener.itemChangecount);
+        assertEquals(0, listener.propertyChangecount);
+        assertTrue(listener.lastEvent instanceof CollectionChangeEvent);
+        levent = (CollectionChangeEvent) listener.lastEvent;
+        assertEquals(item,levent.getSource());
+        assertEquals(CollectionChangeEvent.ITEM_REMOVED,levent.getType());
+        assertEquals(0,levent.getRange().getMinValue());
+        assertEquals(0,levent.getRange().getMaxValue());
+        assertEquals(1,levent.getItems().size());
+        assertEquals(child,levent.getItems().iterator().next());
+        listener.reset();
+
+    }
+
+
+    @Test
+    public void testContextEvents(){
+
+        MapContext context = MapBuilder.createContext();
+
+        final RecordListener listener = new RecordListener();
+        context.addContextListener(listener);
+
+        //test a layer event
+        MapLayer layer = MapBuilder.createEmptyMapLayer();
+        context.layers().add(layer);
+        assertEquals(1, listener.itemChangecount);
+        assertEquals(1, listener.layerChangecount);
+        assertEquals(0, listener.propertyChangecount);
+        listener.reset();
+
+        //test an item event
+        context.items().add(MapBuilder.createItem());
+        assertEquals(1, listener.itemChangecount);
+        assertEquals(0, listener.layerChangecount);
+        assertEquals(0, listener.propertyChangecount);
+        listener.reset();
+
+        //test a layer property change
+        layer.setName("layer0");
+        assertEquals(1, listener.itemChangecount);
+        assertEquals(1, listener.layerChangecount);
+        assertEquals(0, listener.propertyChangecount);
+        assertTrue(listener.lastEvent instanceof CollectionChangeEvent);
+        CollectionChangeEvent levent = (CollectionChangeEvent) listener.lastEvent;
+        assertEquals(context,levent.getSource());
+        assertEquals(CollectionChangeEvent.ITEM_CHANGED,levent.getType());
+        assertEquals(0,levent.getRange().getMinValue());
+        assertEquals(0,levent.getRange().getMaxValue());
+        assertEquals(1,levent.getItems().size());
+        assertEquals(layer,levent.getItems().iterator().next());
+
+        assertTrue(levent.getChangeEvent() instanceof PropertyChangeEvent);
+        PropertyChangeEvent pevent = (PropertyChangeEvent) levent.getChangeEvent();
+        assertEquals(layer,pevent.getSource());
+        assertEquals(MapItem.NAME_PROPERTY, pevent.getPropertyName());
+        assertEquals(null, pevent.getOldValue());
+        assertEquals("layer0", pevent.getNewValue());
+        listener.reset();
+
+        //test a layer style change
+        MutableStyle style = SF.style(SF.pointSymbolizer());
+        layer.setStyle(style);
+        assertEquals(1, listener.itemChangecount);
+        assertEquals(1, listener.layerChangecount);
+        assertEquals(0, listener.propertyChangecount);
+        assertTrue(listener.lastEvent instanceof CollectionChangeEvent);
+        levent = (CollectionChangeEvent) listener.lastEvent;
+        assertEquals(context,levent.getSource());
+        assertEquals(CollectionChangeEvent.ITEM_CHANGED,levent.getType());
+        assertEquals(0,levent.getRange().getMinValue());
+        assertEquals(0,levent.getRange().getMaxValue());
+        assertEquals(1,levent.getItems().size());
+        assertEquals(layer,levent.getItems().iterator().next());
+
+        assertTrue(levent.getChangeEvent() instanceof PropertyChangeEvent);
+        pevent = (PropertyChangeEvent) levent.getChangeEvent();
+        assertEquals(layer,pevent.getSource());
+        assertEquals(MapLayer.STYLE_PROPERTY, pevent.getPropertyName());
+        assertEquals(style, pevent.getNewValue());
+        listener.reset();
+
 
     }
 
@@ -140,5 +294,40 @@ public class TreeMapContextTest {
         assertEquals(0, item321.items().size());
 
     }
+
+    private static class RecordListener implements ContextListener{
+
+        private EventObject lastEvent = null;
+        private int layerChangecount = 0;
+        private int itemChangecount = 0;
+        private int propertyChangecount = 0;
+
+        public void reset(){
+            lastEvent = null;
+            layerChangecount = 0;
+            itemChangecount = 0;
+            propertyChangecount = 0;
+        }
+
+        @Override
+        public void layerChange(CollectionChangeEvent<MapLayer> event) {
+            lastEvent = event;
+            layerChangecount++;
+        }
+
+        @Override
+        public void itemChange(CollectionChangeEvent<MapItem> event) {
+            lastEvent = event;
+            itemChangecount++;
+        }
+
+        @Override
+        public void propertyChange(PropertyChangeEvent event) {
+            lastEvent = event;
+            propertyChangecount++;
+        }
+
+    }
+
 
 }
