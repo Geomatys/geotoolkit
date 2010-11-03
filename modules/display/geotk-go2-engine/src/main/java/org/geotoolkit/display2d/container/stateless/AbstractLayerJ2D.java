@@ -32,7 +32,9 @@ import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.LayerListener;
+import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 
 import org.opengis.referencing.operation.TransformException;
 
@@ -128,6 +130,10 @@ public abstract class AbstractLayerJ2D<T extends MapLayer> extends AbstractGraph
             //TODO should call a repaint only on this graphic
             getCanvas().getController().repaint();
         }
+    }
+
+    @Override
+    public void itemChange(CollectionChangeEvent<MapItem> event) {
     }
 
 }

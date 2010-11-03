@@ -51,6 +51,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import org.geotoolkit.map.MapItem;
 
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
@@ -64,6 +65,7 @@ import org.geotoolkit.gui.swing.propertyedit.model.FeatureCollectionModel;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.LayerListener;
+import org.geotoolkit.util.collection.CollectionChangeEvent;
 
 import org.jdesktop.jxlayer.JXLayer;
 import org.jdesktop.jxlayer.plaf.ext.LockableUI;
@@ -498,6 +500,10 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
     }
     @Override
     public void styleChange(MapLayer source, EventObject event) {
+    }
+
+    @Override
+    public void itemChange(CollectionChangeEvent<MapItem> event) {
     }
 
 }

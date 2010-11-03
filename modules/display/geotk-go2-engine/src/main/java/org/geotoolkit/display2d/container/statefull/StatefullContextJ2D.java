@@ -39,6 +39,7 @@ import org.geotoolkit.map.ContextListener;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
@@ -235,6 +236,10 @@ public class StatefullContextJ2D extends AbstractGraphicJ2D implements ContextLi
             }
         }else if(CollectionChangeEvent.ITEM_CHANGED == type){
         }
+    }
+
+    @Override
+    public void itemChange(CollectionChangeEvent<MapItem> event) {
     }
 
 }

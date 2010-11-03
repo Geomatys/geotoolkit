@@ -69,6 +69,7 @@ import org.geotoolkit.gui.swing.style.JOpacitySlider;
 import org.geotoolkit.map.ContextListener;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.style.MutableStyleFactory;
@@ -385,6 +386,10 @@ public class JContextTree extends JScrollPane implements ContextListener {
             final MapLayer layer = event.getItems().iterator().next();
             updateLayer(layer);
         }
+    }
+
+    @Override
+    public void itemChange(CollectionChangeEvent<MapItem> event) {
     }
 
     ////////////////////////////////////////////////////////////////////////////
