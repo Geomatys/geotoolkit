@@ -18,19 +18,22 @@
 package org.geotoolkit.data.gpx.xml;
 
 import com.vividsolutions.jts.geom.Point;
+
+import java.util.List;
 import java.io.Closeable;
 import java.io.IOException;
 import java.net.URI;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import javax.xml.stream.XMLStreamException;
 
 import org.geotoolkit.data.DataStoreRuntimeException;
-import org.geotoolkit.data.gpx.model.CopyRight;
 import org.geotoolkit.data.gpx.model.MetaData;
 import org.geotoolkit.data.gpx.model.Person;
+import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.xml.StaxStreamWriter;
 
 import org.opengis.feature.ComplexAttribute;
@@ -43,14 +46,27 @@ import static org.geotoolkit.data.gpx.model.GPXModelConstants.*;
 
 
 /**
- * Stax writer class for GPX files.
+ * Stax writer class for GPX 1.0 files.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GPXWriter extends StaxStreamWriter{
+public class GPXWriter100 extends StaxStreamWriter{
 
-    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+    protected final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+
+    private final String creator;
+
+    public GPXWriter100(String creator){
+        if(creator == null){
+            throw new NullArgumentException("Creator can not be null.");
+        }
+        this.creator = creator;
+    }
+
+    protected String getVersion(){
+        return "1.0";
+    }
 
     public void writeStartDocument() throws XMLStreamException{
         writer.writeStartDocument("UTF-8", "1.0");
@@ -63,6 +79,8 @@ public class GPXWriter extends StaxStreamWriter{
     public void writeGPXTag() throws XMLStreamException{
         writer.setDefaultNamespace(GPX_NAMESPACE);
         writer.writeStartElement(GPX_NAMESPACE, TAG_GPX);
+        writer.writeAttribute(GPX_NAMESPACE, ATT_GPX_VERSION, getVersion());
+        writer.writeAttribute(GPX_NAMESPACE, ATT_GPX_CREATOR, creator);
         writer.writeDefaultNamespace(GPX_NAMESPACE);
     }
 
@@ -133,14 +151,18 @@ public class GPXWriter extends StaxStreamWriter{
     }
 
     public void write(MetaData metadata) throws XMLStreamException{
-        writer.writeStartElement(GPX_NAMESPACE, TAG_METADATA);
         writeSimpleTag(GPX_NAMESPACE, TAG_NAME, metadata.getName());
         writeSimpleTag(GPX_NAMESPACE, TAG_DESC, metadata.getDescription());
-        writePerson(metadata.getPerson());
-        writeCopyRight(metadata.getCopyRight());
-        for(URI uri : metadata.getLinks()){
-            writeLink(uri);
+
+        final Person person = metadata.getPerson();
+        if(person != null){
+            writeSimpleTag(GPX_NAMESPACE, TAG_AUTHOR, person.getName());
+            writeSimpleTag(GPX_NAMESPACE, TAG_AUTHOR_EMAIL, person.getEmail());
         }
+
+        //model is based on 1.1 so not all attributs can be written
+
+        writeLinkURIs(metadata.getLinks());
 
         final Date d = metadata.getTime();
         if(d != null){
@@ -150,7 +172,6 @@ public class GPXWriter extends StaxStreamWriter{
         writeSimpleTag(GPX_NAMESPACE, TAG_METADATA_KEYWORDS, metadata.getKeywords());
         writeBounds(metadata.getBounds());
 
-        writer.writeEndElement();
     }
 
     public void writeWayPoint(Feature feature, final String tagName) throws XMLStreamException{
@@ -235,23 +256,22 @@ public class GPXWriter extends StaxStreamWriter{
         writer.writeEndElement();
     }
 
-    public void writePerson(Person person) throws XMLStreamException{
-        if(person == null) return;
-        
-        writer.writeStartElement(GPX_NAMESPACE, TAG_AUTHOR);
-        writeSimpleTag(GPX_NAMESPACE, TAG_NAME, person.getName());
-        writeSimpleTag(GPX_NAMESPACE, TAG_AUTHOR_EMAIL, person.getEmail());
-        writeLink(person.getLink());
-        writer.writeEndElement();
-    }
-
     public void writeLinks(Collection<Property> props) throws XMLStreamException{
         if(props == null || props.isEmpty()) return;
+        final List<URI> uris = new ArrayList<URI>();
         for(final Property prop : props){
             if(prop != null){
                 final URI uri = (URI) prop.getValue();
-                writeLink(uri);
+                uris.add(uri);
             }
+        }
+        writeLinkURIs(uris);
+    }
+
+    public void writeLinkURIs(Collection<URI> links) throws XMLStreamException{
+        if(links != null && !links.isEmpty()){
+            //in gpx 1.0 we only have one link available
+            writeLink(links.iterator().next());
         }
     }
 
@@ -260,19 +280,6 @@ public class GPXWriter extends StaxStreamWriter{
 
         writer.writeStartElement(GPX_NAMESPACE, TAG_LINK);
         writer.writeAttribute(GPX_NAMESPACE, ATT_LINK_HREF, uri.toASCIIString());
-        writer.writeEndElement();
-    }
-
-    public void writeCopyRight(CopyRight copyRight) throws XMLStreamException{
-        if(copyRight == null) return;
-
-        writer.writeStartElement(GPX_NAMESPACE, TAG_COPYRIGHT);
-        final String author = copyRight.getAuthor();
-        if(author != null){
-            writer.writeAttribute(GPX_NAMESPACE, ATT_COPYRIGHT_AUTHOR, author);
-        }
-        writeSimpleTag(GPX_NAMESPACE, TAG_COPYRIGHT_YEAR, copyRight.getYear());
-        writeSimpleTag(GPX_NAMESPACE, TAG_COPYRIGHT_LICENSE, copyRight.getLicense());
         writer.writeEndElement();
     }
 

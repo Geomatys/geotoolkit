@@ -17,6 +17,7 @@
 
 package org.geotoolkit.data.gpx;
 
+import org.geotoolkit.data.gpx.xml.GPXWriter100;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -37,7 +38,7 @@ import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.gpx.model.MetaData;
 import org.geotoolkit.data.gpx.xml.GPXConstants;
 import org.geotoolkit.data.gpx.xml.GPXReader;
-import org.geotoolkit.data.gpx.xml.GPXWriter;
+import org.geotoolkit.data.gpx.xml.GPXWriter110;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.feature.DefaultFeature;
@@ -269,7 +270,7 @@ public class GPXDataStore extends AbstractDataStore{
 
     private class GPXFeatureWriter extends GPXFeatureReader implements FeatureWriter<FeatureType, Feature>{
 
-        private final GPXWriter writer;
+        private final GPXWriter100 writer;
         private final File writeFile;
         private Feature edited = null;
         private Feature lastWritten = null;
@@ -288,7 +289,12 @@ public class GPXDataStore extends AbstractDataStore{
                 if (!writeFile.exists()) {
                     writeFile.createNewFile();
                 }
-                writer = new GPXWriter();
+
+                switch(reader.getVersion()){
+                    case v1_0_0: writer = new GPXWriter100("Geotoolkit.org");break;
+                    default: writer = new GPXWriter110("Geotoolkit.org");break;
+                }
+
                 writer.setOutput(writeFile);
                 writer.writeStartDocument();
                 writer.writeGPXTag();

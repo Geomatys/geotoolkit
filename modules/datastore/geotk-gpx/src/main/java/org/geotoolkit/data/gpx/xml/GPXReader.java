@@ -32,6 +32,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
 
+import org.geotoolkit.data.gpx.GPXVersion;
 import org.geotoolkit.data.gpx.model.CopyRight;
 import org.geotoolkit.data.gpx.model.GPXModelConstants;
 import org.geotoolkit.data.gpx.model.MetaData;
@@ -47,7 +48,7 @@ import static javax.xml.stream.XMLStreamReader.*;
 import static org.geotoolkit.data.gpx.xml.GPXConstants.*;
 
 /**
- * Stax reader class for GPX files.
+ * Stax reader class for GPX 1.0 and 1.1 files.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -60,6 +61,11 @@ public class GPXReader extends StaxStreamReader{
     private int wayPointInc = 0;
     private int routeInc = 0;
     private int trackInc = 0;
+    private GPXVersion version = null;
+
+    public GPXVersion getVersion() {
+        return version;
+    }
 
     @Override
     public void setInput(Object input) throws IOException, XMLStreamException {
@@ -73,8 +79,22 @@ public class GPXReader extends StaxStreamReader{
             switch (type) {
                 case START_ELEMENT:
                     final String typeName = reader.getLocalName();
-                    if(TAG_METADATA.equalsIgnoreCase(typeName)){
-                        metadata = parseMetaData();
+                    if(TAG_GPX.equalsIgnoreCase(typeName)){
+                        final String str = reader.getAttributeValue(null, ATT_GPX_VERSION);
+                        try{
+                            this.version = GPXVersion.toVersion(str);
+                        }catch(NumberFormatException ex){
+                            throw new XMLStreamException(ex);
+                        }
+
+                        if(version == GPXVersion.v1_0_0){
+                            //we wont found a metadata tag, must read the tags here.
+                            metadata = parseMetaData100();
+                            break searchLoop;
+                        }
+
+                    }else if(TAG_METADATA.equalsIgnoreCase(typeName)){
+                        metadata = parseMetaData110();
                         break searchLoop;
                     }else if(  TAG_WPT.equalsIgnoreCase(typeName)
                             || TAG_TRK.equalsIgnoreCase(typeName)
@@ -148,7 +168,75 @@ public class GPXReader extends StaxStreamReader{
 
     }
 
-    private MetaData parseMetaData() throws XMLStreamException{
+    private MetaData parseMetaData100() throws XMLStreamException{
+
+        String name = null;
+        String desc = null;
+        String author = null;
+        String email = null;
+        String url = null;
+        String urlname = null;
+        Date time = null;
+        String keywords = null;
+        Envelope env = null;
+
+        searchLoop:
+        while (reader.hasNext()) {
+            final int type = reader.next();
+
+            switch (type) {
+                case START_ELEMENT:
+                    final String localName = reader.getLocalName();
+                    if(TAG_NAME.equalsIgnoreCase(localName)){
+                        name = reader.getElementText();
+                    }else if(TAG_DESC.equalsIgnoreCase(localName)){
+                        desc = reader.getElementText();
+                    }else if(TAG_AUTHOR.equalsIgnoreCase(localName)){
+                        author = reader.getElementText();
+                    }else if(TAG_AUTHOR_EMAIL.equalsIgnoreCase(localName)){
+                        email = reader.getElementText();
+                    }else if(TAG_URL.equalsIgnoreCase(localName)){
+                        url = reader.getElementText();
+                    }else if(TAG_URLNAME.equalsIgnoreCase(localName)){
+                        urlname = reader.getElementText();
+                    }else if(TAG_METADATA_TIME.equalsIgnoreCase(localName)){
+                        time = parseTime();
+                    }else if(TAG_METADATA_KEYWORDS.equalsIgnoreCase(localName)){
+                        keywords = reader.getElementText();
+                    }else if(TAG_BOUNDS.equalsIgnoreCase(localName)){
+                        env = parseBound();
+                    }else if(  TAG_WPT.equalsIgnoreCase(localName)
+                            || TAG_TRK.equalsIgnoreCase(localName)
+                            || TAG_RTE.equalsIgnoreCase(localName)){
+                        //there is no more metadata tags
+                        break searchLoop;
+                    }
+                    break;
+            }
+        }
+
+        final Person person;
+        if(author != null || email!=null){
+            person = new Person(author, email, null);
+        }else{
+            person = null;
+        }
+
+
+        final List<URI> links = new ArrayList<URI>();
+        if(url != null){
+            try {
+                links.add(new URI(url));
+            } catch (URISyntaxException ex) {
+                throw new XMLStreamException(ex);
+            }
+        }
+
+        return new MetaData(name,desc,person,null,
+                                links,time,keywords,env);
+    }
+
+    private MetaData parseMetaData110() throws XMLStreamException{
 
         String name = null;
         String desc = null;
@@ -411,6 +499,14 @@ public class GPXReader extends StaxStreamReader{
                         ageofdgpsdata = Double.valueOf(reader.getElementText());
                     }else if(TAG_WPT_DGPSID.equalsIgnoreCase(localName)){
                         dgpsid = Integer.valueOf(reader.getElementText());
+                    }else if(version == GPXVersion.v1_0_0 && TAG_URL.equalsIgnoreCase(localName)){
+                        //GPX 1.0 only
+                        if(links == null) links = new ArrayList<URI>();
+                        try {
+                            links.add(new URI(reader.getElementText()));
+                        } catch (URISyntaxException ex) {
+                            throw new XMLStreamException(ex);
+                        }
                     }
                     break;
                 case END_ELEMENT:
@@ -463,6 +559,14 @@ public class GPXReader extends StaxStreamReader{
                         number = Integer.valueOf(reader.getElementText());
                     }else if(TAG_TYPE.equalsIgnoreCase(localName)){
                         type = reader.getElementText();
+                    }else if(version == GPXVersion.v1_0_0 && TAG_URL.equalsIgnoreCase(localName)){
+                        //GPX 1.0 only
+                        if(links == null) links = new ArrayList<URI>();
+                        try {
+                            links.add(new URI(reader.getElementText()));
+                        } catch (URISyntaxException ex) {
+                            throw new XMLStreamException(ex);
+                        }
                     }
                     break;
                 case END_ELEMENT:
@@ -542,6 +646,14 @@ public class GPXReader extends StaxStreamReader{
                         number = Integer.valueOf(reader.getElementText());
                     }else if(TAG_TYPE.equalsIgnoreCase(localName)){
                         type = reader.getElementText();
+                    }else if(version == GPXVersion.v1_0_0 && TAG_URL.equalsIgnoreCase(localName)){
+                        //GPX 1.0 only
+                        if(links == null) links = new ArrayList<URI>();
+                        try {
+                            links.add(new URI(reader.getElementText()));
+                        } catch (URISyntaxException ex) {
+                            throw new XMLStreamException(ex);
+                        }
                     }
                     break;
                 case END_ELEMENT:

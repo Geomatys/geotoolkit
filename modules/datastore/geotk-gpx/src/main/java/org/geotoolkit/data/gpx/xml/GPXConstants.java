@@ -28,89 +28,91 @@ public class GPXConstants {
     /**
      * Main GPX xml tag.
      */
-    public static final String TAG_GPX = "gpx";
-    public static final String ATT_GPX_VERSION = "version";
-    public static final String ATT_GPX_CREATOR = "creator";
+    public static final String TAG_GPX = "gpx";                         // 1.0 and 1.1
+    public static final String ATT_GPX_VERSION = "version";             // 1.0 and 1.1
+    public static final String ATT_GPX_CREATOR = "creator";             // 1.0 and 1.1
 
     /**
      * Attributs used a bit everywhere.
      */
-    public static final String TAG_NAME = "name";
-    public static final String TAG_LINK = "link";
-    public static final String TAG_DESC = "desc";
-    public static final String TAG_CMT = "cmt";
-    public static final String TAG_SRC = "src";
-    public static final String TAG_TYPE = "type";
-    public static final String TAG_NUMBER = "number";
+    public static final String TAG_NAME = "name";                       // 1.0 and 1.1
+    public static final String TAG_URL = "url";                         // 1.0
+    public static final String TAG_URLNAME = "urlname";                 // 1.0
+    public static final String TAG_LINK = "link";                       // 1.1
+    public static final String TAG_DESC = "desc";                       // 1.0 and 1.1
+    public static final String TAG_CMT = "cmt";                         // 1.0 and 1.1
+    public static final String TAG_SRC = "src";                         // 1.0 and 1.1
+    public static final String TAG_TYPE = "type";                       // 1.0 and 1.1
+    public static final String TAG_NUMBER = "number";                   // 1.0 and 1.1
 
     /**
      * Metadata tag.
      */
-    public static final String TAG_METADATA = "metadata";
-    public static final String TAG_METADATA_TIME = "time";
-    public static final String TAG_METADATA_KEYWORDS = "keywords";
+    public static final String TAG_METADATA = "metadata";               // 1.1
+    public static final String TAG_METADATA_TIME = "time";              // 1.0 and 1.1
+    public static final String TAG_METADATA_KEYWORDS = "keywords";      // 1.0 and 1.1
 
     /**
      * Person tag.
      */
-    public static final String TAG_AUTHOR = "author";
-    public static final String TAG_AUTHOR_EMAIL = "email";
+    public static final String TAG_AUTHOR = "author";                   // 1.0(as attribut) and 1.1(as tag)
+    public static final String TAG_AUTHOR_EMAIL = "email";              // 1.0 and 1.1
 
     /**
      * CopyRight tag.
      */
-    public static final String TAG_COPYRIGHT = "copyright";
-    public static final String TAG_COPYRIGHT_YEAR = "year";
-    public static final String TAG_COPYRIGHT_LICENSE = "license";
-    public static final String ATT_COPYRIGHT_AUTHOR = "author";
+    public static final String TAG_COPYRIGHT = "copyright";             // 1.1
+    public static final String TAG_COPYRIGHT_YEAR = "year";             // 1.1
+    public static final String TAG_COPYRIGHT_LICENSE = "license";       // 1.1
+    public static final String ATT_COPYRIGHT_AUTHOR = "author";         // 1.1
 
     /**
      * Bounds tag.
      */
-    public static final String TAG_BOUNDS = "bounds";
-    public static final String ATT_BOUNDS_MINLAT = "minlat";
-    public static final String ATT_BOUNDS_MINLON = "minlon";
-    public static final String ATT_BOUNDS_MAXLAT = "maxlat";
-    public static final String ATT_BOUNDS_MAXLON = "maxlon";
+    public static final String TAG_BOUNDS = "bounds";                   // 1.0 and 1.1
+    public static final String ATT_BOUNDS_MINLAT = "minlat";            // 1.0 and 1.1
+    public static final String ATT_BOUNDS_MINLON = "minlon";            // 1.0 and 1.1
+    public static final String ATT_BOUNDS_MAXLAT = "maxlat";            // 1.0 and 1.1
+    public static final String ATT_BOUNDS_MAXLON = "maxlon";            // 1.0 and 1.1
 
     /**
      * Link tag.
      */
-    public static final String TAG_LINK_TEXT = "text";
-    public static final String TAG_LINK_TYPE = "type";
-    public static final String ATT_LINK_HREF = "href";
+    public static final String TAG_LINK_TEXT = "text";                  // 1.1
+    public static final String TAG_LINK_TYPE = "type";                  // 1.1
+    public static final String ATT_LINK_HREF = "href";                  // 1.1
 
     /**
      * WPT tag.
      */
-    public static final String TAG_WPT = "wpt";
-    public static final String ATT_WPT_LAT = "lat";
-    public static final String ATT_WPT_LON = "lon";
-    public static final String TAG_WPT_ELE = "ele";
-    public static final String TAG_WPT_TIME = "time";
-    public static final String TAG_WPT_MAGVAR = "magvar";
-    public static final String TAG_WPT_GEOIHEIGHT = "geoidheight";
-    public static final String TAG_WPT_SYM = "sym";
-    public static final String TAG_WPT_FIX = "fix";
-    public static final String TAG_WPT_SAT = "sat";
-    public static final String TAG_WPT_HDOP = "hdop";
-    public static final String TAG_WPT_VDOP = "vdop";
-    public static final String TAG_WPT_PDOP = "pdop";
-    public static final String TAG_WPT_AGEOFGPSDATA = "ageofdgpsdata";
-    public static final String TAG_WPT_DGPSID = "dgpsid";
+    public static final String TAG_WPT = "wpt";                         // 1.0 and 1.1
+    public static final String ATT_WPT_LAT = "lat";                     // 1.0 and 1.1
+    public static final String ATT_WPT_LON = "lon";                     // 1.0 and 1.1
+    public static final String TAG_WPT_ELE = "ele";                     // 1.0 and 1.1
+    public static final String TAG_WPT_TIME = "time";                   // 1.0 and 1.1
+    public static final String TAG_WPT_MAGVAR = "magvar";               // 1.0 and 1.1
+    public static final String TAG_WPT_GEOIHEIGHT = "geoidheight";      // 1.0 and 1.1
+    public static final String TAG_WPT_SYM = "sym";                     // 1.0 and 1.1
+    public static final String TAG_WPT_FIX = "fix";                     // 1.0 and 1.1
+    public static final String TAG_WPT_SAT = "sat";                     // 1.0 and 1.1
+    public static final String TAG_WPT_HDOP = "hdop";                   // 1.0 and 1.1
+    public static final String TAG_WPT_VDOP = "vdop";                   // 1.0 and 1.1
+    public static final String TAG_WPT_PDOP = "pdop";                   // 1.0 and 1.1
+    public static final String TAG_WPT_AGEOFGPSDATA = "ageofdgpsdata";  // 1.0 and 1.1
+    public static final String TAG_WPT_DGPSID = "dgpsid";               // 1.0 and 1.1
 
     /**
      * RTE tag.
      */
-    public static final String TAG_RTE = "rte";
-    public static final String TAG_RTE_RTEPT = "rtept";
+    public static final String TAG_RTE = "rte";                         // 1.0 and 1.1
+    public static final String TAG_RTE_RTEPT = "rtept";                 // 1.0 and 1.1
 
     /**
      * TRK tag.
      */
-    public static final String TAG_TRK = "trk";
-    public static final String TAG_TRK_SEG = "trkseg";
-    public static final String TAG_TRK_SEG_PT = "trkpt";
+    public static final String TAG_TRK = "trk";                         // 1.0 and 1.1
+    public static final String TAG_TRK_SEG = "trkseg";                  // 1.0 and 1.1
+    public static final String TAG_TRK_SEG_PT = "trkpt";                // 1.0 and 1.1
 
     private GPXConstants(){};
 

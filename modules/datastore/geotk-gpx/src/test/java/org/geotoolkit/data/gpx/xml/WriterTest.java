@@ -74,7 +74,7 @@ public class WriterTest {
     public void testWritingMetadata() throws Exception{
         final File f = new File("output.xml");
         if(f.exists())f.delete();
-        final GPXWriter writer = new GPXWriter();
+        final GPXWriter110 writer = new GPXWriter110("Geotoolkit.org");
         writer.setOutput(f);
 
         final MetaData metaData = new MetaData("name", "description",
@@ -102,7 +102,7 @@ public class WriterTest {
 
         final File f = new File("output.xml");
         if(f.exists())f.delete();
-        final GPXWriter writer = new GPXWriter();
+        final GPXWriter110 writer = new GPXWriter110("Geotoolkit.org");
         writer.setOutput(f);
 
         //way points -----------------------------------------------------------
