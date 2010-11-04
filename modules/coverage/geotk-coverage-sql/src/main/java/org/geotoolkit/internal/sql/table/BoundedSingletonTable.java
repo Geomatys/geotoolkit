@@ -157,7 +157,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
                 while (results.next()) { // Should contains only one record.
                     if (timeColumn != 0) {
                         final Calendar calendar = getCalendar(lc);
-                        final Date tMin = results.getTimestamp(timeColumn,   calendar);
+                        final Date tMin = results.getTimestamp(timeColumn,   calendar); // NOSONAR: timeColumn can't be 0.
                         final Date tMax = results.getTimestamp(timeColumn+1, calendar);
                         // Computes the intersection with the time range that we found.
                         Date t;
@@ -167,7 +167,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
                         envelope.setTimeRange(tMin, tMax);
                     }
                     if (bboxColumn != 0) {
-                        final String bbox = results.getString(bboxColumn);
+                        final String bbox = results.getString(bboxColumn); // NOSONAR: bboxColumn can't be 0.
                         if (bbox == null) {
                             continue;
                         }

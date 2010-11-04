@@ -90,7 +90,7 @@ public final class WKT {
             "  DATUM[“WGS84”,\n" +
             "    SPHEROID[“WGS84”, 6378137.0, 298.257223563]],\n" +
             "  PRIMEM[“Greenwich”, 0.0],\n" +
-            "  UNIT[“degree”, 0.017453292519943295],\n"+"" +
+            "  UNIT[“degree”, 0.017453292519943295],\n" +
             "  AXIS[“Longitude”,EAST]," +
             "  AXIS[“Latitude”,NORTH]]");
 
@@ -114,7 +114,7 @@ public final class WKT {
             "  DATUM[“WGS84_altered”,\n"                          +
             "    SPHEROID[“WGS84”, 6378137.0, 298.257223563]],\n" +
             "  PRIMEM[“Greenwich”, 0.0],\n"                       +
-            "  UNIT[“degree”, 0.017453292519943295],\n"+""        +
+            "  UNIT[“degree”, 0.017453292519943295],\n"           +
             "  AXIS[“Longitude”,EAST],"                           +
             "  AXIS[“Latitude”,NORTH]]");
 
@@ -351,7 +351,7 @@ public final class WKT {
      * Vertical CRS over the ellipsoid.
      */
     public static final String VERTCS_Z = decodeQuotes(
-            "VERT_CS[“ellipsoid Z in meters”,\n"+"" +
+            "VERT_CS[“ellipsoid Z in meters”,\n" +
             "  VERT_DATUM[“Ellipsoid”,2002],\n" +
             "  UNIT[“metre”, 1],\n" +
             "  AXIS[“Z”,UP]]");

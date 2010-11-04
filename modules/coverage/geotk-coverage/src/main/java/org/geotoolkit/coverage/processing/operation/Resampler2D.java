@@ -393,7 +393,7 @@ final class Resampler2D extends GridCoverage2D {
             } else {
                 step1 = targetGG.getGridToCRS(CORNER);
                 if (!targetGG.isDefined(GridGeometry2D.GRID_RANGE)) {
-                    GeneralEnvelope gridEnvelope = CRS.transform(step1.inverse(), targetEnvelope);
+                    final GeneralEnvelope gridEnvelope = CRS.transform(step1.inverse(), targetEnvelope);
                     // According OpenGIS specification, GridGeometry maps pixel's center.
                     targetGG = new GridGeometry2D(new GeneralGridEnvelope(gridEnvelope,
                             PixelInCell.CELL_CENTER, false), step1, targetCRS);
@@ -650,7 +650,7 @@ final class Resampler2D extends GridCoverage2D {
         upper[targetGG.gridDimensionY] = targetImage.getMaxY();
         final GridEnvelope actualGR = new GeneralGridEnvelope(lower, upper, false);
         if (!targetGR.equals(actualGR)) {
-            MathTransform gridToCRS = targetGG.getGridToCRS(CORNER);
+            final MathTransform gridToCRS = targetGG.getGridToCRS(CORNER);
             targetGG = new GridGeometry2D(actualGR, gridToCRS, targetCRS);
             if (!automaticGR) {
                 final InternationalString name = sourceCoverage.getName();
@@ -705,7 +705,7 @@ final class Resampler2D extends GridCoverage2D {
      * requested resampling may be the inverse of a previous resampling).
      */
     private static GridCoverage2D existingCoverage(GridCoverage2D coverage,
-              CoordinateReferenceSystem targetCRS, GridGeometry2D targetGG)
+              final CoordinateReferenceSystem targetCRS, final GridGeometry2D targetGG)
     {
         while (!equivalent(coverage.getGridGeometry(), targetGG) ||
               (!CRS.equalsIgnoreMetadata(targetCRS, coverage.getCoordinateReferenceSystem()) &&
@@ -882,7 +882,7 @@ final class Resampler2D extends GridCoverage2D {
              * creation that we need to perform some empirical adjustment. The difference between
              * the actual and expected bounding boxes should be only 1 pixel.
              */
-            if (actualBB != null) {
+            if (actualBB != null) { // NOSONAR: Not a redundant null check (because of the loop).
                 final double scaleX     = 1 - ((double) sourceBB.width  / (double) actualBB.width);
                 final double scaleY     = 1 - ((double) sourceBB.height / (double) actualBB.height);
                 final double translateX = sourceBB.x - actualBB.x;

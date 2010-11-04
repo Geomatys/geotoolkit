@@ -512,7 +512,7 @@ public final class Referencing extends Formulas implements XReferencing {
              * Parse failed. Tries to replace the dot by the decimal separator in current locale.
              */
             final String localized = text.replace('.', decimalSeparator);
-            if (localized != text) try {
+            if (!text.equals(localized)) try {
                 return angleFormat.parse(localized).degrees();
             } catch (ParseException ignore) {
                 // Ignore; will throw the first exception.
@@ -684,7 +684,7 @@ public final class Referencing extends Formulas implements XReferencing {
         if (dimension >= 1 && dimension <= cs.getDimension()) {
             return cs.getAxis(dimension - 1).getName().getCode();
         } else {
-            return Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, new Integer(dimension));
+            return Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, dimension);
         }
     }
 

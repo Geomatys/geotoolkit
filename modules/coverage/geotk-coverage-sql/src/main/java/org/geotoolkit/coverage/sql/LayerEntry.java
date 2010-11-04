@@ -576,8 +576,10 @@ final class LayerEntry extends DefaultEntry implements Layer, Localized {
                                 ranges = Arrays.copyOf(ranges, candidates.length);
                                 System.arraycopy(candidates, length, ranges, length, candidates.length - length);
                             }
-                            for (int i=0; i<length; i++) try {
-                                ranges[i] = ranges[i].union(candidates[i]);
+                            try {
+                                for (int i=0; i<length; i++) {
+                                    ranges[i] = ranges[i].union(candidates[i]);
+                                }
                             } catch (IllegalArgumentException e) {
                                 // May occurs if the units are not convertible.
                                 // We are interested in the ConversionException cause.

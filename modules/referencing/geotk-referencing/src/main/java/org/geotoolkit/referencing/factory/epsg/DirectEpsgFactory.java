@@ -2417,7 +2417,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                           " REMARKS" +
                     " FROM [Coordinate_Operation]" +
                     " WHERE COORD_OP_CODE = ?");
-            ResultSet result = executeQuery(stmt, primaryKey);
+            final ResultSet result = executeQuery(stmt, primaryKey);
             while (result.next()) {
                 final String epsg = getString(result, 1, code);
                 final String name = getString(result, 2, code);
@@ -2567,7 +2567,6 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                      * and also because it is not part of FactoryGroup anyway.
                      */
                     result.close();
-                    result = null;
                     final PreparedStatement cstmt = prepareStatement("[Coordinate_Operation Path]",
                             "SELECT SINGLE_OPERATION_CODE" +
                              " FROM [Coordinate_Operation Path]" +

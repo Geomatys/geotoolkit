@@ -280,7 +280,7 @@ public class ImageSampleValues extends JComponent {
         if (image != null) {
             final SampleModel model = image.getSampleModel();
             final int      numBands = model.getNumBands();
-            final Integer  maximum  = new Integer(numBands);
+            final Integer  maximum  = numBands;
             if (band.getNumber().intValue() >= numBands) {
                 band.setValue(maximum);
             }

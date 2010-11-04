@@ -459,7 +459,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
     @Immutable
     static final class Boolean extends StringConverter<java.lang.Boolean> {
         private static final long serialVersionUID = -27525398425996373L;
-        public static final Boolean INSTANCE = new Boolean(); // NOSONAR
+        public static final Boolean INSTANCE = new Boolean();
         private Boolean() {
         }
 

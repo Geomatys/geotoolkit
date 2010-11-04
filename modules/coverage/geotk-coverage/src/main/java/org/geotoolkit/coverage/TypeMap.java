@@ -501,7 +501,7 @@ public final class TypeMap {
             case -8: {
                 final byte candidate = (byte) value;
                 if (candidate == value) {
-                    return new Byte(candidate);
+                    return Byte.valueOf(candidate);
                 }
                 if (!allowWidening) break;
                 // Fall through

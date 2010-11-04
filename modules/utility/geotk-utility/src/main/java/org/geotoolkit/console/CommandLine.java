@@ -389,10 +389,7 @@ public abstract class CommandLine implements Runnable {
         Exception status = null;
         final Class<?> parent = classe.getSuperclass();
         if (CommandLine.class.isAssignableFrom(parent)) {
-            final Exception s = assignValues(parent);
-            if (status == null) {
-                status = s;
-            }
+            status = assignValues(parent);
         }
         /*
          * At this point, the fields have been set for all parent classes. Now set the

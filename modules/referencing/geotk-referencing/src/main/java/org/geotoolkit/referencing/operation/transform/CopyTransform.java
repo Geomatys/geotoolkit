@@ -393,7 +393,7 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
                 for (int j=srcDim; --j>=0;) {
                     if (reverse[j] < 0) {
                         final XMatrix matrix = MatrixFactory.create(srcDim + 1, dstDim + 1);
-                        for (j=0; j<srcDim; j++) {
+                        for (j=0; j<srcDim; j++) { // NOSONAR: the outer loop will not continue.
                             if (j < dstDim) {
                                 matrix.setElement(j, j, 0);
                             }

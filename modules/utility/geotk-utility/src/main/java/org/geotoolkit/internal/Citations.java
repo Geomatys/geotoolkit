@@ -73,7 +73,8 @@ public final class Citations {
                 return true;
             }
             final String asLocalized = candidate.toString();
-            if (asLocalized!=asString && titleMatches(c1, asLocalized)) {
+            // The identity Strings comparison below is just an optimization.
+            if (asLocalized != asString && titleMatches(c1, asLocalized)) { // NOSONAR (see above)
                 return true;
             }
             if (iterator == null) {
@@ -112,7 +113,8 @@ public final class Citations {
                 return true;
             }
             final String asLocalized = candidate.toString();
-            if (asLocalized!=asString && asLocalized.trim().equalsIgnoreCase(title)) {
+            // The identity Strings comparison below is just an optimization.
+            if (asLocalized != asString && asLocalized.trim().equalsIgnoreCase(title)) { // NOSONAR (see above)
                 return true;
             }
             if (iterator == null) {
@@ -160,7 +162,7 @@ public final class Citations {
                 return titleMatches(c1, c2);
             }
             c1 = c2;
-            c2 = null; // Just for make sure that we don't use it by accident.
+            c2 = null; // NOSONAR: Just for make sure that we don't use it by accident.
         }
         do {
             final String id = iterator.next().getCode().trim();

@@ -167,11 +167,12 @@ final class SeriesTable extends SingletonTable<SeriesEntry> {
         final String  formatID      = results.getString(indexOf(query.format));
         final String  pathname      = results.getString(indexOf(query.pathname));
         final String  extension     = results.getString(indexOf(query.extension));
+        final String  remarks       = results.getString(indexOf(query.comments));
         final String  rootDirectory = getProperty(ConfigurationKey.ROOT_DIRECTORY);
         final String  rootURL       = getProperty(ConfigurationKey.ROOT_URL);
         final FormatEntry format = getFormatTable().getEntry(formatID);
         return new SeriesEntry((Integer) identifier, (rootDirectory != null) ? rootDirectory : rootURL,
-                               pathname, extension, format, null);
+                               pathname, extension, format, remarks);
     }
 
     /**

@@ -303,7 +303,7 @@ public final class Logging {
             for (int i=0; i<children.length; i++) {
                 children[i].setLoggerFactory(factory);
             }
-            sameLoggerFactory = sameLoggerFactory(ALL.children, ALL.factory);
+            sameLoggerFactory = sameLoggerFactory(ALL.children, ALL.factory); // NOSONAR: really want static field.
         }
     }
 

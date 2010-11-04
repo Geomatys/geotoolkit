@@ -250,8 +250,9 @@ public class LayerCoverageReader extends GridCoverageReader {
     }
 
     /**
-     * Reads the data them as a coverage. The current implementation delegates to
-     * {@link #readSlice(int, GridCoverageReadParam)}
+     * Reads the data and return them as a coverage. The current implementation delegates to
+     * {@link #readSlice(int, GridCoverageReadParam)}. A future implementation may return a
+     * three-dimensional coverage.
      *
      * @param  index The image index (usually 0).
      * @param  param Optional read parameters (including the envelope and resolution to request),

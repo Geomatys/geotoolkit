@@ -72,14 +72,14 @@ public final class BoundingBoxes implements ChangeListener {
     }
 
     /**
-     * Discarts the cached factory if the configuration changed. This method
+     * Discards the cached factory if the configuration changed. This method
      * is public as an implementation side effect. Do not invoke directly.
      *
      * @param e ignored.
      */
     @Override
     public void stateChanged(ChangeEvent e) {
-        factory = null;
+        factory = null; // NOSONAR: really want to write to the static field.
     }
 
     /**
@@ -176,8 +176,8 @@ public final class BoundingBoxes implements ChangeListener {
     /**
      * Returns {@code true} if the specified {@code crs} starts with the specified {@code head}.
      */
-    private static final boolean startsWith(final CoordinateReferenceSystem crs,
-                                            final CoordinateReferenceSystem head)
+    private static boolean startsWith(final CoordinateReferenceSystem crs,
+                                      final CoordinateReferenceSystem head)
     {
         final int dimension = head.getCoordinateSystem().getDimension();
         return crs.getCoordinateSystem().getDimension() >= dimension &&

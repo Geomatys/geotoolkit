@@ -59,7 +59,7 @@ public final class AxisDirectionType {
      * Creates a new adapter for the given value.
      */
     AxisDirectionType(final AxisDirection value) {
-       this.codeSpace = "EPSG";
+       this.codeSpace = "EPSG"; // NOSONAR: will be read by JAXB.
        this.value     = value.identifier();
     }
 }

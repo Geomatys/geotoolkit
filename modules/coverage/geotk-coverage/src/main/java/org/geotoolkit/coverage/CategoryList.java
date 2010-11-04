@@ -482,7 +482,8 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
             } else {
                 buffer.append('(').append(Vocabulary.getResources(locale).getString(Vocabulary.Keys.UNTITLED)).append(')');
             }
-            return geophysics(true).formatRange(buffer.append(' '), locale).toString();
+            geophysics(true).formatRange(buffer.append(' '), locale);
+            return buffer.toString();
         }
 
         /** Returns the name in the default locale. */
@@ -552,21 +553,20 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
      *
      * @param  buffer The buffer where to write the range of geophysics values.
      * @param  locale The locale to use for formatting numbers.
-     * @return The {@code buffer} for convenience.
      */
-    private StringBuffer formatRange(StringBuffer buffer, final Locale locale) {
+    private void formatRange(final StringBuffer buffer, final Locale locale) {
         final NumberRange<?> range = getRange();
         buffer.append('[');
         if (range != null) {
-            buffer = format(range.getMinimum(), false, locale, buffer).append(" \u2026 "); // " ... "
-            buffer = format(range.getMaximum(), true,  locale, buffer);
+            format(range.getMinimum(), false, locale, buffer).append(" \u2026 "); // " ... "
+            format(range.getMaximum(), true,  locale, buffer);
         } else {
             final Unit<?> unit = getUnits();
             if (unit != null) {
                 buffer.append(unit);
             }
         }
-        return buffer.append(']');
+        buffer.append(']');
     }
 
     /**
@@ -780,12 +780,12 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
      */
     final String toString(final Object owner, final InternationalString description) {
         final String lineSeparator = System.getProperty("line.separator", "\n");
-        StringBuffer buffer = new StringBuffer(64);
+        final StringBuffer buffer = new StringBuffer(64);
         buffer.append(Classes.getShortClassName(owner)).append('(');
         if (description != null && description != name) {
             buffer.append('"').append(description).append("\":");
         }
-        buffer = formatRange(buffer, null);
+        formatRange(buffer, null);
         if (hasGaps) {
             buffer.append(" with gaps");
         }

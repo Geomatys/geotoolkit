@@ -99,7 +99,7 @@ public interface LocalCache {
      * @since 3.09
      * @module
      */
-    static final class Stmt extends StatementEntry {
+    final class Stmt extends StatementEntry {
         /**
          * Special value for {@link #stamp} meaning that the prepared statement
          * has not yet been initialized.

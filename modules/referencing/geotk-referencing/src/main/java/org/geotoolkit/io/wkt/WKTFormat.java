@@ -562,7 +562,7 @@ copy:       while (true) {
                                     Errors.Keys.NON_EQUILIBRATED_PARENTHESIS_$2,
                                     closingBrackets[i], openingBrackets[i]));
                         }
-                        for (i=0; i<bracketCount.length; i++) {
+                        for (i=0; i<bracketCount.length; i++) { // NOSONAR: The outer loop will not continue.
                             if (bracketCount[i] != 0) {
                                 continue copy;
                             }

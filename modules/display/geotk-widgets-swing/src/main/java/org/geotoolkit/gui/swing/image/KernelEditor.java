@@ -645,8 +645,8 @@ public class KernelEditor extends JComponent implements Dialog {
                 } else if (rowCount < oldRowCount) {
                     fireTableRowsDeleted(rowCount, oldRowCount-1);
                 }
-                widthSelector .setValue(new Integer(colCount));
-                heightSelector.setValue(new Integer(rowCount));
+                widthSelector .setValue(colCount);
+                heightSelector.setValue(rowCount);
             }
         }
 

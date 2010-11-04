@@ -539,7 +539,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
             final int[] ni = new int[length];
             if (step == 1) {
                 System.arraycopy(index, first, ni, 0, length);
-            } else for (int j=0; j<length; j++) {
+            } else for (int j=0; j<length; j++) { // NOSONAR: this is not an array loop.
                 ni[j] = index[first];
                 first += step;
             }

@@ -237,8 +237,8 @@ final class WritableGridCoverageTable extends GridCoverageTable {
                 statement.setInt   (byExtent,   extent);
                 if (explicitTranslate) {
                     final Rectangle translate = entry.imageBounds;
-                    statement.setInt(byDx, translate.x);
-                    statement.setInt(byDy, translate.y);
+                    statement.setInt(byDx, translate.x); // NOSONAR: byDx can not be zero.
+                    statement.setInt(byDy, translate.y); // NOSONAR: byDy can not be zero.
                 }
                 final DateRange[] dateRanges = entry.dateRanges;
                 int imageIndex = entry.imageIndex;

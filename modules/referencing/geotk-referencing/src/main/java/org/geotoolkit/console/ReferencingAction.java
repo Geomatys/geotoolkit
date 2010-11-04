@@ -463,24 +463,26 @@ final class ReferencingAction {
         final CoordinateOperationFactory opFactory =
                 AuthorityFactoryFinder.getCoordinateOperationFactory(HINTS);
         char[] separator = null;
-        for (int i=0; i<arguments.length; i++) try {
-            final CoordinateReferenceSystem crs1 = factory.createCoordinateReferenceSystem(arguments[i]);
-            for (int j=i+1; j<arguments.length; j++) {
-                final CoordinateReferenceSystem crs2 = factory.createCoordinateReferenceSystem(arguments[j]);
-                final CoordinateOperation op;
-                try {
-                    op = opFactory.createOperation(crs1, crs2);
-                } catch (OperationNotFoundException exception) {
-                    out.println(exception.getLocalizedMessage());
-                    continue;
+        try {
+            for (int i=0; i<arguments.length; i++) {
+                final CoordinateReferenceSystem crs1 = factory.createCoordinateReferenceSystem(arguments[i]);
+                for (int j=i+1; j<arguments.length; j++) {
+                    final CoordinateReferenceSystem crs2 = factory.createCoordinateReferenceSystem(arguments[j]);
+                    final CoordinateOperation op;
+                    try {
+                        op = opFactory.createOperation(crs1, crs2);
+                    } catch (OperationNotFoundException exception) {
+                        out.println(exception.getLocalizedMessage());
+                        continue;
+                    }
+                    if (separator == null) {
+                        separator = getSeparator();
+                    } else {
+                        out.println(separator);
+                    }
+                    final WKTFormat formatter = getWktFormat();
+                    out.println(formatter.format(op.getMathTransform()));
                 }
-                if (separator == null) {
-                    separator = getSeparator();
-                } else {
-                    out.println(separator);
-                }
-                final WKTFormat formatter = getWktFormat();
-                out.println(formatter.format(op.getMathTransform()));
             }
         } catch (FactoryException e) {
             cmd.printException(e);
