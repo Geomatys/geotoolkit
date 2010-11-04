@@ -28,6 +28,7 @@ import org.junit.Test;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class ColorTest {
 

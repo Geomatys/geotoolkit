@@ -22,6 +22,7 @@ import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class DefaultAbstractTimePrimitive extends DefaultAbstractObject implements AbstractTimePrimitive {
 

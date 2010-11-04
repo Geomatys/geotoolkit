@@ -19,6 +19,7 @@ package org.geotoolkit.data.kml.model;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  * @deprecated
  */
 public class DefaultUrl extends DefaultLink implements Url {

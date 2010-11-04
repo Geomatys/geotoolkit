@@ -43,6 +43,7 @@ import java.net.URI;
  * </pre>
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public interface Pair extends AbstractObject {
 

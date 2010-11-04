@@ -48,6 +48,7 @@ import com.vividsolutions.jts.geom.CoordinateSequence;
  * (optional) altitude coordinate tuple.</p>
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public interface Point extends AbstractGeometry{
     

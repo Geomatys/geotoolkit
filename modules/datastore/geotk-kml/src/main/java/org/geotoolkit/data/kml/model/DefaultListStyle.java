@@ -25,6 +25,7 @@ import static java.util.Collections.*;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class DefaultListStyle extends DefaultAbstractSubStyle implements ListStyle {
 

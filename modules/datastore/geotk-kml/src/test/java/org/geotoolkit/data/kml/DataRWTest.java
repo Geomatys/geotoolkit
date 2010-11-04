@@ -22,11 +22,13 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
+
 import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -38,6 +40,7 @@ import org.xml.sax.SAXException;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class DataRWTest {
 

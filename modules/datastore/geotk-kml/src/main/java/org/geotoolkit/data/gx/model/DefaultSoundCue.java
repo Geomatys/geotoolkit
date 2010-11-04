@@ -24,6 +24,7 @@ import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class DefaultSoundCue extends DefaultAbstractObject implements SoundCue {
 

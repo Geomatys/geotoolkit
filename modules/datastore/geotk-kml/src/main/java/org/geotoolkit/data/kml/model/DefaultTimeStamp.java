@@ -23,6 +23,7 @@ import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class DefaultTimeStamp extends DefaultAbstractTimePrimitive implements TimeStamp {
 

@@ -41,6 +41,7 @@ import java.util.Calendar;
  * </pre>
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public interface TimeStamp extends AbstractTimePrimitive{
 

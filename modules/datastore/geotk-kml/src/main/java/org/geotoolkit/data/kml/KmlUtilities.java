@@ -18,15 +18,18 @@ package org.geotoolkit.data.kml;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
+
 import java.awt.Color;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
 import org.geotoolkit.data.kml.model.KmlException;
 
 /**
  * <p>This class provides utilities for reading and writting KML files.</p>
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class KmlUtilities {
 

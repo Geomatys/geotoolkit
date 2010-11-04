@@ -24,6 +24,7 @@ import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class DefaultCamera extends DefaultAbstractView implements Camera {
 

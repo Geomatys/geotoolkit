@@ -21,6 +21,7 @@ import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class DefaultVec2 implements Vec2 {
 

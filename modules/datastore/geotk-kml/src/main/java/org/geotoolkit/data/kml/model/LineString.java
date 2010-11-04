@@ -45,6 +45,7 @@ import com.vividsolutions.jts.geom.CoordinateSequence;
  * </pre>
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public interface LineString extends AbstractGeometry {
 

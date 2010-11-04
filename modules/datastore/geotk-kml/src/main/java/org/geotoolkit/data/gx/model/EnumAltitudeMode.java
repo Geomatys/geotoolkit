@@ -34,6 +34,7 @@ import org.geotoolkit.data.kml.model.AltitudeMode;
  * </pre>
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public enum EnumAltitudeMode implements AltitudeMode {
 

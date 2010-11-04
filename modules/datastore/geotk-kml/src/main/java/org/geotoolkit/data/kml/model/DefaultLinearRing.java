@@ -25,6 +25,7 @@ import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class DefaultLinearRing extends com.vividsolutions.jts.geom.LinearRing implements LinearRing {
 

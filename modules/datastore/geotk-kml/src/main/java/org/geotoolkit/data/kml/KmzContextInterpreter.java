@@ -22,6 +22,7 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
+
 import java.awt.Color;
 import java.io.File;
 import java.net.URI;
@@ -34,6 +35,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
+
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
@@ -62,6 +64,7 @@ import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.util.FileUtilities;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.Property;
@@ -79,6 +82,7 @@ import org.opengis.style.TextSymbolizer;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class KmzContextInterpreter {
 

@@ -51,6 +51,7 @@ import java.awt.Color;
  * </pre>
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public interface BalloonStyle extends AbstractSubStyle {
 

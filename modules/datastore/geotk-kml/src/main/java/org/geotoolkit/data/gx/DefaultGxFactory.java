@@ -18,10 +18,12 @@ package org.geotoolkit.data.gx;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
 import org.geotoolkit.atom.model.AtomLink;
 import org.geotoolkit.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.gx.model.AbstractTourPrimitive;
@@ -66,6 +68,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xal.model.AddressDetails;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.Property;
@@ -73,6 +76,7 @@ import org.opengis.feature.Property;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class DefaultGxFactory implements GxFactory {
 

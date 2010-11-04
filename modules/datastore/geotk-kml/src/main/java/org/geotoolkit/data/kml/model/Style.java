@@ -44,6 +44,7 @@ package org.geotoolkit.data.kml.model;
  * </pre>
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public interface Style extends AbstractStyleSelector {
 

@@ -27,6 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
+
 import org.geotoolkit.data.kml.model.Extensions.Names;
 import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.xml.KmlExtensionReader;
@@ -36,6 +37,7 @@ import org.geotoolkit.xml.StaxStreamReader;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class DataReader extends StaxStreamReader implements KmlExtensionReader{
     

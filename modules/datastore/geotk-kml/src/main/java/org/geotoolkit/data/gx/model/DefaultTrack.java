@@ -29,6 +29,7 @@ import static java.util.Collections.*;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class DefaultTrack extends DefaultAbstractGeometry implements Track {
 

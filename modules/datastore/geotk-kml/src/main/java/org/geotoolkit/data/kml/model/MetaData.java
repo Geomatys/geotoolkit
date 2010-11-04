@@ -21,6 +21,7 @@ import java.util.List;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 @Deprecated
 public interface Metadata {

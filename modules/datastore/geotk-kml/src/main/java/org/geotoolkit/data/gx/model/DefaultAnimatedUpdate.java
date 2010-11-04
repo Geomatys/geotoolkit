@@ -26,6 +26,7 @@ import static org.geotoolkit.data.gx.xml.GxConstants.*;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class DefaultAnimatedUpdate extends DefaultAbstractObject implements AnimatedUpdate {
 

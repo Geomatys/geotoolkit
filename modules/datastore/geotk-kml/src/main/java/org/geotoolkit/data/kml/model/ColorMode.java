@@ -15,6 +15,7 @@
  *    Lesser General Public License for more details.
  */
 package org.geotoolkit.data.kml.model;
+
 /**
  * <p>This enumeration maps colorModeEnumType.</p>
  *
@@ -28,6 +29,7 @@ package org.geotoolkit.data.kml.model;
  * </pre>
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public enum ColorMode {
 

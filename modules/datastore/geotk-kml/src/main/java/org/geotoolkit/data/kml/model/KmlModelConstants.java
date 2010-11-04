@@ -19,6 +19,7 @@ package org.geotoolkit.data.kml.model;
 
 import java.awt.Color;
 import java.net.URI;
+
 import org.geotoolkit.atom.model.AtomLink;
 import org.geotoolkit.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.kml.xml.KmlConstants;
@@ -27,6 +28,7 @@ import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -34,8 +36,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
-public class KmlModelConstants {
+public final class KmlModelConstants {
 //
 //    private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
 //            new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));

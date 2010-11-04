@@ -24,8 +24,9 @@ import org.geotoolkit.data.kml.xml.KmlConstants;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
-public class GxConstants {
+public final class GxConstants {
 
     // NAMESPACES
     public static final String URI_GX = "http://www.google.com/kml/ext/2.2";

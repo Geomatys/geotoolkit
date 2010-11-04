@@ -23,12 +23,14 @@ import java.io.File;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
+
 import org.geotoolkit.data.kml.model.Kml;
 import org.geotoolkit.data.kml.model.KmlException;
 import org.geotoolkit.data.kml.model.NetworkLinkControl;
 import org.geotoolkit.data.kml.xsd.Cdata;
 import org.geotoolkit.data.kml.xsd.DefaultCdata;
 import org.geotoolkit.xml.DomCompare;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -40,6 +42,7 @@ import org.xml.sax.SAXException;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class NetworkLinkControlTest {
 

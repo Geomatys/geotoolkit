@@ -19,6 +19,7 @@ package org.geotoolkit.data.kml.xsd;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class DefaultCdata implements Cdata{
 
@@ -40,5 +41,12 @@ public class DefaultCdata implements Cdata{
             return CDATA.equals(((Cdata) object).toString());
         else
             return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + (this.CDATA != null ? this.CDATA.hashCode() : 0);
+        return hash;
     }
 }

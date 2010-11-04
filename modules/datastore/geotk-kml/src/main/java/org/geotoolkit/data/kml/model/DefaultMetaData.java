@@ -22,6 +22,7 @@ import static java.util.Collections.*;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 @Deprecated
 public class DefaultMetaData implements Metadata {

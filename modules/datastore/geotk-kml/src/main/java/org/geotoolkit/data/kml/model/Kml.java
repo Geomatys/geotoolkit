@@ -40,6 +40,7 @@ import org.opengis.feature.Feature;
  * </pre>
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public interface Kml {
 

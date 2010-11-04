@@ -18,9 +18,11 @@ package org.geotoolkit.data.gx;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
+
 import java.net.URI;
 import java.util.Calendar;
 import java.util.List;
+
 import org.geotoolkit.atom.model.AtomLink;
 import org.geotoolkit.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.gx.model.AbstractTourPrimitive;
@@ -48,11 +50,13 @@ import org.geotoolkit.data.kml.model.Region;
 import org.geotoolkit.data.kml.model.Update;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import org.geotoolkit.xal.model.AddressDetails;
+
 import org.opengis.feature.Feature;
 
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public interface GxFactory {
 

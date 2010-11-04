@@ -63,6 +63,7 @@ import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
  * information about his nature.</p>
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public interface KmlExtensionWriter {
 

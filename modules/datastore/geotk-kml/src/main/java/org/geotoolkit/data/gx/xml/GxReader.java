@@ -18,6 +18,7 @@ package org.geotoolkit.data.gx.xml;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -30,6 +31,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
+
 import org.geotoolkit.atom.model.AtomLink;
 import org.geotoolkit.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.gx.DefaultGxFactory;
@@ -70,12 +72,14 @@ import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import org.geotoolkit.xal.model.AddressDetails;
 import org.geotoolkit.xml.StaxStreamReader;
+
 import org.opengis.feature.Feature;
 import static org.geotoolkit.data.gx.xml.GxConstants.*;
 
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class GxReader extends StaxStreamReader implements KmlExtensionReader {
 

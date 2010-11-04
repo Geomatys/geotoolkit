@@ -22,15 +22,19 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
+
 import static java.util.Collections.*;
 
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class DefaultMultiGeometry extends DefaultAbstractGeometry implements MultiGeometry {
 

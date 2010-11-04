@@ -33,6 +33,7 @@ import org.geotoolkit.xal.xml.XalConstants;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public final class KmlConstants {
 

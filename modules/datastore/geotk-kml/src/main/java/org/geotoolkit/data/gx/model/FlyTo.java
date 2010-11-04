@@ -39,6 +39,7 @@ import org.geotoolkit.data.kml.model.AbstractView;
  * </pre>
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public interface FlyTo extends AbstractTourPrimitive {
 

@@ -17,8 +17,7 @@
 package org.geotoolkit.data.kml.xml;
 
 import com.vividsolutions.jts.geom.CoordinateSequence;
-import org.geotoolkit.xal.xml.XalWriter;
-import org.geotoolkit.atom.xml.AtomWriter;
+
 import java.awt.Color;
 import java.io.IOException;
 import java.net.URI;
@@ -29,6 +28,9 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
+
+import org.geotoolkit.xal.xml.XalWriter;
+import org.geotoolkit.atom.xml.AtomWriter;
 import org.geotoolkit.atom.model.AtomLink;
 import org.geotoolkit.atom.model.AtomPersonConstruct;
 import org.geotoolkit.data.kml.KmlUtilities;
@@ -112,14 +114,17 @@ import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import org.geotoolkit.data.kml.xsd.Cdata;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.xml.StaxStreamWriter;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
+
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 
 /**
  * <p>This class provides a method to read KML files, version 2.2.</p>
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class KmlWriter extends StaxStreamWriter {
 

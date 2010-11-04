@@ -25,6 +25,7 @@ package org.geotoolkit.data.kml.model;
  * <p>A spécific exception class for KML parsing errors.</p>
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class KmlException extends Exception{
 

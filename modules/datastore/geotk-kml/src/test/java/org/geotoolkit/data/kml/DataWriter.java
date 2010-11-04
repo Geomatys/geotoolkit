@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.stream.XMLStreamException;
+
 import org.geotoolkit.data.kml.model.Extensions;
 import org.geotoolkit.data.kml.model.Extensions.Names;
 import org.geotoolkit.data.kml.model.KmlException;
@@ -32,6 +33,7 @@ import org.geotoolkit.xml.StaxStreamWriter;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class DataWriter extends StaxStreamWriter implements KmlExtensionWriter{
 

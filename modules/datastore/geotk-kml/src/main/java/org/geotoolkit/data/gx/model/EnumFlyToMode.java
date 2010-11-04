@@ -32,6 +32,7 @@ package org.geotoolkit.data.gx.model;
  * </pre>
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public enum EnumFlyToMode {
 

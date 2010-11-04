@@ -37,6 +37,7 @@ import org.geotoolkit.data.kml.model.AbstractObject;
  * </pre>
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public interface LatLonQuad extends AbstractObject {
 

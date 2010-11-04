@@ -19,6 +19,7 @@ package org.geotoolkit.data.kml.xsd;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public interface SimpleTypeContainer {
 

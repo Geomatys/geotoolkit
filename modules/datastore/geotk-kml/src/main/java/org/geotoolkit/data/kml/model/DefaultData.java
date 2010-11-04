@@ -23,6 +23,7 @@ import static java.util.Collections.*;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class DefaultData extends DefaultAbstractObject implements Data {
 

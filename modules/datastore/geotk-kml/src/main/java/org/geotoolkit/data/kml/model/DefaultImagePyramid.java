@@ -23,6 +23,7 @@ import static org.geotoolkit.data.kml.xml.KmlConstants.*;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class DefaultImagePyramid extends DefaultAbstractObject implements ImagePyramid {
 

@@ -17,6 +17,7 @@
 package org.geotoolkit.data.gx.xml;
 
 import com.vividsolutions.jts.geom.Coordinate;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import javax.xml.stream.XMLStreamException;
+
 import org.geotoolkit.data.gx.GxUtilities;
 import org.geotoolkit.data.gx.model.AbstractTourPrimitive;
 import org.geotoolkit.data.gx.model.Angles;
@@ -51,14 +53,17 @@ import org.geotoolkit.data.kml.xml.KmlExtensionWriter;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import org.geotoolkit.xml.StaxStreamWriter;
+
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
+
 import static org.geotoolkit.data.gx.xml.GxConstants.*;
 import static java.util.Collections.*;
 
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class GxWriter extends StaxStreamWriter implements KmlExtensionWriter {
 

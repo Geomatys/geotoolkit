@@ -27,6 +27,7 @@ import org.opengis.util.CodeList;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public final class Extensions {
 

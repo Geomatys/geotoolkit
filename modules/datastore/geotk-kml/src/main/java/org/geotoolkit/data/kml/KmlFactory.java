@@ -18,10 +18,12 @@ package org.geotoolkit.data.kml;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
+
 import java.awt.Color;
 import java.net.URI;
 import java.util.Calendar;
 import java.util.List;
+
 import org.geotoolkit.atom.model.AtomPersonConstruct;
 import org.geotoolkit.atom.model.AtomLink;
 import org.geotoolkit.data.kml.model.AbstractGeometry;
@@ -94,6 +96,7 @@ import org.geotoolkit.data.kml.model.ViewVolume;
 import org.geotoolkit.data.kml.xsd.Cdata;
 import org.geotoolkit.xal.model.AddressDetails;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
+
 import org.opengis.feature.Feature;
 
 /**
@@ -101,6 +104,7 @@ import org.opengis.feature.Feature;
  * to create objects mapping kml 2.2 /2.1 elements.</p>
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public interface KmlFactory {
 

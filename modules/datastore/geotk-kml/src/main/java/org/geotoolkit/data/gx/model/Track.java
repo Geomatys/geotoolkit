@@ -17,8 +17,10 @@
 package org.geotoolkit.data.gx.model;
 
 import com.vividsolutions.jts.geom.CoordinateSequence;
+
 import java.util.Calendar;
 import java.util.List;
+
 import org.geotoolkit.data.kml.model.AbstractGeometry;
 import org.geotoolkit.data.kml.model.AltitudeMode;
 import org.geotoolkit.data.kml.model.ExtendedData;
@@ -27,6 +29,7 @@ import org.geotoolkit.data.kml.model.Model;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public interface Track extends AbstractGeometry {
 

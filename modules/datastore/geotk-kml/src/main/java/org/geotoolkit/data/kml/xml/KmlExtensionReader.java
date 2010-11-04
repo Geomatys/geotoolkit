@@ -43,6 +43,7 @@ import org.geotoolkit.data.kml.model.KmlException;
  * uri/tag of containing element and uri/tag of extension element itself.</p>
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public interface KmlExtensionReader {
 
