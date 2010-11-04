@@ -19,6 +19,7 @@ package org.geotoolkit.xal.xml;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public final class XalConstants {
 

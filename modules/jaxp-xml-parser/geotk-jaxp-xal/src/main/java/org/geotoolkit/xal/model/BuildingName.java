@@ -30,6 +30,7 @@ package org.geotoolkit.xal.model;
  * </pre>
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public interface BuildingName extends GenericTypedGrPostal {
 

@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
+
 import org.geotoolkit.xal.XalFactory;
 import org.geotoolkit.xal.DefaultXalFactory;
 import org.geotoolkit.xal.model.AddressDetails;
@@ -89,51 +89,54 @@ import org.geotoolkit.xal.model.ThoroughfareNumberTo;
 import org.geotoolkit.xal.model.Xal;
 import org.geotoolkit.xal.model.XalException;
 import org.geotoolkit.xml.StaxStreamReader;
+
 import static org.geotoolkit.xal.xml.XalConstants.*;
 
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class XalReader extends StaxStreamReader{
 
+    private final XalFactory XAL_FACTORY;
     private Xal root;
-    private static XalFactory XAL_FACTORY;
     
     public XalReader() {
-        XAL_FACTORY = DefaultXalFactory.getInstance();
+        this(null);
     }
 
     public XalReader(XalFactory xalFactory){
-        XAL_FACTORY = xalFactory;
+        if(xalFactory == null){
+            XAL_FACTORY = DefaultXalFactory.getInstance();
+        }else{
+            XAL_FACTORY = xalFactory;
+        }
     }
-
-    public void setReader(XMLStreamReader reader){this.reader = reader;}
 
     /**
      * <p>This method reads the xAL document assigned to the XalReader.</p>
      *
      * @return The XalS object mapping the document.
      */
-    public Xal read()
-            throws XMLStreamException, XalException {
+    public Xal read() throws XMLStreamException, XalException {
 
-            while (reader.hasNext()) {
+        while (reader.hasNext()) {
 
-                switch (reader.next()) {
+            switch (reader.next()) {
 
-                    case XMLStreamConstants.START_ELEMENT:
-                        final String eName = reader.getLocalName();
-                        final String eUri = reader.getNamespaceURI();
+                case XMLStreamConstants.START_ELEMENT:
+                    final String eName = reader.getLocalName();
+                    final String eUri = reader.getNamespaceURI();
 
-                        if (URI_XAL.equals(eUri)) {
-                            if (TAG_XAL.equals(eName)) {
-                                this.root = this.readXal();
-                            }
+                    if (URI_XAL.equals(eUri)) {
+                        if (TAG_XAL.equals(eName)) {
+                            this.root = this.readXal();
                         }
-                        break;
-                }
+                    }
+                    break;
             }
+        }
         return this.root;
     }
 
@@ -143,11 +146,10 @@ public class XalReader extends StaxStreamReader{
      * @throws XMLStreamException
      * @throws XalException
      */
-    private Xal readXal() 
-            throws XMLStreamException, XalException {
+    private Xal readXal() throws XMLStreamException, XalException {
 
-        String version = reader.getAttributeValue(null, ATT_VERSION);
-        List<AddressDetails> addressDetails = new ArrayList<AddressDetails>();
+        final String version = reader.getAttributeValue(null, ATT_VERSION);
+        final List<AddressDetails> addressDetails = new ArrayList<AddressDetails>();
 
         boucle:
         while (reader.hasNext()) {
@@ -174,7 +176,7 @@ public class XalReader extends StaxStreamReader{
 
         }
 
-        return XalReader.XAL_FACTORY.createXal(addressDetails, version);
+        return XAL_FACTORY.createXal(addressDetails, version);
     }
 
     /**
@@ -233,7 +235,7 @@ public class XalReader extends StaxStreamReader{
 
         }
 
-        return XalReader.XAL_FACTORY.createAddressDetails(postalServiceElements, 
+        return XAL_FACTORY.createAddressDetails(postalServiceElements, 
                 localisation, addressType, currentStatus, validFromDate,
                 validToDate, usage, grPostal, addressDetailsKey);
     }
@@ -301,7 +303,7 @@ public class XalReader extends StaxStreamReader{
 
         }
 
-        return XalReader.XAL_FACTORY.createPostalServiceElements(addressIdentifiers, 
+        return XAL_FACTORY.createPostalServiceElements(addressIdentifiers,
                 endorsementLineCode, keyLineCode, barCode, sortingCode, addressLatitude,
                 addressLatitudeDirection, addressLongitude, addressLongitudeDirection,
                 supplementaryPostalServiceData, type);
@@ -318,7 +320,7 @@ public class XalReader extends StaxStreamReader{
         String type = reader.getAttributeValue(null, ATT_TYPE);
         GrPostal grPostal = this.readGrPostal();
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createGenericTypedGrPostal(type, grPostal, content);
+        return XAL_FACTORY.createGenericTypedGrPostal(type, grPostal, content);
     }
 
     /**
@@ -331,7 +333,7 @@ public class XalReader extends StaxStreamReader{
 
         String type = reader.getAttributeValue(null, ATT_TYPE);
         GrPostal grPostal = this.readGrPostal();
-        return XalReader.XAL_FACTORY.createSortingCode(type, grPostal);
+        return XAL_FACTORY.createSortingCode(type, grPostal);
     }
 
     /**
@@ -346,7 +348,7 @@ public class XalReader extends StaxStreamReader{
         String type = reader.getAttributeValue(null, ATT_TYPE);
         GrPostal grPostal = this.readGrPostal();
         String content = this.reader.getElementText();
-        return XalReader.XAL_FACTORY.createAddressIdentifier(content, identifierType, type, grPostal);
+        return XAL_FACTORY.createAddressIdentifier(content, identifierType, type, grPostal);
     }
 
     /**
@@ -384,7 +386,7 @@ public class XalReader extends StaxStreamReader{
 
         }
 
-        return XalReader.XAL_FACTORY.createAddressLines(addressLines);
+        return XAL_FACTORY.createAddressLines(addressLines);
     }
 
     /**
@@ -392,7 +394,7 @@ public class XalReader extends StaxStreamReader{
      * @return
      */
     public GrPostal readGrPostal(){
-        return XalReader.XAL_FACTORY.createGrPostal(reader.getAttributeValue(null, ATT_CODE));
+        return XAL_FACTORY.createGrPostal(reader.getAttributeValue(null, ATT_CODE));
     }
 
     /**
@@ -443,7 +445,7 @@ public class XalReader extends StaxStreamReader{
             }
 
         }
-        return XalReader.XAL_FACTORY.createCountry(
+        return XAL_FACTORY.createCountry(
                 addressLines, countryNameCodes, countryNames, localisation);
     }
 
@@ -458,7 +460,7 @@ public class XalReader extends StaxStreamReader{
         String scheme = reader.getAttributeValue(null, ATT_SCHEME);
         GrPostal grPostal = this.readGrPostal();
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createCountryNameCode(scheme, grPostal, content);
+        return XAL_FACTORY.createCountryNameCode(scheme, grPostal, content);
     }
 
     /**
@@ -512,7 +514,7 @@ public class XalReader extends StaxStreamReader{
             }
 
         }
-        return XalReader.XAL_FACTORY.createAdministrativeArea(addressLines, administrativeAreaNames,
+        return XAL_FACTORY.createAdministrativeArea(addressLines, administrativeAreaNames,
                 subAdministrativeArea, localisation, type, usageType, indicator);
     }
 
@@ -564,7 +566,7 @@ public class XalReader extends StaxStreamReader{
             }
 
         }
-        return XalReader.XAL_FACTORY.createSubAdministrativeArea(addressLines, 
+        return XAL_FACTORY.createSubAdministrativeArea(addressLines,
                 subAdministrativeAreaNames, localisation, type, usageType, indicator);
     }
 
@@ -629,7 +631,7 @@ public class XalReader extends StaxStreamReader{
                     break;
             }
         }
-        return XalReader.XAL_FACTORY.createLocality(addressLines, localityNames,
+        return XAL_FACTORY.createLocality(addressLines, localityNames,
                 postal, thoroughfare, premise, dependentLocality,
                 postalCode, type, usageType, indicator);
     }
@@ -687,7 +689,7 @@ public class XalReader extends StaxStreamReader{
                     break;
             }
         }
-        return XalReader.XAL_FACTORY.createPostBox(addressLines, postBoxNumber,
+        return XAL_FACTORY.createPostBox(addressLines, postBoxNumber,
                 postBoxNumberPrefix, postBoxNumberSuffix, postBoxNumberExtension,
                 firm, postalCode, type, indicator);
 
@@ -703,7 +705,7 @@ public class XalReader extends StaxStreamReader{
 
         GrPostal grPostal = this.readGrPostal();
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createPostBoxNumber(grPostal, content);
+        return XAL_FACTORY.createPostBoxNumber(grPostal, content);
     }
 
     /**
@@ -717,7 +719,7 @@ public class XalReader extends StaxStreamReader{
         GrPostal grPostal = this.readGrPostal();
         String numberPrefixSeparator = reader.getAttributeValue(null, ATT_NUMBER_PREFIX_SEPARATOR);
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createPostBoxNumberPrefix(numberPrefixSeparator, grPostal, content);
+        return XAL_FACTORY.createPostBoxNumberPrefix(numberPrefixSeparator, grPostal, content);
     }
 
     /**
@@ -731,7 +733,7 @@ public class XalReader extends StaxStreamReader{
         GrPostal grPostal = this.readGrPostal();
         String numberSuffixSeparator = reader.getAttributeValue(null, ATT_NUMBER_SUFFIX_SEPARATOR);
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createPostBoxNumberSuffix(numberSuffixSeparator, grPostal, content);
+        return XAL_FACTORY.createPostBoxNumberSuffix(numberSuffixSeparator, grPostal, content);
     }
 
     /**
@@ -744,7 +746,7 @@ public class XalReader extends StaxStreamReader{
 
         String numberExtensionSeparator = reader.getAttributeValue(null, ATT_NUMBER_EXTENSION_SEPARATOR);
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createPostBoxNumberExtension(numberExtensionSeparator, content);
+        return XAL_FACTORY.createPostBoxNumberExtension(numberExtensionSeparator, content);
     }
 
     /**
@@ -793,7 +795,7 @@ public class XalReader extends StaxStreamReader{
                     break;
             }
         }
-        return XalReader.XAL_FACTORY.createFirm(addressLines, firmNames,
+        return XAL_FACTORY.createFirm(addressLines, firmNames,
                 departments, mailStop, postalCode, type);
     }
 
@@ -840,7 +842,7 @@ public class XalReader extends StaxStreamReader{
                     break;
             }
         }
-        return XalReader.XAL_FACTORY.createDepartment(addressLines,
+        return XAL_FACTORY.createDepartment(addressLines,
                 departmentNames, mailStop, postalCode, type);
     }
 
@@ -884,7 +886,7 @@ public class XalReader extends StaxStreamReader{
                     break;
             }
         }
-        return XalReader.XAL_FACTORY.createMailStop(
+        return XAL_FACTORY.createMailStop(
                 addressLines, mailStopNames, mailStopNumber, type);
     }
 
@@ -899,7 +901,7 @@ public class XalReader extends StaxStreamReader{
         String nameNumberSeparator = reader.getAttributeValue(null, ATT_NAME_NUMBER_SEPARATOR);
         GrPostal grPostal = this.readGrPostal();
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createMailStopNumber(nameNumberSeparator, grPostal, content);
+        return XAL_FACTORY.createMailStopNumber(nameNumberSeparator, grPostal, content);
     }
 
     /**
@@ -945,7 +947,7 @@ public class XalReader extends StaxStreamReader{
                     break;
             }
         }
-        return XalReader.XAL_FACTORY.createPostalCode(addressLines,
+        return XAL_FACTORY.createPostalCode(addressLines,
                 postalCodeNumbers, postalCodeNumberExtensions, postTown, type);
     }
 
@@ -961,7 +963,7 @@ public class XalReader extends StaxStreamReader{
         String numberExtensionSeparator = reader.getAttributeValue(null, ATT_NUMBER_EXTENSION_SEPARATOR);
         GrPostal grPostal = this.readGrPostal();
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createPostalCodeNumberExtension(type, numberExtensionSeparator, grPostal, content);
+        return XAL_FACTORY.createPostalCodeNumberExtension(type, numberExtensionSeparator, grPostal, content);
     }
 
     /**
@@ -1004,7 +1006,7 @@ public class XalReader extends StaxStreamReader{
                     break;
             }
         }
-        return XalReader.XAL_FACTORY.createPostTown(
+        return XAL_FACTORY.createPostTown(
                 addressLines, postTownNames, postTownSuffix, type);
 
     }
@@ -1019,7 +1021,7 @@ public class XalReader extends StaxStreamReader{
 
         GrPostal grPostal = this.readGrPostal();
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createPostTownSuffix(grPostal, content);
+        return XAL_FACTORY.createPostTownSuffix(grPostal, content);
     }
 
     /**
@@ -1078,7 +1080,7 @@ public class XalReader extends StaxStreamReader{
                     break;
             }
         }
-        return XalReader.XAL_FACTORY.createLargeMailUser(addressLines, 
+        return XAL_FACTORY.createLargeMailUser(addressLines,
                 largeMailUserNames,largeMailUserIdentifier, buildingNames,
                 department, postBox, thoroughfare, postalCode, type);
     }
@@ -1096,7 +1098,7 @@ public class XalReader extends StaxStreamReader{
                 reader.getAttributeValue(null, ATT_TYPE_OCCURRENCE));
         GrPostal grPostal = this.readGrPostal();
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createBuildingName(type, typeOccurrence, grPostal, content);
+        return XAL_FACTORY.createBuildingName(type, typeOccurrence, grPostal, content);
     }
 
     /**
@@ -1110,7 +1112,7 @@ public class XalReader extends StaxStreamReader{
         String type = reader.getAttributeValue(null, ATT_TYPE);
         String code = reader.getAttributeValue(null, ATT_CODE);
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createLargeMailUserName(type, code, content);
+        return XAL_FACTORY.createLargeMailUserName(type, code, content);
     }
 
     /**
@@ -1125,7 +1127,7 @@ public class XalReader extends StaxStreamReader{
         String indicator = reader.getAttributeValue(null, ATT_INDICATOR);
         GrPostal grPostal = this.readGrPostal();
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createLargeMailUserIdentifier(type, indicator, grPostal, content);
+        return XAL_FACTORY.createLargeMailUserIdentifier(type, indicator, grPostal, content);
     }
 
     /**
@@ -1175,7 +1177,7 @@ public class XalReader extends StaxStreamReader{
                     break;
             }
         }
-        return XalReader.XAL_FACTORY.createPostalRoute(
+        return XAL_FACTORY.createPostalRoute(
                 addressLines, localisation, postBox, type);
     }
 
@@ -1189,7 +1191,7 @@ public class XalReader extends StaxStreamReader{
 
         GrPostal grPostal = this.readGrPostal();
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createPostalRouteNumber(grPostal, content);
+        return XAL_FACTORY.createPostalRouteNumber(grPostal, content);
     }
 
     /**
@@ -1246,7 +1248,7 @@ public class XalReader extends StaxStreamReader{
                     break;
             }
         }
-        return XalReader.XAL_FACTORY.createPostOffice(addressLines,
+        return XAL_FACTORY.createPostOffice(addressLines,
                 localisation, postalRoute, postBox, postalCode, type, indicator);
     }
 
@@ -1263,7 +1265,7 @@ public class XalReader extends StaxStreamReader{
         AfterBeforeEnum indicatorOccurence = AfterBeforeEnum.transform(
                 reader.getAttributeValue(null, ATT_INDICATOR_OCCURRENCE));
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createPostOfficeNumber(
+        return XAL_FACTORY.createPostOfficeNumber(
                 indicator, indicatorOccurence, grPostal, content);
     }
 
@@ -1279,7 +1281,7 @@ public class XalReader extends StaxStreamReader{
          AfterBeforeEnum nameNumberOccurrence = AfterBeforeEnum.transform(
                  reader.getAttributeValue(null, ATT_NAME_NUMBER_OCCURRENCE));
          String content = reader.getElementText();
-         return XalReader.XAL_FACTORY.createDependentLocalityNumber(
+         return XAL_FACTORY.createDependentLocalityNumber(
                  nameNumberOccurrence, grPostal, content);
      }
 
@@ -1348,7 +1350,7 @@ public class XalReader extends StaxStreamReader{
                     break;
             }
         }
-        return XalReader.XAL_FACTORY.createDependentLocality(addressLines, dependentLocalityNames,
+        return XAL_FACTORY.createDependentLocality(addressLines, dependentLocalityNames,
                 dependentLocalityNumber, localisation, thoroughfare, premise,
                 dependentLocality, postalCode, type, usageType, connector, indicator);
     }
@@ -1434,7 +1436,7 @@ public class XalReader extends StaxStreamReader{
                     break;
             }
         }
-        return XalReader.XAL_FACTORY.createPremise(addressLines, premiseNames, 
+        return XAL_FACTORY.createPremise(addressLines, premiseNames,
                 location, premiseNumberPrefixes, premiseNumberSuffixes, buildingNames,
                 sub, mailStop, postalCode, premise, type, premiseDependency,
                 premiseDependencyType, premiseThoroughfareConnector);
@@ -1454,7 +1456,7 @@ public class XalReader extends StaxStreamReader{
                 reader.getAttributeValue(null, ATT_TYPE_OCCURRENCE));
         GrPostal grPostal = this.readGrPostal();
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createPremiseName(type, typeOccurrence, grPostal, content);
+        return XAL_FACTORY.createPremiseName(type, typeOccurrence, grPostal, content);
     }
 
     /**
@@ -1467,7 +1469,7 @@ public class XalReader extends StaxStreamReader{
 
         GrPostal grPostal = this.readGrPostal();
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createPremiseLocation(grPostal, content);
+        return XAL_FACTORY.createPremiseLocation(grPostal, content);
     }
 
     /**
@@ -1488,7 +1490,7 @@ public class XalReader extends StaxStreamReader{
                 reader.getAttributeValue(null, ATT_NUMBER_TYPE_OCCURRENCE));
         GrPostal grPostal = this.readGrPostal();
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createPremiseNumber(numberType, type, indicator,
+        return XAL_FACTORY.createPremiseNumber(numberType, type, indicator,
                 indicatorOccurrence, numberTypeOccurrence, grPostal, content);
     }
 
@@ -1534,7 +1536,7 @@ public class XalReader extends StaxStreamReader{
                     break;
             }
         }
-        return XalReader.XAL_FACTORY.createPremiseNumberRange(premiseNumberRangeFrom,
+        return XAL_FACTORY.createPremiseNumberRange(premiseNumberRangeFrom,
                 premiseNumberRangeTo, rangeType, indicator, separator,
                 type, indicatorOccurrence, numberRangeOccurrence);
     }
@@ -1581,7 +1583,7 @@ public class XalReader extends StaxStreamReader{
                     break;
             }
         }
-        return XalReader.XAL_FACTORY.createPremiseNumberRangeFrom(addressLines,
+        return XAL_FACTORY.createPremiseNumberRangeFrom(addressLines,
                 premiseNumberPrefixes, premiseNumbers, premiseNumberSuffixes);
     }
 
@@ -1627,7 +1629,7 @@ public class XalReader extends StaxStreamReader{
                     break;
             }
         }
-        return XalReader.XAL_FACTORY.createPremiseNumberRangeTo(addressLines,
+        return XAL_FACTORY.createPremiseNumberRangeTo(addressLines,
                 premiseNumberPrefixes, premiseNumbers, premiseNumberSuffixes);
     }
 
@@ -1643,7 +1645,7 @@ public class XalReader extends StaxStreamReader{
         String type = reader.getAttributeValue(null, ATT_TYPE);
         GrPostal grPostal = this.readGrPostal();
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createPremiseNumberPrefix(
+        return XAL_FACTORY.createPremiseNumberPrefix(
                 numberPrefixSeparator, type, grPostal, content);
     }
 
@@ -1659,7 +1661,7 @@ public class XalReader extends StaxStreamReader{
         String type = reader.getAttributeValue(null, ATT_TYPE);
         GrPostal grPostal = this.readGrPostal();
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createPremiseNumberSuffix(
+        return XAL_FACTORY.createPremiseNumberSuffix(
                 numberSuffixSeparator, type, grPostal, content);
     }
 
@@ -1731,7 +1733,7 @@ public class XalReader extends StaxStreamReader{
                     break;
             }
         }
-        return XalReader.XAL_FACTORY.createSubPremise(addressLines, subPremiseNames,
+        return XAL_FACTORY.createSubPremise(addressLines, subPremiseNames,
                 location, subPremiseNumberPrefixes, subPremiseNumberSuffixes,
                 buildingNames, firm, mailStop, postalCode, subPremise, type);
     }
@@ -1748,7 +1750,7 @@ public class XalReader extends StaxStreamReader{
         String type = reader.getAttributeValue(null, ATT_TYPE);
         GrPostal grPostal = this.readGrPostal();
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createSubPremiseNumberPrefix(
+        return XAL_FACTORY.createSubPremiseNumberPrefix(
                 numberPrefixSeparator, type, grPostal, content);
     }
 
@@ -1764,7 +1766,7 @@ public class XalReader extends StaxStreamReader{
         String type = reader.getAttributeValue(null, ATT_TYPE);
         GrPostal grPostal = this.readGrPostal();
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createSubPremiseNumberSuffix(
+        return XAL_FACTORY.createSubPremiseNumberSuffix(
                 numberSuffixSeparator, type, grPostal, content);
     }
 
@@ -1781,7 +1783,7 @@ public class XalReader extends StaxStreamReader{
                 reader.getAttributeValue(null, ATT_TYPE_OCCURRENCE));
         GrPostal grPostal = this.readGrPostal();
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createSubPremiseName(
+        return XAL_FACTORY.createSubPremiseName(
                 type, typeOccurrence, grPostal, content);
     }
 
@@ -1795,7 +1797,7 @@ public class XalReader extends StaxStreamReader{
 
         GrPostal grPostal = this.readGrPostal();
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createSubPremiseLocation(grPostal, content);
+        return XAL_FACTORY.createSubPremiseLocation(grPostal, content);
     }
 
     /**
@@ -1815,7 +1817,7 @@ public class XalReader extends StaxStreamReader{
                 reader.getAttributeValue(null, ATT_NUMBER_TYPE_OCCURRENCE));
         GrPostal grPostal = this.readGrPostal();
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createSubPremiseNumber(indicator, indicatorOccurrence,
+        return XAL_FACTORY.createSubPremiseNumber(indicator, indicatorOccurrence,
                 numberTypeOccurrence, premiseNumberSeparator, type, grPostal, content);
     }
 
@@ -1900,7 +1902,7 @@ public class XalReader extends StaxStreamReader{
                     break;
             }
         }
-        return XalReader.XAL_FACTORY.createThoroughfare(addressLines, thoroughfareNumbers,
+        return XAL_FACTORY.createThoroughfare(addressLines, thoroughfareNumbers,
                 thoroughfareNumberPrefixes, thoroughfareNumberSuffixes, thoroughfarePreDirection,
                 thoroughfareLeadingType, thoroughfareNames, thoroughfareTrailingType,
                 thoroughfarePostDirection, dependentThoroughfare, location, type,
@@ -1926,7 +1928,7 @@ public class XalReader extends StaxStreamReader{
                 reader.getAttributeValue(null, ATT_NUMBER_OCCURRENCE));
         GrPostal grPostal = this.readGrPostal();
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createThoroughfareNumber(numberType, type,
+        return XAL_FACTORY.createThoroughfareNumber(numberType, type,
                 indicator, indicatorOccurence, numberOccurrence, grPostal, content);
     }
 
@@ -1981,7 +1983,7 @@ public class XalReader extends StaxStreamReader{
             }
         }
 
-        return XalReader.XAL_FACTORY.createThoroughfareNumberRange(addressLines,
+        return XAL_FACTORY.createThoroughfareNumberRange(addressLines,
                 thoroughfareNumberFrom, thoroughfareNumberTo, rangeType, indicator,
                 separator, type, indicatorOccurrence, numberRangeOccurrence, grPostal);
     }
@@ -2034,7 +2036,7 @@ public class XalReader extends StaxStreamReader{
             }
         }
 
-        return XalReader.XAL_FACTORY.createThoroughfareNumberFrom(content, grPostal);
+        return XAL_FACTORY.createThoroughfareNumberFrom(content, grPostal);
     }
 
     /**
@@ -2085,7 +2087,7 @@ public class XalReader extends StaxStreamReader{
             }
         }
 
-        return XalReader.XAL_FACTORY.createThoroughfareNumberTo(content, grPostal);
+        return XAL_FACTORY.createThoroughfareNumberTo(content, grPostal);
     }
 
     /**
@@ -2100,7 +2102,7 @@ public class XalReader extends StaxStreamReader{
         String type = reader.getAttributeValue(null, ATT_TYPE);
         GrPostal grPostal = this.readGrPostal();
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createThoroughfareNumberPrefix(
+        return XAL_FACTORY.createThoroughfareNumberPrefix(
                 numberPrefixSeparator, type, grPostal, content);
     }
 
@@ -2116,7 +2118,7 @@ public class XalReader extends StaxStreamReader{
         String type = reader.getAttributeValue(null, ATT_TYPE);
         GrPostal grPostal = this.readGrPostal();
         String content = reader.getElementText();
-        return XalReader.XAL_FACTORY.createThoroughfareNumberSuffix(
+        return XAL_FACTORY.createThoroughfareNumberSuffix(
                 numberSuffixSeparator, type, grPostal, content);
     }
 
@@ -2169,7 +2171,7 @@ public class XalReader extends StaxStreamReader{
                     break;
             }
         }
-        return XalReader.XAL_FACTORY.createDependentThoroughfare(addressLines, 
+        return XAL_FACTORY.createDependentThoroughfare(addressLines,
                 thoroughfarePreDirection, thoroughfareLeadingType, thoroughfareNames,
                 thoroughfareTrailingType, thoroughfarePostDirection, type);
     }

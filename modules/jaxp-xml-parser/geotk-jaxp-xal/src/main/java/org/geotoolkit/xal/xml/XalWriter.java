@@ -18,6 +18,7 @@ package org.geotoolkit.xal.xml;
 
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+
 import org.geotoolkit.xal.model.AddressDetails;
 import org.geotoolkit.xal.model.AddressIdentifier;
 import org.geotoolkit.xal.model.AddressLines;
@@ -84,6 +85,7 @@ import static org.geotoolkit.xal.xml.XalConstants.*;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class XalWriter extends StaxStreamWriter {
 
@@ -105,25 +107,24 @@ public class XalWriter extends StaxStreamWriter {
      *
      * @param xal The Xal object to write.
      */
-    public void write(Xal xal) 
-            throws XMLStreamException, XalException {
+    public void write(Xal xal) throws XMLStreamException, XalException {
 
-            // FACULTATIF : INDENTATION DE LA SORTIE
-            //streamWriter = new IndentingXMLStreamWriter(streamWriter);
+        // FACULTATIF : INDENTATION DE LA SORTIE
+        //streamWriter = new IndentingXMLStreamWriter(streamWriter);
 
-            writer.writeStartDocument("UTF-8", "1.0");
-            writer.setDefaultNamespace(URI_XAL);
-            writer.writeStartElement(URI_XAL, TAG_XAL);
-            /*writer.writeDefaultNamespace(URI_XAL);
-            streamWriter.writeNamespace(PREFIX_XSI, URI_XSI);
-            streamWriter.writeAttribute(URI_XSI,
-            "schemaLocation",
-            URI_KML+" C:/Users/w7mainuser/Documents/OGC_SCHEMAS/sld/1.1.0/StyledLayerDescriptor.xsd");
-            streamWriter.writeAttribute("version", "0");*/
-            this.writeXal(xal);
-            writer.writeEndElement();
-            writer.writeEndDocument();
-            writer.flush();
+        writer.writeStartDocument("UTF-8", "1.0");
+        writer.setDefaultNamespace(URI_XAL);
+        writer.writeStartElement(URI_XAL, TAG_XAL);
+        /*writer.writeDefaultNamespace(URI_XAL);
+        streamWriter.writeNamespace(PREFIX_XSI, URI_XSI);
+        streamWriter.writeAttribute(URI_XSI,
+        "schemaLocation",
+        URI_KML+" C:/Users/w7mainuser/Documents/OGC_SCHEMAS/sld/1.1.0/StyledLayerDescriptor.xsd");
+        streamWriter.writeAttribute("version", "0");*/
+        this.writeXal(xal);
+        writer.writeEndElement();
+        writer.writeEndDocument();
+        writer.flush();
     }
 
     /**

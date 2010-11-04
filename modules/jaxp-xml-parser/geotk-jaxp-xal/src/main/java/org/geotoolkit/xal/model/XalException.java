@@ -20,25 +20,16 @@ package org.geotoolkit.xal.model;
  * <p>A spécific exception class for xAL parsing errors.</p>
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class XalException extends Exception{
-
-    private final String message;
 
     /**
      *
      * @param message
      */
     public XalException(String message){
-        this.message = message;
+        super(message);
     }
 
-    /**
-     *
-     * @return
-     */
-    @Override
-    public String getMessage(){
-        return this.message;
-    }
 }

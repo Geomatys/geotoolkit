@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
+
 import org.geotoolkit.xal.model.AddressDetails;
 import org.geotoolkit.xal.model.AdministrativeArea;
 import org.geotoolkit.xal.model.AfterBeforeEnum;
@@ -50,6 +51,7 @@ import org.geotoolkit.xal.model.XalException;
 import org.geotoolkit.xal.xml.XalReader;
 import org.geotoolkit.xal.xml.XalWriter;
 import org.geotoolkit.xml.DomCompare;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -61,6 +63,7 @@ import static org.junit.Assert.*;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class CountryTest_AA {
 

@@ -19,6 +19,7 @@ package org.geotoolkit.xal.model;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class DefaultGrPostal implements GrPostal{
 

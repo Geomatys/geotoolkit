@@ -17,6 +17,7 @@
 package org.geotoolkit.xal;
 
 import java.util.List;
+
 import org.geotoolkit.xal.model.AddressDetails;
 import org.geotoolkit.xal.model.AddressIdentifier;
 import org.geotoolkit.xal.model.AddressLines;
@@ -86,6 +87,7 @@ import org.geotoolkit.xal.model.XalException;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public interface XalFactory {
 
