@@ -16,27 +16,31 @@
  */
 package org.geotoolkit.atom;
 
-import org.geotoolkit.atom.xml.AtomReader;
-import org.geotoolkit.atom.xml.AtomWriter;
 import java.io.File;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
+
+import org.geotoolkit.atom.xml.AtomReader;
+import org.geotoolkit.atom.xml.AtomWriter;
 import org.geotoolkit.atom.xml.AtomConstants;
 import org.geotoolkit.atom.model.AtomLink;
 import org.geotoolkit.xml.DomCompare;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
+
+import static org.junit.Assert.*;
 
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class AtomLinkTest {
 

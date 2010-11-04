@@ -22,16 +22,19 @@ import java.util.List;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+
 import org.geotoolkit.atom.AtomFactory;
 import org.geotoolkit.atom.DefaultAtomFactory;
 import org.geotoolkit.atom.model.AtomLink;
 import org.geotoolkit.atom.model.AtomPersonConstruct;
 import org.geotoolkit.xml.StaxStreamReader;
+
 import static org.geotoolkit.atom.xml.AtomConstants.*;
 
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class AtomReader extends StaxStreamReader {
 
@@ -55,7 +58,7 @@ public class AtomReader extends StaxStreamReader {
      * @throws XMLStreamException
      */
     public AtomPersonConstruct readAuthor() throws XMLStreamException {
-        List<Object> params = new ArrayList<Object>();
+        final List<Object> params = new ArrayList<Object>();
 
         boucle:
         while (reader.hasNext()) {
@@ -95,12 +98,12 @@ public class AtomReader extends StaxStreamReader {
      * @throws XMLStreamException
      */
     public AtomLink readLink() throws XMLStreamException {
-        String href = reader.getAttributeValue(null, ATT_HREF);
-        String rel = reader.getAttributeValue(null, ATT_REL);
-        String type = reader.getAttributeValue(null, ATT_TYPE);
-        String hreflang = reader.getAttributeValue(null, ATT_HREFLANG);
-        String title = reader.getAttributeValue(null, ATT_TITLE);
-        String length = reader.getAttributeValue(null, ATT_LENGTH);
+        final String href       = reader.getAttributeValue(null, ATT_HREF);
+        final String rel        = reader.getAttributeValue(null, ATT_REL);
+        final String type       = reader.getAttributeValue(null, ATT_TYPE);
+        final String hreflang   = reader.getAttributeValue(null, ATT_HREFLANG);
+        final String title      = reader.getAttributeValue(null, ATT_TITLE);
+        final String length     = reader.getAttributeValue(null, ATT_LENGTH);
 
         return AtomReader.ATOM_FACTORY.createAtomLink(
                 href, rel, type, hreflang, title, length);

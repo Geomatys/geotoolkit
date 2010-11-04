@@ -19,6 +19,7 @@ package org.geotoolkit.atom.xml;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class AtomConstants {
 

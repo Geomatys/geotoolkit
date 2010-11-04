@@ -27,6 +27,7 @@ import org.geotoolkit.atom.model.DefaultAtomPersonConstruct;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public class DefaultAtomFactory implements AtomFactory {
 

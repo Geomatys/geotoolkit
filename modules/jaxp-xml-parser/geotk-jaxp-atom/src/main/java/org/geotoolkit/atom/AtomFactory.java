@@ -24,6 +24,7 @@ import org.geotoolkit.atom.model.AtomPersonConstruct;
 /**
  *
  * @author Samuel Andrés
+ * @module pending
  */
 public interface AtomFactory {
 
