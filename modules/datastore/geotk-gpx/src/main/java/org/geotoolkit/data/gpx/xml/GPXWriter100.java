@@ -219,7 +219,7 @@ public class GPXWriter100 extends StaxStreamWriter{
         writeProperty(TAG_TYPE,             feature.getProperty(TAG_TYPE));
 
         for(Property prop : feature.getProperties(TAG_RTE_RTEPT)){
-            writeWayPoint((Feature) prop.getValue(),TAG_RTE_RTEPT);
+            writeWayPoint((Feature) prop,TAG_RTE_RTEPT);
         }
 
         writer.writeEndElement();
@@ -239,7 +239,7 @@ public class GPXWriter100 extends StaxStreamWriter{
         writeProperty(TAG_TYPE,             feature.getProperty(TAG_TYPE));
 
         for(Property prop : feature.getProperties(TAG_TRK_SEG)){
-            writeTrackSegment((ComplexAttribute) prop.getValue());
+            writeTrackSegment((ComplexAttribute) prop);
         }
 
         writer.writeEndElement();
@@ -250,7 +250,7 @@ public class GPXWriter100 extends StaxStreamWriter{
         writer.writeStartElement(GPX_NAMESPACE, TAG_TRK_SEG);
 
         for(final Property prop : feature.getProperties(TAG_TRK_SEG_PT)){
-            writeWayPoint((Feature) prop.getValue(),TAG_TRK_SEG_PT);
+            writeWayPoint((Feature) prop,TAG_TRK_SEG_PT);
         }
 
         writer.writeEndElement();

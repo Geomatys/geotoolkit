@@ -83,7 +83,7 @@ public class CalculatedLineStringAttribute extends DefaultGeometryAttribute {
             //explore childs
             int d = depth+1;
             for (final Property prop : related.getProperties(path[depth])) {
-                final ComplexAttribute child = (ComplexAttribute) prop.getValue();
+                final ComplexAttribute child = (ComplexAttribute) prop;
                 explore(child, d, coords);
             }
         }

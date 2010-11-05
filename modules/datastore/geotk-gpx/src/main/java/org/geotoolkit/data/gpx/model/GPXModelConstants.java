@@ -169,7 +169,7 @@ public final class GPXModelConstants {
         ATT_WPT_HDOP =          adb.create(new DefaultName(GPX_NAMESPACE, TAG_WPT_HDOP),   Double.class,0,1,true,null);
         ATT_WPT_VDOP =          adb.create(new DefaultName(GPX_NAMESPACE, TAG_WPT_VDOP),   Double.class,0,1,true,null);
         ATT_WPT_PDOP =          adb.create(new DefaultName(GPX_NAMESPACE, TAG_WPT_PDOP),   Double.class,0,1,true,null);
-        ATT_WPT_AGEOFGPSDATA = adb.create(new DefaultName(GPX_NAMESPACE, TAG_WPT_AGEOFGPSDATA),Double.class,0,1,true,null);
+        ATT_WPT_AGEOFGPSDATA =  adb.create(new DefaultName(GPX_NAMESPACE, TAG_WPT_AGEOFGPSDATA),Double.class,0,1,true,null);
         ATT_WPT_DGPSID =        adb.create(new DefaultName(GPX_NAMESPACE, TAG_WPT_DGPSID), Integer.class,0,1,true,null);
 
         ftb.reset();
@@ -355,7 +355,7 @@ public final class GPXModelConstants {
 
         if(wayPoints != null && !wayPoints.isEmpty()){
             for(Feature pt : wayPoints){
-                properties.add(FF.createAttribute(pt, ATT_WAYPOINTS,null));
+                properties.add(FF.createFeature(pt.getProperties(), ATT_WAYPOINTS,pt.getIdentifier().getID()));
             }
         }
 
@@ -377,7 +377,7 @@ public final class GPXModelConstants {
 
         if(wayPoints != null && !wayPoints.isEmpty()){
             for(Feature pt : wayPoints){
-                properties.add(FF.createAttribute(pt, ATT_TRACKPOINTS, null));
+                properties.add(FF.createFeature(pt.getProperties(), ATT_TRACKPOINTS, pt.getIdentifier().getID()));
             }
         }
 
@@ -414,7 +414,7 @@ public final class GPXModelConstants {
 
         if(segments != null && !segments.isEmpty()){
             for(ComplexAttribute seg : segments){
-                properties.add(FF.createAttribute(seg, ATT_TRACKSEGMENTS, null));
+                properties.add(FF.createComplexAttribute(seg.getProperties(), ATT_TRACKSEGMENTS, seg.getIdentifier().toString()));
             }
         }
 

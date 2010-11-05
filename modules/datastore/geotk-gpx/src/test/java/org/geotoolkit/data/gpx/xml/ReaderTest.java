@@ -225,9 +225,9 @@ public class ReaderTest {
 
         List<Property> points = new ArrayList<Property>(f.getProperties("rtept"));
         assertEquals(3,points.size());
-        checkPoint((Feature) points.get(0).getValue(), 0, false);
-        checkPoint((Feature) points.get(1).getValue(), 1, false);
-        checkPoint((Feature) points.get(2).getValue(), 2, false);
+        checkPoint((Feature) points.get(0), 0, false);
+        checkPoint((Feature) points.get(1), 1, false);
+        checkPoint((Feature) points.get(2), 2, false);
 
         BoundingBox bbox = f.getBounds();
         assertEquals(bbox.getMinX(), 15.0d, DELTA);
@@ -293,9 +293,9 @@ public class ReaderTest {
 
         List<Property> points = new ArrayList<Property>(f.getProperties("rtept"));
         assertEquals(3,points.size());
-        checkPoint((Feature) points.get(0).getValue(), 0, true);
-        checkPoint((Feature) points.get(1).getValue(), 1, true);
-        checkPoint((Feature) points.get(2).getValue(), 2, true);
+        checkPoint((Feature) points.get(0), 0, true);
+        checkPoint((Feature) points.get(1), 1, true);
+        checkPoint((Feature) points.get(2), 2, true);
 
         BoundingBox bbox = f.getBounds();
         assertEquals(bbox.getMinX(), 15.0d, DELTA);
@@ -359,13 +359,13 @@ public class ReaderTest {
 
         List<Property> segments = new ArrayList<Property>(f.getProperties("trkseg"));
         assertEquals(2,segments.size());
-        ComplexAttribute seg1 = (ComplexAttribute) segments.get(0).getValue();
-        ComplexAttribute seg2 = (ComplexAttribute) segments.get(1).getValue();
+        ComplexAttribute seg1 = (ComplexAttribute) segments.get(0);
+        ComplexAttribute seg2 = (ComplexAttribute) segments.get(1);
         List<Property> points = new ArrayList<Property>(seg1.getProperties("trkpt"));
         assertEquals(3, points.size());
-        checkPoint((Feature) points.get(0).getValue(), 0, false);
-        checkPoint((Feature) points.get(1).getValue(), 1, false);
-        checkPoint((Feature) points.get(2).getValue(), 2, false);
+        checkPoint((Feature) points.get(0), 0, false);
+        checkPoint((Feature) points.get(1), 1, false);
+        checkPoint((Feature) points.get(2), 2, false);
         points = new ArrayList<Property>(seg2.getProperties("trkpt"));
         assertEquals(0, points.size());
 
@@ -433,13 +433,13 @@ public class ReaderTest {
 
         List<Property> segments = new ArrayList<Property>(f.getProperties("trkseg"));
         assertEquals(2,segments.size());
-        ComplexAttribute seg1 = (ComplexAttribute) segments.get(0).getValue();
-        ComplexAttribute seg2 = (ComplexAttribute) segments.get(1).getValue();
+        ComplexAttribute seg1 = (ComplexAttribute) segments.get(0);
+        ComplexAttribute seg2 = (ComplexAttribute) segments.get(1);
         List<Property> points = new ArrayList<Property>(seg1.getProperties("trkpt"));
         assertEquals(3, points.size());
-        checkPoint((Feature) points.get(0).getValue(), 0,true);
-        checkPoint((Feature) points.get(1).getValue(), 1,true);
-        checkPoint((Feature) points.get(2).getValue(), 2,true);
+        checkPoint((Feature) points.get(0), 0,true);
+        checkPoint((Feature) points.get(1), 1,true);
+        checkPoint((Feature) points.get(2), 2,true);
         points = new ArrayList<Property>(seg2.getProperties("trkpt"));
         assertEquals(0, points.size());
 

@@ -222,16 +222,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
             tablewriter.write('\n');
             
             final ComplexType ct = (ComplexType) pt;
-
-            final Object value = property.getValue();
-            final ComplexAttribute ca;
-            if(value instanceof ComplexAttribute){
-                //hack, when feature are not correctly build
-                //todo fix all complexe feature instances, then remove
-                ca = (ComplexAttribute)value;
-            }else{
-                ca = (ComplexAttribute)property;
-            }
+            final ComplexAttribute ca = (ComplexAttribute)property;
 
             int nbProperty = ca.getProperties().size();
             int nb=0;
