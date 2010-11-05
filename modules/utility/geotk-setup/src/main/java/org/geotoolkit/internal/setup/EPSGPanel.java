@@ -34,6 +34,7 @@ import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.geotoolkit.resources.Vocabulary;
 
+import static org.geotoolkit.referencing.factory.epsg.EpsgInstaller.DEFAULT_SCHEMA;
 
 /**
  * The panel displaying a configuration form for the connection parameters to the current
@@ -85,7 +86,7 @@ final class EPSGPanel extends DatabasePanel {
         url.setEditable(true);
         return new Field[] {
             new Field("URL",      Vocabulary.Keys.URL,      resources, url, null),
-            new Field("schema",   Vocabulary.Keys.SCHEMA,   resources, new JTextField(), EpsgInstaller.DEFAULT_SCHEMA),
+            new Field("schema",   Vocabulary.Keys.SCHEMA,   resources, new JTextField(DEFAULT_SCHEMA), DEFAULT_SCHEMA),
             new Field("user",     Vocabulary.Keys.USER,     resources, new JTextField(), null),
             new Field("password", Vocabulary.Keys.PASSWORD, resources, new JPasswordField(), null)
         };

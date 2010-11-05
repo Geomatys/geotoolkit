@@ -54,7 +54,7 @@ import static java.awt.GridBagConstraints.*;
  *
  * @author Johann Sorel (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.16
  *
  * @since 3.11 (derived from 3.00)
  * @module
@@ -101,7 +101,7 @@ abstract class DatabasePanel extends JComponent implements ActionListener {
         private boolean  isModified;
 
         /**
-         * Creates a new {@code Field} instance with a laber created from the given property key.
+         * Creates a new {@code Field} instance with a label created from the given property key.
          */
         Field(final String propertyKey, final int resourceKey, final Vocabulary resources,
                 final JComponent component, final String defaultValue)
@@ -341,7 +341,7 @@ abstract class DatabasePanel extends JComponent implements ActionListener {
     }
 
     /**
-     * If the properies file has not yet been read, reads it now.
+     * If the properties file has not yet been read, reads it now.
      * Then, return its content (never {@code null}).
      */
     final Properties getSettings() {
@@ -369,6 +369,12 @@ abstract class DatabasePanel extends JComponent implements ActionListener {
         final boolean manual = (settings != null);
         if (!manual) {
             settings = new Properties();
+            for (final Field field : fields) {
+                final String defaultValue = field.defaultValue;
+                if (defaultValue != null) {
+                    settings.setProperty(field.propertyKey, defaultValue);
+                }
+            }
         } else {
             /*
              * If there is an URL in the property file, add it at the beginning
