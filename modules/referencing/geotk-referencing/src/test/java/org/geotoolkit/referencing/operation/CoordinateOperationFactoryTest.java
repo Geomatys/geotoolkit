@@ -76,7 +76,7 @@ import static org.junit.Assume.*;
  * code below, causing transformation checks to fail as well.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @since 2.1
  */
@@ -113,7 +113,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
     /**
      * Creates a new test suite using factories created from the given hints.
      *
-     * @param hints The hints to use for fecthing factories, or {@code null} for the default ones.
+     * @param hints The hints to use for fetching factories, or {@code null} for the default ones.
      */
     protected CoordinateOperationFactoryTest(final Hints hints) {
         super(AbstractMathTransform.class, hints);
@@ -456,7 +456,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
 
     /**
      * Tests the conversion from a geographic CRS 3D to 2D and conversely.
-     * The converse part is the interresting one.
+     * The converse part is the interesting one.
      *
      * @throws Exception Should never happen.
      *
@@ -732,7 +732,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
      * @throws Exception Should never happen.
      */
     @Test(expected = OperationNotFoundException.class)
-    public void testGeographic2DtoGeographic3D_withHeight() throws Exception {
+    public void testGeographic2D_to_Geographic3D_withHeight() throws Exception {
         final CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(WKT.GEOGCS_NAD27);
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WGS84_H);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
@@ -771,7 +771,6 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
      */
     @Test
     public void testProjected4D_to_2D() throws Exception {
-        assumeTrue(ReferencingTestCase.isEpsgFactoryAvailable());
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.PROJCS_MERCATOR);
         CoordinateReferenceSystem sourceCRS = targetCRS;
         sourceCRS = new DefaultCompoundCRS("Mercator 3D", sourceCRS, ELLIPSOIDAL_HEIGHT);
@@ -786,6 +785,71 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
                    "to a single affine transform.", transform instanceof LinearTransform);
         assertTrue("The operation should be a simple axis change, not a complex" +
                    "chain of ConcatenatedOperations.", op instanceof Conversion);
+        tolerance = 1E-6;
+        assertTransformEquals4_2(   0,     0,  0,    0,    0,     0);
+        assertTransformEquals4_2(1000, -2000, 20, 4000, 1000, -2000);
+    }
+
+    /**
+     * Tests a transformation from a 2D projection to an other 2D projection which imply a
+     * change of prime meridian. The purpose of this test is to isolate the two-dimensional
+     * part of the transform tested by {@link #testProjected4D_to2D_withMeridianShift()}.
+     * <p>
+     * This tests requires the EPSG database, because it requires the coordinate operation
+     * path which is defined there.
+     *
+     * @throws Exception Should never happen.
+     *
+     * @since 3.16
+     */
+    @Test
+    public void testProjected2D_withMeridianShift() throws Exception {
+        assumeTrue(ReferencingTestCase.isEpsgFactoryAvailable());
+        final CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(WKT.PROJCS_LAMBERT_CONIC_NTF);
+        final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.PROJCS_MERCATOR);
+        final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
+        transform = op.getMathTransform();
+        validate();
+        assertFalse(transform.isIdentity());
+        tolerance = 0.02;
+        // Test using the location of Paris (48.856578°N, 2.351828°E)
+        // Only after, test using a coordinate different than the prime meridian.
+        assertTransformEquals2_2(601124.99, 2428693.45, 261804.30, 6218365.72);
+        assertTransformEquals2_2(600000.00, 2420000.00, 260098.74, 6205194.95);
+    }
+
+    /**
+     * Tests a transformation from a 4D projection to a 2D projection which imply a change of
+     * prime meridian. This is the same test than {@link #testProjected2D_withMeridianShift()},
+     * with extra dimension which should be just dropped.
+     * <p>
+     * This tests requires the EPSG database, because it requires the coordinate operation
+     * path which is defined there.
+     *
+     * @throws Exception Should never happen.
+     *
+     * @since 3.16
+     */
+    @Test
+    @Ignore
+    public void testProjected4D_to2D_withMeridianShift() throws Exception {
+        assumeTrue(ReferencingTestCase.isEpsgFactoryAvailable());
+        final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.PROJCS_MERCATOR);
+        CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(WKT.PROJCS_LAMBERT_CONIC_NTF);
+        sourceCRS = new DefaultCompoundCRS("NTF 3D", sourceCRS, ELLIPSOIDAL_HEIGHT);
+        sourceCRS = new DefaultCompoundCRS("NTF 4D", sourceCRS, MODIFIED_JULIAN);
+        final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
+        transform = op.getMathTransform();
+        validate();
+        assertFalse(transform.isIdentity());
+        tolerance = 0.02;
+        // Same coordinates than testProjected2D_withMeridianShift(),
+        // but with random elevation and time which should be dropped.
+        assertTransformEquals4_2(601124.99, 2428693.45, 400, 1000, 261804.30, 6218365.72);
+        assertTransformEquals4_2(600000.00, 2420000.00, 400, 1000, 260098.74, 6205194.95);
+
+        // BUG!! La conversion de Lambert vers Geographique donne des angles en gradiants
+        // plutôt qu'en degrés.
     }
 
     /**

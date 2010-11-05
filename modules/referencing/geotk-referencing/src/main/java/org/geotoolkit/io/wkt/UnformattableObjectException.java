@@ -29,7 +29,7 @@ import org.geotoolkit.resources.Errors;
  * implementations can be formatted as WKT.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.16
  *
  * @see Formatter#setInvalidWKT
  *
@@ -60,15 +60,16 @@ public class UnformattableObjectException extends UnsupportedOperationException 
     }
 
     /**
-     * Constructs an exception with the specified detail message.
+     * Constructs an exception with the specified detail message. If the given message
+     * is {@code null}, then a default message will be created for the given class.
      *
-     * @param message The detail message, or {@code null} if none.
+     * @param message The detail message, or {@code null} for a default message.
      * @param unformattable The type of the object that can't be formatted.
      *
      * @since 2.4
      */
     public UnformattableObjectException(final String message, final Class<?> unformattable) {
-        super(message);
+        super(message != null ? message : message(unformattable));
         this.unformattable = unformattable;
     }
 

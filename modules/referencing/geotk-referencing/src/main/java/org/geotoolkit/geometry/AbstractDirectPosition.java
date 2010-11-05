@@ -20,10 +20,12 @@ package org.geotoolkit.geometry;
 import java.util.Arrays;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.geometry.MismatchedReferenceSystemException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.Strings.trimFractionalPart;
@@ -38,7 +40,7 @@ import static org.geotoolkit.util.Strings.trimFractionalPart;
  * or {@link org.geotoolkit.util.Cloneable} interfaces is left to implementors.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.16
  *
  * @since 2.4
  * @module
@@ -64,15 +66,32 @@ public abstract class AbstractDirectPosition implements DirectPosition {
     /**
      * Sets this direct position to the given position. If the given position is
      * {@code null}, then all ordinate values are set to {@linkplain Double#NaN NaN}.
+     * <p>
+     * If this position and the given position have a non-null CRS, then the default implementation
+     * requires the CRS to be {@linkplain CRS#equalsIgnoreMetadata equals (ignoring metadata)}
+     * otherwise a {@link MismatchedReferenceSystemException} is thrown. However subclass may
+     * choose to assign the CRS of this position to the CRS of the given position.
      *
-     * @param position The new position.
+     * @param position The new position, or {@code null}.
+     * @throws MismatchedDimensionException If the given position doesn't have the expected dimension.
+     * @throws MismatchedReferenceSystemException If the given position doesn't use the expected CRS.
      *
-     * @since 2.5
+     * @since 3.16 (derived from 2.5)
      */
-    public void setDirectPosition(final DirectPosition position) {
+    public void setLocation(final DirectPosition position) throws MismatchedDimensionException,
+            MismatchedReferenceSystemException
+    {
         final int dimension = getDimension();
         if (position != null) {
             ensureDimensionMatch("position", position.getDimension(), dimension);
+            final CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
+            if (crs != null) {
+                final CoordinateReferenceSystem other = position.getCoordinateReferenceSystem();
+                if (other != null && !CRS.equalsIgnoreMetadata(crs, other)) {
+                    throw new MismatchedReferenceSystemException(Errors.format(
+                            Errors.Keys.MISMATCHED_COORDINATE_REFERENCE_SYSTEM));
+                }
+            }
             for (int i=0; i<dimension; i++) {
                 setOrdinate(i, position.getOrdinate(i));
             }
@@ -81,6 +100,20 @@ public abstract class AbstractDirectPosition implements DirectPosition {
                 setOrdinate(i, Double.NaN);
             }
         }
+    }
+
+    /**
+     * The default implementation delegates to {@link #setLocation(DirectPosition)}.
+     *
+     * @param position The new position.
+     *
+     * @since 2.5
+     *
+     * @deprecated Renamed {@link #setLocation(DirectPosition)}.
+     */
+    @Deprecated
+    public void setDirectPosition(final DirectPosition position) {
+        setLocation(position);
     }
 
     /**

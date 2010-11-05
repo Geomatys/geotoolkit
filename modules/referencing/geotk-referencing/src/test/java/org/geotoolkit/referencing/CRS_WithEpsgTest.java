@@ -61,7 +61,7 @@ import static org.geotoolkit.test.Commons.EPSG_VERSION;
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Andrea Aime (TOPP)
- * @version 3.15
+ * @version 3.16
  *
  * @since 2.4
  */
@@ -579,18 +579,17 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
      *
      * @throws FactoryException Should not happen.
      *
-     * @todo Disabled for now, since the test doesn't pass.
      * @see http://jira.geotoolkit.org/browse/GEOTK-81
      */
     @Test
-    @Ignore
     public void testProjected4D() throws FactoryException {
         CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:3395");
         CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:27572");
         sourceCRS = new DefaultCompoundCRS("3D", sourceCRS, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);
         sourceCRS = new DefaultCompoundCRS("4D", sourceCRS, DefaultTemporalCRS.JULIAN);
-        MathTransform tr = CRS.findMathTransform(sourceCRS, targetCRS);
-        assertNotNull(tr);
+        final MathTransform tr = CRS.findMathTransform(sourceCRS, targetCRS, true);
+        assertEquals(4, tr.getSourceDimensions());
+        assertEquals(2, tr.getTargetDimensions());
     }
 
     /**

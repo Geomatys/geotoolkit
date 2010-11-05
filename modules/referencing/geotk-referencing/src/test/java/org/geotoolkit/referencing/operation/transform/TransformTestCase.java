@@ -58,7 +58,7 @@ import org.opengis.test.Validators;
  * the convenience methods defined in GeoAPI and adds a few {@code asserts} statements.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @since 2.0
  */
@@ -341,6 +341,33 @@ public abstract class TransformTestCase extends org.opengis.test.referencing.Tra
         final String message = "Expected ("+ez+"), "+
               "transformed=("+target.ordinates[0]+")";
         assertEquals(message, ez, target.ordinates[0], 1E-2); // Greater tolerance level for Z.
+    }
+
+    /**
+     * Transforms a four-dimensional point and compare the result with the expected
+     * two-dimensional value.
+     *
+     * @param  x The x value to transform.
+     * @param  y The y value to transform.
+     * @param  z The z value to transform.
+     * @param  t The t value to transform.
+     * @param ex The expected x value.
+     * @param ey The expected y value.
+     * @throws TransformException If the given point can not be transformed.
+     *
+     * @since 3.16
+     */
+    protected final void assertTransformEquals4_2(
+            final double  x, final double  y, final double  z, final double t,
+            final double ex, final double ey) throws TransformException
+    {
+        final GeneralDirectPosition source = new GeneralDirectPosition(x,y,z,t);
+        final GeneralDirectPosition target = new GeneralDirectPosition(2);
+        assertSame(target, transform.transform(source, target));
+        final String message = "Expected ("+ex+", "+ey+"), "+
+              "transformed=("+target.ordinates[0]+", "+target.ordinates[1]+")";
+        assertEquals(message, ex, target.ordinates[0], tolerance);
+        assertEquals(message, ey, target.ordinates[1], tolerance);
     }
 
     /**

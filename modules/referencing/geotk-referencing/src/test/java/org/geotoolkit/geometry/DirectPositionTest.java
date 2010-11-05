@@ -17,9 +17,11 @@
  */
 package org.geotoolkit.geometry;
 
+import java.util.Arrays;
 import org.opengis.geometry.DirectPosition;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -29,7 +31,7 @@ import static org.junit.Assert.*;
  * Tests the {@link GeneralDirectPosition} and {@link DirectPosition2D} classes.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.16
  *
  * @since 2.4
  */
@@ -99,5 +101,20 @@ public final class DirectPositionTest {
         p2.setCoordinateReferenceSystem(WGS84);
         assertTrue(p1.equals(p2));
         assertTrue(p2.equals(p1));
+    }
+
+    /**
+     * Tests {@link GeneralDirectPosition#clone()}.
+     *
+     * @since 3.16
+     */
+    @Test
+    public void testClone() {
+        final GeneralDirectPosition p1 = new GeneralDirectPosition(10, 20, 30);
+        p1.setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84_3D);
+        final GeneralDirectPosition p2 = p1.clone();
+        assertEquals ("Expected the same CRS and ordinates.", p1, p2);
+        assertTrue   ("Expected the same ordinates.", Arrays.equals(p1.ordinates, p2.ordinates));
+        assertNotSame("the ordinates array should have been cloned.", p1.ordinates, p2.ordinates);
     }
 }

@@ -24,9 +24,9 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
  * Predefined CRS as WKT strings. Hard-coded constants are more convenient for debugging
  * than strings read from a file.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Andrea Aime (OpenGeo)
- * @version 3.09
+ * @version 3.16
  *
  * @since 2.4
  */
@@ -332,6 +332,34 @@ public final class WKT {
             "  UNIT[“m”, 1.0],\n" +
             "  AXIS[“x”, EAST],\n" +
             "  AXIS[“y”, NORTH]]");
+
+    /**
+     * Lambert conformal conic in France (EPSG:27572).
+     * This uses a prime meridian different than Greenwich.
+     *
+     * @since 3.16
+     */
+    public static final String PROJCS_LAMBERT_CONIC_NTF = decodeQuotes(
+            "PROJCS[“NTF (Paris) / Lambert zone II”,\n" +
+            "  GEOGCS[“NTF (Paris)”,\n" +
+            "    DATUM[“Nouvelle Triangulation Francaise (Paris)”,\n" +
+            "      SPHEROID[“Clarke 1880 (IGN)”, 6378249.2, 293.4660212936269, AUTHORITY[“EPSG”,“7011”]],\n" +
+            "      AUTHORITY[“EPSG”,“6807”]],\n" +
+            "    PRIMEM[“Paris”, 2.5969213, AUTHORITY[“EPSG”,“8903”]],\n" +
+            "    UNIT[“grade”, 0.015707963267948967],\n" +
+            "    AXIS[“Geodetic latitude”, NORTH],\n" +
+            "    AXIS[“Geodetic longitude”, EAST],\n" +
+            "    AUTHORITY[“EPSG”,”4807”]],\n" +
+            "  PROJECTION[“Lambert Conic Conformal (1SP)”, AUTHORITY[“EPSG”,“9801”]],\n" +
+            "  PARAMETER[“central_meridian”, 0.0],\n" +
+            "  PARAMETER[“latitude_of_origin”, 52.0],\n" +
+            "  PARAMETER[“scale_factor”, 0.99987742],\n" +
+            "  PARAMETER[“false_easting”, 600000.0],\n" +
+            "  PARAMETER[“false_northing”, 2200000.0],\n" +
+            "  UNIT[“metre”, 1.0],\n" +
+            "  AXIS[“Easting”, EAST],\n" +
+            "  AXIS[“Northing”, NORTH],\n" +
+            "  AUTHORITY[“EPSG”,“27572”]]");
 
     /**
      * Antartic on WGS84 datum.

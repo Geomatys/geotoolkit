@@ -20,9 +20,12 @@ package org.geotoolkit.referencing.operation;
 import javax.imageio.spi.ServiceRegistry;
 
 import org.opengis.referencing.operation.CoordinateOperationFactory;
+import org.opengis.referencing.operation.OperationNotFoundException;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+
+import org.junit.Test;
 
 
 /**
@@ -31,7 +34,7 @@ import org.geotoolkit.factory.Hints;
  * tests whatever {@link CoordinateOperationFactory} implementation is found on the classpath.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.16
  *
  * @since 3.07
  */
@@ -48,5 +51,19 @@ public final class DefaultCoordinateOperationFactoryTest extends CoordinateOpera
                 return true;
             }
         }));
+    }
+
+    /**
+     * Override a test which is not expected to work without EPSG database.
+     */
+    @Test
+    @Override
+    public void testProjected2D_withMeridianShift() throws Exception {
+        try {
+            super.testProjected4D_to2D_withMeridianShift();
+            fail("Should not allow the transform without Bursa-Wolf parameters.");
+        } catch (OperationNotFoundException e) {
+            // This is the expected exception.
+        }
     }
 }
