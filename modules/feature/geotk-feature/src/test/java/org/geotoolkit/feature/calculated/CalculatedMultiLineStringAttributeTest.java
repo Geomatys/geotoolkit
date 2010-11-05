@@ -123,27 +123,29 @@ public class CalculatedMultiLineStringAttributeTest {
         ftb.setName("test");
         ftb.add(ct, new DefaultName("subAtts"), null, 0, Integer.MAX_VALUE, true, null);
         final FeatureType ft = ftb.buildFeatureType();
+        final AttributeDescriptor sebDesc = (AttributeDescriptor) ft.getDescriptor("subAtts");
 
         final Collection<Property> props = new ArrayList<Property>();
         props.add(FF.createAttribute(line1, (AttributeDescriptor) ct.getDescriptor("line"), null));
-        final ComplexAttribute ca1 = FF.createComplexAttribute(props, ct, "sid1");
+        final ComplexAttribute ca1 = FF.createComplexAttribute(props, sebDesc, "sid1");
 
         props.clear();
         props.add(FF.createAttribute(line2, (AttributeDescriptor) ct.getDescriptor("line"), null));
-        final ComplexAttribute ca2 = FF.createComplexAttribute(props, ct, "sid2");
+        final ComplexAttribute ca2 = FF.createComplexAttribute(props, sebDesc, "sid2");
 
         props.clear();
         props.add(FF.createAttribute(line3, (AttributeDescriptor) ct.getDescriptor("line"), null));
-        final ComplexAttribute ca3 = FF.createComplexAttribute(props, ct, "sid3");
+        final ComplexAttribute ca3 = FF.createComplexAttribute(props, sebDesc, "sid3");
 
         props.clear();
-        props.add(FF.createAttribute(ca1, (AttributeDescriptor) ft.getDescriptor("subAtts"), null));
-        props.add(FF.createAttribute(ca2, (AttributeDescriptor) ft.getDescriptor("subAtts"), null));
-        props.add(FF.createAttribute(ca3, (AttributeDescriptor) ft.getDescriptor("subAtts"), null));
+        props.add(ca1);
+        props.add(ca2);
+        props.add(ca3);
         final Feature feature = FF.createFeature(props, ft, "id");
 
 
-        final GeometryDescriptor desc = (GeometryDescriptor) adb.create(new DefaultName("calc"), MultiLineString.class, 1, 1, false, null);
+        final GeometryDescriptor desc = (GeometryDescriptor) adb.create(
+                new DefaultName("calc"), MultiLineString.class, 1, 1, false, null);
 
         final CalculatedMultiLineStringAttribute att = new CalculatedMultiLineStringAttribute(desc,
                 new DefaultName("subAtts"), new DefaultName("line"));

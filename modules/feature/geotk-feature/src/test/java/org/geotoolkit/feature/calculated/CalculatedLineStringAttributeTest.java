@@ -44,6 +44,7 @@ import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.GeometryDescriptor;
 
 import static org.junit.Assert.*;
+import org.opengis.feature.type.PropertyDescriptor;
 
 /**
  * Test calculated linestring attribut.
@@ -117,23 +118,24 @@ public class CalculatedLineStringAttributeTest {
         ftb.setName("test");
         ftb.add(ct, new DefaultName("subAtts"), null, 0, Integer.MAX_VALUE, true, null);
         final FeatureType ft = ftb.buildFeatureType();
+        final AttributeDescriptor attDesc = (AttributeDescriptor) ft.getDescriptor("subAtts");
 
         final Collection<Property> props = new ArrayList<Property>();
         props.add(FF.createAttribute(GF.createPoint(new Coordinate(5, 5)), (AttributeDescriptor) ct.getDescriptor("point"), null));
-        final ComplexAttribute ca1 = FF.createComplexAttribute(props, ct, "sid1");
+        final ComplexAttribute ca1 = FF.createComplexAttribute(props, attDesc, "sid1");
 
         props.clear();
         props.add(FF.createAttribute(GF.createPoint(new Coordinate(30, 12)), (AttributeDescriptor) ct.getDescriptor("point"), null));
-        final ComplexAttribute ca2 = FF.createComplexAttribute(props, ct, "sid2");
+        final ComplexAttribute ca2 = FF.createComplexAttribute(props, attDesc, "sid2");
 
         props.clear();
         props.add(FF.createAttribute(GF.createPoint(new Coordinate(41, 56)), (AttributeDescriptor) ct.getDescriptor("point"), null));
-        final ComplexAttribute ca3 = FF.createComplexAttribute(props, ct, "sid3");
+        final ComplexAttribute ca3 = FF.createComplexAttribute(props, attDesc, "sid3");
 
         props.clear();
-        props.add(FF.createAttribute(ca1, (AttributeDescriptor) ft.getDescriptor("subAtts"), null));
-        props.add(FF.createAttribute(ca2, (AttributeDescriptor) ft.getDescriptor("subAtts"), null));
-        props.add(FF.createAttribute(ca3, (AttributeDescriptor) ft.getDescriptor("subAtts"), null));
+        props.add(ca1);
+        props.add(ca2);
+        props.add(ca3);
         final Feature feature = FF.createFeature(props, ft, "id");
 
 
