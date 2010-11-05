@@ -67,6 +67,16 @@ public class URLTemplateType {
     @XmlAttribute(required = true)
     private String template;
 
+    public URLTemplateType() {
+
+    }
+
+    public URLTemplateType(String format, String resourceType, String template){
+        this.format = format;
+        this.resourceType = resourceType;
+        this.template = template;
+    }
+
     /**
      * Gets the value of the format property.
      * 

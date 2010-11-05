@@ -243,6 +243,13 @@ public class FeatureTypeType {
     }
 
     /**
+     * Gets the value of the otherSRS property.
+     */
+    public void setOtherSRS(List<String> otherCRS) {
+        this.otherSRS = otherCRS;
+    }
+
+    /**
      * Gets the value of the noSRS property.
      * 
      * @return
