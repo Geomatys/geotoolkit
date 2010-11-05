@@ -31,15 +31,18 @@ import com.vividsolutions.jts.geom.Polygon;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.ValidatingFeatureFactory;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.logging.Logging;
+import org.opengis.feature.Attribute;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.util.FactoryException;
@@ -62,10 +65,11 @@ public class FilterTestConstants {
     public static final GeometryFactory GF = new GeometryFactory();
     public static final FeatureFactory FEAF = new ValidatingFeatureFactory();
 
-    public static Geometry RIGHT_GEOMETRY;
-    public static Geometry WRONG_GEOMETRY;
-    public static Date DATE;
+    public static final Geometry RIGHT_GEOMETRY;
+    public static final Geometry WRONG_GEOMETRY;
+    public static final Date DATE;
     public static final Feature FEATURE_1;
+    public static final Feature CX_FEATURE = createComplexFeature();
 
     static{
         CoordinateReferenceSystem crs = null;
@@ -139,5 +143,63 @@ public class FilterTestConstants {
         
         FEATURE_1 = FEAF.createFeature(properties, ft, "testFeatureType.1");
     }
+
+
+    private static Feature createComplexFeature(){
+        final FeatureType ft = complexType();
+        final AttributeDescriptor pd = (AttributeDescriptor) ft.getDescriptor("{http://test.com}attCpx");
+        final ComplexType ct = (ComplexType) pd.getType();
+
+        final Collection<Property> props = new ArrayList<Property>();
+        props.add(FEAF.createAttribute("toto19",       (AttributeDescriptor) ct.getDescriptor("{http://test.com}attString"), null));
+        props.add(FEAF.createAttribute("marcel1",       (AttributeDescriptor) ct.getDescriptor("{http://test2.com}attString"), null));
+        props.add(FEAF.createAttribute("marcel5",       (AttributeDescriptor) ct.getDescriptor("{http://test2.com}attString"), null));
+        props.add(FEAF.createAttribute(45d,           (AttributeDescriptor) ct.getDescriptor("{http://test.com}attDouble"), null));
+        props.add(FEAF.createAttribute(new Date(),    (AttributeDescriptor) ct.getDescriptor("{http://test.com}attDate"), null));
+        final Attribute ce1 = FEAF.createComplexAttribute(props, pd, null);
+
+        props.clear();
+        props.add(FEAF.createAttribute("toto41",       (AttributeDescriptor) ct.getDescriptor("{http://test.com}attString"), null));
+        props.add(FEAF.createAttribute("marcel2",       (AttributeDescriptor) ct.getDescriptor("{http://test2.com}attString"), null));
+        props.add(FEAF.createAttribute("marcel3",       (AttributeDescriptor) ct.getDescriptor("{http://test2.com}attString"), null));
+        props.add(FEAF.createAttribute("marcel5",       (AttributeDescriptor) ct.getDescriptor("{http://test2.com}attString"), null));
+        props.add(FEAF.createAttribute(45d,           (AttributeDescriptor) ct.getDescriptor("{http://test.com}attDouble"), null));
+        props.add(FEAF.createAttribute(new Date(),    (AttributeDescriptor) ct.getDescriptor("{http://test.com}attDate"), null));
+        final Attribute ce2 = FEAF.createComplexAttribute(props, pd, null);
+
+        props.clear();
+        props.add(FEAF.createAttribute("toto1", (AttributeDescriptor) ft.getDescriptor("{http://test.com}attString"), null));
+        props.add(FEAF.createAttribute("toto2", (AttributeDescriptor) ft.getDescriptor("{http://test.com}attString"), null));
+        props.add(FEAF.createAttribute("toto3", (AttributeDescriptor) ft.getDescriptor("{http://test2.com}attString"), null));
+        props.add(ce1);
+        props.add(ce2);
+        final Feature feature = FEAF.createFeature(props, ft, "id");
+        return feature;
+    }
+
+    private static FeatureType complexType(){
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.reset();
+        ftb.setName("{http://test.com}cpxatt");
+        ftb.add("{http://test.com}attString", String.class,0,12,true,null);
+        ftb.add("{http://test2.com}attString", String.class,0,12,true,null);
+        ftb.add("{http://test.com}attDouble", Double.class,0,12,true,null);
+        ftb.add("{http://test.com}attDate", Date.class,0,12,true,null);
+        ComplexType ct = ftb.buildType();
+
+        ftb.reset();
+        ftb.setName("{http://test.com}test");
+        ftb.add("{http://test.com}attString", String.class,0,12,true,null);
+        ftb.add("{http://test2.com}attString", String.class,0,12,true,null);
+        ftb.add("{http://test.com}attDouble", Double.class,0,12,true,null);
+        ftb.add("{http://test.com}attDate", Date.class,0,12,true,null);
+        ftb.add(ct,DefaultName.valueOf("{http://test.com}attCpx"),null,0,10,true,null);
+
+        FeatureType ft = ftb.buildFeatureType();
+
+        return ft;
+    }
+
+
 
 }

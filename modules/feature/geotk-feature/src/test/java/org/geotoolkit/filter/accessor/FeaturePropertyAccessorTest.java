@@ -15,11 +15,9 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.filter;
+package org.geotoolkit.filter.accessor;
 
 import com.vividsolutions.jts.geom.Geometry;
-import org.geotoolkit.filter.accessor.Accessors;
-import org.geotoolkit.filter.accessor.PropertyAccessor;
 import org.junit.Test;
 import org.opengis.feature.Feature;
 
@@ -37,34 +35,40 @@ public class FeaturePropertyAccessorTest {
     }
 
     @Test
-    public void testAccessor() {
+    public void testFlatAccessor() {
 
         //test a simple attribut------------------------------------------------
         PropertyAccessor accessor = Accessors.getAccessor(Feature.class, "testGeometry", null);
         assertNotNull(accessor);
         Geometry geom = (Geometry) accessor.get(FEATURE_1, "testGeometry", Geometry.class);
-        assertEquals(geom, FEATURE_1.getDefaultGeometryProperty().getValue());
+        assertEquals(FEATURE_1.getDefaultGeometryProperty().getValue(), geom);
 
         //test id---------------------------------------------------------------
         accessor = Accessors.getAccessor(Feature.class, "@id", null);
         assertNotNull(accessor);
         Object id = accessor.get(FEATURE_1, "@id", null);
-        assertEquals(id, FEATURE_1.getIdentifier().getID());
+        assertEquals(FEATURE_1.getIdentifier().getID(), id);
 
         //test xpath index------------------------------------------------------
         accessor = Accessors.getAccessor(Feature.class, "*[10]", null);
         assertNotNull(accessor);
         Object att = accessor.get(FEATURE_1, "*[10]", null);
-        assertEquals(att, "test string data");
-        assertEquals(att, FEATURE_1.getProperty("testString").getValue());
+        assertEquals("test string data", att);
+        assertEquals(FEATURE_1.getProperty("testString").getValue(), att);
 
         //test a geometry name with accents-------------------------------------
         accessor = Accessors.getAccessor(Feature.class, "attribut.Géométrie", null);
         assertNotNull(accessor);
         att = accessor.get(FEATURE_1, "attribut.Géométrie", null);
-        assertEquals(att, "POINT(45,32)");
-        assertEquals(att, FEATURE_1.getProperty("attribut.Géométrie").getValue());
+        assertEquals("POINT(45,32)", att);
+        assertEquals(FEATURE_1.getProperty("attribut.Géométrie").getValue(), att);
 
     }
+
+    @Test
+    public void testComplexAccessor() {
+        //TODO
+    }
+
 
 }

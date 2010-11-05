@@ -46,7 +46,7 @@ import org.opengis.feature.type.PropertyDescriptor;
  * @author Justin Deoliveira, The Open Planning Project
  * @module pending
  */
-public class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFactory {
+public final class DefaultFeaturePropertyAccessorFactory implements PropertyAccessorFactory {
 
     /** Single instnace is fine - classes are thread safe */
     private static final PropertyAccessor ATTRIBUTE_ACCESS = new SimpleFeaturePropertyAccessor();

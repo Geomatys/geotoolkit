@@ -242,7 +242,7 @@ public class FeatureFilterSpatialTest {
         multiPoint.getElements().add(new JTSPoint(new GeneralDirectPosition(70.83, 29.86), crs));
         multiPoint.getElements().add(new JTSPoint(new GeneralDirectPosition(68.87, 31.08), crs));
         multiPoint.getElements().add(new JTSPoint(new GeneralDirectPosition(71.96, 32.19), crs));
-        Equals equalsfilter = FF.equals("http://cite.opengeospatial.org/gmlsf:multiPointProperty", multiPoint);
+        Equals equalsfilter = FF.equals("{http://cite.opengeospatial.org/gmlsf}multiPointProperty", multiPoint);
         boolean match = equalsfilter.evaluate(aggregateGeoFeature1);
         assertTrue(match);
 
@@ -254,7 +254,7 @@ public class FeatureFilterSpatialTest {
         multiPoint.getElements().add(new JTSPoint(new GeneralDirectPosition(38.83, 16.22), crs));
         multiPoint.getElements().add(new JTSPoint(new GeneralDirectPosition(62.07, 2.48), crs));
         
-        Intersects intfilter = FF.intersects("http://cite.opengeospatial.org/gmlsf:attribut.Géométrie", multiPoint);
+        Intersects intfilter = FF.intersects("{http://cite.opengeospatial.org/gmlsf}attribut.Géométrie", multiPoint);
         match = intfilter.evaluate(entiteGenerique1);
         assertFalse(match);
 
