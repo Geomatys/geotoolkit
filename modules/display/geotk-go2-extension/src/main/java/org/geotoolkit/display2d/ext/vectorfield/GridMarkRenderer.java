@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -22,14 +22,11 @@ import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
-import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
-import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
+import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRenderer;
 
 
 /**
@@ -38,18 +35,10 @@ import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GridMarkRenderer extends AbstractSymbolizerRenderer<CachedVectorFieldSymbolizer>{
+public class GridMarkRenderer extends AbstractCoverageSymbolizerRenderer<CachedVectorFieldSymbolizer>{
 
     public GridMarkRenderer(CachedVectorFieldSymbolizer symbol, RenderingContext2D context){
         super(symbol,context);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void portray(ProjectedFeature graphic) throws PortrayalException {
-        //nothing to portray
     }
 
     /**
@@ -81,22 +70,6 @@ public class GridMarkRenderer extends AbstractSymbolizerRenderer<CachedVectorFie
             }
         }
 
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean hit(ProjectedFeature graphic, SearchAreaJ2D mask, VisitFilter filter) {
-        return false;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean hit(ProjectedCoverage graphic, SearchAreaJ2D mask, VisitFilter filter) {
-        return false;
     }
 
 }

@@ -171,8 +171,20 @@ public interface RenderingContext {
      */
     CanvasMonitor getMonitor();
 
+    /**
+     * Extract the date range from the canvas objective envelope (first temporal CRS).
+     * This array is never null but it's values can be null.
+     *
+     * @return array of two dates for the temporal range, never null.
+     */
     Date[] getTemporalRange();
 
+    /**
+     * Extract the elevation range from the canvas objective envelope (first vertical CRS).
+     * This array is never null but it's values can be null.
+     * 
+     * @return array of two dates for the vertical range, never null.
+     */
     Double[] getElevationRange();
 
 }

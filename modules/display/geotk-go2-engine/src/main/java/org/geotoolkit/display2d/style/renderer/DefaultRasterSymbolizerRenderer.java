@@ -19,9 +19,7 @@ package org.geotoolkit.display2d.style.renderer;
 
 import java.awt.Color;
 import java.awt.RenderingHints;
-import java.awt.Shape;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Area;
 import java.awt.image.ColorModel;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.IndexColorModel;
@@ -47,13 +45,10 @@ import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.processing.CoverageProcessingException;
 import org.geotoolkit.coverage.processing.Operations;
-import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
-import org.geotoolkit.display2d.primitive.ProjectedFeature;
-import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedRasterSymbolizer;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.raster.ShadedReliefOp;
@@ -75,7 +70,6 @@ import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
-import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.ColorMap;
 import org.opengis.style.ContrastEnhancement;
@@ -88,22 +82,11 @@ import org.opengis.style.ShadedRelief;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultRasterSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedRasterSymbolizer>{
+public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<CachedRasterSymbolizer>{
 
 
     public DefaultRasterSymbolizerRenderer(CachedRasterSymbolizer symbol, RenderingContext2D context){
         super(symbol,context);
-    }
-
-    @Override
-    public void portray(ProjectedFeature graphic) throws PortrayalException {
-        //nothing to paint
-    }
-
-    @Override
-    public boolean hit(ProjectedFeature graphic, SearchAreaJ2D mask, VisitFilter filter) {
-        //nothing to hit
-        return false;
     }
     
     /**
@@ -216,38 +199,6 @@ public class DefaultRasterSymbolizerRenderer extends AbstractSymbolizerRenderer<
         }
 
         renderingContext.switchToDisplayCRS();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean hit(final ProjectedCoverage projectedCoverage, final SearchAreaJ2D search, final VisitFilter filter) {
-
-        //TODO optimize test using JTS geometries, Java2D Area cost to much cpu
-
-        final Shape mask = search.getDisplayShape();
-        final Shape shape;
-        try {
-            shape = projectedCoverage.getEnvelopeGeometry().getDisplayShape();
-        } catch (TransformException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-            return false;
-        }
-
-        final Area area = new Area(mask);
-
-        switch(filter){
-            case INTERSECTS :
-                area.intersect(new Area(shape));
-                return !area.isEmpty();
-            case WITHIN :
-                Area start = new Area(area);
-                area.add(new Area(shape));
-                return start.equals(area);
-        }
-
-        return false;
     }
 
     ////////////////////////////////////////////////////////////////////////////
