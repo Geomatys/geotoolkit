@@ -299,23 +299,23 @@ public class TransverseMercator extends CassiniOrMercator {
     protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
             throws ProjectionException
     {
-        final double x = rollLongitude(srcPts[srcOff]);
-        final double y = srcPts[srcOff + 1];
-        final double sinphi = sin(y);
-        final double cosphi = cos(y);
-        double t = (abs(cosphi) > ANGLE_TOLERANCE) ? sinphi/cosphi : 0;
+        final double λ = rollLongitude(srcPts[srcOff]);
+        final double φ = srcPts[srcOff + 1];
+        final double sinφ = sin(φ);
+        final double cosφ = cos(φ);
+        double t = (abs(cosφ) > ANGLE_TOLERANCE) ? sinφ / cosφ : 0;
         t *= t;
-        double al = cosphi*x;
-        double als = al*al;
-        al /= sqrt(1 - excentricitySquared*(sinphi*sinphi));
-        final double n = esp * cosphi*cosphi;
+        double al  = cosφ * λ;
+        double als = al * al;
+        al /= sqrt(1 - excentricitySquared * (sinφ*sinφ));
+        final double n = esp * cosφ*cosφ;
 
         dstPts[dstOff] = al*(FC1 + FC3 * als*(1 - t + n +
             FC5 * als * ( 5 + t*(t - 18) + n*(14 - 58*t) +
             FC7 * als * (61 + t*(t*(179 - t) - 479)))));
 
         // NOTE: meridional distance at latitudeOfOrigin is always 0.
-        dstPts[dstOff + 1] = mlfn(y, sinphi, cosphi) + sinphi*al*x*
+        dstPts[dstOff + 1] = mlfn(φ, sinφ, cosφ) + sinφ*al*λ*
             FC2 * (1 +
             FC4 * als * (5 - t + n*(9 + 4*n) +
             FC6 * als * (61 + t * (t - 58) + n*(270 - 330*t) +
@@ -332,22 +332,22 @@ public class TransverseMercator extends CassiniOrMercator {
     {
         double x = srcPts[srcOff];
         double y = srcPts[srcOff + 1];
-        final double phi = inv_mlfn(y);
-        if (abs(phi) >= PI/2) {
+        final double φ = inv_mlfn(y);
+        if (abs(φ) >= PI/2) {
             y = copySign(PI/2, y);
             x = 0;
         } else {
-            final double sinphi = sin(phi);
-            final double cosphi = cos(phi);
-            double t = (abs(cosphi) > ANGLE_TOLERANCE) ? sinphi/cosphi : 0;
-            final double n = esp * cosphi*cosphi;
-            double con = 1 - excentricitySquared*(sinphi*sinphi);
+            final double sinφ = sin(φ);
+            final double cosφ = cos(φ);
+            double t = (abs(cosφ) > ANGLE_TOLERANCE) ? sinφ / cosφ : 0;
+            final double n = esp * cosφ*cosφ;
+            double con = 1 - excentricitySquared * (sinφ*sinφ);
             final double d = x * sqrt(con);
             con *= t;
             t *= t;
             double ds = d*d;
 
-            y = phi - (con*ds / (1 - excentricitySquared)) *
+            y = φ - (con*ds / (1 - excentricitySquared)) *
                 FC2 * (1 - ds *
                 FC4 * (5 + t*(3 - 9*n) + n*(1 - 4*n) - ds *
                 FC6 * (61 + t*(90 - 252*n + 45*t) + 46*n - ds *
@@ -355,7 +355,7 @@ public class TransverseMercator extends CassiniOrMercator {
 
             x = d  * (FC1 - ds * FC3 * (1 + 2*t + n -
                 ds *  FC5 * (5 + t*(28 + 24* t + 8*n) + 6*n -
-                ds *  FC7 * (61 + t*(662 + t*(1320 + 720*t)))))) / cosphi;
+                ds *  FC7 * (61 + t*(662 + t*(1320 + 720*t)))))) / cosφ;
         }
         dstPts[dstOff] = unrollLongitude(x);
         dstPts[dstOff + 1] = y;
@@ -429,8 +429,8 @@ public class TransverseMercator extends CassiniOrMercator {
                                        final double x, final double y)
                 throws ProjectionException
         {
-            final double lambda = srcPts[srcOff];
-            if (abs(lambda) < ASSERTION_DOMAIN) {
+            final double λ = srcPts[srcOff];
+            if (abs(λ) < ASSERTION_DOMAIN) {
                 super.transform(srcPts, srcOff, dstPts, dstOff);
                 return Assertions.checkTransform(dstPts, dstOff, x, y);
             } else {

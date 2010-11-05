@@ -2442,8 +2442,8 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
             final Double[] areaBounds;
             if (area != null) {
                 areaBounds = new Double[] {
-                    new Double(area.getMinX()), new Double(area.getMaxX()),
-                    new Double(area.getMinY()), new Double(area.getMaxY())
+                    area.getMinX(), area.getMaxX(),
+                    area.getMinY(), area.getMaxY()
                 };
             } else {
                 areaBounds = new Double[4];

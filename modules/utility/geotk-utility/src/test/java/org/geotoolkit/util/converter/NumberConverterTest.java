@@ -100,7 +100,7 @@ public final class NumberConverterTest {
     @Test
     public void testComparable() throws NonconvertibleObjectException {
         @SuppressWarnings("rawtypes")
-        final ObjectConverter<Number,Comparable> c = NumberConverter.Comparable.INSTANCE;
+        final ObjectConverter<Number,Comparable<?>> c = NumberConverter.Comparable.INSTANCE;
         assertEquals(2,   c.convert(2  ));
         assertEquals(2.5, c.convert(2.5));
         assertSame(c, serialize(c));

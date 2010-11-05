@@ -627,7 +627,7 @@ public class ColorRamp implements Serializable {
                 font = Font.decode("SansSerif-10");
             }
             final FontRenderContext context = graphics.getFontRenderContext();
-            hints.put(Graduation.VISUAL_AXIS_LENGTH, new Float((float)visualLength));
+            hints.put(Graduation.VISUAL_AXIS_LENGTH, (float) visualLength);
             if (foreground == null) {
                 foreground = Color.BLACK;
             }

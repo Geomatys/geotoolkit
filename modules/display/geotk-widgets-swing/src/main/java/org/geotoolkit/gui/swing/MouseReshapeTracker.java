@@ -1623,8 +1623,7 @@ class MouseReshapeTracker extends MouseInputAdapter implements Shape {
                     case  EAST: value = logicalShape.getMaxX(); break;
                     default   : return;
                 }
-                editor.setValue(isDate ? (Object) new Date(Math.round(value))
-                                       : (Object) new Double(value));
+                editor.setValue(isDate ? new Date(Math.round(value)) : Double.valueOf(value));
             }
         }
 

@@ -66,24 +66,24 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
      * @since 3.01
      */
     @Immutable
-    @SuppressWarnings("rawtypes")
-    static final class Comparable extends NumberConverter<java.lang.Comparable> {
+    static final class Comparable extends NumberConverter<java.lang.Comparable<?>> {
         private static final long serialVersionUID = 3716134638218072176L;
         public static final Comparable INSTANCE = new Comparable();
         private Comparable() {
         }
 
         @Override
-        public Class<java.lang.Comparable> getTargetClass() {
-            return java.lang.Comparable.class;
+        @SuppressWarnings({"rawtypes","unchecked"})
+        public Class<java.lang.Comparable<?>> getTargetClass() {
+            return (Class) java.lang.Comparable.class;
         }
 
         @Override
-        public java.lang.Comparable convert(final Number source) throws NonconvertibleObjectException {
-            if (source == null || source instanceof java.lang.Comparable) {
-                return (java.lang.Comparable) source;
+        public java.lang.Comparable<?> convert(final Number source) throws NonconvertibleObjectException {
+            if (source == null || source instanceof java.lang.Comparable<?>) {
+                return (java.lang.Comparable<?>) source;
             }
-            return new java.lang.Double(source.doubleValue());
+            return source.doubleValue();
         }
 
         /** Returns the singleton instance on deserialization. */

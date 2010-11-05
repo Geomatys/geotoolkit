@@ -213,7 +213,7 @@ public class CoordinateTableModel extends AbstractTableModel {
             if (position != null && columnIndex >= 0 && columnIndex < position.getDimension()) {
                 final double ordinate = position.getOrdinate(columnIndex);
                 if (!Double.isNaN(ordinate)) {
-                    return new Double(ordinate);
+                    return ordinate;
                 }
             }
         }

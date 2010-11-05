@@ -256,7 +256,7 @@ public class FormatChooser extends JComponent implements Dialog {
      */
     private static Object suggestSampleValue(final Format format) {
         if (format instanceof NumberFormat) {
-            return new Double(39.3); // Could be any random value.
+            return 39.3; // Could be any random value.
         }
         if (format instanceof DateFormat) {
             return new Date(); // Could be any random value.

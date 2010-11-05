@@ -234,8 +234,8 @@ public class About extends JComponent implements Dialog {
             add(title, gc);
         }
         final JTabbedPane        tabs = new JTabbedPane();
-        final JLabel totalMemoryLabel = new JLabel(resources.getString(Vocabulary.Keys.MEMORY_HEAP_SIZE_$1,  new Float(totalMemory)));
-        final JLabel percentUsedLabel = new JLabel(resources.getString(Vocabulary.Keys.MEMORY_HEAP_USAGE_$1, new Float(1-freeMemory/totalMemory)));
+        final JLabel totalMemoryLabel = new JLabel(resources.getString(Vocabulary.Keys.MEMORY_HEAP_SIZE_$1,  totalMemory));
+        final JLabel percentUsedLabel = new JLabel(resources.getString(Vocabulary.Keys.MEMORY_HEAP_USAGE_$1, 1 - freeMemory/totalMemory));
         gc.gridx=0; gc.gridy=1; gc.weightx=1; gc.weighty=1; gc.fill=GridBagConstraints.BOTH;
         add(tabs, gc);
         /*
@@ -264,8 +264,8 @@ public class About extends JComponent implements Dialog {
             pane.add(new JLabel(resources.getString(Vocabulary.Keys.OS_VERSION_$2,
                     System.getProperty("os.version"), System.getProperty("os.arch"))), c);
             c.gridy++; c.insets.top=12;
-            pane.add(new JLabel(resources.getString(Vocabulary.Keys.TILE_CACHE_CAPACITY_$1, new Float(
-                 JAI.getDefaultInstance().getTileCache().getMemoryCapacity()/HEAP_SIZE_UNIT))), c);
+            pane.add(new JLabel(resources.getString(Vocabulary.Keys.TILE_CACHE_CAPACITY_$1,
+                 JAI.getDefaultInstance().getTileCache().getMemoryCapacity()/HEAP_SIZE_UNIT)), c);
             c.gridy++; c.insets.top=0;
             pane.add(totalMemoryLabel, c);
             c.gridy++; c.insets.bottom=12;
