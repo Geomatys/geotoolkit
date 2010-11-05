@@ -24,7 +24,7 @@
   <groupId>org.geotoolkit.demo</groupId>
   <artifactId>demos</artifactId>
   <packaging>pom</packaging>
-  <name>Demos</name>
+  <name>Geotoolkit-pending demos</name>
 
   <description>
     Demonstrations of the Geotoolkit.org pending library.
@@ -69,7 +69,9 @@
   <!--     Modules for the build in approximate dependency order   -->
   <!-- =========================================================== -->
   <modules>
+    <module>geotk-demo-referencing</module>
+    <module>geotk-demo-referencing-javadb</module>
+    <module>geotk-demo-referencing-wkt</module>
   </modules>
-
 
 </project>
