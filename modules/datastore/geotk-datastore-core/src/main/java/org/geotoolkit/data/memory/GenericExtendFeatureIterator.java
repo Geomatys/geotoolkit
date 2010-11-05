@@ -34,7 +34,6 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.collection.CloseableIterator;
 import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.Feature;
@@ -180,11 +179,6 @@ public class GenericExtendFeatureIterator<F extends Feature, R extends FeatureIt
         public FeatureCollection subCollection(Query query) throws DataStoreException {
             final FeatureCollection sub = col.subCollection(query);
             return new ExtendFeatureCollection(sub, extend, query.getHints());
-        }
-
-        @Override
-        public CloseableIterator getRows() throws DataStoreException {
-            return col.getRows();
         }
 
         @Override

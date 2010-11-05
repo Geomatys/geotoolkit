@@ -19,7 +19,6 @@ package org.geotoolkit.feature;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import org.geotoolkit.factory.FactoryFinder;

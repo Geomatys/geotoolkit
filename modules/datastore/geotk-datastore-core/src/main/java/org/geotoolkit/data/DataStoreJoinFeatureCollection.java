@@ -30,7 +30,6 @@ import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.collection.CloseableIterator;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -100,11 +99,6 @@ public class DataStoreJoinFeatureCollection extends AbstractFeatureCollection<Fe
         final Query combine = QueryUtilities.subQuery(this.query, query);
         //the result should be an absolute query too.
         return QueryUtilities.evaluate("sub-"+getID(), combine);
-    }
-
-    @Override
-    public CloseableIterator<FeatureCollectionRow> getRows() throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override

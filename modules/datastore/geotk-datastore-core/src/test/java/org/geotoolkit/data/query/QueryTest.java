@@ -31,6 +31,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.Test;
+import org.opengis.feature.ComplexAttribute;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
@@ -342,30 +343,40 @@ public class QueryTest extends TestCase{
 
         FeatureIterator ite = col.iterator();
         Feature f = null;
+        ComplexAttribute c1 = null;
+        ComplexAttribute c2 = null;
 
         f = ite.next();
-        assertEquals(f.getProperty("att1").getValue(), "str1");
-        assertEquals(f.getProperty("att2").getValue(), 1);
-        assertEquals(f.getProperty("att3").getValue(), 1);
-        assertEquals(f.getProperty("att4").getValue(), 10d);
+        c1 = (ComplexAttribute) f.getProperty("s1");
+        c2 = (ComplexAttribute) f.getProperty("s2");
+        assertEquals(c1.getProperty("att1").getValue(), "str1");
+        assertEquals(c1.getProperty("att2").getValue(), 1);
+        assertEquals(c2.getProperty("att3").getValue(), 1);
+        assertEquals(c2.getProperty("att4").getValue(), 10d);
 
         f = ite.next();
-        assertEquals(f.getProperty("att1").getValue(), "str2");
-        assertEquals(f.getProperty("att2").getValue(), 2);
-        assertEquals(f.getProperty("att3").getValue(), 2);
-        assertEquals(f.getProperty("att4").getValue(), 20d);
+        c1 = (ComplexAttribute) f.getProperty("s1");
+        c2 = (ComplexAttribute) f.getProperty("s2");
+        assertEquals(c1.getProperty("att1").getValue(), "str2");
+        assertEquals(c1.getProperty("att2").getValue(), 2);
+        assertEquals(c2.getProperty("att3").getValue(), 2);
+        assertEquals(c2.getProperty("att4").getValue(), 20d);
 
         f = ite.next();
-        assertEquals(f.getProperty("att1").getValue(), "str2");
-        assertEquals(f.getProperty("att2").getValue(), 2);
-        assertEquals(f.getProperty("att3").getValue(), 2);
-        assertEquals(f.getProperty("att4").getValue(), 30d);
+        c1 = (ComplexAttribute) f.getProperty("s1");
+        c2 = (ComplexAttribute) f.getProperty("s2");
+        assertEquals(c1.getProperty("att1").getValue(), "str2");
+        assertEquals(c1.getProperty("att2").getValue(), 2);
+        assertEquals(c2.getProperty("att3").getValue(), 2);
+        assertEquals(c2.getProperty("att4").getValue(), 30d);
 
         f = ite.next();
-        assertEquals(f.getProperty("att1").getValue(), "str3");
-        assertEquals(f.getProperty("att2").getValue(), 3);
-        assertEquals(f.getProperty("att3").getValue(), 3);
-        assertEquals(f.getProperty("att4").getValue(), 40d);
+        c1 = (ComplexAttribute) f.getProperty("s1");
+        c2 = (ComplexAttribute) f.getProperty("s2");
+        assertEquals(c1.getProperty("att1").getValue(), "str3");
+        assertEquals(c1.getProperty("att2").getValue(), 3);
+        assertEquals(c2.getProperty("att3").getValue(), 3);
+        assertEquals(c2.getProperty("att4").getValue(), 40d);
 
         assertFalse(ite.hasNext());
         ite.close();
@@ -401,17 +412,19 @@ public class QueryTest extends TestCase{
         int count = 0;
         while(ite.hasNext()){
             final Feature f = ite.next();
-            final String att1 = f.getProperty("att1").getValue().toString();
+            final ComplexAttribute c1 = (ComplexAttribute) f.getProperty("s1");
+            final ComplexAttribute c2 = (ComplexAttribute) f.getProperty("s2");
+            final String att1 = c1.getProperty("att1").getValue().toString();
 
             if(att1.equals("str1")){
                 foundStr1 = true;
-                assertEquals(f.getProperty("att2").getValue(), 1);
-                assertEquals(f.getProperty("att3").getValue(), 1);
-                assertEquals(f.getProperty("att4").getValue(), 10d);
+                assertEquals(c1.getProperty("att2").getValue(), 1);
+                assertEquals(c2.getProperty("att3").getValue(), 1);
+                assertEquals(c2.getProperty("att4").getValue(), 10d);
             }else if(att1.equals("str2")){
-                assertEquals(f.getProperty("att2").getValue(), 2);
-                assertEquals(f.getProperty("att3").getValue(), 2);
-                double att4 = (Double)f.getProperty("att4").getValue();
+                assertEquals(c1.getProperty("att2").getValue(), 2);
+                assertEquals(c2.getProperty("att3").getValue(), 2);
+                double att4 = (Double)c2.getProperty("att4").getValue();
                 if(att4 == 20d){
                     foundStr20 = true;
                 }else if(att4 == 30d){
@@ -419,19 +432,17 @@ public class QueryTest extends TestCase{
                 }
             }else if(att1.equals("str3")){
                 foundStr3 = true;
-                assertEquals(f.getProperty("att2").getValue(), 3);
-                assertEquals(f.getProperty("att3").getValue(), 3);
-                assertEquals(f.getProperty("att4").getValue(), 40d);
+                assertEquals(c1.getProperty("att2").getValue(), 3);
+                assertEquals(c2.getProperty("att3").getValue(), 3);
+                assertEquals(c2.getProperty("att4").getValue(), 40d);
             }else if(att1.equals("str50")){
                 foundStr50 = true;
-                assertEquals(f.getProperty("att2").getValue(), 50);
-                assertEquals(f.getProperty("att3").getValue(), null);
-                assertEquals(f.getProperty("att4").getValue(), null);
+                assertEquals(c1.getProperty("att2").getValue(), 50);
+                assertNull(c2);
             }else if(att1.equals("str51")){
                 foundStr51 = true;
-                assertEquals(f.getProperty("att2").getValue(), 51);
-                assertEquals(f.getProperty("att3").getValue(), null);
-                assertEquals(f.getProperty("att4").getValue(), null);
+                assertEquals(c1.getProperty("att2").getValue(), 51);
+                assertNull(c2);
             }
             count++;
         }
@@ -477,39 +488,43 @@ public class QueryTest extends TestCase{
         int count = 0;
         while(ite.hasNext()){
             final Feature f = ite.next();
-            final Object att1 = f.getProperty("att1").getValue();
+            final ComplexAttribute c1 = (ComplexAttribute) f.getProperty("s1");
+            final ComplexAttribute c2 = (ComplexAttribute) f.getProperty("s2");
 
-            if("str1".equals(att1)){
-                foundStr1 = true;
-                assertEquals(f.getProperty("att2").getValue(), 1);
-                assertEquals(f.getProperty("att3").getValue(), 1);
-                assertEquals(f.getProperty("att4").getValue(), 10d);
-            }else if("str2".equals(att1)){
-                assertEquals(f.getProperty("att2").getValue(), 2);
-                assertEquals(f.getProperty("att3").getValue(), 2);
-                double att4 = (Double)f.getProperty("att4").getValue();
-                if(att4 == 20d){
-                    foundStr20 = true;
-                }else if(att4 == 30d){
-                    foundStr21 = true;
+            if(c1 != null){
+                final Object att1 = c1.getProperty("att1").getValue();
+                if("str1".equals(att1)){
+                    foundStr1 = true;
+                    assertEquals(c1.getProperty("att2").getValue(), 1);
+                    assertEquals(c2.getProperty("att3").getValue(), 1);
+                    assertEquals(c2.getProperty("att4").getValue(), 10d);
+                }else if("str2".equals(att1)){
+                    assertEquals(c1.getProperty("att2").getValue(), 2);
+                    assertEquals(c2.getProperty("att3").getValue(), 2);
+                    double att4 = (Double)c2.getProperty("att4").getValue();
+                    if(att4 == 20d){
+                        foundStr20 = true;
+                    }else if(att4 == 30d){
+                        foundStr21 = true;
+                    }
+                }else if("str3".equals(att1)){
+                    foundStr3 = true;
+                    assertEquals(c1.getProperty("att2").getValue(), 3);
+                    assertEquals(c2.getProperty("att3").getValue(), 3);
+                    assertEquals(c2.getProperty("att4").getValue(), 40d);
                 }
-            }else if("str3".equals(att1)){
-                foundStr3 = true;
-                assertEquals(f.getProperty("att2").getValue(), 3);
-                assertEquals(f.getProperty("att3").getValue(), 3);
-                assertEquals(f.getProperty("att4").getValue(), 40d);
-            }else if(att1 == null){
-                assertEquals(f.getProperty("att2").getValue(), null);
-                int att3 = (Integer)f.getProperty("att3").getValue();
-                
+            }else{
+                int att3 = (Integer)c2.getProperty("att3").getValue();
+
                 if(att3 == 60){
-                    assertEquals(f.getProperty("att4").getValue(), 60d);
+                    assertEquals(c2.getProperty("att4").getValue(), 60d);
                     foundStr60 = true;
                 }else if(att3 == 61){
-                    assertEquals(f.getProperty("att4").getValue(), 61d);
+                    assertEquals(c2.getProperty("att4").getValue(), 61d);
                     foundStr61 = true;
                 }
             }
+
             count++;
         }
 

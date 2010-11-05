@@ -25,7 +25,6 @@ import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.collection.CloseableIterator;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -113,6 +112,8 @@ public interface FeatureCollection<F extends Feature> extends Collection<F> {
 
     /**
      * Override Iterator to return a limited type FeatureIterator.
+     *
+     * @see FeatureCollection#iterator(org.geotoolkit.factory.Hints)
      * 
      * @return FeatureIterator
      * @throws DataStoreRuntimeException
@@ -121,19 +122,14 @@ public interface FeatureCollection<F extends Feature> extends Collection<F> {
     FeatureIterator<F> iterator() throws DataStoreRuntimeException;
 
     /**
-     * If the collection has several sources for origine. We can iterate
-     * on each source feature using this iterator.
-     * This might be usefull to aquiere separete ids from each source.
-     * Having this navigation possibility is a necessity otherwise we wouldn't be
-     * able to allow modification on such resulting collections.
-     *
-     * This method is the counterpart of javax.jcr.query.QueryResult.getRows
-     * from JSR-283 (Java Content Repository 2).
-     */
-    CloseableIterator<FeatureCollectionRow> getRows() throws DataStoreException;
-
-    /**
      * Get an iterator using some extra hints to configure the reader parameters.
+     *
+     * If the collection has several sources for origine, the returned feature type
+     * combine each selector, the returned features have one complexe attribut for each
+     * selector, the attribut has the name of the selector.
+     *
+     * This approach is the counterpart of javax.jcr.query.QueryResult.getRows
+     * from JSR-283 (Java Content Repository 2).
      * 
      * @param hints : Extra hints
      * @return FeatureIterator

@@ -107,7 +107,7 @@ public class DefaultGeometryAttribute extends DefaultAttribute<Object,GeometryDe
                 //the type does not define the crs, then the object value might define it
                 if(val instanceof Geometry){
                     final int srid = ((Geometry)val).getSRID();
-                    if(srid != -1){
+                    if(srid != -1 && srid != 0){
                         try {
                             crs = CRS.decode(SRIDGenerator.toSRS(srid, SRIDGenerator.Version.V1));
                         } catch (NoSuchAuthorityCodeException ex) {

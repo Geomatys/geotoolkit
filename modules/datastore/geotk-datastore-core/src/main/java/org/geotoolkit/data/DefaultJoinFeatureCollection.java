@@ -17,28 +17,32 @@
 
 package org.geotoolkit.data;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.geotoolkit.data.query.Join;
 import org.geotoolkit.data.query.JoinType;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
+import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.data.query.Source;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.AttributeDescriptorBuilder;
+import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.collection.CloseableIterator;
+import org.opengis.feature.ComplexAttribute;
 
 import org.opengis.feature.Feature;
+import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.Property;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.PropertyIsEqualTo;
@@ -52,30 +56,37 @@ import org.opengis.filter.expression.PropertyName;
  */
 public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feature>{
 
+    private static final FeatureFactory FEATURE_FACTORY = FactoryFinder.getFeatureFactory(
+            new Hints(Hints.FEATURE_FACTORY,LenientFeatureFactory.class));
+
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
     private final Query query;
     private final FeatureCollection leftCollection;
     private final FeatureCollection rightCollection;
     private FeatureType type = null;
+    private AttributeDescriptor leftDesc = null;
+    private AttributeDescriptor rightDesc = null;
 
     public DefaultJoinFeatureCollection(String id, Query query){
         super(id,query.getSource());
 
-        final Source source = query.getSource();
-        if(!(source instanceof Join)){
+        final Source src = query.getSource();
+        if(!(src instanceof Join)){
             throw new IllegalArgumentException("Query must have a join source.");
         }
 
-        if(!QueryUtilities.isAbsolute(source)){
+        if(!QueryUtilities.isAbsolute(src)){
             throw new IllegalArgumentException("Query source must be absolute.");
         }
+
+        final Join join = (Join) src;
 
         this.query = query;
 
         //todo must parse the filter on each selector
-        leftCollection = QueryUtilities.evaluate("left", QueryBuilder.all(getSource().getLeft()));
-        rightCollection = QueryUtilities.evaluate("right", QueryBuilder.all(getSource().getRight()));
+        leftCollection = QueryUtilities.evaluate("left", QueryBuilder.all(join.getLeft()));
+        rightCollection = QueryUtilities.evaluate("right", QueryBuilder.all(join.getRight()));
     }
 
     @Override
@@ -88,21 +99,52 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
         if(type == null){
             final FeatureType leftType = leftCollection.getFeatureType();
             final FeatureType rightType = rightCollection.getFeatureType();
+            final Name leftAttName = (leftCollection.getSource() instanceof Selector) ?
+                    DefaultName.valueOf(((Selector)leftCollection.getSource()).getSelectorName()) :
+                    leftType.getName();
+            final Name rightAttName = (rightCollection.getSource() instanceof Selector) ?
+                    DefaultName.valueOf(((Selector)rightCollection.getSource()).getSelectorName()) :
+                    rightType.getName();
 
-            final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
-            sftb.setName("combine");
-
-            for(final PropertyDescriptor desc : leftType.getDescriptors()){
-                sftb.add((AttributeDescriptor) desc);
-            }
-            for(final PropertyDescriptor desc : rightType.getDescriptors()){
-                sftb.add((AttributeDescriptor) desc);
-            }
-
-            type = sftb.buildSimpleFeatureType();
+            final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+            final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
+            leftDesc = adb.create(leftType,leftAttName,null,0,1,false,null);
+            rightDesc = adb.create(rightType,rightAttName,null,0,1,false,null);
+            ftb.setName(leftAttName.getLocalPart()+'-'+rightAttName.getLocalPart());
+            ftb.add(leftDesc);
+            ftb.add(rightDesc);
+            type = ftb.buildFeatureType();
         }
 
         return type;
+    }
+
+    /**
+     * Agregate all feature from selectors to a single complex feature.
+     *
+     * @param candidates
+     * @return aggregated features
+     * @throws DataStoreException
+     */
+    private Feature toFeature(Feature left, Feature right) throws DataStoreException{
+        final FeatureType type = getFeatureType(); //force creating type.
+
+        final Collection<Property> properties = new ArrayList<Property>();
+
+        //create the id
+        final StringBuilder sb = new StringBuilder();
+        if(left != null){
+            final String leftId = left.getIdentifier().getID();
+            sb.append(leftId).append(' ');
+            properties.add(FEATURE_FACTORY.createComplexAttribute(left.getProperties(), leftDesc, leftId));
+        }
+        if(right != null){
+            final String rightId = right.getIdentifier().getID();
+            sb.append(rightId);
+            properties.add(FEATURE_FACTORY.createComplexAttribute(right.getProperties(), rightDesc, rightId));
+        }
+
+        return FEATURE_FACTORY.createFeature(properties, type, sb.toString());
     }
 
     @Override
@@ -113,25 +155,20 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
     }
 
     @Override
-    public CloseableIterator<FeatureCollectionRow> getRows() throws DataStoreException {
+    public FeatureIterator<Feature> iterator(Hints hints) throws DataStoreRuntimeException {
         final JoinType jt = getSource().getJoinType();
 
-        if(jt == JoinType.INNER){
-            return new JoinInnerRowIterator(null);
-        }else if(jt == JoinType.LEFT_OUTER){
-            return new JoinOuterRowIterator(true,null);
-        }else if(jt == JoinType.RIGHT_OUTER){
-            return new JoinOuterRowIterator(false,null);
-        }else{
-            throw new IllegalArgumentException("Unknowned Join type : " + jt);
-        }
-    }
-
-    @Override
-    public FeatureIterator<Feature> iterator(Hints hints) throws DataStoreRuntimeException {
-        try {
-            return new RowToFeatureIterator(getRows());
-        } catch (DataStoreException ex) {
+        try{
+            if(jt == JoinType.INNER){
+                return new JoinInnerRowIterator(null);
+            }else if(jt == JoinType.LEFT_OUTER){
+                return new JoinOuterRowIterator(true,null);
+            }else if(jt == JoinType.RIGHT_OUTER){
+                return new JoinOuterRowIterator(false,null);
+            }else{
+                throw new IllegalArgumentException("Unknowned Join type : " + jt);
+            }
+        }catch(DataStoreException ex){
             throw new DataStoreRuntimeException(ex);
         }
     }
@@ -157,29 +194,29 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
     /**
      * Iterate on both collections with an Inner join condition.
      */
-    private class JoinInnerRowIterator implements CloseableIterator<FeatureCollectionRow>{
+    private class JoinInnerRowIterator implements FeatureIterator<Feature>{
 
-        private final CloseableIterator<FeatureCollectionRow> leftIterator;
-        private CloseableIterator<FeatureCollectionRow> rightIterator;
-        private FeatureCollectionRow leftRow;
-        private FeatureCollectionRow nextRow;
+        private final FeatureIterator<Feature> leftIterator;
+        private FeatureIterator<Feature> rightIterator;
+        private Feature leftFeature;
+        private Feature combined;
 
         JoinInnerRowIterator(Hints hints) throws DataStoreException{
-            leftIterator = leftCollection.getRows();
+            leftIterator = leftCollection.iterator();
         }
 
         @Override
-        public FeatureCollectionRow next() {
+        public Feature next() {
             try {
                 searchNext();
             } catch (DataStoreException ex) {
                 throw new DataStoreRuntimeException(ex);
             }
-            FeatureCollectionRow f = nextRow;
-            nextRow = null;
+            Feature f = combined;
+            combined = null;
             return f;
         }
-        
+
         @Override
         public void close() {
             leftIterator.close();
@@ -195,50 +232,51 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
             } catch (DataStoreException ex) {
                 throw new DataStoreRuntimeException(ex);
             }
-            return nextRow != null;
+            return combined != null;
         }
 
         private void searchNext() throws DataStoreException{
-            if(nextRow != null) return;
+            if(combined != null) return;
 
             final PropertyIsEqualTo equal = getSource().getJoinCondition();
             final PropertyName leftProperty = (PropertyName) equal.getExpression1();
             final PropertyName rightProperty = (PropertyName) equal.getExpression2();
 
             //we might have several right features for one left
-            if(leftRow != null && rightIterator != null){
-                while(nextRow== null && rightIterator.hasNext()){
-                    final FeatureCollectionRow rightRow = rightIterator.next();
-                    nextRow = checkValid(leftRow, rightRow);
+            if(leftFeature != null && rightIterator != null){
+                while(combined== null && rightIterator.hasNext()){
+                    final Feature rightRes = rightIterator.next();
+                    combined = checkValid(leftFeature, rightRes);
                 }
             }
 
-            if(nextRow==null && rightIterator != null){
+            if(rightIterator==null && rightIterator != null){
+                //no more results in right iterator, close iterator
                 rightIterator.close();
                 rightIterator = null;
             }
 
-            while(nextRow==null && leftIterator.hasNext()){
+            while(combined==null && leftIterator.hasNext()){
                 rightIterator = null;
-                leftRow = leftIterator.next();
+                leftFeature = leftIterator.next();
 
-                final Feature leftFeature = toFeature(leftRow);
                 final Object leftValue = leftProperty.evaluate(leftFeature);
 
                 if(rightIterator == null){
-                    QueryBuilder qb = new QueryBuilder();
+                    final QueryBuilder qb = new QueryBuilder();
                     qb.setSource(getSource().getRight());
                     qb.setFilter(FF.equals(rightProperty, FF.literal(leftValue)));
-                    Query rightQuery = qb.buildQuery();
-                    rightIterator = rightCollection.subCollection(rightQuery).getRows();
+                    final Query rightQuery = qb.buildQuery();
+                    rightIterator = rightCollection.subCollection(rightQuery).iterator();
                 }
 
-                while(nextRow== null && rightIterator.hasNext()){
-                    final FeatureCollectionRow rightRow = rightIterator.next();
-                    nextRow = checkValid(leftRow, rightRow);
+                while(combined== null && rightIterator.hasNext()){
+                    final Feature rightRow = rightIterator.next();
+                    combined = checkValid(leftFeature, rightRow);
                 }
 
-                if(nextRow==null){
+                if(combined==null){
+                    //no more results in right iterator, close iterator
                     rightIterator.close();
                     rightIterator = null;
                 }
@@ -246,15 +284,12 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
 
         }
 
-        private FeatureCollectionRow checkValid(FeatureCollectionRow left, FeatureCollectionRow right) throws DataStoreException{
+        private Feature checkValid(Feature left, Feature right) throws DataStoreException{
             final Feature candidate = toFeature(left,right);
 
             if(query.getFilter().evaluate(candidate)){
                 //combine both rows
-                final FeatureCollectionRow row = new DefaultFeatureCollectionRow();
-                row.getFeatures().putAll(left.getFeatures());
-                row.getFeatures().putAll(right.getFeatures());
-                return row;
+                return candidate;
             }else{
                 //not a valid combinaison
                 return null;
@@ -271,34 +306,33 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
     /**
      * Iterate on both collections with an outer join condition.
      */
-    private class JoinOuterRowIterator implements CloseableIterator<FeatureCollectionRow>{
+    private class JoinOuterRowIterator implements FeatureIterator<Feature>{
 
-        private final CloseableIterator<FeatureCollectionRow> primeIterator;
-        private CloseableIterator<FeatureCollectionRow> secondIterator;
+        private final FeatureIterator<Feature> primeIterator;
+        private FeatureIterator<Feature> secondIterator;
         private final boolean left;
-        private boolean foundPrime = false;
-        private FeatureCollectionRow primeRow;
-        private FeatureCollectionRow nextRow;
+        private Feature primeFeature;
+        private Feature nextFeature;
 
         JoinOuterRowIterator(boolean left, Hints hints) throws DataStoreException{
             this.left = left;
             if(left){
-                primeIterator = leftCollection.getRows();
+                primeIterator = leftCollection.iterator();
             }else{
-                primeIterator = rightCollection.getRows();
+                primeIterator = rightCollection.iterator();
             }
-            
+
         }
 
         @Override
-        public FeatureCollectionRow next() {
+        public Feature next() {
             try {
                 searchNext();
             } catch (DataStoreException ex) {
                 throw new DataStoreRuntimeException(ex);
             }
-            FeatureCollectionRow f = nextRow;
-            nextRow = null;
+            Feature f = nextFeature;
+            nextFeature = null;
             return f;
         }
 
@@ -317,30 +351,32 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
             } catch (DataStoreException ex) {
                 throw new DataStoreRuntimeException(ex);
             }
-            return nextRow != null;
+            return nextFeature != null;
         }
 
         private void searchNext() throws DataStoreException{
-            if(nextRow != null) return;
+            if(nextFeature != null) return;
 
             final PropertyIsEqualTo equal = getSource().getJoinCondition();
             final PropertyName leftProperty = (PropertyName) equal.getExpression1();
             final PropertyName rightProperty = (PropertyName) equal.getExpression2();
 
             //we might have several right features for one left
-            if(primeRow != null && secondIterator != null){
-                while(nextRow== null && secondIterator.hasNext()){
-                    final FeatureCollectionRow secondRow = secondIterator.next();
-                    nextRow = checkValid(primeRow, secondRow);
+            if(primeFeature != null && secondIterator != null){
+                while(nextFeature== null && secondIterator.hasNext()){
+                    final Feature secondCandidate = secondIterator.next();
+                    nextFeature = checkValid(primeFeature, secondCandidate, left);
                 }
             }
 
-            while(nextRow==null && primeIterator.hasNext()){
-                foundPrime = false;
-                secondIterator = null;
-                primeRow = primeIterator.next();
+            while(nextFeature==null && primeIterator.hasNext()){
+                primeFeature = primeIterator.next();
 
-                final Feature primeFeature = toFeature(primeRow);
+                if(secondIterator != null){
+                    secondIterator.close();
+                    secondIterator = null;
+                }
+
                 final Object primeValue;
                 if(left){
                     primeValue = leftProperty.evaluate(primeFeature);
@@ -353,43 +389,43 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
                     if(left){
                         qb.setSource(getSource().getRight());
                         qb.setFilter(FF.equals(rightProperty, FF.literal(primeValue)));
-                        Query secondQuery = qb.buildQuery();
-                        secondIterator = rightCollection.subCollection(secondQuery).getRows();
+                        secondIterator = rightCollection.subCollection(qb.buildQuery()).iterator();
                     }else{
                         qb.setSource(getSource().getLeft());
                         qb.setFilter(FF.equals(leftProperty, FF.literal(primeValue)));
-                        Query secondQuery = qb.buildQuery();
-                        secondIterator = leftCollection.subCollection(secondQuery).getRows();
+                        secondIterator = leftCollection.subCollection(qb.buildQuery()).iterator();
                     }
                 }
 
-                while(nextRow== null && secondIterator.hasNext()){
-                    final FeatureCollectionRow rightRow = secondIterator.next();
-                    nextRow = checkValid(primeRow, rightRow);
-
-                    if(nextRow != null){
-                        foundPrime = true;
-                    }
+                while(nextFeature==null && secondIterator.hasNext()){
+                    final Feature rightRow = secondIterator.next();
+                    nextFeature = checkValid(primeFeature, rightRow,left);
                 }
 
-                if(!foundPrime){
+                if(nextFeature == null){
                     //outer left effect, no right match but still we must return the left side
-                    nextRow = primeRow;
+                    if(left){
+                        nextFeature = toFeature(primeFeature,null);
+                    }else{
+                        nextFeature = toFeature(null,primeFeature);
+                    }
                 }
 
             }
 
         }
 
-        private FeatureCollectionRow checkValid(FeatureCollectionRow left, FeatureCollectionRow right) throws DataStoreException{
-            final Feature candidate = toFeature(left,right);
-
+        private Feature checkValid(Feature left, Feature right, boolean leftJoin) throws DataStoreException{
+            final Feature candidate;
+            if(leftJoin){
+                candidate = toFeature(left,right);
+            }else{
+                candidate = toFeature(right,left);
+            }
+            
             if(query.getFilter().evaluate(candidate)){
                 //combine both rows
-                final FeatureCollectionRow row = new DefaultFeatureCollectionRow();
-                row.getFeatures().putAll(left.getFeatures());
-                row.getFeatures().putAll(right.getFeatures());
-                return row;
+                return candidate;
             }else{
                 //not a valid combinaison
                 return null;
@@ -401,73 +437,6 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
             throw new UnsupportedOperationException("Not supported yet on join queries.");
         }
 
-    }
-
-
-    private class RowToFeatureIterator implements FeatureIterator<Feature>{
-
-        private final CloseableIterator<FeatureCollectionRow> ite;
-
-        public RowToFeatureIterator(CloseableIterator<FeatureCollectionRow> rows){
-            this.ite = rows;
-        }
-
-        @Override
-        public Feature next() {
-            try {
-                return toFeature(ite.next());
-            } catch (DataStoreException ex) {
-                throw new DataStoreRuntimeException(ex);
-            }
-        }
-
-        @Override
-        public void close() {
-            ite.close();
-        }
-
-        @Override
-        public boolean hasNext() {
-            return ite.hasNext();
-        }
-
-        @Override
-        public void remove() {
-            ite.remove();
-        }
-
-    }
-
-    private Feature toFeature(FeatureCollectionRow ... rows) throws DataStoreException{
-
-        if(rows.length == 1 && rows[0].getFeatures().size() == 1){
-            //avoid creating a new feature
-            Feature f = rows[0].getFeatures().values().iterator().next();
-
-            if(f.getType().equals(f)){
-                //same type we can safely retuen it.
-                return f;
-            }
-        }
-
-        final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder((SimpleFeatureType) getFeatureType());
-        //build the id with all features
-        final StringBuilder cid = new StringBuilder();
-
-        for(FeatureCollectionRow row : rows){
-            for(Entry<String,Feature> entry : row.getFeatures().entrySet()){
-                final Feature feature = entry.getValue();
-                if(cid.length()>0) cid.append(" / ");
-                cid.append(feature.getIdentifier().getID());
-
-                //configure the properties
-                for(Property prop : feature.getProperties()){
-                    sfb.set(prop.getName(), prop.getValue());
-                }
-            }
-        }
-
-        return sfb.buildFeature(cid.toString());
     }
 
 }

@@ -35,7 +35,6 @@ import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.storage.DataStoreException;
-import org.geotoolkit.util.collection.CloseableIterator;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -62,7 +61,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
             throw new IllegalArgumentException("Query must have a selector source.");
         }
 
-        if(!QueryUtilities.isAbsolute(getSource())){
+        if(!QueryUtilities.isAbsolute(query.getSource())){
             throw new IllegalArgumentException("Selector must be absolute.");
         }
 
@@ -127,14 +126,6 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
         } catch (DataStoreException ex) {
             throw new DataStoreRuntimeException(ex);
         }
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public CloseableIterator<FeatureCollectionRow> getRows() throws DataStoreException {
-        return new DefaultRowIterator(getSource().getSelectorName(),iterator());
     }
 
     /**

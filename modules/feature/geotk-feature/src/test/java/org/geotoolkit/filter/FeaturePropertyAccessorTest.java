@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.filter;
 
-import org.geotoolkit.filter.accessor.PropertyAccessor;
-import org.geotoolkit.filter.accessor.Accessors;
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.filter.accessor.Accessors;
 import org.geotoolkit.filter.accessor.PropertyAccessor;
