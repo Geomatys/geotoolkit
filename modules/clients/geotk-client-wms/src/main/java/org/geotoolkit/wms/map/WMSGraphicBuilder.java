@@ -121,7 +121,7 @@ final class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
             //check if we must make the  coverage reprojection ourself--------------
             if (layer.isUseLocalReprojection()) {
                 try {
-                    if (!layer.supportCRS(context2D.getCanvasObjectiveBounds().getCoordinateReferenceSystem())) {
+                    if (!layer.supportCRS(context2D.getObjectiveCRS2D())) {
                         queryCrs = layer.findOriginalCRS();
                         if(queryCrs == null){
                             //last chance use : CRS:84
