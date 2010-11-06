@@ -220,7 +220,7 @@ final class JaxenFeatureNavigator implements Navigator{
 
     @Override
     public Iterator getAttributeAxisIterator(Object o) throws UnsupportedAxisException {
-        if(o instanceof ComplexAttribute){
+        if(o instanceof Attribute){
             final Attribute att = (Attribute) o;
             final Identifier id = att.getIdentifier();
             if(id != null){

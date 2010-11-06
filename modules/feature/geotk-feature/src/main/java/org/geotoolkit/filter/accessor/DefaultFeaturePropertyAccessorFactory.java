@@ -89,8 +89,8 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
             return DEFAULT_GEOMETRY_ACCESS;
         }
 
-        if(xpath.startsWith("//")){
-            xpath = xpath.substring(2);
+        if(xpath.startsWith("/")){
+            return null;
         }
 
         //check for fid access--------------------------------------------------
@@ -154,20 +154,15 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
      * @return xpath with any XML prefixes removed
      */
     private static String stripPrefix(String xpath) {
-        if(xpath.startsWith("//")){
-            xpath = xpath.substring(2);
+        while(xpath.startsWith("/")){
+            xpath = xpath.substring(1);
         }
-
-       /* final int split = xpath.indexOf(':');
-        if (split != -1) {
-            return xpath.substring(split + 1);
-        }*/
         return xpath;
     }
 
     @Override
     public int getPriority() {
-        return 0;
+        return 10;
     }
 
     /**

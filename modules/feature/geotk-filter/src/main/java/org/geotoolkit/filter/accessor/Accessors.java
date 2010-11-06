@@ -22,8 +22,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.geotoolkit.factory.FactoryRegistry;
 import org.geotoolkit.lang.Static;
@@ -75,6 +73,14 @@ public class Accessors {
             if(pa != null) return pa;
         }
         return null;
+    }
+    
+    /**
+     * Get an array of all property accessor factories in priority order.
+     * @return PropertyAccessorFactory[]
+     */
+    public static PropertyAccessorFactory[] getAccessorFactories(){
+        return ACCESSOR_FACTORIES.clone();
     }
 
 }

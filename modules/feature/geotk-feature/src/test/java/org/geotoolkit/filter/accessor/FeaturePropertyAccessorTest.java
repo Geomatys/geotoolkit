@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,9 +17,11 @@
  */
 package org.geotoolkit.filter.accessor;
 
+import java.util.Iterator;
 import com.vividsolutions.jts.geom.Geometry;
 import org.junit.Test;
 import org.opengis.feature.Feature;
+import org.opengis.feature.Property;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
@@ -34,6 +36,28 @@ public class FeaturePropertyAccessorTest {
     public FeaturePropertyAccessorTest() {
     }
 
+    @Test
+    public void testFactories(){
+        final PropertyAccessorFactory[] factories = Accessors.getAccessorFactories();
+        
+        int xpathFactory = -1;
+        int defaultFactory = -1;
+        
+        for(int i=0;i<factories.length;i++){
+            if(factories[i] instanceof XPathPropertyAccessorFactory){
+                xpathFactory = i;
+            }else if(factories[i] instanceof DefaultFeaturePropertyAccessorFactory){
+                defaultFactory = i;
+            }
+        }
+        
+        assertTrue(xpathFactory != -1);
+        assertTrue(defaultFactory != -1);
+        assertTrue(defaultFactory < xpathFactory);
+        
+        
+    }
+    
     @Test
     public void testFlatAccessor() {
 
@@ -67,7 +91,30 @@ public class FeaturePropertyAccessorTest {
 
     @Test
     public void testComplexAccessor() {
-        //TODO
+        PropertyAccessor accessor;
+        
+        // flat attribut test //////////////////////////////////////////////////
+        accessor = Accessors.getAccessor(Feature.class, "/{http://test.com}attString", null);
+        assertNotNull(accessor);
+        Object val = accessor.get(CX_FEATURE, "/{http://test.com}attString", null);
+        assertEquals("toto1", val);
+
+
+        // sub path attribut ///////////////////////////////////////////////////
+        accessor = Accessors.getAccessor(Feature.class, "/{http://test.com}attCpx/{http://test.com}attString", null);
+        assertNotNull(accessor);
+        val = accessor.get(CX_FEATURE, "/{http://test.com}attCpx/{http://test.com}attString", null);
+        assertEquals("toto19", val);
+
+        // sub path attribut ///////////////////////////////////////////////////
+        accessor = Accessors.getAccessor(Feature.class, "/{http://test.com}attCpx[{http://test2.com}attString='marcel2']", null);
+        assertNotNull(accessor);
+        val = accessor.get(CX_FEATURE, "/{http://test.com}attCpx[{http://test2.com}attString='marcel2']", Property.class);
+
+        final Iterator<Property> ite = CX_FEATURE.getProperties("attCpx").iterator();
+        ite.next();
+        assertEquals(ite.next(), val);
+        
     }
 
 

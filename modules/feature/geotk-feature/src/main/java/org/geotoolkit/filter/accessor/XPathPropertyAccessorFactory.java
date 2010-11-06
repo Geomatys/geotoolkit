@@ -17,9 +17,12 @@
 package org.geotoolkit.filter.accessor;
 
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.util.Converters;
 import org.jaxen.JaxenException;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Property;
@@ -46,7 +49,7 @@ public final class XPathPropertyAccessorFactory implements PropertyAccessorFacto
 
     @Override
     public int getPriority() {
-        return 20;
+        return 0;
     }
 
     private static class XPathPropertyAccessor implements PropertyAccessor{
@@ -79,10 +82,36 @@ public final class XPathPropertyAccessorFactory implements PropertyAccessorFacto
 
             try {
                 final JaxenFeatureXPath xpath = JaxenFeatureXPath.create(path);
-                final Object v = xpath.evaluate(object);
-                if(v instanceof Property){
-                    return ((Property)v).getValue();
+                Object v = xpath.evaluate(object);
+                if(v instanceof Collection){
+                    //several property for this path
+                    final Collection properties = (Collection) v;
+                    if(target != null && target.isInstance(properties)){
+                        return properties;
+                    }else{
+                        final Iterator ite = properties.iterator();
+                        if(ite.hasNext()){
+                            v = ite.next();
+                        }
+                    }                    
                 }
+                
+                if(v instanceof Property){
+                    //extract value from property if necessary
+                    final Property prop = (Property) v;
+                    if(target != null && target.isInstance(prop)){
+                        return prop;
+                    }else{
+                        v = prop.getValue();
+                    }                    
+                }
+                
+                if(target == null){
+                    return v;
+                }else{
+                    return Converters.convert(v, target);
+                }
+                
             } catch (JaxenException ex) {
                 Logger.getLogger(XPathPropertyAccessorFactory.class.getName()).log(Level.WARNING, null, ex);
             }
