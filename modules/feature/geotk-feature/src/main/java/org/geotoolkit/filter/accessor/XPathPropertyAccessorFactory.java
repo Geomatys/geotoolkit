@@ -21,8 +21,10 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.Converters;
+
 import org.jaxen.JaxenException;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Property;
@@ -69,16 +71,7 @@ public final class XPathPropertyAccessorFactory implements PropertyAccessorFacto
                 return false; // we only work with complex types.
             }
 
-            //search anything that can be used to check if it's a valid xpath
-            if(    xpath.indexOf('/') >= 0
-                || xpath.indexOf('[') >0
-                || xpath.indexOf('@') >0
-                || xpath.indexOf('{') >0){
-                //looks like an xpath, we accept it
-                return true;
-            }
-
-            return false;
+            return true;
         }
 
         @Override

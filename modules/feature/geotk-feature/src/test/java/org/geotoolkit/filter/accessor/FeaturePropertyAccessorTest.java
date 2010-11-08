@@ -133,11 +133,23 @@ public class FeaturePropertyAccessorTest {
     @Test
     public void testComplexFeatureAccessor() {
         PropertyAccessor accessor;
-        
+
+        // flat attribut test //////////////////////////////////////////////////
+        accessor = Accessors.getAccessor(Feature.class, "attString", null);
+        assertNotNull(accessor);
+        Object val = accessor.get(CX_FEATURE, "attString", null);
+        assertEquals("toto1", val);
+
+        // flat attribut test //////////////////////////////////////////////////
+        accessor = Accessors.getAccessor(Feature.class, "{http://test.com}attString", null);
+        assertNotNull(accessor);
+        val = accessor.get(CX_FEATURE, "attString", null);
+        assertEquals("toto1", val);
+
         // flat attribut test //////////////////////////////////////////////////
         accessor = Accessors.getAccessor(Feature.class, "/{http://test.com}attString", null);
         assertNotNull(accessor);
-        Object val = accessor.get(CX_FEATURE, "/{http://test.com}attString", null);
+        val = accessor.get(CX_FEATURE, "/{http://test.com}attString", null);
         assertEquals("toto1", val);
 
         // flat attribut test //////////////////////////////////////////////////
@@ -169,9 +181,21 @@ public class FeaturePropertyAccessorTest {
         PropertyAccessor accessor;
 
         // flat attribut test //////////////////////////////////////////////////
+        accessor = Accessors.getAccessor(FeatureType.class, "attString", null);
+        assertNotNull(accessor);
+        Object val = accessor.get(CX_FEATURE_TYPE, "attString", null);
+        assertEquals(CX_FEATURE_TYPE.getDescriptor("{http://test.com}attString"), val);
+
+        // flat attribut test //////////////////////////////////////////////////
+        accessor = Accessors.getAccessor(FeatureType.class, "{http://test.com}attString", null);
+        assertNotNull(accessor);
+        val = accessor.get(CX_FEATURE_TYPE, "{http://test.com}attString", null);
+        assertEquals(CX_FEATURE_TYPE.getDescriptor("{http://test.com}attString"), val);
+
+        // flat attribut test //////////////////////////////////////////////////
         accessor = Accessors.getAccessor(FeatureType.class, "/{http://test.com}attString", null);
         assertNotNull(accessor);
-        Object val = accessor.get(CX_FEATURE_TYPE, "/{http://test.com}attString", null);
+        val = accessor.get(CX_FEATURE_TYPE, "/{http://test.com}attString", null);
         assertEquals(CX_FEATURE_TYPE.getDescriptor("{http://test.com}attString"), val);
 
 

@@ -20,18 +20,34 @@ package org.geotoolkit.filter.accessor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.jaxen.Context;
+import org.jaxen.ContextSupport;
 
-import org.jaxen.BaseXPath;
+import org.jaxen.FunctionContext;
 import org.jaxen.JaxenException;
+import org.jaxen.JaxenHandler;
 import org.jaxen.NamespaceContext;
+import org.jaxen.Navigator;
 import org.jaxen.SimpleNamespaceContext;
+import org.jaxen.SimpleVariableContext;
+import org.jaxen.VariableContext;
+import org.jaxen.XPath;
+import org.jaxen.XPathFunctionContext;
+import org.jaxen.expr.XPathExpr;
+import org.jaxen.function.BooleanFunction;
+import org.jaxen.function.NumberFunction;
+import org.jaxen.function.StringFunction;
+import org.jaxen.saxpath.SAXPathException;
+import org.jaxen.saxpath.XPathReader;
+import org.jaxen.saxpath.helpers.XPathReaderFactory;
+import org.jaxen.util.SingletonList;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-final class JaxenFeatureXPath extends BaseXPath {
+final class JaxenFeatureXPath implements XPath {
 
     private static final JaxenFeatureNavigator NAVIGATOR = new JaxenFeatureNavigator();
 
@@ -45,14 +61,30 @@ final class JaxenFeatureXPath extends BaseXPath {
         return xpath;
     }
 
-    private JaxenFeatureXPath(String path) throws JaxenException {
-        super(path,NAVIGATOR);
+    /** the parsed form of the XPath expression */
+    private final XPathExpr xpath;
+
+    /** the support information and function, namespace and variable contexts */
+    private ContextSupport support;
+
+    private JaxenFeatureXPath(String xpathExpr) throws JaxenException {
+        try {
+            final XPathReader reader = XPathReaderFactory.createReader();
+            final JaxenHandler handler = new JaxenHandler();
+            handler.setXPathFactory(FeatureXPathFactory.INSTANCE);
+            reader.setXPathHandler(handler);
+            reader.parse(xpathExpr);
+            this.xpath = handler.getXPathExpr();
+        } catch (org.jaxen.saxpath.XPathSyntaxException e) {
+            throw new org.jaxen.XPathSyntaxException(e);
+        } catch (SAXPathException e) {
+            throw new JaxenException(e);
+        }
     }
 
     @Override
     public Object evaluate(Object context) throws JaxenException{
         final List answer = selectNodes(context);
-
         if (answer != null && answer.size() == 1){
             return answer.get(0);
         }
@@ -97,5 +129,140 @@ final class JaxenFeatureXPath extends BaseXPath {
 
         return candidate;
     }
+
+    @Override
+    public String valueOf(Object node) throws JaxenException {
+        return stringValueOf( node );
+    }
+
+    @Override
+    public String stringValueOf(Object node) throws JaxenException {
+        final Context context = getContext( node );
+        final Object result = selectSingleNodeForContext( context );
+        if ( result == null ){
+            return "";
+        }
+        return StringFunction.evaluate( result, context.getNavigator() );
+    }
+
+    @Override
+    public boolean booleanValueOf(Object node) throws JaxenException {
+        final Context context = getContext( node );
+        final List result = selectNodesForContext( context );
+        if ( result == null ) return false;
+        return BooleanFunction.evaluate( result, context.getNavigator() ).booleanValue();
+    }
+
+    @Override
+    public Number numberValueOf(Object node) throws JaxenException {
+        final Context context = getContext( node );
+        final Object result = selectSingleNodeForContext( context );
+        return NumberFunction.evaluate( result, context.getNavigator() );
+    }
+
+    @Override
+    public List selectNodes(Object node) throws JaxenException {
+        final Context context = getContext( node );
+        return selectNodesForContext( context );
+    }
+
+    @Override
+    public Object selectSingleNode(Object node) throws JaxenException {
+        final List results = selectNodes( node );
+        if ( results.isEmpty() ){
+            return null;
+        }
+        return results.get( 0 );
+    }
+
+    @Override
+    public void addNamespace(String prefix, String uri) throws JaxenException {
+        final NamespaceContext nsContext = getNamespaceContext();
+        if ( nsContext instanceof SimpleNamespaceContext ){
+            ((SimpleNamespaceContext)nsContext).addNamespace( prefix, uri );
+            return;
+        }
+        throw new JaxenException("Operation not permitted while using a non-simple namespace context.");
+    }
+
+    @Override
+    public void setNamespaceContext(NamespaceContext namespaceContext) {
+        getContextSupport().setNamespaceContext(namespaceContext);
+    }
+
+    @Override
+    public void setFunctionContext(FunctionContext functionContext) {
+        getContextSupport().setFunctionContext(functionContext);
+    }
+
+    @Override
+    public void setVariableContext(VariableContext variableContext) {
+        getContextSupport().setVariableContext(variableContext);
+    }
+
+    @Override
+    public NamespaceContext getNamespaceContext() {
+        return getContextSupport().getNamespaceContext();
+    }
+
+    @Override
+    public FunctionContext getFunctionContext() {
+        return getContextSupport().getFunctionContext();
+    }
+
+    @Override
+    public VariableContext getVariableContext() {
+        return getContextSupport().getVariableContext();
+    }
+
+    @Override
+    public Navigator getNavigator() {
+        return NAVIGATOR;
+    }
+
+
+    /////////////////////////////////////////////////////////////////////////
+
+    private Context getContext(Object node) {
+        if (node instanceof Context) {
+            return (Context) node;
+        }
+
+        Context fullContext = new Context(getContextSupport());
+
+        if (node instanceof List) {
+            fullContext.setNodeSet((List) node);
+        } else {
+            List list = new SingletonList(node);
+            fullContext.setNodeSet(list);
+        }
+
+        return fullContext;
+    }
+
+    private ContextSupport getContextSupport() {
+        if ( support == null ){
+            support = new ContextSupport(
+                new SimpleNamespaceContext(),
+                XPathFunctionContext.getInstance(),
+                new SimpleVariableContext(),
+                getNavigator()
+            );
+        }
+        return support;
+    }
+
+    private List selectNodesForContext(Context context) throws JaxenException {
+        return this.xpath.asList(context);
+    }
+
+    private Object selectSingleNodeForContext(Context context) throws JaxenException {
+        final List results = selectNodesForContext(context);
+        if (results.isEmpty()) {
+            return null;
+        }
+        return results.get(0);
+    }
+
 
 }
