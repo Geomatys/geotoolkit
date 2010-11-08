@@ -72,6 +72,7 @@
     <module>geotk-demo-referencing</module>
     <module>geotk-demo-referencing-javadb</module>
     <module>geotk-demo-referencing-wkt</module>
+    <module>geotk-demo-samples</module>
   </modules>
 
 </project>

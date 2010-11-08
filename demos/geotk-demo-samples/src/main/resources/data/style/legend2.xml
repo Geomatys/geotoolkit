@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sld:UserStyle xmlns:sld="http://www.opengis.net/sld" xmlns:gml="http://www.opengis.net/gml" xmlns:ogc="http://www.opengis.net/ogc" xmlns:se="http://www.opengis.net/se" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <se:Name/>
+    <se:Description>
+        <se:Title>Title</se:Title>
+        <se:Abstract>Description</se:Abstract>
+    </se:Description>
+    <sld:IsDefault>false</sld:IsDefault>
+    <se:FeatureTypeStyle>
+        <se:Name>15.000 -</se:Name>
+        <se:Description>
+            <se:Title>15.000 -</se:Title>
+            <se:Abstract>15.000 -</se:Abstract>
+        </se:Description>
+        <se:Rule>
+            <se:Name/>
+            <se:Description>
+                <se:Title>minor</se:Title>
+                <se:Abstract>minor</se:Abstract>
+            </se:Description>
+            <ogc:Filter>
+                <ogc:PropertyIsEqualTo>
+                    <ogc:PropertyName>type</ogc:PropertyName>
+                    <ogc:Literal>minor</ogc:Literal>
+                </ogc:PropertyIsEqualTo>
+            </ogc:Filter>
+            <se:MinScaleDenominator>0.0</se:MinScaleDenominator>
+            <se:MaxScaleDenominator>15000.0</se:MaxScaleDenominator>
+            <se:LineSymbolizer uom="http://www.opengeospatial.org/se/units/pixel">
+                <se:Name>lineSymbolizer</se:Name>
+                <se:Description>
+                    <se:Title>Title</se:Title>
+                    <se:Abstract>Description</se:Abstract>
+                </se:Description>
+                <se:Geometry>
+                    <ogc:PropertyName/>
+                </se:Geometry>
+                <se:Stroke>
+                    <se:SvgParameter name="stroke">
+                        <ogc:Literal>#FF0AEA</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-dashoffset">
+                        <ogc:Literal>0.0</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-linecap">
+                        <ogc:Literal>round</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-linejoin">
+                        <ogc:Literal>round</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-opacity">
+                        <ogc:Literal>1.0</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-width">
+                        <ogc:Literal>1.0</ogc:Literal>
+                    </se:SvgParameter>
+                </se:Stroke>
+                <se:PerpendicularOffset>
+                    <ogc:Literal>0.0</ogc:Literal>
+                </se:PerpendicularOffset>
+            </se:LineSymbolizer>
+        </se:Rule>
+        <se:Rule>
+            <se:Name/>
+            <se:Description>
+                <se:Title>unclassified</se:Title>
+                <se:Abstract>unclassified</se:Abstract>
+            </se:Description>
+            <ogc:Filter>
+                <ogc:PropertyIsEqualTo>
+                    <ogc:PropertyName>type</ogc:PropertyName>
+                    <ogc:Literal>unclassified</ogc:Literal>
+                </ogc:PropertyIsEqualTo>
+            </ogc:Filter>
+            <se:MinScaleDenominator>0.0</se:MinScaleDenominator>
+            <se:MaxScaleDenominator>15000.0</se:MaxScaleDenominator>
+            <se:LineSymbolizer uom="http://www.opengeospatial.org/se/units/metre">
+                <se:Name>lineSymbolizer</se:Name>
+                <se:Description>
+                    <se:Title>Title</se:Title>
+                    <se:Abstract>Description</se:Abstract>
+                </se:Description>
+                <se:Geometry>
+                    <ogc:PropertyName/>
+                </se:Geometry>
+                <se:Stroke>
+                    <se:SvgParameter name="stroke">
+                        <ogc:Literal>#5E5E5E</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-dashoffset">
+                        <ogc:Literal>0.0</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-linecap">
+                        <ogc:Literal>round</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-linejoin">
+                        <ogc:Literal>round</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-opacity">
+                        <ogc:Literal>1.0</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-width">
+                        <ogc:Literal>5.0</ogc:Literal>
+                    </se:SvgParameter>
+                </se:Stroke>
+                <se:PerpendicularOffset>
+                    <ogc:Literal>0.0</ogc:Literal>
+                </se:PerpendicularOffset>
+            </se:LineSymbolizer>
+            <se:LineSymbolizer uom="http://www.opengeospatial.org/se/units/metre">
+                <se:Name>lineSymbolizer</se:Name>
+                <se:Description>
+                    <se:Title>Title</se:Title>
+                    <se:Abstract>Description</se:Abstract>
+                </se:Description>
+                <se:Geometry>
+                    <ogc:PropertyName/>
+                </se:Geometry>
+                <se:Stroke>
+                    <se:SvgParameter name="stroke">
+                        <ogc:Literal>#FEFEFE</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-dashoffset">
+                        <ogc:Literal>0.0</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-linecap">
+                        <ogc:Literal>round</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-linejoin">
+                        <ogc:Literal>round</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-opacity">
+                        <ogc:Literal>1.0</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-width">
+                        <ogc:Literal>4.0</ogc:Literal>
+                    </se:SvgParameter>
+                </se:Stroke>
+                <se:PerpendicularOffset>
+                    <ogc:Literal>0.0</ogc:Literal>
+                </se:PerpendicularOffset>
+            </se:LineSymbolizer>
+        </se:Rule>
+        <se:Rule>
+            <se:Name/>
+            <se:Description>
+                <se:Title>historic</se:Title>
+                <se:Abstract>historic</se:Abstract>
+            </se:Description>
+            <ogc:Filter>
+                <ogc:PropertyIsEqualTo>
+                    <ogc:PropertyName>type</ogc:PropertyName>
+                    <ogc:Literal>historic</ogc:Literal>
+                </ogc:PropertyIsEqualTo>
+            </ogc:Filter>
+            <se:MinScaleDenominator>0.0</se:MinScaleDenominator>
+            <se:MaxScaleDenominator>15000.0</se:MaxScaleDenominator>
+            <se:LineSymbolizer uom="http://www.opengeospatial.org/se/units/pixel">
+                <se:Name>lineSymbolizer</se:Name>
+                <se:Description>
+                    <se:Title>Title</se:Title>
+                    <se:Abstract>Description</se:Abstract>
+                </se:Description>
+                <se:Geometry>
+                    <ogc:PropertyName/>
+                </se:Geometry>
+                <se:Stroke>
+                    <se:SvgParameter name="stroke">
+                        <ogc:Literal>#C7CF7C</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-dashoffset">
+                        <ogc:Literal>0.0</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-linecap">
+                        <ogc:Literal>round</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-linejoin">
+                        <ogc:Literal>round</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-opacity">
+                        <ogc:Literal>1.0</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-width">
+                        <ogc:Literal>1.0</ogc:Literal>
+                    </se:SvgParameter>
+                </se:Stroke>
+                <se:PerpendicularOffset>
+                    <ogc:Literal>0.0</ogc:Literal>
+                </se:PerpendicularOffset>
+            </se:LineSymbolizer>
+        </se:Rule>
+        <se:Rule>
+            <se:Name/>
+            <se:Description>
+                <se:Title>trail</se:Title>
+                <se:Abstract>trail</se:Abstract>
+            </se:Description>
+            <ogc:Filter>
+                <ogc:PropertyIsEqualTo>
+                    <ogc:PropertyName>type</ogc:PropertyName>
+                    <ogc:Literal>trail</ogc:Literal>
+                </ogc:PropertyIsEqualTo>
+            </ogc:Filter>
+            <se:MinScaleDenominator>0.0</se:MinScaleDenominator>
+            <se:MaxScaleDenominator>15000.0</se:MaxScaleDenominator>
+            <se:LineSymbolizer uom="http://www.opengeospatial.org/se/units/pixel">
+                <se:Name>lineSymbolizer</se:Name>
+                <se:Description>
+                    <se:Title>Title</se:Title>
+                    <se:Abstract>Description</se:Abstract>
+                </se:Description>
+                <se:Geometry>
+                    <ogc:PropertyName/>
+                </se:Geometry>
+                <se:Stroke>
+                    <se:SvgParameter name="stroke">
+                        <ogc:Literal>#FF002A</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-dashoffset">
+                        <ogc:Literal>0.0</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-linecap">
+                        <ogc:Literal>round</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-linejoin">
+                        <ogc:Literal>round</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-opacity">
+                        <ogc:Literal>1.0</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-width">
+                        <ogc:Literal>1.0</ogc:Literal>
+                    </se:SvgParameter>
+                </se:Stroke>
+                <se:PerpendicularOffset>
+                    <ogc:Literal>0.0</ogc:Literal>
+                </se:PerpendicularOffset>
+            </se:LineSymbolizer>
+        </se:Rule>
+        <se:Rule>
+            <se:Name/>
+            <se:Description>
+                <se:Title>bridleway</se:Title>
+                <se:Abstract>bridleway</se:Abstract>
+            </se:Description>
+            <ogc:Filter>
+                <ogc:PropertyIsEqualTo>
+                    <ogc:PropertyName>type</ogc:PropertyName>
+                    <ogc:Literal>bridleway</ogc:Literal>
+                </ogc:PropertyIsEqualTo>
+            </ogc:Filter>
+            <se:MinScaleDenominator>0.0</se:MinScaleDenominator>
+            <se:MaxScaleDenominator>15000.0</se:MaxScaleDenominator>
+            <se:LineSymbolizer uom="http://www.opengeospatial.org/se/units/pixel">
+                <se:Name>lineSymbolizer</se:Name>
+                <se:Description>
+                    <se:Title>Title</se:Title>
+                    <se:Abstract>Description</se:Abstract>
+                </se:Description>
+                <se:Geometry>
+                    <ogc:PropertyName/>
+                </se:Geometry>
+                <se:Stroke>
+                    <se:SvgParameter name="stroke">
+                        <ogc:Literal>#3765F6</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-dasharray">6.0 6.0</se:SvgParameter>
+                    <se:SvgParameter name="stroke-dashoffset">
+                        <ogc:Literal>0.0</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-linecap">
+                        <ogc:Literal>round</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-linejoin">
+                        <ogc:Literal>round</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-opacity">
+                        <ogc:Literal>1.0</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-width">
+                        <ogc:Literal>1.0</ogc:Literal>
+                    </se:SvgParameter>
+                </se:Stroke>
+                <se:PerpendicularOffset>
+                    <ogc:Literal>0.0</ogc:Literal>
+                </se:PerpendicularOffset>
+            </se:LineSymbolizer>
+        </se:Rule>
+        <se:Rule>
+            <se:Name/>
+            <se:Description>
+                <se:Title>ski</se:Title>
+                <se:Abstract>ski</se:Abstract>
+            </se:Description>
+            <ogc:Filter>
+                <ogc:PropertyIsEqualTo>
+                    <ogc:PropertyName>type</ogc:PropertyName>
+                    <ogc:Literal>ski</ogc:Literal>
+                </ogc:PropertyIsEqualTo>
+            </ogc:Filter>
+            <se:MinScaleDenominator>0.0</se:MinScaleDenominator>
+            <se:MaxScaleDenominator>15000.0</se:MaxScaleDenominator>
+            <se:LineSymbolizer uom="http://www.opengeospatial.org/se/units/pixel">
+                <se:Name>lineSymbolizer</se:Name>
+                <se:Description>
+                    <se:Title>Title</se:Title>
+                    <se:Abstract>Description</se:Abstract>
+                </se:Description>
+                <se:Geometry>
+                    <ogc:PropertyName/>
+                </se:Geometry>
+                <se:Stroke>
+                    <se:SvgParameter name="stroke">
+                        <ogc:Literal>#B6302D</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-dashoffset">
+                        <ogc:Literal>0.0</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-linecap">
+                        <ogc:Literal>round</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-linejoin">
+                        <ogc:Literal>round</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-opacity">
+                        <ogc:Literal>1.0</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-width">
+                        <ogc:Literal>1.0</ogc:Literal>
+                    </se:SvgParameter>
+                </se:Stroke>
+                <se:PerpendicularOffset>
+                    <ogc:Literal>0.0</ogc:Literal>
+                </se:PerpendicularOffset>
+            </se:LineSymbolizer>
+        </se:Rule>
+        <se:Rule>
+            <se:Name/>
+            <se:Description>
+                <se:Title>platform</se:Title>
+                <se:Abstract>platform</se:Abstract>
+            </se:Description>
+            <ogc:Filter>
+                <ogc:PropertyIsEqualTo>
+                    <ogc:PropertyName>type</ogc:PropertyName>
+                    <ogc:Literal>platform</ogc:Literal>
+                </ogc:PropertyIsEqualTo>
+            </ogc:Filter>
+            <se:MinScaleDenominator>0.0</se:MinScaleDenominator>
+            <se:MaxScaleDenominator>15000.0</se:MaxScaleDenominator>
+            <se:LineSymbolizer uom="http://www.opengeospatial.org/se/units/pixel">
+                <se:Name>lineSymbolizer</se:Name>
+                <se:Description>
+                    <se:Title>Title</se:Title>
+                    <se:Abstract>Description</se:Abstract>
+                </se:Description>
+                <se:Geometry>
+                    <ogc:PropertyName/>
+                </se:Geometry>
+                <se:Stroke>
+                    <se:SvgParameter name="stroke">
+                        <ogc:Literal>#030E05</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-dashoffset">
+                        <ogc:Literal>0.0</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-linecap">
+                        <ogc:Literal>round</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-linejoin">
+                        <ogc:Literal>round</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-opacity">
+                        <ogc:Literal>1.0</ogc:Literal>
+                    </se:SvgParameter>
+                    <se:SvgParameter name="stroke-width">
+                        <ogc:Literal>3.0</ogc:Literal>
+                    </se:SvgParameter>
+                </se:Stroke>
+                <se:PerpendicularOffset>
+                    <ogc:Literal>0.0</ogc:Literal>
+                </se:PerpendicularOffset>
+            </se:LineSymbolizer>
+        </se:Rule>
+    </se:FeatureTypeStyle>
+</sld:UserStyle>

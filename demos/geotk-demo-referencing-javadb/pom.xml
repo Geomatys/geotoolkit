@@ -11,7 +11,7 @@
     <groupId>org.geotoolkit.demo</groupId>
     <artifactId>geotk-demo-referencing-javadb</artifactId>
     <packaging>jar</packaging>
-    <version>1.0</version>
+    <version>SNAPSHOT</version>
     <name>Demo : referencing source javadb</name>
     <url>http://www.geotoolkit.org</url>
     
