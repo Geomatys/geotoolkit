@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wms.xml.AbstractBoundingBox;
 
 
 /**
@@ -50,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "BoundingBox")
-public class BoundingBox {
+public class BoundingBox extends AbstractBoundingBox{
 
    
     @XmlAttribute(name = "CRS")
@@ -77,6 +78,14 @@ public class BoundingBox {
     /**
      * Build a new bounding box version 1.3.0.
      *
+     * @param crs 
+     * @param minx 
+     * @param miny 
+     * @param maxx
+     * @param maxy
+     * @param resx
+     * @param resy
+     * @param version
      */
     public BoundingBox(final String crs, final double minx, final double miny,
             final double maxx, final double maxy, final double resx, final double resy, String version) {
@@ -92,54 +101,67 @@ public class BoundingBox {
     
     /**
      * Gets the value of the crs property.
+     * @return 
      */
     public String getCRS() {
         return crs;
     }
 
     /**
-     * Gets the value of the minx property.
-     * 
+     * {@inheritDoc}
      */
+    @Override
     public double getMinx() {
         return minx;
     }
 
     /**
-     * Gets the value of the miny property.
-     * 
+     * {@inheritDoc}
      */
+    @Override
     public double getMiny() {
         return miny;
     }
 
     /**
-     * Gets the value of the maxx property.
-     * 
+     * {@inheritDoc}
      */
+    @Override
     public double getMaxx() {
         return maxx;
     }
 
     /**
-     * Gets the value of the maxy property.
-     * 
+     * {@inheritDoc}
      */
+    @Override
     public double getMaxy() {
         return maxy;
     }
 
     /**
-     * Gets the value of the resx property.
+     * {@inheritDoc}
      */
+    @Override
     public Double getResx() {
         return resx;
     }
 
     /**
+     * {@inheritDoc}
      */
+    @Override
     public Double getResy() {
         return resy;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getProjCode() {
+        return getCRS();
+    }
+
 
 }

@@ -450,7 +450,7 @@ public class WMSMapLayer extends AbstractMapLayer {
     /**
      * @return the transparent
      */
-    public Boolean getTransparent() {
+    public Boolean isTransparent() {
         return transparent;
     }
 

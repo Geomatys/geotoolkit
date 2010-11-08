@@ -124,7 +124,7 @@ public interface GetMapRequest extends Request {
     /**
      * Returns {@code true} if the layer is transparent, {@code false} otherwise.
      */
-    boolean isTransparent();
+    Boolean isTransparent();
 
     /**
      * Sets if a layer is transparent or not.

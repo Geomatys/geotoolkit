@@ -221,7 +221,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * {@inheritDoc }
      */
     @Override
-    public boolean isTransparent() {
+    public Boolean isTransparent() {
         return transparent;
     }
 

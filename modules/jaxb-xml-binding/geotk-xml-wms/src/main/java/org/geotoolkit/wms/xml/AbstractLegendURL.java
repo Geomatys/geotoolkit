@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2008 - 2009, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,40 +14,34 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.wms.xml;
 
-import java.util.List;
-
-/**
- * Commun interface for WMS 1.1.0 and 1.3.0 Style class
- * 
- * @author Johann Sorel (Geomatys)
- */
-public interface Style {
-
+public abstract class AbstractLegendURL {
+    
     /**
-     * Gets the value of the name property.
+     * Gets the value of the format property.
+     * 
      * @return
      */
-    String getName();
+    public abstract String getFormat();
 
     /**
-     * Gets the value of the title property.
+     * Gets the value of the onlineResource property.
+     * 
      * @return
      */
-    String getTitle();
+    public abstract AbstractOnlineResource getOnlineResource();
 
     /**
-     * Gets the value of the abstract property.
+     * Gets the value of the width property.
      * @return
      */
-    String getAbstract();
+    public abstract Integer getWidth();
 
     /**
-     * Gets the value of the legendURL property.
+     * Gets the value of the height property.
+     * 
      * @return
      */
-    List<? extends AbstractLegendURL> getLegendURL();
-
+    public abstract Integer getHeight();
 }

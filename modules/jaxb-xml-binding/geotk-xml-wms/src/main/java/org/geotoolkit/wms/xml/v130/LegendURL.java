@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wms.xml.AbstractLegendURL;
 
 
 /**
@@ -54,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
     "onlineResource"
 })
 @XmlRootElement(name = "LegendURL")
-public class LegendURL {
+public class LegendURL  extends AbstractLegendURL {
 
     @XmlElement(name = "Format", required = true)
     private String format;
