@@ -153,13 +153,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     }
 
     private Name getNameFromString(String fullName) {
-        if (fullName.indexOf(':') != -1) {
-            String namespace = fullName.substring(0, fullName.lastIndexOf(':'));
-            return new DefaultName(namespace, fullName.substring(fullName.lastIndexOf(':') + 1, fullName.length()));
-
-        } else {
-            return new DefaultName(fullName);
-        }
+        return DefaultName.valueOf(fullName);
     }
 
     @Override
