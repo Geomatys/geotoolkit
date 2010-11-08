@@ -26,6 +26,7 @@ import org.geotoolkit.util.collection.Cache;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
@@ -67,7 +68,7 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
             return null;
         }
 
-        if (!Feature.class.isAssignableFrom(type) && !FeatureType.class.isAssignableFrom(type)) {
+        if (!Feature.class.isAssignableFrom(type) && !SimpleFeatureType.class.isAssignableFrom(type)) {
             return null; // we only work with feature
         }
 

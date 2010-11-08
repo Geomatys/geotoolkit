@@ -60,15 +60,15 @@ public class FeatureFilterTest {
      * Test that we get acces attributs without knowing the namespace
      */
     @Test
-    public void testRetrieve() {
+    public void testSimpleFeatureTypeAccessor() {
 
-        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
-        sftb.setName("testing");
-        sftb.add(new DefaultName("http://test1.com", "att_string"), String.class);
-        sftb.add(new DefaultName("http://test2.com", "att_string"), String.class);
-        sftb.add(new DefaultName(null, "att_double"), String.class);
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName("testing");
+        ftb.add(new DefaultName("http://test1.com", "att_string"), String.class);
+        ftb.add(new DefaultName("http://test2.com", "att_string"), String.class);
+        ftb.add(new DefaultName(null, "att_double"), String.class);
 
-        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
+        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
 
         //test a no namespace property
         PropertyAccessor accessor = Accessors.getAccessor(SimpleFeatureType.class, "att_double", AttributeDescriptor.class);
@@ -108,12 +108,12 @@ public class FeatureFilterTest {
         final Name att_3 = new DefaultName(null, "att_double");
 
 
-        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
-        sftb.setName("testing");
-        sftb.add(att_1, String.class);
-        sftb.add(att_2, String.class);
-        sftb.add(att_3, Double.class);
-        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName("testing");
+        ftb.add(att_1, String.class);
+        ftb.add(att_2, String.class);
+        ftb.add(att_3, Double.class);
+        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
 
         PropertyName property = null;
         PropertyDescriptor desc = null;
@@ -173,12 +173,12 @@ public class FeatureFilterTest {
         final Name att_3 = new DefaultName(null, "att_double");
 
 
-        final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
-        sftb.setName("testing");
-        sftb.add(att_1, String.class);
-        sftb.add(att_2, String.class);
-        sftb.add(att_3, Double.class);
-        final SimpleFeatureType sft = sftb.buildSimpleFeatureType();
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
+        ftb.setName("testing");
+        ftb.add(att_1, String.class);
+        ftb.add(att_2, String.class);
+        ftb.add(att_3, Double.class);
+        final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
 
         final SimpleFeatureBuilder sfb = new SimpleFeatureBuilder(sft);
         sfb.set(att_1, "str1");

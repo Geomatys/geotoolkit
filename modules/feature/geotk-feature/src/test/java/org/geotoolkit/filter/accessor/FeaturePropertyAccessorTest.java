@@ -17,11 +17,15 @@
  */
 package org.geotoolkit.filter.accessor;
 
+import org.opengis.feature.simple.SimpleFeatureType;
 import java.util.Iterator;
 import com.vividsolutions.jts.geom.Geometry;
 import org.junit.Test;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
+import org.opengis.feature.type.ComplexType;
+import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.filter.FilterTestConstants.*;
@@ -59,13 +63,20 @@ public class FeaturePropertyAccessorTest {
     }
     
     @Test
-    public void testFlatAccessor() {
+    public void testSimpleFeatureFlatAccessor() {
 
         //test a simple attribut------------------------------------------------
         PropertyAccessor accessor = Accessors.getAccessor(Feature.class, "testGeometry", null);
         assertNotNull(accessor);
-        Geometry geom = (Geometry) accessor.get(FEATURE_1, "testGeometry", Geometry.class);
-        assertEquals(FEATURE_1.getDefaultGeometryProperty().getValue(), geom);
+        Object att = accessor.get(FEATURE_1, "testGeometry", Geometry.class);
+        assertEquals(FEATURE_1.getDefaultGeometryProperty().getValue(), att);
+
+
+        //test a simple attribut------------------------------------------------
+        accessor = Accessors.getAccessor(Feature.class, "//testGeometry", null);
+        assertNotNull(accessor);
+        att = (Geometry) accessor.get(FEATURE_1, "//testGeometry", Geometry.class);
+        assertEquals(FEATURE_1.getDefaultGeometryProperty().getValue(), att);
 
         //test id---------------------------------------------------------------
         accessor = Accessors.getAccessor(Feature.class, "@id", null);
@@ -76,7 +87,7 @@ public class FeaturePropertyAccessorTest {
         //test xpath index------------------------------------------------------
         accessor = Accessors.getAccessor(Feature.class, "*[10]", null);
         assertNotNull(accessor);
-        Object att = accessor.get(FEATURE_1, "*[10]", null);
+        att = accessor.get(FEATURE_1, "*[10]", null);
         assertEquals("test string data", att);
         assertEquals(FEATURE_1.getProperty("testString").getValue(), att);
 
@@ -90,13 +101,49 @@ public class FeaturePropertyAccessorTest {
     }
 
     @Test
-    public void testComplexAccessor() {
+    public void testSimpleFeatureTypeFlatAccessor() {
+
+        //test a simple attribut------------------------------------------------
+        PropertyAccessor accessor = Accessors.getAccessor(SimpleFeatureType.class, "testGeometry", null);
+        assertNotNull(accessor);
+        Object att = (GeometryDescriptor) accessor.get(FEATURE_TYPE_1, "testGeometry", null);
+        assertEquals(FEATURE_TYPE_1.getGeometryDescriptor(), att);
+
+        //test a simple attribut------------------------------------------------
+        accessor = Accessors.getAccessor(SimpleFeatureType.class, "//testGeometry", null);
+        assertNotNull(accessor);
+        att = (GeometryDescriptor) accessor.get(FEATURE_TYPE_1, "//testGeometry", null);
+        assertEquals(FEATURE_TYPE_1.getGeometryDescriptor(), att);
+
+        //test xpath index------------------------------------------------------
+        accessor = Accessors.getAccessor(SimpleFeatureType.class, "*[10]", null);
+        assertNotNull(accessor);
+        att = accessor.get(FEATURE_TYPE_1, "*[10]", null);
+        assertEquals(FEATURE_TYPE_1.getDescriptor("testString"), att);
+
+        //test a geometry name with accents-------------------------------------
+        accessor = Accessors.getAccessor(SimpleFeatureType.class, "attribut.Géométrie", null);
+        assertNotNull(accessor);
+        att = accessor.get(FEATURE_TYPE_1, "attribut.Géométrie", null);
+        assertEquals(FEATURE_TYPE_1.getDescriptor("attribut.Géométrie"), att);
+
+    }
+
+
+    @Test
+    public void testComplexFeatureAccessor() {
         PropertyAccessor accessor;
         
         // flat attribut test //////////////////////////////////////////////////
         accessor = Accessors.getAccessor(Feature.class, "/{http://test.com}attString", null);
         assertNotNull(accessor);
         Object val = accessor.get(CX_FEATURE, "/{http://test.com}attString", null);
+        assertEquals("toto1", val);
+
+        // flat attribut test //////////////////////////////////////////////////
+        accessor = Accessors.getAccessor(Feature.class, "//{http://test.com}attString", null);
+        assertNotNull(accessor);
+        val = accessor.get(CX_FEATURE, "//{http://test.com}attString", null);
         assertEquals("toto1", val);
 
 
@@ -116,6 +163,34 @@ public class FeaturePropertyAccessorTest {
         assertEquals(ite.next(), val);
         
     }
+
+    @Test
+    public void testComplexFeatureTypeAccessor() {
+        PropertyAccessor accessor;
+
+        // flat attribut test //////////////////////////////////////////////////
+        accessor = Accessors.getAccessor(FeatureType.class, "/{http://test.com}attString", null);
+        assertNotNull(accessor);
+        Object val = accessor.get(CX_FEATURE_TYPE, "/{http://test.com}attString", null);
+        assertEquals(CX_FEATURE_TYPE.getDescriptor("{http://test.com}attString"), val);
+
+
+        // sub path attribut ///////////////////////////////////////////////////
+        accessor = Accessors.getAccessor(FeatureType.class, "/{http://test.com}attCpx/{http://test.com}attString", null);
+        assertNotNull(accessor);
+        val = accessor.get(CX_FEATURE_TYPE, "/{http://test.com}attCpx/{http://test.com}attString", null);
+        ComplexType type = (ComplexType) CX_FEATURE_TYPE.getDescriptor("{http://test.com}attCpx").getType();
+        assertEquals(type.getDescriptor("{http://test.com}attString"), val);
+
+        // sub path attribut ///////////////////////////////////////////////////
+        accessor = Accessors.getAccessor(FeatureType.class, "//{http://test.com}attCpx/{http://test.com}attString", null);
+        assertNotNull(accessor);
+        val = accessor.get(CX_FEATURE_TYPE, "//{http://test.com}attCpx/{http://test.com}attString", null);
+        type = (ComplexType) CX_FEATURE_TYPE.getDescriptor("{http://test.com}attCpx").getType();
+        assertEquals(type.getDescriptor("{http://test.com}attString"), val);
+
+    }
+
 
 
 }

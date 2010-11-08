@@ -26,6 +26,8 @@ import org.geotoolkit.util.Converters;
 import org.jaxen.JaxenException;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Property;
+import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.feature.type.PropertyType;
 
 
 /**
@@ -61,7 +63,9 @@ public final class XPathPropertyAccessorFactory implements PropertyAccessorFacto
                 return false;
             }
 
-            if (!ComplexAttribute.class.isAssignableFrom(type)) {
+            if (!ComplexAttribute.class.isAssignableFrom(type) 
+                    && !PropertyType.class.isAssignableFrom(type)
+                    && !PropertyDescriptor.class.isAssignableFrom(type)) {
                 return false; // we only work with complex types.
             }
 
