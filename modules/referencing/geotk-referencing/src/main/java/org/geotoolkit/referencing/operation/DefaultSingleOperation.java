@@ -21,8 +21,10 @@
 package org.geotoolkit.referencing.operation;
 
 import java.util.Map;
+import java.util.Arrays;
 
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.Projection;
 import org.opengis.referencing.operation.Transformation;
@@ -38,12 +40,16 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.transform.Parameterized;
+import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
+import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.internal.referencing.ParameterizedAffine;
-import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.internal.referencing.Semaphores;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.lang.Immutable;
+import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.UnsupportedImplementationException;
 
 
 /**
@@ -53,14 +59,14 @@ import org.geotoolkit.lang.Immutable;
  * method}, usually with associated parameter values.
  * <p>
  * In the Geotk implementation, the {@linkplain #getParameterValues parameter values}
- * are inferred from the {@linkplain #transform transform}. Other implementations may have
- * to overrides the {@link #getParameterValues} method.
+ * are inferred from the {@linkplain #transform transform}. Other implementations may
+ * have to override the {@link #getParameterValues} method.
  * <p>
  * This is a single (not {@linkplain DefaultConcatenatedOperation concatenated})
  * coordinate operation.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.16
  *
  * @since 2.0
  * @module
@@ -207,32 +213,99 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
     @Override
     public ParameterValueGroup getParameterValues() throws UnsupportedOperationException {
         MathTransform mt = transform;
+        MathTransform lastAttempt = mt;
         while (mt != null) {
             if (mt instanceof Parameterized) {
                 final ParameterValueGroup param;
                 if (mt instanceof ParameterizedAffine) {
                     param = ((ParameterizedAffine) mt).parameters.getParameterValues();
                 } else {
-                    final boolean keep = Semaphores.queryAndSet(Semaphores.PROJCS);
+                    if (Semaphores.queryAndSet(Semaphores.PROJCS)) {
+                        throw new AssertionError(); // Should never happen.
+                    }
                     try {
                         param = ((Parameterized) mt).getParameterValues();
                     } finally {
-                        if (!keep) { // Paranoiac check (should always be false).
-                            Semaphores.clear(Semaphores.PROJCS);
-                        }
+                        Semaphores.clear(Semaphores.PROJCS);
                     }
                 }
                 if (param != null) {
                     return param;
                 }
             }
-            if (mt instanceof PassThroughTransform) {
-                mt = ((PassThroughTransform) mt).getSubTransform();
-            } else {
-                throw new UnsupportedImplementationException(mt.getClass());
+            lastAttempt = mt;
+            mt = simplify(mt);
+        }
+        throw new UnsupportedImplementationException(Classes.getClass(lastAttempt));
+    }
+
+    /**
+     * Simplifies the given transform for the purpose of {@link #getParameterValues()} only
+     * (<strong>not</strong> for any other purpose). This method processes as below:
+     * <p>
+     * <ul>
+     *   <li>If the given transform is an instance of {@code PassThroughTransform}, returns its
+     *       {@linkplain #getSubTransform() sub-transform}. The other dimensions are ignored,
+     *       since no operation are applied on them.</li>
+     *   <li>Otherwise if the given transform is an instance of {@link ConcatenatedTransform},
+     *       ignores the leading and trailing affine transforms. Or to be more accurate, ignores
+     *       only the dimensions of those affine transforms without scale or translation, since it
+     *       means that no operation is applied on those dimension (same argument than previous
+     *       point).</li>
+     * </ul>
+     *
+     * @param  transform The transform to simplify, if possible.
+     * @return The simplified transform, or {@code null} if no simplification could be applied.
+     */
+    private static MathTransform simplify(MathTransform transform) {
+        Matrix prepend = null;
+        Matrix append  = null;
+        while (transform instanceof ConcatenatedTransform) {
+            final ConcatenatedTransform concatenated = (ConcatenatedTransform) transform;
+            if (concatenated.transform1 instanceof LinearTransform) {
+                if (prepend != null) {
+                    // Should not happen since Geotk should have concatenated the affine
+                    // transforms. If it happen anyway, do not overwrite and perform the
+                    // process using what we have so far.
+                    break;
+                }
+                prepend = ((LinearTransform) concatenated.transform1).getMatrix();
+                transform = concatenated.transform2;
+            } else if (concatenated.transform2 instanceof LinearTransform) {
+                if (append != null) {
+                    // Same comment as above.
+                    break;
+                }
+                append = ((LinearTransform) concatenated.transform2).getMatrix();
+                transform = concatenated.transform1;
             }
         }
-        throw new IllegalStateException();
+        if (transform instanceof PassThroughTransform) {
+            final PassThroughTransform candidate = (PassThroughTransform) transform;
+            final int[] modified = candidate.getModifiedCoordinates();
+            assert XArrays.isSorted(modified, true); // As of getModifiedCoordinates() contract.
+            if (prepend != null) {
+                /*
+                 * Ensure that every dimensions which are scaled by the affine transform are one
+                 * of the dimension modified by the sub-transform, and not any other dimension.
+                 */
+                for (int j=prepend.getNumRow(); --j>=0;) {
+                    for (int i=prepend.getNumCol(); --i>=0;) {
+                        if (prepend.getElement(j, i) != (i == j ? 1 : 0)) {
+                            // Found a dimension which perform some scaling of translation.
+                            // This is allowed only if this is one of the modified ordinates.
+                            if (Arrays.binarySearch(modified, j) < 0) {
+                                return null;
+                            }
+                            break; // Move to next line.
+                        }
+                    }
+                }
+                // TODO: Do similar check with the 'append' matrix.
+            }
+            return candidate.getSubTransform();
+        }
+        return null;
     }
 
     /**

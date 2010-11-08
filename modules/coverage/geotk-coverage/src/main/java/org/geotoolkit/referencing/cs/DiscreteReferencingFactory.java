@@ -39,8 +39,8 @@ import org.opengis.coverage.grid.GridGeometry;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.referencing.MatrixUtilities;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
@@ -392,7 +392,7 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
                 start = ((Number) first).doubleValue();
                 end   = ((Number) last) .doubleValue();
             } else if (first instanceof Date && last instanceof Date) {
-                CoordinateReferenceSystem temporalCRS = CRSUtilities.getSubCRS(crs, i, i+1);
+                CoordinateReferenceSystem temporalCRS = CRS.getSubCRS(crs, i, i+1);
                 if (temporalCRS instanceof DiscreteCRS<?>) {
                     temporalCRS = ((DiscreteCRS<?>) temporalCRS).crs;
                 }

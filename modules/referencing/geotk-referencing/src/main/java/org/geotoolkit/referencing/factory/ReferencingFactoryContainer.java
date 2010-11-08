@@ -39,6 +39,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.cs.AbstractCS;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.ThreadSafe;
 
@@ -46,21 +47,26 @@ import static org.geotoolkit.internal.FactoryUtilities.addImplementationHints;
 
 
 /**
- * A set of utilities methods working on more than one referencing factories.
- * This class can be used as a container for the following factories:
+ * A container of factories frequently used together, with utility methods.
+ * This class serves two purpose:
  * <p>
- * <ul>
- *   <li>{@link DatumFactory}</li>
- *   <li>{@link CSFactory}</li>
- *   <li>{@link CRSFactory}</li>
- *   <li>{@link MathTransformFactory}</li>
- * </ul>
- * <p>
- * The omission of {@link CoordinateOperationFactory} is intentional, because it is more
- * a processing class than an object builder.
+ * <ol>
+ *   <li>A container for the following factories:
+ *   <ul>
+ *     <li>{@link DatumFactory}</li>
+ *     <li>{@link CSFactory}</li>
+ *     <li>{@link CRSFactory}</li>
+ *     <li>{@link MathTransformFactory}</li>
+ *   </ul></li>
+ *   <li>Utilities methods for creating new CRS derived from an existing one.</li>
+ * </ol>
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.01
+ * {@note The <code>CoordinateOperationFactory</code> factory is intentionally excluded from
+ * this container, because <code>CoordinateOperationFactory</code> is more a processing class
+ * than a factory creating directly objects from the parameters.}
+ *
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.16
  *
  * @since 2.1
  * @level advanced
@@ -291,67 +297,80 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
     }
 
     /**
-     * Converts a 2D&nbsp;+&nbsp;1D compound CRS into a 3D CRS, if possible.
-     * More specifically, if the specified {@linkplain CompoundCRS compound CRS} is made
-     * of a {@linkplain GeographicCRS geographic} (or {@linkplain ProjectedCRS projected})
-     * and a {@linkplain VerticalCRS vertical} CRS, and if the vertical CRS datum type is
-     * {@code ELLIPSOIDAL} (height above the ellipsoid), then this method converts the compound
-     * CRS in a single 3D CRS. Otherwise, the {@code crs} argument is returned unchanged.
+     * Returns a CRS equivalents to the given one, with some components replaced by their 3D
+     * counterpart when possible. More specifically, if the given compound CRS contains two
+     * consecutive {@linkplain CompoundCRS#getComponents() components CRS} where:
+     * <p>
+     * <ul>
+     *   <li>One component is a two-dimensional {@linkplain GeographicCRS geographic} or
+     *       {@linkplain ProjectedCRS projected} CRS;</li>
+     *   <li>The other component is a one-dimensional {@linkplain VerticalCRS vertical} CRS
+     *       and its datum type is {@code ELLIPSOIDAL} (height above the ellipsoid)</li>
+     * </ul>
+     * <p>
+     * Then this method replaces those two components by a single three-dimensional component.
+     * The other components (for example {@linkplain TemporalCRS temporal} CRS) are included
+     * unchanged in the returned CRS.
+     * <p>
+     * If there is no (2D, 1D) components that this method could replace by a 3D component,
+     * then this method returns the {@code crs} argument unchanged. In any case, the transform
+     * from the given CRS to the returned CRS shall be an identity transform.
      *
-     * @param  crs The compound CRS to converts in a 3D geographic or projected CRS.
-     * @return The 3D geographic or projected CRS, or {@code crs} if the change can't be applied.
-     * @throws FactoryException if the object creation failed.
+     * @param  crs The CRS in which to replace (2D + 1D) components by 3D components.
+     * @return A CRS equivalents to the given one with the replacements performed, if any.
+     * @throws FactoryException If a new CRS needs to be created and the call to its factory
+     *         method failed.
      */
     public CoordinateReferenceSystem toGeodetic3D(final CompoundCRS crs) throws FactoryException {
-        List<SingleCRS> components = DefaultCompoundCRS.getSingleCRS(crs);
-        final int count = components.size();
         SingleCRS   horizontal = null;
         VerticalCRS vertical   = null;
-        int hi=0, vi=0;
-        for (int i=0; i<count; i++) {
-            final SingleCRS candidate = components.get(i);
-            if (candidate instanceof VerticalCRS) {
-                if (vertical == null) {
-                    vertical = (VerticalCRS) candidate;
-                    if (VerticalDatumTypes.ELLIPSOIDAL.equals(
-                            vertical.getDatum().getVerticalDatumType()))
-                    {
-                        vi = i;
-                        continue;
-                    }
+        int hi = -2, vi = -2; // Initial condition: Math.abs(vi-hi)!=1 even when hi==0 or vi==0.
+        /*
+         * Get a copy of the components list and iterate in reverse order,
+         * because we may remove elements from that list while iterating.
+         */
+        final List<SingleCRS> components = new ArrayList<SingleCRS>(DefaultCompoundCRS.getSingleCRS(crs));
+        final int count = components.size();
+        for (int i=count; --i>=0;) {
+            final SingleCRS component = components.get(i);
+            if (component instanceof GeographicCRS || component instanceof ProjectedCRS) {
+                if (component.getCoordinateSystem().getDimension() == 2) {
+                    horizontal = component;
+                    hi = i;
                 }
-                return crs;
+            } else if (component instanceof VerticalCRS) {
+                final VerticalCRS candidate = (VerticalCRS) component;
+                if (VerticalDatumTypes.ELLIPSOIDAL.equals(candidate.getDatum().getVerticalDatumType())) {
+                    vertical = candidate;
+                    vi = i;
+                }
             }
-            if (candidate instanceof GeographicCRS || candidate instanceof  ProjectedCRS) {
-                if (horizontal == null) {
-                    horizontal = candidate;
-                    if (horizontal.getCoordinateSystem().getDimension() == 2) {
-                        hi = i;
-                        continue;
-                    }
-                }
-                return crs;
+            if (Math.abs(vi - hi) == 1) {
+                /*
+                 * Found a horizontal and a vertical CRS, and those two CRS are consecutive. Replace
+                 * them by a new 3D CRS, and continue the search in case new (2D, 1D) pairs are found.
+                 */
+                final boolean xyFirst = (hi < vi);
+                final int iMin = xyFirst ? hi : vi;
+                components.remove(iMin);
+                components.set(iMin, toGeodetic3D(CRS.getCompoundCRS(crs, horizontal, vertical),
+                        horizontal, vertical, xyFirst));
             }
         }
-        if (horizontal != null && vertical != null && Math.abs(vi-hi) == 1) {
-            /*
-             * Exactly one horizontal and one vertical CRS has been found, and those two CRS are
-             * consecutives. Constructs the new 3D CS. If the two above-cited components are the
-             * only ones, the result is returned directly. Otherwise, a new compound CRS is created.
-             */
-            final boolean xyFirst = (hi < vi);
-            final SingleCRS single = toGeodetic3D(count == 2 ? crs : null, horizontal, vertical, xyFirst);
-            if (count == 2) {
-                return single;
-            }
-            final int i = xyFirst ? hi : vi;
-            components = new ArrayList<SingleCRS>(components);
-            components.remove(i);
-            components.set(i, single);
-            final SingleCRS[] c = components.toArray(new SingleCRS[components.size()]);
-            return getCRSFactory().createCompoundCRS(AbstractIdentifiedObject.getProperties(crs), c);
+        /*
+         * At this point, all replacements (if any) have been performed. If the length of the
+         * component array didn't changed, then no replacement were performed and the original
+         * CRS can be returned unchanged.
+         */
+        final int r = components.size();
+        if (r == 1) {
+            return components.get(0);
+        } else if (r == count) {
+            return crs;
+        } else {
+            return getCRSFactory().createCompoundCRS(AbstractIdentifiedObject.getProperties(crs),
+                    components.toArray(new SingleCRS[components.size()]));
         }
-        return crs;
     }
 
     /**
@@ -359,7 +378,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
      * vertical parts have been identified. This method may invokes itself recursively if the
      * horizontal CRS is a derived one.
      *
-     * @param  crs        The compound CRS to converts in a 3D geographic CRS, or {@code null}.
+     * @param  crs        The compound CRS to convert to a 3D geographic CRS, or {@code null}.
      *                    Used only in order to infer the name properties of objects to create.
      * @param  horizontal The horizontal component of {@code crs}.
      * @param  vertical   The vertical   component of {@code crs}.
@@ -414,8 +433,8 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
             final CartesianCS   targetCS  = csFactory.createCartesianCS(csName, axis[0], axis[1], axis[2]);
             final GeographicCRS base2D    = sourceCRS.getBaseCRS();
             final GeographicCRS base3D    = (GeographicCRS) toGeodetic3D(null, base2D, vertical, xyFirst);
-            final Matrix        prepend   = toStandard(base2D, false);
-            final Matrix        append    = toStandard(sourceCRS, true);
+            final Matrix        prepend   = toStandard(base2D, true);
+            final Matrix        append    = toStandard(sourceCRS, false);
             Conversion projection = sourceCRS.getConversionFromBase();
             if (!prepend.isIdentity() || !append.isIdentity()) {
                 final MathTransformFactory mtFactory = getMathTransformFactory();
@@ -470,9 +489,11 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
      * @param  dimensions The dimensions to keep.
      * @return The CRS with only the specified dimensions.
      * @throws FactoryException if the given dimensions can not be isolated in the given CRS.
+     *
+     * @see CRS#getSubCRS(CoordinateReferenceSystem, int, int)
      */
     public CoordinateReferenceSystem separate(final CoordinateReferenceSystem crs,
-                                              final int[] dimensions)
+                                              final int... dimensions)
             throws FactoryException
     {
         final int length = dimensions.length;

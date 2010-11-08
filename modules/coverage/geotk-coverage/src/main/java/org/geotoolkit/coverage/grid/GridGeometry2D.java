@@ -707,7 +707,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
             // two ReferencingFactoryContainer instances are created.
         }
         final CoordinateReferenceSystem crs2D;
-        crs2D = FACTORIES.separate(crs, new int[] {axisDimensionX, axisDimensionY});
+        crs2D = FACTORIES.separate(crs, axisDimensionX, axisDimensionY);
         assert crs2D.getCoordinateSystem().getDimension() == 2 : crs2D;
         return crs2D;
     }

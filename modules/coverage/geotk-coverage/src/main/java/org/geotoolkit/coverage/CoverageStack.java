@@ -64,7 +64,6 @@ import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.image.io.IIOListeners;
 import org.geotoolkit.image.io.IIOReadProgressAdapter;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
@@ -607,7 +606,7 @@ public class CoverageStack extends AbstractCoverage {
         }
         this.numSampleDimensions = (sampleDimensions != null) ? sampleDimensions.length : 0;
         this.sampleDimensions = sampleDimensionMismatch ? null : sampleDimensions;
-        zCRS = CRSUtilities.getSubCRS(crs, zDimension, zDimension+1);
+        zCRS = CRS.getSubCRS(crs, zDimension, zDimension+1);
     }
 
     /**
@@ -737,7 +736,7 @@ public class CoverageStack extends AbstractCoverage {
          * specified in the javadoc). A coordinate operation is cached during the loop for
          * transforming envelopes, if needed.
          */
-        final CoordinateReferenceSystem reducedCRS = CRSUtilities.getSubCRS(crs, 0, zDimension);
+        final CoordinateReferenceSystem reducedCRS = CRS.getSubCRS(crs, 0, zDimension);
         CoordinateOperation operation = null;
         for (int j=0; j<elements.length; j++) {
             final Element element = elements[j];
@@ -1047,7 +1046,7 @@ public class CoverageStack extends AbstractCoverage {
          */
         final CoordinateReferenceSystem sourceCRS;
         assert equalsIgnoreMetadata((sourceCRS = coverage.getCoordinateReferenceSystem()),
-                CRSUtilities.getSubCRS(crs, 0, sourceCRS.getCoordinateSystem().getDimension())) :
+                CRS.getSubCRS(crs, 0, sourceCRS.getCoordinateSystem().getDimension())) :
                 sourceCRS + "\n\n" + crs;
         assert coverage.getNumSampleDimensions() == numSampleDimensions : coverage;
         return coverage;
@@ -1209,7 +1208,7 @@ public class CoverageStack extends AbstractCoverage {
      * The number of dimensions must be equals to the dimension of this coverage, or
      * the dimension of this coverage minus one.
      */
-    private final DirectPosition reduce(DirectPosition coord, final Coverage coverage) {
+    private DirectPosition reduce(DirectPosition coord, final Coverage coverage) {
         assert Thread.holdsLock(this);
         final CoordinateReferenceSystem targetCRS = coverage.getCoordinateReferenceSystem();
         final int dimension = targetCRS.getCoordinateSystem().getDimension();

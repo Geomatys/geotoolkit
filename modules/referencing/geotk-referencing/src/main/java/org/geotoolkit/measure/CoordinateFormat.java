@@ -295,7 +295,7 @@ public class CoordinateFormat extends Format {
              * Type is DATE.
              */
             if (Units.isTemporal(unit)) {
-                final Datum datum = CRSUtilities.getDatum(CRSUtilities.getSubCRS(crs, i, i+1));
+                final Datum datum = CRSUtilities.getDatum(CRS.getSubCRS(crs, i, i+1));
                 if (datum instanceof TemporalDatum) {
                     if (epochs == null) {
                         epochs = new long[dimension];

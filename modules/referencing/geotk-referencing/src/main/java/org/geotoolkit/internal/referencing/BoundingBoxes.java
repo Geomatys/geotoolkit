@@ -181,7 +181,7 @@ public final class BoundingBoxes implements ChangeListener {
     {
         final int dimension = head.getCoordinateSystem().getDimension();
         return crs.getCoordinateSystem().getDimension() >= dimension &&
-               CRS.equalsIgnoreMetadata(CRSUtilities.getSubCRS(crs, 0, dimension), head);
+               CRS.equalsIgnoreMetadata(CRS.getSubCRS(crs, 0, dimension), head);
     }
 
     /**

@@ -19,6 +19,7 @@ package org.geotoolkit.referencing;
 
 import java.util.Set;
 import java.util.Map;
+import java.util.List;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.StringTokenizer;
@@ -57,18 +58,19 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
-import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
+import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.operation.projection.UnitaryProjection;
 import org.geotoolkit.referencing.operation.transform.IdentityTransform;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.naming.DefaultNameSpace;
-import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.resources.Errors;
 
 
@@ -89,7 +91,7 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
  * @author Andrea Aime (TOPP)
- * @version 3.14
+ * @version 3.16
  *
  * @since 2.1
  * @module
@@ -845,6 +847,158 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
             }
         }
         return null;
+    }
+
+    /**
+     * Returns the first compound CRS which contains only the given components, in any order.
+     * First, this method gets the {@link SingleCRS} components of the given compound CRS. If
+     * all those components are {@linkplain #equalsIgnoreMetadata equal, ignoring metadata}
+     * and order, to the {@code SingleCRS} components given to this method, then the given
+     * {@code CompoundCRS} is returned. Otherwise if the given {@code CompoundCRS} contains
+     * nested {@code CompoundCRS}, then those nested CRS are inspected recursively by the same
+     * algorithm. Otherwise, this method returns {@code null}.
+     * <p>
+     * This method is useful for extracting metadata about the 3D spatial CRS part in a 4D
+     * spatio-temporal CRS. For example given the following CRS:
+     *
+     * {@preformat wkt
+     *   COMPD_CS["Mercator + height + time",
+     *     COMPD_CS["Mercator + height",
+     *       PROJCS["Mercator", ...etc...]
+     *       VERT_CS["Ellipsoidal height", ...etc...]]
+     *     TemporalCRS["Modified Julian", ...etc...]]
+     * }
+     *
+     * Then the following code will returns the nested {@code COMPD_CS["Mercator + height"]}
+     * without prior knowledge of the CRS component order (the time CRS could be first, and
+     * the vertical CRS could be before the horizontal one):
+     *
+     * {@preformat java
+     *     CompoundCRS crs = ...;
+     *     SingleCRS horizontalCRS = getHorizontalCRS(crs);
+     *     VerticalCRS verticalCRS = getVerticalCRS(crs);
+     *     if (horizontalCRS != null && verticalCRS != null) {
+     *         CompoundCRS spatialCRS = getCompoundCRS(crs, horizontalCRS, verticalCRS);
+     *         if (spatialCRS != null) {
+     *             // ...
+     *         }
+     *     }
+     * }
+     *
+     * @param  crs        The compound CRS to compare with the given component CRS.
+     * @param  components The CRS which must be components of the returned CRS.
+     * @return A CRS which contains the given components, or {@code null} if none.
+     *
+     * @see DefaultCompoundCRS#getSingleCRS()
+     *
+     * @since 3.16
+     */
+    public static CompoundCRS getCompoundCRS(final CompoundCRS crs, final SingleCRS... components) {
+        final List<SingleCRS> actualComponents = DefaultCompoundCRS.getSingleCRS(crs);
+        if (actualComponents.size() == components.length) {
+            int firstValid = 0;
+            final SingleCRS[] toSearch = components.clone();
+compare:    for (final SingleCRS component : actualComponents) {
+                for (int i=firstValid; i<toSearch.length; i++) {
+                    if (equalsIgnoreMetadata(component, toSearch[i])) {
+                        /*
+                         * Found a match: remove it from the search list. Note that we copy the
+                         * remaining components to the end of the array (which is unusual) rather
+                         * than to the begining (as usual), in order to reduce the length of the
+                         * part to copy on the assumption that the components given to this method
+                         * are most likely in the same order than the elements in the CompoundCRS.
+                         */
+                        System.arraycopy(toSearch, firstValid, toSearch, firstValid+1, i - firstValid);
+                        toSearch[firstValid++] = null;
+                        continue compare;
+                    }
+                }
+                // No match found. We can stop the loop now.
+                firstValid = -1;
+                break;
+            }
+            /*
+             * If we found all the requested components and nothing more,
+             * returns the CRS.
+             */
+            if (firstValid == toSearch.length) {
+                return crs;
+            }
+        }
+        /*
+         * Search recursively in the sub-components.
+         */
+        for (final CoordinateReferenceSystem component : crs.getComponents()) {
+            if (component instanceof CompoundCRS) {
+                final CompoundCRS candidate = getCompoundCRS((CompoundCRS) component, components);
+                if (candidate != null) {
+                    return candidate;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the coordinate reference system in the given range of dimension indices.
+     * This method processes as below:
+     * <p>
+     * <ul>
+     *   <li>If the given {@code crs} is {@code null}, then this method returns {@code null}.
+     *   <li>Otherwise if {@code lower} is 0 and {@code upper} if the number of CRS dimensions,
+     *       then this method returns the given CRS unchanged.</li>
+     *   <li>Otherwise if the given CRS is an instance of {@link CompoundCRS}, then this method
+     *       searches for a {@linkplain CompoundCRS#getComponents() component} where:
+     *       <ul>
+     *         <li>The {@linkplain CoordinateSystem#getDimension() number of dimensions} is
+     *             equals to {@code upper - lower}</li>
+     *         <li>The sum of the number of dimensions of all previous CRS is equals to
+     *             {@code lower}</li>
+     *       <ul>
+     *       If such component is found, then it is returned.</li>
+     *   <li>Otherwise (i.e. no component match), this method returns {@code null}.</li>
+     * </ul>
+     * <p>
+     * This method does <strong>not</strong> attempt to build new CRS from the components.
+     * For example it does not attempt to create a 3D geographic CRS from a 2D one + a vertical
+     * component. If such functionality is desired, consider using the utility methods in
+     * {@link org.geotoolkit.referencing.factory.ReferencingFactoryContainer} instead.
+     *
+     * @param  crs   The coordinate reference system to decompose, or {@code null}.
+     * @param  lower The first dimension to keep, inclusive.
+     * @param  upper The last  dimension to keep, exclusive.
+     * @return The sub-coordinate system, or {@code null} if the given {@code crs} was {@code null}
+     *         or can't be decomposed for dimensions in the range {@code [lower..upper]}.
+     * @throws IndexOutOfBoundsException If the given index are out of bounds.
+     *
+     * @see org.geotoolkit.referencing.factory.ReferencingFactoryContainer#separate(CoordinateReferenceSystem, int[])
+     *
+     * @since 3.16
+     */
+    public static CoordinateReferenceSystem getSubCRS(CoordinateReferenceSystem crs, int lower, int upper) {
+        if (crs != null) {
+            int dimension = crs.getCoordinateSystem().getDimension();
+            if (lower < 0 || lower > upper || upper > dimension) {
+                throw new IndexOutOfBoundsException(Errors.format(
+                        Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, lower < 0 ? lower : upper));
+            }
+            while (lower != 0 || upper != dimension) {
+                final List<? extends CoordinateReferenceSystem> c = CRSUtilities.getComponents(crs);
+                if (c == null) {
+                    return null;
+                }
+                for (final Iterator<? extends CoordinateReferenceSystem> it=c.iterator(); it.hasNext();) {
+                    crs = it.next();
+                    dimension = crs.getCoordinateSystem().getDimension();
+                    if (lower < dimension) {
+                        break;
+                    }
+                    lower -= dimension;
+                    upper -= dimension;
+                }
+            }
+        }
+        return crs;
     }
 
     /**

@@ -75,7 +75,7 @@ public final class ReferencingObjectFactoryTest extends ReferencingTestCase {
 
     /**
      * Tests step-by-step the creation of new coordinate reference systems.
-     * This tests create every objects itself. Pratical application may use
+     * This tests create every objects itself. Practical application may use
      * existing constants declared in default implementation classes instead.
      *
      * @throws FactoryException Should never happen.

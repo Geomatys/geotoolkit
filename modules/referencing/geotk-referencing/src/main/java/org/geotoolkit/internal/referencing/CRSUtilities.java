@@ -190,10 +190,10 @@ public final class CRSUtilities {
      * Returns the components of the specified CRS, or {@code null} if none.
      * This method preserves the nested CRS hierarchy if there is one.
      *
-     * @param  crs The coordinate reference system for which to get the componennts.
+     * @param  crs The coordinate reference system for which to get the components.
      * @return The components, or {@code null} if the given CRS is not a {@link CompoundCRS}.
      */
-    private static List<? extends CoordinateReferenceSystem> getComponents(CoordinateReferenceSystem crs) {
+    public static List<? extends CoordinateReferenceSystem> getComponents(CoordinateReferenceSystem crs) {
         if (crs instanceof CompoundCRS) {
             final List<? extends CoordinateReferenceSystem> components;
             components = ((CompoundCRS) crs).getComponents();
@@ -206,7 +206,7 @@ public final class CRSUtilities {
 
     /**
      * Returns the dimension of the first coordinate reference system of the given type. The
-     * {@code type} argument must be a subinterface of {@link CoordinateReferenceSystem}.
+     * {@code type} argument must be a sub-interface of {@link CoordinateReferenceSystem}.
      * If no such dimension is found, then this method returns {@code -1}.
      *
      * @param  crs  The coordinate reference system (CRS) to examine.
@@ -244,7 +244,10 @@ public final class CRSUtilities {
      * @param  upper The last  dimension to keep, exclusive.
      * @return The sub-coordinate system, or {@code null} if {@code crs} can't
      *         be decomposed for dimensions in the range {@code [lower..upper]}.
+     *
+     * @deprecated Moved to {@link org.geotoolkit.referencing.CRS}.
      */
+    @Deprecated
     public static CoordinateReferenceSystem getSubCRS(CoordinateReferenceSystem crs,
                                                       int lower, int upper)
     {

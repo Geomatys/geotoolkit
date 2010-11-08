@@ -17,12 +17,13 @@
  */
 package org.geotoolkit.referencing;
 
-import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import java.util.Set;
 import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 
+import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
+import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
@@ -30,8 +31,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.OperationNotFoundException;
-
-import org.opengis.geometry.Envelope;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.crs.WKT;
@@ -45,7 +44,7 @@ import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.CoordinateReferenceSystemTest;
-import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
+import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -58,7 +57,7 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Andrea Aime (OpenGeo)
- * @version 3.14
+ * @version 3.16
  *
  * @since 3.00
  */
@@ -182,7 +181,7 @@ public final class CRS_Test {
      *
      * @throws FactoryException The expected exception.
      *
-     * @see https://jira.codehaus.org/browse/GEOT-1660
+     * @see <a href="https://jira.codehaus.org/browse/GEOT-1660">GEOT-1660</a>
      */
     @Test(expected = FactoryException.class)
     public void testGEOT1660() throws FactoryException {
@@ -209,7 +208,7 @@ public final class CRS_Test {
      *
      * @throws FactoryException The expected exception.
      *
-     * @see http://jira.geotoolkit.org/browse/GEOTK-86
+     * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-86">GEOTK-86</a>
      * @todo Not yet fixed.
      */
     @Ignore
@@ -230,7 +229,7 @@ public final class CRS_Test {
      *
      * @throws FactoryException Should never happen.
      *
-     * @see http://jira.codehaus.org/browse/GEOT-1268
+     * @see <a href="http://jira.codehaus.org/browse/GEOT-1268">GEOT-1268</a>
      */
     @Test
     public void testEquivalence() throws FactoryException {
@@ -284,6 +283,45 @@ public final class CRS_Test {
         assertEquals("EPSG:26986", CRS.getDeclaredIdentifier(crs2));
 
         assertTrue(CRS.equalsIgnoreMetadata(crs1, crs2));
+    }
+
+    /**
+     * Tests the extraction of components from a {@link CompoundCRS}.
+     *
+     * @throws FactoryException Should never happen.
+     *
+     * @since 3.16
+     */
+    @Test
+    public void testComponentCRS() throws FactoryException {
+        final SingleCRS          crs2D = (SingleCRS) CRS.parseWKT(WKT.PROJCS_LAMBERT_CONIC_NTF);
+        final DefaultCompoundCRS crs3D = new DefaultCompoundCRS("NTF 3D", crs2D, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);
+        final DefaultCompoundCRS crs4D = new DefaultCompoundCRS("NTF 4D", crs3D, DefaultTemporalCRS.MODIFIED_JULIAN);
+        assertTrue (CRS.isHorizontalCRS(crs2D));
+        assertFalse(CRS.isHorizontalCRS(crs3D));
+        assertFalse(CRS.isHorizontalCRS(crs4D));
+        assertSame(crs2D, CRS.getHorizontalCRS(crs2D));
+        assertSame(crs2D, CRS.getHorizontalCRS(crs3D));
+        assertSame(crs2D, CRS.getHorizontalCRS(crs4D));
+        assertNull("No vertical component expected.",     CRS.getVerticalCRS(crs2D));
+        assertSame(DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT, CRS.getVerticalCRS(crs3D));
+        assertSame(DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT, CRS.getVerticalCRS(crs4D));
+        assertNull("No temporal component expected.",     CRS.getTemporalCRS(crs2D));
+        assertNull("No temporal component expected.",     CRS.getTemporalCRS(crs3D));
+        assertSame(DefaultTemporalCRS.MODIFIED_JULIAN,    CRS.getTemporalCRS(crs4D));
+        assertSame(crs3D, CRS.getCompoundCRS(crs3D, crs2D, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT));
+        assertSame(crs3D, CRS.getCompoundCRS(crs4D, crs2D, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT));
+        assertNull(       CRS.getCompoundCRS(crs3D, crs2D, DefaultTemporalCRS.MODIFIED_JULIAN));
+        assertNull(       CRS.getCompoundCRS(crs4D, crs2D, DefaultTemporalCRS.MODIFIED_JULIAN));
+        assertNull(       CRS.getCompoundCRS(crs3D, crs2D, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT, DefaultTemporalCRS.MODIFIED_JULIAN));
+        assertSame(crs4D, CRS.getCompoundCRS(crs4D, crs2D, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT, DefaultTemporalCRS.MODIFIED_JULIAN));
+        assertSame(crs4D, CRS.getCompoundCRS(crs4D, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT, DefaultTemporalCRS.MODIFIED_JULIAN, crs2D));
+        assertNull(       CRS.getSubCRS(crs4D, 0, 1));
+        assertSame(crs2D, CRS.getSubCRS(crs4D, 0, 2));
+        assertSame(crs3D, CRS.getSubCRS(crs4D, 0, 3));
+        assertSame(crs4D, CRS.getSubCRS(crs4D, 0, 4));
+        assertSame(DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT, CRS.getSubCRS(crs4D, 2, 3));
+        assertSame(DefaultTemporalCRS.MODIFIED_JULIAN,    CRS.getSubCRS(crs4D, 3, 4));
     }
 
     /**
