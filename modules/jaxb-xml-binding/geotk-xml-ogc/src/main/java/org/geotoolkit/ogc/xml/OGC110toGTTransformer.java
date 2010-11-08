@@ -436,7 +436,7 @@ public class OGC110toGTTransformer {
                 if (namespace == null) {
                     throw new IllegalArgumentException("Prefix " + prefix + " is nor bounded.");
                 } else {
-                    sb.append(namespace).append(':').append(pname.substring(pos +1));
+                    sb.append('{').append(namespace).append('}').append(pname.substring(pos +1));
                 }
             } else {
                 sb.append(pname);
