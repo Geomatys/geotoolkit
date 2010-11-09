@@ -63,18 +63,34 @@ import org.geotoolkit.gui.swing.WindowCreator;
 
 
 /**
- * A combox box for selecting a coordinate reference system from a list. This component also
+ * A combo box for selecting a coordinate reference system from a list. This component also
  * provides a search button (for filtering the CRS name that contain the specified keywords)
  * and a info button displaying the CRS {@linkplain PropertiesSheet properties sheet}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.16
  *
  * @since 2.3
  * @module
  */
 @SuppressWarnings("serial")
 public class AuthorityCodesComboBox extends WindowCreator {
+    /**
+     * The key for listening to changes in the combo box selection. This event may occurs as
+     * a result of client selection, or of explicit call to {@link #setSelectedCode(String)}.
+     * The values in the event are authority codes (<strong>not</strong> fully constructed
+     * CRS objects).
+     * <p>
+     * Client can listen for those changes with the following code:
+     *
+     * {@code java
+     *     chooser.addPropertyChangeListener(SELECTED_CODE_PROPERTY, listener);
+     * }
+     *
+     * @since 3.16
+     */
+    public static final String SELECTED_CODE_PROPERTY = "selectedCode";
+
     /**
      * Action commands.
      */
@@ -86,12 +102,14 @@ public class AuthorityCodesComboBox extends WindowCreator {
     private final AuthorityFactory factory;
 
     /**
-     * The list of authority codes, as a combo box model.
+     * The list of authority codes, as a combo box model. The elements in this
+     * list are instances of {@link AuthorityCode}.
      */
     private final AuthorityCodeList codeList;
 
     /**
-     * The list of CRS objects.
+     * The list of CRS objects. The elements in this combo box are instances of
+     * {@link AuthorityCode}, and the list model is {@link #codeList}.
      */
     private final JComboBox codeComboBox;
 
@@ -124,6 +142,13 @@ public class AuthorityCodesComboBox extends WindowCreator {
      * The window that contains {@link #properties}.
      */
     private Window propertiesWindow;
+
+    /**
+     * The currently selected code. This information is updated by {@link #selectionChanged()}.
+     *
+     * @since 3.16
+     */
+    private AuthorityCode selectedCode;
 
     /**
      * Creates a CRS chooser backed by the EPSG authority factory.
@@ -173,7 +198,7 @@ public class AuthorityCodesComboBox extends WindowCreator {
     }
 
     /**
-     * Creates a CRS chooser backed by the specified authority factory.
+     * Creates a chooser for objects of the given types backed by the specified authority factory.
      *
      * @param  factory The authority factory responsible for creating objects from a list of codes.
      * @param  types The types of CRS object to includes in the list.
@@ -255,9 +280,23 @@ public class AuthorityCodesComboBox extends WindowCreator {
             } else if (INFO.equals(action)) {
                 showProperties(true);
             } else if (SELECT.equals(action)) {
-                showProperties.setEnabled(codeComboBox.getSelectedItem() != null);
+                selectionChanged();
             }
         }
+    }
+
+    /**
+     * Invoked when the selection in the combo box changed. This method will enable or
+     * disable the properties panel, and fire a change event.
+     */
+    final void selectionChanged() {
+        final AuthorityCode oldValue = selectedCode;
+        final AuthorityCode newValue = (AuthorityCode) codeComboBox.getSelectedItem();
+        selectedCode = newValue;
+        showProperties.setEnabled(newValue != null);
+        firePropertyChange(SELECTED_CODE_PROPERTY,
+                (oldValue != null) ? oldValue.code : null,
+                (newValue != null) ? newValue.code : null);
     }
 
     /**
@@ -286,15 +325,14 @@ public class AuthorityCodesComboBox extends WindowCreator {
      */
     public String getSelectedCode() {
         final AuthorityCode code;
-        final JComboBox list = this.codeComboBox;
         if (EventQueue.isDispatchThread()) {
-            code = (AuthorityCode) list.getModel().getSelectedItem();
+            code = (AuthorityCode) codeComboBox.getSelectedItem();
         } else {
             final class Delegate implements Runnable {
                 Object code;
 
                 @Override public void run() {
-                    code = list.getModel().getSelectedItem();
+                    code = codeComboBox.getSelectedItem();
                 }
             }
             final Delegate del = new Delegate();
@@ -361,7 +399,7 @@ public class AuthorityCodesComboBox extends WindowCreator {
      * {@link PropertiesSheet}.
      *
      * @param visible {@code true} for invoking {@link JComponent#setVisible(boolean)}
-     *        inconditionally. In some L&F, this bring the focus on the window.
+     *        unconditionally. In some L&F, this bring the focus on the window.
      */
     final void showProperties(final boolean visible) {
         new SwingWorker<IdentifiedObject,Object>() {
@@ -397,7 +435,7 @@ public class AuthorityCodesComboBox extends WindowCreator {
                     message = e.toString();
                 }
                 if (title == null) {
-                    title = String.valueOf(codeComboBox.getModel().getSelectedItem());
+                    title = String.valueOf(codeComboBox.getSelectedItem());
                 }
                 if (properties == null) {
                     properties = new PropertiesSheet();
@@ -442,7 +480,7 @@ public class AuthorityCodesComboBox extends WindowCreator {
     /**
      * Enables or disables the search field.
      */
-    private void search(final boolean enable) {
+    final void search(final boolean enable) {
         final JComponent component;
         final String name;
         if (enable) {
@@ -471,6 +509,7 @@ public class AuthorityCodesComboBox extends WindowCreator {
     public void filter(String keywords) {
         if (keywords == null || ((keywords = keywords.trim()).length()) == 0) {
             codeComboBox.setModel(codeList);
+            selectionChanged();
             return;
         }
         /*
@@ -531,6 +570,7 @@ public class AuthorityCodesComboBox extends WindowCreator {
                     return;
                 }
                 codeComboBox.setModel(model);
+                selectionChanged();
             }
         }.execute();
     }

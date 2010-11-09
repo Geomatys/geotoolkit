@@ -17,6 +17,9 @@
  */
 package org.geotoolkit.gui.swing.referencing;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
+
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
@@ -31,11 +34,11 @@ import org.geotoolkit.factory.FactoryNotFoundException;
  * Tests the {@link AuthorityCodesComboBox}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.16
  *
  * @since 3.02
  */
-public final class AuthorityCodesComboBoxTest extends SwingBase<AuthorityCodesComboBox> {
+public final class AuthorityCodesComboBoxTest extends SwingBase<AuthorityCodesComboBox> implements PropertyChangeListener {
     /**
      * Constructs the test case.
      */
@@ -62,7 +65,22 @@ public final class AuthorityCodesComboBoxTest extends SwingBase<AuthorityCodesCo
              */
             return null;
         }
+        chooser.addPropertyChangeListener(AuthorityCodesComboBox.SELECTED_CODE_PROPERTY, this);
         chooser.setSelectedCode("4326");
         return chooser;
+    }
+
+    /**
+     * Invoked when the CRS selection changed. This implementation just prints the event
+     * to the console, so we can visually check this.
+     *
+     * @param event The change event.
+     */
+    @Override
+    public void propertyChange(final PropertyChangeEvent event) {
+        if (isDisplayEnabled()) {
+            System.out.println("Change event: " + event.getPropertyName() +
+                    ", old=" + event.getOldValue() + ", new=" + event.getNewValue());
+        }
     }
 }

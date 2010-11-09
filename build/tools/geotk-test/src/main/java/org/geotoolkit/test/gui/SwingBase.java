@@ -235,10 +235,16 @@ public abstract class SwingBase<T extends JComponent> {
      *         we were waiting for the frame disposal.
      */
     @AfterClass
-    public static synchronized void waitForFrameDisposal() throws InterruptedException {
+    public static void waitForFrameDisposal() throws InterruptedException {
+        final DesktopPane desktop;
+        synchronized (SwingBase.class) {
+            desktop = SwingBase.desktop;
+        }
         if (desktop != null) {
             desktop.lock.await();
-            desktop = null;
+            synchronized (SwingBase.class) {
+                SwingBase.desktop = null;
+            }
         }
     }
 }

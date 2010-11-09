@@ -24,7 +24,7 @@ import org.geotoolkit.util.converter.Classes;
 
 
 /**
- * An element in a {@link CodeList}. This element stores the {@linkplain #code code value}.
+ * An element in a {@link AuthorityCodeList}. This element stores the {@linkplain #code code value}.
  * The description name will be fetched when first needed and returned by {@link #toString}.
  *
  * @author Martin Desruisseaux (IRD)
