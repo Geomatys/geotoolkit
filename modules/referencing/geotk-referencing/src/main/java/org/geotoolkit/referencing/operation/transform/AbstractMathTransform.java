@@ -1086,8 +1086,20 @@ public abstract class AbstractMathTransform extends FormattableObject
     /**
      * Strictly reserved to {@link AbstractMathTransform2D}, which will
      * override this method. The default implementation must do nothing.
+     * <p>
+     * This method is invoked only by {@link ConcatenatedTransform#getPseudoSteps()}
+     * in order to get the {@link ParameterValueGroup} of a map projection, or to
+     * format a {@code PROJCS} WKT.
+     *
+     * @param  transforms The full chain of concatenated transforms.
+     * @param  index      The index of this transform in the {@code transforms} chain.
+     * @param  inverse    Always {@code false}, except if we are formatting the inverse transform.
+     * @return Index of the last transform processed. Iteration should continue at that index + 1.
+     *
+     * @see AbstractMathTransform2D#beforeFormat(List, int, boolean)
+     * @see ConcatenatedTransform#getPseudoSteps()
      */
-    int beforeFormat(List<Object> transforms, int index) {
+    int beforeFormat(List<Object> transforms, int index, boolean inverse) {
         return index;
     }
 

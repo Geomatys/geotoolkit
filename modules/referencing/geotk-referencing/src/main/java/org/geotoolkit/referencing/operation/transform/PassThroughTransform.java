@@ -33,6 +33,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
+import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 
 import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
 
@@ -44,8 +45,8 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  * {@code PassThroughTransform} can convert the height values from feet to
  * meters without affecting the latitude and longitude values.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.16
  *
  * @see DimensionFilter
  *
@@ -145,7 +146,7 @@ public class PassThroughTransform extends AbstractMathTransform implements Seria
             throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2,
                     "numTrailingOrdinates", numTrailingOrdinates));
         }
-        if (firstAffectedOrdinate==0 && numTrailingOrdinates==0) {
+        if (firstAffectedOrdinate == 0 && numTrailingOrdinates == 0) {
             return subTransform;
         }
         /*
@@ -179,6 +180,55 @@ public class PassThroughTransform extends AbstractMathTransform implements Seria
             }
         }
         return new PassThroughTransform(firstAffectedOrdinate, subTransform, numTrailingOrdinates);
+    }
+
+    /**
+     * If the given matrix to be concatenated to this transform, can be concatenated to the
+     * sub-transform instead, returns the matrix to be concatenated to the sub-transform.
+     * Otherwise returns {@code null}.
+     * <p>
+     * This method assumes that the matrix size is compatible with this transform source
+     * dimension. It should have been verified by the caller.
+     */
+    final Matrix toSubMatrix(final Matrix matrix) {
+        final int numRow = matrix.getNumRow();
+        final int numCol = matrix.getNumCol();
+        if (numRow != numCol) {
+            // Current implementation requires a square matrix.
+            return null;
+        }
+        final int subDim = subTransform.getSourceDimensions();
+        final Matrix sub = MatrixFactory.create(subDim + 1);
+        /*
+         * Ensure that every dimensions which are scaled by the affine transform are one
+         * of the dimensions modified by the sub-transform, and not any other dimension.
+         */
+        for (int j=numRow; --j>=0;) {
+            final int sj = j - firstAffectedOrdinate;
+            for (int i=numCol; --i>=0;) {
+                final double element = matrix.getElement(j, i);
+                if (sj >= 0 && sj < subDim) {
+                    final int si;
+                    final boolean pass;
+                    if (i == numCol-1) { // Translation term (last column)
+                        si = subDim;
+                        pass = true;
+                    } else { // Any term other than translation.
+                        si = i - firstAffectedOrdinate;
+                        pass = (si >= 0 && si < subDim);
+                    }
+                    if (pass) {
+                        sub.setElement(sj, si, element);
+                        continue;
+                    }
+                }
+                if (element != (i == j ? 1 : 0)) {
+                    // Found a dimension which perform some scaling or translation.
+                    return null;
+                }
+            }
+        }
+        return sub;
     }
 
     /**
@@ -237,7 +287,7 @@ public class PassThroughTransform extends AbstractMathTransform implements Seria
      * @throws TransformException If the {@linkplain #subTransform sub-transform} failed.
      */
     @Override
-    protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff)
+    protected void transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff)
             throws TransformException
     {
         transform(srcPts, srcOff, dstPts, dstOff, 1);
@@ -249,7 +299,7 @@ public class PassThroughTransform extends AbstractMathTransform implements Seria
      * @throws TransformException If the {@linkplain #subTransform sub-transform} failed.
      */
     @Override
-    public void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts)
+    public void transform(double[] srcPts, int srcOff, final double[] dstPts, int dstOff, int numPts)
             throws TransformException
     {
         final int subDimSource = subTransform.getSourceDimensions();
@@ -295,7 +345,7 @@ public class PassThroughTransform extends AbstractMathTransform implements Seria
      * @throws TransformException If the {@linkplain #subTransform sub-transform} failed.
      */
     @Override
-    public void transform(float[] srcPts, int srcOff, float[] dstPts, int dstOff, int numPts)
+    public void transform(float[] srcPts, int srcOff, final float[] dstPts, int dstOff, int numPts)
             throws TransformException
     {
         final int subDimSource = subTransform.getSourceDimensions();
@@ -341,7 +391,7 @@ public class PassThroughTransform extends AbstractMathTransform implements Seria
      * @throws TransformException If the {@linkplain #subTransform sub-transform} failed.
      */
     @Override
-    public void transform(double[] srcPts, int srcOff, float[] dstPts, int dstOff, int numPts)
+    public void transform(final double[] srcPts, int srcOff, final float[] dstPts, int dstOff, int numPts)
             throws TransformException
     {
         final int subDimSource = subTransform.getSourceDimensions();
@@ -365,7 +415,7 @@ public class PassThroughTransform extends AbstractMathTransform implements Seria
      * @throws TransformException If the {@linkplain #subTransform sub-transform} failed.
      */
     @Override
-    public void transform(float[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts)
+    public void transform(final float[] srcPts, int srcOff, final double[] dstPts, int dstOff, int numPts)
             throws TransformException
     {
         final int subDimSource = subTransform.getSourceDimensions();

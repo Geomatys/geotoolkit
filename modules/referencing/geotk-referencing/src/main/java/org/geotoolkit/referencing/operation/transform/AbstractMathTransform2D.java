@@ -148,8 +148,8 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
          * but with the knowledge that this transform is an inverse transform.
          */
         @Override
-        final int beforeFormat(List<Object> transforms, int index) {
-            return AbstractMathTransform2D.this.beforeFormat(transforms, index, true);
+        final int beforeFormat(final List<Object> transforms, final int index, final boolean inverse) {
+            return AbstractMathTransform2D.this.beforeFormat(transforms, index, !inverse);
         }
     }
 
@@ -452,30 +452,21 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
     }
 
     /**
-     * Given the transforms following this object in a concatenated transform chain, replaces
-     * the next list elements by alternative objects to use when formatting WKT. This method
-     * shall replace only the previous element and the few next elements that need to be changed
-     * as a result of the previous change. This method is not expected to continue the iteration
-     * after the changes that are of direct concern to this object.
+     * Given a transformation chain, replaces the elements around {@code this} transform by
+     * alternative objects to use when formatting WKT. The replacement is performed in-place
+     * in the given list. The index of {@code this} transform is given by {@code index}.
+     * <p>
+     * This method shall replace only the previous element and the few next elements that need
+     * to be changed as a result of the previous change. This method is not expected to continue
+     * the iteration after the changes that are of direct concern to this object.
      *
      * @param  transforms The full chain of concatenated transforms.
      * @param  index      The index of this transform in the {@code transforms} chain.
-     * @return Index of last transform processed. Iteration should continue at that index + 1.
+     * @param  inverse    Always {@code false}, except if we are formatting the inverse transform.
+     * @return Index of the last transform processed. Iteration should continue at that index + 1.
      */
     @Override
-    final int beforeFormat(List<Object> transforms, int index) {
-        return beforeFormat(transforms, index, false);
-    }
-
-    /**
-     * Implementation of {@link #beforeFormat(List,int)}.
-     *
-     * @param  transforms The full chain of concatenated transforms.
-     * @param  index      The index of this transform in the {@code transforms} chain.
-     * @param  inverse    {@code true} if we are formatting the inverse transform.
-     * @return Index of last transform processed. Iteration should continue at that index + 1.
-     */
-    private int beforeFormat(final List<Object> transforms, int index, final boolean inverse) {
+    final int beforeFormat(final List<Object> transforms, int index, final boolean inverse) {
         assert unwrap(transforms.get(index), inverse) == this : getName();
         final Parameters parameters = getUnmarshalledParameters();
         if (parameters == null) {

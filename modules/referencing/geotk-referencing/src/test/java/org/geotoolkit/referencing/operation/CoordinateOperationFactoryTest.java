@@ -847,9 +847,6 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
         // but with random elevation and time which should be dropped.
         assertTransformEquals4_2(601124.99, 2428693.45, 400, 1000, 261804.30, 6218365.72);
         assertTransformEquals4_2(600000.00, 2420000.00, 400, 1000, 260098.74, 6205194.95);
-
-        // BUG!! La conversion de Lambert vers Geographique donne des angles en gradiants
-        // plutôt qu'en degrés.
     }
 
     /**

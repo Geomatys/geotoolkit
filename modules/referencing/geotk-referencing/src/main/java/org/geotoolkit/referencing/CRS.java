@@ -944,17 +944,17 @@ compare:    for (final SingleCRS component : actualComponents) {
      * This method processes as below:
      * <p>
      * <ul>
-     *   <li>If the given {@code crs} is {@code null}, then this method returns {@code null}.
+     *   <li>If the given {@code crs} is {@code null}, then this method returns {@code null}.</li>
      *   <li>Otherwise if {@code lower} is 0 and {@code upper} if the number of CRS dimensions,
      *       then this method returns the given CRS unchanged.</li>
      *   <li>Otherwise if the given CRS is an instance of {@link CompoundCRS}, then this method
      *       searches for a {@linkplain CompoundCRS#getComponents() component} where:
      *       <ul>
      *         <li>The {@linkplain CoordinateSystem#getDimension() number of dimensions} is
-     *             equals to {@code upper - lower}</li>
+     *             equals to {@code upper - lower};</li>
      *         <li>The sum of the number of dimensions of all previous CRS is equals to
-     *             {@code lower}</li>
-     *       <ul>
+     *             {@code lower}.</li>
+     *       </ul>
      *       If such component is found, then it is returned.</li>
      *   <li>Otherwise (i.e. no component match), this method returns {@code null}.</li>
      * </ul>
@@ -968,7 +968,7 @@ compare:    for (final SingleCRS component : actualComponents) {
      * @param  lower The first dimension to keep, inclusive.
      * @param  upper The last  dimension to keep, exclusive.
      * @return The sub-coordinate system, or {@code null} if the given {@code crs} was {@code null}
-     *         or can't be decomposed for dimensions in the range {@code [lower..upper]}.
+     *         or can't be decomposed for dimensions in the range {@code [lower..upper]}.
      * @throws IndexOutOfBoundsException If the given index are out of bounds.
      *
      * @see org.geotoolkit.referencing.factory.ReferencingFactoryContainer#separate(CoordinateReferenceSystem, int[])

@@ -26,6 +26,7 @@ import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.test.Depend;
+import org.geotoolkit.test.Commons;
 import org.geotoolkit.test.crs.WKT;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
@@ -58,7 +59,32 @@ public final class ReferencingFactoryContainerTest {
         crs = crsFactory.createCompoundCRS(name("NTF 4D"), crs, DefaultTemporalCRS.MODIFIED_JULIAN);
         final CoordinateReferenceSystem result = factories.toGeodetic3D((CompoundCRS) crs);
         assertNotSame("Expected a new CRS.", crs, result);
-//      System.out.println(result);
+        Commons.assertMultilinesEquals(Commons.decodeQuotes(
+            "COMPD_CS[“NTF 4D”,\n" +
+            "  PROJCS[“NTF 3D”,\n" +
+            "    GEOGCS[“NTF (Paris) (3D)”,\n" +
+            "      DATUM[“Nouvelle Triangulation Francaise (Paris)”,\n" +
+            "        SPHEROID[“Clarke 1880 (IGN)”, 6378249.2, 293.4660212936269, AUTHORITY[“EPSG”,“7011”]],\n" +
+            "        AUTHORITY[“EPSG”,“6807”]],\n" +
+            "      PRIMEM[“Paris”, 2.5969213, AUTHORITY[“EPSG”,“8903”]],\n" +
+            "      UNIT[“grade”, 0.015707963267948967],\n" +
+            "      AXIS[“Geodetic latitude”, NORTH],\n" +
+            "      AXIS[“Geodetic longitude”, EAST],\n" +
+            "      AXIS[“Ellipsoidal height”, UP]],\n" +
+            "    PROJECTION[“Lambert_Conformal_Conic_1SP”],\n" +
+            "    PARAMETER[“central_meridian”, 0.0],\n" +
+            "    PARAMETER[“latitude_of_origin”, 52.0],\n" +
+            "    PARAMETER[“scale_factor”, 0.99987742],\n" +
+            "    PARAMETER[“false_easting”, 600000.0],\n" +
+            "    PARAMETER[“false_northing”, 2200000.0],\n" +
+            "    UNIT[“metre”, 1.0],\n" +
+            "    AXIS[“Easting”, EAST],\n" +
+            "    AXIS[“Northing”, NORTH],\n" +
+            "    AXIS[“Ellipsoidal height”, UP]],\n" +
+            "  TemporalCRS[“Modified Julian”,\n" +
+            "    DefaultTemporalDatum[“Modified Julian”, 0],\n" +
+            "    UNIT[“day”, 86400.0],\n" +
+            "    AXIS[“Time”, FUTURE]]]"), result.toString());
     }
 
     /**

@@ -46,11 +46,17 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
 
 
 /**
- * Base class for concatenated transform. Concatenated transforms are
- * serializable if all their step transforms are serializables.
+ * Base class for concatenated transforms. Instances can be created by calls to the
+ * {@link #create(MathTransform, MathTransform)} method. When possible, the above-cited
+ * method tries to concatenate {@linkplain ProjectiveTransform projective transforms}
+ * before to fallback on the creation of new {@code ConcatenatedTransform} instances.
+ * <p>
+ * Concatenated transforms are serializable if all their step transforms are serializables.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.16
+ *
+ * @see org.opengis.referencing.operation.MathTransformFactory#createConcatenatedTransform(MathTransform, MathTransform)
  *
  * @since 1.2
  * @module
@@ -154,11 +160,6 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      * @param tr1 The first math transform.
      * @param tr2 The second math transform.
      * @return    The concatenated transform.
-     *
-     * @todo We could add one more optimization: if one transform is a matrix and the
-     *       other transform is a PassThroughTransform, and if the matrix as 0 elements
-     *       for all rows matching the PassThrough sub-transform, then we can get ride
-     *       of the whole PassThroughTransform object.
      */
     public static MathTransform create(MathTransform tr1, MathTransform tr2) {
         final int dim1 = tr1.getTargetDimensions();
@@ -310,7 +311,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
     }
 
     /**
-     * Tries to returns an optimized concatenation, for example by merging to affine transforms
+     * Tries to returns an optimized concatenation, for example by merging two affine transforms
      * into a single one. If no optimized cases has been found, returns {@code null}. In the later
      * case, the caller will need to create a more heavy {@link ConcatenatedTransform} instance.
      */
@@ -336,6 +337,19 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
                 // This call will detect and optimize the special
                 // case where an 'AffineTransform' can be used.
                 return ProjectiveTransform.create(matrix);
+            }
+            /*
+             * If the second transform is a passthrough transform and all passthrough ordinates
+             * are unchanged by the matrix, we can move the matrix inside the passthrough transform.
+             */
+            if (tr2 instanceof PassThroughTransform) {
+                final PassThroughTransform candidate = (PassThroughTransform) tr2;
+                final Matrix sub = candidate.toSubMatrix(matrix1);
+                if (sub != null) {
+                    return PassThroughTransform.create(candidate.firstAffectedOrdinate,
+                            create(ProjectiveTransform.create(sub), candidate.subTransform),
+                            candidate.numTrailingOrdinates);
+                }
             }
         }
         /*
@@ -369,7 +383,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
 
     /**
      * Continue the construction started by {@link #create}. The construction step is available
-     * separatly for testing purpose (in a JUnit test), and for {@link #inverse()} implementation.
+     * separately for testing purpose (in a JUnit test), and for {@link #inverse()} implementation.
      */
     static ConcatenatedTransform createConcatenatedTransform(
             final MathTransform tr1, final MathTransform tr2)
@@ -422,7 +436,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
 
     /**
      * Checks if transforms are compatibles. The default
-     * implementation check if transfert dimension match.
+     * implementation check if transfer dimension match.
      */
     boolean isValid() {
         return transform1.getTargetDimensions() == transform2.getSourceDimensions();
@@ -473,9 +487,10 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
 
     /**
      * Returns all concatenated transforms. The {@linkplain List#size size} of the
-     * returned list is equal to the value returned by {@link #getStepCount}.
+     * returned list is equal to the value returned by {@link #getStepCount()}.
      *
      * @return All math transforms performed by this concatenated transform.
+     *
      * @since 3.00
      */
     public final List<MathTransform> getSteps() {
@@ -485,8 +500,11 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
     }
 
     /**
-     * Returns all concatenated transforms, modified with a pre-processing
-     * applies before WKT formating.
+     * Returns all concatenated transforms, modified with the pre- and post-processing required for
+     * WKT formating. More specifically, if there is any Geotk implementation of Map Projection in the
+     * chain, then the (<var>pre-affine</var>, <var>unitary projection</var>, <var>post-affine</var>)
+     * tuples are replaced by single (<var>projection</var>) elements, which doesn't need to be
+     * instances of {@link MathTransform}.
      */
     private List<Object> getPseudoSteps() {
         final List<Object> transforms = new ArrayList<Object>();
@@ -499,7 +517,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
         for (int i=0; i<transforms.size(); i++) {
             final Object step = transforms.get(i);
             if (step instanceof AbstractMathTransform) {
-                i = ((AbstractMathTransform) step).beforeFormat(transforms, i);
+                i = ((AbstractMathTransform) step).beforeFormat(transforms, i, false);
             }
         }
         return transforms;
@@ -531,15 +549,21 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
      * processed map projections in the special way described in {@link #getParameterValues()},
      * because if they were more than one remaining steps, the returned parameters would not be
      * sufficient for rebuilding the full concatenated transform. Returning parameters when there
-     * is more than one remaining step, even if all other transform steps are not parameterisable,
+     * is more than one remaining step, even if all other transform steps are not parameterizable,
      * would be a contract violation.
-     * <p>
-     * However in the special case where we are formatting {@code PROJCS} element, this rule is
-     * slightlty relaxed. More specifically we ignore affine transforms in order to accept axis
-     * swapping or unit conversions. This special case is internal to Geotk implementation
-     * and should be unknown to users.
      *
-     * @return The parameterisable transform step, or {@code null} if none.
+     * {@section Special case: WKT formatting}
+     * However in the special case where we are formatting {@code PROJCS} element, the above rule
+     * is slightly relaxed. More specifically we ignore affine transforms in order to accept axis
+     * swapping or unit conversions. This special case is internal to Geotk implementation of WKT
+     * formatter and should be unknown to users.
+     *
+     * See {@link org.geotoolkit.referencing.operation.DefaultSingleOperation#getParameterValues()}
+     * for the code where the above-cited special case is applied.
+     *
+     * @return The parameterizable transform step, or {@code null} if none.
+     *
+     * @see org.geotoolkit.referencing.operation.DefaultSingleOperation#simplify(MathTransform)
      */
     private Parameterized getParameterised() {
         Parameterized param = null;

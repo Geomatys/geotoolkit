@@ -51,8 +51,8 @@ import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
  * But if such control are desired, it can be obtained by using directly the {@link Formatter}
  * class.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.16
  *
  * @since 2.0
  * @module
@@ -134,27 +134,43 @@ public class FormattableObject implements Formattable {
     }
 
     /**
+     * Prints a string representation of this object using a default authority and indentation.
+     * The default implementation delegates its work to <code>{@linkplain #print(Citation, int)
+     * print}({@linkplain #OGC}, {@linkplain #getDefaultIndentation()})</code>, but subclasses
+     * are allowed to change those default values.
+     *
+     * @since 3.00
+     */
+    public void print() {
+        print(OGC, defaultIndentation);
+    }
+
+    /**
      * Prints a string representation of this object to the {@linkplain System#out standard
      * output stream}. If a {@linkplain Console console} is attached to the running JVM (i.e.
      * if the application is run from the command-line and the output is not redirected to a
      * file) and if Geotk thinks that the console supports the {@link X364 X3.64} standard,
      * then a syntax coloring will be applied.
      * <p>
-     * This is a convenience method for debugging purpose only.
+     * This is a convenience method for debugging purpose and for console applications.
      *
-     * {@note We don't use the standard error stream (the stream used by logging) because it
-     *        is independent of the stream used by the console.}
+     * {@note We don't use the standard error stream (the stream used by the Java logging
+     *        framework) because it is different than the stream used by the console.}
      *
-     * @since 3.00
+     * @param  authority The authority to prefer when choosing WKT entities names.
+     * @param  indentation The amount of spaces to use in indentation for WKT formatting,
+     *         or {@link #SINGLE_LINE} for formatting the whole WKT on a single line.
+     *
+     * @since 3.16
      */
-    public void print() {
+    public void print(final Citation authority, final int indentation) {
         PrintWriter out = null;
         final Console console = System.console();
         if (console != null) {
             out = console.writer();
         }
         final boolean color = (out != null) && X364.isSupported();
-        final String wkt = formatWKT(OGC, defaultIndentation, color, false);
+        final String wkt = formatWKT(authority, indentation, color, false);
         if (out != null) {
             out.println(wkt);
         } else {
@@ -287,9 +303,8 @@ public class FormattableObject implements Formattable {
     public String formatWKT(final Formatter formatter) {
         Class<?> type = getClass();
         formatter.setInvalidWKT(type);
-        Class<?>[] interfaces = type.getInterfaces();
-        for (int i=0; i<interfaces.length; i++) {
-            final Class<?> candidate = interfaces[i];
+        final Class<?>[] interfaces = type.getInterfaces();
+        for (final Class<?> candidate : interfaces) {
             final String name = candidate.getName();
             if (name.startsWith("org.opengis.") && !name.startsWith("org.opengis.util.")) {
                 type = candidate;

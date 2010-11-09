@@ -20,6 +20,8 @@ package org.geotoolkit.referencing.operation.transform;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
+import org.geotoolkit.referencing.operation.matrix.Matrix4;
+
 import org.junit.*;
 import org.geotoolkit.test.Depend;
 
@@ -28,7 +30,7 @@ import org.geotoolkit.test.Depend;
  * Tests the {@link ConcatenatedTransformTest} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.16
  *
  * @since 3.00
  */
@@ -129,5 +131,47 @@ public final class ConcatenatedTransformTest extends TransformTestCase {
         validate();
         verifyTransform(source, target);
         stress(source);
+    }
+
+    /**
+     * Tests the concatenation of a 3D affine transform with a pass-through transform.
+     * The {@link ConcatenatedTransform#create(MathTransform, MathTransform)} method
+     * should optimize this case.
+     *
+     * @since 3.16
+     */
+    @Test
+    public void testPassthrough() {
+        final MathTransform kernel = new PseudoTransform(2, 3); // Any non-linear transform.
+        final MathTransform passth = PassThroughTransform.create(0, kernel, 1);
+        final Matrix4 matrix = new Matrix4();
+        transform = ConcatenatedTransform.create(ProjectiveTransform.create(matrix), passth);
+        assertSame("Identity transform should be ignored.", passth, transform);
+        assertEquals("Source dimensions", 3, transform.getSourceDimensions());
+        assertEquals("Target dimensions", 4, transform.getTargetDimensions());
+        /*
+         * Put scale or offset factors only in the dimension to be processed by the sub-transform.
+         * The matrix should be concatenated to the sub-transform rather than to the passthrough
+         * transform.
+         */
+        matrix.m00 = 3;
+        matrix.m13 = 2;
+        transform = ConcatenatedTransform.create(ProjectiveTransform.create(matrix), passth);
+        assertInstanceOf("Expected a new passthrough transform.", PassThroughTransform.class, transform);
+        final MathTransform subTransform = ((PassThroughTransform) transform).getSubTransform();
+        assertInstanceOf("Expected a new concatenated transform.", ConcatenatedTransform.class, subTransform);
+        assertSame(kernel, ((ConcatenatedTransform) subTransform).transform2);
+        assertEquals("Source dimensions", 3, transform.getSourceDimensions());
+        assertEquals("Target dimensions", 4, transform.getTargetDimensions());
+        /*
+         * Put scale or offset factors is a passthrough dimension. Now, the affine transform
+         * can not anymore be concatenated with the sub-transform.
+         */
+        matrix.m22 = 4;
+        transform = ConcatenatedTransform.create(ProjectiveTransform.create(matrix), passth);
+        assertInstanceOf("Expected a new concatenated transform.", ConcatenatedTransform.class, transform);
+        assertSame(passth, ((ConcatenatedTransform) transform).transform2);
+        assertEquals("Source dimensions", 3, transform.getSourceDimensions());
+        assertEquals("Target dimensions", 4, transform.getTargetDimensions());
     }
 }

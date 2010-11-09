@@ -312,7 +312,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
      * The other components (for example {@linkplain TemporalCRS temporal} CRS) are included
      * unchanged in the returned CRS.
      * <p>
-     * If there is no (2D, 1D) components that this method could replace by a 3D component,
+     * If there is no (2D + 1D) components that this method could replace by a 3D component,
      * then this method returns the {@code crs} argument unchanged. In any case, the transform
      * from the given CRS to the returned CRS shall be an identity transform.
      *
@@ -449,7 +449,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
             return crsFactory.createProjectedCRS(crsName, base3D, projection, targetCS);
         }
         // Should never happen.
-        throw new AssertionError(horizontal);
+        throw new AssertionError(horizontal.getClass());
     }
 
     /**
