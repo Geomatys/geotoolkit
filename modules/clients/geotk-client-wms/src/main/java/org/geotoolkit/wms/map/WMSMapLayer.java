@@ -44,6 +44,7 @@ import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.Style;
 
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -255,16 +256,21 @@ public class WMSMapLayer extends AbstractMapLayer {
      * @return A {@linkplain GetMapRequest get map request}.
      * @throws MalformedURLException if the generated url is invalid.
      */
-    public URL query(Envelope env, final Dimension rect) throws MalformedURLException {
+    public URL query(Envelope env, final Dimension rect) throws MalformedURLException, TransformException {
 
         //check the politics, the distant wms server might not be strict on axis orders
         // nor in it's crs definitions between CRS:84 and EPSG:4326
+        final CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem());
 
+
+        //we loose the vertical and temporale crs in the process, must be fixed
         //check CRS84 politic---------------------------------------------------
         if (crs84Politic != CRS84Politic.STRICT) {
-            if (CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84)) {
+            if (CRS.equalsIgnoreMetadata(crs2D, DefaultGeographicCRS.WGS84)) {
+
                 switch (crs84Politic) {
                     case CONVERT_TO_EPSG4326:
+                        env = CRS.transform(env, crs2D);
                         env = new GeneralEnvelope(env);
                         ((GeneralEnvelope) env).setCoordinateReferenceSystem(EPSG_4326);
                         break;
@@ -274,9 +280,10 @@ public class WMSMapLayer extends AbstractMapLayer {
 
         //check EPSG4326 politic------------------------------------------------
         if (epsg4326Politic != EPSG4326Politic.STRICT) {
-            if (CRS.equalsIgnoreMetadata(env.getCoordinateReferenceSystem(), DefaultGeographicCRS.WGS84)) {
+            if (CRS.equalsIgnoreMetadata(crs2D, DefaultGeographicCRS.WGS84)) {
                 switch (epsg4326Politic) {
                     case CONVERT_TO_CRS84:
+                        env = CRS.transform(env, crs2D);
                         env = new GeneralEnvelope(env);
                         ((GeneralEnvelope) env).setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
                         break;
@@ -469,7 +476,7 @@ public class WMSMapLayer extends AbstractMapLayer {
      *         in the list of supported crs in the GetCapabilities response. {@code False} otherwise.
      * @throws FactoryException
      */
-    boolean supportCRS(final CoordinateReferenceSystem crs) throws FactoryException {
+    public boolean supportCRS(final CoordinateReferenceSystem crs) throws FactoryException {
         final AbstractLayer layer = server.getCapabilities().getLayerFromName(layers[0]);
 
         final String srid = CRS.lookupIdentifier(crs, true);

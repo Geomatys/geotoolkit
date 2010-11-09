@@ -28,25 +28,21 @@ public interface Style {
 
     /**
      * Gets the value of the name property.
-     * @return
      */
     String getName();
 
     /**
      * Gets the value of the title property.
-     * @return
      */
     String getTitle();
 
     /**
      * Gets the value of the abstract property.
-     * @return
      */
     String getAbstract();
 
     /**
      * Gets the value of the legendURL property.
-     * @return
      */
     List<? extends AbstractLegendURL> getLegendURL();
 

@@ -31,88 +31,71 @@ import org.opengis.geometry.Envelope;
 public abstract class AbstractLayer {
     /**
      * Gets the abstract value for this layer.
-     *
-     * @return
      */
     public abstract String getAbstract();
 
     /**
      * Get all Dimensions (TIME,ELEVATION,...) from a specific layer.
-     * 
-     * @return
      */
     public abstract List<AbstractDimension> getAbstractDimension();
 
     /**
      * Unmodifiable list of dimensions contained in this layer.
-     * @return
      */
     public abstract List<? extends AbstractDimension> getDimension();
 
     /**
      * Gets the value of the keywordList property.
-     *
-     * @return
      */
     public abstract AbstractKeywordList getKeywordList();
 
     /**
      * List of supported CRS.
-     * @return
      */
     public abstract List<String> getCRS();
 
     /**
      * Unmodifiable list of layers contained in this layer.
-     * @return
      */
     public abstract List<? extends AbstractLayer> getLayer();
 
     /**
      * Get the layer name.
-     * @return
      */
     public abstract String getName();
 
     /**
      * Set the layer name
-     * @param name
      */
     public abstract void setName(String name);
     
     /**
      * Get the layer title
-     * @return
      */
     public abstract String getTitle();
 
     /**
      * Set the layer title
-     * @param title
      */
     public abstract void setTitle(String title);
 
     /**
      * Get the layer envelope
-     * @return
      */
     public abstract Envelope getEnvelope();
 
     /**
      * Get layer styles
-     * @return
      */
     public abstract List<? extends Style> getStyle();
 
     /**
      * Get if the layer is queryable or not
-     * @return
      */
     public abstract boolean isQueryable();
 
     /**
      * Get the layer boundingboxes
-     * @return
      */
     public abstract List<? extends AbstractBoundingBox> getBoundingBox();
 

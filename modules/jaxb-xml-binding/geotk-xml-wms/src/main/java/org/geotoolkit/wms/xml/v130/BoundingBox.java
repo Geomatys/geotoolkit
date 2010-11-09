@@ -101,7 +101,6 @@ public class BoundingBox extends AbstractBoundingBox{
     
     /**
      * Gets the value of the crs property.
-     * @return 
      */
     public String getCRS() {
         return crs;
@@ -159,7 +158,7 @@ public class BoundingBox extends AbstractBoundingBox{
      * {@inheritDoc}
      */
     @Override
-    public String getProjCode() {
+    public String getCRSCode() {
         return getCRS();
     }
 

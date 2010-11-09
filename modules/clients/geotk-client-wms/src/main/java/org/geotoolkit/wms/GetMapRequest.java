@@ -122,7 +122,7 @@ public interface GetMapRequest extends Request {
     void setSldBody(String sldBody);
 
     /**
-     * Returns {@code true} if the layer is transparent, {@code false} otherwise.
+     * Returns {@code true} if the layer is transparent, {@code false} otherwise or {@code null} if not specified.
      */
     Boolean isTransparent();
 

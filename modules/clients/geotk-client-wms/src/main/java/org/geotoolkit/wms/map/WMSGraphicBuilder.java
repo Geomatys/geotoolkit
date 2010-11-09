@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -148,7 +149,11 @@ final class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
             final URL url;
             try {
                 url = layer.query(env, dim);
+
             } catch (MalformedURLException ex) {
+                monitor.exceptionOccured(new PortrayalException(ex), Level.WARNING);
+                return;
+            } catch (TransformException ex) {
                 monitor.exceptionOccured(new PortrayalException(ex), Level.WARNING);
                 return;
             }
