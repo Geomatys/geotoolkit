@@ -476,7 +476,7 @@ public class WMSMapLayer extends AbstractMapLayer {
      *         in the list of supported crs in the GetCapabilities response. {@code False} otherwise.
      * @throws FactoryException
      */
-    public boolean supportCRS(final CoordinateReferenceSystem crs) throws FactoryException {
+    boolean supportCRS(final CoordinateReferenceSystem crs) throws FactoryException {
         final AbstractLayer layer = server.getCapabilities().getLayerFromName(layers[0]);
 
         final String srid = CRS.lookupIdentifier(crs, true);
