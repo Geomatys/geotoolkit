@@ -196,26 +196,28 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
             }
         }
         /*
-         * Before to process, performs a special check for CompoundCRS where the target contains
-         * every elements included in the source.  CompoundCRS are usually verified last, but in
-         * the special case described above there is only axis switch or dimension to remove. If
-         * we wait last for processing them, what would have been a simple CoordinateOperation
-         * may become interleaved with more complex operation (e.g. projection followed by the
-         * inverse projection, before they get simplified by DefaultConcatenatedOperation, etc.).
+         * Now perform "instanceof" checks for all supported types. We check CompoundCRS first
+         * because experience shows that it produces simplier transformation chains than if we
+         * check them last.
          */
+        ////////////////////////////////////////////
+        ////                                    ////
+        ////     Compound  -->  various CRS     ////
+        ////                                    ////
+        ////////////////////////////////////////////
         if (sourceCRS instanceof CompoundCRS) {
-            final List<SingleCRS> sources = DefaultCompoundCRS.getSingleCRS(sourceCRS);
-            final List<SingleCRS> targets = DefaultCompoundCRS.getSingleCRS(targetCRS);
-            if (containsIgnoreMetadata(sources, targets)) {
-                final CompoundCRS source = (CompoundCRS) sourceCRS;
-                if (targetCRS instanceof CompoundCRS) {
-                    final CompoundCRS target = (CompoundCRS) targetCRS;
-                    return createOperationStep(source, target);
-                }
-                if (targetCRS instanceof SingleCRS) {
-                    final SingleCRS target = (SingleCRS) targetCRS;
-                    return createOperationStep(source, target);
-                }
+            final CompoundCRS source = (CompoundCRS) sourceCRS;
+            if (targetCRS instanceof CompoundCRS) {
+                return createOperationStep(source, (CompoundCRS) targetCRS);
+            }
+            if (targetCRS instanceof SingleCRS) {
+                return createOperationStep(source, (SingleCRS) targetCRS);
+            }
+        }
+        if (targetCRS instanceof CompoundCRS) {
+            final CompoundCRS target = (CompoundCRS) targetCRS;
+            if (sourceCRS instanceof SingleCRS) {
+                return createOperationStep((SingleCRS) sourceCRS, target);
             }
         }
         /////////////////////////////////////////////////////////////////////
@@ -226,20 +228,16 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         if (sourceCRS instanceof GeographicCRS) {
             final GeographicCRS source = (GeographicCRS) sourceCRS;
             if (targetCRS instanceof GeographicCRS) {
-                final GeographicCRS target = (GeographicCRS) targetCRS;
-                return createOperationStep(source, target);
+                return createOperationStep(source, (GeographicCRS) targetCRS);
             }
             if (targetCRS instanceof ProjectedCRS) {
-                final ProjectedCRS target = (ProjectedCRS) targetCRS;
-                return createOperationStep(source, target);
+                return createOperationStep(source, (ProjectedCRS) targetCRS);
             }
             if (targetCRS instanceof GeocentricCRS) {
-                final GeocentricCRS target = (GeocentricCRS) targetCRS;
-                return createOperationStep(source, target);
+                return createOperationStep(source, (GeocentricCRS) targetCRS);
             }
             if (targetCRS instanceof VerticalCRS) {
-                final VerticalCRS target = (VerticalCRS) targetCRS;
-                return createOperationStep(source, target);
+                return createOperationStep(source, (VerticalCRS) targetCRS);
             }
         }
         /////////////////////////////////////////////////////////
@@ -250,12 +248,10 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         if (sourceCRS instanceof ProjectedCRS) {
             final ProjectedCRS source = (ProjectedCRS) sourceCRS;
             if (targetCRS instanceof ProjectedCRS) {
-                final ProjectedCRS target = (ProjectedCRS) targetCRS;
-                return createOperationStep(source, target);
+                return createOperationStep(source, (ProjectedCRS) targetCRS);
             }
             if (targetCRS instanceof GeographicCRS) {
-                final GeographicCRS target = (GeographicCRS) targetCRS;
-                return createOperationStep(source, target);
+                return createOperationStep(source, (GeographicCRS) targetCRS);
             }
         }
         //////////////////////////////////////////////////////////
@@ -266,12 +262,10 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         if (sourceCRS instanceof GeocentricCRS) {
             final GeocentricCRS source = (GeocentricCRS) sourceCRS;
             if (targetCRS instanceof GeocentricCRS) {
-                final GeocentricCRS target = (GeocentricCRS) targetCRS;
-                return createOperationStep(source, target);
+                return createOperationStep(source, (GeocentricCRS) targetCRS);
             }
             if (targetCRS instanceof GeographicCRS) {
-                final GeographicCRS target = (GeographicCRS) targetCRS;
-                return createOperationStep(source, target);
+                return createOperationStep(source, (GeographicCRS) targetCRS);
             }
         }
         /////////////////////////////////////////
@@ -282,8 +276,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         if (sourceCRS instanceof VerticalCRS) {
             final VerticalCRS source = (VerticalCRS) sourceCRS;
             if (targetCRS instanceof VerticalCRS) {
-                final VerticalCRS target = (VerticalCRS) targetCRS;
-                return createOperationStep(source, target);
+                return createOperationStep(source, (VerticalCRS) targetCRS);
             }
         }
         /////////////////////////////////////////
@@ -294,8 +287,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         if (sourceCRS instanceof TemporalCRS) {
             final TemporalCRS source = (TemporalCRS) sourceCRS;
             if (targetCRS instanceof TemporalCRS) {
-                final TemporalCRS target = (TemporalCRS) targetCRS;
-                return createOperationStep(source, target);
+                return createOperationStep(source, (TemporalCRS) targetCRS);
             }
         }
         //////////////////////////////////////////////////////////////////
@@ -307,11 +299,9 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
             // Note: this code is identical to 'createOperationStep(GeographicCRS, ProjectedCRS)'
             //       except that the later invokes directly the right method for 'step1' instead
             //       of invoking 'createOperation' recursively.
-            final GeneralDerivedCRS  target = (GeneralDerivedCRS) targetCRS;
-            final CoordinateReferenceSystem base = target.getBaseCRS();
-            final CoordinateOperation step1 = createOperation(sourceCRS, base);
-            final CoordinateOperation step2 = target.getConversionFromBase();
-            return concatenate(step1, step2);
+            final GeneralDerivedCRS target = (GeneralDerivedCRS) targetCRS;
+            return concatenate(createOperation(sourceCRS, target.getBaseCRS()),
+                               target.getConversionFromBase());
         }
         //////////////////////////////////////////////////////////////////
         ////                                                          ////
@@ -324,7 +314,6 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
             //       of invoking 'createOperation' recursively.
             final GeneralDerivedCRS       source = (GeneralDerivedCRS) sourceCRS;
             final CoordinateReferenceSystem base = source.getBaseCRS();
-            final CoordinateOperation      step2 = createOperation(base, targetCRS);
             CoordinateOperation            step1 = source.getConversionFromBase();
             MathTransform              transform = step1.getMathTransform();
             try {
@@ -333,30 +322,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                 throw new OperationNotFoundException(getErrorMessage(sourceCRS, base), exception);
             }
             step1 = createFromMathTransform(INVERSE_OPERATION, sourceCRS, base, transform);
-            return concatenate(step1, step2);
-        }
-        ////////////////////////////////////////////
-        ////                                    ////
-        ////     Compound  -->  various CRS     ////
-        ////                                    ////
-        ////////////////////////////////////////////
-        if (sourceCRS instanceof CompoundCRS) {
-            final CompoundCRS source = (CompoundCRS) sourceCRS;
-            if (targetCRS instanceof CompoundCRS) {
-                final CompoundCRS target = (CompoundCRS) targetCRS;
-                return createOperationStep(source, target);
-            }
-            if (targetCRS instanceof SingleCRS) {
-                final SingleCRS target = (SingleCRS) targetCRS;
-                return createOperationStep(source, target);
-            }
-        }
-        if (targetCRS instanceof CompoundCRS) {
-            final CompoundCRS target = (CompoundCRS) targetCRS;
-            if (sourceCRS instanceof SingleCRS) {
-                final SingleCRS source = (SingleCRS) sourceCRS;
-                return createOperationStep(source, target);
-            }
+            return concatenate(step1, createOperation(base, targetCRS));
         }
         /////////////////////////////////////////
         ////                                 ////
@@ -962,11 +928,9 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
          */
         final GeographicCRS sourceGeo = sourceCRS.getBaseCRS();
         final GeographicCRS targetGeo = targetCRS.getBaseCRS();
-        CoordinateOperation step1, step2, step3;
-        step1 = tryDB(sourceCRS, sourceGeo); if (step1==null) step1 = createOperationStep(sourceCRS, sourceGeo);
-        step2 = tryDB(sourceGeo, targetGeo); if (step2==null) step2 = createOperationStep(sourceGeo, targetGeo);
-        step3 = tryDB(targetGeo, targetCRS); if (step3==null) step3 = createOperationStep(targetGeo, targetCRS);
-        return concatenate(step1, step2, step3);
+        return concatenate(tryDB(sourceCRS, sourceGeo),
+                           tryDB(sourceGeo, targetGeo),
+                           tryDB(targetGeo, targetCRS));
     }
 
     /**
@@ -989,13 +953,8 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                                                       final ProjectedCRS  targetCRS)
             throws FactoryException
     {
-        GeographicCRS       base  = targetCRS.getBaseCRS();
-        CoordinateOperation step2 = targetCRS.getConversionFromBase();
-        CoordinateOperation step1 = tryDB(sourceCRS, base);
-        if (step1 == null) {
-            step1 = createOperationStep(sourceCRS, base);
-        }
-        return concatenate(step1, step2);
+        return concatenate(tryDB(sourceCRS, targetCRS.getBaseCRS()),
+                           targetCRS.getConversionFromBase());
     }
 
     /**
@@ -1022,10 +981,6 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
     {
         final GeographicCRS base  = sourceCRS.getBaseCRS();
         CoordinateOperation step1 = sourceCRS.getConversionFromBase();
-        CoordinateOperation step2 = tryDB(base, targetCRS);
-        if (step2 == null) {
-            step2 = createOperationStep(base, targetCRS);
-        }
         MathTransform transform = step1.getMathTransform();
         try {
             transform = transform.inverse();
@@ -1033,7 +988,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
             throw new OperationNotFoundException(getErrorMessage(sourceCRS, base), exception);
         }
         step1 = createFromMathTransform(INVERSE_OPERATION, sourceCRS, base, transform);
-        return concatenate(step1, step2);
+        return concatenate(step1, tryDB(base, targetCRS));
     }
 
     /**
@@ -1205,7 +1160,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
      * @return A coordinate operation from {@code sourceCRS} to {@code targetCRS}.
      * @throws FactoryException If the operation can't be constructed.
      *
-     * @todo (GEOT-401) This method work for some simple cases (e.g. no datum change), and give up
+     * @todo (GEOTK-83) This method works for some simple cases (e.g. no datum change), and give up
      *       otherwise. Before to give up at the end of this method, we should try the following:
      *       <ul>
      *         <li>Maybe {@code sourceCRS} uses a non-ellipsoidal height. We should replace
@@ -1529,8 +1484,8 @@ search: for (int j=0; j<targets.size(); j++) {
      *       and a vertical CRS, so we can't apply a 3D datum shift anyway.</p></li>
      * </ul>
      *
-     * @param strict {@code false} if we tolerate some errror (typically up to 3 metres).
-     *        To be set to {@code false} only in last ressort before throwing an exception.
+     * @param strict {@code false} if we tolerate some error (typically up to 3 metres).
+     *        To be set to {@code false} only in last resort before throwing an exception.
      *        Must be {@code true} in all other cases.
      */
     private static boolean needsGeodetic3D(final List<SingleCRS> sourceCRS,
@@ -1658,32 +1613,24 @@ search: for (int j=0; j<targets.size(); j++) {
     }
 
     /**
-     * Returns {@code true} if {@code container} contains all CRS listed in {@code candidates},
-     * ignoring metadata.
-     */
-    private static boolean containsIgnoreMetadata(final List<SingleCRS> container,
-                                                  final List<SingleCRS> candidates)
-    {
-search: for (final SingleCRS crs : candidates) {
-            for (final SingleCRS c : container) {
-                if (equalsIgnoreMetadata(crs, c)) {
-                    continue search;
-                }
-            }
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * Tries to get a coordinate operation from a database (typically EPSG). The exact behavior
      * depends on the {@link AuthorityBackedFactory} implementation (the most typical subclass),
-     * but usually the database query is degelated to some instance of
+     * but usually the database query is delegated to some instance of
      * {@link org.opengis.referencing.operation.CoordinateOperationAuthorityFactory}.
-     * If no coordinate operation was found in the database, then this method returns {@code null}.
+     * <p>
+     * If no coordinate operation was found in the database, then this method delegates
+     * to {@link #createOperation(CoordinateReferenceSystem, CoordinateReferenceSystem)}.
+     *
+     * @throws FactoryException If an exception occurred while invoking {@code createOperation}.
      */
-    private CoordinateOperation tryDB(final SingleCRS sourceCRS, final SingleCRS targetCRS) {
-        return (sourceCRS == targetCRS) ? null : createFromDatabase(sourceCRS, targetCRS);
+    private CoordinateOperation tryDB(final SingleCRS sourceCRS, final SingleCRS targetCRS) throws FactoryException {
+        if (sourceCRS != targetCRS) {
+            final CoordinateOperation op = createFromDatabase(sourceCRS, targetCRS);
+            if (op != null) {
+                return op;
+            }
+        }
+        return createOperation(sourceCRS, targetCRS);
     }
 
     /**

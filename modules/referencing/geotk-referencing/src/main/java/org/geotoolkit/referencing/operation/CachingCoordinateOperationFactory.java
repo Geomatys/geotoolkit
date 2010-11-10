@@ -38,7 +38,7 @@ import org.geotoolkit.util.Utilities;
 /**
  * Caches the {@linkplain CoordinateOperation coordinate operations} created by an other factory.
  * Those coordinate operations may be expensive to create. During rendering and during data I/O,
- * some implementations make use a lof of coordinate transformations, hence caching them might
+ * some implementations make use a lot of coordinate transformations, hence caching them might
  * help.
  * <p>
  * In most cases, users should not need to create an instance of this class explicitly. An instance
@@ -136,7 +136,7 @@ public class CachingCoordinateOperationFactory extends AbstractCoordinateOperati
 
     /**
      * The pool of cached transformations. This map can not be static, because the values may
-     * be different for the same ({@code sourceCRS}, {@code targetCRS}) pair dependending of
+     * be different for the same ({@code sourceCRS}, {@code targetCRS}) pair depending of
      * hint values like {@link Hints#LENIENT_DATUM_SHIFT}.
      */
     private final Cache<CRSPair, CoordinateOperation> cache = new Cache<CRSPair, CoordinateOperation>();

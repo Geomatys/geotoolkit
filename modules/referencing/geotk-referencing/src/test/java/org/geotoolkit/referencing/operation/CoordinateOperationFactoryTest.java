@@ -605,7 +605,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
 
     /**
      * Tests transformation from 3D to 2D CRS where the last dimension of the 3D CRS is time.
-     * This test case reproduce a situation which have been observed in practice.
+     * This test case reproduces a situation which have been observed in practice.
      *
      * @throws Exception Should never happen.
      */

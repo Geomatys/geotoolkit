@@ -66,7 +66,7 @@ import static org.geotoolkit.factory.AuthorityFactoryFinder.getCoordinateOperati
  * process from the super-class is used as a fallback.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.16
  *
  * @since 2.2
  * @module
@@ -82,7 +82,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
      * The authority factory to use for creating new operations.
      * If {@code null}, a default factory will be fetched when first needed.
      */
-    private CoordinateOperationAuthorityFactory authorityFactory;
+    private volatile CoordinateOperationAuthorityFactory authorityFactory;
 
     /**
      * Used as a guard against infinite recursivity.
@@ -163,7 +163,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
     /**
      * Returns the underlying coordinate operation authority factory. This is the factory
      * where this {@code AuthorityBackedFactory} will search for an explicitly specified
-     * operation before to fallback  the super-class.
+     * operation before to fallback to the super-class.
      *
      * @return The underlying coordinate operation authority factory.
      */
@@ -174,7 +174,8 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
          * Every methods from the super-class are thread-safe without synchronized statements,
          * and we should preserve this advantage in order to reduce the risk of contention.
          */
-        if (authorityFactory == null) {
+        CoordinateOperationAuthorityFactory factory = authorityFactory;
+        if (factory == null) {
             /*
              * Factory creation at this stage will happen only if null hints were specified at
              * construction time, which explain why it is correct to use {@link FactoryFinder}
@@ -182,9 +183,32 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
              */
             final Hints hints = EMPTY_HINTS.clone();
             noForce(hints);
-            authorityFactory = getCoordinateOperationAuthorityFactory(DEFAULT_AUTHORITY, hints);
+            authorityFactory = factory = getCoordinateOperationAuthorityFactory(DEFAULT_AUTHORITY, hints);
         }
-        return authorityFactory;
+        return factory;
+    }
+
+    /**
+     * Invokes {@link #createOperation(CoordinateReferenceSystem, CoordinateReferenceSystem)}
+     * with a guard against infinite recursivity. The check against recursivity is required
+     * because the {@code createOperation(...)} method implemented in the super-class may
+     * invoke {@code createFromDatabase(...)} again.
+     *
+     * @param  source The source CRS.
+     * @param  target The target CRS.
+     * @return The transform from source CRS to target CRS.
+     * @throws FactoryException If an error occurred while creating the math transform.
+     */
+    private MathTransform getMathTransform(final CoordinateReferenceSystem source,
+                                           final CoordinateReferenceSystem target)
+            throws FactoryException
+    {
+        processing.set(Boolean.TRUE);
+        try {
+            return createOperation(source, target).getMathTransform();
+        } finally {
+            processing.set(Boolean.FALSE);
+        }
     }
 
     /**
@@ -194,11 +218,6 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
      * <code>{@linkplain CoordinateOperationAuthorityFactory#createFromCoordinateReferenceSystemCodes
      * createFromCoordinateReferenceSystemCodes}(sourceCode, targetCode)</code> methods.
      * If no operation is found for those codes, then this method returns {@code null}.
-     * <p>
-     * Note that this method may be invoked recursively. For example no operation may be available
-     * from the {@linkplain #getAuthorityFactory underlying authority factory} between two
-     * {@linkplain org.opengis.referencing.crs.CompoundCRS compound CRS}, but an operation
-     * may be available between two components of those compound CRS.
      *
      * @param  sourceCRS Input coordinate reference system.
      * @param  targetCRS Output coordinate reference system.
@@ -212,9 +231,9 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
                                                      final CoordinateReferenceSystem targetCRS)
     {
         /*
-         * Safety check against recursivity: returns null if the given source and target CRS
-         * are already under examination by a previous call to this method. Note: there is no
-         * need to synchronize since the Boolean is thread-local.
+         * Safety check against recursivity: returns null if this method is invoked indirectly
+         * by the above getMathTransform(...) method. Note: there is no need to synchronize
+         * since the Boolean is thread-local.
          */
         if (Boolean.TRUE.equals(processing.get())) {
             return null;
@@ -262,6 +281,9 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
                  * paths for geographic to projected CRS only.
                  */
                 operations = authorityFactory.createFromCoordinateReferenceSystemCodes(targetCode, sourceCode);
+                if (operations == null) {
+                    return null;
+                }
             }
         } catch (NoSuchAuthorityCodeException exception) {
             /*
@@ -269,89 +291,88 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
              * Ignores the exception and fallback on the generic algorithm provided by
              * the super-class.
              */
+            log(Level.FINE, exception, authorityFactory, true);
             return null;
         } catch (FactoryException exception) {
             /*
-             * Other kind of error. It may be more serious, but the super-class is capable
-             * to provides a reasonable default behavior. Log as a warning and lets continue.
+             * Other kind of error. It may be more serious, but the super-class is capable to
+             * provide a reasonable default behavior. Log as a warning and stop this method.
              */
             log(exception, authorityFactory);
             return null;
         }
-        if (operations != null) {
-            for (final Iterator<CoordinateOperation> it=operations.iterator(); it.hasNext();) {
-                CoordinateOperation candidate;
-                try {
-                    // The call to it.next() must be inside the try..catch block,
-                    // which is why we don't use the Java 5 for loop syntax here.
-                    candidate = it.next();
-                    if (candidate == null) {
-                        continue;
-                    }
-                    if (inverse) {
-                        candidate = inverse(candidate);
-                    }
-                } catch (NoninvertibleTransformException e) {
-                    // The transform is non invertible. Do not log any error message, since it
-                    // may be a normal failure - the transform is not required to be invertible.
-                    continue;
-                } catch (FactoryException exception) {
-                    // Other kind of error. Log a warning and try the next coordinate operation.
-                    log(exception, authorityFactory);
-                    continue;
-                } catch (BackingStoreException exception) {
-                    log(exception, authorityFactory);
+        for (final Iterator<CoordinateOperation> it=operations.iterator(); it.hasNext();) {
+            CoordinateOperation candidate;
+            try {
+                // The call to it.next() must be inside the try..catch block,
+                // which is why we don't use the Java 5 for loop syntax here.
+                candidate = it.next();
+                if (candidate == null) {
                     continue;
                 }
+                if (inverse) {
+                    candidate = inverse(candidate);
+                }
+            } catch (NoninvertibleTransformException exception) {
+                // The transform is non invertible. Log only at the fine level, since it
+                // may be a normal failure - the transform is not required to be invertible.
+                log(Level.FINE, exception, authorityFactory, true);
+                continue;
+            } catch (FactoryException exception) {
+                // Other kind of error. Log a warning and try the next coordinate operation.
+                // Note that this exception can occur only during the call to 'inverse', not
+                // during the iteration.
+                log(exception, authorityFactory);
+                continue;
+            } catch (BackingStoreException exception) {
+                // Exception during the iteration. It may be a failure to instantiate
+                // the CoordinateOperation because of an unsupported operation method.
+                final Throwable cause = exception.getCause();
+                log(cause != null ? cause : exception, authorityFactory);
+                continue;
+            }
+            /*
+             * It is possible that the Identifier in user's CRS is not quite right.   For
+             * example the user may have created his source and target CRS from WKT using
+             * a different axis order than the official one and still call it "EPSG:xxxx"
+             * as if it were the official CRS. Checks if the source and target CRS for the
+             * operation just created are really the same (ignoring metadata) than the one
+             * specified by the user.
+             */
+            CoordinateReferenceSystem source = candidate.getSourceCRS();
+            CoordinateReferenceSystem target = candidate.getTargetCRS();
+            try {
+                final MathTransform prepend, append;
+                if (!equalsIgnoreMetadata(sourceCRS, source)) {
+                    prepend = getMathTransform(sourceCRS, source);
+                    source  = sourceCRS;
+                } else {
+                    prepend = null;
+                }
+                if (!equalsIgnoreMetadata(target, targetCRS)) {
+                    append = getMathTransform(target, targetCRS);
+                    target = targetCRS;
+                } else {
+                    append = null;
+                }
+                candidate = transform(source, prepend, candidate, append, target);
+            } catch (FactoryException exception) {
                 /*
-                 * It is possible that the Identifier in user's CRS is not quite right.   For
-                 * example the user may have created his source and target CRS from WKT using
-                 * a different axis order than the official one and still call it "EPSG:xxxx"
-                 * as if it were the official CRS. Checks if the source and target CRS for the
-                 * operation just created are really the same (ignoring metadata) than the one
-                 * specified by the user.
+                 * We have been unable to create a transform from the user-provided CRS to the
+                 * authority-provided CRS. In theory, the two CRS should have been the same and
+                 * the transform would have been the identity transform. In practice, it is not
+                 * always the case because of axis swapping issue (see GEOT-854). The transform
+                 * that we just tried to create in the two previous calls to the createOperation
+                 * method should have been merely an affine transform for swapping axis. If they
+                 * failed, then we are likely to fail for all other transforms provided in the
+                 * database. So stop the loop now (at the very least, do not log the same
+                 * warning for every pass of this loop!)
                  */
-                CoordinateReferenceSystem source = candidate.getSourceCRS();
-                CoordinateReferenceSystem target = candidate.getTargetCRS();
-                try {
-                    final MathTransform prepend, append;
-                    if (!equalsIgnoreMetadata(sourceCRS, source)) try {
-                        processing.set(Boolean.TRUE);
-                        prepend = createOperation(sourceCRS, source).getMathTransform();
-                        source  = sourceCRS;
-                    } finally {
-                        processing.set(Boolean.FALSE);
-                    } else {
-                        prepend = null;
-                    }
-                    if (!equalsIgnoreMetadata(target, targetCRS)) try {
-                        processing.set(Boolean.TRUE);
-                        append = createOperation(target, targetCRS).getMathTransform();
-                        target = targetCRS;
-                    } finally {
-                        processing.set(Boolean.FALSE);
-                    } else {
-                        append = null;
-                    }
-                    candidate = transform(source, prepend, candidate, append, target);
-                } catch (FactoryException exception) {
-                    /*
-                     * We have been unable to create a transform from the user-provided CRS to the
-                     * authority-provided CRS. In theory, the two CRS should have been the same and
-                     * the transform would have been the identity transform. In practice, it is not
-                     * always the case because of axis swapping issue (see GEOT-854). The transform
-                     * that we just tried to create in the two previous calls to the createOperation
-                     * method should have been merely an affine transform for swapping axis. If they
-                     * failed, then we are likely to fail for all other transforms provided in the
-                     * database. So stop the loop now (at the very least, do not log the same
-                     * warning for every pass of this loop!)
-                     */
-                    log(exception, authorityFactory);
-                    return null;
-                }
-                if (accept(candidate)) {
-                    return candidate;
-                }
+                log(exception, authorityFactory);
+                return null;
+            }
+            if (accept(candidate)) {
+                return candidate;
             }
         }
         return null;
@@ -401,7 +422,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
                 if (op.length == 1) {
                     op[0] = transform(sourceCRS, prepend, first, append, targetCRS);
                 } else {
-                    final CoordinateOperation last = op[op.length-1];
+                    final CoordinateOperation last = op[op.length - 1];
                     op[0]           = transform(sourceCRS, prepend, first, null, first.getTargetCRS());
                     op[op.length-1] = transform(last.getSourceCRS(), null, last, append, targetCRS);
                 }
@@ -439,21 +460,39 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
 
     /**
      * Logs a warning when an object can't be created from the specified factory.
+     *
+     * @param exception The exception which occurred.
+     * @param factory The factory used in the attempt to create an operation.
      */
-    private static void log(final Exception exception, final AuthorityFactory factory) {
-        final boolean isOptional = (exception instanceof OptionalFactoryOperationException);
-        final LogRecord record = Loggings.format(Level.WARNING,
-                Loggings.Keys.CANT_CREATE_COORDINATE_OPERATION_$1,
-                factory.getAuthority().getTitle());
-        record.setSourceClassName(AuthorityBackedFactory.class.getName());
-        record.setSourceMethodName("createFromDatabase");
-        if (isOptional) {
-            record.setMessage(Loggings.format(record) + ' ' + exception.getLocalizedMessage());
-        } else {
-            record.setThrown(exception);
+    private static void log(final Throwable exception, final AuthorityFactory factory) {
+        log(Level.WARNING, exception, factory, exception instanceof OptionalFactoryOperationException);
+    }
+
+    /**
+     * Logs an exception at the given level.
+     *
+     * @param level      The level to use for logging.
+     * @param exception  The exception which occurred.
+     * @param factory    The factory used in the attempt to create an operation.
+     * @param isOptional Whatever the operation we just attempted was optional.
+     */
+    private static void log(final Level level, final Throwable exception,
+            final AuthorityFactory factory, final boolean isOptional)
+    {
+        if (LOGGER.isLoggable(level)) {
+            final LogRecord record = Loggings.format(level,
+                    Loggings.Keys.CANT_CREATE_COORDINATE_OPERATION_$1,
+                    factory.getAuthority().getTitle());
+            record.setSourceClassName(AuthorityBackedFactory.class.getName());
+            record.setSourceMethodName("createFromDatabase");
+            if (isOptional) {
+                record.setMessage(Loggings.format(record) + ' ' + exception.getLocalizedMessage());
+            } else {
+                record.setThrown(exception);
+            }
+            record.setLoggerName(LOGGER.getName());
+            LOGGER.log(record);
         }
-        record.setLoggerName(LOGGER.getName());
-        LOGGER.log(record);
     }
 
     /**
@@ -464,7 +503,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
      * operations to be returned.
      *
      * @param  operation The operation that {@code createFromDatabase} wants to return.
-     * @return {@code true} if the given operaiton is acceptable, or {@code false} if
+     * @return {@code true} if the given operation is acceptable, or {@code false} if
      *         {@code createFromDatabase} should look for an other one.
      *
      * @since 2.3
