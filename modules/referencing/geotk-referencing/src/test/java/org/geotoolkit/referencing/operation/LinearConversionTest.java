@@ -21,23 +21,14 @@ import java.util.Random;
 import javax.measure.converter.ConversionException;
 import javax.measure.unit.SI;
 
-import org.opengis.util.FactoryException;
-import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.Matrix;
 
-import org.geotoolkit.referencing.crs.DefaultProjectedCRS;
 import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
-import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
-import org.geotoolkit.referencing.operation.matrix.Matrix3;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
-import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.WGS84;
-import static org.geotoolkit.referencing.cs.DefaultCartesianCS.PROJECTED;
 import static org.opengis.referencing.cs.AxisDirection.*;
 
 import org.junit.*;
@@ -48,7 +39,7 @@ import static org.junit.Assert.*;
  * Tests some operation steps involved in coordinate operation creation.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.16
  *
  * @since 2.2
  */
@@ -160,56 +151,5 @@ public final class LinearConversionTest {
             {1000,  0,   0,   0},
             {0,     0,   0,   1}
         }), matrix);
-    }
-
-    /**
-     * Test the {@link DefaultProjectedCRS#createLinearConversion} method.
-     * Note: this requires a working {@link MathTransformFactory}.
-     *
-     * @throws FactoryException If the conversion can't be created.
-     */
-    @Test
-    public void testCreateLinearConversion() throws FactoryException {
-        final MathTransformFactory   factory = new DefaultMathTransformFactory();
-        final ParameterValueGroup parameters = factory.getDefaultParameters("Mercator_1SP");
-        DefaultProjectedCRS sourceCRS, targetCRS;
-        MathTransform transform;
-        Matrix conversion;
-
-        parameters.parameter("semi_major").setValue(DefaultEllipsoid.WGS84.getSemiMajorAxis());
-        parameters.parameter("semi_minor").setValue(DefaultEllipsoid.WGS84.getSemiMinorAxis());
-        transform = factory.createParameterizedTransform(parameters);
-        sourceCRS = new DefaultProjectedCRS("source", WGS84, transform, PROJECTED);
-
-        parameters.parameter("false_easting" ).setValue(1000);
-        parameters.parameter("false_northing").setValue(2000);
-        transform = factory.createParameterizedTransform(parameters);
-        targetCRS = new DefaultProjectedCRS("source", WGS84, transform, PROJECTED);
-
-        conversion = ProjectionAnalyzer.createLinearConversion(sourceCRS, targetCRS, EPS);
-        Matrix3 expected = new Matrix3(
-            1,  0,  1000,
-            0,  1,  2000,
-            0,  0,     1
-        );
-        assertTrue(expected.equals(conversion, EPS));
-
-        parameters.parameter("scale_factor").setValue(2);
-        transform = factory.createParameterizedTransform(parameters);
-        targetCRS = new DefaultProjectedCRS("source", WGS84, transform, PROJECTED);
-
-        conversion = ProjectionAnalyzer.createLinearConversion(sourceCRS, targetCRS, EPS);
-        expected = new Matrix3(
-            2,  0,  1000,
-            0,  2,  2000,
-            0,  0,     1
-        );
-        assertTrue(expected.equals(conversion, EPS));
-
-        parameters.parameter("semi_minor").setValue(DefaultEllipsoid.WGS84.getSemiMajorAxis());
-        transform = factory.createParameterizedTransform(parameters);
-        targetCRS = new DefaultProjectedCRS("source", WGS84, transform, PROJECTED);
-        conversion = ProjectionAnalyzer.createLinearConversion(sourceCRS, targetCRS, EPS);
-        assertNull(conversion);
     }
 }

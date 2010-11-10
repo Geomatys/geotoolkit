@@ -61,7 +61,6 @@ import static javax.measure.unit.NonSI.DEGREE_ANGLE;
 import static org.geotoolkit.measure.Units.MILLISECOND;
 import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
 import static org.geotoolkit.referencing.AbstractIdentifiedObject.nameMatches;
-import static org.geotoolkit.referencing.operation.ProjectionAnalyzer.createLinearConversion;
 
 
 /**
@@ -904,20 +903,6 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                                                       final ProjectedCRS targetCRS)
             throws FactoryException
     {
-        /*
-         * First, check if a linear path exists from sourceCRS to targetCRS.
-         * If both projected CRS use the same projection and the same horizontal datum,
-         * then only axis orientation and units may have been changed. We do not need
-         * to perform the tedious  ProjectedCRS --> GeographicCRS --> ProjectedCRS  chain.
-         * We can apply a much shorter conversion using only an affine transform.
-         *
-         * This shorter path is essential for proper working of
-         * createOperationStep(GeographicCRS,ProjectedCRS).
-         */
-        final Matrix linear = createLinearConversion(sourceCRS, targetCRS, EPS);
-        if (linear != null) {
-            return createFromAffineTransform(AXIS_CHANGES, sourceCRS, targetCRS, linear);
-        }
         /*
          * Apply the transformation in 3 steps (the 3 arrows below):
          *
