@@ -237,16 +237,19 @@ public final class Registry {
                      *
                      * org.geotoolkit.internal.image.io.Formats.getReaderByFormatName(String)
                      */
-                    if (provider.getClass().getName().startsWith("com.sun.media.")) {
+                    final String classname = provider.getClass().getName();
+                    if (classname.startsWith("com.sun.media.")) {
                         codeclib = provider;
-                    } else {
-                        standard = provider;
+                        break;
                     }
-                    break;
+                    if (classname.startsWith("com.sun.imageio.")) {
+                        standard = provider;
+                        break;
+                    }
                 }
             }
         }
-        if (standard!=null && codeclib!=null) {
+        if (standard != null && codeclib != null) {
             final boolean changed;
             if (allowed) {
                 changed = registry.setOrdering(category, codeclib, standard);
