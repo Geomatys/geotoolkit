@@ -118,7 +118,7 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
 
     /**
      * Constructs a parameter group with default name format matching
-     * <cite><A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">Well
+     * <cite><A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">Well
      * Known Text</A></cite> usages.
      *
      * @param properties Set of properties. Should contains at least {@code "name"}.

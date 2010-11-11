@@ -152,7 +152,7 @@ public class DefaultImageDatum extends AbstractDatum implements ImageDatum {
 
     /**
      * Format the inner part of a
-     * <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
+     * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
      * Known Text</cite> (WKT)</A> element.
      *
      * {@note WKT of image datum is not yet part of OGC specification.}

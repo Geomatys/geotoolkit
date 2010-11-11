@@ -112,7 +112,7 @@
  * <p>
  * In order to reduce the risk of confusion, this package never defines south oriented
  * map projection. This rule removes all ambiguity when reading a transform in
- * <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
+ * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
  * Known Text</cite> (WKT)</A> format, since only the north-oriented variant is used and
  * the affine transform coefficients tell exactly which axis flips are applied.
  *

@@ -185,7 +185,7 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
      * Returns the vertical datum type from a legacy code. The legacy codes were defined in
      * <A HREF="http://www.opengis.org/docs/01-009.pdf">Coordinate Transformation Services</A>
      * (OGC 01-009), which also defined the
-     * <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
+     * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
      * Known Text</cite> (WKT)</A> format. This method is used for WKT parsing.
      *
      * @param  code The legacy vertical datum code.
@@ -238,7 +238,7 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
 
     /**
      * Formats the inner part of a
-     * <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html#VERT_DATUM"><cite>Well
+     * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html#VERT_DATUM"><cite>Well
      * Known Text</cite> (WKT)</A> element.
      *
      * @param  formatter The formatter to use.

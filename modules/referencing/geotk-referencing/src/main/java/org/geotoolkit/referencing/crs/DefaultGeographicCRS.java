@@ -309,7 +309,7 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
 
     /**
      * Formats the inner part of a
-     * <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html#GEOGCS"><cite>Well
+     * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html#GEOGCS"><cite>Well
      * Known Text</cite> (WKT)</A> element.
      *
      * @param  formatter The formatter to use.

@@ -215,7 +215,7 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
 
     /**
      * Formats the inner part of a
-     * <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
+     * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
      * Known Text</cite> (WKT)</A> element. The default implementation writes the following
      * elements:
      * <p>

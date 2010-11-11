@@ -64,7 +64,7 @@ import org.geotoolkit.resources.Vocabulary;
  * instantiate it. Typical applications should create instances of the most specific subclass with
  * {@code Default} prefix instead. An exception to this rule may occurs when it is not possible to
  * identify the exact type. For example it is not possible to infer the exact coordinate system from
- * <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
+ * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
  * Known Text</cite></A> is some cases (e.g. in a {@code LOCAL_CS} element). In such exceptional
  * situation, a plain {@code AbstractCS} object may be instantiated.
  *
@@ -660,7 +660,7 @@ next:   for (int i=0; i<axis.length; i++) {
 
     /**
      * Format the inner part of a
-     * <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
+     * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
      * Known Text</cite> (WKT)</A> element. Note that WKT is not yet defined for coordinate system.
      * Current implementation list the axis contained in this CS.
      *

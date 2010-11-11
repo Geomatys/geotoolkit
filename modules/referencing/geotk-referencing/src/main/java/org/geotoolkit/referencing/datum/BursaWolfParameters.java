@@ -257,7 +257,7 @@ public class BursaWolfParameters extends FormattableObject implements Cloneable,
 
     /**
      * Formats the inner part of a
-     * <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html#TOWGS84"><cite>Well
+     * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html#TOWGS84"><cite>Well
      * Known Text</cite> (WKT)</A> element. The WKT contains the parameters in <var>translation</var>,
      * <var>rotation</var>, <var>scale</var> order, as in
      * <code>TOWGS84[{@linkplain #dx}, {@linkplain #dy}, {@linkplain #dz},

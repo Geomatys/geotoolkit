@@ -308,7 +308,7 @@ public class AbstractDatum extends AbstractIdentifiedObject implements Datum {
 
     /**
      * Formats the inner part of a
-     * <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
+     * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
      * Known Text</cite> (WKT)</A> element.
      *
      * {@note All subclasses will override this method, but only <code>DefaultGeodeticDatum</code>

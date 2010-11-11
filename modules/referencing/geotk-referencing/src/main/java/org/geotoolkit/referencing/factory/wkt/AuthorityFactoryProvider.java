@@ -33,7 +33,7 @@ import org.geotoolkit.factory.Hints;
  * Convenience class for creating {@link CRSAuthorityFactory} instances using custom CRS definitions.
  * Most methods in this class expect the {@linkplain CoordinateReferenceSystem Coordinate Reference
  * System} (CRS) definitions to be provided in
- * <cite><a href="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">Well
+ * <cite><a href="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">Well
  * Known Text</a></cite> (WKT) form, since this is often the easiest way to define custom CRS.
  * <p>
  * The following example creates a factory for ESRI codes. The CRS are defined in a

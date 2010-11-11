@@ -18,7 +18,7 @@
 
 /**
  * Utility classes which enable dynamic binding to factory implementations at runtime. Because Geotk
- * core API consists mostly of interfaces (including <A HREF="http://geoapi.sourceforge.net">GeoAPI</A>),
+ * core API consists mostly of interfaces (including <A HREF="http://www.geoapi.org">GeoAPI</A>),
  * factories play a role in how developers use the API. Although the interfaces that are declared in GeoAPI
  * are implemented in various Geotk packages, they should not be used directly. Instead they should be
  * obtained through factories.

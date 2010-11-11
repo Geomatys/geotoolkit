@@ -877,7 +877,7 @@ public class Formatter {
 
     /**
      * Returns {@code true} if the WKT in this formatter is not strictly compliant to the
-     * <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">WKT
+     * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">WKT
      * specification</A>. This method returns {@code true} if {@link #setInvalidWKT} has
      * been invoked at least once. The action to take regarding invalid WKT is caller-dependent.
      * For example {@link FormattableObject#toString} will accepts loose WKT formatting and ignore
@@ -903,7 +903,7 @@ public class Formatter {
 
     /**
      * Set a flag marking the current WKT as not strictly compliant to the
-     * <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">WKT
+     * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">WKT
      * specification</A>. This method is invoked by {@link FormattableObject#formatWKT} methods when
      * the object to format is more complex than what the WKT specification allows. For example this
      * method is invoked when an {@linkplain org.geotoolkit.referencing.crs.DefaultEngineeringCRS

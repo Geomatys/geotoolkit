@@ -36,7 +36,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
 
 
 /**
- * <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
+ * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
  * Known Text</cite> (WKT)</A> parser for {@linkplain MathTransform math transform}s. Note that
  * while this base class is restricted to math transforms, subclasses may parse a wider range of
  * objects.
@@ -46,7 +46,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
  * @author Rueben Schulz (UBC)
  * @version 3.00
  *
- * @see <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">Well Know Text specification</A>
+ * @see <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">Well Know Text specification</A>
  *
  * @since 2.0
  * @level advanced

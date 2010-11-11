@@ -18,7 +18,7 @@
 
 /**
  * {@linkplain org.opengis.referencing.AuthorityFactory Authority factories} for CRS parsed from
- * <cite><a href="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">Well
+ * <cite><a href="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">Well
  * Known Text</a></cite> (WKT). This package contains two main implementations:
  * <p>
  * <ul>

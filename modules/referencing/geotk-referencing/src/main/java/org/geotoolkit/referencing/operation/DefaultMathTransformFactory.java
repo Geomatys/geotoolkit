@@ -595,7 +595,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
 
     /**
      * Creates a math transform object from a
-     * <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
+     * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
      * Known Text</cite> (WKT)</A>.
      *
      * @param  text Math transform encoded in Well-Known Text format.

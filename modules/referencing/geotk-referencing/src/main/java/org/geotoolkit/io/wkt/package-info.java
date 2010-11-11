@@ -17,7 +17,7 @@
  */
 
 /**
- * <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
+ * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
  * Known Text</cite> (WKT)</A> parsing and formatting. This package provides the internal mechanism
  * used by Geotk implementation. Most users don't need to know about it, except if they want to
  * customize the WKT output. For example it is possible to:
@@ -46,7 +46,7 @@
  *
  * {@section References}
  * <ul>
- *   <li><A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">Well Know Text specification</A></li>
+ *   <li><A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">Well Know Text specification</A></li>
  *   <li><A HREF="http://home.gdal.org/projects/opengis/wktproblems.html">OGC WKT Coordinate System Issues</A></li>
  *   <li><A HREF="http://en.wikipedia.org/wiki/Well-known_text">Well Known Text in Wikipedia</A></li>
  * </ul>

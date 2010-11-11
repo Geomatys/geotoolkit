@@ -41,7 +41,7 @@ import org.geotoolkit.util.converter.Classes;
 /**
  * Enumeration of some metadata standards. A standard is defined by a set of Java interfaces
  * in a specific package or subpackages. For example the {@linkplain #ISO_19115 ISO 19115}
- * standard is defined by <A HREF="http://geoapi.sourceforge.net">GeoAPI</A> interfaces in
+ * standard is defined by <A HREF="http://www.geoapi.org">GeoAPI</A> interfaces in
  * the {@link org.opengis.metadata} package and subpackages.
  * <p>
  * This class provides some methods operating on metadata instances through
@@ -75,7 +75,7 @@ import org.geotoolkit.util.converter.Classes;
 public final class MetadataStandard {
     /**
      * An instance working on ISO 19111 standard as defined by
-     * <A HREF="http://geoapi.sourceforge.net">GeoAPI</A> interfaces
+     * <A HREF="http://www.geoapi.org">GeoAPI</A> interfaces
      * in the {@link org.opengis.referencing} package and subpackages.
      *
      * @since 2.5
@@ -84,14 +84,14 @@ public final class MetadataStandard {
 
     /**
      * An instance working on ISO 19115 standard as defined by
-     * <A HREF="http://geoapi.sourceforge.net">GeoAPI</A> interfaces
+     * <A HREF="http://www.geoapi.org">GeoAPI</A> interfaces
      * in the {@link org.opengis.metadata} package and subpackages.
      */
     public static final MetadataStandard ISO_19115;
 
     /**
      * An instance working on ISO 19119 standard as defined by
-     * <A HREF="http://geoapi.sourceforge.net">GeoAPI</A> interfaces
+     * <A HREF="http://www.geoapi.org">GeoAPI</A> interfaces
      * in the {@link org.opengis.service} package and subpackages.
      *
      * @since 2.5
@@ -100,7 +100,7 @@ public final class MetadataStandard {
 
     /**
      * An instance working on ISO 19123 standard as defined by
-     * <A HREF="http://geoapi.sourceforge.net">GeoAPI</A> interfaces
+     * <A HREF="http://www.geoapi.org">GeoAPI</A> interfaces
      * in the {@link org.opengis.coverage} package and subpackages.
      *
      * @since 3.06

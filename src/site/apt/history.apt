@@ -63,7 +63,7 @@ Geotoolkit.org History
 
   During this period, discussions also took place with the developers of OpenJUMP. That project
   eventually decided not to join in and work on the GeoTools library but did agree to help create
-  a common API. Consequently James Macgill created the {{{http://geoapi.sourceforge.net}GeoAPI}}
+  a common API. Consequently James Macgill created the {{{http://www.geoapi.org}GeoAPI}}
   project on December 23, 2002. GeoAPI aims to define a common set of Java interfaces for geospatial
   applications which are as neutral as possible with regards to implementation, similar to the JDBC
   interfaces for SQL database access. The GeoAPI project attracted the interest of the

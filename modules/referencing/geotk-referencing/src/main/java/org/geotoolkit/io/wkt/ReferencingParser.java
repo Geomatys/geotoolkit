@@ -71,7 +71,7 @@ import static org.geotoolkit.referencing.datum.DefaultVerticalDatum.getVerticalD
 
 
 /**
- * <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
+ * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
  * Known Text</cite> (WKT)</A> parser for referencing objects. This include, but is not limited too,
  * {@linkplain CoordinateReferenceSystem Coordinate Reference System} objects. This parser can parse
  * {@linkplain MathTransform Math Transform} objects as well because they are part of the WKT's
@@ -81,7 +81,7 @@ import static org.geotoolkit.referencing.datum.DefaultVerticalDatum.getVerticalD
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
  *
- * @see <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">Well Know Text specification</A>
+ * @see <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">Well Know Text specification</A>
  * @see <A HREF="http://home.gdal.org/projects/opengis/wktproblems.html">OGC WKT Coordinate System Issues</A>
  *
  * @since 2.0

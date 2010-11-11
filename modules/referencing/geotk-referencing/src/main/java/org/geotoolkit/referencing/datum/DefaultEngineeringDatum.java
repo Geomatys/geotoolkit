@@ -123,7 +123,7 @@ public class DefaultEngineeringDatum extends AbstractDatum implements Engineerin
 
     /**
      * Formats the inner part of a
-     * <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html#LOCAL_DATUM"><cite>Well
+     * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html#LOCAL_DATUM"><cite>Well
      * Known Text</cite> (WKT)</A> element.
      *
      * @param  formatter The formatter to use.

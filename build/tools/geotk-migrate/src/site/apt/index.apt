@@ -25,7 +25,7 @@ Migrate from GeoTools to Geotoolkit
          source file. This operation does nothing in the common case where the class name is the same
          in Geotoolkit than in GeoTools.
 
-  Note that those changes apply to GeoTools classes only; the {{{http://geoapi.sourceforge.net/index.html}GeoAPI}}
+  Note that those changes apply to GeoTools classes only; the {{{http://www.geoapi.org/index.html}GeoAPI}}
   interfaces are the same. Any code that use only the GeoAPI interfaces should be able to switch smoothly between
   GeoTools and Geotk.
 

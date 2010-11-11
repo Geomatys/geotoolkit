@@ -398,7 +398,7 @@ public abstract class AbstractParameter extends FormattableObject
 
     /**
      * Formats the inner part of this parameter as
-     * <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html#PARAMETER"><cite>Well
+     * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html#PARAMETER"><cite>Well
      * Known Text</cite> (WKT)</A>. This method doesn't need to be overridden, since the formatter
      * already know how to {@linkplain Formatter#append(GeneralParameterValue) format parameters}.
      */

@@ -1065,7 +1065,7 @@ public abstract class AbstractMathTransform extends FormattableObject
 
     /**
      * Formats the inner part of a
-     * <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html#PARAM_MT"><cite>Well
+     * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html#PARAM_MT"><cite>Well
      * Known Text</cite> (WKT)</A> element. The default implementation formats all parameter values
      * returned by {@link #getParameterValues}. The parameter group name is used as the math
      * transform name.
@@ -1318,7 +1318,7 @@ public abstract class AbstractMathTransform extends FormattableObject
 
         /**
          * Formats the inner part of a
-         * <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html#INVERSE_MT"><cite>Well
+         * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html#INVERSE_MT"><cite>Well
          * Known Text</cite> (WKT)</A> element. If this inverse math transform
          * has any parameter values, then this method format the WKT as in the
          * {@linkplain AbstractMathTransform#formatWKT super-class method}. Otherwise

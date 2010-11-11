@@ -463,7 +463,7 @@ public final class CRS {
 
     /**
      * Parses a
-     * <A HREF="http://geoapi.sourceforge.net/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
+     * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well
      * Known Text</cite></A> (WKT) into a CRS object. This convenience method is a
      * shorthand for the following:
      *

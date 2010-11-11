@@ -17,7 +17,7 @@
     <links>
       <item name="OGC"     href="http://www.opengeospatial.org/"/>
       <item name="OSGEO"   href="http://www.osgeo.org/"         />
-      <item name="GeoAPI"  href="http://geoapi.sourceforge.net/"/>
+      <item name="GeoAPI"  href="http://www.geoapi.org/"/>
       <item name="Javadoc" href="http://javadoc.geotoolkit.org/"/>
     </links>
 
