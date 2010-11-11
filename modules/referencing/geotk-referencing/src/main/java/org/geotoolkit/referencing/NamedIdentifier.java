@@ -22,7 +22,6 @@ package org.geotoolkit.referencing;
 
 import java.util.Map;
 import java.util.List;
-import java.util.HashMap;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -51,22 +50,22 @@ import org.geotoolkit.lang.Immutable;
  * and a {@linkplain GenericName name}. The main interface implemented by this class is
  * {@link ReferenceIdentifier}. However, this class also implements {@link GenericName}
  * in order to make it possible to reuse the same identifiers in the list of
- * {@linkplain AbstractIdentifiedObject#getAlias aliases}. Casting an alias's
+ * {@linkplain AbstractIdentifiedObject#getAlias aliases}. Casting an alias
  * {@code GenericName} to an {@code ReferenceIdentifier} gives access to more
  * informations, like the URL of the authority.
  * <p>
- * The generic name will be infered from {@code ReferenceIdentifier} attributes. More
+ * The generic name will be inferred from {@code ReferenceIdentifier} attributes. More
  * specifically, a {@linkplain ScopedName scoped name} will be created using the shortest
  * authority's {@linkplain Citation#getAlternateTitles alternate titles} (or the
  * {@linkplain Citation#getTitle main title} if there is no alternate titles) as the
  * {@linkplain ScopedName#scope scope}, and the {@linkplain #getCode code} as the
  * {@linkplain ScopedName#tip tip}. This heuristic rule seems reasonable since,
  * according ISO 19115, the {@linkplain Citation#getAlternateTitles alternate titles}
- * often contains abreviation (for example "DCW" as an alternative title for
+ * often contains abbreviation (for example "DCW" as an alternative title for
  * "<cite>Digital Chart of the World</cite>").
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.03
+ * @version 3.16
  *
  * @since 2.0
  * @module
@@ -105,6 +104,26 @@ public class NamedIdentifier extends DefaultReferenceIdentifier implements Gener
     private GenericName name;
 
     /**
+     * Creates a new identifier from the specified one. This is a copy constructor
+     * which will get the code, codespace, authority, version and (if available)
+     * the remarks from the given identifier.
+     * <p>
+     * If the given identifier implements the {@link GenericName} interface, then calls to
+     * {@link #tip()}, {@link #head()}, {@link #scope()} and similar methods will delegates
+     * to that name.
+     *
+     * @param identifier The identifier to copy.
+     *
+     * @since 3.16
+     */
+    public NamedIdentifier(final ReferenceIdentifier identifier) {
+        super(identifier);
+        if (identifier instanceof GenericName) {
+            name = (GenericName) identifier;
+        }
+    }
+
+    /**
      * Constructs an identifier from a set of properties. The content of the properties map is used
      * as described in the {@linkplain DefaultReferenceIdentifier#DefaultReferenceIdentifier(Map)
      * super-class constructor}.
@@ -114,7 +133,7 @@ public class NamedIdentifier extends DefaultReferenceIdentifier implements Gener
      * @throws IllegalArgumentException if a property is invalid for some other reason.
      */
     public NamedIdentifier(final Map<String,?> properties) throws IllegalArgumentException {
-        this(properties, true);
+        super(properties);
     }
 
     /**
@@ -157,19 +176,7 @@ public class NamedIdentifier extends DefaultReferenceIdentifier implements Gener
      * @param version   The version, or {@code null} if none.
      */
     public NamedIdentifier(final Citation authority, final String code, final String version) {
-        this(toMap(authority, code, version));
-    }
-
-    /**
-     * Work around for RFE #4093999 in Sun's bug database
-     * ("Relax constraint on placement of this()/super() call in constructors").
-     */
-    private static Map<String,?> toMap(final Citation authority, final String code, final String version) {
-        final Map<String,Object> properties = new HashMap<String,Object>(4);
-        if (authority != null) properties.put(AUTHORITY_KEY, authority);
-        if (code      != null) properties.put(CODE_KEY,      code);
-        if (version   != null) properties.put(VERSION_KEY,   version);
-        return properties;
+        super(authority, getCodeSpace(authority), code, version, null);
     }
 
     /**
@@ -185,18 +192,16 @@ public class NamedIdentifier extends DefaultReferenceIdentifier implements Gener
      * @throws InvalidParameterValueException if a property has an invalid value.
      * @throws IllegalArgumentException if a property is invalid for some other reason.
      */
-    NamedIdentifier(final Map<String,?> properties, final boolean standalone)
-            throws IllegalArgumentException
-    {
+    NamedIdentifier(final Map<String,?> properties, final boolean standalone) throws IllegalArgumentException {
         super(properties, standalone);
     }
 
     /**
      * Returns the generic name of this identifier. The name will be constructed
-     * automatically the first time it will be needed. The name's scope is infered
+     * automatically the first time it will be needed. The name's scope is inferred
      * from the shortest alternative title (if any). This heuristic rule seems reasonable
      * since, according ISO 19115, the {@linkplain Citation#getAlternateTitles alternate
-     * titles} often contains abreviation (for example "DCW" as an alternative title for
+     * titles} often contains abbreviation (for example "DCW" as an alternative title for
      * "Digital Chart of the World"). If no alternative title is found or if the main title
      * is yet shorter, then it is used.
      *

@@ -34,6 +34,7 @@ import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.naming.DefaultNameSpace;
 
 
 /**
@@ -201,7 +202,7 @@ public class ReferenceSystemMetadata implements ReferenceSystem, Serializable {
             codespace = null;
             authority = null;
         }
-        return toString("RS", authority, codespace, code);
+        return toString("RS", authority, codespace, code, false);
     }
 
     /**
@@ -211,18 +212,22 @@ public class ReferenceSystemMetadata implements ReferenceSystem, Serializable {
      * @param  authority The authority to write in the {@code "AUTHORITY"} element.
      * @param  codespace Usually an abbreviation of the authority name.
      * @param  code The code to write in the {@code "AUTHORITY"} element, or {@code null} if none.
+     * @param  deprecated {@code true} if the object to format is deprecated.
      * @return The pseudo-WKT.
      */
     public static String toString(final String type, final Citation authority,
-            final String codespace, final String code)
+            final String codespace, final String code, final boolean deprecated)
     {
         final StringBuilder buffer = new StringBuilder(type).append("[\"");
         if (codespace != null) {
-            buffer.append(codespace).append(':');
+            buffer.append(codespace).append(DefaultNameSpace.DEFAULT_SEPARATOR);
         }
         buffer.append(code).append('"');
         if (authority != null) {
-            buffer.append(", AUTHORITY[\"").append(authority.getTitle()).append("\",\"").append(code).append("\"]");
+            buffer.append(", AUTHORITY[\"").append(authority.getTitle()).append("\"]");
+        }
+        if (deprecated) {
+            buffer.append(", DEPRECATED");
         }
         return buffer.append(']').toString();
     }

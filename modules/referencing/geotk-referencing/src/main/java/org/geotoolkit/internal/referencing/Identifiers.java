@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.NoSuchElementException;
 import javax.measure.unit.SI;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
@@ -65,7 +64,7 @@ import static org.geotoolkit.util.collection.XCollections.hashMapCapacity;
  * The current approach is too specific to deserve a public API.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.14
+ * @version 3.16
  *
  * @since 3.00
  * @module
@@ -120,36 +119,48 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
      *
      * {@note ESRI uses <code>"Latitude_Of_Center"</code> in orthographic.}
      */
-    public static final Identifiers LATITUDE_OF_ORIGIN = new Identifiers(new NamedIdentifier[] {
-            new NamedIdentifier(OGC,     "latitude_of_origin"),
-            new NamedIdentifier(ESRI,    "Latitude_Of_Origin"),
-            new NamedIdentifier(OGC,     "latitude_of_center"),
-            new NamedIdentifier(ESRI,    "Latitude_Of_Center"),
-            new NamedIdentifier(ESRI,    "Standard_Parallel_1"),
-            new NamedIdentifier(EPSG,    "Latitude of false origin"),
-            new NamedIdentifier(EPSG,    "Latitude of natural origin"),
-            new NamedIdentifier(EPSG,    "Spherical latitude of origin"),
-            new NamedIdentifier(EPSG,    "Latitude of projection centre"),
-            new NamedIdentifier(GEOTIFF, "NatOriginLat"),
-            new NamedIdentifier(GEOTIFF, "FalseOriginLat"),
-            new NamedIdentifier(GEOTIFF, "ProjCenterLat"),
-            new NamedIdentifier(GEOTIFF, "CenterLat")
-        }, 0, -90, 90, NonSI.DEGREE_ANGLE, true);
+    public static final Identifiers LATITUDE_OF_ORIGIN;
 
     /**
      * The operation parameter descriptor for the standard parallel 1 parameter value.
      * Valid values range is from -90 to 90&deg;. This parameter is optional.
      */
-    public static final Identifiers STANDARD_PARALLEL_1 = new Identifiers(new NamedIdentifier[] {
+    public static final Identifiers STANDARD_PARALLEL_1;
+
+    /**
+     * Creates the above constants together in order to share instances of identifiers
+     * that appear in both cases. Those common identifiers are misplaced for historical
+     * reasons (in the EPSG case, one of them is usually deprecated). We still need to
+     * declare them in both places for compatibility with historical data.
+     */
+    static {
+        final NamedIdentifier esri = new NamedIdentifier(ESRI, "Standard_Parallel_1");
+        final NamedIdentifier epsg = new NamedIdentifier(EPSG, "Latitude of 1st standard parallel");
+
+        LATITUDE_OF_ORIGIN = new Identifiers(new NamedIdentifier[] {
+            new NamedIdentifier(OGC,     "latitude_of_origin"),
+            new NamedIdentifier(ESRI,    "Latitude_Of_Origin"),
+            new NamedIdentifier(OGC,     "latitude_of_center"),
+            new NamedIdentifier(ESRI,    "Latitude_Of_Center"), esri,
+            new NamedIdentifier(EPSG,    "Latitude of false origin"),
+            new NamedIdentifier(EPSG,    "Latitude of natural origin"),
+            new NamedIdentifier(EPSG,    "Spherical latitude of origin"),
+            new NamedIdentifier(EPSG,    "Latitude of projection centre"), epsg,
+            new NamedIdentifier(GEOTIFF, "NatOriginLat"),
+            new NamedIdentifier(GEOTIFF, "FalseOriginLat"),
+            new NamedIdentifier(GEOTIFF, "ProjCenterLat"),
+            new NamedIdentifier(GEOTIFF, "CenterLat"),
+        }, 0, -90, 90, NonSI.DEGREE_ANGLE, true);
+
+        STANDARD_PARALLEL_1 = new Identifiers(new NamedIdentifier[] {
             new NamedIdentifier(OGC,     "standard_parallel_1"),
-            new NamedIdentifier(ESRI,    "Standard_Parallel_1"),
             new NamedIdentifier(OGC,     "pseudo_standard_parallel_1"),
-            new NamedIdentifier(ESRI,    "Pseudo_Standard_Parallel_1"),
-            new NamedIdentifier(EPSG,    "Latitude of 1st standard parallel"),
-            new NamedIdentifier(EPSG,    "Latitude of standard parallel"),
+            new NamedIdentifier(ESRI,    "Pseudo_Standard_Parallel_1"), esri,
+            new NamedIdentifier(EPSG,    "Latitude of standard parallel"), epsg,
             new NamedIdentifier(EPSG,    "Latitude of pseudo standard parallel"),
-            new NamedIdentifier(GEOTIFF, "StdParallel1")
+            new NamedIdentifier(GEOTIFF, "StdParallel1"),
         }, Double.NaN, -90, 90, NonSI.DEGREE_ANGLE, false);
+    }
 
     /**
      * The operation parameter descriptor for the standard parallel 2 parameter value.
@@ -435,21 +446,6 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
         }
         return new DefaultParameterDescriptor<Double>(toMap(selected), Double.class, null,
                 defaultValue, getMinimumValue(), getMaximumValue(), getUnit(), required);
-    }
-
-    /**
-     * Returns the identifier for the given name.
-     *
-     * @param  name The identifier name.
-     * @return The first identifier having the given name.
-     * @throws NoSuchElementException if there is no identifier for the given name.
-     */
-    public NamedIdentifier find(final String name) throws NoSuchElementException {
-        final NamedIdentifier identifier = identifiers.get(name);
-        if (identifier == null) {
-            throw new NoSuchElementException(name);
-        }
-        return identifier;
     }
 
     /**

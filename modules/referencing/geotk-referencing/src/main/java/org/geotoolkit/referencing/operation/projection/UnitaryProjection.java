@@ -52,6 +52,7 @@ import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.referencing.operation.provider.MapProjection;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform2D;
@@ -1032,10 +1033,25 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
             for (final GenericName name : reference.getAlias()) {
                 if (name instanceof Identifier) {
                     final Identifier identifier = (Identifier) name;
-                    if (identifier.getAuthority() != Citations.GEOTOOLKIT) {
-                        if (AbstractIdentifiedObject.nameMatches(descriptor, identifier.getCode())) {
-                            return true;
+                    if (identifier.getAuthority() != Citations.GEOTOOLKIT &&
+                            AbstractIdentifiedObject.nameMatches(descriptor, identifier.getCode()))
+                    {
+                        if (identifier instanceof DefaultReferenceIdentifier &&
+                                ((DefaultReferenceIdentifier) identifier).isDeprecated())
+                        {
+                            /*
+                             * The name matches, but is a deprecated. This case occurs with:
+                             *
+                             *  - Equidistant Cylindrical (Spherical)
+                             *  - Lambert Azimuthal Equal Area (Spherical)
+                             *
+                             * which are defined twice by EPSG with different parameter names.
+                             * One of the definition is deprecated and needs to be ignored, in
+                             * order to allow the referencing module to pickup the correct one.
+                             */
+                            continue;
                         }
+                        return true;
                     }
                 }
             }

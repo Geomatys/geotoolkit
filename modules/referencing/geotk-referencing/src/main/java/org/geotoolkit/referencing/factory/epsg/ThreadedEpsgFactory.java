@@ -655,22 +655,25 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
             if (url == null) {
                 url = product;
             }
-            log(Loggings.format(Level.CONFIG, Loggings.Keys.CONNECTED_EPSG_DATABASE_$2, url, product));
+            /*
+             * Log to the INFO level rather than CONFIG, because experience suggests that this
+             * information is really worth to be known to users. Many problems reported on the
+             * mailing list are related to whatever the referencing module get a connection to
+             * an EPSG database, and which one. It should not pollute the console because this
+             * connection is typically fetched only once. Even if the connection is closed and
+             * the user continue to request CRS, the cached values will typically be returned.
+             */
+            final LogRecord record = Loggings.format(Level.INFO,
+                    Loggings.Keys.CONNECTED_EPSG_DATABASE_$2, url, product);
+            record.setSourceClassName(ThreadedEpsgFactory.class.getName());
+            record.setSourceMethodName("createBackingStore");
+            record.setLoggerName(LOGGER.getName());
+            LOGGER.log(record);
         }
         if (factory instanceof DirectEpsgFactory) {
             ((DirectEpsgFactory) factory).buffered = this;
         }
         return factory;
-    }
-
-    /**
-     * For internal use by {@link #createFactory()} and {@link #createBackingStore()} only.
-     */
-    private static void log(final LogRecord record) {
-        record.setSourceClassName(ThreadedEpsgFactory.class.getName());
-        record.setSourceMethodName("createBackingStore"); // The public caller.
-        record.setLoggerName(LOGGER.getName());
-        LOGGER.log(record);
     }
 
     /**

@@ -80,7 +80,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
 
     /**
      * Name or identifier of the person or organization responsible for namespace.
-     * This is often an abreviation of the authority name.
+     * This is often an abbreviation of the authority name.
      *
      * @see #getCodeSpace
      */
@@ -140,8 +140,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
         authority = identifier.getAuthority();
         version   = identifier.getVersion();
         if (identifier instanceof DefaultReferenceIdentifier) {
-            final DefaultReferenceIdentifier df = (DefaultReferenceIdentifier) identifier;
-            remarks = df.getRemarks();
+            remarks = ((DefaultReferenceIdentifier) identifier).getRemarks();
         } else {
             remarks = null;
         }
@@ -155,7 +154,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
      *          space or code.
      * @param codeSpace
      *          Name or identifier of the person or organization responsible for namespace.
-     *          This is often an abreviation of the authority name.
+     *          This is often an abbreviation of the authority name.
      * @param code
      *          Identifier code or name, optionally from a controlled list or pattern defined by
      *          a code space. The code can not be null.
@@ -173,7 +172,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
      *          space or code.
      * @param codeSpace
      *          Name or identifier of the person or organization responsible for namespace.
-     *          This is often an abreviation of the authority name.
+     *          This is often an abbreviation of the authority name.
      * @param code
      *          Identifier code or name, optionally from a controlled list or pattern defined by
      *          a code space. The code can not be null.
@@ -433,20 +432,22 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
      * Tries to get a code space from the specified authority. This method scans first
      * through the identifier, then through the titles if no suitable identifier were found.
      */
-    private static String getCodeSpace(final Citation authority) {
-        final Collection<? extends Identifier> identifiers = authority.getIdentifiers();
-        if (identifiers != null) {
-            for (final Identifier id : identifiers) {
-                final String identifier = id.getCode();
-                if (isValidCodeSpace(identifier)) {
-                    return identifier;
+    static String getCodeSpace(final Citation authority) {
+        if (authority != null) {
+            final Collection<? extends Identifier> identifiers = authority.getIdentifiers();
+            if (identifiers != null) {
+                for (final Identifier id : identifiers) {
+                    final String identifier = id.getCode();
+                    if (isValidCodeSpace(identifier)) {
+                        return identifier;
+                    }
                 }
             }
-        }
-        // The "null" locale argument is required for getting the unlocalized version.
-        final String title = getShortestTitle(authority).toString(null);
-        if (isValidCodeSpace(title)) {
-            return title;
+            // The "null" locale argument is required for getting the unlocalized version.
+            final String title = getShortestTitle(authority).toString(null);
+            if (isValidCodeSpace(title)) {
+                return title;
+            }
         }
         return null;
     }
@@ -582,6 +583,6 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
      */
     @Override
     public String toString() {
-        return ReferenceSystemMetadata.toString("IDENTIFIER", authority, codeSpace, code);
+        return ReferenceSystemMetadata.toString("IDENTIFIER", authority, codeSpace, code, isDeprecated());
     }
 }

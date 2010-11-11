@@ -79,11 +79,6 @@ import static org.geotoolkit.referencing.AbstractIdentifiedObject.nameMatches;
 @ThreadSafe(concurrent = true)
 public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperationFactory {
     /**
-     * Small number for floating point comparisons.
-     */
-    private static final double EPS = 1E-10;
-
-    /**
      * The operation to use by {@link #createTransformationStep(GeographicCRS,GeographicCRS)} for
      * datum shift. This string can have one of the following values:
      * <p>
@@ -846,13 +841,12 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
                             DefaultCoordinateOperationFactory.class, "createOperationStep", e);
                 }
                 if (ready) {
-                    final CoordinateOperation step1, step2, step3;
                     final GeographicCRS normSourceCRS = normalize(sourceCRS, true);
                     final GeographicCRS normTargetCRS = normalize(targetCRS, true);
-                    step1 = createOperationStep(sourceCRS, normSourceCRS);
-                    step2 = createFromParameters(identifier, normSourceCRS, normTargetCRS, parameters);
-                    step3 = createOperationStep(normTargetCRS, targetCRS);
-                    return concatenate(step1, step2, step3);
+                    return concatenate(
+                            createOperationStep(sourceCRS, normSourceCRS),
+                            createFromParameters(identifier, normSourceCRS, normTargetCRS, parameters),
+                            createOperationStep(normTargetCRS, targetCRS));
                 }
             }
         }
@@ -875,9 +869,8 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
             stepCRS = crsFactory.createGeocentricCRS(
                       getTemporaryName(sourceCRS), sourceDatum, STANDARD);
         }
-        final CoordinateOperation step1 = createOperationStep(sourceCRS, stepCRS);
-        final CoordinateOperation step2 = createOperationStep(stepCRS, targetCRS);
-        return concatenate(step1, step2);
+        return concatenate(createOperationStep(sourceCRS, stepCRS),
+                           createOperationStep(stepCRS, targetCRS));
     }
 
     /**
@@ -1098,12 +1091,10 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         param.parameter("semi_major").setValue(ellipsoid.getSemiMajorAxis(), unit);
         param.parameter("semi_minor").setValue(ellipsoid.getSemiMinorAxis(), unit);
         param.parameter("dim")       .setValue(getDimension(normSourceCRS));
-
-        final CoordinateOperation step1, step2, step3;
-        step1 = createOperationStep (sourceCRS, normSourceCRS);
-        step2 = createFromParameters(GEOCENTRIC_CONVERSION, normSourceCRS, normTargetCRS, param);
-        step3 = createOperationStep (normTargetCRS, targetCRS);
-        return concatenate(step1, step2, step3);
+        return concatenate(
+                createOperationStep (sourceCRS, normSourceCRS),
+                createFromParameters(GEOCENTRIC_CONVERSION, normSourceCRS, normTargetCRS, param),
+                createOperationStep (normTargetCRS, targetCRS));
     }
 
     /**
@@ -1605,15 +1596,19 @@ search: for (int j=0; j<targets.size(); j++) {
      * <p>
      * If no coordinate operation was found in the database, then this method delegates
      * to {@link #createOperation(CoordinateReferenceSystem, CoordinateReferenceSystem)}.
+     * <p>
+     * If {@code sourceCRS} and {@code targetCRS} are the same, then this method returns
+     * {@code null} as a shortcut for identity transform.
      *
      * @throws FactoryException If an exception occurred while invoking {@code createOperation}.
      */
     private CoordinateOperation tryDB(final SingleCRS sourceCRS, final SingleCRS targetCRS) throws FactoryException {
-        if (sourceCRS != targetCRS) {
-            final CoordinateOperation op = createFromDatabase(sourceCRS, targetCRS);
-            if (op != null) {
-                return op;
-            }
+        if (sourceCRS == targetCRS) {
+            return null;
+        }
+        final CoordinateOperation operation = createFromDatabase(sourceCRS, targetCRS);
+        if (operation != null) {
+            return operation;
         }
         return createOperation(sourceCRS, targetCRS);
     }

@@ -46,7 +46,7 @@ import static org.junit.Assert.*;
  * @author Daniele Franzoni
  * @author Martin Desruisseaux (Geomatys)
  * @author Katrin Lasinger
- * @version 3.13
+ * @version 3.16
  *
  * @since 2.1
  */
@@ -61,7 +61,7 @@ public final class GeodeticCalculatorTest {
      */
     @Test
     public void testAzimuth() {
-        final double EPS = 2E-1; // Relax the default (static) tolerance threshold.
+        final double EPS = 0.2; // Relax the default (static) tolerance threshold.
         final GeodeticCalculator calculator = new GeodeticCalculator();
         assertTrue(calculator.getCoordinateReferenceSystem() instanceof GeographicCRS);
         calculator.setStartingGeographicPoint(12, 20);
@@ -69,6 +69,29 @@ public final class GeodeticCalculatorTest {
         calculator.setDestinationGeographicPoint(12, 21);  assertEquals("North",   0, calculator.getAzimuth(), EPS);
         calculator.setDestinationGeographicPoint(11, 20);  assertEquals("West",  -90, calculator.getAzimuth(), EPS);
         calculator.setDestinationGeographicPoint(12, 19);  assertEquals("South", 180, calculator.getAzimuth(), EPS);
+    }
+
+    /**
+     * Tests azimuth at poles.
+     *
+     * @since 3.16
+     */
+    @Test
+    public void testPoles() {
+        final double EPS = 0.2; // Relax the default (static) tolerance threshold.
+        final GeodeticCalculator calculator = new GeodeticCalculator();
+        calculator.setStartingGeographicPoint   ( 30,  90);
+        calculator.setDestinationGeographicPoint( 20,  20);  assertEquals(-170, calculator.getAzimuth(), EPS);
+        calculator.setDestinationGeographicPoint( 40,  20);  assertEquals( 170, calculator.getAzimuth(), EPS);
+        calculator.setDestinationGeographicPoint( 30,  20);  assertEquals( 180, calculator.getAzimuth(), EPS);
+        calculator.setDestinationGeographicPoint( 30, -20);  assertEquals( 180, calculator.getAzimuth(), EPS);
+        calculator.setDestinationGeographicPoint( 30, -90);  assertEquals( 180, calculator.getAzimuth(), EPS);
+
+        calculator.setStartingGeographicPoint   (  0,  90);
+        calculator.setDestinationGeographicPoint( 20,  20);  assertEquals( 160, calculator.getAzimuth(), EPS);
+        calculator.setDestinationGeographicPoint(-20,  20);  assertEquals(-160, calculator.getAzimuth(), EPS);
+        calculator.setDestinationGeographicPoint(  0,  20);  assertEquals( 180, calculator.getAzimuth(), EPS);
+        calculator.setDestinationGeographicPoint(  0, -90);  assertEquals( 180, calculator.getAzimuth(), EPS);
     }
 
     /**

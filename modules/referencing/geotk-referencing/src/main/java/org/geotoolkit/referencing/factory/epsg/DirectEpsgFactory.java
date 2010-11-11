@@ -57,6 +57,7 @@ import org.opengis.metadata.quality.PositionalAccuracy;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.measure.Units;
+import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;
@@ -115,7 +116,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @author Rueben Schulz (UBC)
  * @author Matthias Basler
  * @author Andrea Aime (TOPP)
- * @version 3.11
+ * @version 3.16
  *
  * @since 1.2
  * @module
@@ -2506,7 +2507,16 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                      * transform factory instead of from the operation method in order to get all
                      * required parameter descriptors, including implicit ones.
                      */
-                    final String classe = method.getName().getCode();
+                    String classe = method.getName().getCode();
+                    final ReferenceIdentifier mid = AbstractIdentifiedObject.getIdentifier(method, Citations.EPSG);
+                    if (mid != null) {
+                        final String codespace = mid.getCodeSpace();
+                        if (codespace != null) {
+                            // Use the EPSG code if possible, because operation method names are
+                            // sometime ambiguous (e.g. "Lambert Azimuthal Equal Area (Spherical)")
+                            classe = codespace + DefaultNameSpace.DEFAULT_SEPARATOR + mid.getCode();
+                        }
+                    }
                     parameters = factories.getMathTransformFactory().getDefaultParameters(classe);
                     fillParameterValues(methodCode, epsg, parameters);
                 }

@@ -33,12 +33,14 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 
 
 /**
- * The provider for "<cite>Equidistant Cylindrical</cite>" projection (EPSG:1028, 1029).
- * EPSG defines two codes for this projection, 1029 being the spherical case and 1028 the
- * ellipsoidal case. However the formulas are the same in both cases, with an additional
- * adjustment of Earth radius in the ellipsoidal case. Consequently they are implemented
- * in Geotk by the same class.
- * <p>
+ * The provider for "<cite>Equidistant Cylindrical</cite>" projection (EPSG:1028).
+ *
+ * {@note EPSG defines two codes for this projection, 9823 being the spherical case and 1028 the
+ *        ellipsoidal case. However the formulas are the same in both cases, with an additional
+ *        adjustment of Earth radius in the ellipsoidal case. Consequently they are implemented
+ *        in Geotk by the same class. Note however that the 9823 code is deprecated and replaced
+ *        by EPSG:1029.}
+ *
  * The programmatic names and parameters are enumerated at
  * <A HREF="http://www.remotesensing.org/geotiff/proj_list/equirectangular.html">Equirectangular
  * on RemoteSensing.org</A>. The math transform implementations instantiated by this provider may
@@ -50,7 +52,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @author John Grange
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.16
  *
  * @since 2.2
  * @module
@@ -123,9 +125,8 @@ public class EquidistantCylindrical extends MapProjection {
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Equidistant_Cylindrical"),
             new NamedIdentifier(Citations.EPSG,    "Equidistant Cylindrical"),
-            new NamedIdentifier(Citations.EPSG,    "Equidistant Cylindrical (Spherical)"),
+            new DeprecatedName (Citations.EPSG,    "Equidistant Cylindrical (Spherical)"),
             new IdentifierCode (Citations.EPSG,     1028),       // The ellipsoidal case
-            new IdentifierCode (Citations.EPSG,     1029),       // The spherical case
             new IdentifierCode (Citations.EPSG,     9842, 1028), // The ellipsoidal case (deprecated)
             new IdentifierCode (Citations.EPSG,     9823, 1029), // The cylindrical case (deprecated)
             new NamedIdentifier(Citations.GEOTIFF, "CT_Equirectangular"),
@@ -166,5 +167,59 @@ public class EquidistantCylindrical extends MapProjection {
     @Override
     protected MathTransform2D createMathTransform(ParameterValueGroup values) {
         return Equirectangular.create(getParameters(), values);
+    }
+
+    /**
+     * The provider for "<cite>Equidistant Cylindrical (Spherical)</cite>" projection (EPSG:1029).
+     * This provider is declared explicitly only because EPSG uses a distinct code with different
+     * parameter names for this case.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.16
+     *
+     * @since 3.16
+     * @module
+     */
+    @Immutable
+    public static class Spherical extends EquidistantCylindrical {
+        /**
+         * For cross-version compatibility.
+         */
+        private static final long serialVersionUID = -8719362109051183475L;
+
+        /**
+         * The operation parameter descriptor for the {@linkplain
+         * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#latitudeOfOrigin
+         * latitude of origin} parameter value.
+         *
+         * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
+         * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
+         */
+        public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN =
+                Identifiers.LATITUDE_OF_ORIGIN.select(
+                    "latitude_of_origin",                // OGC
+                    "Latitude of 1st standard parallel", // EPSG
+                    "Standard_Parallel_1",               // ESRI
+                    "ProjCenterLat");                    // GeoTIFF
+
+        /**
+         * The parameters group.
+         */
+        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+            new ReferenceIdentifier[] {
+                new NamedIdentifier(Citations.EPSG, "Equidistant Cylindrical (Spherical)"),
+                new IdentifierCode (Citations.EPSG, 1029)
+            }, new ParameterDescriptor<?>[] {
+                SEMI_MAJOR,       SEMI_MINOR, ROLL_LONGITUDE,
+                CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN,
+                FALSE_EASTING,    FALSE_NORTHING
+            });
+
+        /**
+         * Constructs a new provider.
+         */
+        public Spherical() {
+            super(PARAMETERS);
+        }
     }
 }

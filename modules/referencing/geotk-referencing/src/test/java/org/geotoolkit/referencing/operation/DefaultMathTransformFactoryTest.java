@@ -26,6 +26,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.referencing.operation.provider.Mercator1SP;
+import static org.geotoolkit.referencing.operation.DefaultMathTransformFactory.isDeprecated;
 
 import org.junit.*;
 import org.opengis.referencing.operation.Conversion;
@@ -34,10 +35,10 @@ import static org.junit.Assert.*;
 
 
 /**
- * Tests the regitration of transforms in {@link DefaultMathTransformFactory}.
+ * Tests the registration of transforms in {@link DefaultMathTransformFactory}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.16
  *
  * @since 3.00
  */
@@ -76,6 +77,41 @@ public class DefaultMathTransformFactoryTest {
 
         // Same than above, using EPSG code.
         assertSame(method, factory.getOperationMethod("EPSG:9624"));
+    }
+
+    /**
+     * Tests non-existent operation method.
+     *
+     * @throws NoSuchIdentifierException The expected exception.
+     *
+     * @since 3.16
+     */
+    @Test(expected = NoSuchIdentifierException.class)
+    public void testNonExistentCode() throws NoSuchIdentifierException {
+        factory.getOperationMethod("EPXX:9624");
+    }
+
+    /**
+     * Asks for names which are known to be duplicated. One of the duplicated elements
+     * is deprecated. Geotk shall return the non-deprecated one.
+     *
+     * @throws NoSuchIdentifierException Should never happen.
+     *
+     * @since 3.16
+     */
+    @Test
+    public void testDuplicatedNames() throws NoSuchIdentifierException {
+        final OperationMethod ellipsoidal = factory.getOperationMethod("EPSG:1028");
+        final OperationMethod spherical   = factory.getOperationMethod("EPSG:1029");
+        final OperationMethod deprecated  = factory.getOperationMethod("EPSG:9823");
+        // Following should intentionally be tested immediately after EPSG:9823.
+        assertSame(spherical, factory.getOperationMethod("Equidistant Cylindrical (Spherical)"));
+        assertNotSame(ellipsoidal, spherical);
+        assertSame   (ellipsoidal, deprecated);
+
+        assertFalse(isDeprecated(ellipsoidal, "Equidistant Cylindrical"));
+        assertTrue (isDeprecated(ellipsoidal, "Equidistant Cylindrical (Spherical)"));
+        assertFalse(isDeprecated(spherical,   "Equidistant Cylindrical (Spherical)"));
     }
 
     /**

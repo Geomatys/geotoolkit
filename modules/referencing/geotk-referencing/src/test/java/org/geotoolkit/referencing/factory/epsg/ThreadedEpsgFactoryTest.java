@@ -55,14 +55,11 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
 
 
 /**
- * Tests transformations from CRS and/or operations created from the EPSG factory, using
- * the default plugin. If the MS-Access database is installed and the {@code epsg-access}
- * plugin is in the classpath, then the default plugin will be the factory backed by the
- * MS-Access database.
+ * Tests transformations from CRS and/or operations created from the EPSG factory.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Vadim Semenov
- * @version 3.01
+ * @version 3.16
  *
  * @since 2.1
  */
@@ -98,77 +95,106 @@ public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
     public final void testCreationCRS() throws FactoryException {
         assumeNotNull(factory);
 
-        CoordinateReferenceSystem sourceCRS;
+        CoordinateReferenceSystem crs;
         ParameterValueGroup parameters;
 
-        sourceCRS = factory.createCoordinateReferenceSystem("4274");
-        assertEquals("4274", getIdentifier(sourceCRS));
-        assertTrue(sourceCRS instanceof GeographicCRS);
-        assertEquals(2, sourceCRS.getCoordinateSystem().getDimension());
+        crs = factory.createCoordinateReferenceSystem("4274");
+        assertEquals("4274", getIdentifier(crs));
+        assertTrue(crs instanceof GeographicCRS);
+        assertEquals(2, crs.getCoordinateSystem().getDimension());
 
-        sourceCRS = factory.createCoordinateReferenceSystem("EPSG:4140");
-        assertEquals("4140", getIdentifier(sourceCRS));
-        assertTrue(sourceCRS instanceof GeographicCRS);
-        assertEquals(2, sourceCRS.getCoordinateSystem().getDimension());
+        crs = factory.createCoordinateReferenceSystem("EPSG:4140");
+        assertEquals("4140", getIdentifier(crs));
+        assertTrue(crs instanceof GeographicCRS);
+        assertEquals(2, crs.getCoordinateSystem().getDimension());
 
-        sourceCRS = factory.createCoordinateReferenceSystem("2027");
-        assertEquals("2027", getIdentifier(sourceCRS));
-        assertTrue(sourceCRS instanceof ProjectedCRS);
-        assertEquals(2, sourceCRS.getCoordinateSystem().getDimension());
-        parameters = ((ProjectedCRS) sourceCRS).getConversionFromBase().getParameterValues();
+        crs = factory.createCoordinateReferenceSystem("2027");
+        assertEquals("2027", getIdentifier(crs));
+        assertTrue(crs instanceof ProjectedCRS);
+        assertEquals(2, crs.getCoordinateSystem().getDimension());
+        parameters = ((ProjectedCRS) crs).getConversionFromBase().getParameterValues();
         assertEquals(   -93, parameters.parameter("central_meridian"  ).doubleValue(), EPS);
         assertEquals(     0, parameters.parameter("latitude_of_origin").doubleValue(), EPS);
         assertEquals(0.9996, parameters.parameter("scale_factor"      ).doubleValue(), EPS);
         assertEquals(500000, parameters.parameter("false_easting"     ).doubleValue(), EPS);
         assertEquals(     0, parameters.parameter("false_northing"    ).doubleValue(), EPS);
 
-        sourceCRS = factory.createCoordinateReferenceSystem(" EPSG : 2442 ");
-        assertEquals("2442", getIdentifier(sourceCRS));
-        assertTrue(sourceCRS instanceof ProjectedCRS);
-        assertEquals(2, sourceCRS.getCoordinateSystem().getDimension());
-        parameters = ((ProjectedCRS) sourceCRS).getConversionFromBase().getParameterValues();
+        crs = factory.createCoordinateReferenceSystem(" EPSG : 2442 ");
+        assertEquals("2442", getIdentifier(crs));
+        assertTrue(crs instanceof ProjectedCRS);
+        assertEquals(2, crs.getCoordinateSystem().getDimension());
+        parameters = ((ProjectedCRS) crs).getConversionFromBase().getParameterValues();
         assertEquals(   135, parameters.parameter("central_meridian"  ).doubleValue(), EPS);
         assertEquals(     0, parameters.parameter("latitude_of_origin").doubleValue(), EPS);
         assertEquals(     1, parameters.parameter("scale_factor"      ).doubleValue(), EPS);
         assertEquals(500000, parameters.parameter("false_easting"     ).doubleValue(), EPS);
         assertEquals(     0, parameters.parameter("false_northing"    ).doubleValue(), EPS);
 
-        sourceCRS = factory.createCoordinateReferenceSystem("EPSG:4915");
-        assertEquals("4915", getIdentifier(sourceCRS));
-        assertTrue(sourceCRS instanceof GeocentricCRS);
-        assertEquals(3, sourceCRS.getCoordinateSystem().getDimension());
+        crs = factory.createCoordinateReferenceSystem("EPSG:4915");
+        assertEquals("4915", getIdentifier(crs));
+        assertTrue(crs instanceof GeocentricCRS);
+        assertEquals(3, crs.getCoordinateSystem().getDimension());
 
-        sourceCRS = factory.createCoordinateReferenceSystem("EPSG:4993");
-        assertEquals("4993", getIdentifier(sourceCRS));
-        assertTrue(sourceCRS instanceof GeographicCRS);
-        assertEquals(3, sourceCRS.getCoordinateSystem().getDimension());
+        crs = factory.createCoordinateReferenceSystem("EPSG:4993");
+        assertEquals("4993", getIdentifier(crs));
+        assertTrue(crs instanceof GeographicCRS);
+        assertEquals(3, crs.getCoordinateSystem().getDimension());
 
-        sourceCRS = factory.createCoordinateReferenceSystem("EPSG:5735");
-        assertEquals("5735", getIdentifier(sourceCRS));
-        assertTrue(sourceCRS instanceof VerticalCRS);
-        assertEquals(1, sourceCRS.getCoordinateSystem().getDimension());
+        crs = factory.createCoordinateReferenceSystem("EPSG:5735");
+        assertEquals("5735", getIdentifier(crs));
+        assertTrue(crs instanceof VerticalCRS);
+        assertEquals(1, crs.getCoordinateSystem().getDimension());
 
-        sourceCRS = factory.createCoordinateReferenceSystem("EPSG:5801");
-        assertEquals("5801", getIdentifier(sourceCRS));
-        assertTrue(sourceCRS instanceof EngineeringCRS);
-        assertEquals(2, sourceCRS.getCoordinateSystem().getDimension());
+        crs = factory.createCoordinateReferenceSystem("EPSG:5801");
+        assertEquals("5801", getIdentifier(crs));
+        assertTrue(crs instanceof EngineeringCRS);
+        assertEquals(2, crs.getCoordinateSystem().getDimension());
 
-        sourceCRS = factory.createCoordinateReferenceSystem("EPSG:7400");
-        assertEquals("7400", getIdentifier(sourceCRS));
-        assertTrue(sourceCRS instanceof CompoundCRS);
-        assertEquals(3, sourceCRS.getCoordinateSystem().getDimension());
+        crs = factory.createCoordinateReferenceSystem("EPSG:7400");
+        assertEquals("7400", getIdentifier(crs));
+        assertTrue(crs instanceof CompoundCRS);
+        assertEquals(3, crs.getCoordinateSystem().getDimension());
 
         // GeographicCRS without datum
-        sourceCRS = factory.createCoordinateReferenceSystem("63266405");
-        assertTrue(sourceCRS instanceof GeographicCRS);
-        assertEquals("WGS 84 (deg)", sourceCRS.getName().getCode());
-        assertEquals(2, sourceCRS.getCoordinateSystem().getDimension());
+        crs = factory.createCoordinateReferenceSystem("63266405");
+        assertTrue(crs instanceof GeographicCRS);
+        assertEquals("WGS 84 (deg)", crs.getName().getCode());
+        assertEquals(2, crs.getCoordinateSystem().getDimension());
 
         // Google projection
-        sourceCRS = factory.createCoordinateReferenceSystem("3857");
-        assertTrue(sourceCRS instanceof ProjectedCRS);
-        assertEquals("WGS 84 / Pseudo-Mercator", sourceCRS.getName().getCode());
-        assertEquals(2, sourceCRS.getCoordinateSystem().getDimension());
+        crs = factory.createCoordinateReferenceSystem("3857");
+        assertTrue(crs instanceof ProjectedCRS);
+        assertEquals("WGS 84 / Pseudo-Mercator", crs.getName().getCode());
+        assertEquals(2, crs.getCoordinateSystem().getDimension());
+        assertEquals("EPSG:1024", getOperationMethod(crs));
+
+        // A deprecated EPSG code.
+        crs = factory.createCoordinateReferenceSystem("3786");
+        assertTrue(crs instanceof ProjectedCRS);
+        assertEquals("World Equidistant Cylindrical (Sphere)", crs.getName().getCode());
+        assertEquals(2, crs.getCoordinateSystem().getDimension());
+        assertEquals("EPSG:9823", getOperationMethod(crs));
+
+        // The undeprecated replacement of the above.
+        crs = factory.createCoordinateReferenceSystem("4088");
+        assertTrue(crs instanceof ProjectedCRS);
+        assertEquals("World Equidistant Cylindrical (Sphere)", crs.getName().getCode());
+        assertEquals(2, crs.getCoordinateSystem().getDimension());
+        assertEquals("EPSG:1029", getOperationMethod(crs));
+
+        // Lambert Azimuthal Equal Area (Spherical).
+        crs = factory.createCoordinateReferenceSystem("3408");
+        assertTrue(crs instanceof ProjectedCRS);
+        assertEquals("NSIDC EASE-Grid North", crs.getName().getCode());
+        assertEquals(2, crs.getCoordinateSystem().getDimension());
+        assertEquals("EPSG:1027", getOperationMethod(crs));
+    }
+
+    /**
+     * Returns the EPSG code of the operation method for the given projected CRS.
+     */
+    private static String getOperationMethod(final CoordinateReferenceSystem crs) {
+        return ((ProjectedCRS) crs).getConversionFromBase().getMethod().getIdentifiers().iterator().next().toString();
     }
 
     /**

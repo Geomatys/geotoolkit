@@ -28,6 +28,7 @@ import javax.measure.unit.Unit;
 import javax.measure.quantity.Length;
 import javax.measure.converter.ConversionException;
 
+import org.opengis.util.GenericName;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValueGroup;
@@ -51,6 +52,7 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.io.wkt.Symbols;
 import org.geotoolkit.io.wkt.MathTransformParser;
 import org.geotoolkit.referencing.cs.AbstractCS;
+import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.referencing.factory.ReferencingFactory;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
@@ -97,7 +99,7 @@ import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR;
  * and target coordinate systems.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.03
+ * @version 3.16
  *
  * @since 1.2
  * @module
@@ -111,20 +113,31 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
     private static final Hints HINTS = null;
 
     /**
-     * The object to use for parsing <cite>Well-Known Text</cite> (WKT) strings.
+     * Thread-local variables used by {@link DefaultMathTransformFactory}.
      */
-    private final ThreadLocal<MathTransformParser> parser;
+    private static final class Variables {
+        /**
+         * The object to use for parsing <cite>Well-Known Text</cite> (WKT) strings.
+         */
+        MathTransformParser parser;
+
+        /**
+         * The last value returned by {@link #getProvider}. Stored as an
+         * optimization since the same provider is often asked many times.
+         */
+        MathTransformProvider lastProvider;
+
+        /**
+         * The operation method for the last transform created.
+         * This is often, but not necessarily, the same than {@link #lastProvider}.
+         */
+        OperationMethod lastMethod;
+    }
 
     /**
-     * The last value returned by {@link #getProvider}. Stored as an
-     * optimization since the same provider is often asked many times.
+     * A set of thread-local variables.
      */
-    private MathTransformProvider lastProvider;
-
-    /**
-     * The operation method for the last transform created.
-     */
-    private final ThreadLocal<OperationMethod> lastMethod;
+    private final ThreadLocal<Variables> variables;
 
     /**
      * A pool of math transform. This pool is used in order to
@@ -147,10 +160,9 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
      * Constructs a default {@link MathTransform math transform} factory.
      */
     public DefaultMathTransformFactory() {
-        registry   = new FactoryRegistry(MathTransformProvider.class);
-        lastMethod = new ThreadLocal<OperationMethod>();
-        parser     = new ThreadLocal<MathTransformParser>();
-        pool       = WeakHashSet.newInstance(MathTransform.class);
+        registry  = new FactoryRegistry(MathTransformProvider.class);
+        pool      = WeakHashSet.newInstance(MathTransform.class);
+        variables = new ThreadLocal<Variables>();
     }
 
     /**
@@ -224,7 +236,8 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
      */
     @Override
     public OperationMethod getLastMethodUsed() {
-        return lastMethod.get();
+        final Variables localVariables = variables.get();
+        return (localVariables != null) ? localVariables.lastMethod : null;
     }
 
     /**
@@ -255,44 +268,87 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
      *         method.
      */
     private MathTransformProvider getProvider(final String method) throws NoSuchIdentifierException {
-        /*
-         * Copies the 'lastProvider' reference in order to avoid synchronization. This is safe
-         * because copy of object references are atomic operations.  Note that this is not the
-         * deprecated "double check" idiom since we are not creating new objects, but checking
-         * for existing ones.
-         */
-        MathTransformProvider provider = lastProvider;
-        if (provider!=null && provider.nameMatches(method)) {
-            return provider;
+        Variables localVariables = variables.get();
+        final MathTransformProvider lastProvider = (localVariables != null) ? localVariables.lastProvider : null;
+        if (lastProvider != null && lastProvider.nameMatches(method) && !isDeprecated(lastProvider, method)) {
+            return lastProvider;
         }
+        MathTransformProvider provider = null;
         final MathTransformProvider[] providers = getAvailableMethods();
         for (int i=0; i<providers.length; i++) {
-            provider = providers[i];
-            if (provider.nameMatches(method)) {
-                return lastProvider = provider;
-            }
-        }
-        /*
-         * No matching name found. If the given method is of the form EPSG:9624, searches among the
-         * identifiers. This is not the usual way to use this class (we rather use the names), but
-         * this approach is provided as a convenience and for backward compatibility.
-         */
-        for (int s=method.indexOf(DEFAULT_SEPARATOR); s>=0; s=method.indexOf(DEFAULT_SEPARATOR, s)) {
-            final String codespace = method.substring(0, s).trim();
-            final String code = method.substring(++s).trim();
-            provider = lastProvider;
-            if (provider!=null && provider.identifierMatches(codespace, code)) {
-                return provider;
-            }
-            for (int i=0; i<providers.length; i++) {
-                provider = providers[i];
-                if (provider.identifierMatches(codespace, code)) {
-                    return lastProvider = provider;
+            final MathTransformProvider candidate = providers[i];
+            if (candidate != lastProvider && candidate.nameMatches(method)) {
+                provider = candidate;
+                if (!isDeprecated(candidate, method)) {
+                    break;
                 }
             }
         }
-        throw new NoSuchIdentifierException(Errors.format(
-                Errors.Keys.NO_TRANSFORM_FOR_CLASSIFICATION_$1, method), method);
+        if (provider == null) {
+            /*
+             * No matching name found. If the given method is of the form EPSG:9624, searches among
+             * the identifiers. This is not the usual way to use this class (we rather use the names),
+             * but is required by the EPSG factory since EPSG operation names can be ambiguous.
+             */
+            for (int s=method.indexOf(DEFAULT_SEPARATOR); s>=0; s=method.indexOf(DEFAULT_SEPARATOR, s)) {
+                final String codespace = method.substring(0, s).trim();
+                final String code = method.substring(++s).trim();
+                if (lastProvider != null && lastProvider.identifierMatches(codespace, code)) {
+                    return lastProvider;
+                }
+                for (int i=0; i<providers.length; i++) {
+                    final MathTransformProvider candidate = providers[i];
+                    if (candidate != lastProvider && candidate.identifierMatches(codespace, code)) {
+                        provider = candidate;
+                        break;
+                    }
+                }
+            }
+            if (provider == null) {
+                throw new NoSuchIdentifierException(Errors.format(
+                        Errors.Keys.NO_TRANSFORM_FOR_CLASSIFICATION_$1, method), method);
+            }
+        }
+        /*
+         * Remember the provider we just found, for faster check next time.
+         */
+        if (localVariables == null) {
+            variables.set(localVariables = new Variables());
+        }
+        localVariables.lastProvider = provider;
+        return provider;
+    }
+
+    /**
+     * Returns the local variables, instantiating them if necessary.
+     */
+    private Variables getLocalVariables() {
+        Variables localVariables = variables.get();
+        if (localVariables == null) {
+            variables.set(localVariables = new Variables());
+        }
+        return localVariables;
+    }
+
+    /**
+     * Returns {@code true} if the given operation method is deprecated.
+     *
+     * @param  method The method to test for deprecation.
+     * @param  name   The name which was used for finding the method.
+     * @return {@code true} if the given operation method is deprecated.
+     *
+     * @since 3.16
+     */
+    static boolean isDeprecated(final OperationMethod method, final String name) {
+        for (final GenericName id : method.getAlias()) {
+            if (id instanceof DefaultReferenceIdentifier) {
+                final DefaultReferenceIdentifier df = (DefaultReferenceIdentifier) id;
+                if (name.equals(df.getCode())) {
+                    return df.isDeprecated();
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -301,7 +357,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
      * {@link #getAvailableMethods} method. A typical example is
      * <code>"<A HREF="http://www.remotesensing.org/geotiff/proj_list/transverse_mercator.html">Transverse_Mercator</A>"</code>).
      * <p>
-     * This method creates new parameter instances at every call. It is intented to be modified
+     * This method creates new parameter instances at every call. It is intended to be modified
      * by the user before to be passed to <code>{@linkplain #createParameterizedTransform
      * createParameterizedTransform}(parameters)</code>.
      *
@@ -356,9 +412,10 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
             Parameters.ensureSet(parameters, "semi_minor", ellipsoid.getSemiMinorAxis(), axisUnit, false);
         }
         MathTransform baseToDerived = createParameterizedTransform(parameters);
-        final OperationMethod method = lastMethod.get();
+        final Variables localVariables = getLocalVariables();
+        final OperationMethod method = localVariables.lastMethod;
         baseToDerived = createBaseToDerived(baseCRS, baseToDerived, derivedCS);
-        lastMethod.set(method);
+        localVariables.lastMethod = method;
         return baseToDerived;
     }
 
@@ -367,7 +424,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
      * transform without unit conversion or axis switch, typically a map projection
      * working on (<cite>longitude</cite>, <cite>latitude</cite>) axes in degrees and
      * (<cite>x</cite>, <cite>y</cite>) axes in metres. This method inspects the coordinate
-     * systems and prepend or append the unit conversions and axis switchs automatically.
+     * systems and prepend or append the unit conversions and axis switches automatically.
      *
      * @param  baseCRS The source coordinate reference system.
      * @param  projection The "raw" <cite>base to derived</cite> transform.
@@ -489,13 +546,13 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
             }
             transform = pool.unique(transform);
         } finally {
-            lastMethod.set(method); // May be null in case of failure, which is intented.
+            getLocalVariables().lastMethod = method; // May be null in case of failure, which is intented.
         }
         return transform;
     }
 
     /**
-     * Creates an affine transform from a matrix. If the transform's input dimension is {@code M},
+     * Creates an affine transform from a matrix. If the transform input dimension is {@code M},
      * and output dimension is {@code N}, then the matrix will have size {@code [N+1][M+1]}. The
      * +1 in the matrix dimensions allows the matrix to do a shift, as well as a rotation. The
      * {@code [M][j]} element of the matrix will be the j'th ordinate of the moved origin. The
@@ -510,7 +567,10 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
     public MathTransform createAffineTransform(final Matrix matrix)
             throws FactoryException
     {
-        lastMethod.remove(); // To be strict, we should set the ProjectiveTransform provider
+        final Variables localVariables = variables.get();
+        if (localVariables != null) {
+            localVariables.lastMethod = null; // To be strict, we should set the ProjectiveTransform provider
+        }
         return pool.unique(ProjectiveTransform.create(matrix));
     }
 
@@ -605,13 +665,14 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
      */
     @Override
     public MathTransform createFromWKT(final String text) throws FactoryException {
-        MathTransformParser p = parser.get();
-        if (p == null) {
-            p = new MathTransformParser(Symbols.DEFAULT, this);
-            parser.set(p);
+        final Variables localVariables = getLocalVariables();
+        MathTransformParser parser = localVariables.parser;
+        if (parser == null) {
+            parser = new MathTransformParser(Symbols.DEFAULT, this);
+            localVariables.parser = parser;
         }
         try {
-            return p.parseMathTransform(text);
+            return parser.parseMathTransform(text);
         } catch (ParseException exception) {
             final Throwable cause = exception.getCause();
             if (cause instanceof FactoryException) {

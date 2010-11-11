@@ -20,7 +20,11 @@ package org.geotoolkit.io.wkt;
 
 /**
  * Interface for objects that can be formatted as <cite>Well Known Text</cite> (WKT).
- * Most implementations will extend {@link FormattableObject} instead than implementing
+ * This interface provides a {@link #formatWKT(Formatter)} method, which is invoked
+ * at WKT formatting time.
+ * <p>
+ * Except for {@link org.geotoolkit.referencing.operation.transform.AffineTransform2D},
+ * most Geotk implementations extend {@link FormattableObject} rather than implementing
  * directly this interface.
  *
  * @author Martin Desruisseaux (IRD)

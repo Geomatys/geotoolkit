@@ -30,7 +30,12 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 
 
 /**
- * The provider for "<cite>Lambert Azimuthal Equal Area</cite>" projection (EPSG:9820).
+ * The provider for "<cite>Lambert Azimuthal Equal Area</cite>" projection (EPSG:9820, EPSG:1027).
+ *
+ * {@note EPSG defines two codes for this projection, 1027 being the spherical case and 9820 the
+ *        ellipsoidal case. However the formulas are the same in both cases. Consequently they are
+ *        implemented in Geotk by the same class.}
+ *
  * The programmatic names and parameters are enumerated at
  * <A HREF="http://www.remotesensing.org/geotiff/proj_list/lambert_azimuthal_equal_area.html">Lambert
  * Azimuthal Equal Area on RemoteSensing.org</A>. The math transform implementations instantiated by
@@ -42,7 +47,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @author Beate Stollberg
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.16
  *
  * @since 2.4
  * @module
@@ -111,7 +116,9 @@ public class LambertAzimuthalEqualArea extends MapProjection {
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Lambert_Azimuthal_Equal_Area"),
             new NamedIdentifier(Citations.EPSG,    "Lambert Azimuthal Equal Area"),
+            new NamedIdentifier(Citations.EPSG,    "Lambert Azimuthal Equal Area (Spherical)"),
             new IdentifierCode (Citations.EPSG,     9820),
+            new IdentifierCode (Citations.EPSG,     1027),
             new NamedIdentifier(Citations.GEOTIFF, "CT_LambertAzimEqualArea"),
             new IdentifierCode (Citations.GEOTIFF,  10),
         },  new ParameterDescriptor<?>[] {
@@ -147,9 +154,12 @@ public class LambertAzimuthalEqualArea extends MapProjection {
      * (EPSG:9821). This provider is declared explicitly only because EPSG uses a distinct
      * code with different parameter names for this case.
      *
+     * {@note <strong>This projection method is deprecated by EPSG.</strong> It has been replaced
+     *        by EPSG:1027, which use the same parameter names than the ellipsoidal case.}
+     *
      * @author Beate Stollberg
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
+     * @version 3.16
      *
      * @since 3.00
      * @module
@@ -198,8 +208,8 @@ public class LambertAzimuthalEqualArea extends MapProjection {
          */
         public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
             new ReferenceIdentifier[] {
-                new NamedIdentifier(Citations.EPSG, "Lambert Azimuthal Equal Area (Spherical)"),
-                new IdentifierCode (Citations.EPSG,  9821),
+                new DeprecatedName(Citations.EPSG, "Lambert Azimuthal Equal Area (Spherical)"),
+                new IdentifierCode(Citations.EPSG,  9821, 1027),
             },  new ParameterDescriptor<?>[] {
                     SEMI_MAJOR,         SEMI_MINOR, ROLL_LONGITUDE,
                     LATITUDE_OF_CENTRE, LONGITUDE_OF_CENTRE,

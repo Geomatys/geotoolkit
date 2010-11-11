@@ -37,19 +37,28 @@ import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
 
 
 /**
- * Base class for objects formattable as <cite>Well Known Text</cite> (WKT). The formatting is
- * performed by various {@code toWKT(...)} methods. Those methods may fail to format a particular
- * object, in which case a {@link UnformattableObjectException} is thrown. A formatting may fail
- * because an object is too complex for the WKT format capability (for example an
- * {@linkplain org.geotoolkit.referencing.crs.DefaultEngineeringCRS engineering CRS}
+ * Base class for objects formattable as <cite>Well Known Text</cite> (WKT).
+ * Almost every Geotk implementations of referencing objects extend this class,
+ * except {@link org.geotoolkit.referencing.operation.transform.AffineTransform2D}.
+ *
+ * {@section Strict and lenient WKT formatting}
+ * Strict WKT formatting is performed by various {@code toWKT(...)} methods. Those methods may
+ * fail to format a particular object, in which case a {@link UnformattableObjectException} is
+ * thrown. A formatting may fail because an object is too complex for the WKT format capability
+ * (for example an {@link org.geotoolkit.referencing.crs.DefaultEngineeringCRS EngineeringCRS}
  * with different unit for each axis), or because only some specific implementations can be
  * formatted as WKT.
  * <p>
  * The default implementation of {@link #toString()} is like {@link #toWKT()} except that no
  * exception is thrown if the resulting WKT is not compliant with the specification. The
  * {@code toString()} method does not provide control over indentation and other features.
- * But if such control are desired, it can be obtained by using directly the {@link Formatter}
+ * But if such control is desired, it can be obtained by using directly the {@link Formatter}
  * class.
+ *
+ * {@section Syntax coloring}
+ * A convenience {@link #print()} method is provided, which is roughly equivalent to
+ * {@code System.out.println(this)} except that syntax coloring is automatically applied
+ * if the terminal seems to support the {@link X364 X3.64} standard.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.16
@@ -134,18 +143,6 @@ public class FormattableObject implements Formattable {
     }
 
     /**
-     * Prints a string representation of this object using a default authority and indentation.
-     * The default implementation delegates its work to <code>{@linkplain #print(Citation, int)
-     * print}({@linkplain #OGC}, {@linkplain #getDefaultIndentation()})</code>, but subclasses
-     * are allowed to change those default values.
-     *
-     * @since 3.00
-     */
-    public void print() {
-        print(OGC, defaultIndentation);
-    }
-
-    /**
      * Prints a string representation of this object to the {@linkplain System#out standard
      * output stream}. If a {@linkplain Console console} is attached to the running JVM (i.e.
      * if the application is run from the command-line and the output is not redirected to a
@@ -157,20 +154,16 @@ public class FormattableObject implements Formattable {
      * {@note We don't use the standard error stream (the stream used by the Java logging
      *        framework) because it is different than the stream used by the console.}
      *
-     * @param  authority The authority to prefer when choosing WKT entities names.
-     * @param  indentation The amount of spaces to use in indentation for WKT formatting,
-     *         or {@link #SINGLE_LINE} for formatting the whole WKT on a single line.
-     *
-     * @since 3.16
+     * @since 3.00
      */
-    public void print(final Citation authority, final int indentation) {
+    public void print() {
         PrintWriter out = null;
         final Console console = System.console();
         if (console != null) {
             out = console.writer();
         }
         final boolean color = (out != null) && X364.isSupported();
-        final String wkt = formatWKT(authority, indentation, color, false);
+        final String wkt = formatWKT(OGC, defaultIndentation, color, false);
         if (out != null) {
             out.println(wkt);
         } else {

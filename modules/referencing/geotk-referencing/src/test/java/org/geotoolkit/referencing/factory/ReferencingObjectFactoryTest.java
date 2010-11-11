@@ -49,6 +49,7 @@ import org.geotoolkit.referencing.crs.CoordinateReferenceSystemTest;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.referencing.ReferencingTestCase;
 
 import org.junit.*;
@@ -230,7 +231,9 @@ public final class ReferencingObjectFactoryTest extends ReferencingTestCase {
             }
             assertTrue(classification, mt instanceof AbstractMathTransform);
             final AbstractMathTransform amt = (AbstractMathTransform) mt;
-            assertEquals(classification, amt.getParameterDescriptors().getName().getCode());
+            if (!((DefaultReferenceIdentifier) method.getName()).isDeprecated()) {
+                assertEquals(classification, amt.getParameterDescriptors().getName().getCode());
+            }
             param = amt.getParameterValues();
             assertEquals(classification, 6377563.396,       param.parameter("semi_major").doubleValue(), 1E-4);
             assertEquals(classification, 6356256.909237285, param.parameter("semi_minor").doubleValue(), 1E-4);
