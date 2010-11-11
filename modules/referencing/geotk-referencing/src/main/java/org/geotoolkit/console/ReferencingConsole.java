@@ -77,7 +77,7 @@ import org.geotoolkit.io.X364;
  *   Set the target {@linkplain CoordinateReferenceSystem coordinate reference system} to the
  *   specified object. This object can be specified as a Well Know Text (<var>wkt</var>) or as
  *   a shortcut previously set. Once both source and target CRS are specified a
- *   {@linkplain MathTransform math transform} from source to target CRS is automatically infered.</td></tr>
+ *   {@linkplain MathTransform math transform} from source to target CRS is automatically inferred.</td></tr>
  *
  *   <tr><td nowrap valign="top" bgcolor="#EEEEFF">{@code source pt = } <var>coord</var></td><td>
  *   Transforms the specified coordinates from source CRS to target CRS and prints the result.</td></tr>

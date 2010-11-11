@@ -59,7 +59,7 @@ import org.geotoolkit.resources.Errors;
 /**
  * Formats a {@linkplain org.geotoolkit.geometry.GeneralDirectPosition direct position}
  * in an arbitrary {@linkplain CoordinateReferenceSystem coordinate reference system}.
- * The format for each ordinate is infered from the coordinate system units using the
+ * The format for each ordinate is inferred from the coordinate system units using the
  * following rules:
  * <p>
  * <ul>

@@ -33,7 +33,7 @@ package org.geotoolkit.metadata;
  */
 public enum TypeValuePolicy {
     /**
-     * The type of a property, as infered from the
+     * The type of a property, as inferred from the
      * {@linkplain java.lang.reflect.Method#getReturnType() return type} of the property method.
      * Collections are not handled in any special way; if the return type is a collection, then
      * the value is {@code Collection.class} (or a subclass).

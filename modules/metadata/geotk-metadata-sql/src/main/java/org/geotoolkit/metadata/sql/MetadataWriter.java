@@ -543,7 +543,7 @@ public class MetadataWriter extends MetadataSource {
     }
 
     /**
-     * Returns an abreviation of the given identifier, if one is found.
+     * Returns an abbreviation of the given identifier, if one is found.
      */
     private static String abbreviation(final String identifier) {
         final StringBuilder buffer = new StringBuilder();

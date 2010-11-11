@@ -89,7 +89,7 @@ public class FRA_IndirectReferenceSystem extends ReferenceSystemMetadata {
      *          Organization or party responsible for definition and maintenance of the code space or code.
      * @param codespace
      *          Name or identifier of the person or organization responsible for namespace.
-     *          This is often an abreviation of the authority name.
+     *          This is often an abbreviation of the authority name.
      * @param code
      *          Identifier code or name, optionally from a controlled list or pattern defined by a code space.
      */

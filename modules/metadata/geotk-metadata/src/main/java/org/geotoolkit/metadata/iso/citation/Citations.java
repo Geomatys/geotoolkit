@@ -75,7 +75,7 @@ public final class Citations {
      * The <A HREF="http://www.opengeospatial.org">Open Geospatial consortium</A> organisation.
      * "Open Geospatial consortium" is the new name for "OpenGIS consortium".
      * An {@linkplain Citation#getAlternateTitles alternate title} for this citation is "OGC"
-     * (according ISO 19115, alternate titles often contain abreviations).
+     * (according ISO 19115, alternate titles often contain abbreviations).
      *
      * @see DefaultResponsibleParty#OGC
      * @see #OPEN_GIS
@@ -95,7 +95,7 @@ public final class Citations {
      * The <A HREF="http://www.opengis.org">OpenGIS consortium</A> organisation.
      * "OpenGIS consortium" is the old name for "Open Geospatial consortium".
      * {@linkplain Citation#getAlternateTitles Alternate titles} for this citation are
-     * "OpenGIS" and "OGC" (according ISO 19115, alternate titles often contain abreviations).
+     * "OpenGIS" and "OGC" (according ISO 19115, alternate titles often contain abbreviations).
      *
      * @see DefaultResponsibleParty#OPEN_GIS
      * @see #OGC
@@ -264,7 +264,7 @@ public final class Citations {
     /**
      * The <A HREF="http://java.sun.com/products/java-media/jai">Java Advanced Imaging</A> library.
      * An {@linkplain Citation#getAlternateTitles alternate title} for this citation is "JAI"
-     * (according ISO 19115, alternate titles often contain abreviations).
+     * (according ISO 19115, alternate titles often contain abbreviations).
      *
      * @see DefaultResponsibleParty#SUN_MICROSYSTEMS
      * @category Specification
@@ -290,7 +290,7 @@ public final class Citations {
     /**
      * The <A HREF="http://www.epsg.org">European Petroleum Survey Group</A> authority.
      * An {@linkplain Citation#getAlternateTitles alternate title} for this citation is
-     * "EPSG" (according ISO 19115, alternate titles often contain abreviations). In
+     * "EPSG" (according ISO 19115, alternate titles often contain abbreviations). In
      * addition, this citation contains the "EPSG" {@linkplain Citation#getIdentifiers identifier}.
      * <p>
      * This citation is used as an authority for
@@ -319,7 +319,7 @@ public final class Citations {
     /**
      * The <A HREF="http://www.opengis.org/docs/01-068r3.pdf">WMS 1.1.1</A> "Automatic Projections"
      * authority. An {@linkplain Citation#getAlternateTitles alternate title} for this citation is
-     * "AUTO" (according ISO 19115, alternate titles often contain abreviations). In addition, this
+     * "AUTO" (according ISO 19115, alternate titles often contain abbreviations). In addition, this
      * citation contains the "AUTO" {@linkplain Citation#getIdentifiers identifier}.
      * <p>
      * <strong>Warning:</strong> {@code AUTO} is different from {@link #AUTO2} used for WMS 1.3.0.
@@ -362,7 +362,7 @@ public final class Citations {
     /**
      * The WMS 1.3.0 "Automatic Projections" authority. An {@linkplain Citation#getAlternateTitles
      * alternate title} for this citation is "AUTO2" (according ISO 19115, alternate titles often
-     * contain abreviations). In addition, this citation contains the "AUTO2"
+     * contain abbreviations). In addition, this citation contains the "AUTO2"
      * {@linkplain Citation#getIdentifiers identifier}.
      * <p>
      * <strong>Warning:</strong> {@code AUTO2} is different from {@link #AUTO} used for WMS 1.1.1
