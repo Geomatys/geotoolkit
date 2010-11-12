@@ -54,7 +54,7 @@ public final class WithEPSG_Test extends ReferencingTestCase {
      *
      * @throws FactoryException Should never happen.
      *
-     * @see http://jira.geotoolkit.org/browse/GEOTK-65
+     * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-65">GEOTK-65</a>
      */
     @Test
     public void testGeographic3D_to_2D() throws FactoryException {
@@ -81,13 +81,13 @@ public final class WithEPSG_Test extends ReferencingTestCase {
 
     /**
      * Tests the conversion from {@code CompoundCRS[EPSG:3035 + Sigma-level]} to {@code EPSG:4326}.
-     * The interresting part in this test is that the height is not a standard height, and the
+     * The interesting part in this test is that the height is not a standard height, and the
      * referencing module is not supposed to known how to build a 3D Geographic CRS (needed as
      * an intermediate step for the datum shift) with that height.
      *
      * @throws FactoryException Should never happen.
      *
-     * @see http://jira.geotoolkit.org/browse/GEOTK-71
+     * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-71">GEOTK-71</a>
      */
     @Test
     public void testProjected3D_to_2D() throws FactoryException {

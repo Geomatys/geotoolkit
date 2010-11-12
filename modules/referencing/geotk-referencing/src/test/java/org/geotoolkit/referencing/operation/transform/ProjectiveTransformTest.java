@@ -165,7 +165,7 @@ public final class ProjectiveTransformTest extends TransformTestCase {
             assertEquals("Direct transform", target[i], result[i], tolerance);
         }
         /*
-         * Inverse the transform (this is the interresting part of this test) and try again.
+         * Inverse the transform (this is the interesting part of this test) and try again.
          * The ordinates at index 1 and 3 (they are the index of columns were all elements
          * are 0 in the above matrix) are expected to be NaN.
          */

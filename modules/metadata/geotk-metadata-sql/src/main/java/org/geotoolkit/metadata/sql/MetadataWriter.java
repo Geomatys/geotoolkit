@@ -70,7 +70,7 @@ public class MetadataWriter extends MetadataSource {
      * {@code true} if child tables inherit the index of their parent tables.
      * This feature is not yet supported in PostgreSQL 8.4.
      *
-     * @see http://jira.geotoolkit.org/browse/GEOTK-30
+     * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-30">GEOTK-30</a>
      */
     private static final boolean INDEX_INHERITANCE_SUPPORTED = false;
 
@@ -369,7 +369,7 @@ public class MetadataWriter extends MetadataSource {
                     dependency = done.get(value);
                     if (dependency == null) {
                         dependency = add(stmt, value, done, identifier);
-                        assert done.get(value) == dependency;
+                        assert done.get(value) == dependency; // NOSONAR: really identity comparison.
                     }
                 }
                 value = dependency;

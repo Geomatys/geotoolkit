@@ -28,7 +28,7 @@ import org.geotoolkit.util.collection.WeakHashSet;
 
 /**
  * Shared instances of {@link ColorModel}s. Maintaining shared instance is not that much
- * interresting for most kind of color models, except {@link IndexColorModel} which can
+ * interesting for most kind of color models, except {@link IndexColorModel} which can
  * potentially be quite big. This class works for all color models because they were no
  * technical reasons to restrict, but the real interest is to share index color models.
  *

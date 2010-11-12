@@ -58,7 +58,7 @@ public enum SampleCoverage {
      * This is a raster from Earth observations using a relatively straightforward
      * conversion formula to geophysics values (a linear transform using the usual
      * scale and offset parameters, in this case 0.1 and 10 respectively). The
-     * interresting part of this example is that it contains a lot of nodata values.
+     * interesting part of this example is that it contains a lot of nodata values.
      *
      * {@preformat text
      *   Thematic           :  Sea Surface Temperature (SST) in °C

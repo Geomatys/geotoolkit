@@ -1136,7 +1136,8 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
      * @return A coordinate operation from {@code sourceCRS} to {@code targetCRS}.
      * @throws FactoryException If the operation can't be constructed.
      *
-     * @todo (GEOTK-83) This method works for some simple cases (e.g. no datum change), and give up
+     * @todo (<a href="http://jira.geotoolkit.org/browse/GEOTK-83">GEOTK-83</a>)
+     *       This method works for some simple cases (e.g. no datum change), and give up
      *       otherwise. Before to give up at the end of this method, we should try the following:
      *       <ul>
      *         <li>Maybe {@code sourceCRS} uses a non-ellipsoidal height. We should replace

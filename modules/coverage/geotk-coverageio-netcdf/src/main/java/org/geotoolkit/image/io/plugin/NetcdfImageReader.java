@@ -881,7 +881,7 @@ public class NetcdfImageReader extends FileImageReader implements
              * variable. For example "longitude" may be a variable found in the NetcdfDataset,
              * but is declared only because it is needed as a dimension for the "temperature"
              * variable. The "longitude" variable is usually not of direct interest to the user
-             * (the interresting variable is "temperature"), so we exclude it.
+             * (the interesting variable is "temperature"), so we exclude it.
              */
             final List<Variable> variables = dataset.getVariables();
             final String[] filtered = new String[variables.size()];

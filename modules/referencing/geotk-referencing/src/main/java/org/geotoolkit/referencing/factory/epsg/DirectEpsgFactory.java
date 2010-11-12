@@ -2478,7 +2478,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                  */
                 final boolean isBursaWolf;
                 OperationMethod method;
-                final ParameterValueGroup parameters;
+                ParameterValueGroup parameters;
                 if (methodCode == null) {
                     isBursaWolf = false;
                     method      = null;
@@ -2507,17 +2507,32 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                      * transform factory instead of from the operation method in order to get all
                      * required parameter descriptors, including implicit ones.
                      */
-                    String classe = method.getName().getCode();
+                    final String methodName = method.getName().getCode();
+                    String methodIdentifier = methodName;
                     final ReferenceIdentifier mid = AbstractIdentifiedObject.getIdentifier(method, Citations.EPSG);
                     if (mid != null) {
                         final String codespace = mid.getCodeSpace();
                         if (codespace != null) {
                             // Use the EPSG code if possible, because operation method names are
                             // sometime ambiguous (e.g. "Lambert Azimuthal Equal Area (Spherical)")
-                            classe = codespace + DefaultNameSpace.DEFAULT_SEPARATOR + mid.getCode();
+                            // See http://jira.geotoolkit.org/browse/GEOTK-128
+                            methodIdentifier = codespace + DefaultNameSpace.DEFAULT_SEPARATOR + mid.getCode();
                         }
                     }
-                    parameters = factories.getMathTransformFactory().getDefaultParameters(classe);
+                    final MathTransformFactory mtFactory = factories.getMathTransformFactory();
+                    try {
+                        parameters = mtFactory.getDefaultParameters(methodIdentifier);
+                    } catch (NoSuchIdentifierException exception) {
+                        /*
+                         * If we can not found the operation method by EPSG code, try searching
+                         * by operation name. As a side effect, this second attemt will produce
+                         * a better error message if the operation is really not found.
+                         */
+                        if (methodIdentifier.equals(methodName)) throw exception;
+                        parameters = mtFactory.getDefaultParameters(methodName);
+                        Logging.recoverableException(LOGGER, DirectEpsgFactory.class,
+                                "createCoordinateOperation", exception);
+                    }
                     fillParameterValues(methodCode, epsg, parameters);
                 }
                 /*

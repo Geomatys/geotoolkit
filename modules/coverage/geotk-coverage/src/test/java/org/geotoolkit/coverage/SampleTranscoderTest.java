@@ -220,7 +220,7 @@ public final class SampleTranscoderTest {
          * code block setting the parameters for the JAI "Rescale" operation). To test this issue
          * in a debugger, put a break point on the 'createGridCoverage2D(...)' line, then jump to
          * the above-cited ViewsManager.geophysics(...) method. The first loop iteration in this
-         * test is the interresting one.
+         * test is the interesting one.
          */
         boolean forceSigned = false;
         do {

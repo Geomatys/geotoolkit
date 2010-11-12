@@ -376,7 +376,7 @@ public final class FormattingTest extends ProjectionTestCase {
             transform = transform.inverse();
         }
         /*
-         * Now the interresting part: concatenate the two transforms. We ignore the change of
+         * Now the interesting part: concatenate the two transforms. We ignore the change of
          * ellipsoid, which is completely wrong but our intend here is to test concatenation,
          * not datum change. The referencing framework just concatenates what we said without
          * question. Note that while the WKT we get here seems rather straightforward, the

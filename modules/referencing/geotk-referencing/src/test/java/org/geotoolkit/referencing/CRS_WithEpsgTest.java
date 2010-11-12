@@ -579,7 +579,7 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
      *
      * @throws FactoryException Should not happen.
      *
-     * @see http://jira.geotoolkit.org/browse/GEOTK-81
+     * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-81">GEOTK-81</a>
      */
     @Test
     public void testProjected4D() throws FactoryException {

@@ -536,7 +536,7 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
     /**
      * Copies the user object from this node to the parent node if the slot is empty.
      * This method should be invoked for attribute nodes, when the attribute name is
-     * not really interresting (e.g. {@code "Value"} or {@code "Name"}).
+     * not really interesting (e.g. {@code "Value"} or {@code "Name"}).
      *
      * @return {@code true} if the copy has been performed.
      */

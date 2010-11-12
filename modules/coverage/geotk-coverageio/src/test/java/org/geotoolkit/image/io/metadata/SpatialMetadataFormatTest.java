@@ -480,7 +480,7 @@ public final class SpatialMetadataFormatTest {
     public void testToString() throws IOException {
         final String stream = SpatialMetadataFormat.STREAM.toString();
         final String image  = SpatialMetadataFormat.IMAGE .toString();
-        assertTrue(stream.length() != 0); // Dummy check. The real interresting part is the write to a file.
+        assertTrue(stream.length() != 0); // Dummy check. The real interesting part is the write to a file.
         assertTrue(image .length() != 0);
         if (false) {
             final Writer out = new OutputStreamWriter(new FileOutputStream("SpatialMetadataFormat.txt"), "UTF-8");

@@ -60,7 +60,7 @@ public enum SampleImage {
 
     /**
      * Chlorophyl-a concentration (CHL) using indexed color model. From a color model point of view,
-     * this image brings nothing new compared to {@link #INDEXED}. However the interresting part for
+     * this image brings nothing new compared to {@link #INDEXED}. However the interesting part for
      * a coverage is that the relationship between pixels and geophysics values is a logarithmic one
      * instead than a linear one.
      *

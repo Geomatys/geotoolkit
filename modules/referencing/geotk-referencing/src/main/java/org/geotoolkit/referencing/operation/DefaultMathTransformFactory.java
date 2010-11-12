@@ -122,6 +122,11 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
         MathTransformParser parser;
 
         /**
+         * The code which was used for requesting {@link #lastProvider}.
+         */
+        String lastCode;
+
+        /**
          * The last value returned by {@link #getProvider}. Stored as an
          * optimization since the same provider is often asked many times.
          */
@@ -269,15 +274,14 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
      */
     private MathTransformProvider getProvider(final String method) throws NoSuchIdentifierException {
         Variables localVariables = variables.get();
-        final MathTransformProvider lastProvider = (localVariables != null) ? localVariables.lastProvider : null;
-        if (lastProvider != null && lastProvider.nameMatches(method) && !isDeprecated(lastProvider, method)) {
-            return lastProvider;
+        if (localVariables != null && method.equals(localVariables.lastCode)) {
+            return localVariables.lastProvider;
         }
         MathTransformProvider provider = null;
         final MathTransformProvider[] providers = getAvailableMethods();
         for (int i=0; i<providers.length; i++) {
             final MathTransformProvider candidate = providers[i];
-            if (candidate != lastProvider && candidate.nameMatches(method)) {
+            if (candidate.nameMatches(method)) {
                 provider = candidate;
                 if (!isDeprecated(candidate, method)) {
                     break;
@@ -293,12 +297,9 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
             for (int s=method.indexOf(DEFAULT_SEPARATOR); s>=0; s=method.indexOf(DEFAULT_SEPARATOR, s)) {
                 final String codespace = method.substring(0, s).trim();
                 final String code = method.substring(++s).trim();
-                if (lastProvider != null && lastProvider.identifierMatches(codespace, code)) {
-                    return lastProvider;
-                }
                 for (int i=0; i<providers.length; i++) {
                     final MathTransformProvider candidate = providers[i];
-                    if (candidate != lastProvider && candidate.identifierMatches(codespace, code)) {
+                    if (candidate.identifierMatches(codespace, code)) {
                         provider = candidate;
                         break;
                     }
@@ -315,6 +316,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
         if (localVariables == null) {
             variables.set(localVariables = new Variables());
         }
+        localVariables.lastCode = method;
         localVariables.lastProvider = provider;
         return provider;
     }
