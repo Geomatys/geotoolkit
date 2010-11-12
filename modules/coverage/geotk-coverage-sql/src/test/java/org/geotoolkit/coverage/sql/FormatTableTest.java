@@ -194,7 +194,6 @@ public class FormatTableTest extends CatalogTestBase {
      * @throws SQLException If the test can't connect to the database.
      */
     @Test
-    @Ignore
     public void testFindOrCreate() throws SQLException {
         final String formatName = "New format test";
         final List<GridSampleDimension> bands = Arrays.asList(
