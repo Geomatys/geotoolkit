@@ -70,6 +70,8 @@
  *
  * @version 3.00
  *
+ * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
+ *
  * @since 2.1
  * @module
  */

@@ -118,6 +118,8 @@ import org.geotoolkit.lang.ThreadSafe;
  * @author Andrea Aime (TOPP)
  * @version 3.16
  *
+ * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
+ *
  * @since 1.2
  * @module
  */
@@ -1710,7 +1712,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 try {
                     direction = DefaultCoordinateSystemAxis.getDirection(orientation);
                 } catch (NoSuchElementException exception) {
-                    throw new FactoryException(exception);
+                    throw new FactoryException(exception.getLocalizedMessage(), exception);
                 }
                 final AxisName an = getAxisName(nameCode);
                 final Map<String,Object> properties = createProperties("[Coordinate Axis]", an.name, epsg, an.description);

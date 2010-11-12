@@ -43,6 +43,8 @@
  * @author Guilhem Legal (Geomatys)
  * @version 3.01
  *
+ * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
+ *
  * @since 2.0
  * @module
  */

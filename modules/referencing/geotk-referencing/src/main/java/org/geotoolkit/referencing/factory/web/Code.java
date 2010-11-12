@@ -35,7 +35,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.16
  *
  * @since 2.2
  * @module
@@ -80,16 +80,17 @@ final class Code {
     final Class<? extends CoordinateReferenceSystem> type;
 
     /**
-     * Parses the code string to retrive the code number and central longitude / latitude.
+     * Parses the code string to retrieve the code number and central longitude / latitude.
      * Assumed format is {@code AUTO:code,lon0,lat0} where {@code AUTO} is optional.
      *
      * @param  text The code in the {@code AUTO:code,lon0,lat0} format.
      * @param  The type of the CRS to be constructed (e.g. {@code GeographicCRS.class}).
      *         Used only in case of failure for constructing an error message.
+     * @param  mandatory {@code true} if all mandatory fields must be present.
      * @throws NoSuchAuthorityCodeException if the specified code can't be parsed.
      */
-    public Code(final String text, final Class<? extends CoordinateReferenceSystem> type)
-            throws NoSuchAuthorityCodeException
+    public Code(final String text, final Class<? extends CoordinateReferenceSystem> type,
+            final boolean mandatory) throws NoSuchAuthorityCodeException
     {
         /*
          * Extract the authority, which is optional.
@@ -130,6 +131,7 @@ final class Code {
                 break;
             }
             default: {
+                if (!mandatory) break;
                 // Too many fields are missing.
                 throw noSuchAuthorityCode(type, authority, text, splitIndices);
             }
@@ -166,7 +168,8 @@ parse:  for (int i=0; i<MAXIMUM_FIELDS; i++) {
                 }
             }
         }
-        if (!(longitude >= Longitude.MIN_VALUE && longitude <= Longitude.MAX_VALUE &&
+        if (mandatory &&
+            !(longitude >= Longitude.MIN_VALUE && longitude <= Longitude.MAX_VALUE &&
               latitude  >=  Latitude.MIN_VALUE && latitude  <=  Latitude.MAX_VALUE))
         {
             // A longitude or latitude is out of range, or was not present

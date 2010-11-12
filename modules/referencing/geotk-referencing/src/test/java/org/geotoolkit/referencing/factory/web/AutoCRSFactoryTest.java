@@ -27,6 +27,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -43,7 +44,7 @@ import org.junit.*;
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (IRD)
  * @author Andrea Aime (OpenGeo)
- * @version 3.09
+ * @version 3.16
  *
  * @since 2.2
  */
@@ -84,6 +85,31 @@ public final class AutoCRSFactoryTest extends ReferencingTestCase {
         assertTrue (Citations.identifierMatches(authority, "AUTO2"));
         assertFalse(Citations.identifierMatches(authority, "EPSG"));
         assertFalse(Citations.identifierMatches(authority, "CRS"));
+    }
+
+    /**
+     * Tests {@link CRSAuthorityFactory#getDescriptionText(String)}.
+     *
+     * @throws FactoryException Should never happen.
+     *
+     * @since 3.16
+     */
+    @Test
+    public void testDescription() throws FactoryException {
+        assertEquals("WGS 84 / Auto UTM", factory.getDescriptionText("AUTO:42001,0,0").toString());
+        assertEquals("WGS 84 / Auto UTM", factory.getDescriptionText("AUTO:42001").toString());
+    }
+
+    /**
+     * Tests that using an incomplete code throws an exception.
+     *
+     * @throws FactoryException Should never happen if not of kind {@link NoSuchAuthorityCodeException}.
+     *
+     * @since 3.16
+     */
+    @Test(expected=NoSuchAuthorityCodeException.class)
+    public void testIncompleteCode() throws FactoryException {
+        factory.createObject("AUTO:42001");
     }
 
     /**

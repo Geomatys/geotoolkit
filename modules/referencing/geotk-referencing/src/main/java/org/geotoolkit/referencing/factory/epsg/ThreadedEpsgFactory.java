@@ -92,6 +92,8 @@ import org.geotoolkit.lang.ThreadSafe;
  * @author Jody Garnett (Refractions)
  * @version 3.00
  *
+ * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
+ *
  * @since 2.1
  * @module
  */

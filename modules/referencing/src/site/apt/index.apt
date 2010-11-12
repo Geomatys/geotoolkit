@@ -8,7 +8,13 @@ Referencing
 
   * {{{faq.html}Frequently Asked Questions}}
 
-  * {{{geotk-referencing/index.html}Core module}} (contains links to more references)
+  * {{{supported-codes.html}List of authority codes}}
+
+  * {{{../../apidocs/org/geotoolkit/referencing/operation/provider/package-summary.html}List of supported transforms}}
+
+  * {{{http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html}Well Known Text (WKT) format}}
+
+  * {{{http://www.epsg-registry.org/}EPSG registry service}} (geodetic parameter dataset)
 
 
 * Tutorial

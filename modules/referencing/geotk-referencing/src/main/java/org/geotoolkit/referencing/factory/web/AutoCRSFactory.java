@@ -78,7 +78,7 @@ import org.geotoolkit.referencing.operation.projection.TransverseMercator;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
  * @author Rueben Schulz (UBC)
- * @version 3.09
+ * @version 3.16
  *
  * @since 2.0
  * @module
@@ -196,7 +196,7 @@ public class AutoCRSFactory extends DirectAuthorityFactory implements CRSAuthori
      */
     @Override
     public InternationalString getDescriptionText(final String code) throws FactoryException {
-        final Code c = new Code(code, ProjectedCRS.class);
+        final Code c = new Code(code, ProjectedCRS.class, false);
         return new SimpleInternationalString(findFactlet(c).getName());
     }
 
@@ -231,7 +231,7 @@ public class AutoCRSFactory extends DirectAuthorityFactory implements CRSAuthori
      */
     @Override
     public ProjectedCRS createProjectedCRS(final String code) throws FactoryException {
-        final Code c = new Code(code, ProjectedCRS.class);
+        final Code c = new Code(code, ProjectedCRS.class, true);
         return findFactlet(c).create(c, factories);
     }
 }

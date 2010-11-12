@@ -348,6 +348,8 @@ public final class CRS {
      * @param  authority The authority name (for example {@code "EPSG"}).
      * @return The set of supported codes. May be empty, but never null.
      *
+     * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
+     *
      * @category factory
      */
     public static Set<String> getSupportedCodes(final String authority) {
@@ -420,6 +422,7 @@ public final class CRS {
      *
      * @see #getSupportedCodes(String)
      * @see org.geotoolkit.measure.Units#valueOfEPSG(int)
+     * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
      *
      * @category factory
      */
@@ -450,6 +453,7 @@ public final class CRS {
      *
      * @see Hints#FORCE_LONGITUDE_FIRST_AXIS_ORDER
      * @see org.geotoolkit.referencing.factory.epsg.LongitudeFirstEpsgFactory
+     * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
      *
      * @category factory
      * @since 2.3

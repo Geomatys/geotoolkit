@@ -8,10 +8,9 @@ Referencing core
 
   * {{{../faq.html}Frequently Asked Questions}}
 
+  * {{{../supported-codes.html}List of authority codes}}
+
   * {{{../../../apidocs/org/geotoolkit/referencing/operation/provider/package-summary.html}List of supported transforms}}
-
-
-* References
 
   * {{{http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html}Well Known Text (WKT) format}}
 
