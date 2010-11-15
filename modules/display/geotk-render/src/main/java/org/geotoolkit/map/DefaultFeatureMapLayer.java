@@ -187,7 +187,9 @@ final class DefaultFeatureMapLayer extends AbstractMapLayer implements FeatureMa
     @Override
     public void setElevationRange(Expression from, Expression to) {
         height = null;
+        final Expression[] old = elevationRange;
         elevationRange = new Expression[]{from,to};
+        firePropertyChange(MapLayer.ELEVATION_PROPERTY, old, elevationRange);
     }
 
     @Override
