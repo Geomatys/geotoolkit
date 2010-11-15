@@ -71,7 +71,7 @@ import static org.geotoolkit.referencing.AbstractIdentifiedObject.nameMatches;
  * override those methods in order to extend the factory capability to some more CRS.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.16
  *
  * @since 1.2
  * @module
@@ -1468,13 +1468,9 @@ search: for (int j=0; j<targets.size(); j++) {
     private static boolean needsGeodetic3D(final List<SingleCRS> sourceCRS,
             final SingleCRS targetCRS, final boolean strict)
     {
-        final boolean targetIsGeodetic;
         final Datum targetDatum = targetCRS.getDatum();
-        if (targetDatum instanceof GeodeticDatum) {
-            targetIsGeodetic = true;
-        } else if (targetDatum instanceof VerticalDatum) {
-            targetIsGeodetic = false;
-        } else {
+        final boolean targetIsGeodetic = (targetDatum instanceof GeodeticDatum);
+        if (!targetIsGeodetic && !(targetDatum instanceof VerticalDatum)) {
             return false;
         }
         boolean hasHorizontal  = false; // Whatever at least one source component is horizontal.
@@ -1482,13 +1478,11 @@ search: for (int j=0; j<targets.size(); j++) {
         boolean needDatumShift = false;
         for (final SingleCRS crs : sourceCRS) {
             final Datum sourceDatum = crs.getDatum();
-            final boolean sourceIsGeodetic;
-            if (sourceDatum instanceof GeodeticDatum) {
-                hasHorizontal    = true;
-                sourceIsGeodetic = true;
+            final boolean sourceIsGeodetic = (sourceDatum instanceof GeodeticDatum);
+            if (sourceIsGeodetic) {
+                hasHorizontal = true;
             } else if (sourceDatum instanceof VerticalDatum) {
-                hasVertical      = true;
-                sourceIsGeodetic = false;
+                hasVertical = true;
             } else {
                 continue;
             }

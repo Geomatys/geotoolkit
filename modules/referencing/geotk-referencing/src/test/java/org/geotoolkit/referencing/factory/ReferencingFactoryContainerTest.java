@@ -30,6 +30,7 @@ import org.geotoolkit.test.Commons;
 import org.geotoolkit.test.crs.WKT;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -85,6 +86,22 @@ public final class ReferencingFactoryContainerTest {
             "    DefaultTemporalDatum[“Modified Julian”, 0],\n" +
             "    UNIT[“day”, 86400.0],\n" +
             "    AXIS[“Time”, FUTURE]]]"), result.toString());
+    }
+
+    /**
+     * Tests {@link ReferencingFactoryContainer#separate}.
+     *
+     * @throws FactoryException Should never happen.
+     */
+    @Test
+    public void testSeparate() throws FactoryException {
+        final ReferencingFactoryContainer factories = ReferencingFactoryContainer.instance(null);
+        final CRSFactory crsFactory = factories.getCRSFactory();
+        CoordinateReferenceSystem crs = DefaultGeographicCRS.WGS84;
+        crs = crsFactory.createCompoundCRS(name("WGS84 3D"), crs, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);
+        assertSame(crs, factories.separate(crs, 0, 1, 2));
+        assertSame(DefaultGeographicCRS.WGS84, factories.separate(crs, 0, 1));
+        assertSame(DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT, factories.separate(crs, 2));
     }
 
     /**

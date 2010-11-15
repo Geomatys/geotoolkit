@@ -481,9 +481,12 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
     }
 
     /**
-     * Returns a new coordinate reference system with only the specified dimension.
-     * This method is used for example in order to get a component of a
-     * {@linkplain CompoundCRS compound CRS}.
+     * Returns a new coordinate reference system with only the specified dimension. This method can
+     * be used for example in order to get a component of a {@linkplain CompoundCRS compound CRS}.
+     *
+     * @todo The current implementation does not break a 3D Geographic CRS or a 3D Projected CRS
+     *       into its components. The capability may be added in a future release (see
+     *       <a href="http://jira.geotoolkit.org/browse/GEOTK-129">GEOTK-129</a>).
      *
      * @param  crs The original (usually compound) CRS.
      * @param  dimensions The dimensions to keep.
@@ -498,7 +501,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
     {
         final int length = dimensions.length;
         final int crsDimension = crs.getCoordinateSystem().getDimension();
-        if (length==0 || dimensions[0]<0 || dimensions[length-1]>=crsDimension ||
+        if (length == 0 || dimensions[0] < 0 || dimensions[length-1] >= crsDimension ||
             !XArrays.isSorted(dimensions, true))
         {
             throw new IllegalArgumentException(Errors.format(
