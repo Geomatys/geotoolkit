@@ -280,7 +280,7 @@ public class WMSMapLayer extends AbstractMapLayer {
 
         //check EPSG4326 politic------------------------------------------------
         if (epsg4326Politic != EPSG4326Politic.STRICT) {
-            if (CRS.equalsIgnoreMetadata(crs2D, DefaultGeographicCRS.WGS84)) {
+            if (CRS.equalsIgnoreMetadata(crs2D, EPSG_4326)) {
                 switch (epsg4326Politic) {
                     case CONVERT_TO_CRS84:
                         env = CRS.transform(env, crs2D);
