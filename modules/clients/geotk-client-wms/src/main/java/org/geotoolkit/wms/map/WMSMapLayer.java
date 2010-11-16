@@ -16,9 +16,12 @@
  */
 package org.geotoolkit.wms.map;
 
+import java.awt.geom.NoninvertibleTransformException;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.awt.Dimension;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Point2D;
 import java.net.URL;
 import java.util.Collections;
 import java.util.Date;
@@ -26,8 +29,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.geometry.Envelope2D;
+import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.AbstractMapLayer;
@@ -37,17 +42,20 @@ import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.temporal.object.FastDateParser;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.StringUtilities;
+import org.geotoolkit.wms.GetFeatureInfoRequest;
 import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WebMapServer;
 import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.Style;
 
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
 
 
 /**
@@ -257,7 +265,92 @@ public class WMSMapLayer extends AbstractMapLayer {
      * @throws MalformedURLException if the generated url is invalid.
      */
     public URL query(Envelope env, final Dimension rect) throws MalformedURLException, TransformException {
+        final GetMapRequest request = server.createGetMap();
+        prepareGetMapRequest(request, env, rect);
+        return request.getURL();
+    }
 
+    public URL queryFeatureInfo(Envelope env, final Dimension rect, int x, int y, String format)
+            throws TransformException, FactoryException, MalformedURLException, NoninvertibleTransformException{
+        final GetFeatureInfoRequest request = getServer().createGetFeatureInfo();
+        request.setLayers(layers);
+        request.setQueryLayers(layers);
+
+        final GeneralEnvelope cenv = new GeneralEnvelope(env);
+        final Dimension crect = new Dimension(rect);
+
+        prepareQuery(request, cenv, crect, new double[]{1,1});
+
+        //recalculate x/y coordinates since there might be a local reprojection
+        final CoordinateReferenceSystem beforeCRS = env.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem afterCRS = env.getCoordinateReferenceSystem();
+
+        if(!CRS.equalsIgnoreMetadata(beforeCRS, afterCRS)){
+            //calculate new coordinate in the reprojected query
+            final Point2D point = new Point2D.Double(x, y);
+            final AffineTransform beforeTrs = GO2Utilities.toAffine(rect,env);
+            final AffineTransform afterTrs = GO2Utilities.toAffine(crect,cenv);
+            afterTrs.invert();
+
+            beforeTrs.transform(point, point);
+
+            final DirectPosition pos = new GeneralDirectPosition(env.getCoordinateReferenceSystem());
+            pos.setOrdinate(0, point.getX());
+            pos.setOrdinate(1, point.getY());
+
+            final MathTransform trs = CRS.findMathTransform(beforeCRS, afterCRS);
+            trs.transform(pos, pos);
+
+            point.setLocation(pos.getOrdinate(0), pos.getOrdinate(1));
+            afterTrs.transform(point, point);
+            x = (int) point.getX();
+            y = (int) point.getY();
+
+        }
+        request.setColumnIndex(x);
+        request.setRawIndex(y);
+        request.setInfoFormat(format);
+
+        return request.getURL();
+    }
+
+    /**
+     * Prepare parameters for a getMap query.
+     * The given parameters will be modified !
+     *
+     * @param request
+     * @param env
+     * @param dim
+     */
+    void prepareQuery(GetMapRequest request, GeneralEnvelope env, Dimension dim, double[] resolution) throws TransformException, FactoryException{
+
+        final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
+        CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(crs);
+
+        //check if we must make the  coverage reprojection ourself--------------
+        if (isUseLocalReprojection()) {
+            if (!supportCRS(crs2D)) {
+                crs2D = findOriginalCRS();
+                if(crs2D == null){
+                    //last chance use : CRS:84
+                    crs2D = DefaultGeographicCRS.WGS84;
+                }
+                //change the 2D crs part of the envelope, preserve other axis
+                final Envelope trsEnv = GO2Utilities.transform2DCRS(env, crs2D);
+                env.setEnvelope(new GeneralEnvelope(trsEnv));
+            }
+        }
+
+        //resolution contain dpi adjustments, to obtain an image of the correct dpi
+        //we raise the request dimension so that when we reduce it it will have the
+        //wanted dpi.
+        dim.width /= resolution[0];
+        dim.height /= resolution[1];
+
+        prepareGetMapRequest(request, env, dim);
+    }
+
+    private void prepareGetMapRequest(GetMapRequest request, Envelope env, final Dimension rect) throws TransformException{
         //check the politics, the distant wms server might not be strict on axis orders
         // nor in it's crs definitions between CRS:84 and EPSG:4326
         final CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem());
@@ -307,7 +400,6 @@ public class WMSMapLayer extends AbstractMapLayer {
             }
         }
 
-        final GetMapRequest request = server.createGetMap();
         request.setEnvelope(env);
         request.setDimension(rect);
         request.setLayers(layers);
@@ -323,7 +415,6 @@ public class WMSMapLayer extends AbstractMapLayer {
         request.setExceptions(exceptionsFormat);
         request.setTransparent(transparent);
         request.dimensions().putAll(dims);
-        return request.getURL();
     }
 
     /**

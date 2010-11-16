@@ -16,8 +16,6 @@
  */
 package org.geotoolkit.wms;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import org.geotoolkit.util.StringUtilities;
 
 
@@ -103,10 +101,13 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
     }
 
     /**
-     * {@inheritDoc }
+     * {@inheritDoc}
      */
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
+        super.prepareParameters();
+
+        requestParameters.put("REQUEST", "GetFeatureInfo");
         if (infoFormat == null) {
             throw new IllegalArgumentException("Info_Format is not defined");
         }
@@ -116,6 +117,5 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
         requestParameters.put("INFO_FORMAT", infoFormat);
         requestParameters.put("QUERY_LAYERS", StringUtilities.toCommaSeparatedValues(queryLayers));
 
-        return super.getURL();
     }
 }

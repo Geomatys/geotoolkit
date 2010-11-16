@@ -31,6 +31,7 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Paint;
 import java.awt.Rectangle;
@@ -121,6 +122,7 @@ import org.opengis.filter.expression.Literal;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.crs.CRSFactory;
+import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.TemporalCRS;
@@ -650,6 +652,59 @@ public final class GO2Utilities {
         return env;
     }
 
+    /**
+     * Transform the CRS 2D component of this envelope.
+     * This preserve temporal/elevation or other axis.
+     */
+    public static Envelope transform2DCRS(Envelope env, CoordinateReferenceSystem crs2D) throws TransformException{
+        if(crs2D.getCoordinateSystem().getDimension() != 2){
+            throw new IllegalArgumentException("Expected a 2D CRS");
+        }
+
+        final CoordinateReferenceSystem originalCRS = env.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem targetCRS;
+
+        if(originalCRS instanceof CompoundCRS){
+            final CompoundCRS ccrs = (CompoundCRS) originalCRS;
+            final CoordinateReferenceSystem part2D = CRSUtilities.getCRS2D(originalCRS);
+            final List<CoordinateReferenceSystem> lst = new ArrayList<CoordinateReferenceSystem>();
+            final StringBuilder sb = new StringBuilder();
+            for(CoordinateReferenceSystem c : ccrs.getComponents()){
+                if(c.equals(part2D)){
+                    //replace the 2D part
+                    lst.add(crs2D);
+                    sb.append(crs2D.getName().toString()).append(' ');
+                }else{
+                    //preserve other axis
+                    lst.add(c);
+                    sb.append(c.getName().toString()).append(' ');
+                }
+            }
+            targetCRS = new DefaultCompoundCRS(sb.toString(), lst.toArray(new CoordinateReferenceSystem[lst.size()]));
+
+        }else if(originalCRS.getCoordinateSystem().getDimension() == 2){
+            //no other axis, just reproject normally
+            targetCRS = crs2D;
+        }else{
+            throw new UnsupportedOperationException("How do we change the 2D component of a CRS if it's not a CompoundCRS ?");
+        }
+
+        return CRS.transform(env, targetCRS);
+    }
+
+    /**
+     * Create an affine transform object where (0,0) in the dimension
+     * match the top left corner of the envelope.
+     * This method assume that the Y axis of the rectangle is going down.
+     * This return the display to objective transform (rect to env).
+     */
+    public static AffineTransform toAffine(Dimension rect, Envelope env){
+        final double minx = env.getMinimum(0);
+        final double maxy = env.getMaximum(1);
+        final double scaleX = env.getSpan(0)/rect.width;
+        final double scaleY = - env.getSpan(1)/rect.height;
+        return new AffineTransform(scaleX, 0, 0, scaleY, minx, maxy);
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     // renderers cache /////////////////////////////////////////////////////////

@@ -27,7 +27,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -42,16 +41,14 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
-import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.wms.GetLegendRequest;
+import org.geotoolkit.wms.GetMapRequest;
 
 import org.opengis.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -117,43 +114,23 @@ final class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
         public void paint(RenderingContext2D context2D) {
             final CanvasMonitor monitor = context2D.getMonitor();
 
-            CoordinateReferenceSystem queryCrs = context2D.getObjectiveCRS2D();
-            Envelope env = context2D.getCanvasObjectiveBounds();
-            //check if we must make the  coverage reprojection ourself--------------
-            if (layer.isUseLocalReprojection()) {
-                try {
-                    if (!layer.supportCRS(context2D.getObjectiveCRS2D())) {
-                        queryCrs = layer.findOriginalCRS();
-                        if(queryCrs == null){
-                            //last chance use : CRS:84
-                            queryCrs = DefaultGeographicCRS.WGS84;
-                        }
-                        env = CRS.transform(env, queryCrs);
-                    }
-                } catch (FactoryException ex) {
-                    monitor.exceptionOccured(ex, Level.WARNING);
-                } catch (TransformException ex) {
-                    monitor.exceptionOccured(ex, Level.WARNING);
-                }
-            }
-
+            final GetMapRequest request = layer.getServer().createGetMap();
+            final GeneralEnvelope env = new GeneralEnvelope(context2D.getCanvasObjectiveBounds());
             final Dimension dim = context2D.getCanvasDisplayBounds().getSize();
-
-            //resolution contain dpi adjustments, to obtain an image of the correct dpi
-            //we raise the request dimension so that when we reduce it it will have the
-            //wanted dpi.
             final double[] resolution = context2D.getResolution(context2D.getDisplayCRS());
-            dim.width /= resolution[0];
-            dim.height /= resolution[1];
+
 
             final URL url;
             try {
-                url = layer.query(env, dim);
-
+                layer.prepareQuery(request, env,dim, resolution);
+                url = request.getURL();
             } catch (MalformedURLException ex) {
                 monitor.exceptionOccured(new PortrayalException(ex), Level.WARNING);
                 return;
             } catch (TransformException ex) {
+                monitor.exceptionOccured(new PortrayalException(ex), Level.WARNING);
+                return;
+            } catch (FactoryException ex) {
                 monitor.exceptionOccured(new PortrayalException(ex), Level.WARNING);
                 return;
             }
@@ -185,6 +162,33 @@ final class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 
         @Override
         public List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, VisitFilter filter, List<Graphic> graphics) {
+
+            if(!(context instanceof RenderingContext2D)){
+                return graphics;
+            }
+
+//            final RenderingContext2D ctx2D = (RenderingContext2D) context;
+//            final DirectPosition center = mask.getDisplayGeometry().getCentroid();
+
+//            final URL url;
+//            try {
+//                url = layer.queryFeatureInfo(
+//                        ctx2D.getCanvasObjectiveBounds(),
+//                        ctx2D.getCanvasDisplayBounds().getSize(),
+//                        (int) center.getOrdinate(0),
+//                        (int) center.getOrdinate(1));
+//                System.out.println(url);
+//            } catch (TransformException ex) {
+//                Logger.getLogger(WMSGraphicBuilder.class.getName()).log(Level.SEVERE, null, ex);
+//            } catch (FactoryException ex) {
+//                Logger.getLogger(WMSGraphicBuilder.class.getName()).log(Level.SEVERE, null, ex);
+//            } catch (MalformedURLException ex) {
+//                Logger.getLogger(WMSGraphicBuilder.class.getName()).log(Level.SEVERE, null, ex);
+//            } catch (NoninvertibleTransformException ex) {
+//                Logger.getLogger(WMSGraphicBuilder.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+
+
             return graphics;
         }
         

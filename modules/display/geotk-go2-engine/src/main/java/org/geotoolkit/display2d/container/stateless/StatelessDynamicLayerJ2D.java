@@ -66,9 +66,20 @@ public class StatelessDynamicLayerJ2D extends AbstractLayerJ2D<MapLayer>{
         
     @Override
     public List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, VisitFilter filter, List<Graphic> graphics) {
-        //since this is a distant source, we have no way to find a child graphic.
-        graphics.add(this);
-        return graphics;
+
+        final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) layer.getGraphicBuilder(GraphicJ2D.class);
+        if(builder != null){
+            //this layer hasa special graphic rendering, use it instead of normal rendering
+            final Collection<GraphicJ2D> gras = builder.createGraphics(layer, canvas);
+            for(final GraphicJ2D gra : gras){
+                graphics = gra.getGraphicAt(context, mask, filter,graphics);
+            }
+            return graphics;
+        }else{
+            //since this is a custom layer, we have no way to find a child graphic.
+            graphics.add(this);
+            return graphics;
+        }
     }
 
 }

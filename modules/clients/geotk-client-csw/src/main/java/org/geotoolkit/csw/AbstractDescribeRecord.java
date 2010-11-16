@@ -19,7 +19,6 @@ package org.geotoolkit.csw;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
@@ -98,11 +97,9 @@ public abstract class AbstractDescribeRecord extends AbstractCSWRequest implemen
         this.typeNames = typeName;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
+        super.prepareParameters();
         requestParameters.put("SERVICE", "CSW");
         requestParameters.put("REQUEST", "GetRecords");
         requestParameters.put("VERSION", version);
@@ -128,7 +125,6 @@ public abstract class AbstractDescribeRecord extends AbstractCSWRequest implemen
             requestParameters.put("TYPENAME", sTypeNames.toString());
         }
 
-        return super.getURL();
     }
 
     /**

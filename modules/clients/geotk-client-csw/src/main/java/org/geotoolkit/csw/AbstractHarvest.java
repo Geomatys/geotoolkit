@@ -19,7 +19,6 @@ package org.geotoolkit.csw;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import javax.xml.bind.JAXBException;
@@ -125,7 +124,8 @@ public class AbstractHarvest extends AbstractCSWRequest implements HarvestReques
     }
 
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
+        super.prepareParameters();
         if (source == null) {
             throw new IllegalArgumentException("The parameter \"SOURCE\" is not defined");
         }
@@ -152,7 +152,6 @@ public class AbstractHarvest extends AbstractCSWRequest implements HarvestReques
             requestParameters.put("HARVESTINTERVAL", harvestInterval);
         }
 
-        return super.getURL();
     }
 
     /**

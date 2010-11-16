@@ -42,7 +42,7 @@ public interface GetFeatureInfoRequest extends GetMapRequest {
     /**
      * Sets the layer(s) to request. Must be called.
      */
-    void setQueryLayers(String[] layers);
+    void setQueryLayers(String ... layers);
 
     /**
      * Returns the column index to request into an image, in pixels.

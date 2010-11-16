@@ -16,11 +16,6 @@
  */
 package org.geotoolkit.data.osm.client;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.Date;
 
 import org.geotoolkit.client.AbstractRequest;
@@ -158,7 +153,7 @@ public abstract class AbstractGetChangeSets extends AbstractRequest implements G
      * {@inheritDoc }
      */
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
         if(envelope != null){
             final Envelope geoEnv;
             try {
@@ -208,7 +203,6 @@ public abstract class AbstractGetChangeSets extends AbstractRequest implements G
             requestParameters.put("closed",DONT_ENCODE_EQUAL);
         }
 
-        return super.getURL();
     }
 
 }

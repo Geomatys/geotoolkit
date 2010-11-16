@@ -78,11 +78,14 @@ public abstract class AbstractRequest implements Request {
         return subPath;
     }
 
+    protected void prepareParameters(){};
+
     /**
      * {@inheritDoc }
      */
     @Override
     public URL getURL() throws MalformedURLException {
+        prepareParameters();
 
         String completeURL = this.serverURL;
         final String subPath = getSubPath();

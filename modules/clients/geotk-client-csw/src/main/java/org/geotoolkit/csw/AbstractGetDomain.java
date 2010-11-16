@@ -19,7 +19,6 @@ package org.geotoolkit.csw;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import javax.xml.bind.JAXBException;
@@ -73,11 +72,9 @@ public abstract class AbstractGetDomain extends AbstractCSWRequest implements Ge
         this.propertyName = propertyName;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
+        super.prepareParameters();
         if (propertyName == null) {
             throw new IllegalArgumentException("The parameter \"propertyName\" is not defined");
         }
@@ -86,8 +83,6 @@ public abstract class AbstractGetDomain extends AbstractCSWRequest implements Ge
         requestParameters.put("REQUEST",      "GetDomain");
         requestParameters.put("VERSION",      version);
         requestParameters.put("PROPERTYNAME", propertyName);
-
-        return super.getURL();
     }
 
     /**

@@ -16,12 +16,6 @@
  */
 package org.geotoolkit.data.osm.client;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -70,7 +64,7 @@ public abstract class AbstractGetData extends AbstractRequest implements GetData
      * {@inheritDoc }
      */
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
         if(envelope == null){
             throw new IllegalArgumentException("Envelope is not defined");
         }
@@ -87,7 +81,6 @@ public abstract class AbstractGetData extends AbstractRequest implements GetData
         sb.append(geoEnv.getMinimum(0)).append(',').append(geoEnv.getMinimum(1)).append(',');
         sb.append(geoEnv.getMaximum(0)).append(',').append(geoEnv.getMaximum(1));
         requestParameters.put("bbox",sb.toString());
-        return super.getURL();
     }
 
 }

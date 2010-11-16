@@ -17,9 +17,6 @@
 
 package org.geotoolkit.data.osm.client.v060;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.geotoolkit.data.osm.client.AbstractReadElements;
 import org.geotoolkit.data.osm.model.Node;
 import org.geotoolkit.data.osm.model.Relation;
@@ -55,7 +52,8 @@ public class ReadElements060 extends AbstractReadElements{
     }
 
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
+        super.prepareParameters();
         if(ids == null || ids.isEmpty()){
             throw new IllegalArgumentException("ids has not been defined or is empty");
         }
@@ -74,8 +72,6 @@ public class ReadElements060 extends AbstractReadElements{
 
         final String csv = StringUtilities.toCommaSeparatedValues(ids);
         requestParameters.put(strType, csv);
-
-        return super.getURL();
     }
 
 }

@@ -19,7 +19,6 @@ package org.geotoolkit.csw;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import javax.xml.bind.JAXBException;
@@ -46,15 +45,12 @@ public abstract class AbstractGetCapabilities extends AbstractCSWRequest impleme
         this.version = version;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
+        super.prepareParameters();
         requestParameters.put("SERVICE",    "CSW");
         requestParameters.put("REQUEST",    "GetCapabilities");
         requestParameters.put("VERSION",    version);
-        return super.getURL();
     }
 
     /**

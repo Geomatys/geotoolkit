@@ -16,11 +16,6 @@
  */
 package org.geotoolkit.data.osm.client;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -82,11 +77,8 @@ public abstract class AbstractGetGPSTrace extends AbstractRequest implements Get
         return page;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
         if(envelope == null){
             throw new IllegalArgumentException("Envelope is not defined");
         }
@@ -104,7 +96,6 @@ public abstract class AbstractGetGPSTrace extends AbstractRequest implements Get
         sb.append(geoEnv.getMaximum(0)).append(',').append(geoEnv.getMaximum(1));
         requestParameters.put("bbox",sb.toString());
         requestParameters.put("page",Integer.toString(page));
-        return super.getURL();
     }
 
 }

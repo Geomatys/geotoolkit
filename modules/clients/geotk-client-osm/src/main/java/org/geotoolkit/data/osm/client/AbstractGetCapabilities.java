@@ -16,10 +16,6 @@
  */
 package org.geotoolkit.data.osm.client;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import org.geotoolkit.client.AbstractRequest;
 
 
@@ -41,12 +37,8 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
         super(serverURL, "api/capabilities");
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public URL getURL() throws MalformedURLException {   
-        return super.getURL();
+    protected void prepareParameters() {
     }
 
 }

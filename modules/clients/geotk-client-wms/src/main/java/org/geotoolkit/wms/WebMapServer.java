@@ -26,9 +26,11 @@ import java.util.logging.Logger;
 import org.geotoolkit.client.Server;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.wms.v111.GetCapabilities111;
+import org.geotoolkit.wms.v111.GetFeatureInfo111;
 import org.geotoolkit.wms.v111.GetLegend111;
 import org.geotoolkit.wms.v111.GetMap111;
 import org.geotoolkit.wms.v130.GetCapabilities130;
+import org.geotoolkit.wms.v130.GetFeatureInfo130;
 import org.geotoolkit.wms.v130.GetLegend130;
 import org.geotoolkit.wms.v130.GetMap130;
 import org.geotoolkit.wms.xml.AbstractWMSCapabilities;
@@ -200,6 +202,22 @@ public class WebMapServer implements Server{
                 return new GetLegend111(serverURL.toString());
             case v130:
                 return new GetLegend130(serverURL.toString());
+            default:
+                throw new IllegalArgumentException("Version was not defined");
+        }
+    }
+
+    /**
+     * Returns the request object, in the version chosen.
+     *
+     * @throws IllegalArgumentException if the version requested is not supported.
+     */
+    public GetFeatureInfoRequest createGetFeatureInfo() {
+        switch (version) {
+            case v111:
+                return new GetFeatureInfo111(serverURL.toString());
+            case v130:
+                return new GetFeatureInfo130(serverURL.toString());
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }

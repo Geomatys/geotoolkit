@@ -19,7 +19,6 @@ package org.geotoolkit.csw;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import javax.xml.bind.JAXBException;
@@ -232,11 +231,9 @@ public abstract class AbstractGetRecords extends AbstractCSWRequest implements G
         this.typeNames = typeNames;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
+        super.prepareParameters();
         if (typeNames == null) {
             throw new IllegalArgumentException("The parameter \"TYPENAMES\" is not defined");
         }
@@ -294,7 +291,6 @@ public abstract class AbstractGetRecords extends AbstractCSWRequest implements G
             requestParameters.put("RESPONSEHANDLER", responseHandler);
         }
 
-        return super.getURL();
     }
 
     /**

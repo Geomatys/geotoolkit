@@ -17,17 +17,17 @@
 package org.geotoolkit.wms;
 
 import java.awt.Dimension;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.logging.Logger;
+
 import org.geotoolkit.client.AbstractRequest;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.logging.Logging;
+
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -241,11 +241,9 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
         return dims;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
+        super.prepareParameters();
 
         // Tests if the mandatory parameters are available
         if (layers == null || layers.length == 0) {
@@ -314,7 +312,6 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
             requestParameters.put("SLD_BODY", sldBody);
         }
 
-        return super.getURL();
     }
 
     /**

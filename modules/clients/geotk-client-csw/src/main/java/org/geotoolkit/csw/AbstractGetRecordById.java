@@ -19,7 +19,6 @@ package org.geotoolkit.csw;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Arrays;
@@ -101,11 +100,9 @@ public abstract class AbstractGetRecordById extends AbstractCSWRequest implement
         this.outputSchema = outputSchema;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public URL getURL() throws MalformedURLException {
+    protected void prepareParameters() {
+        super.prepareParameters();
         if (ids == null) {
             throw new IllegalArgumentException("The parameter \"ID\" is not defined");
         }
@@ -124,8 +121,6 @@ public abstract class AbstractGetRecordById extends AbstractCSWRequest implement
         if (outputSchema != null) {
             requestParameters.put("OUTPUTSCHEMA", outputSchema);
         }
-
-        return super.getURL();
     }
 
     /**
