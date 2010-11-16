@@ -39,9 +39,9 @@ import javax.media.jai.JAI;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;

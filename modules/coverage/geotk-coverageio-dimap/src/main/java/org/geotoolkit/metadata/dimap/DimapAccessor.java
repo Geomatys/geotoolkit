@@ -35,10 +35,10 @@ import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.util.NumberRange;
 
 import org.opengis.coverage.SampleDimensionType;
-import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;

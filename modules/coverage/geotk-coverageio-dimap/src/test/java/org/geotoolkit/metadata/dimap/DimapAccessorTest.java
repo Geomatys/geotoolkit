@@ -19,21 +19,25 @@ package org.geotoolkit.metadata.dimap;
 import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
+
 import org.geotoolkit.referencing.CRS;
-import org.opengis.referencing.FactoryException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.operation.TransformException;
-import org.w3c.dom.Document;
 import org.geotoolkit.util.DomUtilities;
+
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
+
+import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import static org.junit.Assert.*;
 import org.xml.sax.SAXException;
+
+import static org.junit.Assert.*;
 
 /**
  *
