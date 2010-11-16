@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<faqs title="Referencing FAQ" toplink="false">
+<faqs xmlns="http://maven.apache.org/FML/1.0.1"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 http://maven.apache.org/xsd/fml-1.0.1.xsd"
+      title="Referencing FAQ" toplink="false">
   <part id="intro">
     <title>Getting started</title>
     <faq id="demos">
@@ -11,7 +14,15 @@
         <p>See the referencing section in the <a href="../../demos/index.html">demos</a> page.</p>
       </answer>
     </faq>
-    <faq id="AxisOrder">
+    <faq id="supportedCodes">
+      <question>
+        Which EPSG codes are supported?
+      </question>
+      <answer>
+        <p>See the <a href="supported-codes.html">Authority codes for Coordinate Reference Systems</a> page.</p>
+      </answer>
+    </faq>
+    <faq id="axisOrder">
       <question>
         What is the <cite>axis order issue</cite> and how is it adressed?
       </question>
@@ -111,7 +122,7 @@ CoordinateReferenceSystem crs = CRS.decode("AUTO:42001," + centralMeridian + ","
         simplier spherical formulas instead. In Geotk this behavior can be obtained for any
         projections (not only the Mercator one used by Google) with explicit declarations of
         <code>"semi_major"</code> and <code>"semi_minor"</code> parameter values, like in the
-        example below. Those parameters are usually infered from the datum, but explicit
+        example below. Those parameters are usually inferred from the datum, but explicit
         declarations override the inferred values.</p>
 
 <blockquote><pre>PROJCS["Google Mercator",
@@ -195,7 +206,7 @@ CoordinateReferenceSystem crs = CRS.decode("AUTO:42001," + centralMeridian + ","
         created from the EPSG <cite>Authority Factory</cite>, then the factory should have already put
         the code in the collection of identifiers. If the CRS has been created in a different way, then
         the collection returned by the <code>getIdentifiers()</code> method may or may not be empty depending
-        if the program that created the CRS has taken the responsability of providing an identifier.</p>
+        if the program that created the CRS has taken the responsibility of providing an identifier.</p>
 
         <p>If the collection of identifiers is empty, the most effective fix is to make sure that
         the WKT contains an <code>AUTHORITY</code> declaration. If this is not possible, then the
@@ -284,7 +295,7 @@ if (identifier != null) {
 
         <p>As a side note, instances created by the Geotk <code>ReferencingObjectFactory</code> are
         unique, so even the identity check (<code>==</code>) works in a majority of cases. However
-        the recommanded approach still the use of <code>equals(Object)</code>.</p>
+        the recommended approach still the use of <code>equals(Object)</code>.</p>
       </answer>
     </faq>
   </part>
@@ -331,7 +342,7 @@ factory = FactoryFinder.getCoordinateOperationFactory(hints);</pre></blockquote>
       </answer>
     </faq>
 
-    <faq id="AxisOrderInTransforms">
+    <faq id="axisOrderInTransforms">
       <question>
         My transformed coordinates are totally wrong!
       </question>
@@ -378,7 +389,7 @@ factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);</pre></b
       </answer>
     </faq>
 
-    <faq id="ProjectionName">
+    <faq id="projectionName">
       <question>
         I have correct axis order but my transformed coordinates are still wrong.
       </question>
