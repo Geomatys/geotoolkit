@@ -154,8 +154,7 @@ public class AbstractIndexSearcher extends IndexLucene {
      */
     private void initSearcher() throws CorruptIndexException, IOException {
         final File indexDirectory = getFileDirectory();
-        final IndexReader ireader = IndexReader.open(new SimpleFSDirectory(indexDirectory), true);
-        searcher                  = new IndexSearcher(ireader);
+        searcher                  = new IndexSearcher(new SimpleFSDirectory(indexDirectory), true);
         LOGGER.log(Level.INFO, "Creating new Index Searcher with index directory:{0}", indexDirectory.getPath());
        
     }
@@ -421,10 +420,14 @@ public class AbstractIndexSearcher extends IndexLucene {
     /**
      * Free the resources when closing the searcher.
      */
+    @Override
     public void destroy() {
+        super.destroy();
+        LOGGER.info("shutting down index searcher");
         try {
-            if (searcher != null)
+            if (searcher != null) {
                 searcher.close();
+            }
             cachedQueries.clear();
         } catch (IOException ex) {
             LOGGER.warning("IOException while closing the index searcher");

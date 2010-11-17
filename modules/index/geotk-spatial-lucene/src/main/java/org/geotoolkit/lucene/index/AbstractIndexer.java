@@ -385,7 +385,10 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     /**
      * Free the resources.
      */
-    public abstract void destroy();
+    @Override
+    public void destroy() {
+        super.destroy();
+    }
 
     /**
      * This method stop all the current indexation running

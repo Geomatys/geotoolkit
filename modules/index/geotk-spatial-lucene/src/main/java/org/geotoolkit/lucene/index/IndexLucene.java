@@ -117,4 +117,12 @@ public abstract class IndexLucene {
         this.logLevel = logLevel;
     }
 
+    /**
+     * Free all the resources.
+     */
+    public void destroy() {
+        if (analyzer != null) {
+            analyzer.close();
+        }
+    }
 }
