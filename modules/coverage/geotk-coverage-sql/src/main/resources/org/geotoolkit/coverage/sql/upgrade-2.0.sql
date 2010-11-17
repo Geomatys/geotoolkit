@@ -37,7 +37,7 @@ SELECT "format", "band", "identifier", "units" FROM postgrid."SampleDimensions";
 
 --- Categories -------------------------------------------------------------------------------------
 INSERT INTO coverages."Categories" ("format", "band", "name", "lower", "upper", "c0", "c1", "function", "colors")
-(SELECT "format", "SampleDimensions"."band", "name", "lower", "upper", "c0", "c1", "function"::coverages."Function", "colors" FROM postgrid."Categories"
+(SELECT "format", "SampleDimensions"."band", "name", "lower", "upper", "c0", "c1", "function"::metadata."MI_TransferFunctionTypeCode", "colors" FROM postgrid."Categories"
 JOIN postgrid."SampleDimensions" ON "Categories"."band" = "SampleDimensions"."identifier");
 
 --- Layers -----------------------------------------------------------------------------------------
