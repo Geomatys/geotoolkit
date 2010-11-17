@@ -29,6 +29,7 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
 
     protected Integer columnIndex;
     protected Integer rawIndex;
+    protected Integer featureCount;
     protected String infoFormat;
     protected String[] queryLayers;
 
@@ -103,6 +104,20 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
     /**
      * {@inheritDoc}
      */
+    public Integer getFeatureCount() {
+        return featureCount;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public void setFeatureCount(Integer featureCount) {
+        this.featureCount = featureCount;
+    }
+
+    /**
+     * {@inheritDoc }
+     */
     @Override
     protected void prepareParameters() {
         super.prepareParameters();
@@ -111,11 +126,15 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
         if (infoFormat == null) {
             throw new IllegalArgumentException("Info_Format is not defined");
         }
+
         if (queryLayers == null) {
             throw new IllegalArgumentException("Query_Layers is not defined");
         }
+
         requestParameters.put("INFO_FORMAT", infoFormat);
         requestParameters.put("QUERY_LAYERS", StringUtilities.toCommaSeparatedValues(queryLayers));
 
+        if (featureCount != null && featureCount > 0)
+            requestParameters.put("FEATURE_COUNT", String.valueOf(featureCount));
     }
 }

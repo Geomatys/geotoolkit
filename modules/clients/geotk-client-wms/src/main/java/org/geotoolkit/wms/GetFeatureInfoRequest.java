@@ -24,6 +24,7 @@ package org.geotoolkit.wms;
  * @module pending
  */
 public interface GetFeatureInfoRequest extends GetMapRequest {
+
     /**
      * Returns the output format, never {@code null}.
      */
@@ -65,5 +66,19 @@ public interface GetFeatureInfoRequest extends GetMapRequest {
      * Sets the value for the column index to request into an image.
      */
     void setRawIndex(Integer rawIndex);
+
+    /**
+     * Gets the maximum number of features per layer for which
+     * feature information shall be returned. Its value is a positive integer. The default value is 1 if this parameter is
+     * omitted or is other than a positive integer.
+     */
+    Integer getFeatureCount();
+
+    /**
+     * Sets the maximum number of features per layer for which
+     * feature information shall be returned. Its value is a positive integer. The default value is 1 if this parameter is
+     * omitted or is other than a positive integer.
+     */
+    void setFeatureCount(Integer featureCount);
 
 }

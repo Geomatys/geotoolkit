@@ -263,6 +263,7 @@ public class WMSMapLayer extends AbstractMapLayer {
      * @param rect The dimension for the output response.
      * @return A {@linkplain GetMapRequest get map request}.
      * @throws MalformedURLException if the generated url is invalid.
+     * @throws TransformException if the tranformation between 2 CRS failed.
      */
     public URL query(Envelope env, final Dimension rect) throws MalformedURLException, TransformException {
         final GetMapRequest request = server.createGetMap();
@@ -270,11 +271,14 @@ public class WMSMapLayer extends AbstractMapLayer {
         return request.getURL();
     }
 
-    public URL queryFeatureInfo(Envelope env, final Dimension rect, int x, int y, String format)
-            throws TransformException, FactoryException, MalformedURLException, NoninvertibleTransformException{
+    public URL queryFeatureInfo(Envelope env, final Dimension rect, int x, int y,
+            final String[] queryLayers, final String infoFormat, int featureCount)
+            throws TransformException, FactoryException, MalformedURLException, NoninvertibleTransformException {
+        
         final GetFeatureInfoRequest request = getServer().createGetFeatureInfo();
-        request.setLayers(layers);
-        request.setQueryLayers(layers);
+        request.setQueryLayers(queryLayers);
+        request.setInfoFormat(infoFormat);
+        request.setFeatureCount(featureCount);
 
         final GeneralEnvelope cenv = new GeneralEnvelope(env);
         final Dimension crect = new Dimension(rect);
@@ -309,7 +313,6 @@ public class WMSMapLayer extends AbstractMapLayer {
         }
         request.setColumnIndex(x);
         request.setRawIndex(y);
-        request.setInfoFormat(format);
 
         return request.getURL();
     }
