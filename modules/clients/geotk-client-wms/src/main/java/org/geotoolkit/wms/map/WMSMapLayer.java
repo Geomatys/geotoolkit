@@ -287,7 +287,7 @@ public class WMSMapLayer extends AbstractMapLayer {
 
         //recalculate x/y coordinates since there might be a local reprojection
         final CoordinateReferenceSystem beforeCRS = env.getCoordinateReferenceSystem();
-        final CoordinateReferenceSystem afterCRS = env.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem afterCRS = cenv.getCoordinateReferenceSystem();
 
         if(!CRS.equalsIgnoreMetadata(beforeCRS, afterCRS)){
             //calculate new coordinate in the reprojected query
