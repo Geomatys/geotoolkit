@@ -58,6 +58,11 @@ public abstract class IndexLucene {
      * The global level of log.
      */
     protected Level logLevel = Level.INFO;
+
+    /**
+     * A flag indicating that the index is already closed.
+     */
+    private boolean closed = false;
     
    /**
     * Creates a new Lucene Index.
@@ -121,8 +126,9 @@ public abstract class IndexLucene {
      * Free all the resources.
      */
     public void destroy() {
-        if (analyzer != null) {
+        if (analyzer != null && !closed) {
             analyzer.close();
+            closed = true;
         }
     }
 }
