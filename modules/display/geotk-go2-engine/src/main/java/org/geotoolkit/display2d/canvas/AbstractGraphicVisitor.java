@@ -32,13 +32,14 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.GridCoverageReader;
+import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
 
 import org.opengis.display.primitive.Graphic;
+import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
@@ -118,25 +119,28 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
 
         //find grid coverage
         final ReferencedCanvas2D canvas = gra.getCanvas();
+        final CanvasController2D controller = canvas.getController();
         final GridCoverage2D coverage;
 
         final AffineTransform dispToObj;
 
         try{
-            dispToObj = canvas.getController().getTransform().createInverse();
+            dispToObj = controller.getTransform().createInverse();
         }catch(NoninvertibleTransformException ex){
             ex.printStackTrace();
             return null;
         }
-        
-        if(layer.getCoverageReader() != null){
-            GridCoverageReader reader = layer.getCoverageReader();
+
+        final GridCoverageReader reader = layer.getCoverageReader();
+        if(reader != null){
             final Rectangle2D displayRect = canvas.getDisplayBounds().getBounds2D();
             final Rectangle2D objectiveRect;
+            final Envelope visibleArea;
             final double[] resolution = new double[2];
 
             try{
                 objectiveRect = canvas.getObjectiveBounds().getBounds2D();
+                visibleArea = controller.getVisibleArea();
             }catch(TransformException ex){
                 ex.printStackTrace();
                 return null;
@@ -145,11 +149,8 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
             resolution[0] = objectiveRect.getWidth()/displayRect.getWidth();
             resolution[1] = objectiveRect.getHeight()/displayRect.getHeight();
 
-            GeneralEnvelope env = new GeneralEnvelope(objectiveRect);
-            env.setCoordinateReferenceSystem(canvas.getObjectiveCRS2D());
-
             GridCoverageReadParam param = new GridCoverageReadParam();
-            param.setEnvelope(env);
+            param.setEnvelope(visibleArea);
             param.setResolution(resolution);
 
             try{

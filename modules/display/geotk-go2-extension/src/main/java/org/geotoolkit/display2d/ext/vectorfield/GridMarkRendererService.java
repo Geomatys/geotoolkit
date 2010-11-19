@@ -17,7 +17,9 @@
  */
 package org.geotoolkit.display2d.ext.vectorfield;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Shape;
 import java.awt.geom.Rectangle2D;
 
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
@@ -68,12 +70,14 @@ public class GridMarkRendererService extends AbstractSymbolizerRendererService<V
 
     @Override
     public Rectangle2D glyphPreferredSize(CachedVectorFieldSymbolizer symbol, MapLayer layer) {
-        return null;
+        return new Rectangle2D.Double(0, 0, 25, 25);
     }
 
     @Override
     public void glyph(Graphics2D g, Rectangle2D rect, CachedVectorFieldSymbolizer symbol, MapLayer layer) {
-        
+        Shape arrow = new Arrow2D(rect.getMinX(), rect.getMinY(), rect.getWidth()-1, rect.getHeight()-1);
+        g.setColor(Color.GRAY);
+        g.fill(arrow);
     }
 
 }
