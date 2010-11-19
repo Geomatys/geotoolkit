@@ -20,7 +20,6 @@ package org.geotoolkit.referencing.operation.transform;
 import java.util.Arrays;
 import java.io.Serializable;
 import static java.lang.Math.*;
-import static java.lang.Double.doubleToLongBits;
 
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
@@ -68,18 +67,18 @@ import org.geotoolkit.referencing.operation.provider.AbridgedMolodensky;
  * </ul>
  *
  * @author Rueben Schulz (UBC)
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.16
  *
  * @since 1.2
  * @module
  */
 @Immutable
-public class MolodenskyTransform extends AbstractMathTransform implements Serializable {
+public class MolodenskyTransform extends AbstractMathTransform implements EllipsoidalTransform, Serializable {
     /**
      * Serial number for inter-operability with different versions.
      */
-    private static final long serialVersionUID = 7536566033885338422L;
+    private static final long serialVersionUID = 7206439437113286122L;
 
     /**
      * The value of {@code 1/sin(1")} multiplied by the conversion
@@ -94,15 +93,53 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
     private static final float TOLERANCE = 0.002f;
 
     /**
-     * {@code true} for the abridged formula, or {@code false} for the complete version.
+     * A mask value for {@link #type}.
+     * <ul>
+     *   <li>If set, the target coordinates are three-dimensional.</li>
+     *   <li>If unset, the target coordinates are two-dimensional.</li>
+     * </ul>
      */
-    final boolean abridged;
+    private static final int TARGET_DIMENSION_MASK = 1;
 
     /**
-     * {@code true} for a 3D transformation, or
-     * {@code false} for a 2D transformation.
+     * A mask value for {@link #type}.
+     * <ul>
+     *   <li>If set, the source coordinates are three-dimensional.</li>
+     *   <li>If unset, the source coordinates are two-dimensional.</li>
+     * </ul>
+     * <p>
+     * This value <strong>must</strong> be equals to {@code TARGET_DIMENSION_MASK << 1}.
+     * This is required by the {@link #inverse()} method.
      */
-    private final boolean source3D, target3D;
+    private static final int SOURCE_DIMENSION_MASK = 2;
+
+    /**
+     * A mask value for {@link #type}. If set, then the Molodensky transform
+     * is the inverse of some previously existing Molodensky transform.
+     */
+    private static final int INVERSE_MASK = 4;
+
+    /**
+     * A mask value for {@link #type}.
+     * <ul>
+     *   <li>If set, the transform uses the abridged formulas.</li>
+     *   <li>If unset, the transform uses the complete formulas.</li>
+     * </ul>
+     */
+    private static final int ABRIDGED_MASK = 8;
+
+    /**
+     * The mask of relevant bits to keep when using the {@link #type} numerical value as
+     * index in the {@link #variants} array. We discard {@link #ABRIDGED_MASK} because we
+     * don't provide an API for building this kind of variants from an existing transform.
+     */
+    private static final int VARIANT_MASK = SOURCE_DIMENSION_MASK | TARGET_DIMENSION_MASK | INVERSE_MASK;
+
+    /**
+     * Bitwise combination of the {@code *_MASK} constants. This is also
+     * the index of this transform in the {@link #variants} array.
+     */
+    private final int type;
 
     /**
      * X,Y,Z shift in meters.
@@ -122,7 +159,7 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
     final double da, db;
 
     /**
-     * Difference between the flattenings ({@code df = target f - source f})
+     * Difference between the flattening ({@code df = target f - source f})
      * of the target and source ellipsoids.
      */
     private final double df;
@@ -151,9 +188,14 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
     private final double adf;
 
     /**
-     * The inverse of this transform. Will be created only when first needed.
+     * The variants for different number of dimensions, and for inverse transform. Will be computed
+     * by {@link #forDimensions(boolean, boolean)} and {@link #inverse()} only when first needed.
+     *
+     * @see #variants()
+     *
+     * @since 3.16
      */
-    transient MolodenskyTransform inverse;
+    private transient MolodenskyTransform[] variants;
 
     /**
      * Constructs a Molodensky transform from the specified parameters.
@@ -182,15 +224,16 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
             final double ta, final double tb, final boolean target3D,
             final double dx, final double dy, final double  dz)
     {
-        this.abridged = abridged;
-        this.source3D = source3D;
-        this.target3D = target3D;
-        this.dx       = dx;
-        this.dy       = dy;
-        this.dz       = dz;
-        this.a        = sa;
-        this.b        = sb;
+        int type = abridged ? ABRIDGED_MASK : 0;
+        if (source3D) type |= SOURCE_DIMENSION_MASK;
+        if (target3D) type |= TARGET_DIMENSION_MASK;
+        this.type = type;
+        this.dx = dx;
+        this.dy = dy;
+        this.dz = dz;
 
+        a     =  sa;
+        b     =  sb;
         da    =  ta - sa;
         db    =  tb - sb;
         a_b   =  sa / sb;
@@ -198,35 +241,68 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
         daa   =  da * sa;
         da_a  =  da / sa;
         df    =  (ta-tb)/ta - (sa-sb)/sa;
-        e2    =  1 - (sb*sb)/(sa*sa);
-        adf   =  (sa*df) + (sa-sb)*da/sa;
+        e2    =  1 - (sb*sb) / (sa*sa);
+        adf   =  (sa*df) + (sa-sb)*(da/sa);
     }
 
     /**
-     * Creates the inverse of the given Molodenski transform.
+     * Creates a new transform with the same ellipsoidal and Bursa-Wolf parameters than the given
+     * transform. The formula (abridged or complete) and the number of dimensions can be different.
+     *
+     * @param original The transform to copy.
+     * @param abridged {@code true} for the abridged formula, or {@code false} for the complete one.
+     * @param source3D {@code true} if the source has a height.
+     * @param target3D {@code true} if the target has a height.
+     *
+     * @since 3.16
+     */
+    protected MolodenskyTransform(final MolodenskyTransform original,
+            final boolean abridged, final boolean source3D, final boolean target3D)
+    {
+        int type = original.type & INVERSE_MASK;
+        if (abridged) type |= ABRIDGED_MASK;
+        if (source3D) type |= SOURCE_DIMENSION_MASK;
+        if (target3D) type |= TARGET_DIMENSION_MASK;
+        this.type = type;
+        dx   = original.dx;
+        dy   = original.dy;
+        dz   = original.dz;
+        da   = original.da;
+        db   = original.db;
+        df   = original.df;
+        a    = original.a;
+        b    = original.b;
+        a_b  = original.a_b;
+        b_a  = original.b_a;
+        daa  = original.daa;
+        da_a = original.da_a;
+        e2   = original.e2;
+        adf  = original.adf;
+    }
+
+    /**
+     * Creates the inverse of the given Molodensky transform. It is caller
+     * responsibility to update the {@link #variants} array after construction.
      *
      * @param direct The transform for which to create the inverse transform.
+     * @param type   The value to assign to {@link #type} (computed by {@link #inverse()}).
      */
-    MolodenskyTransform(final MolodenskyTransform direct) {
-        abridged =  direct.abridged;
-        source3D =  direct.target3D;
-        target3D =  direct.source3D;
-        dx       = -direct.dx;
-        dy       = -direct.dy;
-        dz       = -direct.dz;
-        da       = -direct.da;
-        db       = -direct.db;
-        df       = -direct.df;
-        a        =  direct.a + direct.da;
-        b        =  direct.b + direct.db;
-        a_b      =  a / b;
-        b_a      =  b / a;
-        daa      = da * a;
-        da_a     = da / a;
-        e2       = 1 - (b*b)/(a*a);
-        adf      = (a*df) + (a-b)*da/a;
-        inverse  = direct;
-        direct.inverse = this;
+    MolodenskyTransform(final MolodenskyTransform direct, final int type) {
+        this.type = type;
+        dx   = -direct.dx;
+        dy   = -direct.dy;
+        dz   = -direct.dz;
+        da   = -direct.da;
+        db   = -direct.db;
+        df   = -direct.df;
+        a    =  direct.a + direct.da;
+        b    =  direct.b + direct.db;
+        a_b  =  a / b;
+        b_a  =  b / a;
+        daa  = da * a;
+        da_a = da / a;
+        e2   = 1 - (b*b)/(a*a);
+        adf  = (a*df) + (a-b)*(da/a);
     }
 
     /**
@@ -281,7 +357,7 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
      */
     @Override
     public ParameterDescriptorGroup getParameterDescriptors() {
-        return abridged ? AbridgedMolodensky.PARAMETERS : Molodensky.PARAMETERS;
+        return isAbridged() ? AbridgedMolodensky.PARAMETERS : Molodensky.PARAMETERS;
     }
 
     /**
@@ -301,9 +377,47 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
                    new FloatParameter(Molodensky.DZ,             dz),
                    new FloatParameter(Molodensky.SRC_SEMI_MAJOR, a),
                    new FloatParameter(Molodensky.SRC_SEMI_MINOR, b),
-                   new FloatParameter(Molodensky.TGT_SEMI_MAJOR, a+da),
-                   new FloatParameter(Molodensky.TGT_SEMI_MINOR, b+db)
+                   new FloatParameter(Molodensky.TGT_SEMI_MAJOR, a + da),
+                   new FloatParameter(Molodensky.TGT_SEMI_MINOR, b + db)
                });
+    }
+
+    /**
+     * Returns the {@link #variants} array, creating it if necessary.
+     */
+    private synchronized MolodenskyTransform[] variants() {
+        if (variants == null) {
+            variants = new MolodenskyTransform[VARIANT_MASK + 1];
+            variants[type & VARIANT_MASK] = this;
+        }
+        return variants;
+    }
+
+    /**
+     * Returns a transform having the same ellipsoidal and Bursa-Wolf parameters than
+     * this transform, but a different number of source or target dimensions.
+     *
+     * @since 3.16
+     */
+    @Override
+    public MolodenskyTransform forDimensions(final boolean source3D, final boolean target3D) {
+        final MolodenskyTransform[] variants = variants();
+        final boolean abridged = isAbridged();
+        int index = type & INVERSE_MASK;
+        if (source3D) index |= SOURCE_DIMENSION_MASK;
+        if (target3D) index |= TARGET_DIMENSION_MASK;
+        MolodenskyTransform variant;
+        synchronized (variants) {
+            variant = variants[index];
+            if (variant == null) {
+                variant = (index & (SOURCE_DIMENSION_MASK | TARGET_DIMENSION_MASK)) == 0
+                        ? new MolodenskyTransform2D(this, abridged)
+                        : new MolodenskyTransform(this, abridged, source3D, target3D);
+                variant.variants = variants;
+                variants[index] = variant;
+            }
+        }
+        return variant;
     }
 
     /**
@@ -311,7 +425,7 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
      */
     @Override
     public final int getSourceDimensions() {
-        return source3D ? 3 : 2;
+        return (type & SOURCE_DIMENSION_MASK) != 0 ? 3 : 2;
     }
 
     /**
@@ -319,7 +433,7 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
      */
     @Override
     public final int getTargetDimensions() {
-        return target3D ? 3 : 2;
+        return (type & TARGET_DIMENSION_MASK) != 0 ? 3 : 2;
     }
 
     /**
@@ -334,15 +448,14 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
          * Assertions: computes the inverse transform in the 3D-case only
          *             (otherwise the transform is too approximative).
          *
-         * NOTE: The somewhat complicated expression below executes 'maxError' *only* if
-         * 1) assertions are enabled and 2) the conditions before 'maxError' are meet. Do
-         * not factor the call to 'maxError' outside the 'assert' statement, otherwise it
-         * would be executed everytime and would hurt performance for normal operations
-         * (instead of slowing down during debugging only).
+         * NOTE: The expression below executes 'maxError' *only* if assertions are enabled and the
+         * conditions before 'maxError' are meet. Do not factor the call to 'maxError' outside the
+         * 'assert' statement, otherwise it would be executed everytime and would hurt performance
+         * for normal operations (instead of slowing down during debugging only).
          */
         final float error;
-        assert !(target3D && srcPts != dstPts && (error =
-                maxError(null, srcPts, srcOff, null, dstPts, dstOff, 1)) > TOLERANCE) : error;
+        assert (srcPts == dstPts) || // Following assertion can not be performed if the arrays are the same.
+               (error = maxError(null, srcPts, srcOff, null, dstPts, dstOff, 1)) <= TOLERANCE : error;
     }
 
     /**
@@ -354,8 +467,8 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
     {
         transform(null, srcPts, srcOff, null, dstPts, dstOff, numPts, srcPts == dstPts);
         final float error;
-        assert !(target3D && srcPts != dstPts && (error =
-                maxError(null, srcPts, srcOff, null, dstPts, dstOff, numPts)) > TOLERANCE) : error;
+        assert (srcPts == dstPts) || // Following assertion can not be performed if the arrays are the same.
+               (error = maxError(null, srcPts, srcOff, null, dstPts, dstOff, numPts)) <= TOLERANCE : error;
     }
 
     /**
@@ -367,8 +480,8 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
     {
         transform(srcPts, null, srcOff, dstPts, null, dstOff, numPts, srcPts == dstPts);
         final float error;
-        assert !(target3D && srcPts != dstPts && (error =
-                maxError(srcPts, null, srcOff, dstPts, null, dstOff, numPts)) > TOLERANCE) : error;
+        assert (srcPts == dstPts) || // Following assertion can not be performed if the arrays are the same.
+               (error = maxError(srcPts, null, srcOff, dstPts, null, dstOff, numPts)) <= TOLERANCE : error;
     }
 
     /**
@@ -380,8 +493,7 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
     {
         transform(null, srcPts, srcOff, dstPts, null, dstOff, numPts, false);
         final float error;
-        assert !(target3D && (error =
-                maxError(null, srcPts, srcOff, dstPts, null, dstOff, numPts)) > TOLERANCE) : error;
+        assert (error = maxError(null, srcPts, srcOff, dstPts, null, dstOff, numPts)) <= TOLERANCE : error;
     }
 
     /**
@@ -393,17 +505,23 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
     {
         transform(srcPts, null, srcOff, null, dstPts, dstOff, numPts, false);
         final float error;
-        assert !(target3D && (error =
-                maxError(srcPts, null, srcOff, null, dstPts, dstOff, numPts)) > TOLERANCE) : error;
+        assert (error = maxError(srcPts, null, srcOff, null, dstPts, dstOff, numPts)) <= TOLERANCE : error;
     }
 
     /**
      * Implementation of the transformation methods for all cases.
+     *
+     * Note: if we change the implementation in order to use concatenated transform as documented
+     *       in the constructor javadoc, don't forget to update the "roll longitude" part of the
+     *       {@link #maxError} method.
      */
     private void transform(float[] srcPts1, double[] srcPts2, int srcOff,
                            float[] dstPts1, double[] dstPts2, int dstOff,
                            int numPts, final boolean askStrategy)
     {
+        final boolean abridged = (type & ABRIDGED_MASK)         != 0;
+        final boolean source3D = (type & SOURCE_DIMENSION_MASK) != 0;
+        final boolean target3D = (type & TARGET_DIMENSION_MASK) != 0;
         int srcDecrement = 0;
         int dstDecrement = 0;
         int offFinal     = 0;
@@ -528,33 +646,46 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
      * and compares the result with {@code srcPts}. The maximal difference is returned. This method
      * is used for assertions only.
      *
-     * @return The maximal error in decimal degrees.
+     * @return The maximal error in decimal degrees, or 0 if it can not be computed.
      */
     private float maxError(final float[] srcPts1, final double[] srcPts2, int srcOff,
                            final float[] dstPts1, final double[] dstPts2, int dstOff, int numPts)
     {
         float max = 0f;
-        if (inverse == null) {
-            inverse();
-            if (inverse == null) {
-                return max; // Custom user's subclass; can't do the test.
-            }
-        }
-        final int sourceDim = getSourceDimensions();
-        final float[] tmp = new float[numPts * sourceDim];
-        inverse.transform(dstPts1, dstPts2, dstOff, tmp, null, 0, numPts, false);
-        for (int i=0; i<tmp.length; i++,srcOff++) {
-            final float expected = (srcPts2 != null) ? (float) srcPts2[srcOff] : srcPts1[srcOff];
-            float error = abs(tmp[i] - expected);
-            switch (i % sourceDim) {
-                case 0: error -= 360 * floor(error / 360); break; // Rool Longitude
-                case 2: continue; // Ignore height because inacurate.
-            }
-            if (error > max) {
-                max = error;
+        if (getTargetDimensions() == 3) {
+            final MathTransform inverse = inverse();
+            // We will perform the test only for MolodenskyTransform and MolodenskyTransform2D.
+            if (inverse.getClass().getName().startsWith(MolodenskyTransform.class.getName())) {
+                final int sourceDim = getSourceDimensions();
+                final float[] tmp = new float[numPts * sourceDim];
+                ((MolodenskyTransform) inverse).transform(dstPts1, dstPts2, dstOff, tmp, null, 0, numPts, false);
+                for (int i=0; i<tmp.length; i++,srcOff++) {
+                    final float expected = (srcPts2 != null) ? (float) srcPts2[srcOff] : srcPts1[srcOff];
+                    float error = abs(tmp[i] - expected);
+                    switch (i % sourceDim) {
+                        case 0: error -= 360 * floor(error / 360); break; // Rool Longitude
+                        case 2: continue; // Ignore height because inacurate.
+                    }
+                    if (error > max) {
+                        max = error;
+                    }
+                }
             }
         }
         return max;
+    }
+
+    /**
+     * Returns {@code true} if this Molodensky transform uses abridged formulas
+     * instead than the complete ones. This is the value of the {@code abridged}
+     * boolean argument given to the constructor.
+     *
+     * @return {@code true} if this transform uses abridged formulas.
+     *
+     * @since 3.16
+     */
+    public final boolean isAbridged() {
+        return (type & ABRIDGED_MASK) != 0;
     }
 
     /**
@@ -571,7 +702,8 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
      */
     @Override
     public boolean isIdentity() {
-        return dx == 0 && dy == 0 && dz == 0 && da == 0 && db == 0 && source3D == target3D;
+        return dx == 0 && dy == 0 && dz == 0 && da == 0 && db == 0 &&
+                getSourceDimensions() == getTargetDimensions();
     }
 
     /**
@@ -579,8 +711,27 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
      */
     @Override
     public MathTransform inverse() {
-        if (inverse == null) {
-            inverse = new MolodenskyTransform(this);
+        /*
+         * We need to interchange the number of source and the number of target dimensions.
+         * The last bits of the 'dm' variable below will be set to "00" if the source and
+         * target dimensions are the same (so no swapping is required), or "11" if they
+         * differ. The last XOR compute the type of the inverse transform.
+         */
+        int id = type;
+        id = ((id >>> 1) ^ id) & TARGET_DIMENSION_MASK;
+        id |= (id << 1) | INVERSE_MASK;
+        id ^= type;
+        final int index = id & VARIANT_MASK;
+        final MolodenskyTransform[] variants = variants();
+        MolodenskyTransform inverse;
+        synchronized (variants) {
+            inverse = variants[index];
+            if (inverse == null) {
+                inverse = (index & (SOURCE_DIMENSION_MASK | TARGET_DIMENSION_MASK)) == 0 ?
+                        new MolodenskyTransform2D(this, id) : new MolodenskyTransform(this, id);
+                inverse.variants = variants;
+                variants[index] = inverse;
+            }
         }
         return inverse;
     }
@@ -590,18 +741,13 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
      */
     @Override
     public final int hashCode() {
-        final long code = doubleToLongBits(dx) +
-                      31*(doubleToLongBits(dy) +
-                      31*(doubleToLongBits(dz) +
-                      31*(doubleToLongBits(a)  +
-                      31*(doubleToLongBits(b)  +
-                      31*(doubleToLongBits(da) +
-                      31*(doubleToLongBits(db)))))));
-        int c = ((int) code) ^ (int) (code >>> 32);
-        if (abridged) c ^= 1;
-        if (source3D) c ^= 2;
-        if (target3D) c ^= 4;
-        return c ^ (int) serialVersionUID;
+        return Utilities.hash(dx,
+               Utilities.hash(dy,
+               Utilities.hash(dz,
+               Utilities.hash(a,
+               Utilities.hash(b,
+               Utilities.hash(da,
+               Utilities.hash(db, type)))))));
     }
 
     /**
@@ -615,9 +761,7 @@ public class MolodenskyTransform extends AbstractMathTransform implements Serial
         }
         if (super.equals(object)) {
             final MolodenskyTransform that = (MolodenskyTransform) object;
-            return this.abridged == that.abridged &&
-                   this.source3D == that.source3D &&
-                   this.target3D == that.target3D &&
+            return this.type == that.type &&
                    Utilities.equals(this.dx, that.dx) &&
                    Utilities.equals(this.dy, that.dy) &&
                    Utilities.equals(this.dz, that.dz) &&

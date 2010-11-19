@@ -27,8 +27,8 @@ import org.geotoolkit.lang.Immutable;
  * {@link MolodenksiTransform} except that it implements {@link MathTransform2D}.
  *
  * @author Rueben Schulz (UBC)
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.16
  *
  * @since 2.1
  * @module
@@ -38,7 +38,7 @@ final class MolodenskyTransform2D extends MolodenskyTransform implements MathTra
     /**
      * Serial number for compatibility with different versions.
      */
-    private static final long serialVersionUID = 8098439371246167474L;
+    private static final long serialVersionUID = -7205339479409468581L;
 
     /**
      * Constructs a 2D transform using Molodensky formulas.
@@ -55,18 +55,33 @@ final class MolodenskyTransform2D extends MolodenskyTransform implements MathTra
     protected MolodenskyTransform2D(final boolean abridged,
             final double  a, final double  b,
             final double ta, final double tb,
-            final double dx, final double dy, final double  dz)
+            final double dx, final double dy, final double dz)
     {
         super(abridged, a, b, false, ta, tb, false, dx, dy, dz);
     }
 
     /**
-     * Creates the inverse of the given Molodenski transform.
+     * Creates a new transform with the same ellipsoidal and Bursa-Wolf parameters than the given
+     * transform. The formula (abridged or complete) can be different.
+     *
+     * @param original The transform to copy.
+     * @param abridged {@code true} for the abridged formula, or {@code false} for the complete one.
+     *
+     * @since 3.16
+     */
+    protected MolodenskyTransform2D(final MolodenskyTransform original, final boolean abridged) {
+        super(original, abridged, false, false);
+    }
+
+    /**
+     * Creates the inverse of the given Molodensky transform.
+     * This constructor is invoked by {@link MolodenskyTransform#inverse()} only.
      *
      * @param direct The transform for which to create the inverse transform.
+     * @param type   The value to assign to {@link #type} (computed by {@link #inverse()}).
      */
-    private MolodenskyTransform2D(final MolodenskyTransform2D direct) {
-        super(direct);
+    MolodenskyTransform2D(final MolodenskyTransform direct, final int type) {
+        super(direct, type);
     }
 
     /**
@@ -74,9 +89,6 @@ final class MolodenskyTransform2D extends MolodenskyTransform implements MathTra
      */
     @Override
     public MathTransform2D inverse() {
-        if (inverse == null) {
-            inverse = new MolodenskyTransform2D(this);
-        }
-        return (MathTransform2D) inverse;
+        return (MathTransform2D) super.inverse();
     }
 }

@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.operation.transform;
 
 import java.util.Random;
+import javax.measure.unit.SI;
 import javax.vecmath.Point3d;
 
 import org.opengis.util.FactoryException;
@@ -25,6 +26,7 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
@@ -59,6 +61,33 @@ public final class GeocentricTransformTest extends TransformTestCase {
      */
     public GeocentricTransformTest() {
         super(GeocentricTransform.class, null);
+    }
+
+    /**
+     * Tests the variants for different number of dimensions.
+     *
+     * @throws NoninvertibleTransformException Should never happen.
+     *
+     * @since 3.16
+     */
+    @Test
+    public void testForDimensions() throws NoninvertibleTransformException {
+        final double a = 6378137.0;
+        final double b = 6356752.0;
+        final GeocentricTransform tr2D, tr3D;
+
+        tr2D = new GeocentricTransform(a, b, SI.METRE, false);
+        assertEquals(2, tr2D.getSourceDimensions());
+        assertEquals(3, tr2D.getTargetDimensions());
+        assertSame(tr2D, tr2D.forDimensions(false, true));
+
+        tr3D = tr2D.forDimensions(true, true);
+        assertNotSame(tr2D, tr3D);
+        assertEquals(3, tr3D.getSourceDimensions());
+        assertEquals(3, tr3D.getTargetDimensions());
+
+        assertSame("Expected cached transform.", tr2D, tr3D.forDimensions(false, true));
+        assertSame("Expected cached transform.", tr2D, tr3D.inverse().forDimensions(true, false).inverse());
     }
 
     /**

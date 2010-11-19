@@ -98,11 +98,11 @@ public class PassThroughTransform extends AbstractMathTransform implements Seria
                                    final int numTrailingOrdinates)
     {
         if (firstAffectedOrdinate < 0) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2,
+            throw new IllegalArgumentException(illegalArgument(
                     "firstAffectedOrdinate", firstAffectedOrdinate));
         }
         if (numTrailingOrdinates < 0) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2,
+            throw new IllegalArgumentException(illegalArgument(
                     "numTrailingOrdinates", numTrailingOrdinates));
         }
         if (subTransform instanceof PassThroughTransform) {
@@ -139,11 +139,11 @@ public class PassThroughTransform extends AbstractMathTransform implements Seria
                                        final int numTrailingOrdinates)
     {
         if (firstAffectedOrdinate < 0) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2,
+            throw new IllegalArgumentException(illegalArgument(
                     "firstAffectedOrdinate", firstAffectedOrdinate));
         }
         if (numTrailingOrdinates < 0) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2,
+            throw new IllegalArgumentException(illegalArgument(
                     "numTrailingOrdinates", numTrailingOrdinates));
         }
         if (firstAffectedOrdinate == 0 && numTrailingOrdinates == 0) {

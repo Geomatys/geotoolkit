@@ -182,13 +182,23 @@ public abstract class AbstractMathTransform extends FormattableObject
     }
 
     /**
+     * Constructs an error message for the {@link IllegalArgumentException}.
+     *
+     * @param argument The argument name.
+     * @param value    The illegal value.
+     */
+    static String illegalArgument(final String argument, final Object value) {
+        return Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, argument, value);
+    }
+
+    /**
      * Constructs an error message for the {@link MismatchedDimensionException}.
      *
      * @param argument  The argument name with the wrong number of dimensions.
      * @param dimension The wrong dimension.
      * @param expected  The expected dimension.
      */
-    static String constructMessage(String argument, int dimension, int expected) {
+    static String mismatchedDimension(final String argument, final int dimension, final int expected) {
         return Errors.format(Errors.Keys.MISMATCHED_DIMENSION_$3, argument, dimension, expected);
     }
 
@@ -211,10 +221,10 @@ public abstract class AbstractMathTransform extends FormattableObject
     public Point2D transform(final Point2D ptSrc, final Point2D ptDst) throws TransformException {
         int dim;
         if ((dim = getSourceDimensions()) != 2) {
-            throw new MismatchedDimensionException(constructMessage("ptSrc", 2, dim));
+            throw new MismatchedDimensionException(mismatchedDimension("ptSrc", 2, dim));
         }
         if ((dim = getTargetDimensions()) != 2) {
-            throw new MismatchedDimensionException(constructMessage("ptDst", 2, dim));
+            throw new MismatchedDimensionException(mismatchedDimension("ptDst", 2, dim));
         }
         final double[] ord = new double[] {ptSrc.getX(), ptSrc.getY()};
         transform(ord, 0, ord, 0);
@@ -247,12 +257,12 @@ public abstract class AbstractMathTransform extends FormattableObject
         final int dimSource = getSourceDimensions();
         final int dimTarget = getTargetDimensions();
         if (dimPoint != dimSource) {
-            throw new MismatchedDimensionException(constructMessage("ptSrc", dimPoint, dimSource));
+            throw new MismatchedDimensionException(mismatchedDimension("ptSrc", dimPoint, dimSource));
         }
         if (ptDst != null) {
             dimPoint = ptDst.getDimension();
             if (dimPoint != dimTarget) {
-                throw new MismatchedDimensionException(constructMessage("ptDst", dimPoint, dimTarget));
+                throw new MismatchedDimensionException(mismatchedDimension("ptDst", dimPoint, dimTarget));
             }
             /*
              * Transforms the coordinates using a temporary 'double[]' buffer,
@@ -755,7 +765,7 @@ public abstract class AbstractMathTransform extends FormattableObject
     {
         int dim;
         if ((dim = getSourceDimensions()) != 2 || (dim = getTargetDimensions()) != 2) {
-            throw new MismatchedDimensionException(constructMessage("shape", 2, dim));
+            throw new MismatchedDimensionException(mismatchedDimension("shape", 2, dim));
         }
         final PathIterator     it = shape.getPathIterator(preTransform);
         final Path2D.Double  path = new Path2D.Double(it.getWindingRule());
@@ -903,7 +913,7 @@ public abstract class AbstractMathTransform extends FormattableObject
     public Matrix derivative(final Point2D point) throws TransformException {
         final int dimSource = getSourceDimensions();
         if (dimSource != 2) {
-            throw new MismatchedDimensionException(constructMessage("point", 2, dimSource));
+            throw new MismatchedDimensionException(mismatchedDimension("point", 2, dimSource));
         }
         throw new TransformException(Errors.format(Errors.Keys.CANT_COMPUTE_DERIVATIVE));
     }
@@ -940,7 +950,7 @@ public abstract class AbstractMathTransform extends FormattableObject
         } else {
             final int dimPoint = point.getDimension();
             if (dimPoint != dimSource) {
-                throw new MismatchedDimensionException(constructMessage("point", dimPoint, dimSource));
+                throw new MismatchedDimensionException(mismatchedDimension("point", dimPoint, dimSource));
             }
             if (dimSource == 2) {
                 if (point instanceof Point2D) {

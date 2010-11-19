@@ -19,8 +19,10 @@ package org.geotoolkit.referencing.operation.transform;
 
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.MathTransformFactory;
+import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.factory.FactoryFinder;
@@ -35,7 +37,7 @@ import static org.junit.Assert.*;
  *
  * @author Tara Athan
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.16
  *
  * @since 2.5
  */
@@ -54,12 +56,75 @@ public final class MolodenskyTransformTest extends TransformTestCase {
     }
 
     /**
+     * Tests the variants for different number of dimensions.
+     *
+     * @throws NoninvertibleTransformException Should never happen.
+     *
+     * @since 3.16
+     */
+    @Test
+    public void testForDimensions() throws NoninvertibleTransformException {
+        final double a = 6378137;
+        final double b = 6356752;
+        final MolodenskyTransform tr2D, tr3D, tr23, tr32;
+
+        tr2D = new MolodenskyTransform2D(false, a, b, a, b, 0, 0, 0);
+        assertTrue(tr2D instanceof MathTransform2D);
+        assertEquals(2, tr2D.getSourceDimensions());
+        assertEquals(2, tr2D.getTargetDimensions());
+        assertSame(tr2D, tr2D.forDimensions(false, false));
+        assertSame(tr2D, tr2D.inverse().inverse());
+
+        tr3D = tr2D.forDimensions(true, true);
+        assertNotSame(tr2D, tr3D);
+        assertFalse(tr3D instanceof MathTransform2D);
+        assertEquals(3, tr3D.getSourceDimensions());
+        assertEquals(3, tr3D.getTargetDimensions());
+        assertSame(tr3D, tr2D.forDimensions(true,  true));
+        assertSame(tr3D, tr3D.forDimensions(true,  true));
+        assertSame(tr2D, tr3D.forDimensions(false, false));
+        assertSame(tr3D, tr3D.inverse().inverse());
+        assertSame(tr2D, ((EllipsoidalTransform) tr3D.inverse()).forDimensions(false, false).inverse());
+
+        tr23 = tr2D.forDimensions(false, true);
+        assertNotSame(tr2D, tr23);
+        assertNotSame(tr3D, tr23);
+        assertFalse(tr23 instanceof MathTransform2D);
+        assertEquals(2, tr23.getSourceDimensions());
+        assertEquals(3, tr23.getTargetDimensions());
+        assertSame(tr23, tr2D.forDimensions(false, true));
+        assertSame(tr23, tr3D.forDimensions(false, true));
+        assertSame(tr23, tr23.forDimensions(false, true));
+        assertSame(tr2D, tr23.forDimensions(false, false));
+        assertSame(tr3D, tr23.forDimensions(true,  true));
+        assertSame(tr23, tr23.inverse().inverse());
+        assertSame(tr23, ((EllipsoidalTransform) tr23.inverse()).forDimensions(true, false).inverse());
+
+        tr32 = tr3D.forDimensions(true, false);
+        assertNotSame(tr2D, tr23);
+        assertNotSame(tr3D, tr23);
+        assertNotSame(tr23, tr32);
+        assertFalse(tr32 instanceof MathTransform2D);
+        assertEquals(3, tr32.getSourceDimensions());
+        assertEquals(2, tr32.getTargetDimensions());
+        assertSame(tr32, tr2D.forDimensions(true,  false));
+        assertSame(tr32, tr3D.forDimensions(true,  false));
+        assertSame(tr32, tr23.forDimensions(true,  false));
+        assertSame(tr32, tr32.forDimensions(true,  false));
+        assertSame(tr2D, tr32.forDimensions(false, false));
+        assertSame(tr3D, tr32.forDimensions(true,  true));
+        assertSame(tr23, tr32.forDimensions(false, true));
+        assertSame(tr32, tr32.inverse().inverse());
+        assertSame(tr32, ((EllipsoidalTransform) tr32.inverse()).forDimensions(false, true).inverse());
+    }
+
+    /**
      * Tests the optimized cases for identity transform.
      */
     @Test
     public void testIdentities() {
-        final double a  = 6378137.0;
-        final double b  = 6356752.0;
+        final double a = 6378137;
+        final double b = 6356752;
         boolean source3D = false;
         do {
             boolean target3D = false;
@@ -72,7 +137,7 @@ public final class MolodenskyTransformTest extends TransformTestCase {
                 }
                 boolean abridged = false;
                 do {
-                    transform = MolodenskyTransform.create(abridged, a, b, source3D, a, b, target3D, 0.0, 0.0, 0.0);
+                    transform = MolodenskyTransform.create(abridged, a, b, source3D, a, b, target3D, 0, 0, 0);
                     assertInstanceOf("Expected optimized type.", expected, transform);
                     assertEquals(source3D ? 3 : 2, transform.getSourceDimensions());
                     assertEquals(target3D ? 3 : 2, transform.getTargetDimensions());
@@ -83,7 +148,7 @@ public final class MolodenskyTransformTest extends TransformTestCase {
     }
 
     /**
-     * Tests overwriting the source array, with a target offset slightyly greater than
+     * Tests overwriting the source array, with a target offset slightly greater than
      * the source offset. Source ellipsoid is WGS84. Target ellipsoid is the same (that
      * is, we are testing an identity transform).
      *
@@ -91,9 +156,9 @@ public final class MolodenskyTransformTest extends TransformTestCase {
      */
     @Test
     public void testArrayOverwrite() throws TransformException {
-        final double a  = 6378137.0;
-        final double b  = 6356752.0;
-        transform = new MolodenskyTransform2D(false, a, b, a, b, 0.0, 0.0, 0.0);
+        final double a = 6378137;
+        final double b = 6356752;
+        transform = new MolodenskyTransform2D(false, a, b, a, b, 0, 0, 0);
         assertTrue(transform.isIdentity());
         validate();
 
@@ -115,7 +180,7 @@ public final class MolodenskyTransformTest extends TransformTestCase {
          * Tests the optimized case for identity transform.
          * This is an opportunist test.
          */
-        transform = MolodenskyTransform.create(false, a, b, false, a, b, false, 0.0, 0.0, 0.0);
+        transform = MolodenskyTransform.create(false, a, b, false, a, b, false, 0, 0, 0);
         assertInstanceOf("Expected optimized type.", AffineTransform2D.class, transform);
         assertTrue(transform.isIdentity());
         validate();

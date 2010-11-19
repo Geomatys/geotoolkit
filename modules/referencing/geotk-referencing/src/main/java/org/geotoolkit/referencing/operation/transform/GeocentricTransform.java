@@ -45,7 +45,6 @@ import org.opengis.geometry.DirectPosition;
 
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.parameter.ParameterGroup;
@@ -80,7 +79,7 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.invert;
  * @module
  */
 @Immutable
-public class GeocentricTransform extends AbstractMathTransform implements Serializable {
+public class GeocentricTransform extends AbstractMathTransform implements EllipsoidalTransform, Serializable {
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -143,10 +142,18 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
     /**
      * The inverse of this transform. Will be created only when needed.
      */
-    private transient MathTransform inverse;
+    private transient EllipsoidalTransform inverse;
 
     /**
-     * Constructs a transform from the specified parameters.
+     * The variant having a different number of source dimension. Will be computed
+     * by {@link #forDimensions(boolean, boolean)} only when first needed.
+     *
+     * @since 3.16
+     */
+    private transient GeocentricTransform variant;
+
+    /**
+     * Creates a transform from the specified parameters.
      * <p>
      * <strong>WARNING:</strong> Current implementation expects longitude and latitude ordinates
      * in decimal degrees, but it may be changed to radians in a future version. The static factory
@@ -175,6 +182,26 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
         ep2 = (a2 - b2) / b2;
         checkArgument("a", a, Double.MAX_VALUE);
         checkArgument("b", b, a);
+    }
+
+    /**
+     * Creates a new transform with the same ellipsoidal parameters than the given transform,
+     * but a different number of source dimensions.
+     *
+     * @param original The transform to copy.
+     * @param hasHeight {@code true} if geographic coordinates include an ellipsoidal
+     *        height (i.e. are 3-D), or {@code false} if they are only 2-D.
+     *
+     * @since 3.16
+     */
+    protected GeocentricTransform(final GeocentricTransform original, final boolean hasHeight) {
+        this.hasHeight = hasHeight;
+        a   = original.a;
+        b   = original.b;
+        a2  = original.a2;
+        b2  = original.b2;
+        e2  = original.e2;
+        ep2 = original.ep2;
     }
 
     /**
@@ -232,7 +259,7 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
     {
         if (!(value >= 0 && value <= max)) {
             // Use '!' in order to trap NaN
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, name, value));
+            throw new IllegalArgumentException(illegalArgument(name, value));
         }
     }
 
@@ -271,6 +298,43 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
         parameters[index++] = new FloatParameter(EllipsoidToGeocentric.SEMI_MAJOR, a);
         parameters[index++] = new FloatParameter(EllipsoidToGeocentric.SEMI_MINOR, b);
         return new ParameterGroup(descriptor, parameters);
+    }
+
+    /**
+     * Returns a transform having the same ellipsoidal parameters than this transform,
+     * but a different number of source dimensions. The number of target dimensions can
+     * not be changed, because the target coordinate system is not ellipsoidal.
+     *
+     * {@note In the <i>inverse</i> transform case, the above-cited conditions for the
+     *        <code>source3D</code> and <code>target3D</code> arguments are interchanged.}
+     *
+     * @param  source3D {@code true} if the source coordinates have a height.
+     * @param  target3D Must always be {@code true}.
+     * @return A transform having the requested source dimensions (may be {@code this}).
+     * @throws IllegalArgumentException If {@code target3D} is {@code false}.
+     *
+     * @since 3.16
+     */
+    @Override
+    public GeocentricTransform forDimensions(final boolean source3D, final boolean target3D)
+            throws IllegalArgumentException
+    {
+        if (!target3D) {
+            throw new IllegalArgumentException(illegalArgument("target3D", target3D));
+        }
+        if (source3D == hasHeight) {
+            return this;
+        }
+        GeocentricTransform variant;
+        synchronized (this) {
+            variant = this.variant;
+            if (variant == null) {
+                variant = new GeocentricTransform(this, source3D);
+                variant.variant = this;
+                this.variant = variant;
+            }
+        }
+        return variant;
     }
 
     /**
@@ -581,7 +645,7 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
         final int dimSource = hasHeight ? 3 : 2;
         final int dimPoint = point.getDimension();
         if (dimPoint != dimSource) {
-            throw new MismatchedDimensionException(constructMessage("point", dimPoint, dimSource));
+            throw new MismatchedDimensionException(mismatchedDimension("point", dimPoint, dimSource));
         }
         final double λ = toRadians(point.getOrdinate(0));      // Longitude
         final double φ = toRadians(point.getOrdinate(1));      // Latitude
@@ -617,7 +681,7 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
      * Returns the inverse of this transform.
      */
     @Override
-    public synchronized MathTransform inverse() {
+    public synchronized EllipsoidalTransform inverse() {
         if (inverse == null) {
             inverse = new Inverse();
         }
@@ -677,7 +741,9 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
      * @since 2.0
      * @module
      */
-    private final class Inverse extends AbstractMathTransform.Inverse implements Serializable {
+    private final class Inverse extends AbstractMathTransform.Inverse
+            implements EllipsoidalTransform, Serializable
+    {
         /**
          * Serial number for inter-operability with different versions.
          */
@@ -688,6 +754,31 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
          */
         public Inverse() {
             GeocentricTransform.this.super();
+        }
+
+        /**
+         * Returns a transform having the same ellipsoidal parameters than this transform,
+         * but a different number of target dimensions. The number of source dimensions can
+         * not be changed, because the source coordinate system is not ellipsoidal.
+         *
+         * @param  source3D Must always be {@code true}.
+         * @param  target3D {@code true} if the target coordinates have a height.
+         * @return A transform having the requested target dimensions (may be {@code this}).
+         * @throws IllegalArgumentException If {@code source3D} is {@code false}.
+         *
+         * @since 3.16
+         */
+        @Override
+        public EllipsoidalTransform forDimensions(final boolean source3D, final boolean target3D)
+                throws IllegalArgumentException
+        {
+            if (!source3D) {
+                throw new IllegalArgumentException(illegalArgument("source3D", source3D));
+            }
+            if (target3D == hasHeight) {
+                return this;
+            }
+            return GeocentricTransform.this.forDimensions(target3D, source3D).inverse();
         }
 
         /**
@@ -802,7 +893,7 @@ public class GeocentricTransform extends AbstractMathTransform implements Serial
             }
             final double[] ordinates = point.getCoordinate();
             if (ordinates.length != 3) {
-                throw new MismatchedDimensionException(constructMessage("point", ordinates.length, 3));
+                throw new MismatchedDimensionException(mismatchedDimension("point", ordinates.length, 3));
             }
             inverseTransform(null, ordinates, 0, null, ordinates, 0, 1, true, false);
             point = new GeneralDirectPosition(ordinates);

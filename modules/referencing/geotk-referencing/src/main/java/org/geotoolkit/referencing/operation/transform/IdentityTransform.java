@@ -194,7 +194,7 @@ public class IdentityTransform extends AbstractMathTransform implements LinearTr
                 return ptDst;
             }
         }
-        throw new MismatchedDimensionException(constructMessage(name, check, dimension));
+        throw new MismatchedDimensionException(mismatchedDimension(name, check, dimension));
     }
 
     /**
