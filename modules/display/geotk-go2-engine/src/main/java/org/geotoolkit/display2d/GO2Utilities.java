@@ -239,7 +239,7 @@ public final class GO2Utilities {
         GLYPH_TEXT = textLine;
 
     }
-    
+
     private GO2Utilities() {}
 
     public static void portray(final ProjectedFeature feature, CachedSymbolizer symbol,
@@ -509,7 +509,7 @@ public final class GO2Utilities {
     ////////////////////////////////////////////////////////////////////////////
     // geometries operations ///////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
-    
+
     public static Shape toJava2D(Geometry geom){
         return new JTSGeometryJ2D(geom);
     }
@@ -652,16 +652,12 @@ public final class GO2Utilities {
         return env;
     }
 
-    /**
-     * Transform the CRS 2D component of this envelope.
-     * This preserve temporal/elevation or other axis.
-     */
-    public static Envelope transform2DCRS(Envelope env, CoordinateReferenceSystem crs2D) throws TransformException{
+    public static CoordinateReferenceSystem change2DComponent( CoordinateReferenceSystem originalCRS,
+            CoordinateReferenceSystem crs2D) throws TransformException {
         if(crs2D.getCoordinateSystem().getDimension() != 2){
             throw new IllegalArgumentException("Expected a 2D CRS");
         }
 
-        final CoordinateReferenceSystem originalCRS = env.getCoordinateReferenceSystem();
         final CoordinateReferenceSystem targetCRS;
 
         if(originalCRS instanceof CompoundCRS){
@@ -689,6 +685,16 @@ public final class GO2Utilities {
             throw new UnsupportedOperationException("How do we change the 2D component of a CRS if it's not a CompoundCRS ?");
         }
 
+        return targetCRS;
+    }
+
+    /**
+     * Transform the CRS 2D component of this envelope.
+     * This preserve temporal/elevation or other axis.
+     */
+    public static Envelope transform2DCRS(Envelope env, CoordinateReferenceSystem crs2D) throws TransformException{
+        final CoordinateReferenceSystem originalCRS = env.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem targetCRS = change2DComponent(originalCRS, crs2D);
         return CRS.transform(env, targetCRS);
     }
 
@@ -888,7 +894,7 @@ public final class GO2Utilities {
      */
     public static float calculateScaleCoefficient(RenderingContext2D context, Unit<Length> symbolUnit){
         final CoordinateReferenceSystem objectiveCRS = context.getObjectiveCRS();
-        
+
         if(symbolUnit == null || objectiveCRS == null){
             throw new NullPointerException("symbol unit and objectiveCRS cant be null");
         }

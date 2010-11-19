@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -48,6 +47,7 @@ import org.geotoolkit.wms.WebMapServer;
 import org.geotoolkit.wms.xml.AbstractDimension;
 import org.geotoolkit.wms.xml.AbstractLayer;
 import org.geotoolkit.wms.xml.Style;
+import org.geotoolkit.wms.xml.WMSVersion;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -56,6 +56,8 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
+
+import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.*;
 
 
 /**
@@ -103,7 +105,7 @@ public class WMSMapLayer extends AbstractMapLayer {
     }
 
     //TODO : we should use the envelope provided by the wms capabilities
-    private static final Envelope MAXEXTEND_ENV = new Envelope2D(DefaultGeographicCRS.WGS84, -180, -90, 360, 180);
+    private static final Envelope MAXEXTEND_ENV = new Envelope2D(WGS84, -180, -90, 360, 180);
 
     /**
      * The web map server to request.
@@ -265,16 +267,16 @@ public class WMSMapLayer extends AbstractMapLayer {
      * @throws MalformedURLException if the generated url is invalid.
      * @throws TransformException if the tranformation between 2 CRS failed.
      */
-    public URL query(Envelope env, final Dimension rect) throws MalformedURLException, TransformException {
+    public URL query(Envelope env, final Dimension rect) throws MalformedURLException, TransformException, FactoryException {
         final GetMapRequest request = server.createGetMap();
-        prepareGetMapRequest(request, env, rect);
+        prepareQuery(request, new GeneralEnvelope(env), rect, new double[]{1,1});
         return request.getURL();
     }
 
     public URL queryFeatureInfo(Envelope env, final Dimension rect, int x, int y,
             final String[] queryLayers, final String infoFormat, int featureCount)
             throws TransformException, FactoryException, MalformedURLException, NoninvertibleTransformException {
-        
+
         final GetFeatureInfoRequest request = getServer().createGetFeatureInfo();
         request.setQueryLayers(queryLayers);
         request.setInfoFormat(infoFormat);
@@ -327,20 +329,60 @@ public class WMSMapLayer extends AbstractMapLayer {
      */
     void prepareQuery(GetMapRequest request, GeneralEnvelope env, Dimension dim, double[] resolution) throws TransformException, FactoryException{
 
+
         final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
         CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(crs);
+        GeneralEnvelope fakeEnv = new GeneralEnvelope(env);
 
         //check if we must make the  coverage reprojection ourself--------------
-        if (isUseLocalReprojection()) {
-            if (!supportCRS(crs2D)) {
-                crs2D = findOriginalCRS();
-                if(crs2D == null){
-                    //last chance use : CRS:84
-                    crs2D = DefaultGeographicCRS.WGS84;
-                }
-                //change the 2D crs part of the envelope, preserve other axis
-                final Envelope trsEnv = GO2Utilities.transform2DCRS(env, crs2D);
-                env.setEnvelope(new GeneralEnvelope(trsEnv));
+        if (isUseLocalReprojection() && !supportCRS(crs2D)) {
+            crs2D = findOriginalCRS();
+            if(crs2D == null){
+                //last chance use : CRS:84
+                crs2D = WGS84;
+            }
+
+            //change the 2D crs part of the envelope, preserve other axis
+            final GeneralEnvelope trsEnv;
+
+            if ((server.getVersion() == WMSVersion.v111) && (CRS.equalsIgnoreMetadata(crs2D, EPSG_4326))) {
+                //in case we are asking for a WMS in 1.1.0 and EPSG:4326
+                //we must change the crs to 4326 but with CRS:84 coordinate
+                trsEnv = new GeneralEnvelope(GO2Utilities.transform2DCRS(env, WGS84));
+                env.setEnvelope(trsEnv);
+                CoordinateReferenceSystem fakeCrs = GO2Utilities.change2DComponent(trsEnv.getCoordinateReferenceSystem(), EPSG_4326);
+                trsEnv.setCoordinateReferenceSystem(fakeCrs);
+                fakeEnv.setEnvelope(trsEnv);
+            }else if ((server.getVersion() == WMSVersion.v111) && (CRS.equalsIgnoreMetadata(crs2D, WGS84))) {
+                //in case we are asking for a WMS in 1.1.0 and CRS:84
+                //we must change the crs to 4326 but with CRS:84 coordinate
+                trsEnv = new GeneralEnvelope(GO2Utilities.transform2DCRS(env, WGS84));
+                env.setEnvelope(trsEnv);
+                final CoordinateReferenceSystem fakeCrs = GO2Utilities.change2DComponent(crs, EPSG_4326);
+                trsEnv.setCoordinateReferenceSystem(fakeCrs);
+                fakeEnv.setEnvelope(trsEnv);
+            } else {
+                trsEnv = new GeneralEnvelope(GO2Utilities.transform2DCRS(env, crs2D));
+                env.setEnvelope(trsEnv);
+                fakeEnv.setEnvelope(trsEnv);
+            }
+
+        }else{
+            
+            if ((server.getVersion() == WMSVersion.v111) && (CRS.equalsIgnoreMetadata(crs2D, EPSG_4326))) {
+                //in case we are asking for a WMS in 1.1.0 and EPSG:4326
+                //we must change the crs to 4326 but with CRS:84 coordinate
+                final GeneralEnvelope trsEnv = new GeneralEnvelope(GO2Utilities.transform2DCRS(env, WGS84));
+                final CoordinateReferenceSystem fakeCrs = GO2Utilities.change2DComponent(trsEnv.getCoordinateReferenceSystem(), EPSG_4326);
+                trsEnv.setCoordinateReferenceSystem(fakeCrs);
+                fakeEnv.setEnvelope(trsEnv);
+            } else if ((server.getVersion() == WMSVersion.v111) && (CRS.equalsIgnoreMetadata(crs2D, WGS84))) {
+                //in case we are asking for a WMS in 1.1.0 and CRS:84
+                //we must change the crs to 4326 but with CRS:84 coordinate
+                final GeneralEnvelope trsEnv = new GeneralEnvelope(env);
+                final CoordinateReferenceSystem fakeCrs = GO2Utilities.change2DComponent(crs, EPSG_4326);
+                trsEnv.setCoordinateReferenceSystem(fakeCrs);
+                fakeEnv.setEnvelope(trsEnv);
             }
         }
 
@@ -350,7 +392,7 @@ public class WMSMapLayer extends AbstractMapLayer {
         dim.width /= resolution[0];
         dim.height /= resolution[1];
 
-        prepareGetMapRequest(request, env, dim);
+        prepareGetMapRequest(request, fakeEnv, dim);
     }
 
     private void prepareGetMapRequest(GetMapRequest request, Envelope env, final Dimension rect) throws TransformException{
@@ -362,7 +404,7 @@ public class WMSMapLayer extends AbstractMapLayer {
         //we loose the vertical and temporale crs in the process, must be fixed
         //check CRS84 politic---------------------------------------------------
         if (crs84Politic != CRS84Politic.STRICT) {
-            if (CRS.equalsIgnoreMetadata(crs2D, DefaultGeographicCRS.WGS84)) {
+            if (CRS.equalsIgnoreMetadata(crs2D, WGS84)) {
 
                 switch (crs84Politic) {
                     case CONVERT_TO_EPSG4326:
@@ -381,7 +423,7 @@ public class WMSMapLayer extends AbstractMapLayer {
                     case CONVERT_TO_CRS84:
                         env = CRS.transform(env, crs2D);
                         env = new GeneralEnvelope(env);
-                        ((GeneralEnvelope) env).setCoordinateReferenceSystem(DefaultGeographicCRS.WGS84);
+                        ((GeneralEnvelope) env).setCoordinateReferenceSystem(WGS84);
                         break;
                 }
             }
@@ -503,7 +545,7 @@ public class WMSMapLayer extends AbstractMapLayer {
     /**
      * Set the SLD specification version for SLD defines with SLD or SLD_BODY parameter
      *
-     * @param sldVersion 
+     * @param sldVersion
      */
     public void setSldVersion(String sldVersion) {
         this.sldVersion = sldVersion;
@@ -520,7 +562,7 @@ public class WMSMapLayer extends AbstractMapLayer {
             throw new NullArgumentException("format  = "+format);
         }
         this.format = format;
-        
+
     }
 
     /**
@@ -546,7 +588,7 @@ public class WMSMapLayer extends AbstractMapLayer {
      */
     public void setExceptionsFormat(String exceptionsFormat) {
         this.exceptionsFormat = exceptionsFormat;
-    }    
+    }
 
     /**
      * @return the transparent
