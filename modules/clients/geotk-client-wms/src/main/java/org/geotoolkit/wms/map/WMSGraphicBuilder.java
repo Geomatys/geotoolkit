@@ -42,8 +42,10 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.wms.GetLegendRequest;
 import org.geotoolkit.wms.GetMapRequest;
 
@@ -150,11 +152,16 @@ final class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
                 return;
             }
 
-            final GridCoverageFactory gc = new GridCoverageFactory();
-            final GridCoverage2D coverage = gc.create("wms", image, env);
+            final AffineTransform2D gridToCRS = new AffineTransform2D(GO2Utilities.toAffine(dim, env));
+            final GridCoverageFactory gc = new GridCoverageFactory();            
             try {
+                final GridCoverage2D coverage = gc.create("wms", image,
+                    CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem()), gridToCRS, null, null, null);
                 GO2Utilities.portray(context2D, coverage);
             } catch (PortrayalException ex) {
+                monitor.exceptionOccured(ex, Level.WARNING);
+                return;
+            } catch (TransformException ex) {
                 monitor.exceptionOccured(ex, Level.WARNING);
                 return;
             }
