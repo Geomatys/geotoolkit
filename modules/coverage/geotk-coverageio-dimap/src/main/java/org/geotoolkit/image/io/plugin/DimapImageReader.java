@@ -112,8 +112,14 @@ public class DimapImageReader extends ImageReaderAdapter {
     private RenderedImage changeColorModel(RenderedImage image, boolean bufferedImage) throws IOException{
         if(image == null) return image;
 
-
-        final DimapMetadata metadata = (DimapMetadata) getImageMetadata(0);
+        final boolean oldState = ignoreMetadata;
+        ignoreMetadata = false;
+        final DimapMetadata metadata;
+        try {
+            metadata = (DimapMetadata) getImageMetadata(0);
+        } finally {
+            ignoreMetadata = oldState;
+        }
         if(metadata == null){
             throw new IOException("Coverage has no metadata (*.dim) file associated.");
         }
@@ -140,7 +146,7 @@ public class DimapImageReader extends ImageReaderAdapter {
             buffer.createGraphics().drawRenderedImage(image, new AffineTransform());
         }
 
-        //remove black borders
+        //remove black borders+
         FloodFill.fill(buffer, new Color[]{Color.BLACK}, new Color(0f,0f,0f,0f),
                 new Point(0,0),
                 new Point(buffer.getWidth()-1,0),
