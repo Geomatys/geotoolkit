@@ -549,42 +549,46 @@ public final class NewGridCoverageReference {
                 for (int i=0; i<bands.length; i++) {
                     final GridSampleDimension band = bands[i];
                     final List<Category> categories = band.getCategories();
+                    if (categories == null) {
+                        continue;
+                    }
                     for (int j=categories.size(); --j>=0;) {
                         Category c = categories.get(j);
                         final TransferFunction tf = new TransferFunction(c, null);
-                        if (tf.isQuantitative) {
-                            if (tf.isGeophysics) {
-                                /*
-                                 * In the geophysics case, we are free to choose whatever upper
-                                 * value please us.  We are using 255 here, the maximum allowed
-                                 * for a 8-bits indexed image.
-                                 */
-                                c = new Category(c.getName(), c.getColors(), PACKED_RANGE, c.getRange());
-                                bands[i] = packSampleDimension(band, c).geophysics(true);
-                                packMode = ViewType.GEOPHYSICS;
-                            } else if (tf.minimum < 0 && TransferFunctionType.LINEAR.equals(tf.type)) {
-                                /*
-                                 * In the signed integer values case, the offset applied here must
-                                 * be consistent with the sample conversion applied by the image
-                                 * reader when SampleConversionType.SHIFT_SIGNED_INTEGERS is set.
-                                 */
-                                // Upper sample value: Add 1 because value 0 is reserved for
-                                // "no data", and add 1 again because 'upper' is exclusive.
-                                final int upper = (tf.maximum - tf.minimum) + 2;
-                                double offset = fixRoundingError(tf.offset - tf.scale * (1 - tf.minimum));
-                                c = new Category(c.getName(), c.getColors(), 1, upper, tf.scale, offset);
-                                bands[i] = packSampleDimension(band, c);
-                                packMode = ViewType.PACKED;
-                            }
-                            /*
-                             * MetadataHelper should have created at most one quantitative category
-                             * (usually the last one) recognized by its non-null transfer function.
-                             * In the uncommon case were there is more quantitative categories, it
-                             * is the user responsibility to edit the fields (using the widget for
-                             * instance). We stop the loop in order to avoid conflicts.
-                             */
-                            break;
+                        if (!tf.isQuantitative) {
+                            continue;
                         }
+                        if (tf.isGeophysics) {
+                            /*
+                             * In the geophysics case, we are free to choose whatever upper
+                             * value please us.  We are using 255 here, the maximum allowed
+                             * for a 8-bits indexed image.
+                             */
+                            c = new Category(c.getName(), c.getColors(), PACKED_RANGE, c.getRange());
+                            bands[i] = packSampleDimension(band, c).geophysics(true);
+                            packMode = ViewType.GEOPHYSICS;
+                        } else if (tf.minimum < 0 && TransferFunctionType.LINEAR.equals(tf.type)) {
+                            /*
+                             * In the signed integer values case, the offset applied here must
+                             * be consistent with the sample conversion applied by the image
+                             * reader when SampleConversionType.SHIFT_SIGNED_INTEGERS is set.
+                             */
+                            // Upper sample value: Add 1 because value 0 is reserved for
+                            // "no data", and add 1 again because 'upper' is exclusive.
+                            final int upper = (tf.maximum - tf.minimum) + 2;
+                            double offset = fixRoundingError(tf.offset - tf.scale * (1 - tf.minimum));
+                            c = new Category(c.getName(), c.getColors(), 1, upper, tf.scale, offset);
+                            bands[i] = packSampleDimension(band, c);
+                            packMode = ViewType.PACKED;
+                        }
+                        /*
+                         * MetadataHelper should have created at most one quantitative category
+                         * (usually the last one) recognized by its non-null transfer function.
+                         * In the uncommon case were there is more quantitative categories, it
+                         * is the user responsibility to edit the fields (using the widget for
+                         * instance). We stop the loop in order to avoid conflicts.
+                         */
+                        break;
                     }
                 }
                 sampleDimensions = Arrays.asList(bands);
