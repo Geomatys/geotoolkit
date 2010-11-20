@@ -63,6 +63,13 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
             <artifactId>geotk-xml-xsd</artifactId>
             <version>${project.version}</version>
         </dependency>
+        
+        
+        <dependency>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>woodstox-core-lgpl</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
 </project>

@@ -17,10 +17,22 @@
 
 package org.geotoolkit.xml;
 
+import javax.xml.stream.XMLStreamReader;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.Source;
+import org.w3c.dom.Node;
+import java.beans.Expression;
+import org.w3c.dom.Document;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import java.io.FileOutputStream;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.Result;
+import javax.xml.transform.dom.DOMResult;
+import org.geotoolkit.util.DomUtilities;
 
 import org.geotoolkit.xml.MockReader.Person;
 
@@ -84,9 +96,39 @@ public class StaxStreamWriterTest {
         validate(file);
         if(file.exists()) file.delete();
     }
-
+    
     @Test
-    public void testReadingFromStaxWriter() throws Exception {
+    public void testWritingToDom() throws Exception {
+        //this test requiere and advanced Stax library, here we use WoodStox stream reader.
+        final DocumentBuilderFactory fabrique = DocumentBuilderFactory.newInstance();
+        final DocumentBuilder constructeur = fabrique.newDocumentBuilder();
+        final Document document = constructeur.newDocument();
+
+        final File file = new File("src/test/resources/org/geotoolkit/xml/sampleOutput.xml");
+        if(file.exists()) file.delete();
+
+        final Result res = new DOMResult(document);
+        
+        final MockWriter instance = new MockWriter();
+        instance.setOutput(res);
+        instance.write();
+        instance.dispose();
+
+        
+        //check by reading it back
+        final Source src = new DOMSource(document);
+        
+        final XMLInputFactory XMLfactory = XMLInputFactory.newInstance();
+        final XMLStreamReader reader = XMLfactory.createXMLStreamReader(src);
+
+        final MockReader mr = new MockReader();
+        mr.setInput(reader);
+        StaxStreamReaderTest.validate(mr.read());
+        mr.dispose();
+    }
+    
+    @Test
+    public void testWritingFromStaxWriter() throws Exception {
         final File file = new File("src/test/resources/org/geotoolkit/xml/sampleOutput.xml");
         if(file.exists()) file.delete();
 

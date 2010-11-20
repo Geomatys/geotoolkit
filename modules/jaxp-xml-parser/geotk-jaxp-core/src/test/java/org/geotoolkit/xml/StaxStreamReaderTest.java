@@ -17,9 +17,14 @@
 
 package org.geotoolkit.xml;
 
+import org.w3c.dom.Document;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
+import javax.xml.transform.Source;
+import javax.xml.transform.dom.DOMSource;
 import org.geotoolkit.xml.MockReader.Person;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -97,8 +102,27 @@ public class StaxStreamReaderTest {
         validate(instance.read());
         instance.dispose();
     }
+    
+    @Test
+    public void testReadingFromDom() throws Exception {
+        
+        //this test requiere and advanced Stax library, here we use WoodStox stream reader.
+        final DocumentBuilderFactory fabrique = DocumentBuilderFactory.newInstance();
+        final DocumentBuilder constructeur = fabrique.newDocumentBuilder();
+        final Document document = constructeur.parse(StaxStreamReaderTest.class.getResourceAsStream("/org/geotoolkit/xml/sample.xml"));        
+        final Source src = new DOMSource(document);
+        
+        final XMLInputFactory XMLfactory = XMLInputFactory.newInstance();
+        final XMLStreamReader reader = XMLfactory.createXMLStreamReader(src);
 
-    private void validate(Person person){
+        final MockReader instance = new MockReader();
+        instance.setInput(reader);
+        validate(instance.read());
+        instance.dispose();
+    }
+    
+
+    public static void validate(Person person){
         assertNotNull(person);
         assertEquals(person.name, "Jean-Pierre");
         assertEquals(person.age, 13.5, 0.000000001);

@@ -367,6 +367,13 @@
         <artifactId>jaxen-limited</artifactId>
         <version>1.1.2</version>
       </dependency>
+      
+      <!-- woddstox, for fast and extended stax xml support -->
+      <dependency>
+          <groupId>org.codehaus.woodstox</groupId>
+          <artifactId>woodstox-core-lgpl</artifactId>
+          <version>4.0.9</version>
+      </dependency>
 
     </dependencies>
   </dependencyManagement>
