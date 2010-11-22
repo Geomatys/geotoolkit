@@ -17,6 +17,9 @@
  */
 package org.geotoolkit.display2d.service;
 
+import java.awt.image.IndexColorModel;
+import java.awt.image.ColorModel;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -28,10 +31,13 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints.Key;
 import java.awt.Shape;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
+import java.awt.image.SampleModel;
+import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -402,11 +408,12 @@ public class DefaultPortrayalService implements PortrayalService{
         }
 
         //use the rendering engine to generate an image
-        final BufferedImage image = portray(canvasDef,sceneDef,viewDef);
+        BufferedImage image = portray(canvasDef,sceneDef,viewDef);
 
         if(image == null){
             throw new PortrayalException("No image created by the canvas.");
         }
+
 
         if(useCoverageWriter){
             final Envelope env = viewDef.getEnvelope();
@@ -415,10 +422,14 @@ public class DefaultPortrayalService implements PortrayalService{
                     env.getSpan(0) / (double)dim.width,
                     env.getSpan(1) / (double)dim.height};
 
+            //check the image color model
+            image = (BufferedImage) rectifyImageColorModel(image, mime);
+
             final GridCoverage2D coverage = GCF.create("PortrayalTempCoverage", image, env);
             writeCoverage(coverage, env, resolution, outputDef,null);
         }else{
             try {
+                //image color model check is done in the writeImage method
                 writeImage(image, outputDef);
             } catch (IOException ex) {
                 throw new PortrayalException(ex);
@@ -644,6 +655,7 @@ public class DefaultPortrayalService implements PortrayalService{
     ////////////////////////////////////////////////////////////////////////////
     // OTHER USEFULL ///////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
+
     /**
      * Write exception in a transparent image.
      *
@@ -715,7 +727,10 @@ public class DefaultPortrayalService implements PortrayalService{
      * @throws IOException
      */
     public static void writeImage(RenderedImage image, OutputDef outputDef) throws IOException{
-        final ImageWriter writer = ImageIOUtilities.getImageWriter(image, outputDef.getMime(), outputDef.getOutput());
+        final String mime = outputDef.getMime();
+        image = rectifyImageColorModel(image, mime);
+
+        final ImageWriter writer = ImageIOUtilities.getImageWriter(image, mime, outputDef.getOutput());
         final ImageWriteParam param = writer.getDefaultWriteParam();
 
         final Float compression = outputDef.getCompression();
@@ -757,6 +772,50 @@ public class DefaultPortrayalService implements PortrayalService{
         context.layers().add(layer);
 
         return context;
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////////
+    // COLOR MODEL VERIFICATION ////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    //mime types which writer does not support indexed color model
+    //even if the canEncode method says "true"
+    private static final List<String> INDEXED_CM_UNSUPPORTED =
+            UnmodifiableArrayList.wrap(
+                "image/bmp",
+                "image/pnm");
+
+    /**
+     * Check that the given color model is supported by the mime type.
+     * This is normaly handle by a JAI method "canEncodeImage" but it has
+     * some bugs. So we hard code some cases here.
+     * Returns the same colormodel if it is supported by the mime-type.
+     * Returns a new colormodel otherwise.
+     */
+    public static ColorModel rectifyColorModel(ColorModel model, String mime){
+        if(model instanceof IndexColorModel && INDEXED_CM_UNSUPPORTED.contains(mime)){
+            return ColorModel.getRGBdefault();
+        }
+        return model;
+    }
+
+    /**
+     * @see #rectifyColorModel(java.awt.image.ColorModel, java.lang.String) 
+     */
+    public static RenderedImage rectifyImageColorModel(RenderedImage img, String mime){
+        final ColorModel cm = img.getColorModel();
+        final ColorModel rcm = rectifyColorModel(cm, mime);
+        if(cm != rcm){
+            //color model has been changed
+            final WritableRaster wraster = rcm.createCompatibleWritableRaster(img.getWidth(), img.getHeight());
+            final BufferedImage rimg = new BufferedImage(rcm, wraster, rcm.isAlphaPremultiplied(), null);
+            final Graphics2D g = rimg.createGraphics();
+            g.drawRenderedImage(img, new AffineTransform());
+            g.dispose();
+            img = rimg;
+        }
+        return img;
     }
 
 }
