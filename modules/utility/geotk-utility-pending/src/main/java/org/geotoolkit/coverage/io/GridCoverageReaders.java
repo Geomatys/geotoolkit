@@ -24,9 +24,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.net.URL;
 import java.util.AbstractMap.SimpleEntry;
-import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,11 +48,17 @@ import org.geotoolkit.image.io.mosaic.TileWritingPolicy;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.metadata.acquisition.AcquisitionInformation;
+import org.opengis.metadata.content.ImageDescription;
+import org.opengis.metadata.identification.DataIdentification;
+import org.opengis.metadata.quality.DataQuality;
+import org.opengis.metadata.spatial.Georectified;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 
@@ -70,6 +76,40 @@ public class GridCoverageReaders {
     private static final File TILE_CACHE_FOLDER = new File(System.getProperty("java.io.tmpdir") + File.separator + "imageTiles");
 
     private GridCoverageReaders(){}
+
+    /**
+     * Fill the given Metadata object with informations from reader coverage metadata and stream metadata.
+     * Since there is no one to one relation between ISO 19115 and image metadata,
+     * the returned metadata returned is a best effort relation.
+     *
+     * @param reader
+     * @param metadata : metadata to fill, if null it will create one.
+     * @return Metadata, never null
+     */
+    public static DefaultMetadata fillMetadata(GridCoverageReader reader, DefaultMetadata metadata) throws CoverageStoreException{
+        if(metadata == null){
+            metadata = new DefaultMetadata();
+        }
+
+        final SpatialMetadata coverageMetadata = reader.getCoverageMetadata(0);
+        final SpatialMetadata streamMetadata = reader.getStreamMetadata();
+
+        final DataIdentification dataIdent      = streamMetadata.getInstanceForType(DataIdentification.class);
+        final AcquisitionInformation acqInfo    = streamMetadata.getInstanceForType(AcquisitionInformation.class);
+        final DataQuality dataQuality           = streamMetadata.getInstanceForType(DataQuality.class);
+        final ImageDescription imgDesc          = coverageMetadata.getInstanceForType(ImageDescription.class);
+        final Georectified georect              = coverageMetadata.getInstanceForType(Georectified.class);
+        //TODO where add this in metadata ?
+        //final RectifiedGrid rectGrid            = coverageMetadata.getInstanceForType(RectifiedGrid.class);
+
+        metadata.setIdentificationInfo(Collections.singleton(dataIdent));
+        metadata.setAcquisitionInformation(Collections.singleton(acqInfo));
+        metadata.setDataQualityInfo(Collections.singleton(dataQuality));
+        metadata.setContentInfo(Collections.singleton(imgDesc));
+        metadata.setSpatialRepresentationInfo(Collections.singleton(georect));
+
+        return metadata;
+    }
 
     /**
      * Create a simple reader which doesnt use any pyramid or mosaic tiling.

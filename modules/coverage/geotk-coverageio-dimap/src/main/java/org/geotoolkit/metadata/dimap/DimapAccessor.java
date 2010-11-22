@@ -30,11 +30,13 @@ import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.TypeMap;
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.util.NumberRange;
 
 import org.opengis.coverage.SampleDimensionType;
+import org.opengis.metadata.Metadata;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -277,6 +279,26 @@ public final class DimapAccessor {
         }
 
         return dims;
+    }
+
+    /**
+     * Converts the given dimap document in a metadata object.
+     * Since there is no one to one relation between ISO 19115 and Dimap,
+     * the returned metadta is a best effort relation.
+     *
+     * @param doc
+     * @param metadata : metadata to fill, if null it will create one.
+     * @return Metadata, never null
+     */
+    public static DefaultMetadata fillMetadata(Element doc, DefaultMetadata metadata){
+
+        if(metadata == null){
+            metadata = new DefaultMetadata();
+        }
+
+        //TODO
+
+        return metadata;
     }
 
 }
