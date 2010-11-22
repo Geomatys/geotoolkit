@@ -35,6 +35,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.DirectColorModel;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
@@ -784,7 +785,7 @@ public class DefaultPortrayalService implements PortrayalService{
     private static final List<String> INDEXED_CM_UNSUPPORTED =
             UnmodifiableArrayList.wrap(
                 "image/bmp",
-                "image/pnm");
+                "image/x-portable-pixmap");
 
     /**
      * Check that the given color model is supported by the mime type.
@@ -795,7 +796,12 @@ public class DefaultPortrayalService implements PortrayalService{
      */
     public static ColorModel rectifyColorModel(ColorModel model, String mime){
         if(model instanceof IndexColorModel && INDEXED_CM_UNSUPPORTED.contains(mime)){
-            return ColorModel.getRGBdefault();
+            return new DirectColorModel(24,
+                                        0x00ff0000,	// Red
+                                        0x0000ff00,	// Green
+                                        0x000000ff,	// Blue
+                                        0x0           // Alpha
+                                        );
         }
         return model;
     }
