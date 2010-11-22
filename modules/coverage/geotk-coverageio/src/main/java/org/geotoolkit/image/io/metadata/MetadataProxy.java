@@ -37,6 +37,7 @@ import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 
 import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
@@ -72,7 +73,7 @@ import org.geotoolkit.resources.Errors;
  * @param <T> The metadata interface implemented by the proxy.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.09
+ * @version 3.16
  *
  * @since 3.06
  * @module
@@ -109,9 +110,9 @@ final class MetadataProxy<T> implements InvocationHandler {
     private final Map<String, String> namesMapping;
 
     /**
-     * The childs created up to date. This is used only when the return type of some
-     * invoked methods is a {@link java.util.Collection}, {@link java.util.List} or
-     * an other metadata interface.
+     * The children created up to date. This is used only when the return type of some
+     * invoked methods is a {@link java.util.Collection}, {@link java.util.List} or an
+     * other metadata interface.
      * <p>
      * The keys are method names (instead than attribute names) because they are
      * usually internalized by the JVM, which is not the case of the attribute names.
@@ -368,12 +369,22 @@ final class MetadataProxy<T> implements InvocationHandler {
             List<?> list = (List<?>) childs.get(methodName);
             if (list == null) {
                 String elementName = SpatialMetadataFormat.toElementName(name);
-                MetadataAccessor acc = new MetadataAccessor(accessor, elementName, "#auto");
+                MetadataAccessor acc;
+                try {
+                    acc = new MetadataAccessor(accessor, elementName, "#auto");
+                } catch (IllegalArgumentException e) {
+                    /*
+                     * This exception happen when no node for 'elementName' is defined in the
+                     * IIOMetadataFormat used by the accessor. For example, DiscoveryMetadata
+                     * node in stream SpatialMetadataFormat omits the 'languages' attribute.
+                     */
+                    Logging.recoverableException(MetadataAccessor.LOGGER, interfaceType, methodName, e);
+                    return null;
+                }
                 /*
                  * At this point we have a MetadataAccessor to a node which is known to exist.
-                 * This node may have no children (this happen typically when the code in the
-                 * above "catch" block has been executed), in which case we need to wraps the
-                 * singleton in a list.
+                 * This node may have no children, in which case we need to wraps the singleton
+                 * in a list.
                  */
                 if (acc.allowsChildren()) {
                     componentType = getElementClass(acc.childPath, componentType);
