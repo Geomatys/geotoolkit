@@ -45,7 +45,7 @@ public class ParameterValueWriter extends StaxStreamWriter {
         writer.writeEndDocument();
         writer.flush();
     }
-
+    
     /**
      * <p>This method writes a GenaralParameterValue.</p>
      *
@@ -75,7 +75,10 @@ public class ParameterValueWriter extends StaxStreamWriter {
      */
     private void writeParameterValue(ParameterValue parameter)
             throws XMLStreamException {
-        writer.writeCharacters(parameter.getValue().toString());
+        final Object value = parameter.getValue();
+        if(value != null){
+            writer.writeCharacters(value.toString());
+        }
     }
 
     /**
