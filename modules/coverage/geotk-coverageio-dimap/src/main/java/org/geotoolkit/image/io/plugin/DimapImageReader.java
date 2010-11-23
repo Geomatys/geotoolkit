@@ -338,6 +338,17 @@ public class DimapImageReader extends ImageReaderAdapter {
         public boolean canDecodeInput(Object source) throws IOException {
             if (IOUtilities.canProcessAsPath(source)) {
                 source = IOUtilities.tryToFile(source);
+                final String str = IOUtilities.extension(source);
+                if(str != null){
+                    if(!(str.equalsIgnoreCase("tif") ||
+                         str.equalsIgnoreCase("tiff"))){
+                        return false;
+                    }
+                    //ok
+                }else{
+                    return false;
+                }
+
                 File f = searchMetadataFile(source);
                 return (f != null);
             }
