@@ -30,6 +30,8 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.operation.matrix.*;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 
+import static org.geotoolkit.referencing.operation.matrix.MatrixFactory.*;
+
 
 /**
  * Utilities methods working on matrix. Those methods are not in public package (for now)
@@ -80,7 +82,7 @@ public final class MatrixUtilities {
                 final int oldSrcDim = matrix.getNumCol() - 1;
                 final int oldTgtDim = matrix.getNumRow() - 1;
                 if (oldSrcDim != sourceDimension && oldTgtDim != targetDimension) {
-                    final XMatrix resized = MatrixFactory.create(targetDimension+1, sourceDimension+1);
+                    final XMatrix resized = create(targetDimension+1, sourceDimension+1);
                     final int commonRows = Math.min(targetDimension, oldTgtDim);
                     final int commonCols = Math.min(sourceDimension, oldSrcDim);
                     for (int j=0; j<commonRows; j++) {
@@ -102,86 +104,6 @@ public final class MatrixUtilities {
             }
         }
         return null;
-    }
-
-    /**
-     * Returns the underlying matrix for the specified transform,
-     * or {@code null} if the matrix is unavailable.
-     *
-     * @param  transform The transform, or {@code null}.
-     * @return The matrix of the given transform, or {@code null} if none.
-     *
-     * @since 3.15
-     */
-    public static Matrix getMatrix(final MathTransform transform) {
-        if (transform instanceof LinearTransform) {
-            return ((LinearTransform) transform).getMatrix();
-        }
-        if (transform instanceof AffineTransform) {
-            return new Matrix3((AffineTransform) transform);
-        }
-        return null;
-    }
-
-    /**
-     * Converts the specified matrix to a Geotk implementation. If {@code matrix} is already
-     * an instance of {@code XMatrix}, then it is returned unchanged. Otherwise all elements are
-     * copied in a new {@code XMatrix} object.
-     *
-     * @param  matrix The matrix to convert, or {@code null}.
-     * @return The given matrix, or a copy of it as a {@link XMatrix} object, or {@code null}
-     *         if the given matrix was {@code null}.
-     */
-    public static XMatrix toXMatrix(final Matrix matrix) {
-        if (matrix == null) {
-            return null;
-        }
-        if (matrix instanceof XMatrix) {
-            return (XMatrix) matrix;
-        }
-        return MatrixFactory.create(matrix);
-    }
-
-    /**
-     * Converts the specified matrix to the most suitable Geotk implementation. This method
-     * copies the matrix elements in the specialized {@link Matrix1}, {@link Matrix2}, {@link
-     * Matrix3} or {@link Matrix4} implementation if the matrix size fits and the given matrix
-     * is not already one of those implementations. Otherwise it invokes {@link #toXMatrix}.
-     * <p>
-     * Using those specialized implementations brings a little bit of performance and,
-     * more important, precision in the floating point results of matrix operations.
-     *
-     * @param  matrix The matrix to convert.
-     * @return The given matrix, or a copy of it as a {@link XMatrix} object.
-     */
-    public static XMatrix toOptimalMatrix(final Matrix matrix) {
-        final int size = matrix.getNumRow();
-        if (size == matrix.getNumCol()) switch (size) {
-            case 1: return (matrix instanceof Matrix1) ? (Matrix1) matrix : new Matrix1(matrix);
-            case 2: return (matrix instanceof Matrix2) ? (Matrix2) matrix : new Matrix2(matrix);
-            case 3: return (matrix instanceof Matrix3) ? (Matrix3) matrix : new Matrix3(matrix);
-            case 4: return (matrix instanceof Matrix4) ? (Matrix4) matrix : new Matrix4(matrix);
-        }
-        return toXMatrix(matrix);
-    }
-
-    /**
-     * Converts the specified matrix to a Geotk implementation of {@link Matrix}.
-     * If {@code matrix} is already an instance of {@code GeneralMatrix}, then it is
-     * returned unchanged. Otherwise, all elements are copied in a new {@code GeneralMatrix} object.
-     * <p>
-     * Before to use this method, check if a {@link XMatrix} (to be obtained with {@link #toXMatrix})
-     * would be sufficient. Use this method only if a {@code GeneralMatrix} is really necessary.
-     *
-     * @param  matrix The matrix to convert.
-     * @return The given matrix, or a copy of it as a {@link GeneralMatrix} object.
-     */
-    public static GeneralMatrix toGeneralMatrix(final Matrix matrix) {
-        if (matrix instanceof GeneralMatrix) {
-            return (GeneralMatrix) matrix;
-        } else {
-            return new GeneralMatrix(matrix);
-        }
     }
 
     /**
@@ -284,7 +206,7 @@ skipColumn: for (int i=numCol; --i>=0;) {
                  * containing only 0 elements, and invert that matrix. Finally,
                  * create a new matrix with new rows added for the omitted ordinates.
                  */
-                Matrix squareMatrix = MatrixFactory.create(numRow);
+                Matrix squareMatrix = create(numRow);
                 for (int k=0,i=0; i<numCol; i++) {
                     if (oi != omitted.length && i == omitted[oi]) {
                         oi++;
@@ -297,7 +219,7 @@ skipColumn: for (int i=numCol; --i>=0;) {
                 }
                 squareMatrix = invertSquare(squareMatrix);
                 // From this point, the meaning of 'numCol' and 'numRow' are interchanged.
-                final XMatrix inverse = MatrixFactory.create(numCol, numRow);
+                final XMatrix inverse = create(numCol, numRow);
                 oi = 0;
                 for (int k=0,j=0; j<numCol; j++) {
                     if (oi != omitted.length && j == omitted[oi]) {
@@ -391,7 +313,7 @@ skipColumn: for (int i=numCol; --i>=0;) {
     }
 
     /**
-     * Returns {@code true} if the elements values to not differ by a value greater than the
+     * Returns {@code true} if the elements values do not differ by a value greater than the
      * given tolerance value. If {@code relative} is {@code true}, then for any pair of values
      * <var>v1</var><sub>j,i</sub> and <var>v2</var><sub>j,i</sub> to compare, the tolerance
      * threshold is scaled by {@code max(abs(v1), abs(v2))}.

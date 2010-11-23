@@ -34,6 +34,8 @@ import org.geotoolkit.util.Cloneable;
  * @author Simone Giannecchini (Geosolutions)
  * @version 3.00
  *
+ * @see MatrixFactory#toXMatrix(Matrix)
+ *
  * @since 2.2
  * @module
  */

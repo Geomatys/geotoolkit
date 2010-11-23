@@ -43,6 +43,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;
 
 import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
+import static org.geotoolkit.referencing.operation.matrix.MatrixFactory.*;
 
 
 /**

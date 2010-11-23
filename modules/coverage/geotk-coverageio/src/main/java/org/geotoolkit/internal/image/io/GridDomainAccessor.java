@@ -32,8 +32,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.MetadataAccessor;
-import org.geotoolkit.internal.referencing.MatrixUtilities;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
+import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME;
 
@@ -101,7 +101,7 @@ public final class GridDomainAccessor extends MetadataAccessor {
              */
             gridToCRS = DiscreteReferencingFactory.getAffineTransform((CoordinateReferenceSystem) geometry);
         } else {
-            gridToCRS = MatrixUtilities.getMatrix(geometry.getGridToCRS());
+            gridToCRS = MatrixFactory.getMatrix(geometry.getGridToCRS());
         }
         final int dim = envelope.getDimension();
         final int[]    lower  = new int   [dim];

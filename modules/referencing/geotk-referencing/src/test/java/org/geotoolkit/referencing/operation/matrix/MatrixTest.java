@@ -69,8 +69,8 @@ public final class MatrixTest {
                 }
                 assertEquals(expectedType, actualType);
                 assertTrue  (matrix.equals(reference, STRICT));
-                assertSame  (matrix, toXMatrix(matrix));
-                assertSame  (reference, toGeneralMatrix(reference));
+                assertSame  (matrix, MatrixFactory.toXMatrix(matrix));
+                assertSame  (reference, MatrixFactory.toGeneralMatrix(reference));
                 /*
                  * Following is actually more a test of vecmath than Geotk. We make sure that
                  * the specialized implementations return the same result than the general one.

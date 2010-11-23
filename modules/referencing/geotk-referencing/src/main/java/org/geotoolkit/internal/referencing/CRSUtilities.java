@@ -19,7 +19,6 @@ package org.geotoolkit.internal.referencing;
 
 import java.util.Map;
 import java.util.List;
-import java.util.Iterator;
 import java.util.Collections;
 import java.awt.RenderingHints;
 import javax.measure.unit.Unit;
@@ -234,46 +233,6 @@ public final class CRSUtilities {
             }
         }
         return -1;
-    }
-
-    /**
-     * Returns a sub-coordinate reference system for the specified dimension range.
-     *
-     * @param  crs   The coordinate reference system to decompose.
-     * @param  lower The first dimension to keep, inclusive.
-     * @param  upper The last  dimension to keep, exclusive.
-     * @return The sub-coordinate system, or {@code null} if {@code crs} can't
-     *         be decomposed for dimensions in the range {@code [lower..upper]}.
-     *
-     * @deprecated Moved to {@link org.geotoolkit.referencing.CRS}.
-     */
-    @Deprecated
-    public static CoordinateReferenceSystem getSubCRS(CoordinateReferenceSystem crs,
-                                                      int lower, int upper)
-    {
-        if (crs != null) {
-            int dimension = crs.getCoordinateSystem().getDimension();
-            if (lower < 0 || lower > upper || upper > dimension) {
-                throw new IndexOutOfBoundsException(Errors.format(
-                        Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, lower < 0 ? lower : upper));
-            }
-            while (lower != 0 || upper != dimension) {
-                final List<? extends CoordinateReferenceSystem> c = getComponents(crs);
-                if (c == null) {
-                    return null;
-                }
-                for (final Iterator<? extends CoordinateReferenceSystem> it=c.iterator(); it.hasNext();) {
-                    crs = it.next();
-                    dimension = crs.getCoordinateSystem().getDimension();
-                    if (lower < dimension) {
-                        break;
-                    }
-                    lower -= dimension;
-                    upper -= dimension;
-                }
-            }
-        }
-        return crs;
     }
 
     /**

@@ -17,9 +17,14 @@
  */
 package org.geotoolkit.referencing.operation.matrix;
 
+import java.awt.geom.AffineTransform;
+
 import org.opengis.referencing.operation.Matrix;
-import org.geotoolkit.resources.Errors;
+import org.opengis.referencing.operation.MathTransform;
+
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.referencing.operation.transform.LinearTransform;
 
 
 /**
@@ -28,8 +33,8 @@ import org.geotoolkit.lang.Static;
  * according the desired matrix size. Note that if the matrix size is know at compile time,
  * it may be more efficient to invoke directly the constructor of the appropriate class instead.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.16
  *
  * @since 2.2
  * @module
@@ -121,5 +126,105 @@ public final class MatrixFactory {
             }
         }
         return new GeneralMatrix(matrix);
+    }
+
+    /**
+     * If the given transform is linear, returns its coefficients as a matrix.
+     * More specifically:
+     * <p>
+     * <ul>
+     *   <li>If the given transform is an instance of {@link LinearTransform}, returns
+     *       {@link LinearTransform#getMatrix()}.</li>
+     *   <li>Otherwise if the given transform is an instance of {@link AffineTransform},
+     *       returns its coefficients in a {@link Matrix3} instance.</li>
+     *   <li>Otherwise returns {@code null}.</li>
+     * </ul>
+     *
+     * @param  transform The transform, or {@code null}.
+     * @return The matrix of the given transform, or {@code null} if none.
+     *
+     * @since 3.16 (derived from 3.15)
+     */
+    public static Matrix getMatrix(final MathTransform transform) {
+        if (transform instanceof LinearTransform) {
+            return ((LinearTransform) transform).getMatrix();
+        }
+        if (transform instanceof AffineTransform) {
+            return new Matrix3((AffineTransform) transform);
+        }
+        return null;
+    }
+
+    /**
+     * Converts the specified matrix to a Geotk implementation. If {@code matrix} is already
+     * an instance of {@code XMatrix}, then it is returned unchanged. Otherwise all elements
+     * are copied in a new {@code XMatrix} object.
+     *
+     * @param  matrix The matrix to convert, or {@code null}.
+     * @return The given matrix, or a copy of it as a {@link XMatrix} object, or {@code null}
+     *         if the given matrix was {@code null}.
+     *
+     * @since 3.16 (derived from 3.00)
+     */
+    public static XMatrix toXMatrix(final Matrix matrix) {
+        if (matrix == null || matrix instanceof XMatrix) {
+            return (XMatrix) matrix;
+        }
+        return create(matrix);
+    }
+
+    /**
+     * Converts the specified matrix to the most suitable Geotk implementation.
+     * This method process as below:
+     * <p>
+     * <ul>
+     *   <li>If the given matrix is already an instance of the {@link Matrix1}, {@link Matrix2},
+     *       {@link Matrix3} or {@link Matrix4} specialized classes, then it is returned unchanged.</li>
+     *   <li>Otherwise if the given matrix is square and the number of rows & columns is 1, 2, 3
+     *       or 4, then the elements are copied in an instance of {@link Matrix1}, {@link Matrix2},
+     *       {@link Matrix3} or {@link Matrix4} respectively, and the new instance is returned.</li>
+     *   <li>Otherwise this method delegates to {@link #toXMatrix}.</li>
+     * </ul>
+     * <p>
+     * Using those specialized implementations brings a little bit of performance and,
+     * more important, precision in the floating point results of matrix operations.
+     *
+     * @param  matrix The matrix to convert, or {@code null}.
+     * @return The given matrix, or a copy of it as a {@link XMatrix} object.
+     *
+     * @since 3.16 (derived from 3.00)
+     */
+    public static XMatrix toOptimalMatrix(final Matrix matrix) {
+        if (matrix != null) {
+            final int size = matrix.getNumRow();
+            if (size == matrix.getNumCol()) switch (size) {
+                case 1: return (matrix instanceof Matrix1) ? (Matrix1) matrix : new Matrix1(matrix);
+                case 2: return (matrix instanceof Matrix2) ? (Matrix2) matrix : new Matrix2(matrix);
+                case 3: return (matrix instanceof Matrix3) ? (Matrix3) matrix : new Matrix3(matrix);
+                case 4: return (matrix instanceof Matrix4) ? (Matrix4) matrix : new Matrix4(matrix);
+            }
+        }
+        return toXMatrix(matrix);
+    }
+
+    /**
+     * Converts the specified matrix to {@link GeneralMatrix}. If {@code matrix} is already an
+     * instance of {@code GeneralMatrix}, then it is returned unchanged. Otherwise all elements
+     * are copied in a new {@code GeneralMatrix} object.
+     * <p>
+     * Consider using {@link #toXMatrix(Matrix)} instead than this method if a {@link XMatrix}
+     * instance is sufficient. Use this method only if a {@code GeneralMatrix} is really necessary.
+     *
+     * @param  matrix The matrix to convert, or {@code null}.
+     * @return The given matrix, or a copy of it as a {@link GeneralMatrix} object.
+     *
+     * @since 3.16 (derived from 3.00)
+     */
+    public static GeneralMatrix toGeneralMatrix(final Matrix matrix) {
+        if (matrix == null || matrix instanceof GeneralMatrix) {
+            return (GeneralMatrix) matrix;
+        } else {
+            return new GeneralMatrix(matrix);
+        }
     }
 }

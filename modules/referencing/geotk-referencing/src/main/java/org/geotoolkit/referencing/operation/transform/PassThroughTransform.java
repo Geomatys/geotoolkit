@@ -35,7 +35,7 @@ import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 
-import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
+import static org.geotoolkit.referencing.operation.matrix.MatrixFactory.*;
 
 
 /**

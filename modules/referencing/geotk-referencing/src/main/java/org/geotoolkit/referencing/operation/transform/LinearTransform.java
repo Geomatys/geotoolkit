@@ -59,6 +59,7 @@ public interface LinearTransform extends MathTransform {
      * @param tolerance The tolerance factor.
      * @return {@code true} if this transform is the identity one
      *
+     * @see org.geotoolkit.referencing.operation.matrix.MatrixFactory#getMatrix(MathTransform)
      * @see org.geotoolkit.referencing.operation.matrix.XMatrix#isIdentity(double)
      *
      * @since 2.4

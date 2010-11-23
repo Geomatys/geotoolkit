@@ -39,7 +39,6 @@ import org.opengis.coverage.grid.GridGeometry;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
-import org.geotoolkit.internal.referencing.MatrixUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
@@ -338,7 +337,7 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
     public static Matrix getAffineTransform(final CoordinateReferenceSystem crs) {
         ensureNonNull("crs", crs);
         if (crs instanceof GridGeometry) {
-            final Matrix matrix = MatrixUtilities.getMatrix(((GridGeometry) crs).getGridToCRS());
+            final Matrix matrix = MatrixFactory.getMatrix(((GridGeometry) crs).getGridToCRS());
             if (matrix != null) {
                 return matrix;
             }
