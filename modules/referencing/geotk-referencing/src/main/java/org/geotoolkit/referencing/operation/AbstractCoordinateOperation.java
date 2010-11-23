@@ -69,7 +69,7 @@ import org.geotoolkit.measure.Units;
  * identify the exact type.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.16
  *
  * @since 1.2
  * @module
@@ -482,20 +482,34 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
     }
 
     /**
-     * Returns the most specific GeoAPI interface implemented by the specified operation.
+     * Returns the most specific {@link CoordinateOperation} interface implemented by the
+     * specified operation. Special cases:
+     * <p>
+     * <ul>
+     *   <li>If the operation implements the {@link Transformation} interface,
+     *       then this method returns {@code Transformation.class}. Transformation
+     *       has precedence over any other interface implemented by the operation.</li>
+     *   <li>Otherwise if the operation implements the {@link Conversion} interface,
+     *       then this method returns the most specific {@code Conversion} sub-interface.</li>
+     *   <li>Otherwise if the operation implements the {@link SingleOperation} interface,
+     *       then this method returns {@code SingleOperation.class}.</li>
+     *   <li>Otherwise if the operation implements the {@link ConcatenatedOperation} interface,
+     *       then this method returns {@code ConcatenatedOperation.class}.</li>
+     *   <li>Otherwise this method returns {@code CoordinateOperation.class}.</li>
+     * </ul>
      *
-     * @param  object A coordinate operation.
-     * @return The most specific GeoAPI interface
-     *         (e.g. <code>{@linkplain Transformation}.class</code>).
+     * @param  operation A coordinate operation.
+     * @return The most specific GeoAPI interface implemented by the given operation.
      */
-    public static Class<? extends CoordinateOperation> getType(final CoordinateOperation object) {
-        if (object instanceof        Transformation) return        Transformation.class;
-        if (object instanceof       ConicProjection) return       ConicProjection.class;
-        if (object instanceof CylindricalProjection) return CylindricalProjection.class;
-        if (object instanceof      PlanarProjection) return      PlanarProjection.class;
-        if (object instanceof            Projection) return            Projection.class;
-        if (object instanceof            Conversion) return            Conversion.class;
-        if (object instanceof       SingleOperation) return       SingleOperation.class;
+    public static Class<? extends CoordinateOperation> getType(final CoordinateOperation operation) {
+        if (operation instanceof        Transformation) return        Transformation.class;
+        if (operation instanceof       ConicProjection) return       ConicProjection.class;
+        if (operation instanceof CylindricalProjection) return CylindricalProjection.class;
+        if (operation instanceof      PlanarProjection) return      PlanarProjection.class;
+        if (operation instanceof            Projection) return            Projection.class;
+        if (operation instanceof            Conversion) return            Conversion.class;
+        if (operation instanceof       SingleOperation) return       SingleOperation.class;
+        if (operation instanceof ConcatenatedOperation) return ConcatenatedOperation.class;
         return CoordinateOperation.class;
     }
 

@@ -72,38 +72,40 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
     /**
      * Identifier code or name, optionally from a controlled list or pattern defined by a code space.
      *
-     * @see #getCode
+     * @see #getCode()
      */
     @XmlElement(required = true, namespace = Namespaces.GMD)
     @XmlJavaTypeAdapter(AnchoredStringAdapter.class)
     final String code;
 
     /**
-     * Name or identifier of the person or organization responsible for namespace.
-     * This is often an abbreviation of the authority name.
+     * Name or identifier of the person or organization responsible for namespace, or
+     * {@code null} if not available. This is often an abbreviation of the authority name.
      *
-     * @see #getCodeSpace
+     * @see #getCodeSpace()
      */
     @XmlElement(required = true, namespace = Namespaces.GMD)
     @XmlJavaTypeAdapter(AnchoredStringAdapter.class)
     final String codeSpace;
 
     /**
-     * Organization or party responsible for definition and maintenance of the code space or code.
+     * Organization or party responsible for definition and maintenance of the code space or code,
+     * or {@code null} if not available.
      *
-     * @see #getAuthority
+     * @see #getAuthority()
      */
     @XmlElement(required = true, namespace = Namespaces.GMD)
     @XmlJavaTypeAdapter(CitationAdapter.class)
     final Citation authority;
 
     /**
-     * Identifier of the version of the associated code space or code, as specified
-     * by the code space or code authority. This version is included only when the
-     * {@linkplain #getCode code} uses versions. When appropriate, the edition is
-     * identified by the effective date, coded using ISO 8601 date format.
+     * Identifier of the version of the associated code space or code as specified
+     * by the code space or code authority, or {@code null} if not available. This
+     * version is included only when the {@linkplain #getCode code} uses versions.
+     * When appropriate, the edition is identified by the effective date, coded using
+     * ISO 8601 date format.
      *
-     * @see #getVersion
+     * @see #getVersion()
      */
     @XmlElement(namespace = Namespaces.GMD)
     private final String version;
@@ -169,10 +171,10 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
      *
      * @param authority
      *          Organization or party responsible for definition and maintenance of the code
-     *          space or code.
+     *          space or code, or {@code null} if not available.
      * @param codeSpace
-     *          Name or identifier of the person or organization responsible for namespace.
-     *          This is often an abbreviation of the authority name.
+     *          Name or identifier of the person or organization responsible for namespace, or
+     *          {@code null} if not available. This is often an abbreviation of the authority name.
      * @param code
      *          Identifier code or name, optionally from a controlled list or pattern defined by
      *          a code space. The code can not be null.
@@ -208,27 +210,27 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
      *   <tr>
      *     <td nowrap>&nbsp;{@value org.opengis.metadata.Identifier#CODE_KEY}&nbsp;</td>
      *     <td nowrap>&nbsp;{@link String}&nbsp;</td>
-     *     <td nowrap>&nbsp;{@link #getCode}</td>
+     *     <td nowrap>&nbsp;{@link #getCode()}</td>
      *   </tr>
      *   <tr>
      *     <td nowrap>&nbsp;{@value org.opengis.referencing.ReferenceIdentifier#CODESPACE_KEY}&nbsp;</td>
      *     <td nowrap>&nbsp;{@link String}&nbsp;</td>
-     *     <td nowrap>&nbsp;{@link #getCodeSpace}</td>
+     *     <td nowrap>&nbsp;{@link #getCodeSpace()}</td>
      *   </tr>
      *   <tr>
      *     <td nowrap>&nbsp;{@value org.opengis.metadata.Identifier#AUTHORITY_KEY}&nbsp;</td>
      *     <td nowrap>&nbsp;{@link String} or {@link Citation}&nbsp;</td>
-     *     <td nowrap>&nbsp;{@link #getAuthority}</td>
+     *     <td nowrap>&nbsp;{@link #getAuthority()}</td>
      *   </tr>
      *   <tr>
      *     <td nowrap>&nbsp;{@value org.opengis.referencing.ReferenceIdentifier#VERSION_KEY}&nbsp;</td>
      *     <td nowrap>&nbsp;{@link String}&nbsp;</td>
-     *     <td nowrap>&nbsp;{@link #getVersion}</td>
+     *     <td nowrap>&nbsp;{@link #getVersion()}</td>
      *   </tr>
      *   <tr>
      *     <td nowrap>&nbsp;{@value org.opengis.referencing.IdentifiedObject#REMARKS_KEY}&nbsp;</td>
      *     <td nowrap>&nbsp;{@link String} or {@link InternationalString}&nbsp;</td>
-     *     <td nowrap>&nbsp;{@link #getRemarks}</td>
+     *     <td nowrap>&nbsp;{@link #getRemarks()}</td>
      *   </tr>
      * </table>
      * <p>

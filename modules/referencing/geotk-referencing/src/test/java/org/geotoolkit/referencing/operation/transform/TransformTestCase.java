@@ -30,6 +30,10 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.CoordinateOperationFactory;
+import org.opengis.referencing.operation.ConcatenatedOperation;
+import org.opengis.referencing.operation.CoordinateOperation;
+import org.opengis.referencing.operation.SingleOperation;
+import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterDescriptor;
@@ -69,6 +73,12 @@ public abstract class TransformTestCase extends org.opengis.test.referencing.Tra
      * the buffer. We add an arbitrary number just for making the transform job harder.
      */
     static final int ORDINATE_COUNT = AbstractMathTransform.MAXIMUM_BUFFER_SIZE * 2 + 137;
+
+    /**
+     * The tolerance level for height above the ellipsoid. This tolerance is usually
+     * higher than the tolerance level for horizontal ordinate values.
+     */
+    protected double zTolerance = 1E-2;
 
     /**
      * The datum factory to use for testing.
@@ -123,6 +133,30 @@ public abstract class TransformTestCase extends org.opengis.test.referencing.Tra
         out.print  ("├─ Math Transform       : "); out.println(getShortClassName(mtFactory));
         out.print  ("└─ Coordinate Operation : "); out.println(getShortClassName(opFactory));
         out.println();
+    }
+
+    /**
+     * Returns {@code true} if the given operation is, directly or indirectly, a transformation.
+     * This method returns {@code true} if the operation is either a {@link Transformation}, or
+     * a {@link ConcatenatedOperation} in which at least one step is a transformation.
+     *
+     * @param  operation The operation to test.
+     * @return {@code true} if the given operation is, directly or indirectly, a transformation.
+     *
+     * @since 3.16
+     */
+    protected static boolean isTransformation(final CoordinateOperation operation) {
+        if (operation instanceof Transformation) {
+            return true;
+        }
+        if (operation instanceof ConcatenatedOperation) {
+            for (final SingleOperation step : ((ConcatenatedOperation) operation).getOperations()) {
+                if (step instanceof Transformation) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -269,7 +303,7 @@ public abstract class TransformTestCase extends org.opengis.test.referencing.Tra
               "transformed=("+target.ordinates[0]+", "+target.ordinates[1]+", "+target.ordinates[2]+")";
         assertEquals(message, ex, target.ordinates[0], tolerance);
         assertEquals(message, ey, target.ordinates[1], tolerance);
-        assertEquals(message, ez, target.ordinates[2], 1E-2); // Greater tolerance level for Z.
+        assertEquals(message, ez, target.ordinates[2], zTolerance);
     }
 
     /**
@@ -294,7 +328,7 @@ public abstract class TransformTestCase extends org.opengis.test.referencing.Tra
               "transformed=("+target.ordinates[0]+", "+target.ordinates[1]+", "+target.ordinates[2]+")";
         assertEquals(message, ex, target.ordinates[0], tolerance);
         assertEquals(message, ey, target.ordinates[1], tolerance);
-        assertEquals(message, ez, target.ordinates[2], 1E-2); // Greater tolerance level for Z.
+        assertEquals(message, ez, target.ordinates[2], zTolerance);
     }
 
     /**
@@ -340,7 +374,7 @@ public abstract class TransformTestCase extends org.opengis.test.referencing.Tra
         assertSame(target, transform.transform(source, target));
         final String message = "Expected ("+ez+"), "+
               "transformed=("+target.ordinates[0]+")";
-        assertEquals(message, ez, target.ordinates[0], 1E-2); // Greater tolerance level for Z.
+        assertEquals(message, ez, target.ordinates[0], zTolerance);
     }
 
     /**

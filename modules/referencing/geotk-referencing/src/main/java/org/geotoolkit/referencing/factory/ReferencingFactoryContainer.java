@@ -20,12 +20,16 @@ package org.geotoolkit.referencing.factory;
 import java.util.*;
 import java.awt.RenderingHints;
 import javax.measure.converter.ConversionException;
+import javax.measure.quantity.Length;
+import javax.measure.unit.Unit;
+import javax.measure.unit.SI;
 
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
 import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.util.FactoryException;
 import org.opengis.util.Factory;
 
@@ -34,11 +38,14 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryRegistry;
 import org.geotoolkit.factory.DynamicFactoryRegistry;
+import org.geotoolkit.internal.referencing.Identifier3D;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.cs.AbstractCS;
+import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.ThreadSafe;
@@ -191,7 +198,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
     }
 
     /**
-     * Forces the initialisation of all factories. This method is invoked in one of the
+     * Forces the initialization of all factories. This method is invoked in one of the
      * following situations:
      * <p>
      * <ul>
@@ -297,6 +304,43 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
     }
 
     /**
+     * Adds an ellipsoidal height to the given CRS, if not already presents. This method accepts
+     * only {@linkplain GeographicCRS geographic} or {@linkplain ProjectedCRS projected} CRS. If
+     * the given CRS is already three-dimensional, then it is returned unchanged. Otherwise an
+     * ellipsoidal height <em>in the same units than the {@linkplain Ellipsoid#getAxisUnit()
+     * ellipsoid axis units}</em> (typically metres) is appended as the third dimension of the
+     * given CRS, and the resulting three-dimensional CRS is returned.
+     *
+     * @param  crs The geographic or projected CRS to make three-dimensional.
+     * @return The given CRS with an ellipsoidal height.
+     * @throws FactoryException If an ellipsoidal height can not be added to the given CRS.
+     *
+     * @since 3.16
+     */
+    @SuppressWarnings("fallthrough")
+    public SingleCRS toGeodetic3D(SingleCRS crs) throws FactoryException {
+        if (crs instanceof GeographicCRS || crs instanceof ProjectedCRS) {
+            switch (crs.getCoordinateSystem().getDimension()) {
+                case 2: {
+                    CoordinateSystemAxis vertical = DefaultCoordinateSystemAxis.ELLIPSOIDAL_HEIGHT;
+                    final Unit<Length> units = ((GeodeticDatum) crs.getDatum()).getEllipsoid().getAxisUnit();
+                    if (!SI.METRE.equals(units)) {
+                        vertical = getCSFactory().createCoordinateSystemAxis(
+                                AbstractIdentifiedObject.getProperties(vertical),
+                                vertical.getAbbreviation(), vertical.getDirection(), units);
+                    }
+                    crs = toGeodetic3D(null, crs, vertical, true);
+                    // Fall through
+                }
+                case 3: {
+                    return crs;
+                }
+            }
+        }
+        throw new FactoryException(Errors.format(Errors.Keys.UNSUPPORTED_CRS_$1, crs.getName()));
+    }
+
+    /**
      * Returns a CRS equivalents to the given one, with some components replaced by their 3D
      * counterpart when possible. More specifically, if the given compound CRS contains two
      * consecutive {@linkplain CompoundCRS#getComponents() components CRS} where:
@@ -354,7 +398,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
                 final int iMin = xyFirst ? hi : vi;
                 components.remove(iMin);
                 components.set(iMin, toGeodetic3D(CRS.getCompoundCRS(crs, horizontal, vertical),
-                        horizontal, vertical, xyFirst));
+                        horizontal, vertical.getCoordinateSystem().getAxis(0), xyFirst));
             }
         }
         /*
@@ -381,15 +425,14 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
      * @param  crs        The compound CRS to convert to a 3D geographic CRS, or {@code null}.
      *                    Used only in order to infer the name properties of objects to create.
      * @param  horizontal The horizontal component of {@code crs}.
-     * @param  vertical   The vertical   component of {@code crs}.
+     * @param  vertical   The vertical axis of {@code crs}.
      * @param  xyFirst    {@code true} if the horizontal component appears before the vertical
      *                    component, or {@code false} for the converse.
      * @return The 3D geographic or projected CRS.
      * @throws FactoryException if the object creation failed.
      */
     private SingleCRS toGeodetic3D(final CompoundCRS crs, final SingleCRS horizontal,
-                                   final VerticalCRS vertical, final boolean xyFirst)
-            throws FactoryException
+            final CoordinateSystemAxis vertical, final boolean xyFirst) throws FactoryException
     {
         /*
          * Creates the set of axis in an order which depends of the xyFirst argument.
@@ -400,8 +443,8 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
         final CoordinateSystem cs = horizontal.getCoordinateSystem();
         axis[xyFirst ? 0 : 1] = cs.getAxis(0);
         axis[xyFirst ? 1 : 2] = cs.getAxis(1);
-        axis[xyFirst ? 2 : 0] = vertical.getCoordinateSystem().getAxis(0);
-        final Map<String,?> csName, crsName;
+        axis[xyFirst ? 2 : 0] = vertical;
+        Map<String,?> csName, crsName;
         if (crs != null) {
             csName  = AbstractIdentifiedObject.getProperties(crs.getCoordinateSystem());
             crsName = AbstractIdentifiedObject.getProperties(crs);
@@ -409,6 +452,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
             csName  = getTemporaryName(cs);
             crsName = getTemporaryName(horizontal);
         }
+        crsName = Identifier3D.addHorizontalCRS(crsName, horizontal);
         final  CSFactory  csFactory = getCSFactory();
         final CRSFactory crsFactory = getCRSFactory();
         if (horizontal instanceof GeographicCRS) {
@@ -568,7 +612,9 @@ search:     for (final CoordinateReferenceSystem source : sources) {
      * Returns a temporary name for object derived from the specified one.
      */
     private static Map<String,?> getTemporaryName(final IdentifiedObject source) {
+        final ReferenceIdentifier id = source.getName();
         return Collections.singletonMap(IdentifiedObject.NAME_KEY,
-                source.getName().getCode() + " (3D)");
+                new DefaultReferenceIdentifier(null, // Null because we are inventing a code.
+                    id.getCodeSpace(), id.getCode() + " (3D)"));
     }
 }

@@ -459,10 +459,11 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
     }
 
     /**
-     * Returns the number of {@linkplain MathTransform math transform} steps performed by this
-     * concatenated transform.
+     * Returns the number of single {@linkplain MathTransform math transform} steps.
+     * Nested concatenated transforms (if any) are explored recursively in order to
+     * get the count of single (non-nested) transforms.
      *
-     * @return The number of transform steps.
+     * @return The number of single transform steps.
      *
      * @since 2.5
      */
@@ -471,9 +472,9 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
     }
 
     /**
-     * Returns the number of {@linkplain MathTransform math transform} steps performed by the
-     * given transform. As a special case, we returns 0 for the identity transform since it
-     * should be omitted from the final chain.
+     * Returns the number of single {@linkplain MathTransform math transform} steps performed
+     * by the given transform. As a special case, we returns 0 for the identity transform since
+     * it should be omitted from the final chain.
      */
     private static int getStepCount(final MathTransform transform) {
         if (transform.isIdentity()) {
@@ -486,10 +487,13 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
     }
 
     /**
-     * Returns all concatenated transforms. The {@linkplain List#size size} of the
-     * returned list is equal to the value returned by {@link #getStepCount()}.
+     * Returns all concatenated transforms. The returned list contains only <cite>single</cite>
+     * transforms, i.e. all nested concatenated transforms (if any) have been expanded.
+     * <p>
+     * The {@linkplain List#size() size} of the returned list is equals to the value returned
+     * by {@link #getStepCount()}.
      *
-     * @return All math transforms performed by this concatenated transform.
+     * @return All single math transforms performed by this concatenated transform.
      *
      * @since 3.00
      */

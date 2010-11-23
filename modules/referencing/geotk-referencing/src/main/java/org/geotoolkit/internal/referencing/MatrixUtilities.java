@@ -38,7 +38,7 @@ import org.geotoolkit.referencing.operation.transform.LinearTransform;
  * example multiplication) for efficiency again.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @since 3.00
  * @module
@@ -49,6 +49,59 @@ public final class MatrixUtilities {
      * Do not allow instantiation of this class.
      */
     private MatrixUtilities() {
+    }
+
+    /**
+     * If the given transform is an affine transform, returns its matrix resized to the given
+     * dimensions. Otherwise returns {@code null}. This method is invoked for adding or removing
+     * dimensions to an affine transform. The added or removed dimensions are always the last
+     * ones. Special cases:
+     * <p>
+     * <ul>
+     *   <li>If source and target dimensions are added, the corresponding offset and scale factors
+     *       will be 0 and 1 respectively. In other words, new dimensions are propagated unchanged.</li>
+     *   <li>New source dimensions have no impact on existing dimensions (the corresponding scale
+     *       factors are set to zero).</li>
+     * </ul>
+     *
+     * @param  transform The math transform from which to extract and resize the matrix.
+     * @param  sourceDimension The desired number of source dimensions.
+     * @param  targetDimension The desired number of target dimensions.
+     * @return The transform matrix for the given number of dimensions, or {@code null}.
+     *
+     * @since 3.16
+     */
+    public static XMatrix forDimensions(final MathTransform transform,
+            final int sourceDimension, final int targetDimension)
+    {
+        if (transform instanceof LinearTransform) {
+            XMatrix matrix = toXMatrix(getMatrix(transform));
+            if (matrix != null && matrix.isAffine()) {
+                final int oldSrcDim = matrix.getNumCol() - 1;
+                final int oldTgtDim = matrix.getNumRow() - 1;
+                if (oldSrcDim != sourceDimension && oldTgtDim != targetDimension) {
+                    final XMatrix resized = MatrixFactory.create(targetDimension+1, sourceDimension+1);
+                    final int commonRows = Math.min(targetDimension, oldTgtDim);
+                    final int commonCols = Math.min(sourceDimension, oldSrcDim);
+                    for (int j=0; j<commonRows; j++) {
+                        // Set the scale factor to zero only for existing dimensions
+                        // (not for new target dimensions added by this method call).
+                        if (j >= commonCols && j < targetDimension) {
+                            resized.setElement(j, j, 0);
+                        }
+                        // Copy the scale and shear factors.
+                        for (int i=0; i<commonCols; i++) {
+                            resized.setElement(j, i, matrix.getElement(j, i));
+                        }
+                        // Copy the translation term.
+                        resized.setElement(j, sourceDimension, matrix.getElement(j, oldSrcDim));
+                    }
+                    matrix = resized;
+                }
+                return matrix;
+            }
+        }
+        return null;
     }
 
     /**

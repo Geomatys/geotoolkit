@@ -18,16 +18,20 @@
 package org.geotoolkit.referencing.factory;
 
 import java.util.Map;
+import java.util.List;
 import java.util.Collections;
 
 import org.opengis.util.FactoryException;
+import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.CompoundCRS;
+import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.Commons;
 import org.geotoolkit.test.crs.WKT;
+import org.geotoolkit.internal.referencing.Identifier3D;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -55,11 +59,37 @@ public final class ReferencingFactoryContainerTest {
     public void testToGeodetic3D() throws FactoryException {
         final ReferencingFactoryContainer factories = ReferencingFactoryContainer.instance(null);
         final CRSFactory crsFactory = factories.getCRSFactory();
-        CoordinateReferenceSystem crs = crsFactory.createFromWKT(WKT.PROJCS_LAMBERT_CONIC_NTF);
-        crs = crsFactory.createCompoundCRS(name("NTF 3D"), crs, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);
-        crs = crsFactory.createCompoundCRS(name("NTF 4D"), crs, DefaultTemporalCRS.MODIFIED_JULIAN);
-        final CoordinateReferenceSystem result = factories.toGeodetic3D((CompoundCRS) crs);
+        final ProjectedCRS horizontalCRS = (ProjectedCRS)
+                crsFactory.createFromWKT(WKT.PROJCS_LAMBERT_CONIC_NTF);
+        final CompoundCRS spatialCRS =
+                crsFactory.createCompoundCRS(name("NTF 3D"), horizontalCRS, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);
+        final CompoundCRS crs =
+                crsFactory.createCompoundCRS(name("NTF 4D"), spatialCRS, DefaultTemporalCRS.MODIFIED_JULIAN);
+        final CoordinateReferenceSystem result = factories.toGeodetic3D(crs);
         assertNotSame("Expected a new CRS.", crs, result);
+        /*
+         * Programmatic inspection of the structure. See the WKT below for a textual structure.
+         */
+        assertTrue("Expected a CompoundCRS instance.", result instanceof CompoundCRS);
+        final List<CoordinateReferenceSystem> components = ((CompoundCRS) result).getComponents();
+        assertEquals("Expected a spatial and a temporal components.", 2, components.size());
+
+        // Check the ProjectedCRS.
+        CoordinateReferenceSystem result3D = components.get(0);
+        ReferenceIdentifier identifier = result3D.getName();
+        assertTrue("Need the Identifier3D hack.", identifier instanceof Identifier3D);
+        assertSame(horizontalCRS, ((Identifier3D) identifier).horizontalCRS);
+
+        // Check the GeographicCRS
+        result3D = ((ProjectedCRS) result3D).getBaseCRS();
+        identifier = result3D.getName();
+        assertTrue("Need the Identifier3D hack.", identifier instanceof Identifier3D);
+        assertSame(horizontalCRS.getBaseCRS(), ((Identifier3D) identifier).horizontalCRS);
+        /*
+         * Compares the WKT with the expected one. In addition to testing the VRS structure,
+         * this code also tests the Geotk capability to format a 3D CRS (a previous version
+         * was throwing an exception).
+         */
         Commons.assertMultilinesEquals(Commons.decodeQuotes(
             "COMPD_CS[“NTF 4D”,\n" +
             "  PROJCS[“NTF 3D”,\n" +

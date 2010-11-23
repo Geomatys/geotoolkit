@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.operation;
 
 import java.awt.geom.Point2D;
+import javax.imageio.spi.ServiceRegistry;
 
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -33,10 +34,11 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.referencing.operation.Projection;
-import org.opengis.referencing.operation.Transformation;
 
 import org.geotoolkit.test.crs.WKT;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.Factory;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ReferencingTestCase;
@@ -67,13 +69,9 @@ import static org.junit.Assume.*;
 
 /**
  * Tests the default coordinate operation factory.
- * <p>
- * <strong>NOTE:</strong> Some tests are disabled in the particular case when the
- * {@link CoordinateOperationFactory} is actually an {@link AuthorityBackedFactory}
- * instance. This is because the later can replace source or target CRS by some CRS
- * found in the EPSG authority factory, causing {@code assertSame} to fails. It may
- * also returns a more accurate operation than the one expected from the WKT in the
- * code below, causing transformation checks to fail as well.
+ * This base class tests {@link DefaultCoordinateOperationFactory}, without EPSG database.
+ * The {@link AuthorityBackedFactoryTest} subclass will performs the same tests, but with
+ * the EPSG database (if any) enabled.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.16
@@ -93,21 +91,34 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
             MERCATOR_Z = "COMPD_CS[\"Mercator + Z\","+ WKT.PROJCS_MERCATOR   + ',' + WKT.VERTCS_Z      + ']';
 
     /**
+     * Tolerance value. Do not relax this tolerance: we have selected a value fine enough to allow
+     * the tests to distinguish between a "Molodensky" operation and an "Abridged Molodensky" one.
+     */
+    private static final double TOLERANCE = 1E-6;
+
+    /**
+     * A filter to be used in constructor for selecting a {@link DefaultCoordinateOperationFactory}
+     * instance not backed by an EPSG database ({@link AuthorityBackedFactory}).
+     */
+    static final ServiceRegistry.Filter FILTER = new ServiceRegistry.Filter() {
+        @Override public boolean filter(final Object provider) {
+            if (provider instanceof CoordinateOperationFactory) {
+                return isUsingDefaultFactory((CoordinateOperationFactory) provider);
+            }
+            return true;
+        }
+    };
+
+    /**
      * The hints used for fetching the factories.
      */
     private final Hints testHints;
 
     /**
-     * {@code true} if {@link #opFactory} is <strong>not</strong> an instance of
-     * {@link AuthorityBackedFactory}. See class javadoc for rational.
-     */
-    private boolean usingDefaultFactory;
-
-    /**
-     * Creates a new test suite.
+     * Creates a new test suite which does <strong>not</strong> use {@link AuthorityBackedFactory}.
      */
     public CoordinateOperationFactoryTest() {
-        this(null);
+        this(new Hints(FactoryFinder.FILTER_KEY, FILTER));
     }
 
     /**
@@ -121,21 +132,43 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
     }
 
     /**
-     * Ensures that positional accuracy dependencies are properly loaded. This is not needed for
-     * normal execution, but JUnit behavior with class loaders is sometime surprising.
+     * Returns the datum shift method used by this test.
+     * Subclasses will override this value.
+     *
+     * @return The datum shift method used by this test.
+     *
+     * @since 3.16
      */
-    @Before
-    public void ensureClassLoaded() {
-        assertNotNull(DATUM_SHIFT_APPLIED);
-        assertNotNull(DATUM_SHIFT_OMITTED);
-        usingDefaultFactory = isUsingDefaultFactory(opFactory);
+    protected String getDatumShiftMethod() {
+        return "Molodensky";
     }
 
     /**
-     * Returns {@code true} if the given factory is an {@link AuthorityBackedFactory}
-     * and is not backed neither by such factory.
+     * Returns the expected result for a transformation using the given sample point.
+     * This method shall also set the {@linkplain #tolerance tolerance} threshold.
+     * <p>
+     * Subclasses may override this method in order to returns a different expected
+     * result to be tested with a different threshold.
+     *
+     * @param  sample The sample point.
+     * @param  withHeight {@code true} if the height is expected to be used in the datum change operation.
+     * @return The expected result for a transformation using the given sample point.
+     *
+     * @since 3.16
      */
-    static boolean isUsingDefaultFactory(final CoordinateOperationFactory factory) {
+    protected SamplePoints.Target getExpectedResult(final SamplePoints sample, final boolean withHeight) {
+        tolerance = SamplePoints.MOLODENSKY_TOLERANCE;
+        return sample.tgt;
+    }
+
+    /**
+     * Returns {@code true} if the given factory is <strong>not</strong> an
+     * {@link AuthorityBackedFactory}, or a cached factory backed by an authority factory.
+     *
+     * @param  factory The factory to test.
+     * @return {@code true} if the given factory is not backed by an authority factory.
+     */
+    protected static boolean isUsingDefaultFactory(final CoordinateOperationFactory factory) {
         if (factory instanceof AuthorityBackedFactory) {
             return false;
         }
@@ -146,9 +179,28 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
     }
 
     /**
+     * Ensures that the factory used is the one expected by this test suite.
+     * Subclasses may override this method with a different test.
+     */
+    @Before
+    public void ensureProperFactory() {
+        assertTrue(isUsingDefaultFactory(opFactory));
+    }
+
+    /**
+     * Ensures that positional accuracy dependencies are properly loaded. This is not needed for
+     * normal execution, but JUnit behavior with class loaders is sometime surprising.
+     */
+    @Before
+    public void ensureClassLoaded() {
+        assertNotNull(DATUM_SHIFT_APPLIED);
+        assertNotNull(DATUM_SHIFT_OMITTED);
+    }
+
+    /**
      * Make sure that a factory can be find in the presence of some global hints.
      *
-     * @see http://jira.codehaus.org/browse/GEOT-1618
+     * @see <a href="http://jira.codehaus.org/browse/GEOT-1618">GEOT-1618</a>
      */
     @Test
     public void testFactoryWithHints() {
@@ -219,7 +271,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
 
         transform = operation.getMathTransform();
         validate();
-        tolerance = 1E-6;
+        tolerance = TOLERANCE;
         assertTransformEquals2_2(170, 50, 0, 0);
         transform = transform.inverse();
         assertTransformEquals2_2(0, 0, 170, 50);
@@ -240,13 +292,12 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
         assertSame(targetCRS, operation.getTargetCRS());
         transform = operation.getMathTransform();
         validate();
-        tolerance = 1E-6;
-        assertTransformEquals2_2(-180, -88.21076182660325, -180, -88.21076182655470);
-        assertTransformEquals2_2(+180,  85.41283436546335, -180,  85.41283436531322);
-//      assertTransformEquals2_2(+180,  85.41283436546335, +180,  85.41283436548373);
-        // Note 1: Expected values above were computed with Geotk (not an external library).
-        // Note 2: The commented-out test it the one we get when using geocentric instead of
-        //         Molodenski method.
+        tolerance = TOLERANCE;
+        final boolean isGeoc = "Geocentric".equals(getDatumShiftMethod());
+        // Note: Expected values below were computed with Geotk (not an external library).
+                    assertTransformEquals2_2(-180, -88.21076182660325, -180, -88.21076182655470);
+        if (isGeoc) assertTransformEquals2_2(+180,  85.41283436546335, +180,  85.41283436548373);
+        else        assertTransformEquals2_2(+180,  85.41283436546335, -180,  85.41283436531322);
     }
 
     /**
@@ -256,6 +307,9 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
      */
     @Test
     public void testDatumShift() throws Exception {
+        assertEquals("Factory is not using the expected datum shift method.", getDatumShiftMethod(),
+                ((Factory) opFactory).getImplementationHints().get(Hints.DATUM_SHIFT_METHOD));
+
         final CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(WKT.GEOGCS_NTF);
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.GEOGCS_WGS84);
         final CoordinateOperation operation = opFactory.createOperation(sourceCRS, targetCRS);
@@ -265,12 +319,15 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
         assertFalse(operation.getCoordinateOperationAccuracy().contains(DATUM_SHIFT_OMITTED));
         transform = operation.getMathTransform();
         validate();
-        tolerance = 1E-6;
-        assertTransformEquals2_2( 0,   0,  2.3367521703619816, 0.0028940088671177986);
-        assertTransformEquals2_2(20, -10, -6.663517606186469, 18.00134508026729);
-        // Note: Expected values above were computed with Geotk (not an external library).
-        //       However, it was tested with both Molodenski and Geocentric transformations.
-
+        tolerance = TOLERANCE;
+        /*
+         * Note: Expected values below were computed with Geotk (not an external library).
+         *       However, it was tested with both Molodenski and Geocentric transformations.
+         */
+        assertTransformEquals2_2(0, 0, 2.3367521703619816, 0.0028940088671177986);
+        final boolean isAbridged = "Abridged Molodensky".equals(getDatumShiftMethod());
+        if (isAbridged) assertTransformEquals2_2(20, -10, -6.663517586507632, 18.00134007052471);
+        else            assertTransformEquals2_2(20, -10, -6.663517606186469, 18.00134508026729);
         /*
          * Remove the TOWGS84 element and test again. An exception should be throws,
          * since no Bursa-Wolf parameters were available.
@@ -289,7 +346,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
         try {
             assertNotNull(opFactory.createOperation(amputedCRS, targetCRS));
             fail("Operation without Bursa-Wolf parameters should not have been allowed.");
-        } catch (OperationNotFoundException excption) {
+        } catch (OperationNotFoundException exception) {
             // This is the expected exception.
         }
         /*
@@ -311,13 +368,14 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
 
         transform = lenient.getMathTransform();
         validate();
-        tolerance = 1E-6;
-        assertTransformEquals2_2(0,   0,  2.33722917, 0.0);
-        assertTransformEquals2_2(20, -10, -6.66277083, 17.99814879585781);
-//      assertTransformEquals2_2(lenientTr, 20, -10, -6.66277083, 17.998143675921714);
-        // Note 1: Expected values above were computed with Geotk (not an external library).
-        // Note 2: The commented-out test is the one we get with "Abridged_Molodenski" method
-        //         instead of "Molodenski".
+        tolerance = TOLERANCE;
+        /*
+         * Note: Expected values below were computed with Geotk (not an external library).
+         *       However, it was tested with both Molodenski and Geocentric transformations.
+         */
+        assertTransformEquals2_2(0,    0,  2.33722917,  0.0);
+        if (isAbridged) assertTransformEquals2_2(20, -10, -6.66277083, 17.99814367592171);
+        else            assertTransformEquals2_2(20, -10, -6.66277083, 17.99814879585781);
     }
 
     /**
@@ -336,7 +394,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
         assertFalse(operation.getCoordinateOperationAccuracy().contains(DATUM_SHIFT_OMITTED));
         transform = operation.getMathTransform();
         validate();
-        tolerance = 1E-6;
+        tolerance = TOLERANCE;
         assertTransformEquals2_2(168.1075, -21.597283333333, 822023.338884308, 7608648.67486555);
         // Note: Expected values above were computed with Geotk (not an external library).
 
@@ -355,7 +413,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
         assertFalse(operation.getCoordinateOperationAccuracy().contains(DATUM_SHIFT_OMITTED));
         transform = operation.getMathTransform();
         validate();
-        tolerance = 1E-6;
+        tolerance = TOLERANCE;
         assertTransformEquals2_2(168.1075, -21.597283333333, 822023.338884308, 7608648.67486555);
         // Note: Expected values above were computed with Geotk (not an external library).
     }
@@ -371,21 +429,14 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.GEOGCS_WGS84_DMHS);
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
         transform = op.getMathTransform();
-        assertTrue(op instanceof Transformation);
+        assertTrue(isTransformation(op));
         assertSame(sourceCRS, op.getSourceCRS());
-        if (usingDefaultFactory) {
-            assertSame(targetCRS, op.getTargetCRS());
-        }
         assertFalse(transform.isIdentity());
         validate();
-        if (usingDefaultFactory) {
-            tolerance = 1E-6;
-            // Note: Expected values below were computed with Geotk (not an external library).
-            //       However, it was tested with both Molodenski and Geocentric transformations.
-            assertTransformEquals2_2(0.0,                   0.0,
-                                     0.001654978796746043,  0.0012755944235822696);
-            assertTransformEquals2_2(5.0,                   8.0,
-                                     5.001262960018587,     8.001271733843957);
+        for (final SamplePoints sample : SamplePoints.NAD27_TO_WGS84) {
+            final SamplePoints.Source src = sample.src;
+            final SamplePoints.Target tgt = getExpectedResult(sample, false);
+            assertTransformEquals2_2(src.φ, src.λ, tgt.φ, tgt.λ);
         }
     }
 
@@ -524,7 +575,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
         transform = op.getMathTransform();
         assertNotSame(sourceCRS, op.getSourceCRS());
         assertNotSame(targetCRS, op.getTargetCRS());
-        assertTrue(op                instanceof Transformation);
+        assertTrue(isTransformation(op));
         assertTrue(sourceCRS         instanceof CompoundCRS);
         assertTrue(op.getSourceCRS() instanceof GeographicCRS);   // 2D + 1D  --->  3D
         assertTrue(targetCRS         instanceof CompoundCRS);
@@ -533,17 +584,11 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
         assertFalse(op.getSourceCRS().equals(op.getTargetCRS()));
         assertFalse(transform.isIdentity());
         validate();
-        // Note: Expected values below were computed with Geotk (not an external library).
-        //       However, it was tested with both Molodenski and Geocentric transformations.
-        tolerance = 1E-6;
-        assertTransformEquals3_3(0,                    0,                      0,
-                                 0.001654978796746043, 0.0012755944235822696, 66.4042236590758);
-        assertTransformEquals3_3(5,                    8,                     20,
-                                 5.0012629560319874,   8.001271729856333,    120.27929787151515);
-        assertTransformEquals3_3(5,                    8,                    -20,
-                                 5.001262964005206,    8.001271737831601,     80.2792978901416);
-        assertTransformEquals3_3(-5,                   -8,                    -20,
-                                 -4.99799698932651,    -7.998735783965731,      9.007854541763663);
+        for (final SamplePoints sample : SamplePoints.NAD27_TO_WGS84) {
+            final SamplePoints.Source src = sample.src;
+            final SamplePoints.Target tgt = getExpectedResult(sample, true);
+            assertTransformEquals3_3(src.φ, src.λ, src.h, tgt.φ, tgt.λ, tgt.h);
+        }
     }
 
     /**
@@ -559,7 +604,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
         transform = op.getMathTransform();
         assertNotSame(sourceCRS, op.getSourceCRS());
         assertNotSame(targetCRS, op.getTargetCRS());
-        assertTrue(op                instanceof Transformation);
+        assertTrue(isTransformation(op));
         assertTrue(sourceCRS         instanceof CompoundCRS);
         assertTrue(op.getSourceCRS() instanceof GeographicCRS);   // 2D + 1D  --->  3D
         assertTrue(targetCRS         instanceof CompoundCRS);
@@ -568,13 +613,11 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
         assertFalse(op.getSourceCRS().equals(op.getTargetCRS()));
         assertFalse(transform.isIdentity());
         validate();
-        // Note: Expected values below were computed with Geotk (not an external library).
-        //       However, it was tested with both Molodenski and Geocentric transformations.
-        tolerance = 1E-6;
-        assertTransformEquals3_3(0,                    0,                      0,
-                                 0.001654978796746043, 0.0012755944235822696, 66.4042236590758);
-        assertTransformEquals3_3(-20,                  5,                      8,
-                                 5.001262964005206,    8.001271737831601,     80.2792978901416);
+        for (final SamplePoints sample : SamplePoints.NAD27_TO_WGS84) {
+            final SamplePoints.Source src = sample.src;
+            final SamplePoints.Target tgt = getExpectedResult(sample, true);
+            assertTransformEquals3_3(src.h, src.φ, src.λ, tgt.φ, tgt.λ, tgt.h);
+        }
     }
 
     /**
@@ -589,18 +632,13 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
         transform = op.getMathTransform();
         assertNotSame(sourceCRS, op.getSourceCRS());
-        assertSame   (targetCRS, op.getTargetCRS());
         assertFalse(transform.isIdentity());
         validate();
-        // Note: Expected values below were computed with Geotk (not an external library).
-        //       However, it was tested with both Molodenski and Geocentric transformations.
-        tolerance = 1E-6;
-        assertTransformEquals3_2(0,                    0,                      0,
-                                 0.001654978796746043, 0.0012755944235822696);
-        assertTransformEquals3_2(5,                    8,                     20,
-                                 5.0012629560319874,   8.001271729856333);
-        assertTransformEquals3_2(5,                    8,                    -20,
-                                 5.001262964005206,    8.001271737831601);
+        for (final SamplePoints sample : SamplePoints.NAD27_TO_WGS84) {
+            final SamplePoints.Source src = sample.src;
+            final SamplePoints.Target tgt = getExpectedResult(sample, true);
+            assertTransformEquals3_2(src.φ, src.λ, src.h, tgt.φ, tgt.λ);
+        }
     }
 
     /**
@@ -643,7 +681,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
         assertSame(targetCRS, op.getTargetCRS());
         assertFalse(transform.isIdentity());
         validate();
-        tolerance = 1E-6;
+        tolerance = TOLERANCE;
         assertTransformEquals3_1( 0,  0, 0,   0);
         assertTransformEquals3_1( 5,  8, 20, 20);
         assertTransformEquals3_1(-5, -8, 20, 20);
@@ -666,13 +704,11 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
         assertNotSame(targetCRS, op.getTargetCRS());
         assertFalse(transform.isIdentity());
         validate();
-        // Note: Expected values below were computed with Geotk (not an external library).
-        //       However, it was tested with both Molodenski and Geocentric transformations.
-        tolerance = 1E-6;
-        assertTransformEquals2_3(0,                    0,
-                                 0.001654978796746043, 0.0012755944235822696, 66.4042236590758);
-        assertTransformEquals2_3(5,                    8,
-                                 5.001262960018587,    8.001271733843957,    100.27929787896574);
+        for (final SamplePoints sample : SamplePoints.NAD27_TO_WGS84) {
+            final SamplePoints.Source src = sample.src;
+            final SamplePoints.Target tgt = getExpectedResult(sample, false);
+            assertTransformEquals2_3(src.φ, src.λ, tgt.φ, tgt.λ, tgt.h0);
+        }
     }
 
     /**
@@ -713,6 +749,8 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
      * Should fails unless GEOT-352 has been fixed.
      *
      * @throws Exception Should never happen.
+     *
+     * @see <a href="http://jira.codehaus.org/browse/GEOT-352">GEOT-352</a>
      */
     @Test(expected = OperationNotFoundException.class)
     public void testGeographicCRS_HtoH() throws Exception {
@@ -758,7 +796,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
         assertSame(targetCRS, op.getTargetCRS());
         assertFalse(transform.isIdentity());
         validate();
-        tolerance = 1E-6;
+        tolerance = TOLERANCE;
         assertTransformEquals3_1( 0,  0, 0,   0);
         assertTransformEquals3_1( 5,  8, 20, 20);
         assertTransformEquals3_1(-5, -8, 20, 20);
@@ -785,68 +823,25 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
                    "to a single affine transform.", transform instanceof LinearTransform);
         assertTrue("The operation should be a simple axis change, not a complex" +
                    "chain of ConcatenatedOperations.", op instanceof Conversion);
-        tolerance = 1E-6;
+        tolerance = TOLERANCE;
         assertTransformEquals4_2(   0,     0,  0,    0,    0,     0);
         assertTransformEquals4_2(1000, -2000, 20, 4000, 1000, -2000);
     }
 
     /**
-     * Tests a transformation from a 2D projection to an other 2D projection which imply a
-     * change of prime meridian. The purpose of this test is to isolate the two-dimensional
-     * part of the transform tested by {@link #testProjected4D_to2D_withMeridianShift()}.
-     * <p>
-     * This tests requires the EPSG database, because it requires the coordinate operation
-     * path which is defined there.
+     * A test which is not expected to work without EPSG database.
+     * The {@link AuthorityBackedFactoryTest} subclass will override
+     * this method with a real test.
      *
-     * @throws Exception Should never happen.
+     * @throws Exception If an error occurred while creating the operation.
      *
      * @since 3.16
      */
-    @Test
+    @Test(expected = OperationNotFoundException.class)
     public void testProjected2D_withMeridianShift() throws Exception {
-        assumeTrue(ReferencingTestCase.isEpsgFactoryAvailable());
         final CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(WKT.PROJCS_LAMBERT_CONIC_NTF);
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.PROJCS_MERCATOR);
-        final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
-        transform = op.getMathTransform();
-        validate();
-        assertFalse(transform.isIdentity());
-        tolerance = 0.02;
-        // Test using the location of Paris (48.856578°N, 2.351828°E)
-        // Only after, test using a coordinate different than the prime meridian.
-        assertTransformEquals2_2(601124.99, 2428693.45, 261804.30, 6218365.72);
-        assertTransformEquals2_2(600000.00, 2420000.00, 260098.74, 6205194.95);
-    }
-
-    /**
-     * Tests a transformation from a 4D projection to a 2D projection which imply a change of
-     * prime meridian. This is the same test than {@link #testProjected2D_withMeridianShift()},
-     * with extra dimension which should be just dropped.
-     * <p>
-     * This tests requires the EPSG database, because it requires the coordinate operation
-     * path which is defined there.
-     *
-     * @throws Exception Should never happen.
-     *
-     * @since 3.16
-     */
-    @Test
-    @Ignore
-    public void testProjected4D_to2D_withMeridianShift() throws Exception {
-        assumeTrue(ReferencingTestCase.isEpsgFactoryAvailable());
-        final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.PROJCS_MERCATOR);
-        CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(WKT.PROJCS_LAMBERT_CONIC_NTF);
-        sourceCRS = new DefaultCompoundCRS("NTF 3D", sourceCRS, ELLIPSOIDAL_HEIGHT);
-        sourceCRS = new DefaultCompoundCRS("NTF 4D", sourceCRS, MODIFIED_JULIAN);
-        final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);
-        transform = op.getMathTransform();
-        validate();
-        assertFalse(transform.isIdentity());
-        tolerance = 0.02;
-        // Same coordinates than testProjected2D_withMeridianShift(),
-        // but with random elevation and time which should be dropped.
-        assertTransformEquals4_2(601124.99, 2428693.45, 400, 1000, 261804.30, 6218365.72);
-        assertTransformEquals4_2(600000.00, 2420000.00, 400, 1000, 260098.74, 6205194.95);
+        assertNotNull(opFactory.createOperation(sourceCRS, targetCRS));
     }
 
     /**

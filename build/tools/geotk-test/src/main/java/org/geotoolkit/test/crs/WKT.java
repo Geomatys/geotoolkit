@@ -52,6 +52,11 @@ public final class WKT {
 
     /**
      * Geographic CRS on NAD27 datum (EPSG:4267).
+     * <p>
+     * <b>Note:</b> The {@code TOWGS84} parameters below are not the most accurate ones. The EPSG
+     * database will specify an other operation method for the transformation from NAD27 to WGS84.
+     * However using inaccurate parameters is useful for testing purpose since it provides a way
+     * to test if the EPSG database has been used or not.
      */
     public static final String GEOGCS_NAD27 = decodeQuotes(
             "GEOGCS[“NAD27”,\n" +

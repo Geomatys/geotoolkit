@@ -70,6 +70,11 @@ public final class Descriptions extends IndexedResourceBundle {
         public static final int COMMAND_USAGE_$1 = 3;
 
         /**
+         * Concatenation of {0} adapted to the 3D domain
+         */
+        public static final int CONCATENATED_OPERATION_ADAPTED_$1 = 15;
+
+        /**
          * This result indicates if a datum shift method has been applied.
          */
         public static final int CONFORMANCE_MEANS_DATUM_SHIFT = 4;
@@ -92,7 +97,7 @@ public final class Descriptions extends IndexedResourceBundle {
         public static final int DATA_NOT_INSTALLED_$3 = 7;
 
         /**
-         * {0} files have been read successfuly but {1} files can not be read. The failure causes are
+         * {0} files have been read successfully but {1} files can not be read. The failure causes are
          * reported below.
          */
         public static final int ERROR_READING_SOME_FILES_$2 = 8;

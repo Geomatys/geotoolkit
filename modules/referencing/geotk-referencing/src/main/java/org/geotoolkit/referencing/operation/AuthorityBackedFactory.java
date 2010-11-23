@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.List;
 import java.util.Iterator;
+import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 
@@ -31,16 +32,23 @@ import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.operation.*;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryRegistryException;
+import org.geotoolkit.internal.referencing.Identifier3D;
+import org.geotoolkit.internal.referencing.MatrixUtilities;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.operation.transform.EllipsoidalTransform;
+import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.factory.OptionalFactoryOperationException;
 import org.geotoolkit.util.collection.BackingStoreException;
-import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.resources.Loggings;
+import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.lang.ThreadSafe;
 
 import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
@@ -138,7 +146,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
      * {@code OrderedAxisAuthorityFactory} instance in this class would be in the way and cause
      * an infinite recursivity.
      *
-     * @see http://jira.codehaus.org/browse/GEOT-1161
+     * @see <a href="http://jira.codehaus.org/browse/GEOT-1161">GEOT-1161</a>
      */
     private static void noForce(final Hints userHints) {
         userHints.put(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.FALSE);
@@ -238,10 +246,61 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
         if (Boolean.TRUE.equals(processing.get())) {
             return null;
         }
-        /*
-         * Now performs the real work.
-         */
         final CoordinateOperationAuthorityFactory authorityFactory = getAuthorityFactory();
+        CoordinateOperation operation = null;
+        int combine = 0;
+        do {
+            /*
+             * First, try directly the provided (sourceCRS, targetCRS) pair. If it doesn't
+             * work, try to use different combinations of original CRS and two-dimensional
+             * components of those CRS.
+             */
+            final CoordinateReferenceSystem source, target;
+            source = (combine & 2) == 0 ? sourceCRS : getHorizontalCRS(sourceCRS);
+            target = (combine & 1) == 0 ? targetCRS : getHorizontalCRS(targetCRS);
+            if (source != null && target != null) try {
+                operation = createFromDatabase(source, target, authorityFactory);
+                if (operation != null) {
+                    /*
+                     * Found an operation. If we had to extract the horizontal part of
+                     * some 3D CRS, then we need to modify the coordinate operation.
+                     */
+                    if (combine != 0) {
+                        operation = propagateVertical(operation, source != sourceCRS, target != targetCRS);
+                        operation = complete(operation, sourceCRS, targetCRS);
+                    }
+                    break;
+                }
+            } catch (FactoryException exception) {
+                /*
+                 * Some kind of error more serious than NoSuchAuthorityCodeException (which was caught
+                 * by the createFromDatabase(...) method invoked in the 'try' block). It may be serious,
+                 * but the super-class is capable to provide a reasonable default behavior. Log as a
+                 * warning and stop this method.
+                 */
+                log(exception, authorityFactory);
+                return null;
+            }
+        } while (++combine != 4);
+        return operation;
+    }
+
+    /**
+     * Implementation of {@link #createFromDatabase(CoordinateReferenceSystem, CoordinateReferenceSystem)}
+     * looking only for the specified CRS. This method does not try to get the 2D components of a 3D CRS.
+     *
+     * @param  sourceCRS Input coordinate reference system.
+     * @param  targetCRS Output coordinate reference system.
+     * @param  authorityFactory The factory to query for getting operation from the CRS.
+     * @return A coordinate operation from {@code sourceCRS} to {@code targetCRS}, or {@code null}
+     *         if no such operation is explicitly defined in the underlying database.
+     * @throws FactoryException If an error occurred while creating the operation.
+     */
+    private CoordinateOperation createFromDatabase(
+            final CoordinateReferenceSystem sourceCRS,
+            final CoordinateReferenceSystem targetCRS,
+            final CoordinateOperationAuthorityFactory authorityFactory) throws FactoryException
+    {
         final Citation  authority = authorityFactory.getAuthority();
         final Identifier sourceID = AbstractIdentifiedObject.getIdentifier(sourceCRS, authority);
         if (sourceID == null) {
@@ -293,13 +352,6 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
              */
             log(Level.FINE, exception, authorityFactory, true);
             return null;
-        } catch (FactoryException exception) {
-            /*
-             * Other kind of error. It may be more serious, but the super-class is capable to
-             * provide a reasonable default behavior. Log as a warning and stop this method.
-             */
-            log(exception, authorityFactory);
-            return null;
         }
         for (final Iterator<CoordinateOperation> it=operations.iterator(); it.hasNext();) {
             CoordinateOperation candidate;
@@ -338,39 +390,20 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
              * as if it were the official CRS. Checks if the source and target CRS for the
              * operation just created are really the same (ignoring metadata) than the one
              * specified by the user.
+             *
+             * NOTE:
+             * A FactoryException is thrown by the getMathTransform(...) methods if we have been
+             * unable to create a transform from the user-provided CRS to the authority-provided
+             * CRS. In theory, the two above-cited CRS should been the same and the transform is
+             * the identity transform. In practice, it is not always the case because of axis
+             * swapping issue (see GEOT-854).
+             *
+             * If the getMathTransform(...) methods failed to create what should merely be an
+             * affine transform for swapping axes (if not the identity transform), then we are
+             * likely to fail for all other transforms. Let the FactoryException propagate in
+             * order to stop the loop and avoid logging the same warning many time.
              */
-            CoordinateReferenceSystem source = candidate.getSourceCRS();
-            CoordinateReferenceSystem target = candidate.getTargetCRS();
-            try {
-                final MathTransform prepend, append;
-                if (!equalsIgnoreMetadata(sourceCRS, source)) {
-                    prepend = getMathTransform(sourceCRS, source);
-                    source  = sourceCRS;
-                } else {
-                    prepend = null;
-                }
-                if (!equalsIgnoreMetadata(target, targetCRS)) {
-                    append = getMathTransform(target, targetCRS);
-                    target = targetCRS;
-                } else {
-                    append = null;
-                }
-                candidate = transform(source, prepend, candidate, append, target);
-            } catch (FactoryException exception) {
-                /*
-                 * We have been unable to create a transform from the user-provided CRS to the
-                 * authority-provided CRS. In theory, the two CRS should have been the same and
-                 * the transform would have been the identity transform. In practice, it is not
-                 * always the case because of axis swapping issue (see GEOT-854). The transform
-                 * that we just tried to create in the two previous calls to the createOperation
-                 * method should have been merely an affine transform for swapping axis. If they
-                 * failed, then we are likely to fail for all other transforms provided in the
-                 * database. So stop the loop now (at the very least, do not log the same
-                 * warning for every pass of this loop!)
-                 */
-                log(exception, authorityFactory);
-                return null;
-            }
+            candidate = complete(candidate, sourceCRS, targetCRS);
             if (accept(candidate)) {
                 return candidate;
             }
@@ -379,10 +412,46 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
     }
 
     /**
+     * Completes (if necessary) the given coordinate operation for making sure that the source CRS
+     * is the given one and the target CRS is the given one.  In principle, the given CRS shall be
+     * equivalent to the operation source/target CRS. However discrepancies happen if the user CRS
+     * have flipped axis order, or if we looked for 2D operation while the user provided 3D CRS.
+     *
+     * @param  operation The coordinate operation to complete.
+     * @param  sourceCRS The source CRS requested by the user.
+     * @param  targetCRS The target CRS requested by the user.
+     * @return A coordinate operation for the given source and target CRS.
+     * @throws FactoryException if the operation can't be constructed.
+     */
+    private CoordinateOperation complete(
+            final CoordinateOperation       operation,
+            final CoordinateReferenceSystem sourceCRS,
+            final CoordinateReferenceSystem targetCRS)
+            throws FactoryException
+    {
+        CoordinateReferenceSystem source = operation.getSourceCRS();
+        CoordinateReferenceSystem target = operation.getTargetCRS();
+        final MathTransform prepend, append;
+        if (!equalsIgnoreMetadata(sourceCRS, source)) {
+            prepend = getMathTransform(sourceCRS, source);
+            source  = sourceCRS;
+        } else {
+            prepend = null;
+        }
+        if (!equalsIgnoreMetadata(target, targetCRS)) {
+            append = getMathTransform(target, targetCRS);
+            target = targetCRS;
+        } else {
+            append = null;
+        }
+        return transform(source, prepend, operation, append, target);
+    }
+
+    /**
      * Appends or prepends the specified math transforms to the
-     * {@linkplain CoordinateOperation#getMathTransform operation math transform}.
-     * The new coordinate operation (if any) will share the same metadata
-     * than the original operation, including the authority code.
+     * {@linkplain CoordinateOperation#getMathTransform math transform of the given operation}.
+     * The new coordinate operation (if any) will share the same metadata than the original
+     * operation, including the authority code.
      * <p>
      * This method is used in order to change axis order when the user-specified CRS
      * disagree with the authority-supplied CRS.
@@ -456,6 +525,251 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
             }
         }
         return createFromMathTransform(properties, sourceCRS, targetCRS, transform, method, type);
+    }
+
+    /**
+     * Returns a new coordinate operation with the ellipsoidal height added either in the source
+     * coordinates, in the target coordinates or both. If there is an ellipsoidal transform, then
+     * this method updates the transforms in order to use the ellipsoidal height (it has an impact
+     * on the transformed values).
+     * <p>
+     * This method is not guaranteed to succeed in adding the ellipsoidal height. It works on a
+     * <cite>best effort</cite> basis. In any case, the {@link #complete} method should be invoked
+     * after this one in order to ensure that the source and target CRS are the expected ones.
+     *
+     * @param  operation The original (typically two-dimensional) coordinate operation.
+     * @param  source3D  {@code true} for adding ellipsoidal height in source coordinates.
+     * @param  target3D  {@code true} for adding ellipsoidal height in target coordinates.
+     * @return A coordinate operation with the source and/or target coordinates made 3D.
+     * @throws FactoryException If an error occurred while creating the coordinate operation.
+     *
+     * @since 3.16
+     */
+    private CoordinateOperation propagateVertical(CoordinateOperation operation,
+            final boolean source3D, final boolean target3D) throws FactoryException
+    {
+        /*
+         * Get the list of all single (non-concatenated) transformation steps.
+         */
+        final MathTransform[] steps;
+        MathTransform transform = operation.getMathTransform();
+        if (transform instanceof ConcatenatedTransform) {
+            final List<MathTransform> list = ((ConcatenatedTransform) transform).getSteps();
+            steps = list.toArray(new MathTransform[list.size()]);
+        } else {
+            steps = new MathTransform[] {transform};
+        }
+        /*
+         * Find the first and the last EllipsoidalTransform. In the case of MolodenskyTransform,
+         * the first and last occurences are typically the same instance. In the Geocentric datum
+         * shift case, they are two different instances with an affine transform between them.
+         */
+        EllipsoidalTransform first=null, last=null;
+        int indexFirst=0, indexLast=0;
+        for (int i=0; i<steps.length; i++) {
+            final MathTransform step = steps[i];
+            if (step instanceof EllipsoidalTransform) {
+                last = (EllipsoidalTransform) step;
+                indexLast = i;
+                if (first == null) {
+                    first = last;
+                    indexFirst = i;
+                }
+            }
+        }
+        CoordinateReferenceSystem  sourceCRS = operation.getSourceCRS();
+        CoordinateReferenceSystem  targetCRS = operation.getTargetCRS();
+        final MathTransformFactory mtFactory = getMathTransformFactory();
+        boolean updated = false;
+        /*
+         * If we found ellipsoidal transforms, change their source and target dimensions
+         * according the user request. Then, update the affine transform which is before
+         * the first ellipsoidal transform, and the affine transform which is after the
+         * last ellipsoidal transform.
+         */
+        if (first != null) {
+            final EllipsoidalTransform newFirst, newLast;
+            if (indexFirst == indexLast) {
+                newFirst = newLast = first.forDimensions(source3D, target3D);
+            } else {
+                newFirst = first.forDimensions(source3D, true);
+                newLast  = last .forDimensions(true, target3D);
+            }
+            /*
+             * Now update the transformation steps with the new operations. The following loop
+             * will be executed twice: once for the first ellipsoidal transform and once for
+             * the last ellispoidal transform. It is okay if the last ellipsoid transform is
+             * actually the same instance than the first one.
+             */
+            boolean isLast = false; do {
+                final EllipsoidalTransform oldTr, newTr;
+                final int index, remaining, toAdjust;
+                CoordinateReferenceSystem crs;
+                if (!isLast) {
+                    oldTr     = first;
+                    newTr     = newFirst;
+                    index     = indexFirst;
+                    toAdjust  = index - 1;
+                    remaining = index;
+                    crs       = sourceCRS;
+                } else {
+                    oldTr     = last;
+                    newTr     = newLast;
+                    index     = indexLast;
+                    toAdjust  = index + 1;
+                    remaining = steps.length - index - 1;
+                    crs       = targetCRS;
+                }
+                if (oldTr != newTr) {
+                    /*
+                     * If the first ellipsoidal transform is the very first step, or if the
+                     * last ellipsoidal transform is the very last step, then the update is
+                     * easy: just replace the transform.
+                     *
+                     * But if there is an affine transform before the first ellipsoidal transform,
+                     * or an affine transform after the last ellipsoidal transform, then we need
+                     * to increase the number of dimensions of that affine transform.
+                     */
+                    MathTransform step = null; // The transform to adjust, if any.
+                    boolean addVertical = true;
+                    if (remaining != 0) {
+                        addVertical = (remaining == 1);
+                        step = steps[toAdjust];
+                        int srcDim, tgtDim;
+                        if (!isLast) {
+                            srcDim = step .getSourceDimensions();
+                            tgtDim = newTr.getSourceDimensions();
+                            if (addVertical &= (tgtDim > srcDim)) {
+                                srcDim = tgtDim;
+                            }
+                        } else {
+                            srcDim = newTr.getTargetDimensions();
+                            tgtDim = step .getTargetDimensions();
+                            if (addVertical &= (srcDim > tgtDim)) {
+                                tgtDim = srcDim;
+                            }
+                        }
+                        final Matrix matrix = MatrixUtilities.forDimensions(step, srcDim, tgtDim);
+                        if (matrix == null) {
+                            continue; // Non affine step: do not update the transform steps.
+                        }
+                        step = mtFactory.createAffineTransform(matrix);
+                    }
+                    /*
+                     * Now update the ellipsoidal transform and the CRS. The CRS should be an
+                     * instance of SingleCRS. However we check for safety. If it is not, then
+                     * we can not update the transforms.
+                     */
+                    if (addVertical) {
+                        if (!(crs instanceof SingleCRS)) {
+                            continue; // Can't update the CRS, so don't update the transforms.
+                        }
+                        crs = factories.toGeodetic3D((SingleCRS) crs);
+                        if (!isLast) sourceCRS = crs;
+                        else         targetCRS = crs;
+                    }
+                    steps[index] = newTr;
+                    if (step != null) {
+                        steps[toAdjust] = step;
+                    }
+                    updated = true;
+                }
+            } while ((isLast = !isLast) == true);
+            /*
+             * If at least one step has been changed, rebuild the concatenated transform.
+             */
+            if (updated) {
+                transform = steps[0];
+                for (int i=1; i<steps.length; i++) {
+                    transform = mtFactory.createConcatenatedTransform(transform, steps[i]);
+                }
+            }
+        } else if (source3D && target3D) {
+            /*
+             * If the transformation chain does not contain a datum shift, just let the
+             * ellipsoidal height pass through. Current implementation handles only the
+             * two-dimensional CRS.
+             */
+            if (transform.getSourceDimensions() == 2 && transform.getTargetDimensions() == 2) {
+                if (sourceCRS instanceof SingleCRS && targetCRS instanceof SingleCRS) {
+                    sourceCRS = factories.toGeodetic3D((SingleCRS) sourceCRS);
+                    targetCRS = factories.toGeodetic3D((SingleCRS) targetCRS);
+                    transform = mtFactory.createPassThroughTransform(0, transform, 1);
+                    updated   = true;
+                }
+            }
+        }
+        /*
+         * If the transform has been updated, rebuild the operation. The new operation will
+         * inherit the same properties than the original operation. However a vertical axis
+         * may have been added to the source and/or target CRS.
+         */
+        if (updated) {
+            final Integer srcDim = sourceCRS.getCoordinateSystem().getDimension();
+            final Integer tgtDim = targetCRS.getCoordinateSystem().getDimension();
+            Class<? extends CoordinateOperation> type = AbstractCoordinateOperation.getType(operation);
+            OperationMethod method = null;
+            if (operation instanceof SingleOperation) {
+                /*
+                 * If the original operation was a SingleOperation, make an exact copy of
+                 * the original method except for the number of source/target dimensions.
+                 */
+                method = ((SingleOperation) operation).getMethod();
+                if (!Utilities.equals(srcDim, method.getSourceDimensions()) ||
+                    !Utilities.equals(tgtDim, method.getTargetDimensions()))
+                {
+                    method = new DefaultOperationMethod(method, srcDim, tgtDim);
+                }
+            } else if (operation instanceof ConcatenatedOperation) {
+                /*
+                 * If the original operation was a ConcatenatedOperation, build a SingleOperation
+                 * which will represent the operation as a whole.  In the current implementation,
+                 * we don't try to build a new ConcatenatedOperation because separating the steps
+                 * is hard (because of propagation of dimension changes accross different steps).
+                 */
+                type = SingleOperation.class;
+                final StringBuilder buffer = new StringBuilder();
+                for (final SingleOperation step : ((ConcatenatedOperation) operation).getOperations()) {
+                    final String id = CRS.getDeclaredIdentifier(step);
+                    if (id != null) {
+                        if (buffer.length() != 0) {
+                            buffer.append(" + ");
+                        }
+                        buffer.append(id);
+                    }
+                    if (step instanceof Transformation) {
+                        type = Transformation.class;
+                    } else if (step instanceof Conversion && type != Transformation.class) {
+                        type = Conversion.class;
+                    }
+                    // Don't check the Projection case; it is confusing
+                    // since users expect a well known projection name.
+                }
+                method = new DefaultOperationMethod(Collections.singletonMap(OperationMethod.NAME_KEY,
+                        Descriptions.format(Descriptions.Keys.CONCATENATED_OPERATION_ADAPTED_$1, buffer)),
+                        srcDim, tgtDim, null);
+            }
+            operation = createFromMathTransform(AbstractIdentifiedObject.getProperties(operation),
+                    sourceCRS, targetCRS, transform, method, type);
+        }
+        return operation;
+    }
+
+    /**
+     * If a horizontal CRS can be extracted from the given CRS, returns it.
+     * Otherwise returns {@code null}.
+     *
+     * @param  crs The CRS from which to extract the horizontal component.
+     * @return The horizontal component, or {@code null} if none or unknown.
+     *
+     * @since 3.16
+     */
+    private static SingleCRS getHorizontalCRS(final CoordinateReferenceSystem crs) {
+        final Identifier id = crs.getName();
+        if (id instanceof Identifier3D) {
+            return ((Identifier3D) id).horizontalCRS;
+        }
+        return null;
     }
 
     /**

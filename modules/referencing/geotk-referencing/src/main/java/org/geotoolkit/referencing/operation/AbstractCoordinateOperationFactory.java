@@ -294,7 +294,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
     }
 
     /**
-     * Creates a coordinate operation from a matrix, which usually describes an affine tranform.
+     * Creates a coordinate operation from a matrix, which usually describes an affine transform.
      * A default {@link OperationMethod} object is given to this transform. In the special case
      * where the {@code name} identifier is {@link #DATUM_SHIFT} or {@link #ELLIPSOID_SHIFT},
      * the operation will be an instance of {@link Transformation} instead of the usual
@@ -602,7 +602,10 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
 
     /**
      * An identifier for temporary objects. This identifier manage a count of temporary
-     * identifier. The count is appended to the identifier name (e.g. "WGS84 (step 1)").
+     * identifiers. The count is appended to the identifier name (e.g. "WGS84 (step 1)").
+     * <p>
+     * This class is used only for names formatting. This class doesn't have any impact
+     * on the numerical values to be computed.
      */
     private static final class TemporaryIdentifier extends NamedIdentifier {
         /** For cross-version compatibility. */

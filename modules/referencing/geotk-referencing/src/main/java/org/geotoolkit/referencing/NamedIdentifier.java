@@ -142,7 +142,8 @@ public class NamedIdentifier extends DefaultReferenceIdentifier implements Gener
      * remarks), use the {@linkplain #NamedIdentifier(Map) constructor with a properties map}.
      *
      * @param authority
-     *          The authority (e.g. {@link Citations#OGC OGC} or {@link Citations#EPSG EPSG}).
+     *          The authority (e.g. {@link Citations#OGC OGC} or {@link Citations#EPSG EPSG}),
+     *          or {@code null} if not available.
      * @param code
      *          The code. The {@link InternationalString#toString(Locale) toString(null)} method
      *          is invoked for the code, and the complete international string is retained for
@@ -159,7 +160,8 @@ public class NamedIdentifier extends DefaultReferenceIdentifier implements Gener
      * constructor for commonly-used parameters. If more control are wanted (for example adding
      * remarks), use the {@linkplain #NamedIdentifier(Map) constructor with a properties map}.
      *
-     * @param authority The authority (e.g. {@link Citations#OGC OGC} or {@link Citations#EPSG EPSG}).
+     * @param authority The authority (e.g. {@link Citations#OGC OGC} or {@link Citations#EPSG EPSG}),
+     *                  or {@code null} if not available.
      * @param code      The code. This parameter is mandatory.
      */
     public NamedIdentifier(final Citation authority, final String code) {
@@ -171,7 +173,8 @@ public class NamedIdentifier extends DefaultReferenceIdentifier implements Gener
      * constructor for commonly-used parameters. If more control are wanted (for example adding
      * remarks), use the {@linkplain #NamedIdentifier(Map) constructor with a properties map}.
      *
-     * @param authority The authority (e.g. {@link Citations#OGC OGC} or {@link Citations#EPSG EPSG}).
+     * @param authority The authority (e.g. {@link Citations#OGC OGC} or {@link Citations#EPSG EPSG}),
+     *                  or {@code null} if not available.
      * @param code      The code. This parameter is mandatory.
      * @param version   The version, or {@code null} if none.
      */

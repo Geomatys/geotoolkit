@@ -138,7 +138,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         //
         this.molodenskyMethod  = molodenskyMethod;
         this.lenientDatumShift = lenientDatumShift;
-        this.hints.put(Hints.DATUM_SHIFT_METHOD,  molodenskyMethod);
+        this.hints.put(Hints.DATUM_SHIFT_METHOD,  (molodenskyMethod != null) ? molodenskyMethod : "Geocentric");
         this.hints.put(Hints.LENIENT_DATUM_SHIFT, Boolean.valueOf(lenientDatumShift));
     }
 
@@ -1443,19 +1443,25 @@ search: for (int j=0; j<targets.size(); j++) {
     }
 
     /**
-     * Returns {@code true} if a transformation path from {@code sourceCRS} to {@code targetCRS} is
-     * likely to require a tri-dimensional geodetic CRS as an intermediate step. More specifically,
-     * this method returns {@code false} if at least one of the following conditions is meet:
+     * Returns {@code true} if a transformation path from {@code sourceCRS} to {@code targetCRS}
+     * is likely to require a tri-dimensional geodetic CRS as an intermediate step. This method
+     * is used for enforcing the following rule: <i>ellipsoidal height shall never be separated
+     * from the geographic coordinates</i>, because some transformation steps (the datum shift)
+     * require the full 3D coordinates <strong>even if the result is two-dimensional</strong>.
+     * <p>
+     * We relax the above rule by returning {@code false} if using the (2D + 1D) components
+     * rather than a single 3D CRS is not expected to change the numerical result. We do that
+     * because replacing a (2D + 1D) pair by a 3D singleton cause a lost of information (like
+     * the authority codes). More specifically, this method returns {@code false} if at least
+     * one of the following conditions is meet:
      *
      * <ul>
-     *   <li><p>The target datum is not a vertical or geodetic one (the two datum that must work
-     *       together). Consequently, a potential datum change is not the caller's business.
-     *       It will be handled by the generic method above.</p></li>
+     *   <li><p>The target datum is neither a vertical or geodetic datum. Consequently,
+     *       eventual datum change (typically a temporal datum change) is not the caller
+     *       business. It will be handled by the generic method above.</p></li>
      *
-     *   <li><p>The target datum is vertical or geodetic, but there is no datum change. It is
-     *       better to not try to create 3D-geodetic CRS, since they are more difficult to
-     *       separate in the generic method above. An exception to this rule occurs when
-     *       the target datum is used in a three-dimensional CRS.</p></li>
+     *   <li><p>There is geodetic datum change. While a 3D SingleCRS is conceptually required,
+     *       it is not numerically required if the the target CRS is not geodetic 3D.</p></li>
      *
      *   <li><p>A datum change is required, but source CRS doesn't have both a geodetic
      *       and a vertical CRS, so we can't apply a 3D datum shift anyway.</p></li>
@@ -1477,6 +1483,13 @@ search: for (int j=0; j<targets.size(); j++) {
         boolean hasVertical    = false; // Whatever at least one source component is vertical.
         boolean needDatumShift = false;
         for (final SingleCRS crs : sourceCRS) {
+            if (crs.getCoordinateSystem().getDimension() >= 3) {
+                /*
+                 * If the CRS is already three-dimensional, we don't have to rebuild it.
+                 * This method shall return 'true' only if there is (2D + 1D) to combine.
+                 */
+                continue;
+            }
             final Datum sourceDatum = crs.getDatum();
             final boolean sourceIsGeodetic = (sourceDatum instanceof GeodeticDatum);
             if (sourceIsGeodetic) {
