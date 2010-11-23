@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.referencing.operation;
+package org.geotoolkit.referencing.operation.projection.integration;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -120,28 +120,25 @@ public final class ScriptRunner extends ReferencingConsole {
     /**
      * Run all tests scripts specified on the command line.
      *
-     * @param args The list of script files to execute.
+     * @param  args The list of script files to execute.
+     * @throws IOException If an error occurred while executing the script.
      */
-    public static void main(final String[] args) {
+    public static void main(final String[] args) throws IOException {
         final String lineSeparator = System.getProperty("line.separator", "\r");
-        try {
-            for (int i=0; i<args.length; i++) {
-                final String filename = args[i];
-                final LineNumberReader in = new LineNumberReader(new FileReader(filename));
-                final ScriptRunner test = new ScriptRunner(in);
-                test.out.write("Running \"");
-                test.out.write(filename);
-                test.out.write('"');
-                test.out.write(lineSeparator);
-                test.out.flush();
-                test.run();
-                test.printStatistics();
-                test.out.write(lineSeparator);
-                test.out.flush();
-                in.close();
-            }
-        } catch (IOException exception) {
-            exception.printStackTrace();
+        for (int i=0; i<args.length; i++) {
+            final String filename = args[i];
+            final LineNumberReader in = new LineNumberReader(new FileReader(filename));
+            final ScriptRunner test = new ScriptRunner(in);
+            test.out.write("Running \"");
+            test.out.write(filename);
+            test.out.write('"');
+            test.out.write(lineSeparator);
+            test.out.flush();
+            test.run();
+            test.printStatistics();
+            test.out.write(lineSeparator);
+            test.out.flush();
+            in.close();
         }
     }
 }

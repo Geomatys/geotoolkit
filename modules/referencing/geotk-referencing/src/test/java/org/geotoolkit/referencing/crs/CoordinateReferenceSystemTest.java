@@ -22,6 +22,7 @@ import org.geotoolkit.referencing.datum.DatumTest;
 import org.geotoolkit.referencing.IdentifiedObjectTest;
 import org.geotoolkit.referencing.cs.CoordinateSystemTest;
 
+import static org.junit.Assert.*;
 import static org.geotoolkit.test.Commons.serialize;
 import static org.geotoolkit.test.Commons.decodeQuotes;
 import static org.geotoolkit.referencing.crs.DefaultVerticalCRS.*;

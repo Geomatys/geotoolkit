@@ -35,6 +35,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.ReferencingTestCase;
 
 import org.junit.*;
+import static org.junit.Assert.*;
 import static org.junit.Assume.*;
 import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
 

@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.referencing.operation;
+package org.geotoolkit.referencing.operation.matrix;
 
 import java.util.Random;
 import javax.measure.converter.ConversionException;
@@ -27,8 +27,6 @@ import org.opengis.referencing.operation.Matrix;
 import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
-import org.geotoolkit.referencing.operation.matrix.Matrix2;
-import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import static org.opengis.referencing.cs.AxisDirection.*;
 
 import org.junit.*;
@@ -47,7 +45,7 @@ public final class LinearConversionTest {
     /**
      * Small tolerance value for floating point comparisons.
      */
-    private static final double EPS = 1E-12;
+    private static final double EPS = 1E-9;
 
     /**
      * Tests matrix inversion and multiplication using {@link Matrix2}.
@@ -68,9 +66,9 @@ public final class LinearConversionTest {
             final GeneralMatrix check = new GeneralMatrix(m);
             m.invert();
             check.invert();
-            assertTrue(check.equals(m, 1E-9));
+            assertTrue(check.equals(m, EPS));
             m.multiply(original);
-            assertTrue(identity.equals(m, 1E-9));
+            assertTrue(identity.equals(m, EPS));
         }
     }
 

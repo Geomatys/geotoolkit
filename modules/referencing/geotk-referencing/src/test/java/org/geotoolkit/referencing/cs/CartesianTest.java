@@ -27,6 +27,8 @@ import org.junit.*;
 import org.opengis.test.Validators;
 import org.geotoolkit.referencing.ReferencingTestCase;
 
+import static org.junit.Assert.*;
+
 
 /**
  * Tests the {@link DefaultCartesianCS} class.

@@ -34,6 +34,7 @@ import org.geotoolkit.referencing.operation.CachingCoordinateOperationFactory;
 import org.geotoolkit.util.converter.Classes;
 
 import org.junit.*;
+import static org.junit.Assert.*;
 import static org.junit.Assume.assumeNotNull;
 import static org.geotoolkit.test.Commons.decodeQuotes;
 import static org.geotoolkit.test.Commons.assertMultilinesEquals;

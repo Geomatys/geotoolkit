@@ -27,6 +27,7 @@ import org.geotoolkit.referencing.ReferencingTestCase;
 import org.geotoolkit.referencing.factory.web.URN_AuthorityFactory;
 
 import org.junit.*;
+import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
 
 

@@ -27,6 +27,8 @@ import org.junit.*;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.referencing.ReferencingTestCase;
 
+import static org.junit.Assert.*;
+
 
 /**
  * Tests the {@link ComparableAxisWrapper} class.

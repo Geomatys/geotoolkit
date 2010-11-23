@@ -15,31 +15,43 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.referencing;
+package org.geotoolkit.geoapi;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.referencing.factory.ReferencingObjectFactory;
+import org.geotoolkit.factory.AuthorityFactoryFinder;
+import org.geotoolkit.factory.FactoryNotFoundException;
+import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 
-import org.opengis.test.referencing.ReferencingTest;
+import org.opengis.referencing.crs.CRSAuthorityFactory;
 
 
 /**
  * Runs the suite of tests provided in the GeoAPI project. The test suite is run using
- * the {@link ReferencingObjectFactory} instance registered in {@link FactoryFinder}.
+ * the {@link ThreadedEpsgFactory} instance registered in {@link FactoryFinder}.
  *
  * @author Cédric Briançon (Geomatys)
  * @version 3.01
  *
  * @since 3.01
  */
-public class GeoapiTest extends ReferencingTest {
+public final class CRSTest extends org.opengis.test.referencing.CRSTest {
     /**
      * Creates a new test suite using the singleton factory instance.
      */
-    public GeoapiTest() {
-        super(FactoryFinder.getCRSFactory  (new Hints(Hints.CRS_FACTORY,   ReferencingObjectFactory.class)),
-              FactoryFinder.getCSFactory   (new Hints(Hints.CS_FACTORY,    ReferencingObjectFactory.class)),
-              FactoryFinder.getDatumFactory(new Hints(Hints.DATUM_FACTORY, ReferencingObjectFactory.class)));
+    public CRSTest() {
+        super(getFactory());
+    }
+
+    /**
+     * Returns the authority factory to be used for the tests, or {@code null} if none.
+     */
+    private static CRSAuthorityFactory getFactory() {
+        try {
+            return AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG",
+                    new Hints(Hints.CRS_AUTHORITY_FACTORY, ThreadedEpsgFactory.class));
+        } catch (FactoryNotFoundException e) {
+            return null; // Have the effect of skipping the tests.
+        }
     }
 }

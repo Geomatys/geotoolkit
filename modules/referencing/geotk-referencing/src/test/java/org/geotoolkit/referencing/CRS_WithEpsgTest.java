@@ -22,10 +22,12 @@ import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.sql.Connection;
 import java.sql.SQLException;
+import javax.measure.converter.ConversionException;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.AuthorityFactory;
+import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.cs.AxisDirection;
@@ -34,6 +36,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.util.FactoryException;
 
 import org.geotoolkit.test.Depend;
@@ -44,6 +47,8 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
+import org.geotoolkit.referencing.datum.BursaWolfParameters;
+import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
 import org.geotoolkit.referencing.factory.epsg.ThreadedEpsgFactory;
 import org.geotoolkit.referencing.factory.FallbackAuthorityFactory;
@@ -51,6 +56,7 @@ import org.geotoolkit.referencing.factory.OrderedAxisAuthorityFactory;
 import org.geotoolkit.referencing.factory.OrderedAxisAuthorityFactoryTest;
 
 import org.junit.*;
+import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
 import static org.geotoolkit.test.Commons.EPSG_VERSION;
 
@@ -66,7 +72,18 @@ import static org.geotoolkit.test.Commons.EPSG_VERSION;
  * @since 2.4
  */
 @Depend(CRS_Test.class)
-public class CRS_WithEpsgTest extends ReferencingTestCase {
+public final class CRS_WithEpsgTest extends ReferencingTestCase {
+    /**
+     * Ensures that the EPSG database is available. If no EPSG database is installed,
+     * then the tests will be skipped. We do not cause a test failure because the EPSG
+     * database is not expected to be installed when Geotk is built for the first time
+     * on a new machine.
+     */
+    @Before
+    public void ensureEpsgAvailable() {
+        assumeTrue(isEpsgFactoryAvailable());
+    }
+
     /**
      * Tests the (latitude, longitude) axis order for EPSG:4326.
      *
@@ -74,8 +91,6 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
      */
     @Test
     public void testCorrectAxisOrder() throws FactoryException {
-        assumeTrue(isEpsgFactoryAvailable());
-
         final CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
         assertEquals("EPSG:4326", CRS.getDeclaredIdentifier(crs));
         final CoordinateSystem cs = crs.getCoordinateSystem();
@@ -95,8 +110,6 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
      */
     @Test
     public void testForcedAxisOrder() throws FactoryException {
-        assumeTrue(isEpsgFactoryAvailable());
-
         final CoordinateReferenceSystem crs = CRS.decode("EPSG:4326", true);
         assertEquals("EPSG:4326", CRS.getDeclaredIdentifier(crs));
         final CoordinateSystem cs = crs.getCoordinateSystem();
@@ -119,8 +132,6 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
      */
     @Test
     public void testSystemPropertyToForceXY() throws FactoryException {
-        assumeTrue(isEpsgFactoryAvailable());
-
         assertNull(Hints.getSystemDefault(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER));
         assertNull(Hints.putSystemDefault(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE));
         final CoordinateReferenceSystem crs;
@@ -155,7 +166,6 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
      */
     @Test
     public void testSystemPropertyToFactoryKind() throws FactoryException {
-        assumeTrue(isEpsgFactoryAvailable());
         final AtomicBoolean askedConnection = new AtomicBoolean();
         final DefaultDataSource dummy = new DefaultDataSource("jdbc:dummy") {
             @Override public Connection getConnection() throws SQLException {
@@ -256,8 +266,6 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
      */
     @Test
     public void testLookupIdentifier() throws FactoryException {
-        assumeTrue(isEpsgFactoryAvailable());
-
         CoordinateReferenceSystem crs = getED50("ED50");
         assertEquals("Should find without scan thanks to the name.", "EPSG:4230",
                      CRS.lookupIdentifier(crs, false));
@@ -284,8 +292,6 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
      */
     @Test
     public void testLookupIdentifierWithURN() throws FactoryException {
-        assumeTrue(isEpsgFactoryAvailable());
-
         final CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
         assertEquals("http://www.opengis.net/gml/srs/epsg.xml#4326",
                 CRS.lookupIdentifier(Citations.HTTP_OGC, crs, false));
@@ -317,8 +323,6 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
      */
     @Test
     public void testWKT() throws FactoryException {
-        assumeTrue(isEpsgFactoryAvailable());
-
         String wkt = "GEOGCS[\"WGS 84\",\n"
                    + "  DATUM[\"WGS_1984\",\n"
                    + "    SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],\n"
@@ -338,8 +342,6 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
      */
     @Test
     public void testFindMathTransformIdentity() throws FactoryException {
-        assumeTrue(isEpsgFactoryAvailable());
-
         CoordinateReferenceSystem crs1default = CRS.decode("EPSG:4326");
         CoordinateReferenceSystem crs2default = CRS.decode("EPSG:4326");
         MathTransform tDefault = CRS.findMathTransform(crs1default, crs2default);
@@ -356,7 +358,6 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
      */
     @Test
     public void testAuthority() {
-        assumeTrue(isEpsgFactoryAvailable());
         CRSAuthorityFactory factory;
         Citation authority;
 
@@ -379,7 +380,6 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
      */
     @Test
     public void testVendor() {
-        assumeTrue(isEpsgFactoryAvailable());
         CRSAuthorityFactory factory;
         Citation vendor;
 
@@ -397,7 +397,6 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
      */
     @Test
     public void testCodes() throws FactoryException {
-        assumeTrue(isEpsgFactoryAvailable());
         final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
         final Set<String> codes = factory.getAuthorityCodes(CoordinateReferenceSystem.class);
         assertNotNull(codes);
@@ -411,7 +410,6 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
      */
     @Test
     public void test4326() throws FactoryException {
-        assumeTrue(isEpsgFactoryAvailable());
         final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
         final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:4326");
         assertTrue(crs instanceof GeographicCRS);
@@ -434,7 +432,6 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
      */
     @Test
     public void test4269() throws FactoryException {
-        assumeTrue(isEpsgFactoryAvailable());
         final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
         final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:4269");
         assertTrue(crs instanceof GeographicCRS);
@@ -465,7 +462,6 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
      */
     @Test
     public void test26910() throws FactoryException {
-        assumeTrue(isEpsgFactoryAvailable());
         final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
         final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:26910");
         assertTrue(crs instanceof ProjectedCRS);
@@ -487,7 +483,6 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
      */
     @Test
     public void test26986() throws FactoryException {
-        assumeTrue(isEpsgFactoryAvailable());
         CoordinateReferenceSystem crs = CRS.decode("epsg:26986");
         assertTrue(crs instanceof ProjectedCRS);
         assertEquals("EPSG:26986", CRS.getDeclaredIdentifier(crs));
@@ -501,7 +496,6 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
      */
     @Test
     public void test26742() throws FactoryException {
-        assumeTrue(isEpsgFactoryAvailable());
         CoordinateReferenceSystem crs = CRS.decode("epsg:26742");
         assertTrue(crs instanceof ProjectedCRS);
         assertEquals("EPSG:26742", CRS.getDeclaredIdentifier(crs));
@@ -516,7 +510,6 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
      */
     @Test
     public void test3785() throws FactoryException {
-        assumeTrue(isEpsgFactoryAvailable());
         CoordinateReferenceSystem crs = CRS.decode("epsg:3785");
         assertTrue(crs instanceof ProjectedCRS);
         assertEquals("EPSG:3785", CRS.getDeclaredIdentifier(crs));
@@ -532,7 +525,6 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
      */
     @Test
     public void test3857() throws FactoryException {
-        assumeTrue(isEpsgFactoryAvailable());
         CoordinateReferenceSystem crs = CRS.decode("epsg:3857");
         assertTrue(crs instanceof ProjectedCRS);
         assertEquals("EPSG:3857", CRS.getDeclaredIdentifier(crs));
@@ -545,8 +537,6 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
      */
     @Test
     public void testHorizontalFromCompound() throws FactoryException {
-        assumeTrue(isEpsgFactoryAvailable());
-
         // retrives "NTF (Paris) / France II + NGF Lallemand"
         CoordinateReferenceSystem compound = CRS.decode("EPSG:7401");
         CoordinateReferenceSystem horizontal = CRS.getHorizontalCRS(compound);
@@ -561,8 +551,6 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
      */
     @Test
     public void testHorizontalFromGeodetic() throws FactoryException {
-        assumeTrue(isEpsgFactoryAvailable());
-
         // retrives "WGS 84 (geographic 3D)"
         CoordinateReferenceSystem compound = CRS.decode("EPSG:4327");
         CoordinateReferenceSystem horizontal = CRS.getHorizontalCRS(compound);
@@ -593,31 +581,62 @@ public class CRS_WithEpsgTest extends ReferencingTestCase {
     }
 
     /**
-     * Tests the number of CRS that can be created. This test will be executed only if
-     * this test suite is run while the {@link #verbose} field is set to {@code true}.
+     * Tests the conversion from {@code EPSG:4979} to {@code EPSG:4326}.
+     * Note that {@code EPSG:4979} is the replacement of {@code EPSG:4327}
+     * with degrees units instead of DMS.
      *
-     * @throws FactoryException Should not happen.
+     * @throws FactoryException Should never happen.
+     *
+     * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-65">GEOTK-65</a>
      */
     @Test
-    public void testSuccess() throws FactoryException {
-        assumeTrue(isEpsgFactoryAvailable());
-        if (!verbose) {
-            return;
+    public void testGeographic3D_to_2D() throws FactoryException {
+        CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4327");
+        CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
+        MathTransform tr;
+        try {
+            tr = CRS.findMathTransform(sourceCRS, targetCRS);
+            fail("No conversion from EPSG:4327 to EPSG:4326 should be allowed because the units " +
+                 "conversion from DMS to degrees is not linear. Note that this exception may be " +
+                 "removed in a future version if we implement non-linear unit conversions.");
+        } catch (OperationNotFoundException e) {
+            assertTrue("The operation should have failed because of a unit conversion error.",
+                    e.getCause() instanceof ConversionException);
         }
-        final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
-        Set<String> codes = factory.getAuthorityCodes(CoordinateReferenceSystem.class);
-        int total = codes.size();
-        int count = 0;
-        for (final String code : codes) {
-            CoordinateReferenceSystem crs;
-            try {
-                crs = factory.createCoordinateReferenceSystem(code);
-                assertNotNull(crs);
-                count++;
-            } catch (FactoryException e) {
-                System.err.println("WARNING (CRS: "+code+" ):" + e.getMessage());
-            }
-        }
-        System.out.println("Success: " + count + "/" + total + " (" + (count*100)/total + "%)");
+        sourceCRS = CRS.decode("EPSG:4979");
+        tr = CRS.findMathTransform(sourceCRS, targetCRS);
+        assertEquals(3, tr.getSourceDimensions());
+        assertEquals(2, tr.getTargetDimensions());
+        assertDiagonalMatrix(tr, true, 1, 1, 0);
+    }
+
+    /**
+     * Tests the conversion from {@code CompoundCRS[EPSG:3035 + Sigma-level]} to {@code EPSG:4326}.
+     * The interesting part in this test is that the height is not a standard height, and the
+     * referencing module is not supposed to known how to build a 3D Geographic CRS (needed as
+     * an intermediate step for the datum shift) with that height.
+     *
+     * @throws FactoryException Should never happen.
+     *
+     * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-71">GEOTK-71</a>
+     */
+    @Test
+    public void testProjected3D_to_2D() throws FactoryException {
+        CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:4326");
+        CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:3035");
+        GeodeticDatum targetDatum = ((GeographicCRS) targetCRS).getDatum();
+        GeodeticDatum sourceDatum =  ((ProjectedCRS) sourceCRS).getDatum();
+        final BursaWolfParameters param = ((DefaultGeodeticDatum) sourceDatum).getBursaWolfParameters(targetDatum);
+        assertNotNull("This test requires that an explicit BursaWolf parameter exists.", param);
+        assertTrue("This test requires that the BursaWolf parameter is set to identity.", param.isIdentity());
+
+        CoordinateReferenceSystem vertCRS = CRS.parseWKT(
+                "VERT_CS[\"Sigma Level\",VERT_DATUM[\"Sigma Level\",2000],UNIT[\"level\",1.0],AXIS[\"Sigma Level\",DOWN]]");
+        sourceCRS = new DefaultCompoundCRS("ETRS89 + Sigma level", sourceCRS, vertCRS);
+        final MathTransform tr = CRS.findMathTransform(sourceCRS, targetCRS);
+        assertSame(tr, CRS.findMathTransform(sourceCRS, targetCRS, false));
+        assertSame(tr, CRS.findMathTransform(sourceCRS, targetCRS, true));
+        assertEquals(3, tr.getSourceDimensions());
+        assertEquals(2, tr.getTargetDimensions());
     }
 }

@@ -49,6 +49,7 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.test.Depend;
 
 import org.junit.*;
+import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
 
 

@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.referencing.operation;
+package org.geotoolkit.referencing.crs;
 
 import java.util.Map;
 import java.util.Collections;
@@ -33,12 +33,15 @@ import org.opengis.util.FactoryException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
+import org.geotoolkit.referencing.operation.DefiningConversion;
 
 import org.junit.*;
 import static org.junit.Assert.*;
 
 
 /**
+ * Tests CRS creation using mostly GeoAPI factory methods.
+ * <p>
  * Tests of the {@code createProjectedCRS(...)} setting up the CRS with a 3D cartesian output for
  * one test, and using a 2D + vertical CRS compound for the second test. This test constructs most
  * objects using GeoAPI only (except for a few helper classes).
@@ -49,7 +52,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.2
  */
-public final class Transform3DTest {
+public final class GeoAPI_Test {
     /**
      * Convenience method returning a set of properties for a CRS with the specified name.
      */

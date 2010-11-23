@@ -36,6 +36,7 @@ import org.geotoolkit.referencing.operation.projection.TransverseMercator;
 import org.geotoolkit.referencing.operation.projection.Orthographic;
 
 import org.junit.*;
+import static org.junit.Assert.*;
 
 
 /**

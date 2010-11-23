@@ -32,7 +32,7 @@ import org.geotoolkit.referencing.operation.projection.UnitaryProjection;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.io.wkt.FormattableObject;
 
-import org.junit.Assert;
+import static org.junit.Assert.*;
 import static org.geotoolkit.test.Commons.*;
 
 
@@ -41,11 +41,11 @@ import static org.geotoolkit.test.Commons.*;
  * going to use.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.09
+ * @version 3.16
  *
  * @since 3.00
  */
-public abstract class ReferencingTestCase extends Assert {
+public abstract class ReferencingTestCase {
     /**
      * Small tolerance for comparisons of floating point values.
      */

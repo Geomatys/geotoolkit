@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.referencing.operation;
+package org.geotoolkit.referencing.operation.projection.integration;
 
 import org.opengis.util.FactoryException;
 import org.opengis.util.NoSuchIdentifierException;
@@ -31,9 +31,10 @@ import org.geotoolkit.parameter.ParameterWriter;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.referencing.ReferencingTestCase;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
-
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
+
 import org.junit.*;
+import static org.junit.Assert.*;
 
 
 /**
@@ -49,7 +50,7 @@ import org.junit.*;
  *
  * @since 2.1
  */
-public final class DirectCreationTest extends ReferencingTestCase {
+public final class MathTransformFactoryTest extends ReferencingTestCase {
     /**
      * Tolerance for test when units are degrees.
      */

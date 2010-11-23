@@ -30,6 +30,7 @@ import org.geotoolkit.test.Depend;
 import org.geotoolkit.referencing.IdentifiedObjectTest;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 
+import static org.junit.Assert.*;
 import static org.geotoolkit.test.Commons.serialize;
 import static org.geotoolkit.referencing.cs.DefaultTimeCS.*;
 import static org.geotoolkit.referencing.cs.DefaultVerticalCS.*;

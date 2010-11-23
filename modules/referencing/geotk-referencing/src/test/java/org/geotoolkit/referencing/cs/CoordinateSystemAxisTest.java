@@ -31,6 +31,7 @@ import org.junit.*;
 import org.geotoolkit.referencing.ReferencingTestCase;
 import org.geotoolkit.internal.referencing.AxisDirections;
 
+import static org.junit.Assert.*;
 import static org.geotoolkit.test.Commons.serialize;
 import static org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis.*;
 

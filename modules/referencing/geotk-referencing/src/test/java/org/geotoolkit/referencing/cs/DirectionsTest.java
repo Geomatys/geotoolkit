@@ -20,6 +20,7 @@ package org.geotoolkit.referencing.cs;
 import org.junit.*;
 import org.geotoolkit.referencing.ReferencingTestCase;
 
+import static org.junit.Assert.*;
 import static org.opengis.referencing.cs.AxisDirection.*;
 
 

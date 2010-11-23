@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.referencing.operation;
+package org.geotoolkit.referencing.operation.projection.integration;
 
 import java.io.LineNumberReader;
 import org.geotoolkit.test.Depend;
@@ -33,6 +33,7 @@ import org.geotoolkit.referencing.operation.projection.TransverseMercatorTest;
 import org.geotoolkit.referencing.operation.projection.PolarStereographicTest;
 import org.geotoolkit.referencing.operation.projection.ObliqueStereographicTest;
 import org.geotoolkit.referencing.operation.transform.NadconTransformTest;
+import org.geotoolkit.referencing.operation.DefaultMathTransformFactoryTest;
 
 import org.junit.*;
 
@@ -67,7 +68,7 @@ public final class ScriptTest {
      * @throws Exception If a test failed.
      */
     private void runScript(final String filename) throws Exception {
-        final LineNumberReader in = TestData.openReader(this, filename);
+        final LineNumberReader in = TestData.openReader(DefaultMathTransformFactoryTest.class, filename);
         final ScriptRunner test = new ScriptRunner(in);
         test.run();
         in.close();

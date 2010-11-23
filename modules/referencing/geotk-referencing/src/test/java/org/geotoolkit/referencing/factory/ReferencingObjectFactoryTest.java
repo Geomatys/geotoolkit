@@ -53,6 +53,7 @@ import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.referencing.ReferencingTestCase;
 
 import org.junit.*;
+import static org.junit.Assert.*;
 
 
 /**

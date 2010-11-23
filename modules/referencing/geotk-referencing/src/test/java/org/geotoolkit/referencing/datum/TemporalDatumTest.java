@@ -21,11 +21,13 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import org.opengis.referencing.datum.TemporalDatum;
-import static org.geotoolkit.referencing.datum.DefaultTemporalDatum.*;
 
-import org.junit.*;
+import org.opengis.referencing.datum.TemporalDatum;
 import org.geotoolkit.referencing.ReferencingTestCase;
+import org.junit.*;
+
+import static org.junit.Assert.*;
+import static org.geotoolkit.referencing.datum.DefaultTemporalDatum.*;
 
 
 /**

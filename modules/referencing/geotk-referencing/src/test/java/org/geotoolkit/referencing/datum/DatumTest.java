@@ -33,6 +33,7 @@ import org.geotoolkit.referencing.ReferencingTestCase;
 import org.geotoolkit.referencing.IdentifiedObjectTest;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 
+import static org.junit.Assert.*;
 import static org.geotoolkit.test.Commons.serialize;
 import static org.geotoolkit.referencing.datum.DefaultPrimeMeridian.*;
 import static org.geotoolkit.referencing.datum.DefaultGeodeticDatum.*;

@@ -25,6 +25,7 @@ import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.geometry.DirectPosition2D;
 
 import org.junit.*;
+import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
 
 
@@ -37,7 +38,7 @@ import static org.junit.Assume.assumeTrue;
  * @since 3.00
  */
 @Depend(CRS_WithEpsgTest.class)
-public class GridsTest extends ReferencingTestCase {
+public final class CRS_WithGridTest extends ReferencingTestCase {
     /**
      * Tests transformation NADCON grids.
      *

@@ -36,6 +36,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.ReferencingTestCase;
 
 import org.junit.*;
+import static org.junit.Assert.*;
 import static org.junit.Assume.*;
 import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
 import static org.geotoolkit.referencing.factory.web.HTTP_AuthorityFactory.forceAxisOrderHonoring;
@@ -95,7 +96,7 @@ public final class HTTP_AuthorityFactoryTest extends ReferencingTestCase {
     /**
      * Returns the factory for the given hints.
      */
-    static final HTTP_AuthorityFactory getFactory(final Hints hints) {
+    static HTTP_AuthorityFactory getFactory(final Hints hints) {
         return (HTTP_AuthorityFactory) getCRSAuthorityFactory("http://www.opengis.net", hints);
     }
 

@@ -240,7 +240,7 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int LOADING_REGION_$6 = 60;
 
         /**
-         * Text were discarted for some locales.
+         * Text were discarded for some locales.
          */
         public static final int LOCALES_DISCARTED = 33;
 
@@ -342,7 +342,7 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int UNEXPECTED_EXCEPTION = 52;
 
         /**
-         * Unexpected unit "{0}". Map scale may be inacurate.
+         * Unexpected unit "{0}". Map scale may be inaccurate.
          */
         public static final int UNEXPECTED_UNIT_$1 = 53;
 

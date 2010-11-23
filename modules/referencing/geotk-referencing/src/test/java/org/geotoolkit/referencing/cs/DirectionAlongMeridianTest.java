@@ -22,6 +22,8 @@ import org.opengis.referencing.cs.AxisDirection;
 import org.junit.*;
 import org.geotoolkit.referencing.ReferencingTestCase;
 
+import static org.junit.Assert.*;
+
 
 /**
  * Tests the {@link DirectionAlongMeridian} class.

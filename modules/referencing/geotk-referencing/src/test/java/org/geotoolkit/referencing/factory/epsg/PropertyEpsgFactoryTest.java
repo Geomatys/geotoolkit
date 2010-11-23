@@ -43,6 +43,7 @@ import org.geotoolkit.referencing.factory.wkt.PropertyAuthorityFactoryTest;
 import org.geotoolkit.test.Depend;
 
 import org.junit.*;
+import static org.junit.Assert.*;
 
 
 /**

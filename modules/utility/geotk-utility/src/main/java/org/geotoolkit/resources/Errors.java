@@ -430,7 +430,7 @@ public final class Errors extends IndexedResourceBundle {
         public static final int ILLEGAL_AXIS_ORIENTATION_$2 = 75;
 
         /**
-         * Class '{0}' is illegal. It must be '{1}' or a derivated class.
+         * Class '{0}' is illegal. It must be '{1}' or a derived class.
          */
         public static final int ILLEGAL_CLASS_$2 = 76;
 
@@ -1152,7 +1152,7 @@ public final class Errors extends IndexedResourceBundle {
         public static final int UNKNOWN_AUTHORITY_$2 = 216;
 
         /**
-         * Unknow axis direction: "{0}".
+         * Unknown axis direction: "{0}".
          */
         public static final int UNKNOWN_AXIS_DIRECTION_$1 = 217;
 

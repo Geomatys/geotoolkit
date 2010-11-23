@@ -39,6 +39,7 @@ import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.factory.Hints;
 
 import org.junit.*;
+import static org.junit.Assert.*;
 import static org.junit.Assume.*;
 
 

@@ -32,7 +32,6 @@ import static org.geotoolkit.test.Commons.assertMultilinesEquals;
  * @version 3.16
  *
  * @since 3.16
- * @module
  */
 public final class MonolineFormatterTest {
     /**

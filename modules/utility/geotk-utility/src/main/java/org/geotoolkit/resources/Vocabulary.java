@@ -775,14 +775,14 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int HELP = 139;
 
         /**
+         * Hidden
+         */
+        public static final int HIDDEN = 141;
+
+        /**
          * Hide
          */
         public static final int HIDE = 140;
-
-        /**
-         * Hiden
-         */
-        public static final int HIDEN = 141;
 
         /**
          * Horizontal
@@ -1607,7 +1607,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int TILES_SIZE = 293;
 
         /**
-         * Tile cache capacity: {0} MB
+         * Tile cache capacity: {0} Mb
          */
         public static final int TILE_CACHE_CAPACITY_$1 = 294;
 
