@@ -283,7 +283,7 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
 
                     //send the found graphics to the visitor
                     for(final Graphic candidate : candidates){
-                        visitor.visit(candidate,displayShape);
+                        visitor.visit(candidate,context2D,searchMask);
 
                         //see if the visitor request a stop---------------------
                         if(visitor.isStopRequested()){ visitor.endVisit(); return; }
@@ -311,7 +311,7 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
 
                     //send the found graphics to the visitor
                     for(final Graphic candidate : candidates){
-                        visitor.visit(candidate,displayShape);
+                        visitor.visit(candidate,context2D,searchMask);
 
                         //see if the visitor request a stop---------------------
                         if(visitor.isStopRequested()){ visitor.endVisit(); return; }

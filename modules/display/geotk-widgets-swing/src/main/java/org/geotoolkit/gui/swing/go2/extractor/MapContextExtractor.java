@@ -19,7 +19,6 @@ package org.geotoolkit.gui.swing.go2.extractor;
 
 import com.vividsolutions.jts.geom.Geometry;
 import java.awt.Component;
-import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.List;
 import javax.measure.unit.Unit;
@@ -27,7 +26,9 @@ import javax.measure.unit.Unit;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.canvas.AbstractGraphicVisitor;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.map.CoverageMapLayer;
 
 import org.opengis.display.primitive.Graphic;
@@ -88,7 +89,7 @@ public class MapContextExtractor extends AbstractGraphicVisitor {
     }
 
     @Override
-    public void visit(ProjectedFeature projectedFeature, Shape queryArea) {
+    public void visit(ProjectedFeature projectedFeature, RenderingContext2D context, SearchAreaJ2D queryArea) {
         final Feature feature = (Feature) projectedFeature.getFeature();
         final StringBuilder builder = new StringBuilder();
 
@@ -104,8 +105,8 @@ public class MapContextExtractor extends AbstractGraphicVisitor {
     }
 
     @Override
-    public void visit(ProjectedCoverage projectedCoverage, Shape queryArea) {
-        final Object[][] results = getCoverageValues(projectedCoverage, queryArea);
+    public void visit(ProjectedCoverage projectedCoverage, RenderingContext2D context, SearchAreaJ2D queryArea) {
+        final Object[][] results = getCoverageValues(projectedCoverage, context, queryArea);
 
         final StringBuilder builder = new StringBuilder();
         for (int i = 0; i < results.length; i++) {

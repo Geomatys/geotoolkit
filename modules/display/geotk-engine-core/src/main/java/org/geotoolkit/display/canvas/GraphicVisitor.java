@@ -18,6 +18,7 @@
 package org.geotoolkit.display.canvas;
 
 import java.awt.Shape;
+import org.geotoolkit.display.primitive.SearchArea;
 import org.opengis.display.primitive.Graphic;
 
 /**
@@ -44,7 +45,7 @@ public interface GraphicVisitor {
      *
      * @param graphic : graphic that validate the visiting parameters
      */
-    void visit(Graphic graphic, Shape area);
+    void visit(Graphic graphic, RenderingContext context, SearchArea area);
 
     /**
      * Should return true when the visitor want to stop the search process.

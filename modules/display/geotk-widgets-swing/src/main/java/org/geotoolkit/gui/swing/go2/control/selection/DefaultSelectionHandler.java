@@ -63,6 +63,8 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -125,7 +127,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
         }
 
         @Override
-        public void visit(ProjectedFeature feature, Shape queryArea) {
+        public void visit(ProjectedFeature feature,  RenderingContext2D context, SearchAreaJ2D queryArea) {
 
             final FeatureMapLayer layer = feature.getFeatureLayer();
             Set<FeatureId> ids = selection.get(layer);
@@ -139,7 +141,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
         }
 
         @Override
-        public void visit(ProjectedCoverage coverage, Shape queryArea) {
+        public void visit(ProjectedCoverage coverage,  RenderingContext2D context, SearchAreaJ2D queryArea) {
         }
     };
     private boolean squareArea;

@@ -30,9 +30,12 @@ import java.util.List;
 import org.geotoolkit.data.DataUtilities;
 
 import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display2d.canvas.AbstractGraphicVisitor;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -135,12 +138,12 @@ public class VisitorTest {
         public List<FeatureId> features = new ArrayList<FeatureId>();
 
         @Override
-        public void visit(ProjectedFeature feature, Shape queryArea) {
+        public void visit(ProjectedFeature feature, RenderingContext2D context, SearchAreaJ2D queryArea) {
             features.add(feature.getFeatureId());
         }
 
         @Override
-        public void visit(ProjectedCoverage coverage, Shape queryArea) {
+        public void visit(ProjectedCoverage coverage,  RenderingContext2D context, SearchAreaJ2D queryArea) {
             throw new IllegalStateException("Should not have raised this kind of visit event.");
         }
 
