@@ -16,6 +16,19 @@
  */
 package org.geotoolkit.metadata.dimap;
 
+import java.util.Collections;
+import org.geotoolkit.metadata.iso.citation.DefaultCitationDate;
+import org.opengis.metadata.citation.DateType;
+import org.opengis.metadata.citation.CitationDate;
+import java.util.Date;
+import java.util.Arrays;
+import org.geotoolkit.metadata.iso.DefaultIdentifier;
+import org.opengis.metadata.Identifier;
+import org.geotoolkit.util.SimpleInternationalString;
+import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
+import org.opengis.metadata.identification.CharacterSet;
+import java.util.Locale;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -282,6 +295,15 @@ public final class DimapAccessor {
     }
 
     /**
+     * @return DatasetName from Dataset_ID tag. 
+     */
+    public static String readDatasetName(Element doc){
+        final Element datasetID = firstElement(doc, TAG_DATASET_ID);
+        final String name = textValueSafe(datasetID, TAG_DATASET_NAME, String.class);
+        return name;
+    }
+
+    /**
      * Converts the given dimap document in a metadata object.
      * Since there is no one to one relation between ISO 19115 and Dimap,
      * the returned metadta is a best effort relation.
@@ -295,6 +317,28 @@ public final class DimapAccessor {
         if(metadata == null){
             metadata = new DefaultMetadata();
         }
+
+        //default values
+        metadata.setCharacterSet(CharacterSet.UTF_8);
+        metadata.setLanguage(Locale.ENGLISH);
+
+        // identification ----------------------------------------------------------
+        //dataset id
+        final Element datasetID = firstElement(doc, TAG_DATASET_ID);
+        final String name = textValueSafe(datasetID, TAG_DATASET_NAME, String.class);
+        final String copyright = textValueSafe(datasetID, TAG_DATASET_COPYRIGHT, String.class);
+
+        final DefaultDataIdentification identificationInfo = new DefaultDataIdentification();
+        final DefaultCitation citation = new DefaultCitation();
+        citation.setTitle(new SimpleInternationalString(name));
+        Identifier id = new DefaultIdentifier(name);
+        citation.setIdentifiers(Arrays.asList(id));
+        final CitationDate creationDate = new DefaultCitationDate(new Date(), DateType.CREATION);
+        citation.setDates(Arrays.asList(creationDate));
+        identificationInfo.setCitation(citation);
+
+        metadata.setIdentificationInfo(Collections.singleton(identificationInfo));
+
 
         //TODO
 

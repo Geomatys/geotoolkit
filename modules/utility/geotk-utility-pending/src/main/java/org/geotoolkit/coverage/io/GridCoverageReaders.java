@@ -374,6 +374,16 @@ public class GridCoverageReaders {
      * Create a Mosaic reader.
      */
     private static ImageReader buildMosaicReader(Object input, int tileSize, File tileFolder) throws IOException{
+        final TileManager manager = buildTileManager(input, tileSize, tileFolder);
+        final MosaicImageReader reader = new MosaicImageReader();
+        reader.setInput(manager);
+        return reader;
+    }
+
+    /**
+     * Create a TileManager from the given input.
+     */
+    public static TileManager buildTileManager(Object input, int tileSize, File tileFolder) throws IOException{
         final MosaicBuilder builder = new MosaicBuilder();
         builder.setTileSize(new Dimension(tileSize,tileSize));
         //let the builder build the best pyramid resolutions
@@ -383,9 +393,7 @@ public class GridCoverageReaders {
         final MosaicImageWriteParam params = new MosaicImageWriteParam();
         params.setTileWritingPolicy(TileWritingPolicy.WRITE_NEWS_ONLY);
         final TileManager manager = builder.writeFromInput(input, params);
-        final MosaicImageReader reader = new MosaicImageReader();
-        reader.setInput(manager);
-        return reader;
+        return manager;
     }
 
     /**

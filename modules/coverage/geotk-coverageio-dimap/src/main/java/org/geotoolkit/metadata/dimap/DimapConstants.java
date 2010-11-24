@@ -81,6 +81,15 @@ public final class DimapConstants {
 
     public static final String TAG_DIMAP = "Dimap_Document";
 
+    // Dataset id group --------------------------------------------------------
+    public static final String TAG_DATASET_ID = "Dataset_Id";
+    public static final String TAG_DATASET_NAME = "DATASET_NAME";
+    public static final String TAG_DATASET_COPYRIGHT = "COPYRIGHT";
+    public static final String TAG_DATASET_QL_PATH = "DATASET_QL_PATH";
+    public static final String TAG_DATASET_QL_FORMAT = "DATASET_QL_FORMAT";
+    public static final String TAG_DATASET_TN_PATH = "DATASET_TN_PATH";
+    public static final String TAG_DATASET_TN_FORMAT = "DATASET_TN_FORMAT";
+
     // Scene frame group -------------------------------------------------------
     public static final String TAG_DATASET_FRAME = "Dataset_Frame";
     public static final String TAG_VERTEX = "Vertex";
