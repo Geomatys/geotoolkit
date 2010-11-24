@@ -1325,7 +1325,7 @@ public class RawTiffImageReader extends SpatialImageReader {
          * may perform a better check if the {@link RawTiffImageReader} become less restrictive.
          *
          * @param  source The input source to be decoded.
-         * @return {@code true} if the given source can be used by {@link TiffRawImageReader}.
+         * @return {@code true} if the given source can be used by {@link RawTiffImageReader}.
          * @throws IOException if an I/O error occurs while reading the stream.
          */
         @Override

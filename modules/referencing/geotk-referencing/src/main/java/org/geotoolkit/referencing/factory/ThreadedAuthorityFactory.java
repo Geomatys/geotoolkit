@@ -488,7 +488,7 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
             }
         };
         try {
-            Threads.executor(!shutdown).execute(task);
+            Threads.executor(true, !shutdown).execute(task);
         } catch (RejectedExecutionException e) {
             /*
              * May happen because of race conditions on JVM shutdown. Don't let StoreDisposer

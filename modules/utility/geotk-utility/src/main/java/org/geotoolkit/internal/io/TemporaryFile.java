@@ -44,7 +44,7 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
  *        Callers should ignore that detail.}
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.13
+ * @version 3.16
  *
  * @since 3.03
  * @module
@@ -60,15 +60,7 @@ public final class TemporaryFile extends PhantomReference<File> implements Dispo
      * Registers a shutdown hook which will delete every files not yet deleted.
      */
     static {
-        Runtime.getRuntime().addShutdownHook(new Thread(Threads.SHUTDOWN_HOOKS, "TemporaryFileCleaner") {
-            @Override public void run() {
-                while (deleteAll()) {
-                    Thread.yield();
-                    // The loop exists as a paranoiac action in case TemporaryFile.deleteOnExit(...)
-                    // is being invoked concurrently, but it should never happen.
-                }
-            }
-        });
+        Threads.ensureShutdownHookRegistered();
     }
 
     /**
@@ -145,10 +137,11 @@ public final class TemporaryFile extends PhantomReference<File> implements Dispo
 
     /**
      * Deletes every files, no matter if they have been garbage-collected or not.
+     * This method should be invoking during shutdown only.
      *
      * @return {@code true} if at least one file has been successfully deleted.
      */
-    static boolean deleteAll() {
+    public static boolean deleteAll() {
         boolean deleted = false;
         final Map<String,TemporaryFile> references = REFERENCES;
         if (references != null) { // Safety check against weird behavior at shutdown time.

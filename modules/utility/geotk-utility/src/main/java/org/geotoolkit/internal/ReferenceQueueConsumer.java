@@ -61,10 +61,10 @@ public class ReferenceQueueConsumer<T> extends DaemonThread {
      * Constructs a new thread as a daemon. This thread will be sleeping most of the time.
      * It will run only some few nanoseconds each time a new {@link Reference} is enqueded.
      *
-     * @param name The thread name.
+     * @param name The thread name. This name appears in the debugger.
      */
     protected ReferenceQueueConsumer(final String name) {
-        super(Threads.REFERENCE_CLEANERS, name);
+        super(Threads.RESOURCE_DISPOSERS, name);
         setPriority(MAX_PRIORITY - 2);
     }
 

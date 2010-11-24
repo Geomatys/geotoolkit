@@ -21,6 +21,8 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
+
+import org.geotoolkit.internal.Threads;
 import org.geotoolkit.util.logging.Logging;
 
 
@@ -46,7 +48,7 @@ final class LocalExecutor implements TaskExecutor {
      *        the task directly in the current thread. The later has simplier task trace.
      */
     LocalExecutor(final boolean threaded) {
-        executor = threaded ? Executors.newCachedThreadPool() : null;
+        executor = threaded ? Executors.newCachedThreadPool(Threads.THREAD_FACTORY) : null;
     }
 
     /**

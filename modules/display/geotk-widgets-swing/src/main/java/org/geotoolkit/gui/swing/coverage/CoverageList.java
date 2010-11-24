@@ -24,8 +24,7 @@ import java.util.Locale;
 import java.util.Arrays;
 import java.util.SortedSet;
 import java.util.Collections;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutionException;
 import java.io.File;
 import java.awt.Dimension;
@@ -46,8 +45,6 @@ import javax.swing.JSplitPane;
 import javax.swing.JTable;
 import javax.swing.SwingWorker;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.TableCellRenderer;
@@ -72,6 +69,7 @@ import org.geotoolkit.gui.swing.IconFactory;
 import org.geotoolkit.internal.swing.ToolBar;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
+import org.geotoolkit.internal.Threads;
 import org.geotoolkit.resources.Widgets;
 import org.jdesktop.swingx.JXBusyLabel;
 
@@ -180,7 +178,7 @@ public class CoverageList extends JComponent {
     /**
      * Executor for adding new coverages. Created when first needed.
      */
-    private transient ExecutorService executor;
+    private transient Executor executor;
 
     /**
      * Creates a new list with a default, initially empty, {@code CoverageTableModel}.
@@ -235,7 +233,6 @@ public class CoverageList extends JComponent {
          */
         add(BorderLayout.CENTER, pane);
         add(toolbar, BorderLayout.WEST);
-        addAncestorListener(listeners);
     }
 
     /**
@@ -253,7 +250,7 @@ public class CoverageList extends JComponent {
     /**
      * Implement all listeners used by the {@link LayerList} class.
      */
-    private final class Listeners implements ListSelectionListener, ActionListener, AncestorListener {
+    private final class Listeners implements ListSelectionListener, ActionListener {
         /**
          * The last selected entry. Used in order to detect if the selection changed,
          * in order to avoid unnecessary fetching of image properties.
@@ -310,34 +307,6 @@ public class CoverageList extends JComponent {
                     addNewCoverage();
                 }
             }
-        }
-
-        /**
-         * Not of interest to {@code CoverageList}.
-         */
-        @Override
-        public void ancestorAdded(AncestorEvent event) {
-        }
-
-        /**
-         * Invoked when the frame is closed. This method disposes the executor, if any.
-         * Note that a new executor will be created if the frame is made visible again.
-         */
-        @Override
-        public void ancestorRemoved(AncestorEvent event) {
-            if (executor != null) {
-                // Use shutdownNow() - not shutdown() - because we need
-                // InterruptedException to be thrown in the waiting thread.
-                executor.shutdownNow();
-                executor = null;
-            }
-        }
-
-        /**
-         * Not of interest to {@code CoverageList}.
-         */
-        @Override
-        public void ancestorMoved(AncestorEvent event) {
         }
     }
 
@@ -607,7 +576,7 @@ public class CoverageList extends JComponent {
              * to prevent other SwingWorkers to work.
              */
             if (executor == null) {
-                executor = Executors.newSingleThreadExecutor();
+                executor = Threads.executor(false, true);
             }
             executor.execute(new Runnable() {
                 @Override public void run() {

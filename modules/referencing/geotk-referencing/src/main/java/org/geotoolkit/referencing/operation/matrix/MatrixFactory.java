@@ -183,7 +183,7 @@ public final class MatrixFactory {
      *   <li>Otherwise if the given matrix is square and the number of rows & columns is 1, 2, 3
      *       or 4, then the elements are copied in an instance of {@link Matrix1}, {@link Matrix2},
      *       {@link Matrix3} or {@link Matrix4} respectively, and the new instance is returned.</li>
-     *   <li>Otherwise this method delegates to {@link #toXMatrix}.</li>
+     *   <li>Otherwise this method delegates to {@link #toXMatrix(Matrix)}.</li>
      * </ul>
      * <p>
      * Using those specialized implementations brings a little bit of performance and,

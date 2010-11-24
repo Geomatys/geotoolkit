@@ -26,6 +26,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -34,7 +35,7 @@ import org.geotoolkit.lang.Static;
  * grouping the threads created by Geotk together under the same parent tree node.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
+ * @version 3.16
  *
  * @since 3.03
  * @module
@@ -48,45 +49,44 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
     public static final ThreadGroup GEOTOOLKIT = new ThreadGroup("Geotoolkit.org");
 
     /**
-     * The group of shutdown hooks. This group has the default priority.
-     */
-    public static final ThreadGroup SHUTDOWN_HOOKS;
-
-    /**
-     * The group of {@code ReferenceQueueConsumer} threads running.
-     * Threads in this group have a high priority and should be completed quickly.
-     */
-    public static final ThreadGroup REFERENCE_CLEANERS;
-
-    /**
      * The group of threads disposing resources, typically after a timeout.
      */
     public static final ThreadGroup RESOURCE_DISPOSERS;
 
     /**
-     * The group of low-priority daemons. Tasks in this thread are executed only
-     * when the CPU have plenty of time available.
+     * The group of workers to run in a background thread.
      *
      * @since 3.05
      */
-    public static final ThreadGroup DAEMONS;
+    public static final ThreadGroup WORKERS;
 
     static {
-        final ThreadGroup parent = GEOTOOLKIT;
-        SHUTDOWN_HOOKS     = new ThreadGroup(parent, "ShutdownHooks");
-        REFERENCE_CLEANERS = new ThreadGroup(parent, "ReferenceQueueConsumers");
-        RESOURCE_DISPOSERS = new ThreadGroup(parent, "ResourceDisposers");
-        DAEMONS            = new ThreadGroup(parent, "Daemons");
-        REFERENCE_CLEANERS.setMaxPriority(Thread.MAX_PRIORITY  - 2);
-        RESOURCE_DISPOSERS.setMaxPriority(Thread.NORM_PRIORITY + 1);
-        DAEMONS           .setMaxPriority(Thread.MIN_PRIORITY  + 1);
+        RESOURCE_DISPOSERS = new ThreadGroup(GEOTOOLKIT, "ResourceDisposers");
+        WORKERS            = new ThreadGroup(GEOTOOLKIT, "Workers");
+        RESOURCE_DISPOSERS.setMaxPriority(Thread.MAX_PRIORITY  - 2);
+        WORKERS           .setMaxPriority(Thread.NORM_PRIORITY - 1);
     }
 
     /**
-     * The executors to be returned by {@link #executor(boolean)}.
-     * Will be created only when first needed.
+     * The thread factory for worker threads created by the Geotk library.
+     * This factory should be used by every method that use {@link Executors}
+     * directly instead than {@link #executor(boolean, boolean)}.
+     *
+     * @since 3.16
      */
-    private static volatile ExecutorService normalExecutor, daemonExecutor;
+    public static final ThreadFactory THREAD_FACTORY = new Threads(false, false);
+
+    /**
+     * The executors to be returned by {@link #executor(int)}.
+     * Will be created only when first needed, and then considered as final.
+     */
+    private static ExecutorService[] EXECUTORS;
+
+    /**
+     * {@code true} if the threads to be created are part of the {@link #RESOURCE_DISPOSERS}
+     * group, or {@code false} if they are {@link #WORKERS} threads.
+     */
+    private final boolean disposer;
 
     /**
      * {@code true} if the threads to be created should be daemon threads.
@@ -96,47 +96,52 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
     /**
      * For internal usage only.
      */
-    private Threads(final boolean daemon) {
-        this.daemon = daemon;
+    private Threads(final boolean disposer, final boolean daemon) {
+        this.disposer = disposer;
+        this.daemon   = daemon;
     }
 
     /**
-     * A pool of threads to be shared by different Geotk utility classes. The tasks submitted
-     * to this executor should be only house-keeping works. For tasks doing "real" computation,
-     * use your own executor.
-     * <p>
-     * The threads in this executor have a priority slightly higher than the normal priority.
-     * This is on the assumption that the tasks will spend most of their time waiting for some
-     * condition, and complete quickly when the condition become true.
-     * <p>
+     * A pool of threads to be shared by different Geotk utility classes. The threads
+     * created by the executor can be part of two groups:
+     *
+     * <ul>
+     *   <li><p><b>Disposer:</b> The tasks submitted to this executor should be only house-keeping
+     *   works. The threads in this executor have a priority slightly higher than the normal priority.
+     *   This is on the assumption that the tasks will spend most of their time waiting for some
+     *   condition, and complete quickly when the condition become true.</p></li>
+     *
+     *   <li><p><b>Normal:</b> Any background task which is not about disposing resources.</p></li>
+     * </ul>
+     *
      * Callers should not keep a reference to the returned executor for a long time.
      * It is preferable to use it as soon as possible and discard.
      *
+     * @param  disposer {@code true} if the executor is for resources disposal tasks.
      * @param  daemon {@code true} if the threads to be created should be daemon threads.
      * @return The executor.
      */
-    public static Executor executor(final boolean daemon) {
-        ExecutorService exec = daemon ? daemonExecutor : normalExecutor;
-        if (exec == null) {
-            // Double-check: was a deprecated practice before Java 5, is okay
-            // since Java 5 provided that the field is declared volatile.
-            synchronized (Threads.class) {
-                exec = daemon ? daemonExecutor : normalExecutor;
-                if (exec == null) {
-                    // The tasks should be very short-lived, so limit the number of threads
-                    // in order to avoid the creation of many threads at startup time which
-                    // become idle very soon after their creation.
-                    exec = new ThreadPoolExecutor(0, 4, 60L, TimeUnit.SECONDS,
-                            new LinkedBlockingQueue<Runnable>(), new Threads(daemon));
-                    if (daemon) {
-                        daemonExecutor = exec;
-                    } else {
-                        normalExecutor = exec;
-                    }
-                }
-            }
+    public static synchronized Executor executor(final boolean disposer, final boolean daemon) {
+        int index = (disposer) ? 2 : 0;
+        if (daemon) index |= 1;
+        ExecutorService[] executors = EXECUTORS;
+        if (executors == null) {
+            ensureShutdownHookRegistered();
+            EXECUTORS = executors = new ExecutorService[4];
         }
-        return exec;
+        ExecutorService executor = executors[index];
+        if (executor == null) {
+            /*
+             * In the disposer case, the tasks should be very short-lived. So limit the number
+             * of threads in order to avoid the creation of many threads at startup time which
+             * become idle very soon after their creation.
+             */
+            final int maximumPoolSize = disposer ? 4 : 100;
+            final ThreadFactory factory = (index == 3) ? THREAD_FACTORY : new Threads(disposer, daemon);
+            executors[index] = executor = new ThreadPoolExecutor(0, maximumPoolSize, 60L, TimeUnit.SECONDS,
+                    new LinkedBlockingQueue<Runnable>(), factory);
+        }
+        return executor;
     }
 
     /**
@@ -147,11 +152,26 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
      */
     @Override
     public Thread newThread(final Runnable task) {
-        final String name = "Geotk pooled " + (daemon ? "daemon" : "thread") + ' ' + incrementAndGet();
-        final Thread thread = new Thread(RESOURCE_DISPOSERS, task, name);
-        thread.setPriority(Thread.NORM_PRIORITY + 1);
+        final String name = "Pooled " + (daemon ? "daemon" : "thread") + ' ' + incrementAndGet();
+        final Thread thread = new Thread(disposer ? RESOURCE_DISPOSERS : WORKERS, task, name);
+        thread.setPriority(Thread.NORM_PRIORITY + 1); // WORKERS group will lower this value.
         thread.setDaemon(daemon);
         return thread;
+    }
+
+    /**
+     * Ensures that the shutdown hook is registered. The shutdown process is implemented in the
+     * {@link org.geotoolkit.factory.ShutdownHook#run()} method. This method should be invoked
+     * once by classes that require the service provided in the shutdown hook.
+     *
+     * @since 3.16
+     */
+    public static void ensureShutdownHookRegistered() {
+        try {
+            Class.forName("org.geotoolkit.factory.ShutdownHook", true, Threads.class.getClassLoader());
+        } catch (Exception e) {
+            Logging.unexpectedException(Threads.class, "ensureShutdownHook", e);
+        }
     }
 
     /**
@@ -162,20 +182,29 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
      * @return {@code true} if the pending tasks have been completed, or {@code false}
      *         if this method returned before every tasks were completed.
      *
+     * @see org.geotoolkit.factory.ShutdownHook#run()
+     *
      * @since 3.06
      */
     public static synchronized boolean shutdown() {
-        ExecutorService exec = daemonExecutor;
-        if (exec != null) {
-            exec.shutdown();
+        final ExecutorService[] executors = EXECUTORS;
+        if (executors != null) {
+            for (final ExecutorService executor : executors) {
+                if (executor != null) {
+                    executor.shutdown();
+                }
+            }
+            try {
+                for (final ExecutorService executor : executors) {
+                    if (executor != null && !executor.awaitTermination(8, TimeUnit.SECONDS)) {
+                        return false;
+                    }
+                }
+            } catch (InterruptedException e) {
+                // Too late for logging since we are in process of shuting down.
+                return false;
+            }
         }
-        exec = normalExecutor;
-        if (exec != null) try {
-            exec.shutdown();
-            return exec.awaitTermination(4, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            // Too late for logging since we are in process of shuting down.
-        }
-        return false;
+        return true;
     }
 }

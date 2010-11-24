@@ -504,7 +504,7 @@ public class About extends JComponent implements Dialog {
          */
         public synchronized void start() {
             if (worker == null) {
-                worker = new DaemonThread(Threads.DAEMONS, this, resources.getString(Vocabulary.Keys.ABOUT));
+                worker = new DaemonThread(Threads.WORKERS, this, resources.getString(Vocabulary.Keys.ABOUT));
                 worker.start();
             }
         }

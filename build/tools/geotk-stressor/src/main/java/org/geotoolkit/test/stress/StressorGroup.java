@@ -32,6 +32,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.io.ExpandedTabWriter;
+import org.geotoolkit.internal.Threads;
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.util.NullArgumentException;
 
@@ -106,7 +107,7 @@ public class StressorGroup<S extends Stressor> implements Runnable, ThreadFactor
      * @param err      The error stream where to reports error (also used for log messages).
      */
     public StressorGroup(final long duration, final PrintWriter out, final PrintWriter err) {
-        this.threadGroup = new ThreadGroup("Stressors");
+        this.threadGroup = new ThreadGroup(Threads.GEOTOOLKIT, "Stressors");
         this.threadCount = new AtomicInteger();
         this.stressors   = new ArrayList<S>();
         this.executor    = Executors.newCachedThreadPool(this);

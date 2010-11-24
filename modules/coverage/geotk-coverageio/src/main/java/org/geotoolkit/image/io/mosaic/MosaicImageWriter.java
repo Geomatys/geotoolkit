@@ -62,6 +62,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.image.io.InvalidImageStoreException;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
+import org.geotoolkit.internal.Threads;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.image.io.Compressions;
 import org.geotoolkit.internal.image.io.SupportFiles;
@@ -431,7 +432,7 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
          * RTree initialized with the tiles remaining after the removal in the previous block.
          */
         final int             nThreads  = Runtime.getRuntime().availableProcessors();
-        final ExecutorService executor  = Executors.newFixedThreadPool(nThreads);
+        final ExecutorService executor  = Executors.newFixedThreadPool(nThreads, Threads.THREAD_FACTORY);
         final Semaphore  submitPermits  = new Semaphore(nThreads + 1);
         final List<Future<?>> tasks     = new ArrayList<Future<?>>();
         final TreeNode        tree      = new GridNode(tiles.toArray(new Tile[tiles.size()]));

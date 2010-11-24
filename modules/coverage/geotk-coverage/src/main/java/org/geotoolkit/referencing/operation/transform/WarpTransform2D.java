@@ -326,7 +326,7 @@ public class WarpTransform2D extends AbstractMathTransform implements MathTransf
      * @param  transform The transform to returns as an image warp.
      * @return The warp for the given transform.
      *
-     * @deprecated Moved to {@link WarpFactory#create(CharSequence, MathTransform2D)
+     * @deprecated Moved to {@link WarpFactory#create(CharSequence, MathTransform2D)}
      */
     @Deprecated
     public static Warp getWarp(CharSequence name, final MathTransform2D transform) {

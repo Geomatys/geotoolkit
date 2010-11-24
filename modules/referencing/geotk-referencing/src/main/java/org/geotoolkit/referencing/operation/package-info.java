@@ -31,7 +31,7 @@
  * }
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.01
+ * @version 3.16
  *
  * @since 1.2
  * @module

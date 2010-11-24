@@ -20,15 +20,20 @@ package org.geotoolkit.factory;
 import java.util.Arrays;
 import java.util.Iterator;
 import javax.imageio.spi.ServiceRegistry;
-import org.geotoolkit.internal.Threads;
+
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.internal.Threads;
+import org.geotoolkit.internal.io.TemporaryFile;
 
 
 /**
- * Disposes every factories on JVM shutdown.
+ * Disposes every factories on JVM shutdown. Performs also other shutdown service that
+ * are better to be executed only after factories disposal, like executors shutdown.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.04
+ * @version 3.16
+ *
+ * @see Threads#ensureShutdownHookRegistered()
  *
  * @since 3.00
  * @module
@@ -49,7 +54,7 @@ final class ShutdownHook extends Thread {
      * Creates the singleton instance.
      */
     private ShutdownHook() {
-        super(Threads.SHUTDOWN_HOOKS, "FactoryCleaner");
+        super(Threads.RESOURCE_DISPOSERS, "ShutdownHook");
     }
 
     /**
@@ -92,13 +97,19 @@ final class ShutdownHook extends Thread {
         /*
          * The following method should be invoked only when we think there is not any code still
          * runnning that may invoke Threads.executor(boolean). It is actually hard to ensure that,
-         * but a search on Threads.SHUTDOWN_HOOKS and Threads.executor(boolean) is helpful.
+         * but a search on Threads.SHUTDOWN_HOOKS and Threads.executor(boolean,boolean) is helpful.
          */
         if (!Threads.shutdown()) {
-            if (false) { // Disabled because it occurs most of the time during shutdown.
-                // We can't use java.util.logging at this point since we are shutting down.
-                System.err.println("NOTE: Some background threads didn't completed.");
-            }
+            // We can't use java.util.logging at this point since we are shutting down.
+            System.err.println("NOTE: Some background threads didn't completed.");
+        }
+        /*
+         * Delete the temporary file after there is presumably no running service.
+         */
+        while (TemporaryFile.deleteAll()) {
+            Thread.yield();
+            // The loop exists as a paranoiac action in case TemporaryFile.deleteOnExit(...)
+            // is being invoked concurrently, but it should never happen.
         }
     }
 }

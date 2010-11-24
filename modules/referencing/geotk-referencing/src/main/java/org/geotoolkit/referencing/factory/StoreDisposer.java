@@ -46,7 +46,7 @@ import org.geotoolkit.util.logging.Logging;
  */
 final class StoreDisposer extends DaemonThread {
     /**
-     * The unique instance of this disposer thread. This is a demaon
+     * The unique instance of this disposer thread. This is a daemon
      * thread started on this class initialization and running until
      * the application terminate.
      */
@@ -68,7 +68,7 @@ final class StoreDisposer extends DaemonThread {
      * is invoked by the unique {@link #INSTANCE} only.
      */
     private StoreDisposer() {
-        super(Threads.RESOURCE_DISPOSERS, "StoreDisposer");
+        super(Threads.RESOURCE_DISPOSERS, "ReferencingStoreDisposer");
         setPriority(Thread.NORM_PRIORITY + 1);
     }
 

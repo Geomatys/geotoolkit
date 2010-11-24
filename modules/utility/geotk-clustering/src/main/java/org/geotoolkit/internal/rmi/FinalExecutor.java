@@ -54,7 +54,7 @@ final class FinalExecutor extends RemoteExecutor implements Runnable {
         super.shutdown();
         // This is not really a shutdown hook, but close
         // (more a kind of "pre-shutdown hook").
-        new Thread(Threads.SHUTDOWN_HOOKS, this, "exit").start();
+        new Thread(Threads.RESOURCE_DISPOSERS, this, "exit").start();
     }
 
     /**

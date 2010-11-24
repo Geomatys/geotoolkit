@@ -79,7 +79,7 @@ final class CacheReferences extends DaemonThread {
      * Ensures that we have a singleton instance of this class.
      */
     private CacheReferences() {
-        super(Threads.REFERENCE_CLEANERS, "CacheReferences");
+        super(Threads.RESOURCE_DISPOSERS, "CacheReferences");
         setPriority(MAX_PRIORITY - 2);
     }
 
