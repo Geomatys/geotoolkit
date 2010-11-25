@@ -18,6 +18,7 @@
 package org.geotoolkit.geometry;
 
 import org.opengis.geometry.DirectPosition;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -28,12 +29,36 @@ import org.geotoolkit.test.Depend;
  * Tests the {@link GeneralEnvelope} class.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.16
  *
  * @since 2.4
  */
 @Depend(DirectPositionTest.class)
 public final class GeneralEnvelopeTest {
+    /**
+     * Tests the {@link GeneralEnvelope#setSubEnvelope(Envelope, int)} method.
+     *
+     * @since 3.16
+     */
+    @Test
+    public void testSetSubEnvelope() {
+        final GeneralEnvelope horizontal = new GeneralEnvelope(new double[] {-180, -90}, new double[] {180, 90});
+        final GeneralEnvelope vertical   = new GeneralEnvelope(20, 40);
+        final GeneralEnvelope envelope   = new GeneralEnvelope(3);
+        assertTrue (envelope.isEmpty());
+        assertFalse(vertical.isEmpty());
+        assertFalse(horizontal.isEmpty());
+        envelope.setSubEnvelope(horizontal, 0);
+        envelope.setSubEnvelope(vertical,   2);
+        assertFalse(envelope.isEmpty());
+        assertEquals(-180, envelope.getMinimum(0), 0);
+        assertEquals( 180, envelope.getMaximum(0), 0);
+        assertEquals( -90, envelope.getMinimum(1), 0);
+        assertEquals(  90, envelope.getMaximum(1), 0);
+        assertEquals(  20, envelope.getMinimum(2), 0);
+        assertEquals(  40, envelope.getMaximum(2), 0);
+    }
+
     /**
      * Tests the {@link AbstractEnvelope#toString(Envelope)} method.
      *
@@ -174,5 +199,25 @@ public final class GeneralEnvelopeTest {
         assertNotSame(p1, p2);
         assertEquals (p1, p2);
         assertEquals (p1.hashCode(), p2.hashCode());
+    }
+
+    /**
+     * Tests the {@link GeneralEnvelope#clone()} method.
+     *
+     * @since 3.16
+     */
+    @Test
+    public void testClone() {
+        final GeneralEnvelope e1 = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        e1.setRange(0, -40, +60);
+        e1.setRange(1, -20, +30);
+        final GeneralEnvelope e2 = e1.clone();
+        assertNotSame("Expected a new instance.",           e1, e2);
+        assertEquals ("The two instances should be equal.", e1, e2);
+        e1.setRange(0, -40, +61);
+        assertFalse("Ordinates array should have been cloned.", e1.equals(e2));
+        e2.setRange(0, -40, +61);
+        assertEquals(e1, e2);
+        assertSame(DefaultGeographicCRS.WGS84, e2.getCoordinateReferenceSystem());
     }
 }

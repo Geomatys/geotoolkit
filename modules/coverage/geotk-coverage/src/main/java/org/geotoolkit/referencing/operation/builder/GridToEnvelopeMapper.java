@@ -50,6 +50,7 @@ import org.geotoolkit.resources.Errors;
  * The affine transform will be computed automatically from the information specified by the
  * {@link #setGridRange(GridEnvelope)} and {@link #setEnvelope(Envelope)} methods, which are
  * mandatory. All other setter methods are optional hints about the affine transform to be created.
+ * <p>
  * This builder is convenient when the following conditions are meet:
  *
  * <ul>
@@ -69,7 +70,7 @@ import org.geotoolkit.resources.Errors;
  * </ul>
  *
  * In such case (and assuming that the image CRS has the same characteristics than the
- * {@link BufferedImage}'s CRS described above):
+ * {@link BufferedImage} CRS described above):
  *
  * <ul>
  *   <li><p>{@link #setSwapXY swapXY} shall be set to {@code true} if the "real world" axis
@@ -85,7 +86,7 @@ import org.geotoolkit.resources.Errors;
  *       (<var>y</var> axis), in order to get them oriented toward the {@link AxisDirection#EAST
  *       EAST} or {@link AxisDirection#SOUTH SOUTH} direction respectively. The later may seems
  *       unnatural, but it reflects the fact that row values are increasing down in an
- *       {@link BufferedImage}'s CRS.</p></li>
+ *       {@link BufferedImage} CRS.</p></li>
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
@@ -162,8 +163,8 @@ public class GridToEnvelopeMapper {
      *
      * @param  gridEnvelope The valid coordinate range of a grid coverage.
      * @param  userEnvelope The corresponding coordinate range in user coordinate. This envelope must
-     *         contains entirely all pixels, i.e. the envelope's upper left corner must coincide
-     *         with the upper left corner of the first pixel and the envelope's lower right corner
+     *         contains entirely all pixels, i.e. the envelope upper left corner must coincide
+     *         with the upper left corner of the first pixel and the envelope lower right corner
      *         must coincide with the lower right corner of the last pixel.
      * @throws MismatchedDimensionException if the two envelopes don't have consistent dimensions.
      */

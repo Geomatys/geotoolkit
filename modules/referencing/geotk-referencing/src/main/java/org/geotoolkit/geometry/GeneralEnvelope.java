@@ -20,6 +20,7 @@ package org.geotoolkit.geometry;
 import java.util.Arrays;
 import java.io.Serializable;
 import java.awt.geom.Rectangle2D;
+import java.lang.reflect.Field;
 import javax.measure.unit.Unit;
 import javax.measure.converter.ConversionException;
 
@@ -69,17 +70,20 @@ import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
  * A {@code GeneralEnvelope} can be created in various ways:
  * <p>
  * <ul>
- *   <li>From a given number of dimension, with all ordinates initialized to 0.</li>
- *   <li>From two coordinate points.</li>
- *   <li>From a an other envelope (copy constructor).</li>
- *   <li>From a <cite>geographic bounding box</cite> or a Java2D rectangle.</li>
- *   <li>From a grid envelope together with a <cite>Grid to CRS</cite> transform.</li>
- *   <li>From a string representing a {@code BBOX} in <cite>Well Known Text</cite> format.</li>
+ *   <li>{@linkplain #GeneralEnvelope(int) From a given number of dimension}, with all ordinates initialized to 0.</li>
+ *   <li>{@linkplain #GeneralEnvelope(GeneralDirectPosition, GeneralDirectPosition) From two coordinate points}.</li>
+ *   <li>{@linkplain #GeneralEnvelope(Envelope) From a an other envelope} (copy constructor).</li>
+ *   <li>{@linkplain #GeneralEnvelope(GeographicBoundingBox) From a geographic bounding box}
+ *       or a {@linkplain #GeneralEnvelope(Rectangle2D) Java2D rectangle}.</li>
+ *   <li>{@linkplain #GeneralEnvelope(GridEnvelope, PixelInCell, MathTransform, CoordinateReferenceSystem)
+ *       From a grid envelope} together with a <cite>Grid to CRS</cite> transform.</li>
+ *   <li>{@linkplain #GeneralEnvelope(String) From a string} representing a {@code BBOX} in
+ *       <cite>Well Known Text</cite> format.</li>
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simone Giannecchini (Geosolutions)
- * @version 3.11
+ * @version 3.16
  *
  * @see Envelope2D
  * @see org.geotoolkit.geometry.jts.ReferencedEnvelope
@@ -95,13 +99,17 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
     private static final long serialVersionUID = 1752330560227688940L;
 
     /**
+     * Used for setting the {@link #ordinates} field during a {@link #clone()} operation only.
+     * Will be fetch when first needed.
+     */
+    private static volatile Field ordinatesField;
+
+    /**
      * Minimum and maximum ordinate values. The first half contains minimum ordinates, while the
      * last half contains maximum ordinates. This layout is convenient for the creation of lower
      * and upper corner direct positions.
-     * <p>
-     * Consider this reference as final; it is modified by {@link #clone} only.
      */
-    private double[] ordinates;
+    private final double[] ordinates;
 
     /**
      * The coordinate reference system, or {@code null}.
@@ -115,7 +123,7 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
      * @param dimension The envelope dimension.
      */
     public GeneralEnvelope(final int dimension) {
-        ordinates = new double[dimension * 2];
+        ordinates = new double[dimension << 1];
     }
 
     /**
@@ -169,7 +177,7 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
 //      ensureNonNull("maxDP", maxDP);
         this(minDP.ordinates, maxDP.ordinates);
         crs = getCoordinateReferenceSystem(minDP, maxDP);
-        AbstractDirectPosition.checkCoordinateReferenceSystemDimension(crs, ordinates.length/2);
+        AbstractDirectPosition.checkCoordinateReferenceSystemDimension(crs, ordinates.length >>> 1);
     }
 
     /**
@@ -182,7 +190,7 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
      */
     public GeneralEnvelope(final CoordinateReferenceSystem crs) {
 //  Uncomment next line if Sun fixes RFE #4093999
-//      ensureNonNull("envelope", envelope);
+//      ensureNonNull("crs", crs);
         this(crs.getCoordinateSystem().getDimension());
         this.crs = crs;
     }
@@ -255,7 +263,7 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
      * accurate for affine transforms.
      * <p>
      * <b>Note:</b> The convention is specified as a {@link PixelInCell} code instead than
-     * the more detailled {@link PixelOrientation}, because the later is restricted to the
+     * the more detailed {@link PixelOrientation}, because the later is restricted to the
      * two-dimensional case while the former can be used for any number of dimensions.
      * <p>
      * <b>Note:</b> The envelope created by this constructor is subject to rounding errors.
@@ -274,6 +282,7 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
      *
      * @since 2.3
      *
+     * @see org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper
      * @see org.geotoolkit.coverage.grid.GeneralGridEnvelope#GeneralGridEnvelope(Envelope,PixelInCell,boolean)
      */
     public GeneralEnvelope(final GridEnvelope  gridEnvelope,
@@ -289,7 +298,7 @@ public class GeneralEnvelope extends AbstractEnvelope implements Cloneable, Seri
         final int dimTarget = gridToCRS.getTargetDimensions();
         ensureSameDimension(dimRange, dimSource);
         ensureSameDimension(dimRange, dimTarget);
-        ordinates = new double[dimSource * 2];
+        ordinates = new double[dimSource << 1];
         final double offset = PixelTranslation.getPixelTranslation(anchor) + 0.5;
         for (int i=0; i<dimSource; i++) {
             /*
@@ -427,7 +436,7 @@ scanNumber: while (++i < length) {
         }
         if (levelParenth != 0) fail(wkt, ')');
         if (levelBracket != 0) fail(wkt, ']');
-        ordinates = XArrays.resize(minimum, maxDimension*2);
+        ordinates = XArrays.resize(minimum, maxDimension << 1);
         System.arraycopy(maximum, 0, ordinates, maxDimension, maxDimension);
     }
 
@@ -459,7 +468,7 @@ scanNumber: while (++i < length) {
      *         than or equal to the corresponding ordinate value in the maximum point.
      */
     private static void checkCoordinates(final double[] ordinates) throws IllegalArgumentException {
-        final int dimension = ordinates.length / 2;
+        final int dimension = ordinates.length >>> 1;
         for (int i=0; i<dimension; i++) {
             final double min = ordinates[i];
             final double max = ordinates[dimension+i];
@@ -476,7 +485,7 @@ scanNumber: while (++i < length) {
      */
     @Override
     public final int getDimension() {
-        return ordinates.length / 2;
+        return ordinates.length >>> 1;
     }
 
     /**
@@ -557,7 +566,7 @@ scanNumber: while (++i < length) {
     public boolean reduceToDomain(final boolean useDomainOfCRS) {
         boolean changed = false;
         if (crs != null) {
-            final int dimension = ordinates.length / 2;
+            final int dimension = ordinates.length >>> 1;
             final CoordinateSystem cs = crs.getCoordinateSystem();
             for (int i=0; i<dimension; i++) {
                 final int j = i + dimension;
@@ -622,7 +631,7 @@ scanNumber: while (++i < length) {
     /**
      * Fixes rounding errors up to a given tolerance level. For each value {@code ordinates[i]}
      * at dimension <var>i</var>, this method multiplies the ordinate value by the given factor,
-     * then round the result only if the product is close to an integer value. The threashold is
+     * then round the result only if the product is close to an integer value. The threshold is
      * defined by the {@code maxULP} argument in ULP units (<cite>Unit in the Last Place</cite>).
      * If and only if the product has been rounded, it is divided by the factor and stored in this
      * envelope in place of the original ordinate.
@@ -669,7 +678,7 @@ scanNumber: while (++i < length) {
      */
     @Override
     public DirectPosition getLowerCorner() {
-        final int dim = ordinates.length / 2;
+        final int dim = ordinates.length >>> 1;
         final GeneralDirectPosition position = new GeneralDirectPosition(dim);
         System.arraycopy(ordinates, 0, position.ordinates, 0, dim);
         position.setCoordinateReferenceSystem(crs);
@@ -684,7 +693,7 @@ scanNumber: while (++i < length) {
      */
     @Override
     public DirectPosition getUpperCorner() {
-        final int dim = ordinates.length / 2;
+        final int dim = ordinates.length >>> 1;
         final GeneralDirectPosition position = new GeneralDirectPosition(dim);
         System.arraycopy(ordinates, dim, position.ordinates, 0, dim);
         position.setCoordinateReferenceSystem(crs);
@@ -700,7 +709,7 @@ scanNumber: while (++i < length) {
      * @since 2.5
      */
     public DirectPosition getMedian() {
-        final GeneralDirectPosition position = new GeneralDirectPosition(ordinates.length / 2);
+        final GeneralDirectPosition position = new GeneralDirectPosition(ordinates.length >>> 1);
         for (int i=position.ordinates.length; --i>=0;) {
             position.ordinates[i] = getMedian(i);
         }
@@ -724,7 +733,7 @@ scanNumber: while (++i < length) {
      */
     @Override
     public final double getMinimum(final int dimension) throws IndexOutOfBoundsException {
-        if (dimension < ordinates.length/2) {
+        if (dimension < (ordinates.length >>> 1)) {
             return ordinates[dimension];
         } else {
             throw indexOutOfBounds(dimension);
@@ -741,7 +750,7 @@ scanNumber: while (++i < length) {
     @Override
     public final double getMaximum(final int dimension) throws IndexOutOfBoundsException {
         if (dimension >= 0) {
-            return ordinates[dimension + ordinates.length/2];
+            return ordinates[dimension + (ordinates.length >>> 1)];
         } else {
             throw indexOutOfBounds(dimension);
         }
@@ -758,7 +767,7 @@ scanNumber: while (++i < length) {
      */
     @Override
     public final double getMedian(final int dimension) throws IndexOutOfBoundsException {
-        return 0.5*(ordinates[dimension] + ordinates[dimension + ordinates.length/2]);
+        return 0.5*(ordinates[dimension] + ordinates[dimension + (ordinates.length >>> 1)]);
     }
 
     /**
@@ -772,7 +781,7 @@ scanNumber: while (++i < length) {
      */
     @Override
     public final double getSpan(final int dimension) throws IndexOutOfBoundsException {
-        return ordinates[dimension + ordinates.length/2] - ordinates[dimension];
+        return ordinates[dimension + (ordinates.length >>> 1)] - ordinates[dimension];
     }
 
     /**
@@ -800,7 +809,7 @@ scanNumber: while (++i < length) {
     }
 
     /**
-     * Sets the envelope's range along the specified dimension.
+     * Sets the envelope range along the specified dimension.
      *
      * @param  dimension The dimension to set.
      * @param  minimum   The minimum value along the specified dimension.
@@ -817,8 +826,8 @@ scanNumber: while (++i < length) {
         }
         if (dimension >= 0) {
             // An exception will be thrown before any change if 'dimension' is out of range.
-            ordinates[dimension + ordinates.length/2] = maximum;
-            ordinates[dimension                     ] = minimum;
+            ordinates[dimension + (ordinates.length >>> 1)] = maximum;
+            ordinates[dimension]                            = minimum;
         } else {
             throw indexOutOfBounds(dimension);
         }
@@ -855,22 +864,121 @@ scanNumber: while (++i < length) {
 
     /**
      * Sets this envelope to the same coordinate values than the specified envelope.
+     * If the given envelope has a non-null Coordinate Reference System (CRS), then
+     * the CRS of this envelope will be set to the CRS of the given envelope.
      *
-     * @param  envelope The new envelope to copy coordinates from.
+     * @param  envelope The envelope to copy coordinates from.
      * @throws MismatchedDimensionException if the specified envelope doesn't have the expected
      *         number of dimensions.
      *
      * @since 2.2
      */
-    public void setEnvelope(final GeneralEnvelope envelope) throws MismatchedDimensionException {
+    public void setEnvelope(final Envelope envelope) throws MismatchedDimensionException {
         ensureNonNull("envelope", envelope);
-        AbstractDirectPosition.ensureDimensionMatch("envelope", envelope.getDimension(), getDimension());
-        System.arraycopy(envelope.ordinates, 0, ordinates, 0, ordinates.length);
-        if (envelope.crs != null) {
-            crs = envelope.crs;
+        final int dimension = ordinates.length >>> 1;
+        AbstractDirectPosition.ensureDimensionMatch("envelope", envelope.getDimension(), dimension);
+        if (envelope instanceof GeneralEnvelope) {
+            System.arraycopy(((GeneralEnvelope) envelope).ordinates, 0, ordinates, 0, ordinates.length);
+        } else {
+            for (int i=0; i<dimension; i++) {
+                ordinates[i]           = envelope.getMinimum(i);
+                ordinates[i+dimension] = envelope.getMaximum(i);
+            }
+        }
+        final CoordinateReferenceSystem envelopeCRS = envelope.getCoordinateReferenceSystem();
+        if (envelopeCRS != null) {
+            crs = envelopeCRS;
             assert crs.getCoordinateSystem().getDimension() == getDimension() : crs;
             assert !envelope.getClass().equals(getClass()) || equals(envelope) : envelope;
         }
+    }
+
+    /**
+     * Sets a sub-domain of this envelope to the same coordinate values than the specified envelope.
+     * This method copies the ordinate values of all dimensions from the given envelope to some
+     * dimensions of this envelope. The target dimensions in this envelope range from {@code lower}
+     * inclusive to <code>lower + {@linkplain #getDimension()</code> exclusive.
+     * <p>
+     * This method ignores the Coordinate Reference System of {@code this} and the given envelope.
+     *
+     * @param  envelope The envelope to copy coordinates from.
+     * @param  offset Index of the first dimension to write in this envelope.
+     * @throws IndexOutOfBoundsException If the given offset is negative, or is greater than
+     *         <code>getDimension() - envelope.getDimension()</code>.
+     *
+     * @since 3.16
+     */
+    public void setSubEnvelope(final Envelope envelope, int offset) throws IndexOutOfBoundsException {
+        ensureNonNull("envelope", envelope);
+        final int subDim = envelope.getDimension();
+        final int dimension = ordinates.length >>> 1;
+        if (offset < 0 || offset + subDim > dimension) {
+            throw new IndexOutOfBoundsException(Errors.format(
+                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "lower", offset));
+        }
+        for (int i=0; i<subDim; i++) {
+            ordinates[offset]           = envelope.getMinimum(i);
+            ordinates[offset+dimension] = envelope.getMaximum(i);
+            offset++;
+        }
+    }
+
+    /**
+     * Returns a new envelope that encompass only some dimensions of this envelope.
+     * This method copy this envelope ordinates into a new envelope, beginning at
+     * dimension {@code lower} and extending to dimension {@code upper-1}.
+     * Thus the dimension of the sub-envelope is {@code upper-lower}.
+     *
+     * @param  lower The first dimension to copy, inclusive.
+     * @param  upper The last  dimension to copy, exclusive.
+     * @return The sub-envelope.
+     * @throws IndexOutOfBoundsException if an index is out of bounds.
+     */
+    public GeneralEnvelope getSubEnvelope(final int lower, final int upper)
+            throws IndexOutOfBoundsException
+    {
+        final int curDim = ordinates.length >>> 1;
+        final int newDim = upper-lower;
+        if (lower<0 || lower>curDim) {
+            throw new IndexOutOfBoundsException(Errors.format(
+                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "lower", lower));
+        }
+        if (newDim<0 || upper>curDim) {
+            throw new IndexOutOfBoundsException(Errors.format(
+                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "upper", upper));
+        }
+        final GeneralEnvelope envelope = new GeneralEnvelope(newDim);
+        System.arraycopy(ordinates, lower,        envelope.ordinates, 0,      newDim);
+        System.arraycopy(ordinates, lower+curDim, envelope.ordinates, newDim, newDim);
+        return envelope;
+    }
+
+    /**
+     * Returns a new envelope with the same values than this envelope minus the
+     * specified range of dimensions.
+     *
+     * @param  lower The first dimension to omit, inclusive.
+     * @param  upper The last  dimension to omit, exclusive.
+     * @return The sub-envelope.
+     * @throws IndexOutOfBoundsException if an index is out of bounds.
+     */
+    public GeneralEnvelope getReducedEnvelope(final int lower, final int upper)
+            throws IndexOutOfBoundsException
+    {
+        final int curDim = ordinates.length >>> 1;
+        final int rmvDim = upper-lower;
+        if (lower<0 || lower>curDim) {
+            throw new IndexOutOfBoundsException(Errors.format(
+                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "lower", lower));
+        }
+        if (rmvDim<0 || upper>curDim) {
+            throw new IndexOutOfBoundsException(Errors.format(
+                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "upper", upper));
+        }
+        final GeneralEnvelope envelope = new GeneralEnvelope(curDim - rmvDim);
+        System.arraycopy(ordinates, 0,     envelope.ordinates, 0,            lower);
+        System.arraycopy(ordinates, lower, envelope.ordinates, upper, curDim-upper);
+        return envelope;
     }
 
     /**
@@ -882,7 +990,7 @@ scanNumber: while (++i < length) {
      * @since 2.2
      */
     public void setToInfinite() {
-        final int mid = ordinates.length/2;
+        final int mid = ordinates.length >>> 1;
         Arrays.fill(ordinates, 0,   mid,              Double.NEGATIVE_INFINITY);
         Arrays.fill(ordinates, mid, ordinates.length, Double.POSITIVE_INFINITY);
         assert isInfinite() : this;
@@ -953,7 +1061,7 @@ scanNumber: while (++i < length) {
      * @return {@code true} if this envelope is empty.
      */
     public boolean isEmpty() {
-        final int dimension = ordinates.length / 2;
+        final int dimension = ordinates.length >>> 1;
         if (dimension == 0) {
             return true;
         }
@@ -991,7 +1099,7 @@ scanNumber: while (++i < length) {
      * Adds a point to this envelope. The resulting envelope is the smallest envelope that
      * contains both the original envelope and the specified point. After adding a point,
      * a call to {@link #contains} with the added point as an argument will return {@code true},
-     * except if one of the point's ordinates was {@link Double#NaN} (in which case the
+     * except if one of the point ordinates was {@link Double#NaN} (in which case the
      * corresponding ordinate have been ignored).
      *
      * {@note This method assumes that the specified point uses the same CRS than this envelope.
@@ -1003,7 +1111,7 @@ scanNumber: while (++i < length) {
      */
     public void add(final DirectPosition position) throws MismatchedDimensionException {
         ensureNonNull("position", position);
-        final int dim = ordinates.length / 2;
+        final int dim = ordinates.length >>> 1;
         AbstractDirectPosition.ensureDimensionMatch("position", position.getDimension(), dim);
         assert equalsIgnoreMetadata(crs, position.getCoordinateReferenceSystem()) : position;
         for (int i=0; i<dim; i++) {
@@ -1027,7 +1135,7 @@ scanNumber: while (++i < length) {
      */
     public void add(final Envelope envelope) throws MismatchedDimensionException {
         ensureNonNull("envelope", envelope);
-        final int dim = ordinates.length / 2;
+        final int dim = ordinates.length >>> 1;
         AbstractDirectPosition.ensureDimensionMatch("envelope", envelope.getDimension(), dim);
         assert equalsIgnoreMetadata(crs, envelope.getCoordinateReferenceSystem()) : envelope;
         for (int i=0; i<dim; i++) {
@@ -1055,7 +1163,7 @@ scanNumber: while (++i < length) {
      */
     public boolean contains(final DirectPosition position) throws MismatchedDimensionException {
         ensureNonNull("position", position);
-        final int dim = ordinates.length/2;
+        final int dim = ordinates.length >>> 1;
         AbstractDirectPosition.ensureDimensionMatch("point", position.getDimension(), dim);
         assert equalsIgnoreMetadata(crs, position.getCoordinateReferenceSystem()) : position;
         for (int i=0; i<dim; i++) {
@@ -1091,7 +1199,7 @@ scanNumber: while (++i < length) {
             throws MismatchedDimensionException
     {
         ensureNonNull("envelope", envelope);
-        final int dim = ordinates.length / 2;
+        final int dim = ordinates.length >>> 1;
         AbstractDirectPosition.ensureDimensionMatch("envelope", envelope.getDimension(), dim);
         assert equalsIgnoreMetadata(crs, envelope.getCoordinateReferenceSystem()) : envelope;
         for (int i=0; i<dim; i++) {
@@ -1134,7 +1242,7 @@ scanNumber: while (++i < length) {
             throws MismatchedDimensionException
     {
         ensureNonNull("envelope", envelope);
-        final int dim = ordinates.length / 2;
+        final int dim = ordinates.length >>> 1;
         AbstractDirectPosition.ensureDimensionMatch("envelope", envelope.getDimension(), dim);
         assert equalsIgnoreMetadata(crs, envelope.getCoordinateReferenceSystem()) : envelope;
         for (int i=0; i<dim; i++) {
@@ -1164,7 +1272,7 @@ scanNumber: while (++i < length) {
      */
     public void intersect(final Envelope envelope) throws MismatchedDimensionException {
         ensureNonNull("envelope", envelope);
-        final int dim = ordinates.length / 2;
+        final int dim = ordinates.length >>> 1;
         AbstractDirectPosition.ensureDimensionMatch("envelope", envelope.getDimension(), dim);
         assert equalsIgnoreMetadata(crs, envelope.getCoordinateReferenceSystem()) : envelope;
         for (int i=0; i<dim; i++) {
@@ -1178,64 +1286,6 @@ scanNumber: while (++i < length) {
             ordinates[i    ] = min;
             ordinates[i+dim] = max;
         }
-    }
-
-    /**
-     * Returns a new envelope that encompass only some dimensions of this envelope.
-     * This method copy this envelope's ordinates into a new envelope, beginning at
-     * dimension {@code lower} and extending to dimension {@code upper-1}.
-     * Thus the dimension of the sub-envelope is {@code upper-lower}.
-     *
-     * @param  lower The first dimension to copy, inclusive.
-     * @param  upper The last  dimension to copy, exclusive.
-     * @return The sub-envelope.
-     * @throws IndexOutOfBoundsException if an index is out of bounds.
-     */
-    public GeneralEnvelope getSubEnvelope(final int lower, final int upper)
-            throws IndexOutOfBoundsException
-    {
-        final int curDim = ordinates.length / 2;
-        final int newDim = upper-lower;
-        if (lower<0 || lower>curDim) {
-            throw new IndexOutOfBoundsException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "lower", lower));
-        }
-        if (newDim<0 || upper>curDim) {
-            throw new IndexOutOfBoundsException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "upper", upper));
-        }
-        final GeneralEnvelope envelope = new GeneralEnvelope(newDim);
-        System.arraycopy(ordinates, lower,        envelope.ordinates, 0,      newDim);
-        System.arraycopy(ordinates, lower+curDim, envelope.ordinates, newDim, newDim);
-        return envelope;
-    }
-
-    /**
-     * Returns a new envelope with the same values than this envelope minus the
-     * specified range of dimensions.
-     *
-     * @param  lower The first dimension to omit, inclusive.
-     * @param  upper The last  dimension to omit, exclusive.
-     * @return The subenvelope.
-     * @throws IndexOutOfBoundsException if an index is out of bounds.
-     */
-    public GeneralEnvelope getReducedEnvelope(final int lower, final int upper)
-            throws IndexOutOfBoundsException
-    {
-        final int curDim = ordinates.length / 2;
-        final int rmvDim = upper-lower;
-        if (lower<0 || lower>curDim) {
-            throw new IndexOutOfBoundsException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "lower", lower));
-        }
-        if (rmvDim<0 || upper>curDim) {
-            throw new IndexOutOfBoundsException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "upper", upper));
-        }
-        final GeneralEnvelope envelope = new GeneralEnvelope(curDim - rmvDim);
-        System.arraycopy(ordinates, 0,     envelope.ordinates, 0,            lower);
-        System.arraycopy(ordinates, lower, envelope.ordinates, upper, curDim-upper);
-        return envelope;
     }
 
     /**
@@ -1295,12 +1345,25 @@ scanNumber: while (++i < length) {
     @Override
     public GeneralEnvelope clone() {
         try {
+            Field field = ordinatesField;
+            if (field == null) {
+                field = GeneralEnvelope.class.getDeclaredField("ordinates");
+                field.setAccessible(true);
+                ordinatesField = field;
+            }
             GeneralEnvelope e = (GeneralEnvelope) super.clone();
-            e.ordinates = e.ordinates.clone();
+            field.set(e, ordinates.clone());
             return e;
         } catch (CloneNotSupportedException exception) {
             // Should not happen, since we are cloneable.
             throw new AssertionError(exception);
+        } catch (NoSuchFieldException exception) {
+            // Should not happen, since the field is known to exist.
+            throw new AssertionError(exception);
+        } catch (IllegalAccessException exception) {
+            // Should not happen, since we made the field accessible.
+            throw new AssertionError(exception);
         }
+        // TODO: Use multi-catch with Java 7.
     }
 }
