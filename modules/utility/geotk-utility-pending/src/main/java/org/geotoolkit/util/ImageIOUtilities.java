@@ -22,6 +22,8 @@ import java.awt.image.RenderedImage;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.Locale;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
@@ -82,6 +84,21 @@ public class ImageIOUtilities {
 
     }
 
+    public static void logImageWriterOrder(String mime) {
+        final Iterator<ImageWriter> writers = ImageIO.getImageWritersByMIMEType(mime);
+        int i = 1;
+        String line = "\n///////////////////////////////////////////\n";
+        StringBuilder sb = new StringBuilder(line);
+        while (writers.hasNext()) {
+            final ImageWriter writer = writers.next();
+            final ImageWriterSpi spi = writer.getOriginatingProvider();
+            sb.append("\\").append(i).append(": description:").append(spi.getDescription(Locale.FRENCH)).append('\n');
+            i++;
+        }
+        sb.append(line);
+        Logger.getAnonymousLogger().log(Level.INFO, sb.toString());
+    }
+
     public static ImageWriter getImageWriter(final RenderedImage image, String mime, Object output) throws IOException{
         if(image == null) throw new NullPointerException("Image can not be null");
 
@@ -90,7 +107,20 @@ public class ImageIOUtilities {
         while (writers.hasNext()) {
             final ImageWriter writer = writers.next();
             final ImageWriterSpi spi = writer.getOriginatingProvider();
+            String line = "\n///////////////////////////////////////////\n";
+            Logger.getAnonymousLogger().log(Level.INFO, line + "// writer:\n" +
+                                                        "// class:" + spi.getClass().getName() + '\n' +
+                                                        "// plugin class:" + spi.getPluginClassName() + '\n' +
+                                                        "// description:" + spi.getDescription(Locale.FRENCH) + '\n' +
+                                                        "// NativeImageMetadataFormatName:" + spi.getNativeImageMetadataFormatName() + '\n' +
+                                                        "// NativeStreamMetadataFormatName:" + spi.getNativeStreamMetadataFormatName() + '\n' +
+                                                        "// Vendor Name:" + spi.getVendorName() + '\n' +
+                                                        "// version:" + spi.getVersion() + line);
+            Logger.getAnonymousLogger().log(Level.INFO, line + "// Image:\n" +
+                                                        "// Color Model:" + image.getColorModel() + '\n' +
+                                                        "// Sample Model:" + image.getSampleModel() + line);
             if (spi.canEncodeImage(image)) {
+                Logger.getAnonymousLogger().log(Level.INFO, "writer selected");
                 return writer;
             }
             n++;

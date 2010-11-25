@@ -139,7 +139,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      */
     private void deleteOldIndexDir(File configDirectory, String serviceID, String currentDirName) {
         for (File indexDirectory : configDirectory.listFiles(new IndexDirectoryFilter(serviceID))) {
-            String dirName = indexDirectory.getName();
+            final String dirName = indexDirectory.getName();
             if (!dirName.equals(currentDirName)) {
                 FileUtilities.deleteDirectory(indexDirectory);
             }
@@ -356,11 +356,11 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param srid coordinate spatial reference identifier.
      */
     protected void addMultipleBoundingBox(Document doc, List<Double> minx, List<Double> maxx, List<Double> miny, List<Double> maxy, int srid) {
-        Polygon[] polygons = new Polygon[minx.size()];
+        final Polygon[] polygons = new Polygon[minx.size()];
         for (int i = 0; i < minx.size(); i++) {
             polygons[i] = getPolygon(minx.get(i), maxx.get(i), miny.get(i), maxy.get(i),srid);
         }
-        GeometryCollection geom = GF.createGeometryCollection(polygons);
+        final GeometryCollection geom = GF.createGeometryCollection(polygons);
         addGeometry(doc, geom);
     }
 
@@ -408,12 +408,14 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @return the service ID of this index or "" if there is not explicit service ID.
      */
     protected String getServiceID() {
-        File directory       = getFileDirectory();
-        String directoryName = directory.getName();
-        String serviceId = "";
+        final File directory       = getFileDirectory();
+        final String directoryName = directory.getName();
+        final String serviceId;
         if (directoryName.contains("index")) {
             serviceId = directoryName.substring(0, directoryName.indexOf("index"));
 
+        } else {
+            serviceId = "";
         }
         return serviceId;
     }
@@ -428,12 +430,13 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         /**
          * The service ID.
          */
-        private String prefix;
+        private final String prefix;
 
         public IndexDirectoryFilter(String id) {
-            prefix = "";
             if (id != null) {
                 prefix = id;
+            } else {
+                prefix = "";
             }
         }
 
@@ -447,8 +450,8 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
         @Override
         public boolean accept(File dir, String name) {
             File f = new File(dir, name);
-            if (!prefix.isEmpty() && prefix.equals("all")) {
-                return (name.indexOf("index-") != 0 && f.isDirectory());
+            if ("all".equals(prefix)) {
+                return (name.indexOf("index-") != -1 && f.isDirectory());
             } else {
                 return (name.startsWith(prefix + "index-") && f.isDirectory());
             }
