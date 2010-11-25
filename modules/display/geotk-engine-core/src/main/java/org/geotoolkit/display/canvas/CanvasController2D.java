@@ -25,7 +25,7 @@ import java.util.Date;
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
 
-import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 
 import org.opengis.display.canvas.CanvasController;
 import org.opengis.geometry.DirectPosition;
@@ -92,9 +92,9 @@ public interface CanvasController2D extends CanvasController{
     
     /**
      *
-     * @return the live interim objective To display transform.
+     * @return a snapshot objective To display transform.
      */
-    AffineMatrix3 getTransform();
+    AffineTransform2D getTransform();
     
     // Relative position operations --------------------------------------------
     

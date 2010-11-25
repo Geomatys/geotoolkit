@@ -42,10 +42,10 @@ import org.geotoolkit.coverage.grid.GridCoverageFactory;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.processing.Operations;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
@@ -211,7 +211,7 @@ public class RenderedGridMarks extends RenderedMarks {
      *
      * @param coverage The grid coverage, or <code>null</code> if none.
      */
-    public RenderedGridMarks(final ReferencedCanvas2D canvas,final GridCoverage2D cover) {
+    public RenderedGridMarks(final J2DCanvas canvas,final GridCoverage2D cover) {
         super(canvas, cover.getCoordinateReferenceSystem2D());
         if(cover == null){
             throw new NullPointerException("Coverage must not be null");

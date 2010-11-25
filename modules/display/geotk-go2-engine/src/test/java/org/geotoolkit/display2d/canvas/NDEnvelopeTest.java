@@ -73,10 +73,8 @@ public class NDEnvelopeTest {
          //check sended temporal and elevation
          Date[] temps = canvas.getController().getTemporalRange();
          Double[] elev = canvas.getController().getElevationRange();
-         assertTrue(temps[0] == null);
-         assertTrue(temps[1] == null);
-         assertTrue(elev[0] == null);
-         assertTrue(elev[1] == null);
+         assertTrue(temps == null);
+         assertTrue(elev == null);
 
          CoordinateReferenceSystem crs = new DefaultCompoundCRS(
                "",
@@ -90,6 +88,7 @@ public class NDEnvelopeTest {
          env.setRange(2, -50, 150);
          env.setRange(3, 3000, 6000);
 
+         canvas.getController().setObjectiveCRS(crs);
          canvas.getController().setVisibleArea(env);
 
          temps = canvas.getController().getTemporalRange();

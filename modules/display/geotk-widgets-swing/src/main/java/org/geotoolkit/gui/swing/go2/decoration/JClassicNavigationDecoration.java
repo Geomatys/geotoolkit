@@ -23,7 +23,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
-import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
@@ -47,6 +46,7 @@ import java.util.logging.Logger;
 import javax.swing.JComponent;
 
 import org.geotoolkit.display.canvas.AbstractCanvas;
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.util.logging.Logging;
 
@@ -568,11 +568,11 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
     public void setMap2D(Map2D map) {
         
         if(this.map != null){
-            this.map.getCanvas().removePropertyChangeListener(AbstractCanvas.OBJECTIVE_TO_DISPLAY_PROPERTY,propertyListener);
+            this.map.getCanvas().removePropertyChangeListener(ReferencedCanvas2D.OBJECTIVE_TO_DISPLAY_PROPERTY,propertyListener);
         }
         
         this.map = map;
-        this.map.getCanvas().addPropertyChangeListener(AbstractCanvas.OBJECTIVE_TO_DISPLAY_PROPERTY,propertyListener);
+        this.map.getCanvas().addPropertyChangeListener(ReferencedCanvas2D.OBJECTIVE_TO_DISPLAY_PROPERTY,propertyListener);
     }
 
     @Override

@@ -19,14 +19,13 @@ package org.geotoolkit.display2d.ext.grid;
 
 
 import java.util.List;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.opengis.display.primitive.Graphic;
 
 /**
@@ -39,7 +38,7 @@ public class GraphicGridJ2D extends AbstractGraphicJ2D{
 
     private final GridTemplate template;
 
-    public GraphicGridJ2D(final ReferencedCanvas2D canvas, final GridTemplate template){
+    public GraphicGridJ2D(final J2DCanvas canvas, final GridTemplate template){
         super(canvas,canvas.getObjectiveCRS());
 
         if(template == null) throw new NullPointerException("Template can not be null");

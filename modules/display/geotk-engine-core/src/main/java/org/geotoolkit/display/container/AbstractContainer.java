@@ -29,7 +29,8 @@ import java.util.logging.Level;
 import javax.swing.event.EventListenerList;
 
 import org.geotoolkit.display.canvas.AbstractCanvas;
-import org.geotoolkit.display.canvas.ReferencedCanvas;
+import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.primitive.AbstractGraphic;
 import org.geotoolkit.display.primitive.AbstractReferencedGraphic;
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -54,7 +55,7 @@ import org.opengis.referencing.operation.TransformException;
  * @author Martin Desruisseaux (IRD)
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractContainer<C extends ReferencedCanvas, G extends Graphic> implements GraphicsContainer<G>{
+public abstract class AbstractContainer<C extends AbstractCanvas, G extends Graphic> implements GraphicsContainer<G>{
 
     /**
      * A listener to be notified when a graphic property changed.
@@ -436,7 +437,7 @@ public abstract class AbstractContainer<C extends ReferencedCanvas, G extends Gr
     //-------------------canvas events------------------------------------------
 
     protected void propertyChange(PropertyChangeEvent evt) {
-        if(evt.getPropertyName().equals(AbstractCanvas.OBJECTIVE_CRS_PROPERTY)){
+        if(evt.getPropertyName().equals(AbstractReferencedCanvas2D.OBJECTIVE_CRS_PROPERTY)){
             try {
                 updateObjectiveCRS((CoordinateReferenceSystem) evt.getNewValue());
             } catch (TransformException ex) {

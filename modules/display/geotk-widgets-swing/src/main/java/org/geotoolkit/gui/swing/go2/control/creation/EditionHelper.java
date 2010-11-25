@@ -51,6 +51,7 @@ import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.feature.simple.SimpleFeature;
@@ -135,7 +136,7 @@ public class EditionHelper {
     }
 
     public Coordinate toCoord(int x, int y){
-        AffineMatrix3 trs = handler.getMap().getCanvas().getController().getTransform();
+        AffineTransform2D trs = handler.getMap().getCanvas().getController().getTransform();
         AffineTransform dispToObj;
         try {
             dispToObj = trs.createInverse();

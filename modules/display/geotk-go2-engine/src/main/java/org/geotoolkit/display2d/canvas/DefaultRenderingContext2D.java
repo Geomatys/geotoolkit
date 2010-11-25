@@ -33,8 +33,6 @@ import javax.measure.quantity.Length;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
-import org.geotoolkit.display.canvas.ReferencedCanvas;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
@@ -103,7 +101,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     /**
      * The originating canvas.
      */
-    private final ReferencedCanvas2D canvas;
+    private final J2DCanvas canvas;
 
     /**
      * The graphics handle to use for painting. This graphics is set by {@link BufferedCanvas2D}
@@ -222,7 +220,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
      *
      * @param canvas        The canvas which creates this rendering context.
      */
-    public DefaultRenderingContext2D(final ReferencedCanvas2D canvas) {
+    public DefaultRenderingContext2D(final J2DCanvas canvas) {
         this.canvas = canvas;
     }
 
@@ -362,7 +360,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
      * {@inheritDoc }
      */
     @Override
-    public ReferencedCanvas2D getCanvas(){
+    public J2DCanvas getCanvas(){
         return canvas;
     }
     

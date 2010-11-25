@@ -5,10 +5,10 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.List;
 
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 
@@ -17,8 +17,8 @@ import org.opengis.display.primitive.Graphic;
 
 public class SquaresGraphic extends AbstractGraphicJ2D{
 
-    public SquaresGraphic(ReferencedCanvas2D canvas){
-        super(canvas, canvas.getObjectiveCRS());
+    public SquaresGraphic(J2DCanvas canvas){
+        super(canvas, canvas.getObjectiveCRS2D());
     }
 
     @Override

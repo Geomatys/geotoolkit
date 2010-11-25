@@ -17,12 +17,12 @@
  */
 package org.geotoolkit.display2d.ext.northarrow;
 
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.util.logging.Level;
 
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.ext.PositionedGraphic2D;
@@ -39,7 +39,7 @@ public class GraphicNorthArrowJ2D extends PositionedGraphic2D{
 
     private NorthArrowTemplate template;
 
-    public GraphicNorthArrowJ2D(ReferencedCanvas2D canvas, NorthArrowTemplate template){
+    public GraphicNorthArrowJ2D(J2DCanvas canvas, NorthArrowTemplate template){
         super(canvas);
         this.template = template;
     }

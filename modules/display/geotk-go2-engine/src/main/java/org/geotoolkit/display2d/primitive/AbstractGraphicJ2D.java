@@ -17,8 +17,8 @@
  */
 package org.geotoolkit.display2d.primitive;
 
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.primitive.AbstractReferencedGraphic2D;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 
 import org.opengis.display.primitive.Graphic;
@@ -42,9 +42,14 @@ public abstract class AbstractGraphicJ2D extends AbstractReferencedGraphic2D imp
      * @throws IllegalArgumentException if {@code crs} is null or has an incompatible number of
      *         dimensions.
      */
-    protected AbstractGraphicJ2D(final ReferencedCanvas2D canvas,final CoordinateReferenceSystem crs)
+    protected AbstractGraphicJ2D(final J2DCanvas canvas,final CoordinateReferenceSystem crs)
             throws IllegalArgumentException{
         super(canvas,crs);
+    }
+
+    @Override
+    public J2DCanvas getCanvas() {
+        return (J2DCanvas) super.getCanvas();
     }
 
     /**

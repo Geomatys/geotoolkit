@@ -18,17 +18,16 @@
 package org.geotoolkit.display2d.canvas;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.Shape;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.IndexColorModel;
 import java.util.Comparator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedSet;
@@ -36,7 +35,6 @@ import java.util.TreeSet;
 
 import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
@@ -63,7 +61,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class J2DCanvasBuffered extends J2DCanvas{
 
     private BufferedImage buffer;
-    private Dimension dim;
 
 
     public J2DCanvasBuffered(CoordinateReferenceSystem crs, final Dimension dim){
@@ -72,33 +69,21 @@ public class J2DCanvasBuffered extends J2DCanvas{
 
     public J2DCanvasBuffered(CoordinateReferenceSystem crs, final Dimension dim, final Hints hints){
         super(crs,hints);
-        if(dim == null){
-            throw new NullPointerException("Dimension can not be null");
-        }else if(dim.getHeight() <=0 || dim.getWidth() <=0){
-            throw new IllegalArgumentException("Dimension is not valid, width and height must be > 0");
-        }
-        setDisplayBounds(new Rectangle(dim));
-        this.dim = dim;
+        setSize(dim);
+    }
+
+    public Dimension getSize(){
+        return getDisplayBounds().getBounds().getSize();
     }
 
     public void setSize(final Dimension dim){
-        if(dim == null){
-            throw new NullPointerException("Dimension can't be null");
-        }
-        if(dim.width != this.dim.width || dim.height != this.dim.height){
-            setDisplayBounds(new Rectangle(dim));
-            this.dim = dim;
-            buffer = null;
-        }
+        setDisplayBounds(new Rectangle(dim));
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
-    public void clearCache() {
-        super.clearCache();
-        buffer = null;
+    protected void setDisplayBounds(Rectangle2D rect) {
+        super.setDisplayBounds(rect);
+        buffer = null; //todo should check if the size is really different
     }
 
     /**
@@ -107,34 +92,24 @@ public class J2DCanvasBuffered extends J2DCanvas{
     @Override
     public void dispose(){
         super.dispose();
-        context2D.dispose();
         buffer = null;
-        dim = null;
-    }
-
-    /**
-     * Returns the display bounds in terms of {@linkplain #getDisplayCRS display CRS}.
-     * If no bounds were {@linkplain #setDisplayBounds explicitly set}, then this method
-     * returns the {@linkplain Component#getBounds() widget bounds}.
-     */
-    @Override
-    public synchronized Shape getDisplayBounds() {
-        Shape bounds = super.getDisplayBounds();
-        if (bounds.equals(XRectangle2D.INFINITY)) {
-            bounds = new Rectangle(dim);
-        }
-        return bounds;
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public void repaint() {
+    public BufferedImage getSnapShot(){
+        return buffer;
+    }
+
+    @Override
+    public void repaint(Shape displayArea) {
+        final Dimension dim = getSize();
 
         if(buffer == null){
             //create the buffer at the last possible moment
-            buffer = createBufferedImage();
+            buffer = createBufferedImage(dim);
         }else{
             //we clear the buffer if it exists
             final Graphics2D g2D = (Graphics2D) buffer.getGraphics();
@@ -185,23 +160,11 @@ public class J2DCanvasBuffered extends J2DCanvas{
     }
 
     /**
-     * {@inheritDoc }
-     */
-    @Override
-    public BufferedImage getSnapShot(){
-        return buffer;
-    }
-
-    @Override
-    public void repaint(Shape displayArea) {
-    }
-
-    /**
      * This will try to create the most efficient bufferedImage knowing
      * the different rendering parameters and hints.
      * @return
      */
-    private BufferedImage createBufferedImage(){
+    private BufferedImage createBufferedImage(Dimension dim){
 
         //See if a color model has been set, if so use it.
         final ColorModel cm = (ColorModel)getRenderingHint(GO2Hints.KEY_COLOR_MODEL);
@@ -237,7 +200,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
                 //translucent background
                 colors.add(0);
                 //we succesfully predicted the colors, makes an index color model
-                return createBufferedImage(colors);
+                return createBufferedImage(dim,colors);
             }else{
                 //we can't use a index color model, use an ARGB palette
                 return new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_ARGB);
@@ -255,7 +218,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
                         final Color bgColor = ((SolidColorPainter)painter).getColor();
                         colors.add(bgColor.getRGB());
                         //we succesfully predicted the colors, makes an index color model
-                        return createBufferedImage(colors);
+                        return createBufferedImage(dim,colors);
                     }else{
                         //we can't use a index color model, use an RGB palette
                         return new BufferedImage(dim.width, dim.height, BufferedImage.TYPE_INT_RGB);
@@ -272,7 +235,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
 
     }
 
-    private BufferedImage createBufferedImage(Set<Integer> colors){
+    private static BufferedImage createBufferedImage(Dimension dim, Set<Integer> colors){
         
         if(colors.size() <= 1){
             //in case no colors where used after all filters.

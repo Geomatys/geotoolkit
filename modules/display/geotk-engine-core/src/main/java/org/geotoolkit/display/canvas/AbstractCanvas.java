@@ -17,33 +17,21 @@
  */
 package org.geotoolkit.display.canvas;
 
-import java.awt.geom.AffineTransform;
-import java.beans.PropertyChangeEvent;
 import javax.swing.event.EventListenerList;
-
-import org.opengis.display.canvas.RenderingState;
-import org.opengis.util.InternationalString;
-import org.opengis.referencing.crs.DerivedCRS;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.display.canvas.Canvas;
-import org.opengis.display.canvas.CanvasEvent;
-import org.opengis.display.canvas.CanvasListener;
-import org.opengis.display.primitive.Graphic;
-
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.canvas.control.FailOnErrorMonitor;
 import org.geotoolkit.display.canvas.event.DefaultCanvasEvent;
 import org.geotoolkit.display.container.AbstractContainer;
-import org.geotoolkit.display.primitive.AbstractGraphic;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.internal.referencing.CRSUtilities;
-import org.geotoolkit.util.converter.Classes;
+
+import org.opengis.display.canvas.Canvas;
+import org.opengis.display.canvas.CanvasEvent;
+import org.opengis.display.canvas.CanvasListener;
+import org.opengis.display.canvas.CanvasState;
+import org.opengis.display.canvas.RenderingState;
 import org.opengis.display.container.ContainerEvent;
 import org.opengis.display.container.ContainerListener;
-import org.opengis.referencing.cs.CartesianCS;
-import org.opengis.referencing.cs.SphericalCS;
+import org.opengis.geometry.DirectPosition;
 
 /**
  * Manages the display and user manipulation of {@link Graphic} instances. A newly constructed
@@ -74,54 +62,19 @@ import org.opengis.referencing.cs.SphericalCS;
  * @author Martin Desruisseaux (IRD)
  * @author Johann Sorel (Geomatys)
  */
-public abstract class AbstractCanvas extends DisplayObject implements Canvas {
-    /**
-     * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
-     * canvas {@linkplain ReferencedCanvas2D#getDisplayBounds display bounds} changed.
-     */
-    public static final String DISPLAY_BOUNDS_PROPERTY = "displayBounds";
+public abstract class AbstractCanvas<T extends AbstractContainer> extends DisplayObject implements Canvas{
 
-    /**
-     * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
-     * canvas {@linkplain ReferencedCanvas#getDisplayCRS display CRS} changed.
-     */
-    public static final String DISPLAY_CRS_PROPERTY = "displayCRS";
-
-    /**
-     * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
-     * canvas {@linkplain ReferencedCanvas#getObjectiveCRS objective CRS} changed.
-     */
-    public static final String OBJECTIVE_CRS_PROPERTY = "objectiveCRS";
-
-    /**
-     * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
-     * canvas {@linkplain CanvasController2D#getScale() canvas scale} changed.
-     */
-    public static final String SCALE_PROPERTY = "scale";
-    
-    /**
-     * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
-     * canvas {@linkplain CanvasController2D#getScale() canvas scale} changed.
-     */
-    public static final String OBJECTIVE_TO_DISPLAY_PROPERTY = "objectiveToDisplay";
-
-    /**
-     * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
-     * {@linkplain AbstractCanvas#getTitle canvas title} changed.
-     */
-    public static final String TITLE_PROPERTY = "title";
-    
     /**
      * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
      * {@linkplain AbstractCanvas#getMonitor canvas monitor} changed.
      */
     public static final String MONITOR_PROPERTY = "monitor";
-    
+
     /**
-     * Canvas listeners list.
+     * Small number for floating point comparaisons.
      */
-    private final EventListenerList canvasListeners;
-    
+    protected static final double EPS = 1E-12;
+
     /**
      * Listener on the renderer to be notified when graphics change.
      */
@@ -141,25 +94,24 @@ public abstract class AbstractCanvas extends DisplayObject implements Canvas {
         public void graphicsChanged(ContainerEvent event) {
             AbstractCanvas.this.graphicsChanged(event);
         }
-        
+
         @Override
         public void graphicsDisplayChanged(ContainerEvent event){
             AbstractCanvas.this.graphicsDisplayChanged(event);
         }
-        
+
     };
-    
-    /**
-     * Renderer used by this canvas
-     */
-    private AbstractContainer container = null;
 
     /**
-     * The title assigned to this canvas, or {@code null} if none. It may be either an instance
-     * of {@link String} or {@link InternationalString}.
+     * Container used by this canvas
      */
-    protected InternationalString title;
-    
+    protected T container;
+
+    /**
+     * Canvas listeners list.
+     */
+    private final EventListenerList canvasListeners = new EventListenerList();
+
     /**
      * The monitor assigned to this canvas, can not be null.
      */
@@ -168,64 +120,35 @@ public abstract class AbstractCanvas extends DisplayObject implements Canvas {
     /**
      * Creates an initially empty canvas.
      *
-     * @param hints   The initial set of hints, or {@code null} if none.
+     * @param hints The initial set of hints, or {@code null} if none.
      */
     protected AbstractCanvas(final Hints hints) {
         super(hints);
-        this.canvasListeners = new EventListenerList();
     }
 
-    /**
-     * Returns the title assigned to this {@code Canvas}, or {@code null} if none. If the title
-     * was {@linkplain #setTitle(InternationalString) defined as an international string}, then
-     * this method returns the title in the {@linkplain #getLocale current locale}.
-     *
-     * @return InternationalString of the title
-     */
-    public synchronized InternationalString getTitle() {
-        return title;
-    }
+    
 
     /**
-     * Sets the title of this {@code Canvas}. The title of a {@code Canvas}
-     * may or may not be displayed on the titlebar of an application's window.
-     * <p>
-     * This method fires a {@value #TITLE_PROPERTY}
-     * property change event.
-     *
-     * @param title The International String title.
+     * Set the graphics container for this canvas.
      */
-    public void setTitle(final InternationalString title) {
-        final InternationalString old;
-        synchronized (this) {
-            old = this.title;
-            this.title = title;
-        }
-        propertyListeners.firePropertyChange(TITLE_PROPERTY, old, title);
-    }
-
-    /**
-     * Set the renderer for this canvas.
-     */
-    public void setContainer(AbstractContainer renderer){
-
+    public void setContainer(T container){
         if(this.container != null){
             this.container.removeContainerListener(containerListener);
         }
-        
-        this.container = renderer;
-        
+
+        this.container = container;
+
         if(this.container != null){
             this.container.addContainerListener(containerListener);
         }
         
     }
-    
+
     /**
-     * Get the current renderer used by the canvas, or null
-     * if the renderer has not be defined.
+     * Get the current graphics container used by the canvas, or null
+     * if the container has not be defined.
      */
-    public AbstractContainer getContainer() {
+    public T getContainer(){
         return container;
     }
 
@@ -250,7 +173,7 @@ public abstract class AbstractCanvas extends DisplayObject implements Canvas {
         if(monitor == null){
             throw new NullPointerException("Canvas monitor can not be null");
         }
-        
+
         final CanvasMonitor old;
         synchronized (this) {
             old = this.monitor;
@@ -258,7 +181,7 @@ public abstract class AbstractCanvas extends DisplayObject implements Canvas {
         }
         propertyListeners.firePropertyChange(MONITOR_PROPERTY, old, monitor);
     }
-    
+
     /**
      * Clears all cached data. Invoking this method may help to release some resources for other
      * applications. It should be invoked when we know that the map is not going to be rendered
@@ -286,24 +209,11 @@ public abstract class AbstractCanvas extends DisplayObject implements Canvas {
      */
     @Override
     public synchronized void dispose() {
+        clearCache();
         if(container != null) container.dispose();
         super.dispose();
     }
 
-    /**
-     * Returns a string representation of this canvas and all its {@link Graphic}s.
-     * The offscreen buffer type, if any, appears in the right column.
-     * This method is for debugging purpose
-     * only and may change in any future version.
-     *
-     * @return String representation of the canvas
-     */
-    @Override
-    public synchronized String toString() {
-        final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(this));
-        buffer.append("[\"").append(getTitle()).append("\" ]");
-        return buffer.toString();
-    }
 
     //--------------Canvas Listeners convinient methods-------------------------
     /**
@@ -329,135 +239,63 @@ public abstract class AbstractCanvas extends DisplayObject implements Canvas {
      * @param event CanvasEvent
      */
     protected void fireCanvasEvent(CanvasEvent event){
-        CanvasListener[] listeners = canvasListeners.getListeners(CanvasListener.class);
-        for(CanvasListener listener : listeners){
+        final CanvasListener[] listeners = canvasListeners.getListeners(CanvasListener.class);
+        for(final CanvasListener listener : listeners){
             listener.canvasChanged(event);
         }
     }
 
     private RenderingState oldState = null;
     protected void fireRenderingStateChanged(RenderingState state){
-        CanvasEvent event = new DefaultCanvasEvent(this, null, null, null, oldState, state);
+        final CanvasEvent event = new DefaultCanvasEvent(this, null, null, null, oldState, state);
         fireCanvasEvent(event);
         oldState = state;
     }
 
-    //-----------------------CRS methods ---------------------------------------
-    /**
-     * Sets the objective Coordinate Reference System for this {@code Canvas}.
-     *
-     * @param  crs The objective coordinate reference system.
-     * @throws TransformException If the data can't be transformed.
-     */
-    public abstract void setObjectiveCRS(final CoordinateReferenceSystem crs) throws TransformException;
-
-    /**
-     * Returns the objective Coordinate Reference System (the projection of a georeferenced CRS)
-     * for this {@code Canvas}. This is the "real world" CRS used for displaying all graphics.
-     * Note that underlying data in graphic primitives don't need to be in terms of this CRS.
-     * Transformations will be applied on the fly as needed at rendering time.
-     *
-     * @return Objective CRS
-     */
-    public abstract CoordinateReferenceSystem getObjectiveCRS();
-
-    /**
-     * Returns the Coordinate Reference System associated with the display of this {@code Canvas}.
-     * Its {@linkplain CoordinateReferenceSystem#getCoordinateSystem coordinate system} corresponds
-     * to the geometry of the display device. It is usually a {@linkplain CartesianCS cartesian} one
-     * for video monitor, but may also be a {@linkplain SphericalCS spherical} one for planetarium.
-     * <p>
-     * When rendering on a flat screen using <cite>Java2D</cite>, axis are oriented as in the
-     * {@linkplain java.awt.Graphics2D Java2D space}: coordinates are in "dots" (about 1/72 of inch),
-     * <var>x</var> values increasing right and <var>y</var> values increasing <strong>down</strong>.
-     * <p>
-     * In the GeotoolKit implementation, the display CRS must be
-     * {@linkplain DerivedCRS#getBaseCRS derived from} the
-     * {@linkplain #getObjectiveCRS objective CRS}. The
-     * {@linkplain DerivedCRS#getConversionFromBase conversion from base} is usually an
-     * {@linkplain AffineTransform affine transform} with the scale terms proportional to the map
-     * {@linkplain CanvasController2D#getScale scale factor}. The
-     * {@linkplain AffineTransform#getScaleY y scale value} is often negative because of the
-     * <var>y</var> axis oriented toward down.
-     *
-     * @return Display CRS
-     * @see ReferencedCanvas#setDisplayCRS
-     */
-    public abstract CoordinateReferenceSystem getDisplayCRS();
-
-    /**
-     * Returns the Coordinate Reference System associated with the device of this {@code Canvas}.
-     * The device CRS is related to the {@linkplain #getDisplayCRS display CRS} in a device
-     * dependent (but zoom independent) way.
-     * <p>
-     * When rendering on screen, device CRS and {@linkplain #getDisplayCRS display CRS} are usually
-     * identical. Those CRS differ more often during printing, in which case the <cite>display to
-     * device</cite> transform depends on the printer resolution. For example in the specific case
-     * of <cite>Java2D</cite>, the {@linkplain #getDisplayCRS display CRS} is defined in such a way
-     * that one display unit is approximatively equals to 1/72 of inch no matter what the printer
-     * resolution is. The display CRS is then what <cite>Java2D</cite> calls
-     * {@linkplain java.awt.Graphics2D user space}, and the <cite>display to device</cite> transform
-     * is the {@linkplain java.awt.GraphicsConfiguration#getDefaultTransform transform mapping
-     * display units do device units}.
-     * <p>
-     * The default implementation returns the {@linkplain #getDisplayCRS display CRS}, i.e. assumes
-     * that the <cite>display to device</cite> transform is the identity transform. Subclasses need
-     * to override this method if they can manage device-dependent transformations. In any case,
-     * the device {@linkplain CoordinateReferenceSystem#getCoordinateSystem coordinate system} must
-     * be the same one then the display coordinate system (not to be confused with coordinate
-     * <em>reference</em> system).
-     * <p>
-     * Most users will deal with the {@linkplain #getDisplayCRS display CRS} rather than this
-     * device CRS.
-     *
-     * @return DerivedCRS
-     * @see ReferencedCanvas#setDeviceCRS
-     */
-    public CoordinateReferenceSystem getDeviceCRS() {
-        return getDisplayCRS();
-    }
-
-    /**
-     * Sets the {@linkplain #getObjectiveCRS objective} to {@linkplain #getDisplayCRS display}
-     * transform to the specified transform. This method is typically invoked by subclasses
-     * every time the zoom change.
-     * <p>
-     * Note that some subclasses may require that the transform is affine.
-     *
-     * @param  transform The {@linkplain #getObjectiveCRS objective} to
-     *         {@linkplain #getDisplayCRS display} transform.
-     * @throws TransformException if the transform can not be set to the specified value.
-     */
-    public abstract void setObjectiveToDisplayTransform(final MathTransform transform)
-            throws TransformException;
-
-    //------------------------Renderer events-----------------------------------    
+    //------------------------container events-----------------------------------
     /**
      * This method is automaticly called when a event is generate by the canvas
-     * renderer when a graphic object is added.
+     * container when a graphic object is added.
      */
     protected void graphicsAdded(ContainerEvent event) {
     }
 
     /**
      * This method is automaticly called when a event is generate by the canvas
-     * renderer when a graphic object is removed.
+     * container when a graphic object is removed.
      */
     protected void graphicsRemoved(ContainerEvent event) {
     }
 
     /**
      * This method is automaticly called when a event is generate by the canvas
-     * renderer when a graphic object changes.
+     * container when a graphic object changes.
      */
     protected void graphicsChanged(ContainerEvent event) {
     }
-    
+
     /**
      * This method is automaticly called when a event is generate by the canvas
-     * renderer when a graphic display changes.
+     * container when a graphic display changes.
      */
     protected void graphicsDisplayChanged(ContainerEvent event) {
+    }
+
+
+    //////////////////////////////////////////////////////////////////////////
+    // Obsolete methods, TODO should be removed from geoapi //////////////////
+    //////////////////////////////////////////////////////////////////////////
+
+    @Override
+    @Deprecated
+    public CanvasState getState() {
+        throw new UnsupportedOperationException("Not supported. Obsolete.");
+    }
+
+    @Override
+    @Deprecated
+    public boolean isVisible(DirectPosition coordinate) {
+        throw new UnsupportedOperationException("Not supported. Obsolete.");
     }
     
 }

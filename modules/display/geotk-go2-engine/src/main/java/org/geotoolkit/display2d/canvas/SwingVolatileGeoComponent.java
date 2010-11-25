@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.display2d.canvas;
 
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.ActionEvent;
@@ -41,7 +40,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 public class SwingVolatileGeoComponent extends JComponent{
 
     private final J2DCanvasVolatile canvas;
-    private Image img = null;
 
     /**
      * Updates the enclosing canvas according various AWT events.
@@ -49,7 +47,8 @@ public class SwingVolatileGeoComponent extends JComponent{
     private final ComponentListener listener = new ComponentAdapter(){
 
         /** Invoked when the component's size changes. */
-        @Override public void componentResized(final ComponentEvent event) {
+        @Override
+        public void componentResized(final ComponentEvent event) {
             synchronized (SwingVolatileGeoComponent.this) {                
                 canvas.resize(SwingVolatileGeoComponent.this.getSize());
             }
@@ -73,7 +72,6 @@ public class SwingVolatileGeoComponent extends JComponent{
             @Override
             public void canvasChanged(CanvasEvent event) {
                 if(RenderingState.RENDERING.equals(event.getNewRenderingstate())){
-                    img = canvas.getVolatile();
                     timer.start();
                 }else{
                     timer.stop();
@@ -91,7 +89,7 @@ public class SwingVolatileGeoComponent extends JComponent{
 
     @Override
     public void paintComponent(final Graphics g) {
-        img = canvas.getVolatile();
+        final Image img = canvas.getVolatile();
 
         if (img != null) {
             g.drawImage(img, 0, 0, this);

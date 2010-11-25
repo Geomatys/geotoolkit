@@ -37,6 +37,7 @@ import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
@@ -65,9 +66,9 @@ final class WCSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 
     @Override
     public Collection<GraphicJ2D> createGraphics(MapLayer layer, Canvas canvas) {
-        if(layer instanceof WCSMapLayer && canvas instanceof ReferencedCanvas2D){
+        if(layer instanceof WCSMapLayer && canvas instanceof J2DCanvas){
             return Collections.singleton((GraphicJ2D)
-                    new WCSGraphic((ReferencedCanvas2D)canvas, (WCSMapLayer)layer));
+                    new WCSGraphic((J2DCanvas)canvas, (WCSMapLayer)layer));
         }else{
             return Collections.emptyList();
         }
@@ -88,8 +89,8 @@ final class WCSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 
         private final WCSMapLayer layer;
 
-        private WCSGraphic(ReferencedCanvas2D canvas, WCSMapLayer layer){
-            super(canvas,canvas.getObjectiveCRS());
+        private WCSGraphic(J2DCanvas canvas, WCSMapLayer layer){
+            super(canvas,canvas.getObjectiveCRS2D());
             this.layer = layer;
         }
 

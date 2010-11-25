@@ -47,10 +47,7 @@ public interface ReferencedGraphic2D extends ReferencedGraphic {
      * {@linkplain AbstractGraphic#getZOrderHint z order hint} changed.
      */
     public static final String Z_ORDER_HINT_PROPERTY = "zOrderHint";
-    
-    @Override
-    ReferencedCanvas2D getCanvas();
-    
+        
     /**
      * Returns the <var>z</var> order hint value for this graphic. Graphics with highest
      * <var>z</var> order will be painted on top of graphics with lowest <var>z</var> order.

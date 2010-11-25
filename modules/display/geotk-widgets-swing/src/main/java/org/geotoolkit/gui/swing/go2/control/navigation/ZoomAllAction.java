@@ -19,7 +19,6 @@ package org.geotoolkit.gui.swing.go2.control.navigation;
 
 import java.awt.event.ActionEvent;
 import java.awt.geom.NoninvertibleTransformException;
-import java.awt.geom.Rectangle2D;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
@@ -29,6 +28,9 @@ import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.util.logging.Logging;
+
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.operation.TransformException;
 
 
 /**
@@ -56,9 +58,11 @@ public class ZoomAllAction extends AbstractAction {
     @Override
     public void actionPerformed(ActionEvent arg0) {
         if (map != null) {
-            Rectangle2D rect = map.getCanvas().getContainer().getGraphicsEnvelope2D();
+            Envelope rect = map.getCanvas().getContainer().getGraphicsEnvelope();
             try {
                 map.getCanvas().getController().setVisibleArea(rect);
+            } catch (TransformException ex) {
+                LOGGER.log(Level.WARNING, null, ex);
             } catch (IllegalArgumentException ex) {
                 LOGGER.log(Level.WARNING, null, ex);
             } catch (NoninvertibleTransformException ex) {

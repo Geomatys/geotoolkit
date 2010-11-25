@@ -19,7 +19,8 @@ package org.geotoolkit.display2d.container.stateless;
 
 import java.util.Collection;
 import java.util.Collections;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.container.ContextGraphicBuilder;
 import org.geotoolkit.map.MapContext;
@@ -35,7 +36,7 @@ public class StatelessContextGraphicBuilder implements ContextGraphicBuilder{
      * {@inheritDoc }
      */
     @Override
-    public Collection<? extends GraphicJ2D> createGraphics(ReferencedCanvas2D canvas, MapContext context) {
+    public Collection<? extends GraphicJ2D> createGraphics(J2DCanvas canvas, MapContext context) {
         return Collections.singleton(new StatelessContextJ2D(canvas, context));
     }
 

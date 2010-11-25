@@ -18,7 +18,6 @@
 package org.geotoolkit.display2d.canvas;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
@@ -31,17 +30,13 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.VolatileImage;
 import java.util.logging.Level;
 
-import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.display.canvas.CanvasController2D;
-import org.geotoolkit.display.canvas.DefaultController2D;
-import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display.canvas.DefaultCanvasController2D;
 import org.geotoolkit.display.container.AbstractContainer;
 import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 
 import org.opengis.display.canvas.RenderingState;
 import org.opengis.geometry.Envelope;
@@ -59,7 +54,6 @@ public class J2DCanvasVolatile extends J2DCanvas{
     private final GraphicsConfiguration GC;
     private final DrawingThread thread;
     private final DelayedController controller = new DelayedController(this);
-    private final DefaultRenderingContext2D context2D = new DefaultRenderingContext2D(this);
     private VolatileImage buffer0;
     private Dimension dim;
     private boolean mustupdate = false;
@@ -88,13 +82,6 @@ public class J2DCanvasVolatile extends J2DCanvas{
     }
 
     @Override
-    public void clearCache() {
-        super.clearCache();
-        buffer0 = null;
-
-    }
-
-    @Override
     public void dispose(){
         super.dispose();
         thread.dispose();
@@ -110,6 +97,7 @@ public class J2DCanvasVolatile extends J2DCanvas{
         if(this.dim == null){
             //first time we affect the size
             this.dim = dim;
+            setDisplayBounds(new Rectangle(dim));
             if(controller.wishedEnvelope!=null){
                 try {
                     controller.setVisibleArea(controller.wishedEnvelope);
@@ -147,28 +135,10 @@ public class J2DCanvasVolatile extends J2DCanvas{
     public CanvasController2D getController() {
         return controller;
     }
-        
-    /**
-     * Returns the display bounds in terms of {@linkplain #getDisplayCRS display CRS}.
-     * If no bounds were {@linkplain #setDisplayBounds explicitly set}, then this method
-     * returns the {@linkplain Component#getBounds() widget bounds}.
-     */
-    @Override
-    public synchronized Shape getDisplayBounds() {
-        Shape bounds = super.getDisplayBounds();
-        if (bounds.equals(XRectangle2D.INFINITY)) {
-            if(dim != null){
-                bounds = new Rectangle(dim);
-            }
-        }
-        return bounds;
-    }
-
-
+    
     private void render(Shape paintingDisplayShape){
 
         if(paintingDisplayShape == null) paintingDisplayShape = getDisplayBounds();
-        final AffineTransform2D old =  new AffineTransform2D(previousObjectiveToDisplay.clone());
 
         final Graphics2D output;
 
@@ -232,12 +202,6 @@ public class J2DCanvasVolatile extends J2DCanvas{
             }
         }
 
-
-        //notify graphics that the affine changed
-        if( !old.equals(context2D.getObjectiveToDisplay()) ){
-            propertyListeners.firePropertyChange(AbstractCanvas.OBJECTIVE_TO_DISPLAY_PROPERTY, old, context2D.getObjectiveToDisplay());
-        }
-
         monitor.renderingStarted();
         fireRenderingStateChanged(RenderingState.RENDERING);
 
@@ -252,12 +216,7 @@ public class J2DCanvasVolatile extends J2DCanvas{
         fireRenderingStateChanged(RenderingState.ON_HOLD);
         monitor.renderingFinished();
     }
-    
-    @Override
-    public void repaint(){
-        repaint(getDisplayBounds().getBounds());
-    }
-    
+        
     @Override
     public Image getSnapShot(){
         if(buffer0 != null){
@@ -273,17 +232,11 @@ public class J2DCanvasVolatile extends J2DCanvas{
     }
 
     @Override
-    protected RenderingContext getRenderingContext() {
-        return context2D;
-    }
-
-    @Override
     public synchronized void repaint(Shape displayArea) {
         this.dirtyArea.add(new Area(displayArea));
         mustupdate = true;
         thread.wake();
     }
-
 
     private class DrawingThread extends Thread {
 
@@ -329,7 +282,7 @@ public class J2DCanvasVolatile extends J2DCanvas{
     /**
      * Stores the requested visible area if the canvas size is not knowned yet.
      */
-    private class DelayedController extends DefaultController2D{
+    private class DelayedController extends DefaultCanvasController2D{
 
         private Envelope wishedEnvelope = null;
 

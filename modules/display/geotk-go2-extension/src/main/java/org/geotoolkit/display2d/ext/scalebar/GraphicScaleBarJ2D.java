@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.display2d.ext.scalebar;
 
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -29,7 +30,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.measure.unit.SI;
 
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.ext.PositionedGraphic2D;
@@ -54,7 +54,7 @@ public class GraphicScaleBarJ2D extends PositionedGraphic2D{
                             3,true,false, new Font("Serial", Font.PLAIN, 12),true,SI.METRE);
 
 
-    public GraphicScaleBarJ2D(ReferencedCanvas2D canvas){
+    public GraphicScaleBarJ2D(J2DCanvas canvas){
         super(canvas);
         setPosition(SOUTH_WEST);
     }

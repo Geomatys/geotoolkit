@@ -24,7 +24,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.display.primitive.AbstractReferencedGraphic2D;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
@@ -70,7 +70,7 @@ public abstract class AbstractContainer2D extends AbstractContainer{
     /**
      * Create a Default Abstract 2D renderer.
      */
-    protected AbstractContainer2D(ReferencedCanvas2D canvas){
+    protected AbstractContainer2D(AbstractReferencedCanvas2D canvas){
         super(canvas);
     }
 
@@ -97,8 +97,8 @@ public abstract class AbstractContainer2D extends AbstractContainer{
     }
 
     @Override
-    public ReferencedCanvas2D getCanvas() {
-        return (ReferencedCanvas2D) super.getCanvas();
+    public AbstractReferencedCanvas2D getCanvas() {
+        return (AbstractReferencedCanvas2D) super.getCanvas();
     }
 
 

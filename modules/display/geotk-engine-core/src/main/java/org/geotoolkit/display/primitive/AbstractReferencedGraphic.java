@@ -20,7 +20,6 @@ package org.geotoolkit.display.primitive;
 import java.beans.PropertyChangeEvent;
 import java.util.List;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.opengis.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;
@@ -32,14 +31,13 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.display.canvas.AbstractCanvas;
+import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.display.canvas.ReferencedCanvas;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
 
@@ -85,7 +83,7 @@ public abstract class AbstractReferencedGraphic extends AbstractGraphic implemen
      * @see #setTypicalCellDimension
      * @see #setZOrderHint
      */
-    protected AbstractReferencedGraphic(final ReferencedCanvas canvas, final CoordinateReferenceSystem crs)
+    protected AbstractReferencedGraphic(final AbstractReferencedCanvas2D canvas, final CoordinateReferenceSystem crs)
             throws IllegalArgumentException {
         super(canvas);
         if (crs == null) {
@@ -97,8 +95,8 @@ public abstract class AbstractReferencedGraphic extends AbstractGraphic implemen
     }
 
     @Override
-    public ReferencedCanvas getCanvas() {
-        return (ReferencedCanvas) super.getCanvas();
+    public AbstractReferencedCanvas2D getCanvas() {
+        return (AbstractReferencedCanvas2D) super.getCanvas();
     }
 
     /**
@@ -112,7 +110,7 @@ public abstract class AbstractReferencedGraphic extends AbstractGraphic implemen
     public void propertyChange(PropertyChangeEvent evt) {
         super.propertyChange(evt);
         
-        if(evt.getPropertyName().equals(AbstractCanvas.OBJECTIVE_CRS_PROPERTY)){
+        if(evt.getPropertyName().equals(AbstractReferencedCanvas2D.OBJECTIVE_CRS_PROPERTY)){
             final CoordinateReferenceSystem newCRS = (CoordinateReferenceSystem) evt.getNewValue();
             try {
                 setObjectiveCRS(newCRS);
@@ -227,8 +225,8 @@ public abstract class AbstractReferencedGraphic extends AbstractGraphic implemen
 
         try {
             final Canvas owner = getCanvas();
-            if (owner instanceof ReferencedCanvas) {
-                return ((ReferencedCanvas) owner).getMathTransform(sourceCRS, targetCRS,
+            if (owner instanceof AbstractReferencedCanvas2D) {
+                return ((AbstractReferencedCanvas2D) owner).getMathTransform(sourceCRS, targetCRS,
                        AbstractReferencedGraphic.class, sourceMethodName);
             } else {
                 return AuthorityFactoryFinder.getCoordinateOperationFactory(null)

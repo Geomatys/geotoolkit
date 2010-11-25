@@ -17,13 +17,6 @@
  */
 package org.geotoolkit.display2d.container;
 
-
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPoint;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
@@ -36,10 +29,10 @@ import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.display.primitive.ReferencedGraphic;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
@@ -47,7 +40,6 @@ import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.display.canvas.CanvasState;
-import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -141,7 +133,7 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
     /**
      * CreContextContainer2D with no particular hints.
      */
-    protected ContextContainer2D(final ReferencedCanvas2D canvas){
+    protected ContextContainer2D(final J2DCanvas canvas){
         super(canvas);
     }
 

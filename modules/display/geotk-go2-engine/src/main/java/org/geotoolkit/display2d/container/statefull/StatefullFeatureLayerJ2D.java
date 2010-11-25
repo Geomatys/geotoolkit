@@ -28,11 +28,11 @@ import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.GO2Hints;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.StatelessFeatureLayerJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
@@ -71,7 +71,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
     private Name[] cachedAttributs = null;
     private double[] oldRes = null;
     
-    public StatefullFeatureLayerJ2D(ReferencedCanvas2D canvas, FeatureMapLayer layer){
+    public StatefullFeatureLayerJ2D(J2DCanvas canvas, FeatureMapLayer layer){
         super(canvas, layer);
         params = new StatefullContextParams(canvas,layer);
         dataCRS = layer.getCollection().getFeatureType().getCoordinateReferenceSystem();

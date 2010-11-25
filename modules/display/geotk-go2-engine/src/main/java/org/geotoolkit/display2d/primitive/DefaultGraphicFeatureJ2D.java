@@ -17,10 +17,9 @@
  */
 package org.geotoolkit.display2d.primitive;
 
-import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
+
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +29,6 @@ import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.primitive.SearchArea;
@@ -42,6 +40,8 @@ import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
+import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;
@@ -84,7 +84,7 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
     private boolean isDisplayCalculated = false;
 
     
-    public DefaultGraphicFeatureJ2D(ReferencedCanvas2D canvas, FeatureMapLayer layer, Feature feature){
+    public DefaultGraphicFeatureJ2D(J2DCanvas canvas, FeatureMapLayer layer, Feature feature){
         super(canvas,feature.getType().getCoordinateReferenceSystem());
         this.layer = layer;
         initFeature(feature);

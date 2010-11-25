@@ -25,7 +25,6 @@ import java.util.logging.Logger;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.display.canvas.VisitFilter;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display.canvas.RenderingContext;
@@ -34,6 +33,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.container.stateless.AbstractLayerJ2D;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
@@ -61,7 +61,7 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
     private CoordinateReferenceSystem dataCRS;
     private CoordinateReferenceSystem lastObjectiveCRS = null;
 
-    public StatefullCoverageLayerJ2D(ReferencedCanvas2D canvas, CoverageMapLayer layer){
+    public StatefullCoverageLayerJ2D(J2DCanvas canvas, CoverageMapLayer layer){
         super(canvas, layer, true);
 
         try {

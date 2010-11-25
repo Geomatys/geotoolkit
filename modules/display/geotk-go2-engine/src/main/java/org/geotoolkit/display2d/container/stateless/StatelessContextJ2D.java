@@ -27,10 +27,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotoolkit.display2d.GO2Hints;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.container.MultiThreadedRendering;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
@@ -64,8 +64,8 @@ public class StatelessContextJ2D extends AbstractGraphicJ2D implements ContextLi
 
     private final MapContext context;
 
-    public StatelessContextJ2D(final ReferencedCanvas2D canvas, final MapContext context) {
-        super(canvas, context.getCoordinateReferenceSystem());
+    public StatelessContextJ2D(final J2DCanvas canvas, final MapContext context) {
+        super(canvas, canvas.getObjectiveCRS2D());
 
         if(context == null){
             throw new NullPointerException("Mapcontext can not be null");
@@ -75,7 +75,7 @@ public class StatelessContextJ2D extends AbstractGraphicJ2D implements ContextLi
 
 
         try {
-            final GeneralEnvelope env = new GeneralEnvelope(canvas.getObjectiveCRS());
+            final GeneralEnvelope env = new GeneralEnvelope(canvas.getObjectiveCRS2D());
             env.setRange(0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
             env.setRange(1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
             setEnvelope(env);

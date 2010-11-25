@@ -42,8 +42,8 @@ import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display.shape.TransformedShape;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.util.XArrays;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -202,7 +202,7 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
      *            a two dimensional {@link CompoundCoordinateSystem#getHeadCS headCS}.
      * @throws IllegalArgumentException if <code>cs</code> is nul.
      */
-    public RenderedMarks(final ReferencedCanvas2D canvas, final CoordinateReferenceSystem crs) {
+    public RenderedMarks(final J2DCanvas canvas, final CoordinateReferenceSystem crs) {
         super(canvas,crs);        
     }
 
@@ -780,7 +780,7 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
     public void propertyChange(PropertyChangeEvent prop) {
 //        super.zoomChanged(change);
         
-        if(prop.getPropertyName().equals(AbstractCanvas.OBJECTIVE_TO_DISPLAY_PROPERTY)){
+        if(prop.getPropertyName().equals(ReferencedCanvas2D.OBJECTIVE_TO_DISPLAY_PROPERTY)){
             invalidate();
             clearCache();
             setDisplayBounds(null);

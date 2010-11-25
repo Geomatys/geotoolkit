@@ -20,7 +20,7 @@ package org.geotoolkit.display2d.container;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.container.statefull.StatefullContextGraphicBuilder;
 import org.geotoolkit.display2d.container.stateless.StatelessContextGraphicBuilder;
@@ -40,7 +40,7 @@ public class DefaultContextContainer2D extends ContextContainer2D{
     private MapContext context = null;
 
 
-    public DefaultContextContainer2D(final ReferencedCanvas2D canvas, final boolean statefull){
+    public DefaultContextContainer2D(final J2DCanvas canvas, final boolean statefull){
         super(canvas);
 
         if(statefull){
@@ -75,7 +75,7 @@ public class DefaultContextContainer2D extends ContextContainer2D{
 
         if(this.context != null){
             //create the new graphics
-            for(final GraphicJ2D graphic : builder.createGraphics(getCanvas(),context)){
+            for(final GraphicJ2D graphic : builder.createGraphics((J2DCanvas) getCanvas(),context)){
                 contextGraphics.add(graphic);
                 //add graphic in the renderer
                 add(graphic);

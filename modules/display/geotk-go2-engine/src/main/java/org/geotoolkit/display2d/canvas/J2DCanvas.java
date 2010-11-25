@@ -18,7 +18,6 @@
 package org.geotoolkit.display2d.canvas;
 
 import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
 import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -29,31 +28,30 @@ import java.util.List;
 import java.util.logging.Level;
 
 import org.geotoolkit.display.canvas.CanvasController2D;
-import org.geotoolkit.display.canvas.DefaultController2D;
 import org.geotoolkit.display.canvas.GraphicVisitor;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
-import org.geotoolkit.display2d.primitive.GraphicJ2D;
-import org.geotoolkit.display.primitive.ReferencedGraphic;
+import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
+import org.geotoolkit.display.canvas.DefaultCanvasController2D;
 import org.geotoolkit.display.container.AbstractContainer;
 import org.geotoolkit.display.container.AbstractContainer2D;
+import org.geotoolkit.display.primitive.ReferencedGraphic;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
-import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
-import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.geotoolkit.factory.Hints;
-import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
-import org.geotoolkit.display2d.style.labeling.LabelRenderer;
 import org.geotoolkit.display2d.canvas.painter.BackgroundPainter;
+import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
+import org.geotoolkit.display2d.primitive.GraphicJ2D;
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
+import org.geotoolkit.display2d.style.labeling.LabelRenderer;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.display.container.ContainerEvent;
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Geometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -61,14 +59,14 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public abstract class J2DCanvas extends ReferencedCanvas2D{
+public abstract class J2DCanvas extends AbstractReferencedCanvas2D{
 
-    protected final CanvasController2D controller = new DefaultController2D(this);
+    protected final CanvasController2D controller = new DefaultCanvasController2D(this);
     protected final DefaultRenderingContext2D context2D = new DefaultRenderingContext2D(this);
 
     protected BackgroundPainter painter = null;
-    
-    protected J2DCanvas(CoordinateReferenceSystem crs,Hints hints){
+
+    protected J2DCanvas(CoordinateReferenceSystem crs,Hints hints) {
         super(crs,hints);
     }
 
@@ -92,8 +90,8 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
      * {@inheritDoc }
      */
     @Override
-    protected RenderingContext getRenderingContext() {
-        return context2D;
+    public AbstractContainer2D getContainer() {
+        return (AbstractContainer2D) super.getContainer();
     }
 
     /**
@@ -103,11 +101,25 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
     protected void graphicsDisplayChanged(final ContainerEvent event) {
         for(Graphic gra : event.getGraphics()){
             if(gra instanceof GraphicJ2D){
-                GraphicJ2D j2d = (GraphicJ2D) gra;
-                Rectangle rect = j2d.getDisplayBounds().getBounds();
-                repaint(rect);
+                final GraphicJ2D j2d = (GraphicJ2D) gra;
+                final Rectangle rect = j2d.getDisplayBounds().getBounds();
+                if(getController().isAutoRepaint()){
+                    repaint(rect);
+                }
             }
         }
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        context2D.dispose();
+    }
+
+    protected Shape getObjectiveBounds() throws TransformException{
+        final MathTransform2D transform = (MathTransform2D) getObjectiveToDisplay().inverse();
+        final Shape bounds = getDisplayBounds();
+        return transform.createTransformedShape(bounds);
     }
 
     /**
@@ -116,36 +128,18 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
      * You may provide a null Graphic2D if you need to prepare a context for only a "hit"
      * operation.
      */
-    public DefaultRenderingContext2D prepareContext(final DefaultRenderingContext2D context, final Graphics2D output, Shape paintingDisplayShape){
+    public DefaultRenderingContext2D prepareContext(final DefaultRenderingContext2D context,
+            final Graphics2D output, Shape paintingDisplayShape){
 
         final Shape canvasDisplayShape = getDisplayBounds();
-        
-        //correct the displayToDevice transform
-        GraphicsConfiguration gc = (output != null) ? output.getDeviceConfiguration() : null;
-        if(gc != null){
-            displayToDevice = new AffineMatrix3(gc.getNormalizingTransform());
-        }else{
-            displayToDevice = new AffineMatrix3();
-        }
 
+        final AffineTransform2D objToDisp = getObjectiveToDisplay();
 
-        final AffineMatrix3 old =  previousObjectiveToDisplay.clone();
-        AffineMatrix3 objToDisp = null;
-
-        //retrieve an affineTransform that will not be modify
-        // while rendering
-        try{
-            objToDisp = setObjectiveToDisplayTransform(canvasDisplayShape.getBounds());
-        }catch(TransformException exception){
-            exception.printStackTrace();
-            return null;
-        }
-        
         if(output != null) output.addRenderingHints(hints);
-        
+
         final Shape canvasObjectShape;
-        
-        try { 
+
+        try {
             canvasObjectShape = getObjectiveBounds();
         } catch (TransformException ex) {
             monitor.exceptionOccured(ex, Level.WARNING);
@@ -188,10 +182,10 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
                 getController().getElevationRange(),
                 dpi.doubleValue());
         if(output != null) context.initGraphic(output);
-        
+
         return context;
     }
-    
+
     protected void render(final RenderingContext2D context2D, final List<Graphic> graphics){
 
         /*
@@ -208,7 +202,7 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
                 ((GraphicJ2D) graphic).paint(context2D);
             }
         }
-        
+
         if(monitor.stopRequested()){
             return;
         }
@@ -216,13 +210,13 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
         //draw the labels
         final LabelRenderer labelRenderer = context2D.getLabelRenderer(false);
         if(labelRenderer != null){
-            try { 
+            try {
                 labelRenderer.portrayLabels();
-            } catch (TransformException ex) { 
+            } catch (TransformException ex) {
                 monitor.exceptionOccured(ex, Level.WARNING);
             }
         }
-        
+
     }
 
     /**
@@ -237,20 +231,20 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
 
         visitor.startVisit();
 
-        final AbstractContainer container = getContainer();
+        final AbstractContainer container = (AbstractContainer) getContainer();
 
         if(container != null){
 
             final List<Graphic> candidates = new ArrayList<Graphic>();
 
-            final DefaultRenderingContext2D searchContext = (DefaultRenderingContext2D)getRenderingContext();
+            final DefaultRenderingContext2D searchContext = context2D;
             prepareContext(searchContext,null,null);
 
             final AffineTransform dispToObj = new AffineTransform(searchContext.getObjectiveToDisplay());
             try {
                 dispToObj.invert();
             } catch (NoninvertibleTransformException ex) {
-                Logging.getLogger(J2DCanvas.class).log(Level.WARNING, null, ex);
+                getLogger().log(Level.WARNING, null, ex);
             }
 
             final Shape objectiveShape = dispToObj.createTransformedShape(displayShape);
@@ -283,7 +277,7 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
 
                     //send the found graphics to the visitor
                     for(final Graphic candidate : candidates){
-                        visitor.visit(candidate,context2D,searchMask);
+                        visitor.visit(candidate,searchContext,searchMask);
 
                         //see if the visitor request a stop---------------------
                         if(visitor.isStopRequested()){ visitor.endVisit(); return; }
@@ -311,7 +305,7 @@ public abstract class J2DCanvas extends ReferencedCanvas2D{
 
                     //send the found graphics to the visitor
                     for(final Graphic candidate : candidates){
-                        visitor.visit(candidate,context2D,searchMask);
+                        visitor.visit(candidate,searchContext,searchMask);
 
                         //see if the visitor request a stop---------------------
                         if(visitor.isStopRequested()){ visitor.endVisit(); return; }

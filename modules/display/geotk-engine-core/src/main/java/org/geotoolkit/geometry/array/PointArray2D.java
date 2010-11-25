@@ -25,7 +25,6 @@ import java.io.Serializable;
 import java.util.RandomAccess;
 import java.util.List;
 
-import org.geotoolkit.display.canvas.ReferencedCanvas;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.coordinate.PointArray;
 import org.opengis.geometry.coordinate.Position;

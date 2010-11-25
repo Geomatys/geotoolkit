@@ -21,9 +21,9 @@ import java.util.Collection;
 import java.util.List;
 
 import org.geotoolkit.display.canvas.VisitFilter;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.map.GraphicBuilder;
@@ -41,7 +41,7 @@ import org.opengis.display.primitive.Graphic;
 public class StatelessDynamicLayerJ2D extends AbstractLayerJ2D<MapLayer>{
     
     
-    public StatelessDynamicLayerJ2D(final ReferencedCanvas2D canvas, final MapLayer layer){
+    public StatelessDynamicLayerJ2D(final J2DCanvas canvas, final MapLayer layer){
         super(canvas, layer);
     }
         

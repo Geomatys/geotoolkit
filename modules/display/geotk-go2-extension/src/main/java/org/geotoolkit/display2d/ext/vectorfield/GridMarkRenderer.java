@@ -21,8 +21,8 @@ package org.geotoolkit.display2d.ext.vectorfield;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
@@ -61,7 +61,7 @@ public class GridMarkRenderer extends AbstractCoverageSymbolizerRenderer<CachedV
             throw new PortrayalException(ex);
         }
 
-        final ReferencedCanvas2D canvas = renderingContext.getCanvas();
+        final J2DCanvas canvas = renderingContext.getCanvas();
 
         if(coverage != null){
             final RenderedGridMarks marks = new RenderedGridMarks(canvas,coverage);

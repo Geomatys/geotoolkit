@@ -18,7 +18,6 @@
 package org.geotoolkit.display2d.container.stateless;
 
 import java.util.Arrays;
-import javax.media.jai.JAI;
 import java.awt.Image;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -35,7 +34,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
-import javax.media.jai.TileRecycler;
 
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
@@ -70,6 +68,7 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.display2d.GO2Hints;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.container.statefull.StatefullCachedRule;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
@@ -113,7 +112,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
     protected Query currentQuery = null;
 
-    public StatelessFeatureLayerJ2D(ReferencedCanvas2D canvas, FeatureMapLayer layer){
+    public StatelessFeatureLayerJ2D(J2DCanvas canvas, FeatureMapLayer layer){
         super(canvas, layer);
     }
 

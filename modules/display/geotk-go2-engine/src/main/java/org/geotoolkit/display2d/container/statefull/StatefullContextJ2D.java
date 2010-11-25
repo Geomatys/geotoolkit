@@ -25,11 +25,11 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.GO2Hints;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.container.MultiThreadedRendering;
 import org.geotoolkit.display2d.container.stateless.StatelessDynamicLayerJ2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -66,7 +66,7 @@ public class StatefullContextJ2D extends AbstractGraphicJ2D implements ContextLi
 
     private final MapContext context;
 
-    public StatefullContextJ2D(final ReferencedCanvas2D canvas, final MapContext context) {
+    public StatefullContextJ2D(final J2DCanvas canvas, final MapContext context) {
         super(canvas, context.getCoordinateReferenceSystem());
 
         if(context == null){

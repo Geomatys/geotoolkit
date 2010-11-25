@@ -23,7 +23,6 @@ import java.util.logging.Logger;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.control.NeverFailMonitor;
 import org.geotoolkit.display2d.canvas.SwingVolatileGeoComponent;
 import org.geotoolkit.display2d.container.ContextContainer2D;
@@ -57,7 +56,7 @@ public class JMap2D extends AbstractMap2D{
         geoComponent = new SwingVolatileGeoComponent(DefaultGeographicCRS.WGS84);
         geoComponent.getCanvas().setMonitor(new NeverFailMonitor());
         setMapComponent(geoComponent);
-        final ReferencedCanvas2D canvas = geoComponent.getCanvas();
+        final J2DCanvas canvas = geoComponent.getCanvas();
         canvas.setContainer(new DefaultContextContainer2D(canvas, statefull));
         canvas.getController().setAutoRepaint(true);
 //        canvas.setRenderingHint(GO2Hints.KEY_GENERALIZE, true);
@@ -73,6 +72,8 @@ public class JMap2D extends AbstractMap2D{
                     // since it may repaint dynamic graphic it would show up all the time
                     return;
                 }
+
+                System.out.println("EVENT " + event.getNewRenderingstate());
 
                 if(RenderingState.ON_HOLD.equals(event.getNewRenderingstate())){
                     getInformationDecoration().setPaintingIconVisible(false);

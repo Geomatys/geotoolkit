@@ -1,0 +1,465 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2005 - 2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2008 - 2010, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotoolkit.display.canvas;
+
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.util.Date;
+import java.util.logging.Level;
+import javax.measure.converter.UnitConverter;
+import javax.measure.quantity.Length;
+import javax.measure.unit.SI;
+import javax.measure.unit.Unit;
+
+import org.geotoolkit.geometry.Envelope2D;
+import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.GeodeticCalculator;
+import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
+
+import org.opengis.geometry.DirectPosition;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.AxisDirection;
+import org.opengis.referencing.cs.CoordinateSystem;
+import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.opengis.referencing.operation.TransformException;
+
+/**
+ *
+ * @author Johann Sorel (Geomatys)
+ * @module pending
+ */
+public class DefaultCanvasController2D extends AbstractCanvasController implements CanvasController2D {
+
+    private static final double DEFAULT_DPI = 90d;
+
+    protected final AbstractReferencedCanvas2D canvas;
+
+    public DefaultCanvasController2D(AbstractReferencedCanvas2D canvas){
+        this.canvas = canvas;
+    }
+
+    @Override
+    public void repaint() {
+        canvas.repaint();
+    }
+
+    @Override
+    public void setAutoRepaint(boolean auto) {
+        canvas.autoRepaint = auto;
+    }
+
+    @Override
+    public boolean isAutoRepaint() {
+        return canvas.autoRepaint;
+    }
+
+    @Override
+    public void setCenter(DirectPosition center) {
+        try {
+            final DirectPosition oldCenter = getCenter();
+            final double diffX = center.getOrdinate(0) - oldCenter.getOrdinate(0);
+            final double diffY = center.getOrdinate(1) - oldCenter.getOrdinate(1);
+            translateObjective(diffX, diffY);
+        } catch (NoninvertibleTransformException ex) {
+            throw new IllegalStateException(ex.getLocalizedMessage(), ex);
+        }
+    }
+
+    @Override
+    public void setObjectiveCRS(CoordinateReferenceSystem crs) throws TransformException {
+       canvas.setObjectiveCRS(crs);
+    }
+
+    @Override
+    public void reset() throws NoninvertibleTransformException {
+        canvas.resetTransform();
+    }
+
+    @Override
+    public Point2D getDisplayCenter() {
+        final Rectangle2D rect = canvas.getDisplayBounds();
+        return new Point2D.Double(rect.getCenterX(), rect.getCenterY());
+    }
+
+    @Override
+    public DirectPosition getCenter() throws NoninvertibleTransformException {
+        final Point2D center = getDisplayCenter();
+        canvas.objToDisp.inverseTransform(center, center);
+        return new GeneralDirectPosition(center);
+    }
+
+    @Override
+    public Envelope getVisibleArea() throws TransformException {
+        final CoordinateReferenceSystem objectiveCRS2D = canvas.getObjectiveCRS2D();
+        final Rectangle2D canvasObjectiveBounds = canvas.getDisplayBounds();
+        return new Envelope2D(objectiveCRS2D, canvasObjectiveBounds);
+    }
+
+    @Override
+    public void setAxisProportions(double prop) {
+        canvas.proportion = prop;
+    }
+
+    @Override
+    public double getAxisProportions() {
+        return canvas.proportion;
+    }
+
+    @Override
+    public AffineTransform2D getTransform() {
+        return canvas.getObjectiveToDisplay();
+    }
+
+    @Override
+    public void rotate(double r) throws NoninvertibleTransformException {
+        rotate(r, getDisplayCenter());
+    }
+
+    @Override
+    public void rotate(double r, Point2D center) throws NoninvertibleTransformException {
+        final AffineTransform change = canvas.objToDisp.createInverse();
+
+        if (center != null) {
+            final double centerX = center.getX();
+            final double centerY = center.getY();
+            change.translate(+centerX, +centerY);
+            change.rotate(-r);
+            change.translate(-centerX, -centerY);
+        }
+
+        change.concatenate(canvas.objToDisp);
+        XAffineTransform.roundIfAlmostInteger(change, EPS);
+        transform(change);
+    }
+
+    @Override
+    public void scale(double s) throws NoninvertibleTransformException {
+        scale(s, getDisplayCenter());
+    }
+
+    @Override
+    public void scale(double s, Point2D center) throws NoninvertibleTransformException {
+        final AffineTransform change = canvas.objToDisp.createInverse();
+
+        if (center != null) {
+            final double centerX = center.getX();
+            final double centerY = center.getY();
+            change.translate(+centerX, +centerY);
+            change.scale(s, s);
+            change.translate(-centerX, -centerY);
+        }
+
+        change.concatenate(canvas.objToDisp);
+        XAffineTransform.roundIfAlmostInteger(change, EPS);
+        transform(change);
+    }
+
+    @Override
+    public void translateDisplay(double x, double y) throws NoninvertibleTransformException {
+        final AffineTransform change = canvas.objToDisp.createInverse();
+        change.translate(x, y);
+        change.concatenate(canvas.objToDisp);
+        XAffineTransform.roundIfAlmostInteger(change, EPS);
+        transform(change);
+    }
+
+    @Override
+    public void translateObjective(double x, double y) throws NoninvertibleTransformException {
+        final Point2D dispCenter = getDisplayCenter();
+        final DirectPosition center = getCenter();
+        Point2D objCenter = new Point2D.Double(center.getOrdinate(0) + x, center.getOrdinate(1) + y);
+        objCenter = canvas.objToDisp.transform(objCenter, objCenter);
+        translateDisplay(dispCenter.getX() - objCenter.getX(), dispCenter.getY() - objCenter.getY());
+    }
+
+    @Override
+    public void transform(AffineTransform change) {
+        canvas.applyTransform(change);
+    }
+
+    @Override
+    public void transformPixels(AffineTransform change) {
+        if (!change.isIdentity()) {
+            final AffineTransform logical;
+            try {
+                logical = canvas.objToDisp.createInverse();
+            } catch (NoninvertibleTransformException exception) {
+                throw new IllegalStateException(exception);
+            }
+            logical.concatenate(change);
+            logical.concatenate(canvas.objToDisp);
+            XAffineTransform.roundIfAlmostInteger(logical, EPS);
+            transform(logical);
+        }
+    }
+
+    @Override
+    public void setRotation(double r) throws NoninvertibleTransformException {
+        double rotation = getRotation();
+        rotate(rotation - r);
+    }
+
+    @Override
+    public double getRotation() {
+        return -XAffineTransform.getRotation(canvas.objToDisp);
+    }
+
+    @Override
+    public void setScale(double newScale) throws NoninvertibleTransformException {
+        final double oldScale = XAffineTransform.getScale(canvas.objToDisp);
+        scale(newScale / oldScale);
+    }
+
+    @Override
+    public double getScale() {
+        return XAffineTransform.getScale(canvas.objToDisp);
+    }
+
+    @Override
+    public void setDisplayVisibleArea(Rectangle2D dipsEnv) {
+        try {
+            Shape shp = canvas.objToDisp.createInverse().createTransformedShape(dipsEnv);
+            setVisibleArea(shp.getBounds2D());
+        } catch (NoninvertibleTransformException ex) {
+            canvas.getLogger().log(Level.WARNING, null, ex);
+        }
+    }
+
+    @Override
+    public void setVisibleArea(Envelope env) throws NoninvertibleTransformException, TransformException {
+        final CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem());
+        Envelope env2D = CRS.transform(env, crs2D);
+
+        //check that the provided envelope is in the canvas crs
+        if(!CRS.equalsIgnoreMetadata(canvas.getObjectiveCRS2D(),crs2D)){
+            env2D = CRS.transform(env2D, canvas.getObjectiveCRS2D());
+        }
+
+        //configure the 2D envelope
+        Rectangle2D rect2D = new Rectangle2D.Double(env2D.getMinimum(0), env2D.getMinimum(1), env2D.getSpan(0), env2D.getSpan(1));
+        canvas.resetTransform(rect2D, true,false);
+
+        //set the temporal and elevation if some
+        final CoordinateSystem cs = env.getCoordinateReferenceSystem().getCoordinateSystem();
+
+        for(int i=0, n= cs.getDimension(); i<n;i++){
+            final CoordinateSystemAxis axis = cs.getAxis(i);
+            final AxisDirection ad = axis.getDirection();
+            if(ad.equals(AxisDirection.FUTURE) || ad.equals(AxisDirection.PAST)){
+                //found a temporal axis
+                final double minT = env.getMinimum(i);
+                final double maxT = env.getMaximum(i);
+                setTemporalRange(toDate(minT), toDate(maxT));
+            } else if(ad.equals(AxisDirection.UP) || ad.equals(AxisDirection.DOWN)){
+                //found a vertical axis
+                final double minT = env.getMinimum(i);
+                final double maxT = env.getMaximum(i);
+                //todo should use the axis unit
+                setElevationRange(minT, maxT, SI.METRE);
+            }
+        }
+    }
+
+    @Override
+    public void setVisibleArea(Rectangle2D logicalBounds) throws IllegalArgumentException, NoninvertibleTransformException {
+        canvas.resetTransform(logicalBounds, true,true);
+    }
+
+    @Override
+    public void setGeographicScale(double scale) throws TransformException {
+        double currentScale = getGeographicScale();
+        double factor = currentScale / scale;
+        try {
+            scale(factor);
+        } catch (NoninvertibleTransformException ex) {
+            canvas.getLogger().log(Level.WARNING, null, ex);
+        }
+    }
+
+    @Override
+    public double getGeographicScale() throws TransformException {
+        final Point2D center = getDisplayCenter();
+        final double[] P1 = new double[]{center.getX(), center.getY()};
+        final double[] P2 = new double[]{P1[0], P1[1] + 1};
+
+        final AffineTransform trs;
+        try {
+            trs = canvas.objToDisp.createInverse();
+        } catch (NoninvertibleTransformException ex) {
+            throw new TransformException(ex.getLocalizedMessage(), ex);
+        }
+        trs.transform(P1, 0, P1, 0, 1);
+        trs.transform(P2, 0, P2, 0, 1);
+
+        final CoordinateReferenceSystem crs = canvas.getObjectiveCRS2D();
+        final Unit unit = crs.getCoordinateSystem().getAxis(0).getUnit();
+
+        final double distance;
+        if (unit.isCompatible(SI.METRE)) {
+            final Point2D p1 = new Point2D.Double(P1[0], P1[1]);
+            final Point2D p2 = new Point2D.Double(P2[0], P2[1]);
+            final UnitConverter conv = unit.getConverterTo(SI.METRE);
+            distance = conv.convert(p1.distance(p2));
+        } else {
+            /*
+             * If the latitude ordinates (for example) are outside the +/-90°
+             * range, translate the points in order to bring them back in the
+             * domain of validity.
+             */
+            final CoordinateSystem cs = crs.getCoordinateSystem();
+            for (int i = cs.getDimension(); --i >= 0;) {
+                final CoordinateSystemAxis axis = cs.getAxis(i);
+                double delta = P1[i] - axis.getMaximumValue();
+                if (delta > 0) {
+                    P1[i] -= delta;
+                    P2[i] -= delta;
+                }
+                delta = P2[i] - axis.getMaximumValue();
+                if (delta > 0) {
+                    P1[i] -= delta;
+                    P2[i] -= delta;
+                }
+                delta = axis.getMinimumValue() - P1[i];
+                if (delta > 0) {
+                    P1[i] += delta;
+                    P2[i] += delta;
+                }
+                delta = axis.getMinimumValue() - P2[i];
+                if (delta > 0) {
+                    P1[i] += delta;
+                    P2[i] += delta;
+                }
+            }
+            final GeodeticCalculator gc = new GeodeticCalculator(crs);
+            final GeneralDirectPosition pos1 = new GeneralDirectPosition(crs);
+            pos1.setOrdinate(0, P1[0]);
+            pos1.setOrdinate(1, P1[1]);
+            final GeneralDirectPosition pos2 = new GeneralDirectPosition(crs);
+            pos2.setOrdinate(0, P2[0]);
+            pos2.setOrdinate(1, P2[1]);
+            try {
+                gc.setStartingPosition(pos1);
+                gc.setDestinationPosition(pos2);
+            } catch (TransformException ex) {
+                throw new TransformException(ex.getLocalizedMessage(), ex);
+            } catch (IllegalArgumentException ex) {
+                //might happen when changing projection and moving the area.
+                //the coordinate can be out of the crs area, which causes this exception
+                throw new TransformException(ex.getLocalizedMessage(), ex);
+            }
+            distance = Math.abs(gc.getOrthodromicDistance());
+        }
+
+        final double displayToDevice = 1f / DEFAULT_DPI * 0.0254f;
+        return distance / displayToDevice;
+    }
+
+    @Override
+    public void setTemporalRange(Date startDate, Date endDate) {
+        final int index = getTemporalAxisIndex();
+        if (index >= 0) {
+            canvas.envelope.setRange(index, startDate.getTime(), endDate.getTime());
+        }
+    }
+
+    @Override
+    public Date[] getTemporalRange() {
+        final int index = getTemporalAxisIndex();
+        if (index >= 0) {
+            final Date[] range = new Date[2];
+            range[0] = new Date((long) canvas.envelope.getMinimum(index));
+            range[1] = new Date((long) canvas.envelope.getMaximum(index));
+            return range;
+        }
+        return null;
+    }
+
+    @Override
+    public void setElevationRange(Double min, Double max, Unit<Length> unit) {
+        final int index = getElevationAxisIndex();
+        if (index >= 0) {
+            canvas.envelope.setRange(index, min, max);
+        }
+    }
+
+    @Override
+    public Double[] getElevationRange() {
+        final int index = getElevationAxisIndex();
+        if (index >= 0) {
+            return new Double[]{canvas.envelope.getMinimum(index), canvas.envelope.getMaximum(index)};
+        }
+        return null;
+    }
+
+    @Override
+    public Unit<Length> getElevationUnit() {
+        final int index = getElevationAxisIndex();
+        if (index >= 0) {
+            return (Unit<Length>) canvas.getObjectiveCRS().getCoordinateSystem().getAxis(index).getUnit();
+        }
+        return null;
+    }
+
+    /**
+     * Find the elevation axis index or -1 if there is none.
+     */
+    private int getElevationAxisIndex() {
+        final CoordinateReferenceSystem objCrs = canvas.getObjectiveCRS();
+        final CoordinateSystem cs = objCrs.getCoordinateSystem();
+        for (int i = 0, n = cs.getDimension(); i < n; i++) {
+            final AxisDirection direction = cs.getAxis(i).getDirection();
+            if (direction == AxisDirection.UP || direction == AxisDirection.DOWN) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Find the temporal axis index or -1 if there is none.
+     */
+    private int getTemporalAxisIndex() {
+        final CoordinateReferenceSystem objCrs = canvas.getObjectiveCRS();
+        final CoordinateSystem cs = objCrs.getCoordinateSystem();
+        for (int i = 0, n = cs.getDimension(); i < n; i++) {
+            final AxisDirection direction = cs.getAxis(i).getDirection();
+            if (direction == AxisDirection.FUTURE || direction == AxisDirection.PAST) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    //convinient methods -------------------------------------------------
+
+    private static Date toDate(double d){
+        if(Double.isNaN(d)){
+            return null;
+        }else{
+            return new Date((long)d);
+        }
+    }
+
+}

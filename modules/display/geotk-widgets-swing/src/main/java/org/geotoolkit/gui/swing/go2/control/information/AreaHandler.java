@@ -40,6 +40,7 @@ import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
 import org.geotoolkit.gui.swing.go2.CanvasHandler;
 import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.go2.control.navigation.MouseNavigatonListener;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.util.logging.Logging;
 
 /**
@@ -128,7 +129,7 @@ public class AreaHandler implements CanvasHandler {
             int mousebutton = e.getButton();
             if (mousebutton == MouseEvent.BUTTON1) {
                 //add a coordinate
-                final AffineMatrix3 trs = map.getCanvas().getController().getTransform();
+                final AffineTransform2D trs = map.getCanvas().getController().getTransform();
                 try {
                     final AffineTransform dispToObj = trs.createInverse();
                     final double[] crds = new double[]{e.getX(),e.getY()};

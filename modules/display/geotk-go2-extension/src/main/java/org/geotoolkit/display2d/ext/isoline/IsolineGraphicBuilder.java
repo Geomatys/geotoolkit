@@ -24,6 +24,7 @@ import java.util.Collections;
 
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
@@ -85,7 +86,7 @@ public class IsolineGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
     public Collection<GraphicJ2D> createGraphics(MapLayer layer, Canvas canvas) {
 
         if(canvas instanceof ReferencedCanvas2D && layer instanceof FeatureMapLayer){
-            final ReferencedCanvas2D refCanvas = (ReferencedCanvas2D) canvas;
+            final J2DCanvas refCanvas = (J2DCanvas) canvas;
             final Collection<GraphicJ2D> graphics = new ArrayList<GraphicJ2D>();
             
             final IsolineGraphicJ2D iso = new IsolineGraphicJ2D(refCanvas,(FeatureMapLayer)layer, extractor);

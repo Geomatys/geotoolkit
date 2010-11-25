@@ -18,7 +18,8 @@
 package org.geotoolkit.display2d.container;
 
 import java.util.Collection;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.map.MapContext;
 
@@ -28,6 +29,6 @@ import org.geotoolkit.map.MapContext;
  */
 public interface ContextGraphicBuilder {
 
-    Collection<? extends GraphicJ2D> createGraphics(ReferencedCanvas2D canvas, MapContext context);
+    Collection<? extends GraphicJ2D> createGraphics(J2DCanvas canvas, MapContext context);
     
 }

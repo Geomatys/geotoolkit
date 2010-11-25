@@ -18,10 +18,10 @@
 package org.geotoolkit.display2d.primitive;
 
 import java.util.List;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.opengis.display.primitive.Graphic;
 
@@ -35,7 +35,7 @@ public class GraphicProbe extends AbstractGraphicJ2D{
 
     private final ProbeMonitor monitor;
 
-    public GraphicProbe(ReferencedCanvas2D canvas, ProbeMonitor monitor){
+    public GraphicProbe(J2DCanvas canvas, ProbeMonitor monitor){
         super(canvas,canvas.getObjectiveCRS2D());
         this.monitor = monitor;
     }

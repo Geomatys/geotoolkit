@@ -52,7 +52,6 @@ import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.stateless.StatelessFeatureLayerJ2D;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -60,6 +59,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.container.statefull.StatefullCoverageLayerJ2D;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -87,7 +87,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
     private boolean interpolateCoverageColor = true;
     private int step = 10;
 
-    public IsolineGraphicJ2D(ReferencedCanvas2D canvas, FeatureMapLayer layer, ValueExtractor extractor) {
+    public IsolineGraphicJ2D(J2DCanvas canvas, FeatureMapLayer layer, ValueExtractor extractor) {
         super(canvas, layer);
         this.extractor = extractor;
 

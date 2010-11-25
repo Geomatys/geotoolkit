@@ -24,9 +24,9 @@ import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
 
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.display.canvas.ReferencedCanvas;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.RenderingContext;
+import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 
 
 /**
@@ -53,7 +53,7 @@ public interface ReferencedGraphic extends Graphic {
      */
     public static final String ENVELOPE_PROPERTY = "envelope";
     
-    ReferencedCanvas getCanvas();
+    AbstractReferencedCanvas2D getCanvas();
 
     /**
      * Returns an envelope that completly encloses the graphic. Note that there is no guarantee

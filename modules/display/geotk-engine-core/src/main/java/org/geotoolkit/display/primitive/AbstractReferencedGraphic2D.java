@@ -24,6 +24,7 @@ import java.beans.PropertyChangeEvent;
 import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.util.Locale;
+import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -117,7 +118,7 @@ public abstract class AbstractReferencedGraphic2D extends AbstractReferencedGrap
      * @see #setTypicalCellDimension
      * @see #setZOrderHint
      */
-    protected AbstractReferencedGraphic2D(final ReferencedCanvas2D canvas) {
+    protected AbstractReferencedGraphic2D(final AbstractReferencedCanvas2D canvas) {
         this(canvas,DefaultEngineeringCRS.GENERIC_2D);
     }
 
@@ -133,16 +134,11 @@ public abstract class AbstractReferencedGraphic2D extends AbstractReferencedGrap
      * @see #setTypicalCellDimension
      * @see #setZOrderHint
      */
-    protected AbstractReferencedGraphic2D(final ReferencedCanvas2D canvas, final CoordinateReferenceSystem crs)
-            throws IllegalArgumentException
-    {
+    protected AbstractReferencedGraphic2D(final AbstractReferencedCanvas2D canvas, final CoordinateReferenceSystem crs)
+            throws IllegalArgumentException {
         super(canvas,to2D(crs));
     }
 
-    @Override
-    public ReferencedCanvas2D getCanvas() {
-        return (ReferencedCanvas2D) super.getCanvas();
-    }
 
     /**
      * Work around for RFE #4093999 in Sun's bug database

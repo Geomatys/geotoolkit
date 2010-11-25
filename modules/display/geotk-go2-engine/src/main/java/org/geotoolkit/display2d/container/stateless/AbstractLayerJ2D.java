@@ -28,7 +28,7 @@ import javax.media.jai.JAI;
 import javax.media.jai.TileFactory;
 import javax.media.jai.TileRecycler;
 
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.LayerListener;
@@ -53,13 +53,13 @@ public abstract class AbstractLayerJ2D<T extends MapLayer> extends AbstractGraph
 
     protected final T layer;
 
-    public AbstractLayerJ2D(final ReferencedCanvas2D canvas, final T layer){
+    public AbstractLayerJ2D(final J2DCanvas canvas, final T layer){
         this(canvas, layer, false);
     }
 
-    public AbstractLayerJ2D(final ReferencedCanvas2D canvas, final T layer, final boolean useLayerEnv){
+    public AbstractLayerJ2D(final J2DCanvas canvas, final T layer, final boolean useLayerEnv){
         //do not use layer crs here, to long to calculate
-        super(canvas, canvas.getObjectiveCRS());
+        super(canvas, canvas.getObjectiveCRS2D());
         //super(canvas, layer.getBounds().getCoordinateReferenceSystem());
         this.layer = layer;
 
@@ -69,7 +69,7 @@ public abstract class AbstractLayerJ2D<T extends MapLayer> extends AbstractGraph
             if (useLayerEnv) {
                 setEnvelope(layer.getBounds());
             } else {
-                final GeneralEnvelope env = new GeneralEnvelope(canvas.getObjectiveCRS());
+                final GeneralEnvelope env = new GeneralEnvelope(canvas.getObjectiveCRS2D());
                 env.setRange(0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
                 env.setRange(1, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
                 setEnvelope(env);

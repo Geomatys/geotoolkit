@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,11 +16,7 @@
  */
 package org.geotoolkit.report.graphic.map;
 
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.NoninvertibleTransformException;
@@ -32,15 +28,13 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRRenderable;
 
 import org.geotoolkit.display.canvas.CanvasController2D;
-import org.geotoolkit.display.canvas.DefaultController2D;
+import org.geotoolkit.display.canvas.DefaultCanvasController2D;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.DefaultRenderingContext2D;
-import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.display.shape.XRectangle2D;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.display.canvas.RenderingState;
@@ -59,17 +53,15 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
 
     private Envelope area = null;
 
-    private final CanvasController2D controller = new DefaultController2D(this){
+    private final CanvasController2D controller = new DefaultCanvasController2D(this){
         @Override
         public void setVisibleArea(Envelope env) throws NoninvertibleTransformException, TransformException {
             super.setVisibleArea(env);
             area = env;
         }
     };
-    private final DefaultRenderingContext2D context2D = new DefaultRenderingContext2D(this);
+
     private Graphics2D g2d = null;
-    private Color background = null;
-    private Dimension dim = new Dimension(1,1);
     
     public CanvasRenderer(MapContext context){
         super(context.getCoordinateReferenceSystem(),null);
@@ -79,19 +71,6 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
         super(DefaultGeographicCRS.WGS84,hints);
     }
 
-    public void setBackground(final Color color){
-        this.background = color;
-    }
-        
-    public void setSize(final Dimension dim){
-        if(dim == null){
-            throw new NullPointerException("Dimension can't be null");
-        }
-        if(dim.width != this.dim.width || dim.height != this.dim.height){
-            setDisplayBounds(new Rectangle(dim));
-            this.dim = dim;
-        }
-    }
     
     /**
      * {@inheritDoc }
@@ -108,7 +87,6 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
     public void dispose(){
         super.dispose();
         context2D.dispose();
-        dim = null;
     }
 
     /**
@@ -118,46 +96,16 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
     public CanvasController2D getController() {
         return controller;
     }
-    
-    /**
-     * Returns the display bounds in terms of {@linkplain #getDisplayCRS display CRS}.
-     * If no bounds were {@linkplain #setDisplayBounds explicitly set}, then this method
-     * returns the {@linkplain Component#getBounds() widget bounds}.
-     */
-    @Override
-    public synchronized Shape getDisplayBounds() {
-        Shape bounds = super.getDisplayBounds();
-        if (bounds.equals(XRectangle2D.INFINITY)) {
-            bounds = new Rectangle(dim);
-        }
-        return bounds;
-    }
-    
+        
     /**
      * {@inheritDoc }
      */
     @Override
-    public void repaint() {
+    public void repaint(Shape area) {
         monitor.renderingStarted();
         fireRenderingStateChanged(RenderingState.RENDERING);
 
         final Graphics2D output = g2d;
-
-        Rectangle clipBounds = output.getClipBounds();
-        /*
-         * Sets a flag for avoiding some "refresh()" events while we are actually painting.
-         * For example some implementation of the GraphicPrimitive2D.paint(...) method may
-         * detects changes since the last rendering and invokes some kind of invalidate(...)
-         * methods before the graphic rendering begin. Invoking those methods may cause in some
-         * indirect way a call to GraphicPrimitive2D.refresh(), which will trig an other widget
-         * repaint. This second repaint is usually not needed, since Graphics usually managed
-         * to update their informations before they start their rendering. Consequently,
-         * disabling repaint events while we are painting help to reduces duplicated rendering.
-         */
-        if (clipBounds == null) {
-            clipBounds = new Rectangle(dim);
-        }
-        output.setClip(clipBounds);
         output.addRenderingHints(hints);
 
         final DefaultRenderingContext2D context = prepareContext(context2D, output,null);
@@ -235,7 +183,9 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
     public void render(Graphics2D g, Rectangle2D rect) throws JRException {
         double rotation = getController().getRotation();
 
-        setSize(new Dimension((int)rect.getWidth(), (int)rect.getHeight()));
+        final Rectangle2D dim = new Rectangle2D.Double(0, 0, rect.getWidth(), rect.getHeight());
+
+        setDisplayBounds(rect);
         try {
             getController().setVisibleArea(area);
             getController().setRotation(rotation);
@@ -249,18 +199,6 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
         g2d.clip(rect);
         g2d.translate(rect.getMinX(), rect.getMinY());
         repaint();
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    protected RenderingContext getRenderingContext() {
-        return context2D;
-    }
-
-    @Override
-    public void repaint(Shape displayArea) {
     }
     
 }

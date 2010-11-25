@@ -6,8 +6,8 @@ import java.awt.Image;
 import java.util.Collection;
 import java.util.Collections;
 
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
@@ -20,8 +20,8 @@ public class LinksGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
     @Override
     public Collection<GraphicJ2D> createGraphics(MapLayer layer, Canvas canvas) {
 
-        if(layer instanceof FeatureMapLayer && canvas instanceof ReferencedCanvas2D){
-            final ReferencedCanvas2D rc = (ReferencedCanvas2D) canvas;
+        if(layer instanceof FeatureMapLayer && canvas instanceof J2DCanvas){
+            final J2DCanvas rc = (J2DCanvas) canvas;
             final FeatureMapLayer fl = (FeatureMapLayer) layer;
             return Collections.singletonList((GraphicJ2D)new LinksGraphic(rc, fl));
         }

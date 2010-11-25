@@ -20,10 +20,8 @@ package org.geotoolkit.display2d.ext.text;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.image.BufferedImage;
 
-import javax.swing.JLabel;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.ext.PositionedGraphic2D;
 
@@ -42,7 +40,7 @@ public class GraphicTextJ2D extends PositionedGraphic2D{
 
     private final TextTemplate template;
 
-    public GraphicTextJ2D(final ReferencedCanvas2D canvas, TextTemplate template){
+    public GraphicTextJ2D(final J2DCanvas canvas, TextTemplate template){
         super(canvas);
         this.template = template;
     }

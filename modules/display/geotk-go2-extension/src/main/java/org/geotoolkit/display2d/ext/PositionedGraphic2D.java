@@ -21,10 +21,10 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.util.List;
 import javax.swing.SwingConstants;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -41,7 +41,7 @@ public abstract class PositionedGraphic2D extends AbstractGraphicJ2D{
     private int[] offset = new int[]{0,0};
     private Dimension minimumCanvasSize = new Dimension(0,0);
 
-    public PositionedGraphic2D(ReferencedCanvas2D canvas) {
+    public PositionedGraphic2D(J2DCanvas canvas) {
         super(canvas,DefaultGeographicCRS.WGS84);
     }
 
