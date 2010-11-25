@@ -107,20 +107,7 @@ public class ImageIOUtilities {
         while (writers.hasNext()) {
             final ImageWriter writer = writers.next();
             final ImageWriterSpi spi = writer.getOriginatingProvider();
-            String line = "\n///////////////////////////////////////////\n";
-            Logger.getAnonymousLogger().log(Level.INFO, line + "// writer:\n" +
-                                                        "// class:" + spi.getClass().getName() + '\n' +
-                                                        "// plugin class:" + spi.getPluginClassName() + '\n' +
-                                                        "// description:" + spi.getDescription(Locale.FRENCH) + '\n' +
-                                                        "// NativeImageMetadataFormatName:" + spi.getNativeImageMetadataFormatName() + '\n' +
-                                                        "// NativeStreamMetadataFormatName:" + spi.getNativeStreamMetadataFormatName() + '\n' +
-                                                        "// Vendor Name:" + spi.getVendorName() + '\n' +
-                                                        "// version:" + spi.getVersion() + line);
-            Logger.getAnonymousLogger().log(Level.INFO, line + "// Image:\n" +
-                                                        "// Color Model:" + image.getColorModel() + '\n' +
-                                                        "// Sample Model:" + image.getSampleModel() + line);
             if (spi.canEncodeImage(image)) {
-                Logger.getAnonymousLogger().log(Level.INFO, "writer selected");
                 return writer;
             }
             n++;
