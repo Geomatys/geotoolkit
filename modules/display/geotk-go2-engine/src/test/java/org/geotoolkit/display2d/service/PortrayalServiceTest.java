@@ -19,25 +19,29 @@ package org.geotoolkit.display2d.service;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
-import java.awt.Color;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import org.geotoolkit.coverage.CoverageStack;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;
-
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.display.canvas.control.StopOnErrorMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.MapBuilder;
@@ -54,17 +58,17 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.opengis.coverage.Coverage;
 
+import org.opengis.coverage.Coverage;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
 
 import static org.junit.Assert.*;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  * Testing portrayal service.
@@ -72,6 +76,8 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Geomatys)
  */
 public class PortrayalServiceTest {
+
+    private static final double EPS = 0.000000001d;
 
     private static final GeometryFactory GF = new GeometryFactory();
     private static final GridCoverageFactory GCF = new GridCoverageFactory();
@@ -261,6 +267,84 @@ public class PortrayalServiceTest {
     public void testCoverageNDRendering() throws Exception{
         //todo
     }
+
+    @Test
+    public void testLongitudeFirst() throws Exception{
+
+        final int[] pixel = new int[4];
+        final int[] red = new int[]{255,0,0,255};
+        final int[] white = new int[]{255,255,255,255};
+
+        final Hints hints = new Hints();
+        hints.put(GO2Hints.KEY_COLOR_MODEL, ColorModel.getRGBdefault());
+
+
+        
+
+        //create a map context with a layer that will cover the entire area we will ask for
+        final GeneralEnvelope covenv = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        covenv.setRange(0, -180, 180);
+        covenv.setRange(1, -90, 90);
+        final BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+        final Graphics2D g = img.createGraphics();
+        g.setColor(Color.RED);
+        g.fill(new Rectangle(0, 0, 360, 180));
+        final GridCoverage2D coverage = GCF.create("test1", img, covenv);
+        final MapLayer layer = MapBuilder.createCoverageLayer(coverage, SF.style(SF.rasterSymbolizer()), "");
+        final MapContext context = MapBuilder.createContext();
+        context.layers().add(layer);
+
+
+        //sanity test, image should be a red vertical band in the middle
+        final CoordinateReferenceSystem epsg4326 = CRS.decode("EPSG:4326");
+        GeneralEnvelope env = new GeneralEnvelope(epsg4326);
+        env.setRange(0, -180, 180);
+        env.setRange(1, -180, 180);
+
+        BufferedImage buffer = DefaultPortrayalService.portray(
+                new CanvasDef(new Dimension(360, 360), Color.WHITE),
+                new SceneDef(context, hints),
+                new ViewDef(env));
+        //ImageIO.write(buffer, "png", new File("sanity.png"));
+        assertEquals(360,buffer.getWidth());
+        assertEquals(360,buffer.getHeight());
+
+        WritableRaster raster = buffer.getRaster();
+        raster.getPixel(0, 0, pixel);       assertArrayEquals(white, pixel);
+        raster.getPixel(359, 0, pixel);     assertArrayEquals(white, pixel);
+        raster.getPixel(359, 359, pixel);   assertArrayEquals(white, pixel);
+        raster.getPixel(0, 359, pixel);     assertArrayEquals(white, pixel);
+        raster.getPixel(180, 0, pixel);     assertArrayEquals(red, pixel);
+        raster.getPixel(180, 359, pixel);   assertArrayEquals(red, pixel);
+        raster.getPixel(0, 180, pixel);     assertArrayEquals(white, pixel);
+        raster.getPixel(359, 180, pixel);   assertArrayEquals(white, pixel);
+
+
+
+        //east=horizontal test, image should be a red horizontal band in the middle
+        buffer = DefaultPortrayalService.portray(
+                new CanvasDef(new Dimension(360, 360), Color.WHITE),
+                new SceneDef(context, hints),
+                new ViewDef(env).setLongitudeFirst());
+        //ImageIO.write(buffer, "png", new File("flip.png"));
+        assertEquals(360,buffer.getWidth());
+        assertEquals(360,buffer.getHeight());
+
+        raster = buffer.getRaster();
+        raster.getPixel(0, 0, pixel);       assertArrayEquals(white, pixel);
+        raster.getPixel(359, 0, pixel);     assertArrayEquals(white, pixel);
+        raster.getPixel(359, 359, pixel);   assertArrayEquals(white, pixel);
+        raster.getPixel(0, 359, pixel);     assertArrayEquals(white, pixel);
+        raster.getPixel(180, 0, pixel);     assertArrayEquals(white, pixel);
+        raster.getPixel(180, 359, pixel);   assertArrayEquals(white, pixel);
+        raster.getPixel(0, 180, pixel);     assertArrayEquals(red, pixel);
+        raster.getPixel(359, 180, pixel);   assertArrayEquals(red, pixel);
+
+
+
+    }
+
+
 
     private void testRendering(MapLayer layer) throws TransformException, PortrayalException{
         final StopOnErrorMonitor monitor = new StopOnErrorMonitor();

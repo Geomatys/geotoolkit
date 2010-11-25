@@ -16,11 +16,15 @@
  */
 package org.geotoolkit.display2d.service;
 
-import java.util.Date;
+
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
+import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * View Definition holds the different navigation parameter of the
@@ -80,4 +84,19 @@ public class ViewDef {
     public String toString() {
         return "ViewDef[envelope=" + envelope + ", azimuth=" + azimuth +"]";
     }
+
+    /**
+     * Test and update the Envelope to ensure that the East-West axis is placed horizontaly.
+     * This has no effect if the axis direction can not determinate.
+     *
+     * @return ViewDef : this same object
+     */
+    public ViewDef setLongitudeFirst() throws TransformException, FactoryException{
+        final Envelope env = getEnvelope();
+        if(env != null){
+            setEnvelope( GO2Utilities.setLongitudeFirst(env) );
+        }
+        return this;
+    }
+
 }

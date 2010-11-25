@@ -22,16 +22,25 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.util.Date;
-import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import org.opengis.geometry.Envelope;
-import static org.junit.Assert.*;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.operation.TransformException;
+
+import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
+
+import static org.junit.Assert.*;
 
 /**
  *
@@ -113,5 +122,55 @@ public class Go2UtilitiesTest {
         assertEquals(0, pt.getY(), DELTA);
 
     }
+
+    @Test
+    public void testLongitudeFirst() throws Exception{
+
+        //test on EPSG:4326
+        final CoordinateReferenceSystem epsg4326 = CRS.decode("EPSG:4326");
+        assertTrue(epsg4326.getCoordinateSystem().getAxis(0).getDirection() == AxisDirection.NORTH);
+        assertTrue(epsg4326.getCoordinateSystem().getAxis(1).getDirection() == AxisDirection.EAST);
+
+        GeneralEnvelope env = new GeneralEnvelope(epsg4326);
+        env.setRange(0, -90, 90);
+        env.setRange(1, -180, 180);
+
+        Envelope fliped = GO2Utilities.setLongitudeFirst(env);
+        CoordinateReferenceSystem flipedcrs = fliped.getCoordinateReferenceSystem();
+        assertTrue(flipedcrs.getCoordinateSystem().getAxis(0).getDirection() == AxisDirection.EAST);
+        assertTrue(flipedcrs.getCoordinateSystem().getAxis(1).getDirection() == AxisDirection.NORTH);
+        assertFalse( fliped.getCoordinateReferenceSystem().equals(epsg4326) );
+        assertEquals(-180, fliped.getMinimum(0),DELTA);
+        assertEquals(180, fliped.getMaximum(0),DELTA);
+        assertEquals(-90, fliped.getMinimum(1),DELTA);
+        assertEquals(90, fliped.getMaximum(1),DELTA);
+
+
+        //test on a compoundCRS
+        CoordinateReferenceSystem comp = new DefaultCompoundCRS("4D crs",
+                    epsg4326,
+                    DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT,
+                    DefaultTemporalCRS.JAVA);
+
+        env = new GeneralEnvelope(comp);
+        env.setRange(0, -90, 90);
+        env.setRange(1, -180, 180);
+        env.setRange(2, 30, 60);
+        env.setRange(3, 1000, 5000);
+
+        fliped = GO2Utilities.setLongitudeFirst(env);
+        flipedcrs = fliped.getCoordinateReferenceSystem();
+        assertFalse( fliped.getCoordinateReferenceSystem().equals(epsg4326) );
+        assertEquals(-180, fliped.getMinimum(0),DELTA);
+        assertEquals(180, fliped.getMaximum(0),DELTA);
+        assertEquals(-90, fliped.getMinimum(1),DELTA);
+        assertEquals(90, fliped.getMaximum(1),DELTA);
+        assertEquals(30, fliped.getMinimum(2),DELTA);
+        assertEquals(60, fliped.getMaximum(2),DELTA);
+        assertEquals(1000, fliped.getMinimum(3),DELTA);
+        assertEquals(5000, fliped.getMaximum(3),DELTA);
+
+    }
+
 
 }
