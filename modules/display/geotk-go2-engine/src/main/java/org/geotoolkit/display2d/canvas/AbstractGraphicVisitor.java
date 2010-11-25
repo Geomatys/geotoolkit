@@ -32,10 +32,19 @@ import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.CoverageMapLayer;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.TemporalCRS;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * A visitor which can be applied to the 
@@ -100,56 +109,75 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
      * first column is the value : Float
      * second column is the unit : Unit
      */
-    protected static Object[][] getCoverageValues(final ProjectedCoverage gra,  RenderingContext2D context, SearchAreaJ2D queryArea){
+    protected static Object[][] getCoverageValues(final ProjectedCoverage gra, RenderingContext2D context, SearchAreaJ2D queryArea){
 
         final CoverageMapLayer layer = gra.getCoverageLayer();
-
-        //find center of the selected area
-        final Rectangle2D bounds2D = queryArea.getObjectiveShape().getBounds2D();
-        final double centerX = bounds2D.getCenterX();
-        final double centerY = bounds2D.getCenterY();
-        final Envelope objBounds = context.getCanvasObjectiveBounds();
-        final double[] resolution = new double[objBounds.getCoordinateReferenceSystem().getCoordinateSystem().getDimension()];
-        resolution[0] = context.getResolution()[0];
-        resolution[1] = context.getResolution()[1];
-
-        final GridCoverageReader reader = layer.getCoverageReader();
-        final GridCoverage2D coverage;
+        Envelope objBounds = context.getCanvasObjectiveBounds();
+        CoordinateReferenceSystem objCRS = objBounds.getCoordinateReferenceSystem();
+        TemporalCRS temporalCRS = CRS.getTemporalCRS(objCRS);
+        if (temporalCRS == null) {
+            /*
+             * If there is no temporal range, arbitrarily select the latest date.
+             * This is necessary otherwise the call to reader.read(...) will scan
+             * every records in the GridCoverages table for the layer.
+             */
+            Envelope timeRange = layer.getBounds();
+            if (timeRange != null) {
+                temporalCRS = CRS.getTemporalCRS(timeRange.getCoordinateReferenceSystem());
+                if (temporalCRS != null) {
+                    try {
+                        timeRange = CRS.transform(timeRange, temporalCRS);
+                    } catch (TransformException e) {
+                        // Should never happen since temporalCRS is a component of layer CRS.
+                        Logging.unexpectedException(AbstractGraphicVisitor.class, "getCoverageValues", e);
+                        return null;
+                    }
+                    final double lastTime = timeRange.getMaximum(0);
+                    objCRS = new DefaultCompoundCRS(objCRS.getName().getCode() + " + time", objCRS, temporalCRS);
+                    final GeneralEnvelope merged = new GeneralEnvelope(objCRS);
+                    merged.setSubEnvelope(objBounds, 0);
+                    merged.setRange(objBounds.getDimension(), lastTime, lastTime);
+                    objBounds = merged;
+                }
+            }
+        }
+        double[] resolution = context.getResolution();
+        resolution = XArrays.resize(resolution, objCRS.getCoordinateSystem().getDimension());
 
         final GridCoverageReadParam param = new GridCoverageReadParam();
         param.setEnvelope(objBounds);
         param.setResolution(resolution);
 
-        try{
+        final GridCoverageReader reader = layer.getCoverageReader();
+        final GridCoverage2D coverage;
+        try {
             coverage = (GridCoverage2D) reader.read(0,param);
-        }catch(CoverageStoreException ex){
+        } catch (CoverageStoreException ex) {
             ex.printStackTrace();
             return null;
         }
 
-        if(coverage == null){
+        if (coverage == null) {
             //no coverage for this BBOX
             return null;
         }
 
-        final GeneralDirectPosition dp = new GeneralDirectPosition(objBounds.getCoordinateReferenceSystem());
-        dp.setOrdinate(0, centerX);
-        dp.setOrdinate(1, centerY);
+        final GeneralDirectPosition dp = new GeneralDirectPosition(objCRS);
+        final Rectangle2D bounds2D = queryArea.getObjectiveShape().getBounds2D();
+        dp.setOrdinate(0, bounds2D.getCenterX());
+        dp.setOrdinate(1, bounds2D.getCenterY());
 
-        final float[] values = new float[coverage.getNumSampleDimensions()];
-        coverage.evaluate(dp,values);
+        float[] values = null;
+        values = coverage.evaluate(dp, values);
 
         final Object[][] results = new Object[values.length][2];
-        for(int i=0; i<values.length; i++){
+        for (int i=0; i<values.length; i++){
             final float value = values[i];
             final GridSampleDimension sample = coverage.getSampleDimension(i);
             final Unit<?> unit = sample.getUnits();
             results[i][0] = value;
             results[i][1] = unit;
-            return results;
         }
-
-        return null;
+        return results;
     }
-    
 }

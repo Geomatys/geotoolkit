@@ -270,7 +270,7 @@ public abstract class AbstractReferencedGraphic extends AbstractGraphic implemen
     protected void setEnvelope(final Envelope newEnvelope) throws TransformException {
         synchronized (getTreeLock()) {                        
             final GeneralEnvelope old = new GeneralEnvelope(envelope);
-            this.envelope.setEnvelope(new GeneralEnvelope(newEnvelope));
+            this.envelope.setEnvelope(newEnvelope);
             setObjectiveCRS(getCanvas().getObjectiveCRS());
             propertyListeners.firePropertyChange(ENVELOPE_PROPERTY, old, envelope);
         }
