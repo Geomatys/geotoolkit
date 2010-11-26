@@ -124,10 +124,15 @@ final class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
             final Dimension dim = context2D.getCanvasDisplayBounds().getSize();
             final double[] resolution = context2D.getResolution(context2D.getDisplayCRS());
 
+            //resolution contain dpi adjustments, to obtain an image of the correct dpi
+            //we raise the request dimension so that when we reduce it it will have the
+            //wanted dpi.
+            dim.width /= resolution[0];
+            dim.height /= resolution[1];
 
             final URL url;
             try {
-                layer.prepareQuery(request, env, dim, resolution);
+                layer.prepareQuery(request, env, dim, null);
                 url = request.getURL();
             } catch (MalformedURLException ex) {
                 monitor.exceptionOccured(new PortrayalException(ex), Level.WARNING);

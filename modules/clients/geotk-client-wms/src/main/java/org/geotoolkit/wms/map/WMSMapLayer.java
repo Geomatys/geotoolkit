@@ -269,7 +269,7 @@ public class WMSMapLayer extends AbstractMapLayer {
      */
     public URL query(Envelope env, final Dimension rect) throws MalformedURLException, TransformException, FactoryException {
         final GetMapRequest request = server.createGetMap();
-        prepareQuery(request, new GeneralEnvelope(env), rect, new double[]{1,1});
+        prepareQuery(request, new GeneralEnvelope(env), rect, null);
         return request.getURL();
     }
 
@@ -285,7 +285,9 @@ public class WMSMapLayer extends AbstractMapLayer {
         final GeneralEnvelope cenv = new GeneralEnvelope(env);
         final Dimension crect = new Dimension(rect);
 
-        prepareQuery(request, cenv, crect, new double[]{1,1});
+        final Point2D pickCoord = new Point2D.Double(x, y);
+
+        prepareQuery(request, cenv, crect, pickCoord);
 
         //recalculate x/y coordinates since there might be a local reprojection
         final CoordinateReferenceSystem beforeCRS = env.getCoordinateReferenceSystem();
@@ -313,8 +315,8 @@ public class WMSMapLayer extends AbstractMapLayer {
             y = (int) point.getY();
 
         }
-        request.setColumnIndex(x);
-        request.setRawIndex(y);
+        request.setColumnIndex( (int)Math.round(pickCoord.getX()) );
+        request.setRawIndex( (int)Math.round(pickCoord.getY()) );
 
         return request.getURL();
     }
@@ -327,8 +329,7 @@ public class WMSMapLayer extends AbstractMapLayer {
      * @param env
      * @param dim
      */
-    void prepareQuery(GetMapRequest request, final GeneralEnvelope env, Dimension dim, double[] resolution) throws TransformException, FactoryException{
-
+    void prepareQuery(GetMapRequest request, final GeneralEnvelope env, Dimension dim, Point2D pickCoord) throws TransformException, FactoryException{
 
         final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
         CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(crs);
@@ -343,6 +344,7 @@ public class WMSMapLayer extends AbstractMapLayer {
             }
 
             //change the 2D crs part of the envelope, preserve other axis
+            final GeneralEnvelope beforeEnv = new GeneralEnvelope(env);
             final GeneralEnvelope trsEnv;
 
             if ((server.getVersion() == WMSVersion.v111) && (CRS.equalsIgnoreMetadata(crs2D, EPSG_4326))) {
@@ -367,6 +369,30 @@ public class WMSMapLayer extends AbstractMapLayer {
                 fakeEnv.setEnvelope(trsEnv);
             }
 
+            //Recalculate pick coordinate according to reverse transformation
+            if(pickCoord != null){
+                //calculate new coordinate in the reprojected query
+                final AffineTransform beforeTrs = GO2Utilities.toAffine(dim,beforeEnv);
+                final AffineTransform afterTrs = GO2Utilities.toAffine(dim,env);
+                try {
+                    afterTrs.invert();
+                } catch (NoninvertibleTransformException ex) {
+                    throw new TransformException("Failed to invert transform.",ex);
+                }
+
+                beforeTrs.transform(pickCoord, pickCoord);
+
+                final DirectPosition pos = new GeneralDirectPosition(env.getCoordinateReferenceSystem());
+                pos.setOrdinate(0, pickCoord.getX());
+                pos.setOrdinate(1, pickCoord.getY());
+
+                final MathTransform trs = CRS.findMathTransform(beforeEnv.getCoordinateReferenceSystem(), env.getCoordinateReferenceSystem());
+                trs.transform(pos, pos);
+
+                pickCoord.setLocation(pos.getOrdinate(0), pos.getOrdinate(1));
+                afterTrs.transform(pickCoord, pickCoord);
+            }
+
         }else{
             
             if ((server.getVersion() == WMSVersion.v111) && (CRS.equalsIgnoreMetadata(crs2D, EPSG_4326))) {
@@ -386,16 +412,9 @@ public class WMSMapLayer extends AbstractMapLayer {
             }
         }
 
-        //resolution contain dpi adjustments, to obtain an image of the correct dpi
-        //we raise the request dimension so that when we reduce it it will have the
-        //wanted dpi.
-        dim.width /= resolution[0];
-        dim.height /= resolution[1];
-
-
         //WMS returns images with EAST-WEST axis first, so we ensure we modify the crs as expected
         final Envelope longFirstEnvelope = GO2Utilities.setLongitudeFirst(env);
-        env.setEnvelope(new GeneralEnvelope(longFirstEnvelope));
+        env.setEnvelope(longFirstEnvelope);
 
         prepareGetMapRequest(request, fakeEnv, dim);
     }
