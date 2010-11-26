@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wms.xml.v130;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -151,28 +152,51 @@ public class WMSCapabilities extends AbstractWMSCapabilities {
      */
     @Override
     public AbstractLayer getLayerFromName(String name) {
-        return searchLayerByName(getCapability().getLayer(), name);
+        final AbstractLayer[] stack = getLayerStackFromName(name);
+        if(stack != null){
+            return stack[stack.length-1];
+        }
+        return null;
     }
 
-    private static AbstractLayer searchLayerByName(Layer candidate, String name){
+    /**
+     * @return true if it founds the layer
+     */
+    private static boolean searchLayerByName(List<AbstractLayer> stack, Layer candidate, String name){
         if(candidate == null){
-            return null;
+            return false;
         }
 
+        //add current layer in the stack
+        stack.add(candidate);
+
         if(name.equals(candidate.getName())){
-            return candidate;
+            return true;
         }
 
         //search it's children
         final List<Layer> layers = candidate.getLayer();
         if(layers != null){
             for(Layer layer : layers){
-                final AbstractLayer v = searchLayerByName(layer, name);
-                if(v != null){
-                    return v;
+                if(searchLayerByName(stack, layer, name)){
+                    return true;
                 }
             }
         }
+
+        //we didn't find the searched layer in this layer, remove it from the stack
+        stack.remove(stack.size()-1);
+        return false;
+    }
+
+    @Override
+    public AbstractLayer[] getLayerStackFromName(String name) {
+        final List<AbstractLayer> stack = new ArrayList<AbstractLayer>();
+
+        if(searchLayerByName(stack, getCapability().getLayer(), name)){
+            return stack.toArray(new AbstractLayer[stack.size()]);
+        }
+
         return null;
     }
 

@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.wms.xml.v111;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -126,14 +128,55 @@ public class WMT_MS_Capabilities extends AbstractWMSCapabilities {
      * Get a specific layer from the capabilities document.
      * 
      */
+    @Override
     public AbstractLayer getLayerFromName(String name) {
-        for( Layer layer : getCapability().getLayer().getLayer()){
-            if(layer != null && layer.getName()!=null && layer.getName().equals(name)){
-                return (AbstractLayer) layer; 
-            }
-        }        
+        final AbstractLayer[] stack = getLayerStackFromName(name);
+        if(stack != null){
+            return stack[stack.length-1];
+        }
         return null;
     }
-   
+
+    /**
+     * @return true if it founds the layer
+     */
+    private static boolean searchLayerByName(List<AbstractLayer> stack, Layer candidate, String name){
+        if(candidate == null){
+            return false;
+        }
+
+        //add current layer in the stack
+        stack.add(candidate);
+
+        if(name.equals(candidate.getName())){
+            return true;
+        }
+
+        //search it's children
+        final List<Layer> layers = candidate.getLayer();
+        if(layers != null){
+            for(Layer layer : layers){
+                if(searchLayerByName(stack, layer, name)){
+                    return true;
+                }
+            }
+        }
+
+        //we didn't find the searched layer in this layer, remove it from the stack
+        stack.remove(stack.size()-1);
+        return false;
+    }
+
+    @Override
+    public AbstractLayer[] getLayerStackFromName(String name) {
+        final List<AbstractLayer> stack = new ArrayList<AbstractLayer>();
+
+        if(searchLayerByName(stack, getCapability().getLayer(), name)){
+            return stack.toArray(new AbstractLayer[stack.size()]);
+        }
+
+        return null;
+    }
+
     
 }

@@ -637,14 +637,15 @@ public class WMSMapLayer extends AbstractMapLayer {
      * @throws FactoryException
      */
     boolean supportCRS(final CoordinateReferenceSystem crs) throws FactoryException {
-        final AbstractLayer layer = server.getCapabilities().getLayerFromName(layers[0]);
+        final AbstractLayer[] stack = server.getCapabilities().getLayerStackFromName(layers[0]);
 
-        final String srid = CRS.lookupIdentifier(crs, true);
-
-        if(layer != null){
-            for (String str : layer.getCRS()) {
-                if (srid.equalsIgnoreCase(str)) {
-                    return true;
+        if(stack != null){
+            final String srid = CRS.lookupIdentifier(crs, true);
+            for(int i=0;i<stack.length;i++){
+                for (String str : stack[i].getCRS()) {
+                    if (srid.equalsIgnoreCase(str)) {
+                        return true;
+                    }
                 }
             }
         }else{

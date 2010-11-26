@@ -58,4 +58,12 @@ public abstract class AbstractWMSCapabilities implements WMSResponse {
      * 
      */
     public abstract AbstractLayer getLayerFromName(String name);
+
+    /**
+     * Get a specific layer from the capabilities document.
+     * The Layer may be contain in other layers, so this is a stack which last
+     * element is the wanted layer.
+     */
+    public abstract AbstractLayer[] getLayerStackFromName(String name);
+
 }
