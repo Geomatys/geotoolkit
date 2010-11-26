@@ -45,12 +45,15 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.wms.GetLegendRequest;
 import org.geotoolkit.wms.GetMapRequest;
 
 import org.opengis.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -124,7 +127,7 @@ final class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 
             final URL url;
             try {
-                layer.prepareQuery(request, env,dim, resolution);
+                layer.prepareQuery(request, env, dim, resolution);
                 url = request.getURL();
             } catch (MalformedURLException ex) {
                 monitor.exceptionOccured(new PortrayalException(ex), Level.WARNING);
@@ -152,9 +155,13 @@ final class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
                 return;
             }
 
-            final AffineTransform2D gridToCRS = new AffineTransform2D(GO2Utilities.toAffine(dim, env));
-            final GridCoverageFactory gc = new GridCoverageFactory();            
+
             try {
+                final CoordinateReferenceSystem crs2d = CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem());
+                final Envelope env2D = CRS.transform(env, crs2d);
+                final AffineTransform2D gridToCRS = new AffineTransform2D(GO2Utilities.toAffine(dim, env2D));
+                final GridCoverageFactory gc = new GridCoverageFactory();
+
                 final GridCoverage2D coverage = gc.create("wms", image,
                     CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem()), gridToCRS, null, null, null);
                 GO2Utilities.portray(context2D, coverage);

@@ -22,23 +22,29 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Length;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
-import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.GeodeticCalculator;
+import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
+import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
+import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -111,10 +117,14 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     }
 
     @Override
-    public Envelope getVisibleArea() throws TransformException {
+    public Envelope getVisibleEnvelope() {
+        return new GeneralEnvelope(canvas.envelope);
+    }
+
+    @Override
+    public Envelope getVisibleEnvelope2D() throws TransformException {
         final CoordinateReferenceSystem objectiveCRS2D = canvas.getObjectiveCRS2D();
-        final Rectangle2D canvasObjectiveBounds = canvas.getDisplayBounds();
-        return new Envelope2D(objectiveCRS2D, canvasObjectiveBounds);
+        return CRS.transform(getVisibleEnvelope(), objectiveCRS2D);
     }
 
     @Override
@@ -248,13 +258,15 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     }
 
     @Override
-    public void setVisibleArea(Envelope env) throws NoninvertibleTransformException, TransformException {
-        final CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem());
-        Envelope env2D = CRS.transform(env, crs2D);
+    public void setVisibleArea(final Envelope env) throws NoninvertibleTransformException, TransformException {
+        final CoordinateReferenceSystem envCRS = env.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem envCRS2D = CRSUtilities.getCRS2D(envCRS);
+        Envelope env2D = CRS.transform(env, envCRS2D);
 
         //check that the provided envelope is in the canvas crs
-        if(!CRS.equalsIgnoreMetadata(canvas.getObjectiveCRS2D(),crs2D)){
-            env2D = CRS.transform(env2D, canvas.getObjectiveCRS2D());
+        final CoordinateReferenceSystem canvasCRS2D = canvas.getObjectiveCRS2D();
+        if(!CRS.equalsIgnoreMetadata(canvasCRS2D,envCRS2D)){
+            env2D = CRS.transform(env2D, canvasCRS2D);
         }
 
         //configure the 2D envelope
@@ -262,7 +274,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
         canvas.resetTransform(rect2D, true,false);
 
         //set the temporal and elevation if some
-        final CoordinateSystem cs = env.getCoordinateReferenceSystem().getCoordinateSystem();
+        final CoordinateSystem cs = envCRS.getCoordinateSystem();
 
         for(int i=0, n= cs.getDimension(); i<n;i++){
             final CoordinateSystemAxis axis = cs.getAxis(i);
@@ -377,8 +389,16 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     }
 
     @Override
-    public void setTemporalRange(Date startDate, Date endDate) {
-        final int index = getTemporalAxisIndex();
+    public void setTemporalRange(Date startDate, Date endDate) throws TransformException {
+        int index = getTemporalAxisIndex();
+        if(index < 0){
+            //no temporal axis, add one
+            CoordinateReferenceSystem crs = canvas.getObjectiveCRS();
+            crs = appendCRS(crs, DefaultTemporalCRS.JAVA);
+            setObjectiveCRS(crs);
+            index = getTemporalAxisIndex();
+        }
+
         if (index >= 0) {
             canvas.envelope.setRange(index, startDate.getTime(), endDate.getTime());
         }
@@ -397,8 +417,16 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     }
 
     @Override
-    public void setElevationRange(Double min, Double max, Unit<Length> unit) {
-        final int index = getElevationAxisIndex();
+    public void setElevationRange(Double min, Double max, Unit<Length> unit) throws TransformException {
+        int index = getElevationAxisIndex();
+        if(index < 0){
+            //no elevation axis, add one
+            CoordinateReferenceSystem crs = canvas.getObjectiveCRS();
+            crs = appendCRS(crs, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);
+            setObjectiveCRS(crs);
+            index = getElevationAxisIndex();
+        }
+
         if (index >= 0) {
             canvas.envelope.setRange(index, min, max);
         }
@@ -421,6 +449,8 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
         }
         return null;
     }
+
+    //convinient methods -------------------------------------------------
 
     /**
      * Find the elevation axis index or -1 if there is none.
@@ -452,7 +482,18 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
         return -1;
     }
 
-    //convinient methods -------------------------------------------------
+    private CoordinateReferenceSystem appendCRS(CoordinateReferenceSystem crs, CoordinateReferenceSystem toAdd){
+        if(crs instanceof CompoundCRS){
+            final CompoundCRS orig = (CompoundCRS) crs;
+            final List<CoordinateReferenceSystem> lst = new ArrayList<CoordinateReferenceSystem>(orig.getComponents());
+            lst.add(toAdd);
+            return new DefaultCompoundCRS(orig.getName().getCode(), lst.toArray(new CoordinateReferenceSystem[lst.size()]));
+        }else{
+            return new DefaultCompoundCRS(crs.getName().getCode()+" "+toAdd.getName().getCode(),crs, toAdd);
+        }
+
+    }
+
 
     private static Date toDate(double d){
         if(Double.isNaN(d)){

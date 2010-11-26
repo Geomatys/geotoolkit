@@ -29,6 +29,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.measure.unit.SI;
 import javax.swing.AbstractAction;
 import javax.swing.JLabel;
@@ -47,6 +49,8 @@ import org.geotoolkit.gui.swing.navigator.DoubleRenderer;
 import org.geotoolkit.gui.swing.navigator.JNavigator;
 import org.geotoolkit.gui.swing.navigator.JNavigatorBand;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.util.logging.Logging;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  *
@@ -54,6 +58,8 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  * @module pending
  */
 public class JMapElevationLine extends JNavigator implements PropertyChangeListener{
+
+    private static final Logger LOGGER = Logging.getLogger(JMapElevationLine.class);
 
     private static final Color MAIN = new Color(0f,0.3f,0.6f,1f);
     private static final Color SECOND = new Color(0f,0.3f,0.6f,0.4f);
@@ -75,7 +81,11 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
                 range[1] = range[1] + step;
             }
 
-            map.getCanvas().getController().setElevationRange(range[0], range[1], null);
+            try{
+                map.getCanvas().getController().setElevationRange(range[0], range[1], null);
+            } catch (TransformException ex) {
+                LOGGER.log(Level.WARNING, null, ex);
+            }
         }
     };
 
@@ -89,7 +99,11 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
                 if(vh.isInfinite()) vh = null;
                 if(vb.isInfinite()) vb = null;
 
-                map.getCanvas().getController().setElevationRange(vb, vh, SI.METRE);
+                try{
+                    map.getCanvas().getController().setElevationRange(vb, vh, SI.METRE);
+                } catch (TransformException ex) {
+                    LOGGER.log(Level.WARNING, null, ex);
+                }
             }
         };
 
@@ -153,14 +167,18 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
                         if (getMap() != null && popupEdit != null) {
                             final CanvasController2D controller = getMap().getCanvas().getController();
                             final Double[] range = controller.getElevationRange();
-                            if (range == null || range[0] == null || range[1] == null) {
-                                controller.setElevationRange(popupEdit, popupEdit,null);
-                            } else {
-                                double middle = (range[0] + range[1]) / 2l;
-                                double step = popupEdit - middle;
-                                double start = range[0] + step;
-                                double end = range[1] + step;
-                                getMap().getCanvas().getController().setElevationRange(start, end, null);
+                            try{
+                                if (range == null || range[0] == null || range[1] == null) {
+                                    controller.setElevationRange(popupEdit, popupEdit,null);
+                                } else {
+                                    double middle = (range[0] + range[1]) / 2l;
+                                    double step = popupEdit - middle;
+                                    double start = range[0] + step;
+                                    double end = range[1] + step;
+                                    getMap().getCanvas().getController().setElevationRange(start, end, null);
+                                }
+                            } catch (TransformException ex) {
+                                LOGGER.log(Level.WARNING, null, ex);
                             }
                             JMapElevationLine.this.repaint();
                         }
@@ -179,10 +197,14 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
                         if(getMap() != null && popupEdit != null){
                             final CanvasController2D controller = getMap().getCanvas().getController();
                             final Double[] range = controller.getElevationRange();
-                            if(range == null){
-                                controller.setElevationRange(popupEdit, popupEdit, null);
-                            }else{
-                                controller.setElevationRange(range[0],popupEdit, null);
+                            try{
+                                if(range == null){
+                                    controller.setElevationRange(popupEdit, popupEdit, null);
+                                }else{
+                                    controller.setElevationRange(range[0],popupEdit, null);
+                                }
+                            } catch (TransformException ex) {
+                                LOGGER.log(Level.WARNING, null, ex);
                             }
                             JMapElevationLine.this.repaint();
                         }
@@ -206,10 +228,14 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
                         if(getMap() != null && popupEdit != null){
                             final CanvasController2D controller = getMap().getCanvas().getController();
                             final Double[] range = controller.getElevationRange();
-                            if(range == null){
-                                controller.setElevationRange(popupEdit, popupEdit, null);
-                            }else{
-                                controller.setElevationRange(popupEdit, range[1], null);
+                            try{
+                                if(range == null){
+                                    controller.setElevationRange(popupEdit, popupEdit, null);
+                                }else{
+                                    controller.setElevationRange(popupEdit, range[1], null);
+                                }
+                            } catch (TransformException ex) {
+                                LOGGER.log(Level.WARNING, null, ex);
                             }
                             JMapElevationLine.this.repaint();
                         }
@@ -236,7 +262,11 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
                     public void actionPerformed(ActionEvent e) {
                         if(getMap() != null && popupEdit != null){
                             final CanvasController2D controller = getMap().getCanvas().getController();
-                            controller.setElevationRange(null, null, null);
+                            try{
+                                controller.setElevationRange(null, null, null);
+                            } catch (TransformException ex) {
+                                LOGGER.log(Level.WARNING, null, ex);
+                            }
                             JMapElevationLine.this.repaint();
                         }
                     }
@@ -262,7 +292,11 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
                             final Double[] range = controller.getElevationRange();
                             if(range != null){
                                 range[1] = null;
-                                controller.setElevationRange(range[0], range[1], null);
+                                try{
+                                    controller.setElevationRange(range[0], range[1], null);
+                                } catch (TransformException ex) {
+                                    LOGGER.log(Level.WARNING, null, ex);
+                                }
                             }
                             JMapElevationLine.this.repaint();
                         }
@@ -288,7 +322,11 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
                             final Double[] range = controller.getElevationRange();
                             if(range != null){
                                 range[0] = null;
-                                controller.setElevationRange(range[0], range[1], null);
+                                try{
+                                    controller.setElevationRange(range[0], range[1], null);
+                                } catch (TransformException ex) {
+                                    LOGGER.log(Level.WARNING, null, ex);
+                                }
                             }
                             JMapElevationLine.this.repaint();
                         }
@@ -407,16 +445,20 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
 
             final Double[] range = map.getCanvas().getController().getElevationRange();
 
-            if(selected == 0){
-                map.getCanvas().getController().setElevationRange(edit, range[1], null);
-            }else if(selected == 2){
-                map.getCanvas().getController().setElevationRange(range[0], edit, null);
-            }else if(selected == 1){
-                double middle = (range[0] + range[1]) / 2d;
-                double step = edit - middle;
-                double start = range[0] + step;
-                double end = range[1] + step;
-                map.getCanvas().getController().setElevationRange(start, end, null);
+            try{
+                if(selected == 0){
+                    map.getCanvas().getController().setElevationRange(edit, range[1], null);
+                }else if(selected == 2){
+                    map.getCanvas().getController().setElevationRange(range[0], edit, null);
+                }else if(selected == 1){
+                    double middle = (range[0] + range[1]) / 2d;
+                    double step = edit - middle;
+                    double start = range[0] + step;
+                    double end = range[1] + step;
+                    map.getCanvas().getController().setElevationRange(start, end, null);
+                }
+            } catch (TransformException ex) {
+                LOGGER.log(Level.WARNING, null, ex);
             }
 
             repaint();

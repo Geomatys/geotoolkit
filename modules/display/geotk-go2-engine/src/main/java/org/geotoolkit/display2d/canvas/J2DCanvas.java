@@ -172,14 +172,12 @@ public abstract class J2DCanvas extends AbstractReferencedCanvas2D{
         }
 
         context.initParameters(
-                new AffineTransform2D(objToDisp),
+                objToDisp,
                 monitor,
                 paintingDisplayShape,
                 paintingObjectiveShape,
                 canvasDisplayShape,
                 canvasObjectShape,
-                getController().getTemporalRange(),
-                getController().getElevationRange(),
                 dpi.doubleValue());
         if(output != null) context.initGraphic(output);
 

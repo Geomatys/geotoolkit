@@ -44,6 +44,7 @@ import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.converter.Classes;
 
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.DerivedCRS;
 import org.opengis.referencing.crs.GeneralDerivedCRS;
@@ -74,7 +75,7 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
     private final transient Map<CoordinateReferenceSystem,MathTransform> transforms =
             new HashMap<CoordinateReferenceSystem,MathTransform>();
 
-    private final Rectangle2D.Double displayBounds = new Rectangle2D.Double();
+    private final Rectangle2D.Double displayBounds = new Rectangle2D.Double(0, 0, 0, 0);
     final AffineTransform objToDisp = new AffineTransform(1, 0, 0, 1, 0, 0);
     GeneralEnvelope envelope = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
 
@@ -122,11 +123,34 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
             return;
         }
 
+        //store the visible area to restore it later
+        Envelope preserve = null;
+        if(!displayBounds.isEmpty()){
+            preserve = getController().getVisibleEnvelope();
+        }
+
+        try {
+            resetTransform();
+        } catch (NoninvertibleTransformException ex) {
+            throw new TransformException("Fail to change objective CRS", ex);
+        }
+
         final CoordinateReferenceSystem oldObjectiveCRS = envelope.getCoordinateReferenceSystem();
-        resetTransform();
-        envelope = new GeneralEnvelope(objective); //TODO we should try to preserve temporal and elevation axis
+
+        envelope = new GeneralEnvelope(objective);
         objectiveCRS2D = CRSUtilities.getCRS2D(objective);
         propertyListeners.firePropertyChange(OBJECTIVE_CRS_PROPERTY, oldObjectiveCRS, envelope.getCoordinateReferenceSystem());
+
+        if(preserve != null){
+            //restore previous visible area
+            preserve = CRS.transform(preserve, objectiveCRS2D);
+            try {
+                getController().setVisibleArea(preserve);
+            } catch (NoninvertibleTransformException ex) {
+                throw new TransformException("Fail to change objective CRS", ex);
+            }
+        }
+
     }
 
     @Override
@@ -164,21 +188,37 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
         }
     }
 
+    private void updateEnvelope() {
+        final Rectangle2D canvasDisplayBounds = getDisplayBounds();
+        final Rectangle2D canvasObjectiveBounds;
+        try {
+            canvasObjectiveBounds = objToDisp.createInverse().createTransformedShape(canvasDisplayBounds).getBounds2D();
+        } catch (NoninvertibleTransformException ex) {
+            getLogger().log(Level.SEVERE, "Failed to calculate canvas objective bounds", ex);
+            return;
+        }
+        envelope.setRange(0, canvasObjectiveBounds.getMinX(), canvasObjectiveBounds.getMaxX());
+        envelope.setRange(1, canvasObjectiveBounds.getMinY(), canvasObjectiveBounds.getMaxY());
+    }
+
     void applyTransform(AffineTransform change){
         if (!change.isIdentity()) {
+            final AffineTransform2D old = getObjectiveToDisplay();
+
             displayCRS = null; //clear display crs cache
             objToDisp.concatenate(change);
             XAffineTransform.roundIfAlmostInteger(objToDisp, EPS);
+
+            //fire event and repaint
+            updateEnvelope();
+            propertyListeners.firePropertyChange(OBJECTIVE_TO_DISPLAY_PROPERTY, old, getObjectiveToDisplay());
             repaintIfAuto();
+
         }
     }
 
-    void resetTransform(){
-        displayCRS = null; //clear display crs cache
-        final AffineTransform2D old = getObjectiveToDisplay();
-        objToDisp.setTransform(1, 0, 0, 1, 0, 0);
-        propertyListeners.firePropertyChange(OBJECTIVE_TO_DISPLAY_PROPERTY, old, getObjectiveToDisplay());
-        repaintIfAuto();
+    void resetTransform() throws NoninvertibleTransformException{
+        resetTransform(new Rectangle(1, 1), true, false);
     }
 
     /**
@@ -235,6 +275,7 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
                 }
 
                 //fire event and repaint
+                updateEnvelope();
                 propertyListeners.firePropertyChange(OBJECTIVE_TO_DISPLAY_PROPERTY, old, getObjectiveToDisplay());
                 repaintIfAuto();
             }

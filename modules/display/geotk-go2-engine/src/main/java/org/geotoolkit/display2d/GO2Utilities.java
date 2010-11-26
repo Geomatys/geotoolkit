@@ -121,8 +121,6 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.Literal;
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.referencing.crs.CRSAuthorityFactory;
-import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
@@ -698,6 +696,80 @@ public final class GO2Utilities {
         final CoordinateReferenceSystem originalCRS = env.getCoordinateReferenceSystem();
         final CoordinateReferenceSystem targetCRS = change2DComponent(originalCRS, crs2D);
         return CRS.transform(env, targetCRS);
+    }
+
+    /**
+     * Tryes to change a coordinate reference system axis order to place the east axis first.
+     * Reproject the envelope.
+     */
+    public static Envelope setLongitudeFirst(Envelope env) throws TransformException, FactoryException{
+        if(env == null) return env;
+
+        final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem flipped = setLongitudeFirst(crs);
+        return CRS.transform(env, flipped);
+    }
+
+    /**
+     * Tryes to change a coordinate reference system axis order to place the east axis first.
+     */
+    public static CoordinateReferenceSystem setLongitudeFirst(CoordinateReferenceSystem crs) throws FactoryException{
+        if(crs instanceof SingleCRS){
+            final SingleCRS singlecrs = (SingleCRS) crs;
+            final CoordinateSystem cs = singlecrs.getCoordinateSystem();
+            final int dimension = cs.getDimension();
+
+            if(dimension <=1){
+                //can't change anything if it's only one axis
+                return crs;
+            }
+
+            //find the east axis
+            int eastAxis = -1;
+            for(int i=0; i<dimension; i++){
+                final AxisDirection firstAxis = cs.getAxis(i).getDirection();
+                if(firstAxis == AxisDirection.EAST || firstAxis == AxisDirection.WEST){
+                    eastAxis = i;
+                    break;
+                }
+            }
+
+            if(eastAxis == -1 || eastAxis == 0){
+                //the crs is already in the correct order or does not have any east axis
+                return singlecrs;
+            }
+
+            //try to change the crs axis
+            final String id = CRS.lookupIdentifier(singlecrs, true);
+            if(id != null){
+                return CRS.decode(id, true);
+            }else{
+                //TODO how to manage custom crs ? might be a derivedCRS.
+                throw new FactoryException("Failed to create flipped axis for crs : " + singlecrs);
+            }
+
+        }else if(crs instanceof CompoundCRS){
+            final CompoundCRS compoundcrs = (CompoundCRS) crs;
+
+            final List<CoordinateReferenceSystem> components = compoundcrs.getComponents();
+            final int size = components.size();
+            final CoordinateReferenceSystem[] parts = new CoordinateReferenceSystem[size];
+
+            //only recreate the crs if one element changed.
+            boolean changed = false;
+            for(int i=0; i<size; i++){
+                final CoordinateReferenceSystem orig = components.get(i);
+                parts[i] = setLongitudeFirst(orig);
+                if(!parts[i].equals(orig)) changed = true;
+            }
+
+            if(changed){
+                return new DefaultCompoundCRS(compoundcrs.getName().getCode(), parts);
+            }else{
+                return crs;
+            }
+        }
+        return crs;
     }
 
     /**
@@ -1419,74 +1491,6 @@ public final class GO2Utilities {
         final int b = Math.min(c1.getBlue(), c2.getBlue())      + (int) (Math.abs(c1.getBlue()-c2.getBlue())*alpha);
 
         return new Color(r, g, b);
-    }
-
-    /**
-     * Tryes to change a coordinate reference system axis order to place the east axis first.
-     * Reproject the envelope.
-     */
-    public static Envelope setLongitudeFirst(Envelope env) throws TransformException, FactoryException{
-        if(env == null) return env;
-
-        final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
-        final CoordinateReferenceSystem flipped = setLongitudeFirst(crs);
-        return CRS.transform(env, flipped);
-    }
-
-    /**
-     * Tryes to change a coordinate reference system axis order to place the east axis first.
-     */
-    public static CoordinateReferenceSystem setLongitudeFirst(CoordinateReferenceSystem crs) throws FactoryException{
-        if(crs instanceof SingleCRS){
-            final SingleCRS singlecrs = (SingleCRS) crs;
-            final CoordinateSystem cs = singlecrs.getCoordinateSystem();
-            final int dimension = cs.getDimension();
-
-            if(dimension <=1){
-                //can't change anything if it's only one axis
-                return crs;
-            }
-
-            //find the east axis
-            int eastAxis = -1;
-            for(int i=0; i<dimension; i++){
-                final AxisDirection firstAxis = cs.getAxis(i).getDirection();
-                if(firstAxis == AxisDirection.EAST || firstAxis == AxisDirection.WEST){
-                    eastAxis = i;
-                    break;
-                }
-            }
-
-            if(eastAxis == -1 || eastAxis == 0){
-                //the crs is already in the correct order or does not have any east axis
-                return singlecrs;
-            }
-
-            //try to change the crs axis
-            final String id = CRS.lookupIdentifier(singlecrs, true);
-            if(id != null){
-                final CRSAuthorityFactory factory = CRS.getAuthorityFactory(Boolean.TRUE);
-                return factory.createCoordinateReferenceSystem(id);
-            }else{
-                //TODO how to manage custom crs ? might be a derivedCRS.
-                throw new FactoryException("Failed to create flipped axis for crs : " + singlecrs);
-            }
-
-        }else if(crs instanceof CompoundCRS){
-            final CompoundCRS compoundcrs = (CompoundCRS) crs;
-
-            final List<CoordinateReferenceSystem> components = compoundcrs.getComponents();
-            final int size = components.size();
-            final CoordinateReferenceSystem[] parts = new CoordinateReferenceSystem[size];
-
-            for(int i=0; i<size; i++){
-                parts[i] = setLongitudeFirst(components.get(i));
-            }
-
-            return new DefaultCompoundCRS(compoundcrs.getName().getCode(), parts);
-        }
-
-        return crs;
     }
 
 }

@@ -327,7 +327,7 @@ public class WMSMapLayer extends AbstractMapLayer {
      * @param env
      * @param dim
      */
-    void prepareQuery(GetMapRequest request, GeneralEnvelope env, Dimension dim, double[] resolution) throws TransformException, FactoryException{
+    void prepareQuery(GetMapRequest request, final GeneralEnvelope env, Dimension dim, double[] resolution) throws TransformException, FactoryException{
 
 
         final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
@@ -338,8 +338,8 @@ public class WMSMapLayer extends AbstractMapLayer {
         if (isUseLocalReprojection() && !supportCRS(crs2D)) {
             crs2D = findOriginalCRS();
             if(crs2D == null){
-                //last chance use : CRS:84
-                crs2D = WGS84;
+                //last chance use : EPSG:4326
+                crs2D = EPSG_4326;
             }
 
             //change the 2D crs part of the envelope, preserve other axis
@@ -391,6 +391,11 @@ public class WMSMapLayer extends AbstractMapLayer {
         //wanted dpi.
         dim.width /= resolution[0];
         dim.height /= resolution[1];
+
+
+        //WMS returns images with EAST-WEST axis first, so we ensure we modify the crs as expected
+        final Envelope longFirstEnvelope = GO2Utilities.setLongitudeFirst(env);
+        env.setEnvelope(new GeneralEnvelope(longFirstEnvelope));
 
         prepareGetMapRequest(request, fakeEnv, dim);
     }

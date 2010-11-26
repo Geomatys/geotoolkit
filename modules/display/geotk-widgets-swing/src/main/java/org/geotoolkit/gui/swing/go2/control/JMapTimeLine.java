@@ -29,6 +29,8 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -39,6 +41,8 @@ import org.geotoolkit.gui.swing.navigator.DateRenderer;
 import org.geotoolkit.gui.swing.navigator.JNavigator;
 import org.geotoolkit.gui.swing.navigator.JNavigatorBand;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.util.logging.Logging;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Extension of a JTimeline displaying the temporal range
@@ -48,6 +52,8 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  * @module pending
  */
 public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
+
+    private static final Logger LOGGER = Logging.getLogger(JMapTimeLine.class);
 
     private static final Color MAIN = new Color(0f,0.3f,0.6f,1f);
     private static final Color SECOND = new Color(0f,0.3f,0.6f,0.4f);
@@ -67,8 +73,11 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
             if(range[1] != null){
                 range[1] = new Date(range[1].getTime() + (long)step);
             }
-
-            map.getCanvas().getController().setTemporalRange(range[0], range[1]);
+            try {
+                map.getCanvas().getController().setTemporalRange(range[0], range[1]);
+            } catch (TransformException ex) {
+                LOGGER.log(Level.WARNING, null, ex);
+            }
         }
     };
     private volatile Map2D map = null;
@@ -106,14 +115,18 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
                         if (getMap() != null && popupEdit != null) {
                             final CanvasController2D controller = getMap().getCanvas().getController();
                             final Date[] range = controller.getTemporalRange();
-                            if (range == null || range[0] == null || range[1] == null) {
-                                controller.setTemporalRange(popupEdit, popupEdit);
-                            } else {
-                                long middleDate = (range[0].getTime() + range[1].getTime()) / 2l;
-                                long step = popupEdit.getTime() - middleDate;
-                                Date start = new Date(range[0].getTime() + step);
-                                Date end = new Date(range[1].getTime() + step);
-                                getMap().getCanvas().getController().setTemporalRange(start, end);
+                            try{
+                                if (range == null || range[0] == null || range[1] == null) {
+                                    controller.setTemporalRange(popupEdit, popupEdit);
+                                } else {
+                                    long middleDate = (range[0].getTime() + range[1].getTime()) / 2l;
+                                    long step = popupEdit.getTime() - middleDate;
+                                    Date start = new Date(range[0].getTime() + step);
+                                    Date end = new Date(range[1].getTime() + step);
+                                    controller.setTemporalRange(start, end);
+                                }
+                            }catch(TransformException ex){
+                                LOGGER.log(Level.WARNING, null,ex);
                             }
                             JMapTimeLine.this.repaint();
                         }
@@ -132,10 +145,14 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
                         if(getMap() != null && popupEdit != null){
                             final CanvasController2D controller = getMap().getCanvas().getController();
                             final Date[] range = controller.getTemporalRange();
-                            if(range == null){
-                                controller.setTemporalRange(popupEdit, popupEdit);
-                            }else{
-                                controller.setTemporalRange(popupEdit, range[1]);
+                            try{
+                                if(range == null){
+                                    controller.setTemporalRange(popupEdit, popupEdit);
+                                }else{
+                                    controller.setTemporalRange(popupEdit, range[1]);
+                                }
+                            }catch(TransformException ex){
+                                LOGGER.log(Level.WARNING, null,ex);
                             }
                             JMapTimeLine.this.repaint();
                         }
@@ -159,10 +176,14 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
                         if(getMap() != null && popupEdit != null){
                             final CanvasController2D controller = getMap().getCanvas().getController();
                             final Date[] range = controller.getTemporalRange();
-                            if(range == null){
-                                controller.setTemporalRange(popupEdit, popupEdit);
-                            }else{
-                                controller.setTemporalRange(range[0],popupEdit);
+                            try{
+                                if(range == null){
+                                    controller.setTemporalRange(popupEdit, popupEdit);
+                                }else{
+                                    controller.setTemporalRange(range[0],popupEdit);
+                                }
+                            }catch(TransformException ex){
+                                LOGGER.log(Level.WARNING, null,ex);
                             }
                             JMapTimeLine.this.repaint();
                         }
@@ -188,7 +209,11 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
                     public void actionPerformed(ActionEvent e) {
                         if(getMap() != null && popupEdit != null){
                             final CanvasController2D controller = getMap().getCanvas().getController();
-                            controller.setTemporalRange(null, null);
+                            try{
+                                controller.setTemporalRange(null, null);
+                            }catch(TransformException ex){
+                                LOGGER.log(Level.WARNING, null,ex);
+                            }
                             JMapTimeLine.this.repaint();
                         }
                     }
@@ -213,7 +238,11 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
                             final Date[] range = controller.getTemporalRange();
                             if(range != null){
                                 range[0] = null;
-                                controller.setTemporalRange(range[0], range[1]);
+                                try{
+                                    controller.setTemporalRange(range[0], range[1]);
+                                }catch(TransformException ex){
+                                    LOGGER.log(Level.WARNING, null,ex);
+                                }
                             }
                             JMapTimeLine.this.repaint();
                         }
@@ -239,7 +268,11 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
                             final Date[] range = controller.getTemporalRange();
                             if(range != null){
                                 range[1] = null;
-                                controller.setTemporalRange(range[0], range[1]);
+                                try{
+                                    controller.setTemporalRange(range[0], range[1]);
+                                }catch(TransformException ex){
+                                    LOGGER.log(Level.WARNING, null,ex);
+                                }
                             }
                             JMapTimeLine.this.repaint();
                         }
@@ -337,16 +370,20 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
 
             final Date[] range = map.getCanvas().getController().getTemporalRange();
 
-            if(selected == 0){
-                map.getCanvas().getController().setTemporalRange(edit, range[1]);
-            }else if(selected == 2){
-                map.getCanvas().getController().setTemporalRange(range[0], edit);
-            }else if(selected == 1){
-                long middleDate = (range[0].getTime() + range[1].getTime()) / 2l;
-                long step = edit.getTime() - middleDate;
-                Date start = new Date(range[0].getTime() + step);
-                Date end = new Date(range[1].getTime() + step);
-                map.getCanvas().getController().setTemporalRange(start, end);
+            try{
+                if(selected == 0){
+                    map.getCanvas().getController().setTemporalRange(edit, range[1]);
+                }else if(selected == 2){
+                    map.getCanvas().getController().setTemporalRange(range[0], edit);
+                }else if(selected == 1){
+                    long middleDate = (range[0].getTime() + range[1].getTime()) / 2l;
+                    long step = edit.getTime() - middleDate;
+                    Date start = new Date(range[0].getTime() + step);
+                    Date end = new Date(range[1].getTime() + step);
+                    map.getCanvas().getController().setTemporalRange(start, end);
+                }
+            }catch(TransformException ex){
+                LOGGER.log(Level.WARNING, null,ex);
             }
 
             repaint();

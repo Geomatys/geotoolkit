@@ -23,6 +23,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.IdentityHashMap;
 import java.util.Map;
@@ -205,13 +206,13 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
     private Shape              paintingDisplayShape   = null;
     private Rectangle          paintingDisplaybounds  = null;
     private Shape              paintingObjectiveShape = null;
-    private GeneralEnvelope    paintingObjectiveBBox  = null;
+    private Envelope           paintingObjectiveBBox  = null;
     private Envelope           paintingObjectiveBBox2D  = null;
 
     private Shape              canvasDisplayShape   = null;
     private Rectangle          canvasDisplaybounds  = null;
     private Shape              canvasObjectiveShape = null;
-    private GeneralEnvelope    canvasObjectiveBBox  = null;
+    private Envelope           canvasObjectiveBBox  = null;
     private Envelope           canvasObjectiveBBox2D  = null;
     
 
@@ -226,10 +227,10 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
 
     public void initParameters(final AffineTransform2D objToDisp, final CanvasMonitor monitor,
             final Shape paintingDisplayShape, final Shape paintingObjectiveShape,
-            final Shape canvasDisplayShape, final Shape canvasObjectiveShape, 
-            Date[] temporal, Double[] elevation, double dpi){
-        this.objectiveCRS       = canvas.getObjectiveCRS();
-        this.objectiveCRS2D = canvas.getObjectiveCRS2D();
+            final Shape canvasDisplayShape, final Shape canvasObjectiveShape, double dpi){
+        this.canvasObjectiveBBox= canvas.getController().getVisibleEnvelope();
+        this.objectiveCRS       = canvasObjectiveBBox.getCoordinateReferenceSystem();
+        this.objectiveCRS2D     = canvas.getObjectiveCRS2D();
         this.displayCRS         = canvas.getDisplayCRS();
         this.objectiveToDisplay = objToDisp;
         try {
@@ -254,16 +255,8 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         
         final Rectangle2D canvasObjectiveBounds = canvasObjectiveShape.getBounds2D();
 
-
         //calculate the objective bbox with there temporal and elevation parameters ----
         this.canvasObjectiveBBox2D = new Envelope2D(objectiveCRS2D,canvasObjectiveBounds);
-        try {
-            this.canvasObjectiveBBox = GO2Utilities.combine(objectiveCRS, canvasObjectiveBounds, temporal, elevation);
-        } catch (TransformException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-        }
-        this.objectiveCRS = canvasObjectiveBBox.getCoordinateReferenceSystem();
-
 
         //calculate the resolution -----------------------------------------------
         this.dpi = dpi;
@@ -285,11 +278,9 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
 
         final Rectangle2D paintingObjectiveBounds = paintingObjectiveShape.getBounds2D();
         this.paintingObjectiveBBox2D = new Envelope2D(objectiveCRS2D,paintingObjectiveBounds);
-        try {
-            this.paintingObjectiveBBox = GO2Utilities.combine(objectiveCRS, paintingObjectiveBounds, temporal, elevation);
-        } catch (TransformException ex) {
-            LOGGER.log(Level.WARNING, null, ex);
-        }
+        this.paintingObjectiveBBox = new GeneralEnvelope(canvasObjectiveBBox);
+        ((GeneralEnvelope)this.paintingObjectiveBBox).setRange(0, paintingObjectiveBounds.getMinX(), paintingObjectiveBounds.getMaxX());
+        ((GeneralEnvelope)this.paintingObjectiveBBox).setRange(1, paintingObjectiveBounds.getMinY(), paintingObjectiveBounds.getMaxY());
 
         try {
             geoScale = canvas.getController().getGeographicScale();
@@ -300,19 +291,20 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         }
 
         //set temporal and elevation range--------------------------------------
+        final Date[] temporal = canvas.getController().getTemporalRange();
         if(temporal != null){
             temporalRange[0] = temporal[0];
             temporalRange[1] = temporal[1];
         }else{
-            temporalRange[0] = null;
-            temporalRange[1] = null;
+            Arrays.fill(temporalRange, null);
         }
+
+        final Double[] elevation = canvas.getController().getElevationRange();
         if(elevation != null){
             elevationRange[0] = elevation[0];
             elevationRange[1] = elevation[1];
         }else{
-            elevationRange[0] = null;
-            elevationRange[1] = null;
+            Arrays.fill(elevationRange, null);
         }
 
         //calculate the symbology encoding scale -------------------------------
@@ -477,8 +469,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
         final DefaultRenderingContext2D context = new DefaultRenderingContext2D(canvas);
         context.initParameters(objectiveToDisplay, monitor,
                                paintingDisplayShape, paintingObjectiveShape,
-                               canvasDisplayShape, canvasObjectiveShape,
-                               temporalRange,elevationRange, dpi);
+                               canvasDisplayShape, canvasObjectiveShape, dpi);
         context.initGraphic(g2d);
         g2d.setRenderingHints(this.graphics.getRenderingHints());
         context.labelRenderer = getLabelRenderer(true);

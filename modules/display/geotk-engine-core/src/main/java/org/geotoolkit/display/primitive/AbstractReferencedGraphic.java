@@ -32,6 +32,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.display.canvas.AbstractReferencedCanvas2D;
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.RenderingContext;
@@ -142,8 +143,9 @@ public abstract class AbstractReferencedGraphic extends AbstractGraphic implemen
      * @throws TransformException If this method do not accept the new CRS. In such case,
      *         this method should keep the old CRS and leaves this graphic in a consistent state.
      */
-    protected void setObjectiveCRS(final CoordinateReferenceSystem newCRS) throws TransformException {
+    protected void setObjectiveCRS(CoordinateReferenceSystem newCRS) throws TransformException {
         final CoordinateReferenceSystem oldCRS = this.envelope.getCoordinateReferenceSystem();
+        newCRS = ((ReferencedCanvas2D)canvas).getObjectiveCRS2D();
         if (newCRS == null) {
             throw new IllegalArgumentException(Errors.getResources(getLocale()).getString(Errors.Keys.ILLEGAL_ARGUMENT_$2, "crs", newCRS));
         }

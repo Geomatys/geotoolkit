@@ -70,8 +70,6 @@ public interface CanvasController2D extends CanvasController{
      */
     DirectPosition getCenter() throws NoninvertibleTransformException;
 
-    Envelope getVisibleArea() throws TransformException;
-
     void setAutoRepaint(boolean auto);
     
     boolean isAutoRepaint();
@@ -188,6 +186,16 @@ public interface CanvasController2D extends CanvasController{
             throws IllegalArgumentException, NoninvertibleTransformException;
 
     /**
+     * @return visible envelope of the canvas, in Objective CRS
+     */
+    public Envelope getVisibleEnvelope();
+
+    /**
+     * @return visible envelope of the canvas, in Objective CRS 2D
+     */
+    public Envelope getVisibleEnvelope2D() throws TransformException;
+
+    /**
      * Set the scale, in a ground unit manner, relation between map display size
      * and real ground unit meters;
      * @param scale
@@ -208,13 +216,13 @@ public interface CanvasController2D extends CanvasController{
 
     // Temporal dimension ------------------------------------------------------
 
-    void setTemporalRange(Date startDate, Date endDate);
+    void setTemporalRange(Date startDate, Date endDate) throws TransformException;
 
     Date[] getTemporalRange();
 
     // Elevation dimension -----------------------------------------------------
 
-    void setElevationRange(Double min, Double max, Unit<Length> unit);
+    void setElevationRange(Double min, Double max, Unit<Length> unit) throws TransformException;
 
     Double[] getElevationRange();
 

@@ -19,10 +19,9 @@ package org.geotoolkit.display2d.canvas;
 
 import java.awt.Dimension;
 import java.util.Date;
-import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.container.ContextContainer2D;
-import org.geotoolkit.display2d.service.DefaultPortrayalService;
 
+import org.geotoolkit.display.exception.PortrayalException;
+import org.geotoolkit.display2d.service.DefaultPortrayalService;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
@@ -57,10 +56,6 @@ public class NDEnvelopeTest {
     @AfterClass
     public static void tearDownClass() throws Exception {
     }
-
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
 
      @Test
      public void test4DEnvelope() throws Exception {
@@ -127,5 +122,5 @@ public class NDEnvelopeTest {
 
      }
 
-
+         
 }
