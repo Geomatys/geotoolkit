@@ -57,6 +57,12 @@ import org.geotoolkit.internal.StringUtilities;
  */
 public final class SupportedListGenerator extends ReportGenerator {
     /**
+     * The symbol to write in from of EPSG code of CRS having an axis order different
+     * then the (longitude, latitude) one.
+     */
+    private static final char YX_ORDER = '\u21B7';
+
+    /**
      * The authority code.
      */
     private final String code;
@@ -70,6 +76,11 @@ public final class SupportedListGenerator extends ReportGenerator {
      * Whatever the CRS is supported.
      */
     private boolean isSupported;
+
+    /**
+     * Whatever the CRS orders longitude before latitude.
+     */
+    private boolean isLongitudeFirst = true;
 
     /**
      * A message to display after the name.
@@ -92,7 +103,11 @@ public final class SupportedListGenerator extends ReportGenerator {
         if (highlight) {
             out.write(" bgcolor=\"lavender\"");
         }
-        out.write("><td nowrap><code>&nbsp;");
+        out.write("><td>");
+        if (!isLongitudeFirst) {
+            out.write(YX_ORDER);
+        }
+        out.write("</td><td nowrap><code>");
         out.write(code);
         out.write("&nbsp;</code></td nowrap><td>");
         out.write(description);
@@ -153,10 +168,11 @@ public final class SupportedListGenerator extends ReportGenerator {
      * @throws Exception If an error occurred while reading the database, or writing the HTML file.
      */
     public static void main(final String[] args) throws Exception {
-        int numValids = 0;
+        int numValids = 0, numYX = 0;
         Locale.setDefault(LOCALE);
         final List<SupportedListGenerator> list = new ArrayList<SupportedListGenerator>();
         final CRSAuthorityFactory factory = CRS.getAuthorityFactory(false);
+        final CRSAuthorityFactory xyOrder = CRS.getAuthorityFactory(true);
         for (final String code : factory.getAuthorityCodes(CoordinateReferenceSystem.class)) {
             final SupportedListGenerator element = new SupportedListGenerator(code, factory.getDescriptionText(code));
             if (code.startsWith("AUTO2:")) {
@@ -164,7 +180,10 @@ public final class SupportedListGenerator extends ReportGenerator {
                 element.isSupported = true;
                 numValids++;
             } else try {
-                element.message = getMessage(factory.createCoordinateReferenceSystem(code));
+                final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem(code);
+                element.isLongitudeFirst = CRS.equalsIgnoreMetadata(crs.getCoordinateSystem(),
+                        xyOrder.createCoordinateReferenceSystem(code).getCoordinateSystem());
+                element.message = getMessage(crs);
                 element.isSupported = true;
                 numValids++;
             } catch (FactoryException exception) {
@@ -174,6 +193,9 @@ public final class SupportedListGenerator extends ReportGenerator {
                     message = "Unable to format units in UCUM";
                 }
                 element.message = message;
+            }
+            if (!element.isLongitudeFirst) {
+                numYX++;
             }
             list.add(element);
         }
@@ -195,10 +217,19 @@ public final class SupportedListGenerator extends ReportGenerator {
         out.write(String.valueOf(list.size()));
         out.write(" codes, ");
         out.write(String.valueOf(100 * numValids / list.size())); // Really want rounding toward 0.
-        out.write("% of them being supported.</p>\n");
+        out.write("% of them being supported.</p>\n" +
+                  "<p><b>Notation:</b></p>\n" +
+                  "<ul>\n" +
+                  "  <li>The " + YX_ORDER + " symbol in front of authority codes (");
+        out.write(String.valueOf(Math.round(100.0 * numYX / list.size())));
+        out.write("% of them) identifies the CRS having an axis order different than " +
+                  "(<var>easting</var>, <var>northing</var>).</li>\n" +
+                  "</ul>");
+
         out.write("<table bgcolor=\"aliceblue\" cellpadding=\"0\" cellspacing=\"0\">\n");
         out.write("<tr bgcolor=\"lightskyblue\" align=\"left\">"
-                + "<th height=\"24\"><code>&nbsp;</code>Code</th>"
+                + "<th height=\"24\"></th>"
+                + "<th>Code</th>"
                 + "<th>Description</th>"
                 + "<th>Type, or reason for unsupport</th>\n");
         for (final SupportedListGenerator element : list) {
@@ -207,5 +238,6 @@ public final class SupportedListGenerator extends ReportGenerator {
         }
         out.write("</table>\n");
         closeHTML(out);
+        System.exit(0);
     }
 }
