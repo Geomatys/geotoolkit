@@ -18,6 +18,8 @@
 package org.geotoolkit.display2d.canvas;
 
 import java.awt.geom.Rectangle2D;
+import javax.measure.converter.ConversionException;
+import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -133,10 +135,20 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
                         return null;
                     }
                     final double lastTime = timeRange.getMaximum(0);
+                    double day;
+                    try {
+                        // Arbitrarily use a time range of 1 day, to be converted in units of the temporal CRS.
+                        day = NonSI.DAY.getConverterToAny(temporalCRS.getCoordinateSystem().getAxis(0).getUnit()).convert(1);
+                    } catch (ConversionException e) {
+                        // Should never happen since TemporalCRS use time units. But if it happen
+                        // anyway, use a time range of 1 of whatever units the temporal CRS use.
+                        Logging.unexpectedException(AbstractGraphicVisitor.class, "getCoverageValues", e);
+                        day = 1;
+                    }
                     objCRS = new DefaultCompoundCRS(objCRS.getName().getCode() + " + time", objCRS, temporalCRS);
                     final GeneralEnvelope merged = new GeneralEnvelope(objCRS);
                     merged.setSubEnvelope(objBounds, 0);
-                    merged.setRange(objBounds.getDimension(), lastTime, lastTime);
+                    merged.setRange(objBounds.getDimension(), lastTime - day, lastTime);
                     objBounds = merged;
                 }
             }
