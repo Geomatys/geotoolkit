@@ -32,7 +32,6 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.GeodeticCalculator;
@@ -73,12 +72,12 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
 
     @Override
     public void setAutoRepaint(boolean auto) {
-        canvas.autoRepaint = auto;
+        canvas.setAutoRepaint(auto);
     }
 
     @Override
     public boolean isAutoRepaint() {
-        return canvas.autoRepaint;
+        return canvas.isAutoRepaint();
     }
 
     @Override
@@ -112,13 +111,13 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     @Override
     public DirectPosition getCenter() throws NoninvertibleTransformException {
         final Point2D center = getDisplayCenter();
-        canvas.objToDisp.inverseTransform(center, center);
+        canvas.getObjectiveToDisplay().inverseTransform(center, center);
         return new GeneralDirectPosition(center);
     }
 
     @Override
     public Envelope getVisibleEnvelope() {
-        return new GeneralEnvelope(canvas.envelope);
+        return canvas.getVisibleEnvelope();
     }
 
     @Override
@@ -129,12 +128,12 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
 
     @Override
     public void setAxisProportions(double prop) {
-        canvas.proportion = prop;
+        canvas.setAxisProportions(prop);
     }
 
     @Override
     public double getAxisProportions() {
-        return canvas.proportion;
+        return canvas.getAxisProportions();
     }
 
     @Override
@@ -149,7 +148,8 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
 
     @Override
     public void rotate(double r, Point2D center) throws NoninvertibleTransformException {
-        final AffineTransform change = canvas.objToDisp.createInverse();
+        final AffineTransform2D objToDisp = canvas.getObjectiveToDisplay();
+        final AffineTransform change = objToDisp.createInverse();
 
         if (center != null) {
             final double centerX = center.getX();
@@ -159,7 +159,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
             change.translate(-centerX, -centerY);
         }
 
-        change.concatenate(canvas.objToDisp);
+        change.concatenate(objToDisp);
         XAffineTransform.roundIfAlmostInteger(change, EPS);
         transform(change);
     }
@@ -171,7 +171,8 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
 
     @Override
     public void scale(double s, Point2D center) throws NoninvertibleTransformException {
-        final AffineTransform change = canvas.objToDisp.createInverse();
+        final AffineTransform2D objToDisp = canvas.getObjectiveToDisplay();
+        final AffineTransform change = objToDisp.createInverse();
 
         if (center != null) {
             final double centerX = center.getX();
@@ -181,16 +182,17 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
             change.translate(-centerX, -centerY);
         }
 
-        change.concatenate(canvas.objToDisp);
+        change.concatenate(objToDisp);
         XAffineTransform.roundIfAlmostInteger(change, EPS);
         transform(change);
     }
 
     @Override
     public void translateDisplay(double x, double y) throws NoninvertibleTransformException {
-        final AffineTransform change = canvas.objToDisp.createInverse();
+        final AffineTransform2D objToDisp = canvas.getObjectiveToDisplay();
+        final AffineTransform change = objToDisp.createInverse();
         change.translate(x, y);
-        change.concatenate(canvas.objToDisp);
+        change.concatenate(objToDisp);
         XAffineTransform.roundIfAlmostInteger(change, EPS);
         transform(change);
     }
@@ -200,7 +202,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
         final Point2D dispCenter = getDisplayCenter();
         final DirectPosition center = getCenter();
         Point2D objCenter = new Point2D.Double(center.getOrdinate(0) + x, center.getOrdinate(1) + y);
-        objCenter = canvas.objToDisp.transform(objCenter, objCenter);
+        objCenter = canvas.getObjectiveToDisplay().transform(objCenter, objCenter);
         translateDisplay(dispCenter.getX() - objCenter.getX(), dispCenter.getY() - objCenter.getY());
     }
 
@@ -210,16 +212,17 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     }
 
     @Override
-    public void transformPixels(AffineTransform change) {
+    public void transformPixels(AffineTransform change) {        
         if (!change.isIdentity()) {
+            final AffineTransform2D objToDisp = canvas.getObjectiveToDisplay();
             final AffineTransform logical;
             try {
-                logical = canvas.objToDisp.createInverse();
+                logical = objToDisp.createInverse();
             } catch (NoninvertibleTransformException exception) {
                 throw new IllegalStateException(exception);
             }
             logical.concatenate(change);
-            logical.concatenate(canvas.objToDisp);
+            logical.concatenate(objToDisp);
             XAffineTransform.roundIfAlmostInteger(logical, EPS);
             transform(logical);
         }
@@ -233,24 +236,24 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
 
     @Override
     public double getRotation() {
-        return -XAffineTransform.getRotation(canvas.objToDisp);
+        return -XAffineTransform.getRotation(canvas.getObjectiveToDisplay());
     }
 
     @Override
     public void setScale(double newScale) throws NoninvertibleTransformException {
-        final double oldScale = XAffineTransform.getScale(canvas.objToDisp);
+        final double oldScale = XAffineTransform.getScale(canvas.getObjectiveToDisplay());
         scale(newScale / oldScale);
     }
 
     @Override
     public double getScale() {
-        return XAffineTransform.getScale(canvas.objToDisp);
+        return XAffineTransform.getScale(canvas.getObjectiveToDisplay());
     }
 
     @Override
     public void setDisplayVisibleArea(Rectangle2D dipsEnv) {
         try {
-            Shape shp = canvas.objToDisp.createInverse().createTransformedShape(dipsEnv);
+            Shape shp = canvas.getObjectiveToDisplay().createInverse().createTransformedShape(dipsEnv);
             setVisibleArea(shp.getBounds2D());
         } catch (NoninvertibleTransformException ex) {
             canvas.getLogger().log(Level.WARNING, null, ex);
@@ -318,7 +321,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
 
         final AffineTransform trs;
         try {
-            trs = canvas.objToDisp.createInverse();
+            trs = canvas.getObjectiveToDisplay().createInverse();
         } catch (NoninvertibleTransformException ex) {
             throw new TransformException(ex.getLocalizedMessage(), ex);
         }
@@ -400,7 +403,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
         }
 
         if (index >= 0) {
-            canvas.envelope.setRange(index, startDate.getTime(), endDate.getTime());
+            canvas.setRange(index, startDate.getTime(), endDate.getTime());
         }
     }
 
@@ -408,9 +411,10 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     public Date[] getTemporalRange() {
         final int index = getTemporalAxisIndex();
         if (index >= 0) {
+            final Envelope envelope = canvas.getVisibleEnvelope();
             final Date[] range = new Date[2];
-            range[0] = new Date((long) canvas.envelope.getMinimum(index));
-            range[1] = new Date((long) canvas.envelope.getMaximum(index));
+            range[0] = new Date((long) envelope.getMinimum(index));
+            range[1] = new Date((long) envelope.getMaximum(index));
             return range;
         }
         return null;
@@ -428,7 +432,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
         }
 
         if (index >= 0) {
-            canvas.envelope.setRange(index, min, max);
+            canvas.setRange(index, min, max);
         }
     }
 
@@ -436,7 +440,8 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     public Double[] getElevationRange() {
         final int index = getElevationAxisIndex();
         if (index >= 0) {
-            return new Double[]{canvas.envelope.getMinimum(index), canvas.envelope.getMaximum(index)};
+            final Envelope envelope = canvas.getVisibleEnvelope();
+            return new Double[]{envelope.getMinimum(index), envelope.getMaximum(index)};
         }
         return null;
     }

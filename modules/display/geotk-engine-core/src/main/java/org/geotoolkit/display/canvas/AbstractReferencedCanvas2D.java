@@ -22,7 +22,6 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.Map;
@@ -76,8 +75,8 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
             new HashMap<CoordinateReferenceSystem,MathTransform>();
 
     private final Rectangle2D.Double displayBounds = new Rectangle2D.Double(0, 0, 0, 0);
-    final AffineTransform objToDisp = new AffineTransform(1, 0, 0, 1, 0, 0);
-    GeneralEnvelope envelope = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+    private final AffineTransform objToDisp = new AffineTransform(1, 0, 0, 1, 0, 0);
+    private GeneralEnvelope envelope = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
 
     /**
      * Proportions support between X and Y axis.
@@ -85,9 +84,9 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
      * if prop = 1 then one unit in X will be equal to one unit in Y
      * else value will mean that prop*Y will be used
      */
-    double proportion = 1d;
+    private double proportion = 1d;
 
-    boolean autoRepaint = false;
+    private boolean autoRepaint = false;
 
     private CoordinateReferenceSystem objectiveCRS2D = DefaultGeographicCRS.WGS84;
     private DerivedCRS displayCRS = null;
@@ -126,7 +125,7 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
         //store the visible area to restore it later
         Envelope preserve = null;
         if(!displayBounds.isEmpty()){
-            preserve = getController().getVisibleEnvelope();
+            preserve = new GeneralEnvelope(envelope);
         }
 
         try {
@@ -201,7 +200,40 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
         envelope.setRange(1, canvasObjectiveBounds.getMinY(), canvasObjectiveBounds.getMaxY());
     }
 
-    void applyTransform(AffineTransform change){
+    //only available in this package by the controller --------------------
+
+    /**
+     * @return a copy of the internal canvas visible envelope.
+     */
+    final Envelope getVisibleEnvelope(){
+        return new GeneralEnvelope(envelope);
+    }
+
+    /**
+     * Change a range in the canvas envelope.
+     * Can be used to temporal or elevatio range of the map.
+     */
+    final void setRange(int ordinate, double min, double max){
+        envelope.setRange(ordinate, min, max);
+    }
+
+    final void setAutoRepaint(boolean autoRepaint) {
+        this.autoRepaint = autoRepaint;
+    }
+
+    final boolean isAutoRepaint() {
+        return autoRepaint;
+    }
+
+    final void setAxisProportions(double prop) {
+        this.proportion = prop;
+    }
+
+    final double getAxisProportions() {
+        return proportion;
+    }
+
+    final void applyTransform(AffineTransform change){
         if (!change.isIdentity()) {
             final AffineTransform2D old = getObjectiveToDisplay();
 
@@ -217,7 +249,7 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
         }
     }
 
-    void resetTransform() throws NoninvertibleTransformException{
+    final void resetTransform() throws NoninvertibleTransformException{
         resetTransform(new Rectangle(1, 1), true, false);
     }
 
@@ -233,7 +265,7 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
      * @param yAxisUpward {@code true} if the <var>y</var> axis should point upwards rather than
      *        downwards.
      */
-    protected final void resetTransform(final Rectangle2D preferredArea, final boolean yAxisUpward,
+    final void resetTransform(final Rectangle2D preferredArea, final boolean yAxisUpward,
                          boolean preserveRotation) throws NoninvertibleTransformException{
 
         final Rectangle canvasBounds = getDisplayBounds().getBounds();
@@ -258,16 +290,13 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
                 objToDisp.concatenate(transform);
 
                 if(preserveRotation){
-                    final Point2D center = getController().getDisplayCenter();
+                    final double centerX = displayBounds.getCenterX();
+                    final double centerY = displayBounds.getCenterY();
                     final AffineTransform change = objToDisp.createInverse();
-
-                    if (center != null) {
-                        final double centerX = center.getX();
-                        final double centerY = center.getY();
-                        change.translate(+centerX, +centerY);
-                        change.rotate(rotation);
-                        change.translate(-centerX, -centerY);
-                    }
+                    
+                    change.translate(+centerX, +centerY);
+                    change.rotate(rotation);
+                    change.translate(-centerX, -centerY);
 
                     change.concatenate(objToDisp);
                     XAffineTransform.roundIfAlmostInteger(change, EPS);
