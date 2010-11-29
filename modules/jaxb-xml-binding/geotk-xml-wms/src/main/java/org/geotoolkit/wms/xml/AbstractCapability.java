@@ -38,4 +38,6 @@ public abstract class AbstractCapability {
 
      public abstract List<String> getExceptionFormats();
 
+     public abstract void setExceptionFormats(List<String> formats);
+
 }

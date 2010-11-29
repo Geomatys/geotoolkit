@@ -99,7 +99,18 @@ public class Capability extends AbstractCapability {
      */
     @Override
     public List<String> getExceptionFormats() {
-        return getException().getFormat();
+        if (exception == null) {
+            exception = new Exception();
+        }
+        return exception.getFormat();
+    }
+
+    public void setExceptionFormats(List<String> formats) {
+        if (formats == null) {
+            this.exception = new Exception(formats.toArray(new String[formats.size()]));
+        } else {
+            this.exception = null;
+        }
     }
 
     /**
