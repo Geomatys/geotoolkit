@@ -312,14 +312,17 @@ next:   for (final FormatEntry candidate : getEntries()) {
          */
         ViewType type = ViewType.PHOTOGRAPHIC;
 check:  for (final GridSampleDimension band : bands) {
-            for (final Category category : band.getCategories()) {
-                final MathTransform1D tr = category.getSampleToGeophysics();
-                if (tr != null) {
-                    if (tr.isIdentity()) {
-                        type = ViewType.GEOPHYSICS;
-                    } else {
-                        type = ViewType.PACKED;
-                        break check;
+            final List<Category> categories = band.getCategories();
+            if (categories != null) {
+                for (final Category category : categories) {
+                    final MathTransform1D tr = category.getSampleToGeophysics();
+                    if (tr != null) {
+                        if (tr.isIdentity()) {
+                            type = ViewType.GEOPHYSICS;
+                        } else {
+                            type = ViewType.PACKED;
+                            break check;
+                        }
                     }
                 }
             }

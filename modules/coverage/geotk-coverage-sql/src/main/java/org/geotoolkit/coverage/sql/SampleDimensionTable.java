@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.sql.Types;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -227,6 +228,7 @@ final class SampleDimensionTable extends Table {
                 final int nameIndex = indexOf(query.name);
                 final int unitIndex = indexOf(query.units);
                 final List<List<Category>> categories = new ArrayList<List<Category>>(bands.size());
+                boolean isEmpty = true;
                 int bandNumber = 0;
                 for (GridSampleDimension band : bands) {
                     band = band.geophysics(false);
@@ -242,10 +244,16 @@ final class SampleDimensionTable extends Table {
                     if (count != 1) {
                         throw new IllegalUpdateException(getLocale(), count);
                     }
-                    categories.add(band.getCategories());
+                    List<Category> bandCategories = band.getCategories();
+                    if (bandCategories == null) {
+                        bandCategories = Collections.emptyList();
+                    } else if (isEmpty) {
+                        isEmpty = bandCategories.isEmpty();
+                    }
+                    categories.add(bandCategories);
                 }
                 release(lc, ce);
-                if (!categories.isEmpty()) {
+                if (!isEmpty) {
                     getCategoryTable().addCategories(format, categories);
                 }
                 success = true;
