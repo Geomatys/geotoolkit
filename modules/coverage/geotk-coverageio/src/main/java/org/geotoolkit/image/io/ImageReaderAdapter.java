@@ -991,7 +991,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
          * The {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME} value
          * in an array, for assignment to {@code extra[Stream|Image]MetadataFormatNames} fields.
          */
-        static final String[] EXTRA_METADATA = {
+        private static final String[] EXTRA_METADATA = {
             SpatialMetadataFormat.FORMAT_NAME
         };
 
@@ -1043,12 +1043,10 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
             inputTypes = TYPES;
             supportsStandardStreamMetadataFormat = main.isStandardStreamMetadataFormatSupported();
             supportsStandardImageMetadataFormat  = main.isStandardImageMetadataFormatSupported();
-            nativeStreamMetadataFormatClassName  = main.getNativeStreamMetadataFormatName();
-            nativeImageMetadataFormatClassName   = main.getNativeImageMetadataFormatName();
-            extraStreamMetadataFormatClassNames  = XArrays.concatenate(
-                    main.getExtraStreamMetadataFormatNames(), EXTRA_METADATA);
-            extraImageMetadataFormatClassNames  = XArrays.concatenate(
-                    main.getExtraImageMetadataFormatNames(), EXTRA_METADATA);
+            nativeStreamMetadataFormatName       = main.getNativeStreamMetadataFormatName();
+            nativeImageMetadataFormatName        = main.getNativeImageMetadataFormatName();
+            extraStreamMetadataFormatNames       = addSpatialFormat(main.getExtraStreamMetadataFormatNames());
+            extraImageMetadataFormatNames        = addSpatialFormat(main.getExtraImageMetadataFormatNames());
             boolean acceptStream = false;
             boolean acceptOther  = false;
             for (final Class<?> type : main.getInputTypes()) {
@@ -1072,6 +1070,17 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
          */
         protected Spi(final String format) throws IllegalArgumentException {
             this(Formats.getReaderByFormatName(format, Spi.class));
+        }
+
+        /**
+         * Adds the {@value SpatialMetadataFormat#FORMAT_NAME} to the given array,
+         * if not already presents.
+         */
+        static String[] addSpatialFormat(String[] formatNames) {
+            if (!XArrays.contains(formatNames, SpatialMetadataFormat.FORMAT_NAME)) {
+                formatNames = XArrays.concatenate(formatNames, EXTRA_METADATA);
+            }
+            return formatNames;
         }
 
         /**

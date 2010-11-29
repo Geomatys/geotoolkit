@@ -48,8 +48,9 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.util.NullArgumentException;
-import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.converter.Classes;
+
+import static org.geotoolkit.image.io.ImageReaderAdapter.Spi.addSpatialFormat;
 
 
 /**
@@ -708,12 +709,10 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
             outputTypes = TYPES;
             supportsStandardStreamMetadataFormat = main.isStandardStreamMetadataFormatSupported();
             supportsStandardImageMetadataFormat  = main.isStandardImageMetadataFormatSupported();
-            nativeStreamMetadataFormatClassName  = main.getNativeStreamMetadataFormatName();
-            nativeImageMetadataFormatClassName   = main.getNativeImageMetadataFormatName();
-            extraStreamMetadataFormatClassNames  = XArrays.concatenate(
-                    main.getExtraStreamMetadataFormatNames(), ImageReaderAdapter.Spi.EXTRA_METADATA);
-            extraImageMetadataFormatClassNames  = XArrays.concatenate(
-                    main.getExtraImageMetadataFormatNames(), ImageReaderAdapter.Spi.EXTRA_METADATA);
+            nativeStreamMetadataFormatName       = main.getNativeStreamMetadataFormatName();
+            nativeImageMetadataFormatName        = main.getNativeImageMetadataFormatName();
+            extraStreamMetadataFormatNames       = addSpatialFormat(main.getExtraStreamMetadataFormatNames());
+            extraImageMetadataFormatNames        = addSpatialFormat(main.getExtraImageMetadataFormatNames());
             acceptStream = Classes.isAssignableTo(ImageOutputStream.class, main.getOutputTypes());
         }
 
