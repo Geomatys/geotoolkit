@@ -54,7 +54,6 @@ import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.TableWriter;
@@ -333,7 +332,7 @@ public class GeodeticCalculator {
                 return (GeographicCRS) crs;
             }
         }
-        final Datum datum = CRSUtilities.getDatum(crs);
+        final Datum datum = CRS.getDatum(crs);
         if (datum instanceof GeodeticDatum) {
             return new DefaultGeographicCRS("Geodetic", (GeodeticDatum) datum,
                     DefaultEllipsoidalCS.GEODETIC_2D);

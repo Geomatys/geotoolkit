@@ -33,6 +33,7 @@ import org.opengis.referencing.operation.*;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
+import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.factory.FactoryFinder;
@@ -96,7 +97,7 @@ public final class CRSUtilities {
      * colinear with the specified axis. If an axis with the same
      * {@linkplain CoordinateSystemAxis#getDirection direction} or an
      * {@linkplain AxisDirections#opposite opposite} direction than {@code axis}
-     * ocurs in the coordinate system, then the dimension of the first such occurrence
+     * occurs in the coordinate system, then the dimension of the first such occurrence
      * is returned. That is, the value <var>k</var> such that:
      *
      * {@preformat java
@@ -316,7 +317,9 @@ public final class CRSUtilities {
     }
 
     /**
-     * Returns the datum of the specified CRS, or {@code null} if none.
+     * Implementation of {@link CRS#getDatum(CoordinateReferenceSystem)}, defined here in order
+     * to avoid a dependency of {@link org.geotoolkit.referencing.crs.AbstractDerivedCRS} to the
+     * {@link CRS} class.
      *
      * @param  crs The coordinate reference system for which to get the datum. May be {@code null}.
      * @return The datum in the given CRS, or {@code null} if none.
@@ -324,7 +327,37 @@ public final class CRSUtilities {
      * @see CRS#getEllipsoid(CoordinateReferenceSystem)
      */
     public static Datum getDatum(final CoordinateReferenceSystem crs) {
-        return (crs instanceof SingleCRS) ? ((SingleCRS) crs).getDatum() : null;
+        Datum datum;
+        if (crs instanceof SingleCRS) {
+            datum = ((SingleCRS) crs).getDatum();
+        } else {
+            datum = null;
+            for (final SingleCRS component : DefaultCompoundCRS.getSingleCRS(crs)) {
+                final Datum candidate = component.getDatum();
+                if (datum != null && !datum.equals(candidate)) {
+                    if (isGeodetic3D(datum, candidate)) {
+                        continue; // Keep the current datum unchanged.
+                    }
+                    if (!isGeodetic3D(candidate, datum)) {
+                        return null; // Can't build a 3D geodetic datum.
+                    }
+                }
+                datum = candidate;
+            }
+        }
+        return datum;
+    }
+
+    /**
+     * Returns {@code true} if the given datum can form a three-dimensional geodetic datum.
+     *
+     * @param  geodetic The presumed geodetic datum.
+     * @param  vertical The presumed vertical datum.
+     * @return If the given datum can form a 3D geodetic datum.
+     */
+    private static boolean isGeodetic3D(final Datum geodetic, final Datum vertical) {
+        return (geodetic instanceof GeodeticDatum) && (vertical instanceof VerticalDatum) &&
+                VerticalDatumTypes.ELLIPSOIDAL.equals(((VerticalDatum) vertical).getVerticalDatumType());
     }
 
     /**

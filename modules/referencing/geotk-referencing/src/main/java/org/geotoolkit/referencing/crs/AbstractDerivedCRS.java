@@ -25,7 +25,6 @@ import java.util.Map;
 import org.opengis.referencing.operation.*;
 import org.opengis.referencing.datum.Datum;
 import org.opengis.referencing.cs.CoordinateSystem;
-import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.GeneralDerivedCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -40,6 +39,7 @@ import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.DefaultSingleOperation;
 import org.geotoolkit.referencing.operation.DefaultOperationMethod;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
+import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.referencing.Semaphores;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
@@ -56,7 +56,7 @@ import org.geotoolkit.lang.Immutable;
  * identify the exact type.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.16
  *
  * @since 2.1
  * @module
@@ -145,7 +145,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
                                  final CoordinateSystem     derivedCS)
             throws MismatchedDimensionException
     {
-        super(properties, getDatum(base), derivedCS);
+        super(properties, CRSUtilities.getDatum(base), derivedCS);
         ensureNonNull("conversionFromBase", conversionFromBase);
         ensureNonNull("baseToDerived",      baseToDerived);
         this.baseCRS = base;
@@ -211,7 +211,7 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
                                  final CoordinateSystem     derivedCS)
             throws MismatchedDimensionException
     {
-        super(properties, getDatum(base), derivedCS);
+        super(properties, CRSUtilities.getDatum(base), derivedCS);
         ensureNonNull("baseToDerived", baseToDerived);
         this.baseCRS = base;
         /*
@@ -230,17 +230,6 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
             /* transform  */ baseToDerived,
             /* method     */ method,
             /* type       */ (this instanceof ProjectedCRS) ? Projection.class : Conversion.class);
-    }
-
-    /**
-     * Work around for RFE #4093999 in Sun's bug database
-     * ("Relax constraint on placement of this()/super() call in constructors").
-     *
-     * @todo What to do if {@code base} is not an instance of {@link SingleCRS}?
-     */
-    private static Datum getDatum(final CoordinateReferenceSystem base) {
-        ensureNonNull("base",  base);
-        return (base instanceof SingleCRS) ? ((SingleCRS) base).getDatum() : null;
     }
 
     /**

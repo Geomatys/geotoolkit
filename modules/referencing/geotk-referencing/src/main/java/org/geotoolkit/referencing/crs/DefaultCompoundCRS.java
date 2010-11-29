@@ -229,8 +229,8 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
      * The specified CRS doesn't need to be a Geotk implementation.
      *
      * @param  crs The coordinate reference system.
-     * @return The single coordinate reference systems.
-     * @throws ClassCastException if a CRS is neither a {@link SingleCRS} or a {@link CompoundCRS}.
+     * @return The single coordinate reference systems, or an empty list if the
+     *         given CRS is neither a {@link SingleCRS} or a {@link CompoundCRS}.
      */
     public static List<SingleCRS> getSingleCRS(final CoordinateReferenceSystem crs) {
         final List<SingleCRS> singles;
@@ -241,8 +241,10 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
                 ((CompoundCRS) crs).getComponents();
             singles = new ArrayList<SingleCRS>(elements.size());
             getSingleCRS(elements, singles);
-        } else {
+        } else if (crs instanceof SingleCRS) {
             singles = Collections.singletonList((SingleCRS) crs);
+        } else {
+            singles = Collections.emptyList();
         }
         return singles;
     }

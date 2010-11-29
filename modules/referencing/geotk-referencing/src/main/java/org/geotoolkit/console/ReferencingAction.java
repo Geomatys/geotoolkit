@@ -49,7 +49,6 @@ import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.datum.BursaWolfParameters;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 import org.geotoolkit.referencing.factory.FallbackAuthorityFactory;
@@ -60,7 +59,7 @@ import static org.geotoolkit.console.CommandLine.*;
 /**
  * The actions run by {@link ReferencingCommands}.
  * Contains a few action which have been moved out of {@code ReferencingCommands} for making
- * it lighther, and faster to startup when the user just want the summary or the help screen.
+ * it lighter, and faster to startup when the user just want the summary or the help screen.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.01
@@ -382,7 +381,7 @@ final class ReferencingAction {
                 return;
             }
             if (object instanceof CoordinateReferenceSystem) {
-                object = CRSUtilities.getDatum((CoordinateReferenceSystem) object);
+                object = CRS.getDatum((CoordinateReferenceSystem) object);
             }
             if (object instanceof DefaultGeodeticDatum) {
                 final BursaWolfParameters[] params =

@@ -50,7 +50,6 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.geometry.TransformedDirectPosition;
 import org.geotoolkit.internal.referencing.AxisDirections;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
@@ -295,7 +294,7 @@ public class CoordinateFormat extends Format {
              * Type is DATE.
              */
             if (Units.isTemporal(unit)) {
-                final Datum datum = CRSUtilities.getDatum(CRS.getSubCRS(crs, i, i+1));
+                final Datum datum = CRS.getDatum(CRS.getSubCRS(crs, i, i+1));
                 if (datum instanceof TemporalDatum) {
                     if (epochs == null) {
                         epochs = new long[dimension];

@@ -45,7 +45,6 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.internal.Citations;
 import org.geotoolkit.internal.image.io.DataTypes;
-import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.logging.Logging;
@@ -363,7 +362,7 @@ public class ReferencingBuilder {
     public void setCoordinateReferenceSystem(final CoordinateReferenceSystem crs) {
         setName(crs, accessor);
         accessor.setAttribute("type", DataTypes.getType(crs));
-        final Datum datum = CRSUtilities.getDatum(crs);
+        final Datum datum = CRS.getDatum(crs);
         if (datum != null) {
             setDatum(datum);
         }
