@@ -29,10 +29,11 @@ import org.geotoolkit.internal.CodeLists;
  * about the handling of {@code CodeList} in ISO-19139.
  * <p>
  * This particular class extends {@link MetadataAdapter} rather than {@link CodeListAdapter}
- * because it is not formatted like the other code list. More specificially, the value shall
+ * because it is not formatted like the other code list. More specifically, the value shall
  * not be wrapped in a {@link CodeListProxy}.
  *
  * @author Cédric Briançon (Geomatys)
+ * @author Guihem Legal (Geomatys)
  * @version 3.05
  *
  * @since 2.5
@@ -75,7 +76,12 @@ public final class TopicCategoryAdapter extends MetadataAdapter<TopicCategoryAda
     @Override
     @XmlElement(name = "MD_TopicCategoryCode")
     public String getElement() {
-        return metadata.identifier();
+        String identifier = metadata.identifier();
+        if (identifier == null || ((identifier = identifier.trim()).length()) == 0) {
+            // The user created his own code list using TopicCategory.valueOf("...").
+            identifier = metadata.name();
+        }
+        return identifier;
     }
 
     /**
