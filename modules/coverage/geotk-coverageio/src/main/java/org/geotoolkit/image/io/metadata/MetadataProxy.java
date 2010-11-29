@@ -305,7 +305,27 @@ final class MetadataProxy<T> implements InvocationHandler {
          * the method performing the less transformation (String if the target type is Object,
          * Double rather than Integer if the target type is Number).
          */
-        final Class<?> targetType = Classes.primitiveToWrapper(method.getReturnType());
+        final Class<?> targetType = method.getReturnType();
+        if (targetType.equals(Double.TYPE)) {
+            Double value = accessor.getAttributeAsDouble(name);
+            if (value == null) value = Double.NaN;
+            return value;
+        }
+        if (targetType.equals(Float.TYPE)) {
+            Float value = accessor.getAttributeAsFloat(name);
+            if (value == null) value = Float.NaN;
+            return value;
+        }
+        if (targetType.equals(Integer.TYPE)) {
+            Integer value = accessor.getAttributeAsInteger(name);
+            if (value == null) value = 0;
+            return value;
+        }
+        if (targetType.equals(Boolean.TYPE)) {
+            Boolean value = accessor.getAttributeAsBoolean(name);
+            if (value == null) value = Boolean.FALSE;
+            return value;
+        }
         if (targetType.isAssignableFrom(String     .class)) return accessor.getAttribute          (name);
         if (targetType.isAssignableFrom(Double     .class)) return accessor.getAttributeAsDouble  (name);
         if (targetType.isAssignableFrom(Float      .class)) return accessor.getAttributeAsFloat   (name);
@@ -421,9 +441,13 @@ final class MetadataProxy<T> implements InvocationHandler {
                 final MetadataAccessor acc = new MetadataAccessor(accessor, elementName, "#auto");
                 child = acc.newProxyInstance(elementType);
             } catch (IllegalArgumentException e) {
-                // Report the warning and remember that we can not return a
-                // value for this element, so we don't try again next time.
-                accessor.warning(interfaceType, methodName, e);
+                /*
+                 * Report the warning and remember that we can not return a value for this
+                 * element, so we don't try again next time.  We use a lower warning level
+                 * since this exception can be considered normal (IIOMetadataFormat does
+                 * not define every attributes).
+                 */
+                accessor.warning(Level.FINE, interfaceType, methodName, e);
                 child = Void.TYPE;
             }
             childs.put(methodName, child);

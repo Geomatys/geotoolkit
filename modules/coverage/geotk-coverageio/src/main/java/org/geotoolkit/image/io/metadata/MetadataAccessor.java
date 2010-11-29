@@ -1268,7 +1268,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
                 // Inefficient fallback, but should usually not happen anyway.
                 return SpatialMetadata.parse(Date.class, value);
             } catch (ParseException e) {
-                warning(MetadataAccessor.class, "getAttributeAsDate", e);
+                warning(null, MetadataAccessor.class, "getAttributeAsDate", e);
             }
         }
         return null;
@@ -1295,7 +1295,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
                 // Inefficient fallback, but should usually not happen anyway.
                 return (NumberRange<?>) SpatialMetadata.parse(NumberRange.class, value);
             } catch (ParseException e) {
-                warning(MetadataAccessor.class, "getAttributeAsRange", e);
+                warning(null, MetadataAccessor.class, "getAttributeAsRange", e);
             }
         }
         return null;
@@ -1329,7 +1329,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
                 warning("getAttributeAsUnit", Errors.Keys.INCOMPATIBLE_UNIT_$1, unit);
             }
         } catch (IllegalArgumentException e) {
-            warning(MetadataAccessor.class, "getAttributeAsUnit", e);
+            warning(null, MetadataAccessor.class, "getAttributeAsUnit", e);
         }
         return null;
     }
@@ -1746,6 +1746,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     final void warning(final Class<?> classe, final String method,
             final IndexedResourceBundle resource, final int key, final Object value)
     {
+        final Level warningLevel = this.warningLevel;
         if (!Level.OFF.equals(warningLevel)) {
             final LogRecord record = resource.getLogRecord(warningLevel, key, value);
             record.setSourceClassName(classe.getName());
@@ -1760,10 +1761,16 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      * <p>
      * We put the name of the exception class in the message only if the exception does
      * not provide a localized message, or that message is made of only one word.
+     *
+     * @param level The maximal logging level to use, or {@code null} if none.
      */
-    final void warning(final Class<?> classe, final String method, final Exception exception) {
+    final void warning(Level level, final Class<?> classe, final String method, final Exception exception) {
+        final Level warningLevel = this.warningLevel;
         if (!Level.OFF.equals(warningLevel)) {
-            Warnings.log(this, warningLevel, classe, method, exception);
+            if (level == null || (warningLevel != null && warningLevel.intValue() < level.intValue())) {
+                level = warningLevel;
+            }
+            Warnings.log(this, level, classe, method, exception);
         }
     }
 

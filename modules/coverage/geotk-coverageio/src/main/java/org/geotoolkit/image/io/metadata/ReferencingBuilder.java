@@ -265,7 +265,7 @@ public class ReferencingBuilder {
             // Throws by 'isNonNull' (in this class) if a mandatory element is absents.
             failure = e;
         }
-        accessor.warning(getClass(), "getOptionalCRS", failure);
+        accessor.warning(null, getClass(), "getOptionalCRS", failure);
         return null;
     }
 
@@ -342,7 +342,7 @@ public class ReferencingBuilder {
                     if (isNonNull("getBaseToCRS", "value", value)) try {
                         parameters.parameter(name).setValue(value.doubleValue());
                     } catch (IllegalArgumentException e) {
-                        paramAccessor.warning(getClass(), "getBaseToCRS", e);
+                        paramAccessor.warning(null, getClass(), "getBaseToCRS", e);
                     }
                 }
             }

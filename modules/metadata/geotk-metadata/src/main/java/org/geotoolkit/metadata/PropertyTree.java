@@ -43,6 +43,8 @@ import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.metadata.AbstractMetadata.LOGGER;
+
 
 /**
  * Represents the metadata property as a tree made from {@linkplain TreeNode tree nodes}.
@@ -140,7 +142,8 @@ final class PropertyTree {
                     Level.WARNING, Errors.Keys.DUPLICATED_VALUES_COUNT_$1, duplicated);
             record.setSourceClassName("AbstractMetadata"); // This is the public API.
             record.setSourceMethodName("parse");
-            AbstractMetadata.LOGGER.log(record);
+            record.setLoggerName(LOGGER.getName());
+            LOGGER.log(record);
         }
     }
 
