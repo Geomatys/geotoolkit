@@ -20,48 +20,35 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.image.RenderedImage;
 import java.awt.geom.AffineTransform;
-import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
 import java.awt.image.renderable.ParameterBlock;
 import java.io.File;
 import java.io.IOException;
 import java.util.Locale;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ServiceRegistry;
-import javax.imageio.metadata.IIOMetadata;
 import javax.media.jai.JAI;
 import javax.xml.parsers.ParserConfigurationException;
-
-import org.opengis.metadata.spatial.PixelOrientation;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
-import org.opengis.util.FactoryException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
-import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.image.io.ImageReaderAdapter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
-import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.jai.FloodFill;
-import org.geotoolkit.internal.image.io.DimensionAccessor;
-import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.lang.Configuration;
-import org.geotoolkit.metadata.dimap.DimapMetadata;
 import org.geotoolkit.metadata.dimap.DimapAccessor;
+import org.geotoolkit.metadata.dimap.DimapConstants;
+import org.geotoolkit.metadata.dimap.DimapMetadataFormat;
 import org.geotoolkit.util.DomUtilities;
 import org.geotoolkit.util.Version;
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.Logging;
 
 /**
@@ -97,13 +84,10 @@ public class DimapImageReader extends ImageReaderAdapter {
 
     @Override
     protected Object createInput(final String readerID) throws IOException {
-        if ("main".equalsIgnoreCase(readerID)) {
-            return super.createInput(readerID);
-        }else if("dim".equalsIgnoreCase(readerID)){
-            File metadata = DimapImageReader.Spi.searchMetadataFile(input);
-            return metadata;
+        if("dim".equalsIgnoreCase(readerID)){
+            return DimapImageReader.Spi.searchMetadataFile(input);
         }
-        throw new IOException("Unexpected reader id : " + readerID +" allowed ids are 'main' and 'dim'.");
+        return super.createInput(readerID);
     }
 
     /**
@@ -114,9 +98,9 @@ public class DimapImageReader extends ImageReaderAdapter {
 
         final boolean oldState = ignoreMetadata;
         ignoreMetadata = false;
-        final DimapMetadata metadata;
+        final SpatialMetadata metadata;
         try {
-            metadata = (DimapMetadata) getImageMetadata(0);
+            metadata = getImageMetadata(0);
         } finally {
             ignoreMetadata = oldState;
         }
@@ -125,7 +109,7 @@ public class DimapImageReader extends ImageReaderAdapter {
         }
 
         //apply the band <-> color mapping -------------------------------------
-        final int[] colorMapping = DimapAccessor.readColorBandMapping((Element)metadata.getAsTree(DimapMetadata.NATIVE_FORMAT));
+        final int[] colorMapping = DimapAccessor.readColorBandMapping((Element)metadata.getAsTree(DimapMetadataFormat.NATIVE_FORMAT));
         if(colorMapping == null){
             //we have no default styling
             return image;
@@ -189,33 +173,15 @@ public class DimapImageReader extends ImageReaderAdapter {
         return (BufferedImage) changeColorModel(super.readTile(imageIndex, tileX, tileY),true);
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Raster readRaster(final int imageIndex, final ImageReadParam param) throws IOException {
-        return super.readRaster(imageIndex, param);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Raster readTileRaster(final int imageIndex, int tileX, int tileY) throws IOException {
-        return super.readTileRaster(imageIndex, tileX, tileY);
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public BufferedImage readThumbnail(int imageIndex, int thumbnailIndex) throws IOException {
-        return super.readThumbnail(imageIndex,thumbnailIndex);
-    }
-
-
     @Override
     protected SpatialMetadata createMetadata(final int imageIndex) throws IOException {
+
+        //grab spatial metadata from underlying geotiff
+        final SpatialMetadata metadata = super.createMetadata(imageIndex);
+
+        if(metadata == null){
+            throw new IOException("Geotiff reader failed to parse spatial metadata.");
+        }
 
         //parse the dimap metadata file
         final Object metaFile = createInput("dim");
@@ -229,65 +195,9 @@ public class DimapImageReader extends ImageReaderAdapter {
         }
         final Element dimapNode = doc.getDocumentElement();
 
-
-        SpatialMetadata metadata = null;
-        if (imageIndex >= 0) {
-            final IIOMetadata iometa = main.getImageMetadata(imageIndex);
-            if (iometa != null) {
-                metadata = new DimapMetadata(SpatialMetadataFormat.IMAGE, this, iometa, dimapNode);
-            }
-        } else {
-            final IIOMetadata iometa = main.getStreamMetadata();
-            if (iometa != null) {
-                metadata = new DimapMetadata(SpatialMetadataFormat.STREAM, this, iometa, dimapNode);
-            }
-        }
-
-        if (imageIndex >= 0) {
-            AffineTransform gridToCRS = null;
-            CoordinateReferenceSystem crs = null;
-            GridSampleDimension[] dims = null;
-
-            try {
-                crs = DimapAccessor.readCRS(dimapNode);
-                final int[] dim = DimapAccessor.readRasterDimension(dimapNode);
-                gridToCRS = DimapAccessor.readGridToCRS(dimapNode);
-                dims = DimapAccessor.readSampleDimensions(dimapNode, "cn", dim[2]);
-
-            } catch (FactoryException ex) {
-                Logger.getLogger(DimapImageReader.class.getName()).log(Level.WARNING, null, ex);
-            } catch (TransformException ex) {
-                Logger.getLogger(DimapImageReader.class.getName()).log(Level.WARNING, null, ex);
-            }
-            
-            /*
-             * If we have found metadata information in dimap file, complete metadata.
-             */
-            if (gridToCRS != null || crs != null) {
-                if (metadata == null) {
-                    metadata = new DimapMetadata(SpatialMetadataFormat.IMAGE, this, null,dimapNode);
-                }
-                if (gridToCRS != null) {
-                    final int width  = getWidth (imageIndex);
-                    final int height = getHeight(imageIndex);
-                    new GridDomainAccessor(metadata).setAll(gridToCRS, new Rectangle(width, height),
-                            null, PixelOrientation.UPPER_LEFT);
-                }
-                if (crs != null) {
-                    new ReferencingBuilder(metadata).setCoordinateReferenceSystem(crs);
-                }
-            }
-
-            if(dims != null){
-                final DimensionAccessor accesor = new DimensionAccessor(metadata);
-                for(GridSampleDimension dim : dims){
-                    accesor.selectChild(accesor.appendChild());
-                    accesor.setAttribute("descriptor", dim.getDescription().toString());
-                }
-            }
-
-        }
-        return metadata;
+        final SpatialMetadata dimapMeta = new SpatialMetadata(DimapMetadataFormat.INSTANCE, this, metadata);
+        dimapMeta.mergeTree(DimapMetadataFormat.NATIVE_FORMAT, dimapNode);
+        return dimapMeta;
     }
 
     public static class Spi extends ImageReaderAdapter.Spi {
@@ -298,6 +208,10 @@ public class DimapImageReader extends ImageReaderAdapter {
             pluginClassName = "org.geotoolkit.image.io.plugin.DimapImageReader";
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
+            extraImageMetadataFormatNames = XArrays.concatenate(extraImageMetadataFormatNames, new String[] {
+                nativeImageMetadataFormatName
+            });
+            nativeImageMetadataFormatName = DimapMetadataFormat.NATIVE_FORMAT;
         }
 
         public Spi(final String format) throws IllegalArgumentException {
@@ -338,18 +252,7 @@ public class DimapImageReader extends ImageReaderAdapter {
         public boolean canDecodeInput(Object source) throws IOException {
             if (IOUtilities.canProcessAsPath(source)) {
                 source = IOUtilities.tryToFile(source);
-                final String str = IOUtilities.extension(source);
-                if(str != null){
-                    if(!(str.equalsIgnoreCase("tif") ||
-                         str.equalsIgnoreCase("tiff"))){
-                        return false;
-                    }
-                    //ok
-                }else{
-                    return false;
-                }
-
-                File f = searchMetadataFile(source);
+                final File f = searchMetadataFile(source);
                 return (f != null);
             }
             return super.canDecodeInput(source);
@@ -365,11 +268,15 @@ public class DimapImageReader extends ImageReaderAdapter {
             if (registry == null) {
                 registry = IIORegistry.getDefaultInstance();
             }
+
+            //dimap requiere geotiff
+            GeoTiffImageReader.Spi.registerDefaults(registry);
+
             for (int index=0; ;index++) {
                 final Spi provider;
                 try {
                     switch (index) {
-                        case 0: provider = new TIFF(); break;
+                        case 0: provider = new GEOTIFF(); break;
                         //todo must add BIL format in the futur
                         default: return;
                     }
@@ -396,7 +303,7 @@ public class DimapImageReader extends ImageReaderAdapter {
             for (int index=0; ;index++) {
                 final Class<? extends Spi> type;
                 switch (index) {
-                    case 0: type = TIFF.class; break;
+                    case 0: type = GEOTIFF.class; break;
                     //todo must add BIL format in the futur
                     default: return;
                 }
@@ -408,5 +315,5 @@ public class DimapImageReader extends ImageReaderAdapter {
         }
     }
 
-    private static final class TIFF extends Spi {TIFF() {super("TIFF"  );}}
+    private static final class GEOTIFF extends Spi {GEOTIFF() {super("geotiff"  );}}
 }
