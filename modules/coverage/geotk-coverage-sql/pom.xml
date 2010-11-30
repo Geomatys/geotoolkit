@@ -110,10 +110,10 @@
   <build>
     <resources>
       <resource>
-        <directory>org/geotoolkit/coverage/sql</directory>
+        <directory>src/main/resources</directory>
         <excludes>
-          <exclude>README.txt</exclude>
-          <exclude>upgrade-2.0.sql</exclude>
+          <exclude>org/geotoolkit/coverage/sql/README.txt</exclude>
+          <exclude>org/geotoolkit/coverage/sql/upgrade-2.0.sql</exclude>
         </excludes>
       </resource>
     </resources>
