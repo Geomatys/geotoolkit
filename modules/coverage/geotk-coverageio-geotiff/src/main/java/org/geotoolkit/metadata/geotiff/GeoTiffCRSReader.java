@@ -36,7 +36,6 @@
 
 package org.geotoolkit.metadata.geotiff;
 
-import org.geotoolkit.referencing.crs.DefaultProjectedCRS;
 import org.opengis.util.NoSuchIdentifierException;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.cs.CSFactory;
@@ -52,22 +51,23 @@ import javax.measure.unit.SI;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
-import org.geotoolkit.referencing.datum.DefaultEllipsoid;
-import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
-import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
-import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
-import org.geotoolkit.referencing.cs.DefaultCartesianCS;
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.image.io.metadata.ReferencingBuilder;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.geotoolkit.referencing.cs.DefaultCartesianCS;
+import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.referencing.crs.DefaultProjectedCRS;
+import org.geotoolkit.referencing.datum.DefaultEllipsoid;
+import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
+import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.factory.AllAuthoritiesFactory;
-import org.geotoolkit.image.io.metadata.SpatialMetadata;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.image.io.metadata.ReferencingBuilder;
-import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.referencing.operation.DefiningConversion;
+import org.geotoolkit.resources.Vocabulary;
 
 import org.opengis.referencing.crs.CRSFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
