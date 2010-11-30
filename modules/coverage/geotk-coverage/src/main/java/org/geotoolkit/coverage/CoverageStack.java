@@ -31,7 +31,6 @@ import java.io.ObjectInputStream;
 import javax.imageio.ImageReader;
 import javax.imageio.event.IIOReadWarningListener;
 import javax.imageio.event.IIOReadProgressListener;
-import java.lang.reflect.UndeclaredThrowableException;
 import javax.media.jai.InterpolationNearest;
 
 import org.opengis.coverage.Coverage;
@@ -58,6 +57,7 @@ import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.FrequencySortedSet;
+import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.Interpolator2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
@@ -115,13 +115,13 @@ import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
  * {@section Caching}
  * This {@code CoverageStack} implementation remember the last coverage elements used;
  * it will not trig new data loading as long as consecutive calls to {@code evaluate(...)}
- * methods require the same coverage elements. Apart from this very simple caching mechanism,
+ * methods require the same coverage elements. Apart from this very simple mechanism,
  * caching is the responsibility of {@link Element} implementations. Note that this simple
  * caching mechanism is sufficient if {@code evaluate(...)} methods are invoked with increasing
  * <var>z</var> values.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.16
  *
  * @since 2.1
  * @module
@@ -244,9 +244,10 @@ public class CoverageStack extends AbstractCoverage {
     /**
      * A convenience adapter class for wrapping a pre-loaded {@link Coverage} into an
      * {@link Element} object. This adapter provides basic implementation for all methods,
-     * but they a require a fully constructed {@link Coverage} object. Subclasses are strongly
-     * encouraged to provides alternative implementation loading only the minimum amount of data
-     * required for each method.
+     * but they require a fully constructed {@link Coverage} object.
+     * <p>
+     * Subclasses are strongly encouraged to provides alternative implementation loading
+     * only the minimum amount of data required for each method.
      *
      * @author Martin Desruisseaux (IRD)
      * @since 2.1
@@ -273,7 +274,7 @@ public class CoverageStack extends AbstractCoverage {
          * @param coverage The coverage to wrap. Can be {@code null} only if this constructor
          *                 is invoked from a sub-class constructor.
          * @param range    The minimum and maximum <var>z</var> values for this element, or
-         *                 {@code null} to infers it from the last dimension in the coverage's
+         *                 {@code null} to infers it from the last dimension in the coverage
          *                 envelope.
          */
         public Adapter(final Coverage coverage, final NumberRange<?> range) {
@@ -304,7 +305,7 @@ public class CoverageStack extends AbstractCoverage {
         /**
          * Returns the minimum and maximum <var>z</var> values for the coverage. If the range was
          * not explicitly specified to the constructor, then the default implementation infers it
-         * from the last dimension in the coverage's envelope.
+         * from the last dimension in the coverage envelope.
          */
         @Override
         public NumberRange<?> getZRange() throws IOException {
@@ -459,25 +460,25 @@ public class CoverageStack extends AbstractCoverage {
 
     /**
      * Sample byte values. Allocated when first needed, in order to avoid allocating
-     * thel again everytime an {@code evaluate(...)} method is invoked.
+     * them again every time an {@code evaluate(...)} method is invoked.
      */
     private transient byte[] byteBuffer;
 
     /**
      * Sample integer values. Allocated when first needed, in order to avoid allocating
-     * thel again everytime an {@code evaluate(...)} method is invoked.
+     * them again every time an {@code evaluate(...)} method is invoked.
      */
     private transient int[] intBuffer;
 
     /**
      * Sample float values. Allocated when first needed, in order to avoid allocating
-     * thel again everytime an {@code evaluate(...)} method is invoked.
+     * them again every time an {@code evaluate(...)} method is invoked.
      */
     private transient float[] floatBuffer;
 
     /**
      * Sample double values. Allocated when first needed, in order to avoid allocating
-     * thel again everytime an {@code evaluate(...)} method is invoked.
+     * them again every time an {@code evaluate(...)} method is invoked.
      */
     private transient double[] doubleBuffer;
 
@@ -511,7 +512,7 @@ public class CoverageStack extends AbstractCoverage {
      *     envelope.setRange(1, southLatitudeBound, northLatitudeBound);
      *     for (int i=0; i<...; i++) {
      *         envelope.setRange(2, minElevation, maxElevation);
-     *         coverages.add(factory.create(..., crs, envelope, ...);
+     *         coverages.add(factory.create(..., crs, envelope, ...));
      *     }
      * }
      *
@@ -596,8 +597,7 @@ public class CoverageStack extends AbstractCoverage {
         zDimension = envelope.getDimension() - 1;
         boolean sampleDimensionMismatch = false;
         SampleDimension[] sampleDimensions = null;
-        for (int j=0; j<elements.length; j++) {
-            final Element element = elements[j];
+        for (final Element element : elements) {
             /*
              * Ensures that all coverages uses the same number of sample dimension.
              * To be strict, we should ensure that all sample dimensions are identical.
@@ -663,8 +663,8 @@ public class CoverageStack extends AbstractCoverage {
     {
         try {
             Arrays.sort(elements, COMPARATOR);
-        } catch (UndeclaredThrowableException exception) {
-            throw rethrow(exception);
+        } catch (BackingStoreException exception) {
+            throw exception.unwrapOrRethrow(IOException.class);
         }
         /*
          * If no CRS was specified, selects the most frequently used one. The loop below memorizes
@@ -823,22 +823,6 @@ public class CoverageStack extends AbstractCoverage {
     }
 
     /**
-     * Rethrows the exception in {@link #COMPARATOR} as a {@link RuntimeException}.
-     * It gives an opportunity for implementations of {@link Element} to uses some
-     * checked exception like {@link IOException}.
-     */
-    private static IOException rethrow(final UndeclaredThrowableException exception) {
-        final Throwable cause = exception.getCause();
-        if (cause instanceof IOException) {
-            return (IOException) cause;
-        }
-        if (cause instanceof RuntimeException) {
-            throw (RuntimeException) cause;
-        }
-        throw exception;
-    }
-
-    /**
      * A comparator for {@link Element} sorting and binary search. This comparator uses the
      * middle <var>z</var> value as criterion. It must accepts {@link Double} objects as well
      * as {@link Element}, because binary search will mix those two kinds of object.
@@ -848,7 +832,7 @@ public class CoverageStack extends AbstractCoverage {
             try {
                 return Double.compare(zFromObject(entry1), zFromObject(entry2));
             } catch (IOException exception) {
-                throw new UndeclaredThrowableException(exception);
+                throw new BackingStoreException(exception);
                 // Will be catch and rethrown as IOException
                 // by all methods using this comparator.
             }
@@ -949,13 +933,18 @@ public class CoverageStack extends AbstractCoverage {
 
     /**
      * Snaps the specified coordinate point to the coordinate of the nearest voxel available in
-     * this coverage. First, this method locate the {@linkplain Element coverage element} at or
-     * near the last ordinate value (the <var>z</var> value). If no coverage is available at the
-     * specified <var>z</var> value, then the nearest one is selected. Next, this method locate
-     * the pixel under the {@code point} coordinate in the coverage element. The {@code point}
-     * is then set to the pixel center coordinate and to the <var>z</var> value of the selected
-     * coverage element. Consequently, calling any {@code evaluate(...)} method with snapped
-     * coordinates will returns non-interpolated values.
+     * this coverage. Invoking any {@code evaluate(...)} method with snapped coordinates will
+     * return non-interpolated values.
+     * <p>
+     * <ul>
+     *   <li>First, this method locates the {@linkplain Element coverage element} at or near
+     *       the last ordinate value (the <var>z</var> value). If no coverage is available at
+     *       the specified <var>z</var> value, then the nearest one is selected.</li>
+     *   <li>Next, this method locates the pixel under the {@code point} coordinate in the
+     *       coverage element.</li>
+     *   <li>The {@code point} is then set to the pixel center coordinate and to the
+     *       <var>z</var> value of the selected coverage element.</li>
+     * </ul>
      *
      * @param  point The point to snap.
      * @throws IOException if an I/O operation was required but failed.
@@ -965,8 +954,8 @@ public class CoverageStack extends AbstractCoverage {
         int index;
         try {
             index = Arrays.binarySearch(elements, Double.valueOf(z), COMPARATOR);
-        } catch (UndeclaredThrowableException exception) {
-            throw rethrow(exception);
+        } catch (BackingStoreException exception) {
+            throw exception.unwrapOrRethrow(IOException.class);
         }
         if (index < 0) {
             /*
@@ -1133,9 +1122,10 @@ public class CoverageStack extends AbstractCoverage {
         int index;
         try {
             index = Arrays.binarySearch(elements, Z, COMPARATOR);
-        } catch (UndeclaredThrowableException exception) {
+        } catch (BackingStoreException exception) {
             // TODO: localize
-            throw new CannotEvaluateException("Can't fetch coverage properties.", rethrow(exception));
+            throw new CannotEvaluateException("Can't fetch coverage properties.",
+                    exception.unwrapOrRethrow(IOException.class));
         }
         try {
             if (index >= 0) {
@@ -1180,7 +1170,7 @@ public class CoverageStack extends AbstractCoverage {
                 final NumberRange<?> upperRange   = upperElement.getZRange();
                 final double         lowerEnd     = lowerRange.getMaximum();
                 final double         upperStart   = upperRange.getMinimum();
-                if (lowerEnd+lagTolerance >= upperStart) {
+                if (lowerEnd + lagTolerance >= upperStart) {
                     if (interpolationEnabled) {
                         load(lowerElement, upperElement);
                     } else {
@@ -1284,7 +1274,7 @@ public class CoverageStack extends AbstractCoverage {
             return lower.evaluate(reduce(coord, lower), dest);
         }
         assert !(z<lowerZ || z>upperZ) : z;   // Uses !(...) in order to accepts NaN.
-        final Coverage coverage = (z >= 0.5*(lowerZ+upperZ)) ? upper : lower;
+        final Coverage coverage = (z >= 0.5*(lowerZ + upperZ)) ? upper : lower;
         return coverage.evaluate(reduce(coord, coverage), dest);
     }
 
@@ -1307,7 +1297,7 @@ public class CoverageStack extends AbstractCoverage {
             if (dest == null) {
                 dest = new byte[numSampleDimensions];
             } else {
-                Arrays.fill(dest, 0, numSampleDimensions, (byte)0);
+                Arrays.fill(dest, 0, numSampleDimensions, (byte) 0);
             }
             return dest;
         }
@@ -1317,9 +1307,9 @@ public class CoverageStack extends AbstractCoverage {
         byteBuffer = upper.evaluate(reduce(coord, upper), byteBuffer);
         dest       = lower.evaluate(reduce(coord, lower), dest);
         assert !(z<lowerZ || z>upperZ) : z;   // Uses !(...) in order to accepts NaN.
-        final double ratio = (z-lowerZ) / (upperZ-lowerZ);
+        final double ratio = (z - lowerZ) / (upperZ - lowerZ);
         for (int i=0; i<byteBuffer.length; i++) {
-            dest[i] = (byte)Math.round(dest[i] + ratio*(byteBuffer[i]-dest[i]));
+            dest[i] = (byte) Math.round(dest[i] + ratio*(byteBuffer[i] - dest[i]));
         }
         return dest;
     }
@@ -1353,9 +1343,9 @@ public class CoverageStack extends AbstractCoverage {
         intBuffer = upper.evaluate(reduce(coord, upper), intBuffer);
         dest      = lower.evaluate(reduce(coord, lower), dest);
         assert !(z<lowerZ || z>upperZ) : z;   // Uses !(...) in order to accepts NaN.
-        final double ratio = (z-lowerZ) / (upperZ-lowerZ);
+        final double ratio = (z - lowerZ) / (upperZ - lowerZ);
         for (int i=0; i<intBuffer.length; i++) {
-            dest[i] = (int)Math.round(dest[i] + ratio*(intBuffer[i]-dest[i]));
+            dest[i] = (int) Math.round(dest[i] + ratio*(intBuffer[i] - dest[i]));
         }
         return dest;
     }
@@ -1388,11 +1378,11 @@ public class CoverageStack extends AbstractCoverage {
         floatBuffer = upper.evaluate(reduce(coord, upper), floatBuffer);
         dest        = lower.evaluate(reduce(coord, lower), dest);
         assert !(z<lowerZ || z>upperZ) : z;   // Uses !(...) in order to accepts NaN.
-        final double ratio = (z-lowerZ) / (upperZ-lowerZ);
+        final double ratio = (z - lowerZ) / (upperZ - lowerZ);
         for (int i=0; i<floatBuffer.length; i++) {
             final float lower = dest[i];
             final float upper = floatBuffer[i];
-            float value = (float)(lower + ratio*(upper-lower));
+            float value = (float) (lower + ratio*(upper - lower));
             if (Float.isNaN(value)) {
                 if (!Float.isNaN(lower)) {
                     assert Float.isNaN(upper) : upper;
@@ -1439,11 +1429,11 @@ public class CoverageStack extends AbstractCoverage {
         doubleBuffer = upper.evaluate(reduce(coord, upper), doubleBuffer);
         dest         = lower.evaluate(reduce(coord, lower), dest);
         assert !(z<lowerZ || z>upperZ) : z;   // Uses !(...) in order to accepts NaN.
-        final double ratio = (z-lowerZ) / (upperZ-lowerZ);
+        final double ratio = (z - lowerZ) / (upperZ - lowerZ);
         for (int i=0; i<doubleBuffer.length; i++) {
             final double lower = dest[i];
             final double upper = doubleBuffer[i];
-            double value = lower + ratio*(upper-lower);
+            double value = lower + ratio*(upper - lower);
             if (isNaN(value)) {
                 if (!isNaN(lower)) {
                     assert isNaN(upper) : upper;

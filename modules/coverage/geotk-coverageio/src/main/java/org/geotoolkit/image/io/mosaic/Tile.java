@@ -462,12 +462,18 @@ public class Tile implements Comparable<Tile>, Serializable {
     }
 
     /**
-     * Returns {@code true} if we recommend to ignore the given provider. This method returns
-     * {@code true} if the given provider is an instance of {@link org.geotoolkit.image.io.ImageReaderAdapter.Spi},
-     * or other providers which may be added in the future. Those providers are wrapper around
-     * "native" providers, adding support for {@link org.geotoolkit.image.io.metadata.SpatialMetadata}.
-     * Because {@code Tile} do not use those metadata, the overhead of using those wrappers is
-     * not needed.
+     * Returns {@code true} if we recommend to ignore the given provider. The current
+     * implementation returns {@code true} if the given provider is an instance of
+     * {@link org.geotoolkit.image.io.ImageReaderAdapter.Spi}, but the conditions may
+     * change in any future version.
+     * <p>
+     * The intend is to ignore the providers that are wrappers around "native" providers
+     * adding only support for {@link org.geotoolkit.image.io.metadata.SpatialMetadata}.
+     * Because {@code Tile} does not need those metadata, the overhead of using those
+     * wrappers is not needed.
+     *
+     * {@note If this method returns <code>true</code> for every submitted providers,
+     * then callers are encouraged to nevertheless use one of the "ignored" providers.}
      *
      * @param  provider An image reader provider.
      * @return {@code true} if the given provider should be ignored for usage with {@code Tile}.
@@ -483,6 +489,8 @@ public class Tile implements Comparable<Tile>, Serializable {
 
     /**
      * Returns {@code true} if we recommend to ignore the given provider for writing tiles.
+     * This method is defined for symmetry with {@link #ignore(ImageReaderSpi)} and is subject
+     * to the same recommendations.
      *
      * @param  provider An image writer provider.
      * @return {@code true} if the given provider should be ignored for usage with {@code Tile}.
@@ -704,7 +712,7 @@ public class Tile implements Comparable<Tile>, Serializable {
 
     /**
      * Returns an image reader provider inferred from the given input, or {@code null} if none.
-     * If more than one provider is is suitable for the given suffix, the first provider found
+     * If more than one provider is suitable for the given suffix, then the first provider found
      * is returned, except for World File image readers which are returned only if the wrapped
      * Spi is not found (because we don't need the metadata provided by the TFW files).
      */
@@ -769,7 +777,7 @@ public class Tile implements Comparable<Tile>, Serializable {
         if (input instanceof CharSequence) {
             final String path = input.toString();
             final Object url;
-            if (path.indexOf("://") > 0) { // NOSONAR
+            if (path.indexOf("://") >= 1) {
                 url = new URL(path);
             } else {
                 url = new File(path);

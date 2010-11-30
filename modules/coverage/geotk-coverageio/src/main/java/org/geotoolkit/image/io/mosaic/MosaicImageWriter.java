@@ -89,7 +89,7 @@ import org.geotoolkit.util.converter.Classes;
  * images to temporary files in an uncompressed RAW format. The inconvenient is that a large
  * amount of disk space will be temporarily required until the write operation is completed.
  * <p>
- * Caching are enabled by default. If the environment is contrained by disk space or if the
+ * Caching are enabled by default. If the environment is constrained by disk space or if the
  * source tiles are known to be already uncompressed, then caching can be disabled by overriding
  * the {@link #isCachingEnabled(ImageReader,int)} method.
  *
@@ -102,7 +102,7 @@ import org.geotoolkit.util.converter.Classes;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @since 2.5
  * @module
@@ -273,7 +273,7 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
      * Reads the image from the given input and writes it as a set of tiles. This is equivalent
      * to <code>{@linkplain #writeFromInput(Object,int,ImageWriteParam) writeFromInput}(input,
      * <b>0</b>, param)</code> except that this method ensures that the input contains only one
-     * image. If more than one image is found, then an exception is throw. This is often desireable
+     * image. If more than one image is found, then an exception is throw. This is often desirable
      * when the input is a collection of {@link Tile}s, since having more than one "image" (where
      * "image" in this context means an input mosaic as a whole) means that we failed to create a
      * single mosaic from a set of source tiles.
@@ -1411,16 +1411,15 @@ search: for (final Tile tile : tiles) {
     }
 
     /**
-     * Gets and initializes an {@linkplain ImageWriter image writer} that can encode the specified
-     * image. The returned writer has its {@linkplain ImageWriter#setOutput output} already set.
-     * If the output is different than the {@linkplain Tile#getInput tile input}, then it is
-     * probably an {@linkplain ImageOutputStream Image Output Stream} and closing it is caller's
-     * responsibility.
+     * Gets and initializes an {@link ImageWriter} that can encode the specified image. The
+     * returned writer has its {@linkplain ImageWriter#setOutput output} already set. If the
+     * output is different than the {@linkplain Tile#getInput tile input}, then it is probably
+     * an {@link ImageOutputStream} and closing it is caller responsibility.
      * <p>
      * This method extracts an {@code ImageWriter} instance from the given cache, if possible.
      * If no suitable writer is available, then a new one is created but <strong>not</strong>
-     * cached; it is caller responsibility to reset and cache the writer when the write operation
-     * is done.
+     * cached; it is caller responsibility to reset the writer and cache it after the write
+     * operation has been completed.
      *
      * @param  tile  The tile to encode.
      * @param  image The image associated to the specified tile.
@@ -1498,8 +1497,10 @@ search: for (final Tile tile : tiles) {
         final String[] formatNames = readerSpi.getFormatNames();
         final IIORegistry registry = IIORegistry.getDefaultInstance();
         final Set<ImageWriterSpi> providers = new LinkedHashSet<ImageWriterSpi>();
-        Iterator<ImageWriterSpi> it = null; // To be initialized when first needed.
-        while (true) {
+        List<ImageWriterSpi> ignored = null; // To be initialized when first needed.
+        Iterator<ImageWriterSpi>  it = null; // To be initialized when first needed.
+        boolean canIgnore = true;
+        while (true) { // The exit point is in the middle of the loop, after "if (!it.hasNext())".
             final ImageWriterSpi spi;
             if (spiNames != null && spiNameIndex < spiNames.length) {
                 /*
@@ -1510,56 +1511,83 @@ search: for (final Tile tile : tiles) {
                 try {
                     spiType = Class.forName(spiName);
                 } catch (ClassNotFoundException e) {
-                    // May be normal.
+                    // May be normal. Search for an other writer.
                     Logging.recoverableException(MosaicImageWriter.class, "getImageWriter", e);
                     continue;
                 }
                 final Object candidate = registry.getServiceProviderByClass(spiType);
                 if (!(candidate instanceof ImageWriterSpi)) {
+                    // No instance is registered for the given class. Search an other writer.
                     continue;
                 }
                 spi = (ImageWriterSpi) candidate;
             } else {
                 /*
                  * ---- Second strategy (see above comment) --------
+                 *      To be run only after every providers
+                 *      listed in 'spiNames' have been tried.
                  */
                 if (it == null) {
+                    // Executed the first time that the second strategy is run.
                     it = registry.getServiceProviders(ImageWriterSpi.class, true);
                 }
+                /*
+                 * If we have examined every pertinent providers listed by IIORegistry but some
+                 * of those providers have been ignored, and if we found no "normal" provider,
+                 * then take a second look to the providers that we have ignored.
+                 *
+                 * The ignored providers are considered only if we found no "normal" providers,
+                 * because the "normal" providers are examined again after this loop and should
+                 * have precedence over the ignored providers.
+                 */
                 if (!it.hasNext()) {
-                    break;
+                    if (ignored == null || !providers.isEmpty()) {
+                        // This is the only exit point of the while(true) loop.
+                        break;
+                    }
+                    it = ignored.iterator();
+                    ignored   = null;
+                    canIgnore = false;
                 }
                 spi = it.next();
-                if (Tile.ignore(spi)) {
+                if (!XArrays.intersects(formatNames, spi.getFormatNames())) {
+                    // Not a provider for the format we are looking for.
+                    continue;
+                }
+                /*
+                 * Ignore the providers that are wrappers around "native" providers, because we
+                 * don't want to write metadata like ".prj" or ".tfw" files for every tiles.
+                 * However keep trace of the ignored providers, so we can give a second look
+                 * at them later if we find no "normal" provider.
+                 */
+                if (canIgnore && Tile.ignore(spi)) {
+                    if (ignored == null) {
+                        ignored = new ArrayList<ImageWriterSpi>(4);
+                    }
+                    ignored.add(spi);
                     continue;
                 }
             }
             /*
-             * For each image writers, checks if at least one format name is an expected one
-             * and check if the writer can encode the image. If a suitable writer is found
-             * and is capable to encode the output, returns it immediately. Otherwise the
-             * writers are stored in an array as we found it, in order to try them again with
-             * an ImageOutputStream after this loop.
+             * If a suitable writer is found and is capable to encode the output, returns
+             * it immediately. Otherwise the writers are stored in an Set as we found them,
+             * in order to try them again with an ImageOutputStream after this loop.
              */
-            if (providers.add(spi)) {
-                if (XArrays.intersects(formatNames, spi.getFormatNames()) && spi.canEncodeImage(image)) {
-                    for (final Class<?> legalType : spi.getOutputTypes()) {
-                        if (legalType.isAssignableFrom(outputType)) {
-                            final ImageWriter writer = spi.createWriterInstance();
-                            writer.setOutput(output);
-                            if (filter(writer)) {
-                                if (stream != null) {
-                                    stream.close();
-                                }
-                                cacheEntry.writer = writer;
-                                return cacheEntry;
+            if (spi.canEncodeImage(image) && providers.add(spi)) {
+                for (final Class<?> legalType : spi.getOutputTypes()) {
+                    if (legalType.isAssignableFrom(outputType)) {
+                        final ImageWriter writer = spi.createWriterInstance();
+                        writer.setOutput(output);
+                        if (filter(writer)) {
+                            if (stream != null) {
+                                stream.close();
                             }
-                            writer.dispose();
-                            break;
+                            cacheEntry.writer = writer;
+                            return cacheEntry;
                         }
+                        writer.dispose();
+                        break;
                     }
-                } else {
-                    providers.remove(spi);
                 }
             }
         }

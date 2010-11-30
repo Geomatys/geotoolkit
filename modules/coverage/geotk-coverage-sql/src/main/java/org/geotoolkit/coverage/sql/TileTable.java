@@ -291,11 +291,15 @@ final class TileTable extends Table implements Comparator<TileManager> {
     private static ImageReaderSpi getImageReaderSpi(final String format) throws IIOException {
         final IIORegistry registry = IIORegistry.getDefaultInstance();
         Iterator<ImageReaderSpi> providers = registry.getServiceProviders(ImageReaderSpi.class, true);
+        ImageReaderSpi fallback = null;
         while (providers.hasNext()) {
             final ImageReaderSpi provider = providers.next();
-            if (!Tile.ignore(provider)) {
-                if (XArrays.containsIgnoreCase(provider.getFormatNames(), format)) {
+            if (XArrays.containsIgnoreCase(provider.getFormatNames(), format)) {
+                if (!Tile.ignore(provider)) {
                     return provider;
+                }
+                if (fallback == null) {
+                    fallback = provider;
                 }
             }
         }
@@ -308,11 +312,17 @@ final class TileTable extends Table implements Comparator<TileManager> {
         providers = registry.getServiceProviders(ImageReaderSpi.class, true);
         while (providers.hasNext()) {
             final ImageReaderSpi provider = providers.next();
-            if (!Tile.ignore(provider)) {
-                if (XArrays.containsIgnoreCase(provider.getMIMETypes(), format)) {
+            if (XArrays.containsIgnoreCase(provider.getMIMETypes(), format)) {
+                if (!Tile.ignore(provider)) {
                     return provider;
                 }
+                if (fallback == null) {
+                    fallback = provider;
+                }
             }
+        }
+        if (fallback != null) {
+            return fallback;
         }
         throw new IIOException(Errors.format(Errors.Keys.NO_IMAGE_READER));
     }
