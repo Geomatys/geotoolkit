@@ -379,61 +379,71 @@ final class GridCoverageEntry extends DefaultEntry implements GridCoverageRefere
 
     /**
      * Loads the data if needed and returns the coverage.
-     * <p>
-     * This method is synchronized on {@link #identifier}, which is a totally arbitrary lock.
-     * We use that lock because we need something different than the lock used by {@link #abort}.
+     * Note that the coverage is cached by the read method, since the envelope is null.
      */
     @Override
     public GridCoverage2D getCoverage(final IIOListeners listeners)
             throws IOException, CancellationException
     {
-        GridCoverage2D coverage;
-        synchronized (identifier) { // See javadoc comment.
-            if (cached != null) {
-                coverage = cached.get();
-                if (coverage != null) {
-                    return coverage;
-                }
-                cached = null;
+        try {
+            return read((CoverageEnvelope) null, listeners);
+        } catch (CoverageStoreException e) {
+            final Throwable cause = e.getCause();
+            if (cause instanceof IOException) {
+                throw (IOException) cause;
             }
-            try {
-                coverage = read((GridCoverageReadParam) null, listeners);
-            } catch (CoverageStoreException e) {
-                final Throwable cause = e.getCause();
-                if (cause instanceof IOException) {
-                    throw (IOException) cause;
-                }
-                throw new IIOException(Errors.format(Errors.Keys.CANT_READ_$1, getName()), e);
-            }
-            if (coverage != null) {
-                cached = new SoftReference<GridCoverage2D>(coverage);
-            }
+            throw new IIOException(Errors.format(Errors.Keys.CANT_READ_$1, getName()), e);
         }
-        return coverage;
     }
 
     /**
      * Reads the data in the given envelope and returns them as a coverage.
+     * If the given envelope is {@code null}, then the whole coverage is loaded and cached.
      */
     @Override
     public GridCoverage2D read(final CoverageEnvelope envelope, final IIOListeners listeners)
             throws CoverageStoreException, CancellationException
     {
         GridCoverageReadParam param = null;
-        final Rectangle2D bounds = envelope.getHorizontalRange();
-        if (!Double.isInfinite(bounds.getWidth()) || !Double.isInfinite(bounds.getHeight())) {
-            param = new GridCoverageReadParam();
-            param.setEnvelope(bounds, envelope.database.horizontalCRS);
-        }
-        final Dimension2D resolution = envelope.getPreferredResolution();
-        if (resolution != null) {
-            if (param == null) {
+        if (envelope != null) {
+            final Rectangle2D bounds = envelope.getHorizontalRange();
+            if (!Double.isInfinite(bounds.getWidth()) || !Double.isInfinite(bounds.getHeight())) {
                 param = new GridCoverageReadParam();
-                param.setCoordinateReferenceSystem(envelope.database.horizontalCRS);
+                param.setEnvelope(bounds, envelope.database.horizontalCRS);
             }
-            param.setResolution(resolution.getWidth(), resolution.getHeight());
+            final Dimension2D resolution = envelope.getPreferredResolution();
+            if (resolution != null) {
+                if (param == null) {
+                    param = new GridCoverageReadParam();
+                    param.setCoordinateReferenceSystem(envelope.database.horizontalCRS);
+                }
+                param.setResolution(resolution.getWidth(), resolution.getHeight());
+            }
         }
-        return read(param, listeners);
+        GridCoverage2D coverage;
+        if (param != null) {
+            // Do not use cache.
+            coverage = read(param, listeners);
+        } else {
+            /*
+             * This block is synchronized on identifier, which is a totally arbitrary lock. We
+             * use that lock because we need something different than the lock used by abort().
+             */
+            synchronized (identifier) {
+                if (cached != null) {
+                    coverage = cached.get();
+                    if (coverage != null) {
+                        return coverage;
+                    }
+                    cached = null;
+                }
+                coverage = read(param, listeners);
+                if (coverage != null) {
+                    cached = new SoftReference<GridCoverage2D>(coverage);
+                }
+            }
+        }
+        return coverage;
     }
 
     /**

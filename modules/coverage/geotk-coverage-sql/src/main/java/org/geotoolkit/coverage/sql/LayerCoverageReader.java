@@ -44,22 +44,28 @@ import org.geotoolkit.resources.Errors;
 
 
 /**
- * A grid coverage reader for a layer. This class provides a way to read the data using only
- * the {@link GridCoverageReader} API. Alternative ways to read the same data are:
+ * A grid coverage reader for a layer. This class provides a way to read the data using only the
+ * {@link GridCoverageReader} API, with {@linkplain #getInput() input} of kind {@link Layer}.
  * <p>
- * <ul>
- *   <li>{@link CoverageDatabase#readSlice(CoverageQuery)}</li>
- *   <li>{@link GridCoverageReference#read(CoverageEnvelope, IIOListeners)}</li>
- * </ul>
- * <p>
- * The {@linkplain #getInput() input} of this reader shall be an instance of {@link Layer}.
  * The {@link #read read} method actually reads two-dimensional slices selected according
  * the spatio-temporal envelope given to the {@link GridCoverageReadParam} argument.
+ * <p>
+ * <b>Usage example:</b>
+ * {@preformat java
+ *     CoverageDatabase      db     = new CoverageDatabase(...);
+ *     LayerCoverageReader   reader = db.createGridCoverageReader("My layer");
+ *     GridCoverageReadParam param  = new GridCoverageGridParam();
+ *     param.setEnvelope(...);
+ *     param.setResolution(...);
+ *     GridCoverage coverage = reader.read(0, param);
+ * }
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.11
  *
  * @see CoverageDatabase#createGridCoverageReader(String)
+ * @see CoverageDatabase#readSlice(CoverageQuery)
+ * @see GridCoverageReference#read(CoverageEnvelope, IIOListeners)
  *
  * @since 3.10
  * @module

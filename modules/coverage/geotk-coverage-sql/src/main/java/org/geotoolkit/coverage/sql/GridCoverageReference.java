@@ -41,16 +41,29 @@ import org.geotoolkit.util.DateRange;
 /**
  * Reference to a {@link GridCoverage2D}. This object holds some metadata about the coverage
  * ({@linkplain #getTimeRange time range}, {@linkplain #getGeographicBoundingBox geographic
- * bounding box}, <cite>etc.</cite>) without the need to open the image file - the metadata
- * are extracted from the database.
+ * bounding box}, <cite>etc.</cite>) without the need to open the image file, since the metadata
+ * are extracted from the database. The actual loading of pixel values occurs when
+ * {@link #getCoverage(IIOListeners)} is invoked for the first time.
  * <p>
- * The actual loading of pixel values occurs when {@link #getCoverage(IIOListeners)} is invoked
- * for the first time.
- * <p>
+ * <b>Usage example:</b>
+ * {@preformat java
+ *     CoverageDatabase db       = new CoverageDatabase(...);
+ *     Layer            layer    = db.getLayer("My Layer").result();
+ *     CoverageEnvelope envelope = layer.getEnvelope(null, null);
+ *     envelope.setHorizontalRange(...);
+ *     envelope.setVerticalRange(...);
+ *     envelope.setTimeRange(...);
+ *     GridCoverageReference ref = layer.getCoverageReference(envelope);
+ *     GridCoverage2D coverage = ref.getCoverage(null);
+ * }
+ *
  * {@code GridCoverageReference} instances are immutable and thread-safe.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.16
+ *
+ * @see Layer#getCoverageReference(CoverageEnvelope)
+ * @see Layer#getCoverageReferences(CoverageEnvelope)
  *
  * @since 3.10 (derived from Seagis)
  * @module
@@ -218,26 +231,14 @@ public interface GridCoverageReference extends CoverageStack.Element {
     GridCoverageReader getCoverageReader(GridCoverageReader recycle) throws CoverageStoreException;
 
     /**
-     * Reads the data if needed and returns the coverage. This method is equivalent to invoking
-     * the {@link #read read} method, except that default parameters are used, typically reading
-     * the full coverage. If the coverage has already been read previously and has not yet been
-     * reclaimed by the garbage collector, then the existing coverage may be returned immediately.
+     * Reads the data and returns the coverage. This method accepts an optional {@code envelope}
+     * parameter, which restrict the spatio-temporal extent of data to be read. If the envelope
+     * is {@code null}, then the default extent is loaded.
      * <p>
-     * This method returns always the {@linkplain org.geotoolkit.coverage.grid.ViewType#GEOPHYSICS
-     * geophysics} {@linkplain GridCoverage2D#view view} of data.
-     *
-     * @param  listeners Objects to inform about progress, or {@code null} if none.
-     * @return The coverage.
-     *
-     * @throws IOException if an error occurred while reading the image.
-     * @throws CancellationException if {@link #abort()} has been invoked during the reading process.
-     */
-    @Override
-    GridCoverage2D getCoverage(IIOListeners listeners) throws IOException, CancellationException;
-
-    /**
-     * Reads the data and returns the coverage. At the difference of
-     * {@link #getCoverage(IIOListeners)}, this method doesn't cache the returned coverage.
+     * The default Geotk implementation cache the returned coverage if and only if the envelope
+     * is null. In the later case, if the coverage has already been read previously and has not
+     * yet been reclaimed by the garbage collector, then the existing coverage may be returned
+     * immediately.
      * <p>
      * This method returns always the {@linkplain org.geotoolkit.coverage.grid.ViewType#GEOPHYSICS
      * geophysics} {@linkplain GridCoverage2D#view view} of data.

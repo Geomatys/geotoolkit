@@ -34,7 +34,7 @@ import org.geotoolkit.internal.StringUtilities;
 
 /**
  * Wraps a {@link Format} object in order to either parse fully a string, or log a warning.
- * This class provides a {@link #parse} method which performs the following tasks:
+ * This class provides a {@link #parse(String)} method which performs the following tasks:
  * <p>
  * <ul>
  *   <li>Checks if the string was fully parsed and log a warning if it was not. This is

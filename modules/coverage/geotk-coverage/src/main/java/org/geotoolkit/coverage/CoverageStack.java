@@ -157,9 +157,12 @@ public class CoverageStack extends AbstractCoverage {
      */
     public interface Element {
         /**
-         * Returns a name for the coverage. This method should not load a large amount of data,
-         * since it may be invoked soon. This method is invoked just before {@link #getCoverage}
-         * in order to log a "<cite>Loading data...</cite>" message.
+         * Returns a name for the coverage. This information is mandatory.
+         *
+         * {@section Efficiency}
+         * This method shall not load a large amount of data, since it may be invoked soon.
+         * It is invoked just before {@link #getCoverage(IIOListeners)} in order to log a
+         * "<cite>Loading data...</cite>" message.
          *
          * @return The coverage name.
          * @throws IOException if an I/O operation was required but failed.
@@ -168,9 +171,11 @@ public class CoverageStack extends AbstractCoverage {
 
         /**
          * Returns the minimum and maximum <var>z</var> values for the coverage.
-         * This information is mandatory. This method should not load a large
-         * amount of data, since it may be invoked soon. Note that this method
-         * may be invoked often, so it should be efficient.
+         * This information is mandatory.
+         *
+         * {@section Performance note}
+         * This method shall not load a large amount of data, since it may be invoked soon.
+         * Note that this method may also be invoked often.
          *
          * @return The minimal and maximal values of coverage data.
          * @throws IOException if an I/O operation was required but failed.
@@ -181,8 +186,10 @@ public class CoverageStack extends AbstractCoverage {
          * Returns the coverage envelope, or {@code null} if this information is too expensive to
          * compute. The envelope may or may not contains an extra dimension for the
          * {@linkplain #getZRange range of z values}, since the {@link CoverageStack} class is
-         * tolerant in this regard. This method should not load a large amount of data, since it
-         * may be invoked soon.
+         * tolerant in this regard.
+         *
+         * {@section Performance note}
+         * This method shall not load a large amount of data, since it may be invoked soon.
          *
          * @return The coverage envelope, or {@code null} if this information is not available
          *         or is too costly to compute.
@@ -192,8 +199,10 @@ public class CoverageStack extends AbstractCoverage {
 
         /**
          * The coverage grid geometry, or {@code null} if this information do not applies or is too
-         * expensive to compute. This method should not load a large amount of data, since it may be
-         * invoked soon.
+         * expensive to compute.
+         *
+         * {@section Performance note}
+         * This method shall not load a large amount of data, since it may be invoked soon.
          *
          * @return The grid geometry, or {@code null} if this information is not available,
          *         not applicable or is too costly to compute.
@@ -203,8 +212,10 @@ public class CoverageStack extends AbstractCoverage {
 
         /**
          * The sample dimension for the coverage, or {@code null} if this information is too
-         * expensive to compute. This method should not load a large amount of data, since it
-         * may be invoked soon.
+         * expensive to compute.
+         *
+         * {@section Performance note}
+         * This method shall not load a large amount of data, since it may be invoked soon.
          *
          * @return The sample dimensions, or {@code null} if this information is not available
          *         or is too costly to compute.
@@ -213,10 +224,14 @@ public class CoverageStack extends AbstractCoverage {
         SampleDimension[] getSampleDimensions() throws IOException;
 
         /**
-         * Returns the coverage, loading the data if needed. Implementations should invokes the
+         * Returns the coverage, loading the data if needed. Implementations should invoke the
          * {@link IIOListeners#addListenersTo(ImageReader)} method if they use an image reader
-         * for loading data. Caching (if desired) is implementor's responsibility. The default
-         * {@link CoverageStack} implementation caches only the last coverages used.
+         * for loading data.
+         *
+         * {@section Performance note}
+         * The default {@link CoverageStack} implementation caches only the last coverages used.
+         * Consequently, more sophisticated coverage caching (if desired) is implementor
+         * responsibility.
          *
          * @param  listeners Listeners to register to the {@linkplain ImageReader image I/O reader},
          *         if such a reader is going to be used.

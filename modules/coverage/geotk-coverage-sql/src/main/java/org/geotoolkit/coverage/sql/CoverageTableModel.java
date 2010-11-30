@@ -55,6 +55,8 @@ import javax.swing.undo.AbstractUndoableEdit;
 import javax.swing.undo.CannotUndoException;
 import javax.swing.undo.CannotRedoException;
 
+import org.opengis.coverage.Coverage;
+
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.logging.Logging;
@@ -225,7 +227,7 @@ public class CoverageTableModel extends AbstractTableModel {
      * timezone for the date column is the {@linkplain TimeZone#getDefault() local timezone},
      * but this can be changed by a call to {@link #setTimeZone(TimeZone)} after construction.
      *
-     * @param  refs Refererences to the coverages to put in the list, or {@code null} if none.
+     * @param  refs References to the coverages to put in the list, or {@code null} if none.
      * @param  locale The locale for column titles and cell formatting, or
      *         {@code null} for the {@linkplain Locale#getDefault() default locale}.
      */
@@ -347,7 +349,7 @@ public class CoverageTableModel extends AbstractTableModel {
     }
 
     /**
-     * Returns the coverage reference at the given row indice. This method returns a special
+     * Returns the coverage reference at the given row index. This method returns a special
      * reference which will take trace of whatever a call to {@link GridCoverageReference#read
      * GridCoverageReference.read} succeed or not, and will apply a color on the corresponding
      * table cell accordingly.
@@ -524,7 +526,7 @@ public class CoverageTableModel extends AbstractTableModel {
      * }
      *
      * @param  rows The indices of the rows to copy in the transferable object.
-     * @return Objet A copy of the specified rows as a transferable object.
+     * @return A copy of the specified rows as a transferable object.
      */
     public Transferable copy(final int[] rows) {
         if (fieldPosition == null) {
@@ -591,7 +593,7 @@ public class CoverageTableModel extends AbstractTableModel {
     /**
      * Returns the type of cell values in the column at the given index.
      *
-     * @param column The column indice.
+     * @param column The column index.
      */
     @Override
     public Class<?> getColumnClass(final int column) {
@@ -693,7 +695,7 @@ public class CoverageTableModel extends AbstractTableModel {
     }
 
     /**
-     * Adds a new object to inform everytime a undoable action has been performed.
+     * Adds a new object to inform every time a undoable action has been performed.
      *
      * @param listener The listener to add.
      */
@@ -775,7 +777,7 @@ public class CoverageTableModel extends AbstractTableModel {
      * whatever the reading succeed or failed.
      *
      * @author Martin Desruisseaux (IRD, Geomatys)
-     * @version 3.11
+     * @version 3.16
      *
      * @since 3.11 (derived from Seagis)
      * @module
@@ -809,9 +811,9 @@ public class CoverageTableModel extends AbstractTableModel {
          * flag is set. If the read operation fails, then the {@link #CORRUPTED} flag is set.
          */
         @Override
-        public GridCoverage2D getCoverage(final IIOListeners listeners) throws IOException {
+        public Coverage getCoverage(final IIOListeners listeners) throws IOException {
             try {
-                final GridCoverage2D image = reference.getCoverage(listeners);
+                final Coverage image = reference.getCoverage(listeners);
                 setFlag((byte) (MISSING|CORRUPTED|RMI_FAILURE), false);
                 setFlag(VIEWED, image != null);
                 return image;

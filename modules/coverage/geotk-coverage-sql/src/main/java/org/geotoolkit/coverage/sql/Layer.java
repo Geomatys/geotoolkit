@@ -150,7 +150,7 @@ public interface Layer {
      * the image to be generated. Current implementation recognizes the following entries
      * (all other entries are silently ignored):
      * <p>
-     * <table>
+     * <table border="1">
      *   <tr>
      *     <th nowrap>Key</th>
      *     <th nowrap>Value type</th>

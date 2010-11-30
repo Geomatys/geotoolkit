@@ -80,7 +80,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         final GridCoverageReference entry = table.getEntry();
 
         requireImageData();
-        final GridCoverage2D coverage = entry.getCoverage(null);
+        final GridCoverage2D coverage = entry.read(null, null);
         assertSame("Coverage shall be cached.", coverage, entry.getCoverage(null));
         checkTemperatureCoverage(coverage);
 
@@ -158,7 +158,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         final GridCoverageReference entry = table.getEntry();
 
         requireImageData();
-        final GridCoverage2D coverage = entry.getCoverage(null);
+        final GridCoverage2D coverage = entry.read(null, null);
         assertSame("Coverage shall be cached.", coverage, entry.getCoverage(null));
         checkCoriolisCoverage(coverage);
 

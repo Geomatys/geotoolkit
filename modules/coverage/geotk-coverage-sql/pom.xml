@@ -112,6 +112,7 @@
       <resource>
         <directory>org/geotoolkit/coverage/sql</directory>
         <excludes>
+          <exclude>README.txt</exclude>
           <exclude>upgrade-2.0.sql</exclude>
         </excludes>
       </resource>

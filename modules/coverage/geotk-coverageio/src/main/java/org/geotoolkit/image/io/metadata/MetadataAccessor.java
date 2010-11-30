@@ -468,6 +468,7 @@ public class MetadataAccessor implements WarningProducer {
              * Fetch the IIOMetadataFormat to use and the root of the tree,
              * or the root of the sub-tree if 'parentAccessor' is non-null.
              */
+            SpatialMetadata sp = null; // can be non-null only for "#auto" (or null) format.
             if (parentAccessor != null) {
                 format       = parentAccessor.format;
                 root         = parentAccessor.parent;
@@ -476,7 +477,7 @@ public class MetadataAccessor implements WarningProducer {
                 format = metadata.getMetadataFormat(formatName);
                 root   = metadata.getAsTree(formatName);
             } else if (metadata instanceof SpatialMetadata) {
-                final SpatialMetadata sp = (SpatialMetadata) metadata;
+                sp = (SpatialMetadata) metadata;
                 format = sp.format;
                 root   = sp.getAsTree();
             } else {
@@ -518,9 +519,10 @@ public class MetadataAccessor implements WarningProducer {
             /*
              * Found no path. If there is a fallback, get the fallback and redo all the
              * process from the begining of this method. Otherwise throw an exception.
+             * Note that 'sp' is non-null only if the format name is "#auto" (or null).
              */
-            if (metadata instanceof SpatialMetadata) {
-                metadata = ((SpatialMetadata) metadata).fallback;
+            if (sp != null) {
+                metadata = sp.fallback;
                 if (metadata != null) {
                     continue;
                 }

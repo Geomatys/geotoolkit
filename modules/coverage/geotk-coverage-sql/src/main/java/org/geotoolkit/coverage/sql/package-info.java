@@ -31,15 +31,7 @@
  * <a href="{@docRoot}/../modules/display/geotk-wizards-swing/CoverageDatabaseInstaller.html">graphical wizard</a>.
  * The database can also be created manually by running the SQL scripts available on the
  * <a href="http://hg.geotoolkit.org/geotoolkit/file/tip/modules/coverage/geotk-coverage-sql/src/main/resources/org/geotoolkit/coverage/sql">Mercurial
- * repository</a> in the following order:
- * <p>
- * <ul>
- *   <li>{@code prepare.sql}</li>
- *   <li><strong>Modified</strong> versions of the {@code postgis.sql} and {@code spatial_ref_sys.sql} files
- *       provided with the PostGIS installation. See the comments in {@code prepare.sql} for details.</li>
- *   <li>{@code postgis-update.sql}</li>
- *   <li>{@code coverages-create.sql}</li>
- * </ul>
+ * repository</a>.
  *
  * {@section Connection}
  * The connection to the database is specified by a JDBC {@link javax.sql.DataSource}
