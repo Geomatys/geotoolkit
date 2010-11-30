@@ -21,8 +21,11 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.net.URI;
 import java.net.URL;
 import java.util.logging.Level;
@@ -30,6 +33,14 @@ import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 
@@ -54,12 +65,40 @@ public class DomUtilities {
      * not be the faster parsing method.
      */
     public static Document read(Object input) throws ParserConfigurationException, SAXException, IOException {
-        final InputStream stream = toStream(input);
+        final InputStream stream = toInputStream(input);
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         final DocumentBuilder constructeur = factory.newDocumentBuilder();
         final Document document = constructeur.parse(stream);
         stream.close();
         return document;
+    }
+
+    /**
+     * Convinient method to write a dom.
+     *
+     * @param doc : DOM document to write
+     * @param output : output file, url, uri, outputstream
+     * @throws TransformerException
+     */
+    public static void write(Document doc, Object output) throws TransformerException, FileNotFoundException, IOException{
+        final Source source = new DOMSource(doc);
+
+        final Result result;
+        if(output instanceof File){
+            result = new StreamResult((File)output);
+        }else if(output instanceof Writer){
+            result = new StreamResult((Writer)output);
+        }else{
+            final OutputStream stream = toOutputStream(output);
+            result = new StreamResult(stream);
+        }
+
+        final TransformerFactory factory = TransformerFactory.newInstance();
+        Transformer trs = factory.newTransformer();
+        trs.setOutputProperty(OutputKeys.INDENT, "yes");
+        trs.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1");
+
+        trs.transform(source, result);
     }
 
     /**
@@ -113,7 +152,19 @@ public class DomUtilities {
     /**
      * Convert an object source to a stream.
      */
-    private static InputStream toStream(Object input) throws FileNotFoundException, IOException{
+    private static OutputStream toOutputStream(Object input) throws FileNotFoundException, IOException{
+
+        if(input instanceof File){
+            return new FileOutputStream((File)input);
+        }else{
+            throw new IOException("Can not handle input type : " + ((input!=null)?input.getClass() : input));
+        }
+    }
+
+    /**
+     * Convert an object source to a stream.
+     */
+    private static InputStream toInputStream(Object input) throws FileNotFoundException, IOException{
 
         if(input instanceof InputStream){
             return (InputStream) input;
