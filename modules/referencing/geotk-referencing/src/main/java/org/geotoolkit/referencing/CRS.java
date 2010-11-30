@@ -1011,7 +1011,7 @@ compare:    for (final SingleCRS component : actualComponents) {
      * <p>
      * <ul>
      *   <li>If the given CRS is an instance of {@link SingleCRS}, then this method returns
-     *       <code>crs.{@linkplain SingleCRS#getDatum()}</code>.</li>
+     *       <code>crs.{@linkplain SingleCRS#getDatum() getDatum()}</code>.</li>
      *   <li>Otherwise if the given CRS is an instance of {@link CompoundCRS}, then:
      *       <ul>
      *         <li>If all components have the same datum, then that datum is returned.</li>

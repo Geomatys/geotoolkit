@@ -84,10 +84,8 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  * </table></blockquote>
  *
  * If no node exists for the given path, then the node will be created at {@code MetadataAccessor}
- * construction time. For example the last exemple in the above list will ensure that the metadata
- * tree contains at least the nodes below, creating the missing ones if needed (Note: the value of
- * {@code <root>} depends on the metadata format, but is typically
- * {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME}):
+ * construction time. For example the last line in the above list will ensure that the metadata
+ * tree contains at least the nodes below, creating the missing ones if needed:
  *
  * {@preformat text
  *    <root>
@@ -95,6 +93,10 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  *        └───Extent
  *            └───GeographicElement
  * }
+ *
+ * <blockquote><font size="-1"><b>Note:</b> the value of {@code <root>} depends on the metadata
+ * format, but is typically
+ * {@value org.geotoolkit.image.io.metadata.SpatialMetadataFormat#FORMAT_NAME}</font></blockquote>
  *
  * After a {@code MetadataAccessor} instance has been created, the {@code getAttributeAs<Type>(String)}
  * methods can be invoked for fetching any attribute values, taking care of conversions to
@@ -109,7 +111,7 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  * create a new {@code MetadataAccessor} with the complete path to that element.
  * <p>
  * If the child policy of the node is {@link IIOMetadataFormat#CHILD_POLICY_REPEAT CHILD_POLICY_REPEAT},
- * then this class provide convenience methods for accessing the attributes of the childs.
+ * then this class provides convenience methods for accessing the attributes of the childs.
  * The path to unique legal child elements shall be specified to the constructor, as in the
  * examples below:
  * <p>
@@ -164,7 +166,7 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.13
+ * @version 3.16
  *
  * @see SpatialMetadata#getInstanceForType(Class)
  * @see SpatialMetadata#getListForType(Class)
@@ -206,7 +208,7 @@ public class MetadataAccessor implements WarningProducer {
     /**
      * The {@linkplain #childs} path. This is the {@code childPath} parameter
      * given to the constructor if explicitly specified, or the computed value
-     * if the parmeter given to the contructor was {@code "#auto"}.
+     * if the parameter given to the constructor was {@code "#auto"}.
      */
     final String childPath;
 
@@ -237,7 +239,7 @@ public class MetadataAccessor implements WarningProducer {
      * independently.
      * <p>
      * The initially {@linkplain #selectChild selected child} and {@linkplain #getWarningLevel()
-     * warnings level} are the same one than the given accessor.
+     * warnings level} are the same than the given accessor.
      * <p>
      * The main purpose of this constructor is to create many views over the same list
      * of childs, where each view can {@linkplain #selectChild select} a different child.
@@ -319,7 +321,7 @@ public class MetadataAccessor implements WarningProducer {
 
     /**
      * Creates an accessor for the {@linkplain Element element} at the given path relative to
-     * the {@link IIOMetadataFormat#getRootName() root}. This is a convenience method for the
+     * the {@linkplain IIOMetadataFormat#getRootName() root}. This is a convenience method for the
      * {@linkplain #MetadataAccessor(IIOMetadata, String, String, String) constructor below}
      * with {@code formatName} and {@code childPath} argument set to {@code "#auto"} value.
      *
@@ -342,7 +344,7 @@ public class MetadataAccessor implements WarningProducer {
 
     /**
      * Creates an accessor for the {@linkplain Element element} at the given path relative to
-     * the {@link IIOMetadataFormat#getRootName() root}. The paths can contain many elements
+     * the {@linkplain IIOMetadataFormat#getRootName() root}. The paths can contain many elements
      * separated by the {@code '/'} character.
      * See the <a href="#skip-navbar_top">class javadoc</a> for more details.
      *
@@ -424,70 +426,117 @@ public class MetadataAccessor implements WarningProducer {
     /**
      * Implementation of the public constructors. If the {@code parentAccessor}
      * argument is non-null, then {@code parentPath} is relative to that parent.
+     * <p>
+     * The {@code type} argument and the ({@code parentPath}, {@code childPath})
+     * pair of arguments are exclusive (only one of them shall be non-null).
+     *
+     * @param  parent      The accessor for which the {@code parentPath} is relative, or from
+     *                     which to start the search for an element accepting the given type.
+     * @param  metadata    The Image I/O metadata to wrap.
+     * @param  formatName  The name of the format to use, or {@code null} or {@code "#auto"}.
+     * @param  type        The class of user object to locate, or {@code null} for explicit paths.
+     * @param  parentPath  The path to the node of interest, or {@code null} for the root.
+     * @param  childPath   The relative path to the child elements, or {@code null} if none,
+     *                     or {@code "#auto"} for auto-detection.
      */
     @SuppressWarnings("fallthrough")
-    private MetadataAccessor(final MetadataAccessor parentAccessor, final IIOMetadata metadata,
+    private MetadataAccessor(final MetadataAccessor parentAccessor, IIOMetadata metadata,
             String formatName, final Class<?> type, String parentPath, String childPath)
             throws IllegalArgumentException, NoSuchElementException
     {
         ensureNonNull("metadata", metadata);
-        this.metadata = metadata;
+        IIOMetadataFormat format;
+        Node root;
         /*
-         * Fetch IIOMetadataFormat to use and the root of the tree,
-         * or the root of the sub-tree is 'parentAccessor' is non-null.
+         * The following loop is typically executed exactly once. It will be executed more than
+         * once only if the requested type (if non-null) was not found in the given metadata,
+         * and a fallback exists. In such case, the fallbacks will be iteratively examined.
+         *
+         * To be honest, we are actually using this loop construct as a "goto" statement. The
+         * pseudo-goto is the "continue" statement near the end of this loop, just before the
+         * "throw new IllegalArgumentException" statement.
+         *
+         * This block will assign or modify the following variables:
+         *
+         *   - metadata    (if it was necessary to iterate in the fallback chain)
+         *   - format      (derived from metadata)
+         *   - root        (derived from metadata)
+         *   - parentPath  (if a non-null type was specified)
          */
-        final Node root;
-        if (parentAccessor != null) {
-            format       = parentAccessor.format;
-            root         = parentAccessor.parent;
-            warningLevel = parentAccessor.warningLevel;
-        } else if (formatName != null && !formatName.equals("#auto")) {
-            format = metadata.getMetadataFormat(formatName);
-            root   = metadata.getAsTree(formatName);
-        } else if (metadata instanceof SpatialMetadata) {
-            final SpatialMetadata sp = (SpatialMetadata) metadata;
-            format = sp.format;
-            root   = sp.getAsTree();
-        } else {
-            // In preference order: native, standard, extra formats.
-            formatName = metadata.getMetadataFormatNames()[0];
-            format = metadata.getMetadataFormat(formatName);
-            root   = metadata.getAsTree(formatName);
+        while (true) {
+            /*
+             * Fetch the IIOMetadataFormat to use and the root of the tree,
+             * or the root of the sub-tree if 'parentAccessor' is non-null.
+             */
+            if (parentAccessor != null) {
+                format       = parentAccessor.format;
+                root         = parentAccessor.parent;
+                warningLevel = parentAccessor.warningLevel;
+            } else if (formatName != null && !formatName.equals("#auto")) {
+                format = metadata.getMetadataFormat(formatName);
+                root   = metadata.getAsTree(formatName);
+            } else if (metadata instanceof SpatialMetadata) {
+                final SpatialMetadata sp = (SpatialMetadata) metadata;
+                format = sp.format;
+                root   = sp.getAsTree();
+            } else {
+                // In preference order: native, standard, extra formats.
+                formatName = metadata.getMetadataFormatNames()[0];
+                format = metadata.getMetadataFormat(formatName);
+                root   = metadata.getAsTree(formatName);
+            }
+            if (format == null) {
+                throw new IllegalArgumentException(getErrorResources().getString(
+                        Errors.Keys.UNDEFINED_FORMAT_$1, formatName));
+            }
+            // If the user did not provided a Class<?> argument, we are done.
+            if (type == null) {
+                break;
+            }
+            /*
+             * If the caller asked for a node associated to a user object of the
+             * given type, get the path to that node. We expect a single path.
+             */
+            final List<String> paths = new ArrayList<String>(4);
+            listPaths(format, type, root.getNodeName(), new StringBuilder(), paths);
+            final int count = paths.size();
+            if (count == 1) {
+                // Found the path we were looking for. Stop the search.
+                parentPath = paths.get(0);
+                break;
+            }
+            if (count != 0) {
+                // Found too many paths.
+                final String lineSeparator = System.getProperty("line.separator", "\n");
+                final StringBuilder buffer = new StringBuilder(getErrorResources().getString(
+                        Errors.Keys.AMBIGIOUS_VALUE_$1, type)).append(lineSeparator);
+                for (final String path : paths) {
+                    buffer.append(" \u2022 ").append(path).append(lineSeparator);
+                }
+                throw new IllegalArgumentException(buffer.toString());
+            }
+            /*
+             * Found no path. If there is a fallback, get the fallback and redo all the
+             * process from the begining of this method. Otherwise throw an exception.
+             */
+            if (metadata instanceof SpatialMetadata) {
+                metadata = ((SpatialMetadata) metadata).fallback;
+                if (metadata != null) {
+                    continue;
+                }
+            }
+            throw new IllegalArgumentException(getErrorResources()
+                    .getString(Errors.Keys.UNKNOWN_TYPE_$1, type));
         }
-        if (format == null) {
-            throw new IllegalArgumentException(getErrorResources().getString(
-                    Errors.Keys.UNDEFINED_FORMAT_$1, formatName));
-        }
+        /*
+         * End of the pseudo-goto block construct.
+         * At this point we have the final metadata, format and root node.
+         */
+        this.metadata = metadata;
+        this.format   = format;
         if (warningLevel == null) {
             warningLevel = (metadata instanceof SpatialMetadata) ?
                 ((SpatialMetadata) metadata).getWarningLevel() : Level.WARNING;
-        }
-        /*
-         * If the user asked for a metadata working on a node for user object of
-         * a specific type, get the path to that node. We expect a single path.
-         */
-        if (type != null) {
-            final List<String> paths = new ArrayList<String>(4);
-            listPaths(format, type, root.getNodeName(), new StringBuilder(), paths);
-            switch (paths.size()) {
-                case 0: {
-                    throw new IllegalArgumentException(getErrorResources()
-                            .getString(Errors.Keys.UNKNOWN_TYPE_$1, type));
-                }
-                case 1: {
-                    parentPath = paths.get(0);
-                    break;
-                }
-                default: {
-                    final String lineSeparator = System.getProperty("line.separator", "\n");
-                    final StringBuilder buffer = new StringBuilder(getErrorResources().getString(
-                            Errors.Keys.AMBIGIOUS_VALUE_$1, type)).append(lineSeparator);
-                    for (final String path : paths) {
-                        buffer.append("  \u2022 ").append(path).append(lineSeparator);
-                    }
-                    throw new IllegalArgumentException(buffer.toString());
-                }
-            }
         }
         /*
          * Fetch the parent node and ensure that we got a singleton. If there is more nodes than

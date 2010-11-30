@@ -20,10 +20,12 @@ package org.geotoolkit.image.io.metadata;
 import java.util.List;
 import java.util.Arrays;
 import java.util.HashSet;
+import javax.imageio.ImageReader;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.acquisition.Instrument;
 import org.opengis.metadata.extent.GeographicBoundingBox;
+import org.opengis.coverage.grid.RectifiedGrid;
 
 import org.geotoolkit.test.Depend;
 import org.junit.*;
@@ -36,7 +38,7 @@ import static org.geotoolkit.test.Commons.*;
  * Tests {@link MetadataAccessor}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
+ * @version 3.16
  *
  * @since 3.06
  */
@@ -229,5 +231,45 @@ public final class MetadataAccessorTest {
         } catch (IllegalArgumentException e) {
             // This is the expected exception.
         }
+    }
+
+    /**
+     * Tests the {@link MetadataAccessor} constructors which locate the path
+     * automatically from the given type, forcing a search in the fallback.
+     *
+     * @since 3.16
+     */
+    @Test
+    public void testAutomaticLocationInFallback() {
+        SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.STREAM);
+        MetadataAccessor accessor = new MetadataAccessor(metadata, "#auto", GeographicBoundingBox.class);
+        assertEquals("GeographicElement", accessor.name());
+        accessor.setAttribute("inclusion", true);
+        /*
+         * The stream metadata should not know anything about the RectifiedGrid interface.
+         * Note that we will ask exactly the same interface later.
+         */
+        try {
+            accessor = new MetadataAccessor(metadata, "#auto", RectifiedGrid.class);
+            fail("Should not find " + accessor);
+        } catch (IllegalArgumentException e) {
+            // This is the expected exception.
+            assertTrue(e.getMessage().contains("RectifiedGrid"));
+        }
+        /*
+         * Creates an image metadata which will use the above stream metadata as a fallback.
+         * This is not a recommanded practice (especially since both metadata format share
+         * the same name). We are just too lazy for creating a new metadata format, and the
+         * approach used here is sufficient for this test.
+         */
+        metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE, (ImageReader) null, metadata);
+        accessor = new MetadataAccessor(metadata, "#auto", RectifiedGrid.class);
+        assertEquals("RectifiedGridDomain", accessor.name());
+        /*
+         * Now ask a metadata which should work only if the MetadataAccessor has been
+         * able to search in the fallback chain.
+         */
+        accessor = new MetadataAccessor(metadata, "#auto", GeographicBoundingBox.class);
+        assertEquals("GeographicElement", accessor.name());
     }
 }

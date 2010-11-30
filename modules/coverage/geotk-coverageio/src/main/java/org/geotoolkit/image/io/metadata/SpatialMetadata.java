@@ -161,7 +161,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * if the user asked for something else than the spatial metadata managed by this class.
      * This is {@code null} if there is no such fallback.
      */
-    private final IIOMetadata fallback;
+    final IIOMetadata fallback;
 
     /**
      * The root node to be returned by {@link #getAsTree}.
