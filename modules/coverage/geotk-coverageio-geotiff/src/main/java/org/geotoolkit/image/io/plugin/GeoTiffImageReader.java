@@ -27,6 +27,7 @@ import javax.imageio.metadata.IIOMetadata;
 import org.geotoolkit.image.io.ImageReaderAdapter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.image.io.Formats;
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader;
 import org.geotoolkit.util.Version;
@@ -66,6 +67,11 @@ public class GeoTiffImageReader extends ImageReaderAdapter {
 
     @Override
     protected SpatialMetadata createMetadata(final int imageIndex) throws IOException {
+        if(imageIndex < 0){
+            //stream metadata
+            return super.createMetadata(imageIndex);
+        }
+
         final IIOMetadata metadata = main.getImageMetadata(imageIndex);
         try {
             final GeoTiffMetaDataReader metareader = new GeoTiffMetaDataReader(metadata);
@@ -85,6 +91,7 @@ public class GeoTiffImageReader extends ImageReaderAdapter {
             pluginClassName = "org.geotoolkit.image.io.plugin.GeoTiffImageReader";
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
+            writerSpiNames = new String[] {GeoTiffImageWriter.TIFF.class.getName()};
         }
 
         public Spi(final String format) throws IllegalArgumentException {
@@ -100,6 +107,21 @@ public class GeoTiffImageReader extends ImageReaderAdapter {
         public boolean canDecodeInput(Object source) throws IOException {
             if(super.canDecodeInput(source)){
                 //todo must find a way to check that this tiff has the geo tags.
+                try{
+                    source = IOUtilities.tryToFile(source);
+                    final String str = IOUtilities.extension(source);
+                    if(str != null){
+                        if(!(str.equalsIgnoreCase("tif") ||
+                             str.equalsIgnoreCase("tiff"))){
+                            return false;
+                        }
+                        //ok
+                    }else{
+                        return false;
+                    }
+                }catch(IOException ex){
+                    //maybe it's a stream
+                }
                 return true;
             }else{
                 return false;

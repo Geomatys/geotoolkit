@@ -44,7 +44,6 @@ import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.metadata.dimap.DimapAccessor;
-import org.geotoolkit.metadata.dimap.DimapConstants;
 import org.geotoolkit.metadata.dimap.DimapMetadataFormat;
 import org.geotoolkit.util.DomUtilities;
 import org.geotoolkit.util.Version;
@@ -105,7 +104,9 @@ public class DimapImageReader extends ImageReaderAdapter {
             ignoreMetadata = oldState;
         }
         if(metadata == null){
-            throw new IOException("Coverage has no metadata (*.dim) file associated.");
+            //TODO geotiff did not returned the metadata
+            //find solution to pass the ignoreMetadata flag down in the reader stack.
+            return image;
         }
 
         //apply the band <-> color mapping -------------------------------------
@@ -180,7 +181,8 @@ public class DimapImageReader extends ImageReaderAdapter {
         final SpatialMetadata metadata = super.createMetadata(imageIndex);
 
         if(metadata == null){
-            throw new IOException("Geotiff reader failed to parse spatial metadata.");
+            //it can happen if reading metadata has not been asked.
+            return metadata;
         }
 
         //parse the dimap metadata file
@@ -212,6 +214,7 @@ public class DimapImageReader extends ImageReaderAdapter {
                 nativeImageMetadataFormatName
             });
             nativeImageMetadataFormatName = DimapMetadataFormat.NATIVE_FORMAT;
+            writerSpiNames = new String[] {DimapImageWriter.GEOTIFF.class.getName()};
         }
 
         public Spi(final String format) throws IllegalArgumentException {
@@ -250,12 +253,14 @@ public class DimapImageReader extends ImageReaderAdapter {
 
         @Override
         public boolean canDecodeInput(Object source) throws IOException {
-            if (IOUtilities.canProcessAsPath(source)) {
+            boolean can = super.canDecodeInput(source);
+
+            if (can && IOUtilities.canProcessAsPath(source)) {
                 source = IOUtilities.tryToFile(source);
                 final File f = searchMetadataFile(source);
                 return (f != null);
             }
-            return super.canDecodeInput(source);
+            return false;
         }
 
         @Override
