@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.internal.image.io;
 
+import javax.imageio.spi.ImageReaderSpi;
+
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -25,7 +27,7 @@ import static org.junit.Assert.*;
  * Tests {@link Formats}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.16
  *
  * @since 3.10
  */
@@ -38,11 +40,21 @@ public final class FormatsTest {
         assertArrayEquals(new String[] {
             "ascii-grid", "bmp", "gif", "jpeg", "jpeg 2000", "jpeg2000", "jpg",
             "matrix", "netcdf", "png", "pnm", "raw", "records", "tif", "tiff"
-        }, Formats.simplify(new String[] {
+        }, Formats.simplify(
             "raw", "tif", "jpeg", "WBMP", "PNM", "JPG", "wbmp", "JPEG", "PNG",
             "jpeg 2000", "ascii-grid", "tiff", "BMP", "JPEG2000", "RAW", "netcdf",
             "matrix", "jpeg2000", "GIF", "TIF", "TIFF", "jpg", "bmp", "pnm", "png",
             "NetCDF", "records", "JPEG 2000", "gif"
-        }));
+        ));
+    }
+
+    /**
+     * Test {@link Formats#getDisplayName}.
+     */
+    @Test
+    public void testGetDisplayName() {
+        final ImageReaderSpi spi = Formats.getReaderByFormatName("png", null);
+        assertNotNull("Not allowed to return null.", spi);
+        assertEquals("PNG", Formats.getDisplayName(spi));
     }
 }

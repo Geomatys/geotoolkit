@@ -64,7 +64,7 @@ import org.geotoolkit.image.io.InvalidImageStoreException;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.internal.image.ImageUtilities;
-import org.geotoolkit.internal.image.io.Compressions;
+import org.geotoolkit.internal.image.io.IIOUtilities;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.internal.image.io.RawFile;
 import org.geotoolkit.internal.io.TemporaryFile;
@@ -1057,7 +1057,7 @@ search: for (final Tile tile : tiles) {
          */
         final Runtime rt = Runtime.getRuntime(); rt.gc();
         final long maxInputSize = rt.maxMemory() - (rt.totalMemory() - rt.freeMemory());
-        final int bitPerPixels = Compressions.bitsPerPixel(input.getRawImageType(inputIndex));
+        final int bitPerPixels = IIOUtilities.bitsPerPixel(input.getRawImageType(inputIndex));
         /*
          * Checks the space available in the temporary directory, which
          * will contain the temporary uncompressed files for source tiles.
@@ -1088,7 +1088,7 @@ search: for (final Tile tile : tiles) {
                  */
                 if (!compressed) {
                     for (final ImageReaderSpi spi : tiles.getImageReaderSpis()) {
-                        if (Compressions.guessForFormat(spi) != 1) {
+                        if (IIOUtilities.guessCompressionRatio(spi) != 1) {
                             compressed = true;
                             break;
                         }
@@ -1109,7 +1109,7 @@ search: for (final Tile tile : tiles) {
              * Same tests than above, but in the case where the source is a single image
              * instead than a mosaic of source tiles.
              */
-            if (Compressions.guessForFormat(input.getOriginatingProvider()) == 1) {
+            if (IIOUtilities.guessCompressionRatio(input.getOriginatingProvider()) == 1) {
                 return false;
             }
             final int width  = input.getWidth (inputIndex);
@@ -1137,7 +1137,7 @@ search: for (final Tile tile : tiles) {
                 available = root.getUsableSpace();
                 long usage = tiles.diskUsage() * bitPerPixels / Byte.SIZE;
                 for (final ImageReaderSpi spi : tiles.getImageReaderSpis()) {
-                    int ir = Compressions.guessForFormat(spi);
+                    int ir = IIOUtilities.guessCompressionRatio(spi);
                     if (ir != 0) {
                         usage /= ir;
                         break; // Use the first known format as the reference.

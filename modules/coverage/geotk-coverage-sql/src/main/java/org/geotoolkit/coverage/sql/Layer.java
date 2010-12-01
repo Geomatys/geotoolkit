@@ -150,7 +150,7 @@ public interface Layer {
      * the image to be generated. Current implementation recognizes the following entries
      * (all other entries are silently ignored):
      * <p>
-     * <table border="1">
+     * <table border="1" cellspacing="0" cellpadding="3">
      *   <tr>
      *     <th nowrap>Key</th>
      *     <th nowrap>Value type</th>
@@ -174,7 +174,7 @@ public interface Layer {
      *   <tr valign="top">
      *     <td>{@code "graphics"}</td>
      *     <td>{@link java.awt.Graphics2D}</td>
-     *     <td>In provided, paints the image using the given graphics handle instead than
+     *     <td>If provided, paints the image using the given graphics handle instead than
      *         creating a new image. In such case, this method returns {@code null}.</td>
      *   </tr>
      * </table>

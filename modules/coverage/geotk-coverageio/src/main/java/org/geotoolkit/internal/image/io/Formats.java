@@ -31,6 +31,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
+import javax.imageio.spi.IIOServiceProvider;
 import javax.imageio.spi.ImageInputStreamSpi;
 import javax.imageio.spi.ImageReaderWriterSpi;
 import javax.imageio.stream.ImageInputStream;
@@ -46,7 +47,7 @@ import org.geotoolkit.resources.Vocabulary;
  * Utility methods about image formats.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @since 3.01
  * @module
@@ -406,31 +407,55 @@ attmpt: while (true) {
     /**
      * Returns the name of the given provider, or {@code null} if the name is unknown.
      * If the provider declares many names, the longest name is selected. If many names
-     * have the same length, the first one having at least one upper-case character is
+     * have the same length, the one having at largest number of upper-case characters is
      * selected. This allows this method to return {@code "PNG"} instead than {@code "png"}.
+     * <p>
+     * If no format name has been found, then this method fallback on the shortest MIME type.
+     * Note that the use of shortest MIME type is the opposite of the longest name, but this
+     * is done that way in order to prefer {@code "image/png"} rather than {@code "image/x-png"}
+     * for example.
      *
      * @param  provider The provider for which we want the name, or {@code null}.
      * @return The name of the given provider, or {@code null} if none.
      *
      * @since 3.07
      */
-    public static String getFormatName(final ImageReaderWriterSpi provider) {
-        boolean hasUpperCase = false;
+    public static String getDisplayName(final ImageReaderWriterSpi provider) {
         String name = null;
         if (provider != null) {
-            final String[] formats = provider.getFormatNames();
+            String[] formats = provider.getFormatNames();
             if (formats != null) {
-                int length = 0;
-                for (int i=0; i<formats.length; i++) {
-                    final String candidate = formats[i];
-                    if (candidate != null) {
-                        final int lg = candidate.length();
-                        if (lg > length) {
-                            length = lg;
+                for (final String candidate : formats) {
+                    int d = candidate.length();
+                    if (d != 0) {
+                        if (name != null) {
+                            d -= name.length();
+                        }
+                        if (d >= 0) {
+                            if (d == 0) {
+                                int na=0, nb=0;
+                                for (int i=candidate.length(); --i>=0;) {
+                                    if (Character.isUpperCase(candidate.charAt(i))) na++;
+                                    if (Character.isUpperCase(name   .charAt(i))) nb++;
+                                }
+                                if (na <= nb) {
+                                    continue;
+                                }
+                            }
                             name = candidate;
-                            hasUpperCase = hasUpperCase(name);
-                        } else if (!hasUpperCase && lg == length && hasUpperCase(candidate)) {
-                            hasUpperCase = true;
+                        }
+                    }
+                }
+            }
+            /*
+             * If no format has been found, fallback on MIME types.
+             */
+            if (name == null) {
+                formats = provider.getMIMETypes();
+                if (formats != null) {
+                    for (final String candidate : formats) {
+                        final int length = candidate.length();
+                        if (length != 0 && (name == null || length < name.length())) {
                             name = candidate;
                         }
                     }
@@ -438,18 +463,6 @@ attmpt: while (true) {
             }
         }
         return name;
-    }
-
-    /**
-     * Returns {@code true} if the given string has at least one upper-case character.
-     */
-    private static boolean hasUpperCase(final String name) {
-        for (int i=name.length(); --i>=0;) {
-            if (Character.isUpperCase(name.charAt(i))) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**
@@ -462,7 +475,7 @@ attmpt: while (true) {
      *
      * @since 3.10
      */
-    public static String[] simplify(String[] choices) {
+    public static String[] simplify(String... choices) {
         if (choices != null) {
             Arrays.sort(choices, String.CASE_INSENSITIVE_ORDER);
             int count = 0;
@@ -482,7 +495,7 @@ attmpt: while (true) {
     }
 
     /**
-     * Formats a description from the information provided in the given {@link ImageReaderWriterSpi}.
+     * Formats a description from the information provided in the given provider.
      *
      * @param spi      The provider from which to extract the information.
      * @param locale   The locale to use for localizing the description.
@@ -490,7 +503,7 @@ attmpt: while (true) {
      *
      * @since 3.15
      */
-    public static void formatDescription(final ImageReaderWriterSpi spi, final Locale locale,
+    public static void formatDescription(final IIOServiceProvider spi, final Locale locale,
             final StringBuilder appendTo)
     {
         final Vocabulary resources = Vocabulary.getResources(locale);

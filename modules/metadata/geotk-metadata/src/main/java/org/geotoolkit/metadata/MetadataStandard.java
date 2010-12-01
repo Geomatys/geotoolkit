@@ -506,14 +506,15 @@ public final class MetadataStandard {
      *   <li>If the {@code metadata} argument is a {@link Class}, then this method returns all
      *       restrictions that applied on metadata of the given type.</li>
      *   <li>Otherwise if {@code metadata} is an instance of a metadata object, then this method
-     *       returns only the restrictions that are violated by the given instance. The returned
-     *       map is <cite>live</cite>: changes to any metadata value will be immediately reflected
-     *       in the restriction map.</li>
+     *       returns non-null values only for restrictions that are violated by the given instance.
+     *       In this case, the returned map is <cite>live</cite>: changes to any metadata value
+     *       will be immediately reflected in the restriction map.</li>
      * </ul>
      *
      * @param metadata The metadata intance for which to get the restriction that are violated,
      *                 or the {@link Class} of a metadata object for listing all restrictions.
-     * @param  content Whatever the entries having null values should be included in the map.
+     * @param  content Whatever the entries having no restriction or no violation (null value)
+     *         should be included in the map.
      * @param  keyNames Determines the string representation of map keys.
      * @return The restrictions that are violated by the given metadata instance,
      *         or all restrictions if {@code metadata} is a {@link Class}.
@@ -553,8 +554,8 @@ public final class MetadataStandard {
      * the javabeans property name, or the UML identifier.
      *
      * @param  metadata The metadata object to view as a map.
-     * @param  content Whatever the entries having null values or empty collections should
-     *         be included in the map. The default is {@link NullValuePolicy#NON_EMPTY NON_EMPTY}.
+     * @param  content Whatever the entries having null value or empty collection should be
+     *         included in the map. The default is {@link NullValuePolicy#NON_EMPTY NON_EMPTY}.
      * @param  keyNames Determines the string representation of map keys. The default is
      *         {@link KeyNamePolicy#JAVABEANS_PROPERTY JAVABEANS_PROPERTY}.
      * @return A map view over the metadata object.

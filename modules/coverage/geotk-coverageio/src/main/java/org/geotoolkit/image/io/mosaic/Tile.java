@@ -863,7 +863,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      * @return The format name.
      */
     public String getFormatName() {
-        return Formats.getFormatName(getImageReaderSpi());
+        return Formats.getDisplayName(getImageReaderSpi());
     }
 
     /**

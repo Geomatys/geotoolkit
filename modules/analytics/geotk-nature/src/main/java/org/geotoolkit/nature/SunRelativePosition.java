@@ -539,7 +539,7 @@ public class SunRelativePosition {
     /**
      * Returns the date used for {@linkplain #getElevation elevation} and
      * {@linkplain #getAzimuth azimuth} computation. This is the date specified
-     * during the last call to {@link #setDate}.
+     * during the last call to {@link #setDate(Date)}.
      *
      * @return The date and time (GMT).
      */
@@ -572,7 +572,7 @@ public class SunRelativePosition {
 
     /**
      * Returns the sun's {@linkplain #getElevation elevation angle} at twilight, in degrees.
-     * This is the value set during the last call to {@link #setTwilight}.
+     * This is the value set during the last call to {@link #setTwilight(double)}.
      *
      * @return The Sun's elevation angle at twilight (decimal degrees).
      */

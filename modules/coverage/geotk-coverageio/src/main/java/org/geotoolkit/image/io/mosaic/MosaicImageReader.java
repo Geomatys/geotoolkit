@@ -1342,7 +1342,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
                     /*
                      * Add one row in the table if we are logging.
                      */
-                    table.write(Formats.getFormatName(tile.getImageReaderSpi()));
+                    table.write(Formats.getDisplayName(tile.getImageReaderSpi()));
                     table.nextColumn();
                     table.write(tile.getInputName());
                     table.nextColumn();

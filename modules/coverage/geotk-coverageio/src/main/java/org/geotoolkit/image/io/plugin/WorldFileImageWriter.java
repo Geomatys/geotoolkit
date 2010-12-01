@@ -242,7 +242,7 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
         @Override
         public String getDescription(final Locale locale) {
             return Vocabulary.getResources(locale).getString(
-                    Vocabulary.Keys.IMAGE_CODEC_WITH_WORLD_FILE_$2, 1, Formats.getFormatName(main));
+                    Vocabulary.Keys.IMAGE_CODEC_WITH_WORLD_FILE_$2, 1, Formats.getDisplayName(main));
         }
 
         /**

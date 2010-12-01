@@ -29,7 +29,6 @@ import java.util.Collection;
 import javax.imageio.ImageReader;
 import javax.imageio.IIOException;
 import javax.imageio.spi.ImageReaderSpi;
-import javax.imageio.metadata.IIOMetadata;
 
 import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
@@ -56,6 +55,8 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SampleDimension;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.internal.image.io.Formats;
+import org.geotoolkit.internal.image.io.IIOUtilities;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.internal.sql.table.NoSuchRecordException;
@@ -326,20 +327,29 @@ public final class NewGridCoverageReference {
     }
 
     /**
-     * Creates an entry for the given tile.
+     * Creates an entry for the given tile. This constructor does <strong>not</strong> read the
+     * image file, since we usually don't want to parse the metadata for every tiles (usually,
+     * every tiles share the same metadata). Consequently, caller may need to set the metadata
+     * explicitly using their own {@link CoverageDatabaseController} instance.
      *
      * @param  database The database where the new entry will be added.
      * @param  tile The tile to use for the entry.
-     * @throws IOException if an error occurred while reading the image.
+     * @throws IOException If an error occurred while fetching some tile properties.
      */
     NewGridCoverageReference(final SpatialDatabase database, final Tile tile)
             throws SQLException, IOException, FactoryException
     {
-        this(database, tile.getImageReader(), tile.getInput(), tile.getImageIndex(), tile, true);
+        this(database, null,
+             tile.getInput(),
+             tile.getImageIndex(),
+             tile.getImageReaderSpi(),
+             tile.getRegion(),
+             tile.getGridToCRS(),
+             null);
     }
 
     /**
-     * Creates en entry for the given reader. The {@linkplain ImageReader#setInput(Object)
+     * Creates an entry for the given reader. The {@linkplain ImageReader#setInput(Object)
      * reader input must be set} by the caller before to invoke this constructor.
      *
      * @param  database      The database where the new entry will be added.
@@ -349,36 +359,47 @@ public final class NewGridCoverageReference {
      * @param  imageIndex    Index of the image to read.
      * @param  disposeReader {@code true} if {@link ImageReader#dispose()} should be invoked on
      *                       the given {@code reader} after this method finished its work.
-     * @throws IOException if an error occurred while reading the image.
+     * @throws IOException If an error occurred while reading the image.
      */
     NewGridCoverageReference(final SpatialDatabase database, final ImageReader reader,
             final Object input, final int imageIndex, final boolean disposeReader)
             throws SQLException, IOException, FactoryException
     {
-        this(database, reader, input, imageIndex, null, disposeReader);
+        this(database, reader, input, imageIndex, reader.getOriginatingProvider(),
+             new Rectangle(reader.getWidth(imageIndex), reader.getHeight(imageIndex)), null,
+             IIOUtilities.getSpatialMetadata(reader, imageIndex));
+        /*
+         * Close the reader but do not dispose it (unless we were asked to),
+         * since it may be used for the next entry.
+         */
+        XImageIO.close(reader);
+        if (disposeReader) {
+            reader.dispose();
+        }
     }
 
     /**
-     * Creates en entry for the given tile or reader. The reader argument is mandatory
-     * and must have its {@linkplain ImageReader#setInput(Object) input set}. The tile
-     * argument is optional.
+     * Creates an entry for the given tile or reader.
      *
      * @param  database      The database where the new entry will be added.
-     * @param  reader        The image reader with its input set.
-     * @param  input         The original input. May not be the same than {@link ImageReader#getInput()}
-     *                       because the later may have been transformed in an image input stream.
+     * @param  reader        The image reader with its input set, or {@code null} if none.
+     * @param  input         The original input (<strong>not</strong> the input stream).
      * @param  imageIndex    Index of the image to read.
-     * @param  tile          The tile for which a reference is created, or {@code null} if none.
-     * @param  disposeReader {@code true} if {@link ImageReader#dispose()} should be invoked on
-     *                       the given {@code reader} after this method finished its work.
-     * @throws IOException if an error occurred while reading the image.
+     * @param  spi           The provider of the {@code reader}, or {@link Tile#getImageReaderSpi()}.
+     * @param  imageBounds   The image size (in pixels) and its location (in the case of tiles only).
+     * @param  gridToCRS     The transform to real world, or {@code null} for fetching from metadata.
+     * @param  metadata      The metadata, or {@code null} if none,
+     * @throws IOException If an error occurred while reading the image.
      */
-    private NewGridCoverageReference(final SpatialDatabase database, final ImageReader reader,
-            Object input, final int imageIndex, final Tile tile, final boolean disposeReader)
+    private NewGridCoverageReference(final SpatialDatabase database,
+            final ImageReader reader, Object input, final int imageIndex, final ImageReaderSpi spi,
+            final Rectangle imageBounds, AffineTransform gridToCRS, SpatialMetadata metadata)
             throws SQLException, IOException, FactoryException
     {
-        this.database = database;
-        this.imageIndex = imageIndex;
+        this.database    = database;
+        this.imageIndex  = imageIndex;
+        this.spi         = spi;
+        this.imageBounds = imageBounds;
         /*
          * Get the input, which must be an instance of File.
          * Split that input file into the path components.
@@ -404,40 +425,18 @@ public final class NewGridCoverageReference {
          * store their information only in stream metadata, so we will fallback on stream
          * metadata if there is no image metadata.
          */
-        spi = reader.getOriginatingProvider();
-        String imageFormat = getFormatName(spi);
+        String imageFormat = Formats.getDisplayName(spi);
         if (imageFormat == null) {
-            imageFormat = IOUtilities.extension(input);
+            imageFormat = IOUtilities.extension(inputFile);
         }
         if (imageFormat.length() == 0) {
             throw new IOException(Errors.format(Errors.Keys.UNDEFINED_FORMAT));
         }
-        SpatialMetadata metadata = null;
-        if (true) {
-            IIOMetadata candidate = reader.getImageMetadata(imageIndex);
-            if (candidate instanceof SpatialMetadata) {
-                metadata = (SpatialMetadata) candidate;
-            } else {
-                candidate = reader.getStreamMetadata();
-                if (candidate instanceof SpatialMetadata) {
-                    metadata = (SpatialMetadata) candidate;
-                }
-            }
-        }
         final MetadataHelper helper = (metadata != null) ? new MetadataHelper(
                 (reader instanceof Localized) ? (Localized) reader : null) : null;
         /*
-         * Get the geolocalization from the image, then complete with the tile information if
-         * there is a Tile object. We avoid invoking Tile.getRegion() because it may create a
-         * new ImageReader for fetching the image size. We will rather use the ImageReader that
-         * we already have.
+         * Get the geolocalization from the image, if it was not provided by a Tile instance.
          */
-        imageBounds = new Rectangle(reader.getWidth(imageIndex), reader.getHeight(imageIndex));
-        AffineTransform gridToCRS = null;
-        if (tile != null) {
-            imageBounds.setLocation(tile.getLocation());
-            gridToCRS = tile.getGridToCRS();
-        }
         if (gridToCRS != null) {
             // Tile.getGridToCRS() returns an immutable AffineTransform.
             // We want to allow modifications.
@@ -532,7 +531,7 @@ public final class NewGridCoverageReference {
         List<GridSampleDimension> sampleDimensions = null;
         if (metadata != null) {
             final DimensionAccessor dimHelper = new DimensionAccessor(metadata);
-            if (dimHelper.isScanSuggested(reader, imageIndex)) {
+            if (reader != null && dimHelper.isScanSuggested(reader, imageIndex)) {
                 dimHelper.scanValidSampleValue(reader, imageIndex);
             }
             sampleDimensions = helper.getGridSampleDimensions(metadata.getListForType(SampleDimension.class));
@@ -618,14 +617,6 @@ public final class NewGridCoverageReference {
         this.sampleDimensions = (candidate.sampleDimensions != null) ?
             new ArrayList<GridSampleDimension>(candidate.sampleDimensions) :
             new ArrayList<GridSampleDimension>();
-        /*
-         * Close the reader but do not dispose it (unless we were asked to),
-         * since it may be used for the next entry.
-         */
-        XImageIO.close(reader);
-        if (disposeReader) {
-            reader.dispose();
-        }
     }
 
     /**
@@ -672,55 +663,6 @@ public final class NewGridCoverageReference {
             }
         }
         return CRS.lookupEpsgCode(crs, true);
-    }
-
-    /**
-     * Returns the format name. Current implementation selects the longest name,
-     * on the assumption that it is the most explicit name.
-     *
-     * @param  spi The image reader provider, or {@code null}.
-     * @return The format name, or {@code null} if {@code spi} was null.
-     * @throws IOException if the format can not be obtained.
-     */
-    private static String getFormatName(final ImageReaderSpi spi) throws IOException {
-        if (spi == null) {
-            return null;
-        }
-        String format = "";
-        String[] formats = spi.getFormatNames();
-        if (formats != null) {
-            for (final String candidate : formats) {
-                final int d = candidate.length() - format.length();
-                if (d >= 0) {
-                    if (d == 0) {
-                        int na=0, nb=0;
-                        for (int i=candidate.length(); --i>=0;) {
-                            if (Character.isUpperCase(candidate.charAt(i))) na++;
-                            if (Character.isUpperCase(format   .charAt(i))) nb++;
-                        }
-                        if (na <= nb) {
-                            continue;
-                        }
-                    }
-                    format = candidate;
-                }
-            }
-        }
-        if (format.length() == 0) {
-            // No format found - fall back on mime types.
-            formats = spi.getMIMETypes();
-            if (formats != null) {
-                for (final String candidate : formats) {
-                    if (candidate.length() > format.length()) {
-                        format = candidate;
-                    }
-                }
-            }
-            if (format.length() == 0) {
-                return null;
-            }
-        }
-        return format;
     }
 
     /**
