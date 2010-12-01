@@ -67,7 +67,6 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.LayerListener;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 
-import org.jdesktop.jxlayer.JXLayer;
 import org.jdesktop.jxlayer.plaf.ext.LockableUI;
 import org.jdesktop.swingx.JXErrorPane;
 import org.jdesktop.swingx.JXTable;
@@ -77,6 +76,8 @@ import org.jdesktop.swingx.table.DatePickerCellEditor;
 
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.Feature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.Id;
 import org.opengis.filter.identity.Identifier;
@@ -110,16 +111,17 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
     private final List<JComponent> actions = new ArrayList<JComponent>();
     private final LockableUI lockableUI = new LoadingLockableUI();
-    private final JXLayer guiLockPane;
 
     private FeatureMapLayer layer = null;
     private boolean editable = false;
     private final LayerListener.Weak weakListener = new LayerListener.Weak(this);
+    
+    private final JXTable tab_data = new JXTable();
+    private final JFeatureCollectionOutline outline = new JFeatureCollectionOutline();
+    
 
     /** Creates new form DefaultMapLayerTablePanel */
     public LayerFeaturePropertyPanel() {
-
-        //netbeans JPanel components init
         initComponents();
 
         tab_data.setEditable(false);
@@ -138,7 +140,6 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         tab_data.setDefaultEditor(Timestamp.class, new DatePickerCellEditor(DateFormat.getDateTimeInstance()));
 
         SwingUtilities.invokeLater(new Runnable() {
-
             @Override
             public void run() {
                 tab_data.packAll();
@@ -167,8 +168,6 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
         checkChanges();
 
-        guiLockPane = new JXLayer(jScrollPane1,lockableUI);
-        add(BorderLayout.CENTER,guiLockPane);
     }
 
     /**
@@ -258,8 +257,6 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new JScrollPane();
-        tab_data = new JXTable();
         jPanel1 = new JPanel();
         jcb_edit = new JCheckBox();
         guiCount = new JLabel();
@@ -267,8 +264,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         guiRollback = new JButton();
         jbu_action = new JButton();
         guiShowId = new JCheckBox();
-
-        jScrollPane1.setViewportView(tab_data);
+        panCenter = new JPanel();
 
         setLayout(new BorderLayout());
 
@@ -317,19 +313,19 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
                 .addComponent(jcb_edit)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiShowId)
-                .addPreferredGap(ComponentPlacement.RELATED, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(guiCount, GroupLayout.PREFERRED_SIZE, 562, GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addComponent(guiCount, GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiCommit)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(guiRollback)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(jbu_action))
+                .addComponent(jbu_action, GroupLayout.PREFERRED_SIZE, 51, GroupLayout.PREFERRED_SIZE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel1Layout.createParallelGroup(Alignment.BASELINE)
-                .addComponent(jbu_action)
+                .addComponent(jbu_action, GroupLayout.PREFERRED_SIZE, 27, GroupLayout.PREFERRED_SIZE)
                 .addComponent(guiCount)
                 .addComponent(jcb_edit)
                 .addComponent(guiRollback)
@@ -338,6 +334,9 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         );
 
         add(jPanel1, BorderLayout.SOUTH);
+
+        panCenter.setLayout(new BorderLayout());
+        add(panCenter, BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
     private void actionEditer(ActionEvent evt) {//GEN-FIRST:event_actionEditer
@@ -396,10 +395,9 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
     private JButton guiRollback;
     private JCheckBox guiShowId;
     private JPanel jPanel1;
-    private JScrollPane jScrollPane1;
     private JButton jbu_action;
     private JCheckBox jcb_edit;
-    private JXTable tab_data;
+    private JPanel panCenter;
     // End of variables declaration//GEN-END:variables
     
     @Override
@@ -410,28 +408,46 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
             tab_data.getModel().removeTableModelListener(tableListener);
         }
 
+        panCenter.removeAll();
+
         if (target instanceof FeatureMapLayer) {
             layer = (FeatureMapLayer) target;
-            FeatureCollection<SimpleFeature> source =
+            final FeatureCollection<SimpleFeature> source =
                     (FeatureCollection<SimpleFeature>) layer.getCollection();
             editable = source.isWritable();
             
             jcb_edit.setEnabled(editable);
 
-            FeatureCollectionModel m = new FeatureCollectionModel(tab_data, layer, guiShowId.isSelected());
-            tab_data.setModel(m);
-            tab_data.packAll();
-            tab_data.getModel().addTableModelListener(tableListener);
-            updateLayerSelection();
+            final FeatureType type = source.getFeatureType();
+
+            if(type instanceof SimpleFeatureType){
+                //use table view
+                final FeatureCollectionModel m = new FeatureCollectionModel(tab_data, layer, guiShowId.isSelected());
+                tab_data.setModel(m);
+                tab_data.packAll();
+                tab_data.getModel().addTableModelListener(tableListener);
+                updateLayerSelection();
+                panCenter.add(BorderLayout.CENTER, new JScrollPane(tab_data));
+            }else{
+                //use outline view
+                outline.setTarget(source);
+                panCenter.add(BorderLayout.CENTER, outline);
+            }
 
             weakListener.registerSource(layer);
         }
 
+        panCenter.revalidate();
+
         revalidate();
         repaint();
         checkChanges();
-
     }
+    
+    public void updateEditPane(){
+        
+    }
+    
 
     public FeatureMapLayer getTarget(){
         return layer;
