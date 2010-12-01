@@ -297,5 +297,14 @@ public class TemporalUtilitiesTest implements Test{
 
     }
 
+    @Test
+    public void durationFormatingTest(){
+
+        assertEquals("0ms", TemporalUtilities.durationToString(0));
+        assertEquals("15ms", TemporalUtilities.durationToString(15));
+        assertEquals("1s 25ms", TemporalUtilities.durationToString(1025));
+        assertEquals("1min 35ms", TemporalUtilities.durationToString(60035));
+
+    }
 
 }

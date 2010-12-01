@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.temporal.object;
 
+import java.util.Locale;
 import java.util.Map;
 import java.util.List;
 import java.text.DateFormat;
@@ -733,6 +734,49 @@ public final class TemporalUtilities {
             ParseException pex = new ParseException(ex.getLocalizedMessage(), 0);
             pex.initCause(ex);
             throw pex;
+        }
+    }
+
+    /**
+     * Return a time description on the form "Ny Nm Nd Nh Nmin Ns Nms" from a millisecond time.
+     *
+     * @param time A time value in millisecond
+     * @return A string on the form "Xmin Ys Zms".
+     */
+    public static String durationToString(long time){
+
+        if(time == 0){
+            return "0ms";
+        }
+
+        final long years = time / YEAR_MS;
+        time = time % YEAR_MS;
+        final long months = time / MONTH_MS;
+        time = time % MONTH_MS;
+        final long days = time / DAY_MS;
+        time = time % DAY_MS;
+        final long hours = time / HOUR_MS;
+        time = time % HOUR_MS;
+        final long minuts = time / MINUTE_MS;
+        time = time % MINUTE_MS;
+        final long seconds = time / SECOND_MS;
+        time = time % SECOND_MS;
+        final long millis = time;
+
+        final StringBuilder sb = new StringBuilder();
+        if(years > 0)   sb.append(years).append("y ");
+        if(months > 0)  sb.append(months).append("m ");
+        if(days > 0)    sb.append(days).append("d ");
+        if(hours > 0)   sb.append(hours).append("h ");
+        if(minuts > 0)  sb.append(minuts).append("min ");
+        if(seconds > 0) sb.append(seconds).append("s ");
+        if(millis > 0)  sb.append(millis).append("ms");
+
+        final int size = sb.length();        
+        if (sb.charAt(size - 1) == ' ') {
+            return sb.substring(0, size-1);
+        }else{
+            return sb.toString();
         }
     }
 
