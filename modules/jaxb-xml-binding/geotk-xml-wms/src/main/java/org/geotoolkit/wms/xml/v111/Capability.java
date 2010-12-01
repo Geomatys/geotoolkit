@@ -106,7 +106,7 @@ public class Capability extends AbstractCapability {
     }
 
     public void setExceptionFormats(List<String> formats) {
-        if (formats == null) {
+        if (formats != null) {
             this.exception = new Exception(formats.toArray(new String[formats.size()]));
         } else {
             this.exception = null;
