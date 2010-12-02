@@ -19,6 +19,7 @@ package org.geotoolkit.image.io.mosaic;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
@@ -43,7 +44,7 @@ import org.geotoolkit.util.logging.LogProducer;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.image.io.IIOListeners;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
@@ -53,12 +54,15 @@ import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
 
 
 /**
- * A convenience class for building tiles using the same {@linkplain ImageReader image reader}
- * and organized according some common {@linkplain TileLayout tile layout}. Optionally, this
- * builder can also write the tiles to disk from an initially untiled image. For example in
- * order to create a mosaic for a set of tiles of size 256&times;256 pixels, with overviews
- * having pixels twice (2), 3 and 4 times the width and height of original pixels and for
- * writing the tiles in the {@code "output"} directory, use the following:
+ * Creates {@link TileManger} from a set of images organized according a given
+ * {@linkplain TileLayout tile layout}. This class can work with pre-existing
+ * tile files (in which case it just build a {@code TileManager}), or can write
+ * the tiles to the disk if the files do not already exist.
+ *
+ * {@section Example creating tiles to disk}
+ * For example in order to create a mosaic for a set of tiles of size 256&times;256 pixels,
+ * with overviews having pixels 2, 3 and 4 times the width and height of original pixels and
+ * for writing the tiles in the {@code "output"} directory, use the following:
  *
  * {@preformat java
  *     Object originalMosaic = ...; // May be a File, URL, list of Tiles, etc.
@@ -71,7 +75,7 @@ import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.02
+ * @version 3.16
  *
  * @see org.geotoolkit.gui.swing.image.MosaicBuilderEditor
  *
@@ -114,13 +118,24 @@ public class MosaicBuilder implements LogProducer {
     private ImageReaderSpi tileReaderSpi;
 
     /**
-     * The envelope for the mosaic as a whole, or {@code null} if none. This is optional, but
-     * if specified this builder uses it for assigning values to {@link Tile#getGridToCRS}.
+     * An optional <cite>grid to CRS</cite> transform to be used for assigned value
+     * to {@link Tile#getGridToCRS()}.
+     *
+     * @since 3.16
      */
-    private GeneralEnvelope mosaicEnvelope;
+    private AffineTransform gridToCRS;
 
     /**
-     * The raster bounding box in pixel coordinates. The initial value is {@code null}.
+     * The geodetic envelope for the mosaic as a whole, or {@code null} if none.
+     * The envelope is optional. If specified, then this builder will use the
+     * envelope for assigning values to {@link Tile#getGridToCRS()}.
+     *
+     * @see #setGeodeticEnvelope(Rectangle2D)
+     */
+    private Rectangle2D mosaicEnvelope;
+
+    /**
+     * The mosaic bounding box in pixel coordinates. The initial value is {@code null}.
      * This value must be set before {@link Tile} objects are created.
      */
     private Rectangle untiledBounds;
@@ -155,14 +170,15 @@ public class MosaicBuilder implements LogProducer {
     private Level logLevel = Level.FINE;
 
     /**
-     * Generates tiles using the default factory.
+     * Creates a new instance which will use the
+     * {@linkplain TileManagerFactory#DEFAULT default tile manager factory}.
      */
     public MosaicBuilder() {
         this(null);
     }
 
     /**
-     * Generates tiles using the specified factory.
+     * Generates tiles using the specified tile manager factory.
      *
      * @param factory The factory to use, or {@code null} for the
      *        {@linkplain TileManagerFactory#DEFAULT default} one.
@@ -175,7 +191,7 @@ public class MosaicBuilder implements LogProducer {
     }
 
     /**
-     * Returns the logging level for tile information during read and write operations.
+     * Returns the logging level for information about tiles being read and written.
      * The default logging level is {@link Level#FINE FINE}.
      *
      * @return The current logging level.
@@ -186,8 +202,8 @@ public class MosaicBuilder implements LogProducer {
     }
 
     /**
-     * Sets the logging level for tile information during read and write operations.
-     * The default value is {@link Level#FINE}. A {@code null} value restores the default.
+     * Sets the logging level for information about tiles being read and written.
+     * The default value is {@link Level#FINE FINE}. A {@code null} value restores the default.
      *
      * @param level The new logging level.
      */
@@ -214,8 +230,7 @@ public class MosaicBuilder implements LogProducer {
      *       image ({@link TileLayout#CONSTANT_TILE_SIZE CONSTANT_TILE_SIZE}).</li>
      * </ul>
      * <p>
-     * The default value is {@link TileLayout#CONSTANT_TILE_SIZE CONSTANT_TILE_SIZE},
-     * which is the most efficient layout available in this package.
+     * The default value is {@link TileLayout#CONSTANT_TILE_SIZE CONSTANT_TILE_SIZE}.
      *
      * @return An identification of current tile layout.
      */
@@ -312,53 +327,95 @@ public class MosaicBuilder implements LogProducer {
     }
 
     /**
-     * Returns the envelope for the mosaic as a whole, or {@code null} if none. This is optional,
-     * but if specified this builder uses it for assigning values to {@link Tile#getGridToCRS}.
+     * Returns the transform from mosaic pixel coordinates to mosaic geodetic coordinates,
+     * or {@code null} if none. This transform is optional. If specified, then the builder
+     * will forward this value to {@link TileManager#setGridToCRS(AffineTransform)}.
      *
-     * @return The current envelope, or {@code null} if none.
+     * {@section Tips}
+     * If the available information is a geodetic envelope rather than a <cite>grid to CRS</cite>
+     * transform, then the transform can be computed from the envelope using
+     * {@link org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper}.
+     * <p>
+     * If the available information is a {@link org.opengis.coverage.grid.RectifiedGrid} rather
+     * than a <cite>grid to CRS</cite>, then the transform can be computed from the rectified
+     * grid using {@link org.geotoolkit.image.io.metadata.MetadataHelper}.
+     *
+     * @return The <cite>pixel to geodetic</cite> transform, or {@code null} if none.
+     *
+     * @since 3.16
      */
-    public synchronized Envelope getMosaicEnvelope() {
-        return (mosaicEnvelope != null) ? mosaicEnvelope.clone() : null;
+    public synchronized AffineTransform getGridToCRS() {
+        return (gridToCRS != null) ? (AffineTransform) gridToCRS.clone() : null;
     }
 
     /**
-     * Sets the envelope for the mosaic as a whole, or {@code null} if none. This is optional,
-     * but if specified this builder uses it for assigning values to {@link Tile#getGridToCRS}.
+     * Sets the transform from mosaic pixel coordinates to mosaic geodetic coordinates.
+     * This transform is optional. If specified, then the builder will forward this value
+     * to {@link TileManager#setGridToCRS(AffineTransform)}.
+     *
+     * @param tr The <cite>pixel to geodetic</cite> transform, or {@code null} if none.
+     *
+     * @since 3.16
+     */
+    public synchronized void setGridToCRS(final AffineTransform tr) {
+        gridToCRS = (tr != null) ? new AffineTransform(tr) : null;
+    }
+
+    /**
+     * Returns the geodetic envelope for the mosaic as a whole, or {@code null} if none. The
+     * envelope is optional. If specified, then the builder will use the envelope for assigning
+     * values to {@link Tile#getGridToCRS()}.
+     *
+     * @return The current geodetic envelope, or {@code null} if none.
+     *
+     * @deprecated Replaced by {@link #getGridToCRS()}.
+     */
+    @Deprecated
+    public synchronized Envelope getMosaicEnvelope() {
+        return (mosaicEnvelope != null) ? new Envelope2D(null, mosaicEnvelope) : null;
+    }
+
+    /**
+     * Sets the geodetic envelope for the mosaic as a whole, or {@code null} if none.
+     * The envelope is optional. If specified, then the builder will invoke
+     * {@link TileManager#setGridToCRS(AffineTransform)} with a transform computed
+     * from the geodetic envelope and the {@linkplain #getUntiledImageBounds pixel envelope}.
      * <p>
-     * This is merely a convenient way to invoke {@link TileManager#setGridToCRS} with a transform
-     * computed from the envelope and the {@linkplain #getUntiledImageBounds untiled image bounds}.
-     * Like usual, creating "grid to CRS" from an envelope is ambiguous since we don't know if axis
-     * need to be interchanged, <var>y</var> axis flipped, <i>etc.</i> Subclasses can gain
-     * more control by overriding the {@link #createGridToEnvelopeMapper createGridToEnvelopeMapper}
-     * method.
+     * Creating "<cite>grid to CRS</cite>" from an envelope is ambiguous since we don't know if axis
+     * need to be interchanged, <var>y</var> axis flipped, <i>etc.</i> Subclasses can gain more
+     * control by overriding the {@link #createGridToEnvelopeMapper(TileManager)} method.
      * <p>
      * Note that this method should <strong>not</strong> be invoked if the source {@link Tile}
      * objects were given an {@link AffineTransform} at construction time, either directly or
      * indirectly through a TFW file.
      *
-     * @param envelope The new envelope, or {@code null} if none.
+     * @param envelope The new geodetic envelope, or {@code null} if none.
      *
-     * @see #createGridToEnvelopeMapper
+     * @see #createGridToEnvelopeMapper(TileManager)
+     *
+     * @deprecated Replaced by {@link #setGridToCRS(AffineTransform)}.
      */
+    @Deprecated
     public synchronized void setMosaicEnvelope(final Envelope envelope) {
-        mosaicEnvelope = (envelope != null) ? new GeneralEnvelope(envelope) : null;
+        mosaicEnvelope = (envelope != null) ? new Envelope2D(envelope) : null;
     }
 
     /**
-     * Returns the bounds of the untiled image, or {@code null} if not set. In the later case, the
-     * bounds will be inferred from the input image when {@link #createTileManager(Object)} is invoked.
+     * Returns the grid envelope (in pixels) of the mosaic as a whole, or {@code null}
+     * if not set. In the later case, the bounds will be inferred from the input image
+     * when {@link #createTileManager(Object)} is invoked.
      *
-     * @return The current untiled image bounds.
+     * @return The current grid envelope of the mosaic, or {@code null}.
      */
     public synchronized Rectangle getUntiledImageBounds() {
         return (untiledBounds != null) ? (Rectangle) untiledBounds.clone() : null;
     }
 
     /**
-     * Sets the bounds of the untiled image to the specified value.
-     * A {@code null} value discarts any value previously set.
+     * Sets the grid envelope (in pixels) of the mosaic as a whole.
+     * A {@code null} value discards any value previously set.
      *
-     * @param bounds The new untiled image bounds.
+     * @param bounds The new grid envelope of the mosaic, or {@code null}.
      */
     public synchronized void setUntiledImageBounds(final Rectangle bounds) {
         untiledBounds = (bounds != null) ? new Rectangle(bounds) : null;
@@ -389,7 +446,7 @@ public class MosaicBuilder implements LogProducer {
     }
 
     /**
-     * Sets the tile size. A {@code null} value discarts any value previously set.
+     * Sets the tile size. A {@code null} value discards any value previously set.
      *
      * @param size The new tile size.
      */
@@ -629,8 +686,8 @@ public class MosaicBuilder implements LogProducer {
      * The following methods must be invoked prior this one:
      * <p>
      * <ul>
-     *   <li>{@link #setUntiledImageBounds}</li>
-     *   <li>{@link #setTileReaderSpi}</li>
+     *   <li>{@link #setUntiledImageBounds(Rectangle)}</li>
+     *   <li>{@link #setTileReaderSpi(ImageReaderSpi)}</li>
      * </ul>
      * <p>
      * The other setter methods are optional.
@@ -700,19 +757,21 @@ public class MosaicBuilder implements LogProducer {
          * was given to this builder. If no envelope were given but a transform was already
          * specified in the input tiles, inherit that transform.
          */
-        if (mosaicEnvelope != null && !mosaicEnvelope.isNull()) {
-            final GridToEnvelopeMapper mapper = createGridToEnvelopeMapper(output);
-            mapper.setGridRange(untiledBounds);
-            mapper.setEnvelope(mosaicEnvelope);
-            output.setGridToCRS((AffineTransform) mapper.createTransform());
-        } else if (input != null) {
-            final ImageGeometry geometry = input.getGridGeometry();
-            if (geometry != null) {
-                final AffineTransform gridToCRS = geometry.getGridToCRS();
-                if (gridToCRS != null) {
-                    output.setGridToCRS(gridToCRS);
+        if (gridToCRS == null) {
+            if (mosaicEnvelope != null && !mosaicEnvelope.isEmpty()) {
+                final GridToEnvelopeMapper mapper = createGridToEnvelopeMapper(output);
+                mapper.setGridRange(untiledBounds);
+                mapper.setEnvelope(mosaicEnvelope);
+                gridToCRS = (AffineTransform) mapper.createTransform();
+            } else if (input != null) {
+                final ImageGeometry geometry = input.getGridGeometry();
+                if (geometry != null) {
+                    gridToCRS = geometry.getGridToCRS();
                 }
             }
+        }
+        if (gridToCRS != null) {
+            output.setGridToCRS(gridToCRS);
         }
         return output;
     }
@@ -1215,7 +1274,10 @@ public class MosaicBuilder implements LogProducer {
      * @return An "grid to envelope" mapper having the desired configuration.
      *
      * @see #setMosaicEnvelope
+     *
+     * @deprecated Replaced by {@code get/setGridToCRS(...)} method pair.
      */
+    @Deprecated
     protected GridToEnvelopeMapper createGridToEnvelopeMapper(final TileManager tiles) {
         final GridToEnvelopeMapper mapper = new GridToEnvelopeMapper();
         mapper.setPixelAnchor(PixelInCell.CELL_CORNER);
@@ -1229,7 +1291,7 @@ public class MosaicBuilder implements LogProducer {
      * The {@linkplain ImageWriteParam#setSourceRegion source region} and
      * {@linkplain ImageWriteParam#setSourceSubsampling source subsampling} parameters can not be
      * set through this method. Their setting will be overwritten by the caller because their
-     * values depend on the strategy choosen by {@code MosaicImageWriter} for reading images,
+     * values depend on the strategy chosen by {@code MosaicImageWriter} for reading images,
      * which itself depends on the amount of available memory.
      *
      * @param  tile The tile to be written.
