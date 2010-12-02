@@ -244,47 +244,53 @@ final class FormatTable extends SingletonTable<FormatEntry> {
         setImageFormats(FormatEntry.getImageFormats(codecName));
 next:   for (final FormatEntry candidate : getEntries()) {
             final List<GridSampleDimension> current = candidate.sampleDimensions;
-            if (size(current) == numBands) {
-                for (int i=0; i<numBands; i++) {
-                    final GridSampleDimension band1 = bands.get(i);
-                    final GridSampleDimension band2 = current.get(i);
-                    if (Utilities.equals(band1.getUnits(), band2.getUnits())) {
-                        final List<Category> categories1 = band1.getCategories();
-                        final List<Category> categories2 = band2.getCategories();
-                        final int numCategories = size(categories1);
-                        if (size(categories2) == numCategories) {
-                            for (int j=0; j<numCategories; j++) {
-                                Category category1 = categories1.get(j);
-                                Category category2 = categories2.get(j);
-                                /*
-                                 * Converts the two categories to non-geophysics categories.
-                                 * If we detect in this process that one category is geophysics
-                                 * while the other is not, consider that we don't have a match.
-                                 */
-                                if ((category1 == (category1 = category1.geophysics(false))) !=
-                                    (category2 == (category2 = category2.geophysics(false))))
-                                {
-                                    continue next;
-                                }
-                                /*
-                                 * Compares the sample value range (not the geophysics one) because
-                                 * the former is definitive in the database. However do not convert
-                                 * to geophysics categories when comparing the transforms,  because
-                                 * we want to differentiate "geophysics" views from the packed ones
-                                 * (the former have identity transforms).
-                                 */
-                                if (!Utilities.equals(getRange(category1), getRange(category2)) ||
-                                    !Utilities.equals(category1.getSampleToGeophysics(),
-                                                      category2.getSampleToGeophysics()))
-                                {
-                                    continue next;
-                                }
-                            }
-                        }
-                        return candidate;
+            if (size(current) != numBands) {
+                // Number of band don't match: look for an other format.
+                continue next;
+            }
+            for (int i=0; i<numBands; i++) {
+                final GridSampleDimension band1 = bands.get(i);
+                final GridSampleDimension band2 = current.get(i);
+                if (!Utilities.equals(band1.getUnits(), band2.getUnits())) {
+                    // Units don't match for at least one band: look for an other format.
+                    continue next;
+                }
+                final List<Category> categories1 = band1.getCategories();
+                final List<Category> categories2 = band2.getCategories();
+                final int numCategories = size(categories1);
+                if (size(categories2) != numCategories) {
+                    // Number of category don't match in at least one band: look for an other format.
+                    continue next;
+                }
+                for (int j=0; j<numCategories; j++) {
+                    Category category1 = categories1.get(j);
+                    Category category2 = categories2.get(j);
+                    /*
+                     * Converts the two categories to non-geophysics categories.
+                     * If we detect in this process that one category is geophysics
+                     * while the other is not, consider that we don't have a match.
+                     */
+                    if ((category1 == (category1 = category1.geophysics(false))) !=
+                        (category2 == (category2 = category2.geophysics(false))))
+                    {
+                        continue next;
+                    }
+                    /*
+                     * Compares the sample value range (not the geophysics one) because
+                     * the former is definitive in the database. However do not convert
+                     * to geophysics categories when comparing the transforms,  because
+                     * we want to differentiate "geophysics" views from the packed ones
+                     * (the former have identity transforms).
+                     */
+                    if (!Utilities.equals(getRange(category1), getRange(category2)) ||
+                        !Utilities.equals(category1.getSampleToGeophysics(),
+                                          category2.getSampleToGeophysics()))
+                    {
+                        continue next;
                     }
                 }
             }
+            return candidate;
         }
         return null;
     }

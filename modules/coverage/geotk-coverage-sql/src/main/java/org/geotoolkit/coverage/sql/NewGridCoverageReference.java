@@ -288,7 +288,7 @@ public final class NewGridCoverageReference {
      * This constructor does not clone the references to mutable objects.
      * Consequently this instance is not allowed to be made visible through public API.
      *
-     * {@section Not for implementors}
+     * {@section Note for implementors}
      * The {@link WritableGridCoverageTable#addEntries} method assumes that the instance created by
      * this method uses the same format and the same spatial extent than the master entry. If this
      * assumption doesn't hold anymore in a future version, then {@code WritableGridCoverageTable}
