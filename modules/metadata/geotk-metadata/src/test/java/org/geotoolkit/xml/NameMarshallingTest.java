@@ -64,7 +64,7 @@ public final class NameMarshallingTest {
         pool.release(marshaller);
         String xml = out.toString();
         /*
-         * Takes only the name parts, discarts the remainding of XML.
+         * Takes only the name parts, discards the remainding of XML.
          */
         int startAt = xml.indexOf("<gmd:featureTypes>");
         assertTrue("<gmd:featureTypes> not found.", startAt >= 0);

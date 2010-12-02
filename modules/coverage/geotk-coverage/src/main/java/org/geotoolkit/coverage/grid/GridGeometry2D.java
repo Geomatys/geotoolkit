@@ -582,7 +582,7 @@ public class GridGeometry2D extends GeneralGridGeometry {
         Exception cause = null;
         int[] srcDim = filter.getSourceDimensions();
         /*
-         * Select a math transform that operate only on the two dimensions choosen above.
+         * Select a math transform that operate only on the two dimensions chosen above.
          * If such a math transform doesn't have exactly 2 output dimensions, then select
          * the same output dimensions than the input ones.
          */

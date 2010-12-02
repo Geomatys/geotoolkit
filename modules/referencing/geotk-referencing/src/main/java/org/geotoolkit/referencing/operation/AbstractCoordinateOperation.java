@@ -420,7 +420,7 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
         /*
          * If the coordinate operation is actually a transformation, checks if Bursa-Wolf
          * parameters were available for the datum shift. This is Geotk-specific.
-         * See javadoc for a rational about the return values choosen.
+         * See javadoc for a rational about the return values chosen.
          */
         if (operation instanceof Transformation) {
             if (!accuracies.contains(AbstractPositionalAccuracy.DATUM_SHIFT_OMITTED)) {

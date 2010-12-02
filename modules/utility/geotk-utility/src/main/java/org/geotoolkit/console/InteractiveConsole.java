@@ -602,7 +602,7 @@ public abstract class InteractiveConsole implements Runnable {
 
     /**
      * If the given delimiters are presents, returns only the part between those delimiters
-     * and discarts the rest of the string. This is a lazy way to ignore comments that appear
+     * and discards the rest of the string. This is a lazy way to ignore comments that appear
      * after some coordinate points in test scripts.
      *
      * @param text  The string to check.

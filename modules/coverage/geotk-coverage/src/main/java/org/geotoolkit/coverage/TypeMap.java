@@ -464,7 +464,7 @@ public final class TypeMap {
 
     /**
      * Wraps the specified value into a number of the specified data type. If the
-     * value can't fit in the specified type, then a wider type is choosen unless
+     * value can't fit in the specified type, then a wider type is chosen unless
      * {@code allowWidening} is {@code false}.
      *
      * @param  value The value to wrap in a {@link Number} object.

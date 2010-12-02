@@ -409,7 +409,7 @@ public final class Identifiers extends DefaultParameterDescriptor<Double> {
         }
         /*
          * If some identifiers were selected as a result of explicit requirement through the
-         * names array, discarts all other identifiers of that authority. Otherwise if there
+         * names array, discards all other identifiers of that authority. Otherwise if there
          * is some remaining authorities declaring exactly one identifier, inherits that
          * identifier silently. If more than one identifier if found for the same authority,
          * do not add this authority name.

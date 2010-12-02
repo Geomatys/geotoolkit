@@ -354,7 +354,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
         /*
          * Gets the localized remarks, if it was not yet set. If a user specified remarks
          * both as InternationalString and as String for some locales (which is a weird
-         * usage...), then current implementation discarts the later with a warning.
+         * usage...), then current implementation discards the later with a warning.
          */
         if (localized!=null && !localized.getLocales().isEmpty()) {
             if (remarks == null) {

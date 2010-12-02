@@ -1213,7 +1213,7 @@ search: for (final Tile tile : tiles) {
      * The {@linkplain ImageWriteParam#setSourceRegion source region} and
      * {@linkplain ImageWriteParam#setSourceSubsampling source subsampling} parameters can not be
      * set through this method. Their setting will be overwritten by the caller because their
-     * values depend on the strategy choosen by {@code MosaicImageWriter} for reading images,
+     * values depend on the strategy chosen by {@code MosaicImageWriter} for reading images,
      * which itself depends on the amount of available memory.
      *
      * @param  tile The tile to be written.

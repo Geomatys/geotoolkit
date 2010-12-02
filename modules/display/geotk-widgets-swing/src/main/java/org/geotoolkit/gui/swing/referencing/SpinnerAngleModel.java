@@ -75,7 +75,7 @@ final class SpinnerAngleModel extends AbstractSpinnerModel implements Serializab
 
     /**
      * Constructs a {@code SpinnerAngleModel} that represents a closed sequence of angles.
-     * Initial minimum and maximum values are choosen according the {@code value} type:
+     * Initial minimum and maximum values are chosen according the {@code value} type:
      * <p>
      * <table>
      *   <tr><td>{@link Longitude}&nbsp;</td> <td>-180° to 180°</td></tr>

@@ -282,7 +282,7 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
              * but it was not strictly necessary since it was redundant with the comparisons of
              * MathTransforms. Actually it was preventing to detect that two CRS were equivalent
              * despite different method names (e.g. "Mercator (1SP)" and "Mercator (2SP)" when
-             * the parameters are properly choosen).
+             * the parameters are properly chosen).
              */
             return true;
         }

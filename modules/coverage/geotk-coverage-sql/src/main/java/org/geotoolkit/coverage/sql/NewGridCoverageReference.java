@@ -539,9 +539,9 @@ public final class NewGridCoverageReference {
                 /*
                  * Replaces geophysics sample dimensions by new sample dimensions using the
                  * [1...255] range of packed values, and 0 for "no data".  We don't do that
-                 * in the default MetadataHelper implementation because the choosen range is
+                 * in the default MetadataHelper implementation because the chosen range is
                  * arbitrary. However this is okay to make such arbitrary choice in the particular
-                 * case of NewGridCoverageReference, because the choosen range will be saved
+                 * case of NewGridCoverageReference, because the chosen range will be saved
                  * in the database (the user can also modify the range).
                  */
                 final GridSampleDimension[] bands = sampleDimensions.toArray(new GridSampleDimension[sampleDimensions.size()]);

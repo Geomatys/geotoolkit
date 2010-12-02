@@ -111,7 +111,7 @@ public abstract class AbstractCRS extends AbstractReferenceSystem implements Coo
      * object in a fixed locale. In many case this fixed locale is the English one, but for this
      * particular method we take the system default. We do that way because this method is used
      * for the creation of convenience objects only, not for objects created from an official
-     * database. Consequently the "unlocalized" name is actually choosen according the user's
+     * database. Consequently the "unlocalized" name is actually chosen according the user's
      * locale at class initialization time.
      * <p>
      * The same name is also added in a localizable form as an alias. Since the {@link #nameMatches}

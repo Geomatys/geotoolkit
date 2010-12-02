@@ -235,7 +235,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
     /**
      * Creates a name for the predefined constants in subclasses. The name is an unlocalized String
      * object. However, since this method is used for creation of convenience objects only (not for
-     * objects created from an "official" database), the "unlocalized" name is actually choosen
+     * objects created from an "official" database), the "unlocalized" name is actually chosen
      * according the user's locale at class initialization time. The same name is also added in
      * a localizable form as an alias. Since the {@link #nameMatches} convenience method checks
      * the alias, it still possible to consider two objects are equivalent even if their names

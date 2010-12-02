@@ -665,7 +665,7 @@ public class OperationJAI extends Operation2D {
      * 2 or more quantitative category, then this method returns {@code -1}.
      *
      * @param categories The categories to test.
-     * @return The index of the quantitative category, or {@code -1} if none can be choosen.
+     * @return The index of the quantitative category, or {@code -1} if none can be chosen.
      *
      * @since 2.4
      */

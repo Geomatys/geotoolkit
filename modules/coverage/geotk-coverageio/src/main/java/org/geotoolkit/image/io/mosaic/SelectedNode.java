@@ -162,7 +162,7 @@ final class SelectedNode extends TreeNode {
          * while their child do not overlaps at all.
          *
          * We don't perform this computation if this node contains a tile, because in such case
-         * we assume that the bounding box was carefully choosen by the user. This is different
+         * we assume that the bounding box was carefully chosen by the user. This is different
          * than a null tile in which case the bounding box was calculated by our code.
          */
         if (tile == null) {

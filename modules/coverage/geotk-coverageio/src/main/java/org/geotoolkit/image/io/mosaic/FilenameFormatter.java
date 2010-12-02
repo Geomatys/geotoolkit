@@ -84,7 +84,7 @@ final class FilenameFormatter implements Serializable {
 
     /**
      * Initializes the formatter with a suffix inferred from the given image reader provider
-     * if none was explicitly set. The longest file extension is choosen (e.g. {@code "tiff"}
+     * if none was explicitly set. The longest file extension is chosen (e.g. {@code "tiff"}
      * instead of {@code "tif"}).
      *
      * @param tileReaderSpi The image reader provider to be used for reading tiles.

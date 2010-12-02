@@ -638,7 +638,7 @@ public class AngleFormat extends Format {
      * to {@link #applyPattern}. The argument {@code obj} shall be an {@link Angle} object or
      * one of its derived class ({@link Latitude}, {@link Longitude}). If {@code obj} is a
      * {@link Latitude} object, then a symbol "N" or "S" will be appended to the end of the
-     * string (the symbol will be choosen according the angle's sign). Otherwise, if {@code obj}
+     * string (the symbol will be chosen according the angle's sign). Otherwise, if {@code obj}
      * is a {@link Longitude} object, then a symbol "E" or "W" will be appended to the end of the
      * string. Otherwise, no hemisphere symbol will be appended.
      * <p>
