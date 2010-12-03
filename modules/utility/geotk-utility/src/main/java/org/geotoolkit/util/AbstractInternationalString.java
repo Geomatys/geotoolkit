@@ -21,6 +21,9 @@
 package org.geotoolkit.util;
 
 import java.util.Locale;
+import java.util.Formatter;
+import java.util.Formattable;
+import java.util.FormattableFlags;
 import org.opengis.util.InternationalString;
 import org.geotoolkit.resources.Errors;
 
@@ -37,13 +40,13 @@ import org.geotoolkit.resources.Errors;
  * {@linkplain Locale#getDefault default locale}, as returned by {@link #toString()}.
  * This string also defines the {@linkplain CharSequence character sequence}.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.16
  *
  * @since 2.1
  * @module
  */
-public abstract class AbstractInternationalString implements InternationalString {
+public abstract class AbstractInternationalString implements InternationalString, Formattable {
     /**
      * The string in the {@linkplain Locale#getDefault system default} locale, or {@code null}
      * if this string has not yet been determined. This is the default string returned by
@@ -160,6 +163,42 @@ public abstract class AbstractInternationalString implements InternationalString
             }
         }
         return defaultValue;
+    }
+
+    /**
+     * Formats this international string using the given formatter. This method appends the string
+     * obtained by:
+     *
+     * <blockquote><code>
+     * {@linkplain #toString(Locale) toString}(formatter.{@linkplain Formatter#locale()})
+     * </code></blockquote>
+     *
+     * @param formatter The formatter to use for formatting this string.
+     * @param flags     A bitmask of {@link FormattableFlags} values.
+     * @param width     The minimum number of characters, or -1 if none.
+     * @param precision The maximum number of characters (before expanding to the {@code width}),
+     *                  or -1 for no restriction.
+     *
+     * @since 3.16
+     */
+    @Override
+    public void formatTo(final Formatter formatter, final int flags, int width, final int precision) {
+        final Locale locale = formatter.locale();
+        String value = toString(locale);
+        if ((flags & FormattableFlags.UPPERCASE) != 0) {
+            value = value.toUpperCase(locale);
+        }
+        if (precision >= 0 && precision < value.length()) {
+            value = value.substring(0, precision);
+        }
+        final Object[] args = new Object[] {value, value};
+        width -= value.length();
+        String format = "%s";
+        if (width >= 0) {
+            format = "%s%s";
+            args[(flags & FormattableFlags.LEFT_JUSTIFY) != 0 ? 1 : 0] = Strings.spaces(width);
+        }
+        formatter.format(format, args);
     }
 
     /**

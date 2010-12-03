@@ -28,8 +28,8 @@ import static org.geotoolkit.test.Commons.*;
 /**
  * Tests the various {@link InternationalString} implementations.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.16
  *
  * @since 2.1
  */
@@ -80,6 +80,14 @@ public final class InternationalStringTest {
         assertEquals("French message:",      messageFr,   toTest.toString(Locale.FRENCH));
         assertEquals("French message:",      messageFrCa, toTest.toString(Locale.CANADA_FRENCH));
         assertNotNull("Other language:",                  toTest.toString(Locale.CHINESE));
+
+        assertEquals("Unlocalized message:", message,     String.format((Locale) null,  "%s", toTest));
+        assertEquals("English message:",     messageEn,   String.format(Locale.ENGLISH, "%s", toTest));
+        assertEquals("French message:",      messageFr,   String.format(Locale.FRENCH,  "%s", toTest));
+        assertEquals("  This",   String.format(Locale.ENGLISH, "%6.4s", toTest));
+        assertEquals(" Voici",   String.format(Locale.FRENCH,  "%6.5s", toTest));
+        assertEquals("THIS  ",   String.format(Locale.ENGLISH, "%-6.5S", toTest));
+        assertEquals("VOICI ",   String.format(Locale.FRENCH,  "%-6.5S", toTest));
     }
 
     /**
