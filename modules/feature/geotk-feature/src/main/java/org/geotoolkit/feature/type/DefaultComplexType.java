@@ -22,12 +22,14 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.converter.Classes;
@@ -43,6 +45,8 @@ import org.opengis.filter.Filter;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.InternationalString;
+
+import static org.geotoolkit.util.StringUtilities.*;
 
 
 /**
@@ -199,15 +203,9 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
 
         final Collection<PropertyDescriptor> descs = getDescriptors();
-        final int last = descs.size()-1;
-        int i=0;
         for (PropertyDescriptor property : descs) {
-            if(i==last){                
-                toString(tablewriter, property, 1, 1, 1);
-            }else{                
-                toString(tablewriter, property, 1, 0, 1);
-            }
-            i++;
+            tablewriter.write(toString(property));
+            tablewriter.write('\n');
         }
         tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
         try {
@@ -238,85 +236,89 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         return sb.toString();
     }
 
-    private static void toString(TableWriter tablewriter, PropertyDescriptor property, int depth, int pos, int startdepth){
+    private static String toString(PropertyDescriptor property){
+        final StringBuilder builder = new StringBuilder();
 
-        if(depth > 1){
-            for(int i=1; i<depth-1;i++){
-                if(i < startdepth){
-                    tablewriter.write("\u00A0\u00A0\u00A0");
-                }else{
-                    tablewriter.write("\u2502\u00A0\u00A0");
-                }
-            }
-            if(pos == 0){
-                tablewriter.write("\u251C\u2500\u2500");
-            }else if(pos == 1){
-                tablewriter.write("\u2514\u2500\u2500");
-            }else{
-                tablewriter.write("\u251C\u2500\u2500");
-            }
-        }
-
-        tablewriter.write(DefaultName.toJCRExtendedForm(property.getName()));
-        tablewriter.write("\t");
-        tablewriter.write(Integer.toString(property.getMinOccurs()));
-        tablewriter.write("\t");
-        tablewriter.write(Integer.toString(property.getMaxOccurs()));
-        tablewriter.write("\t");
-        tablewriter.write(Boolean.toString(property.isNillable()));
-        tablewriter.write("\t");
+        builder.append(DefaultName.toJCRExtendedForm(property.getName()));
+        builder.append("\t");
+        builder.append(Integer.toString(property.getMinOccurs()));
+        builder.append("\t");
+        builder.append(Integer.toString(property.getMaxOccurs()));
+        builder.append("\t");
+        builder.append(Boolean.toString(property.isNillable()));
+        builder.append("\t");
         final PropertyType pt = property.getType();
         if(pt instanceof ComplexType){
-            tablewriter.write("CX:" + ((ComplexType)pt).getName().getLocalPart() );
+            builder.append("CX:").append( ((ComplexType)pt).getName().getLocalPart() );
         }else{
-            tablewriter.write(pt.getBinding().getSimpleName());
+            builder.append(pt.getBinding().getSimpleName());
         }
-        tablewriter.write("\t");
+        builder.append("\t");
 
         if(property instanceof GeometryDescriptor){
             final GeometryDescriptor desc = (GeometryDescriptor) property;
             final CoordinateReferenceSystem crs = desc.getCoordinateReferenceSystem();
             if(crs != null){
                 try {
-                    tablewriter.write(String.valueOf(CRS.lookupIdentifier(crs, true)));
+                    builder.append(String.valueOf(CRS.lookupIdentifier(crs, true)));
                 } catch (FactoryException ex) {
-                    tablewriter.write("Error getting identifier");
+                    builder.append("Error getting identifier");
                 }
             }
         }else{
-            tablewriter.write("");
+            builder.append("");
         }
-        tablewriter.write("\t");
+        builder.append("\t");
 
         final Map<Object,Object> userDatas = property.getUserData();
         if(userDatas != null && !userDatas.isEmpty()){
             for(Map.Entry<Object,Object> param : userDatas.entrySet()){
-                tablewriter.write(param.getKey().toString());
-                tablewriter.write("=");
-                tablewriter.write(param.getValue().toString());
-                tablewriter.write("  ");
+                builder.append(param.getKey().toString());
+                builder.append("=");
+                builder.append(param.getValue().toString());
+                builder.append("  ");
             }
         }
-
-        tablewriter.write("\n");
 
         if(property.getType() instanceof ComplexType){
             final ComplexType ct = (ComplexType) property.getType();
             final Collection<PropertyDescriptor> descs = ct.getDescriptors();
-            int i=0;
-            int n=descs.size()-1;
-            for(PropertyDescriptor desc : descs){
-                if(i==n){
-                    toString(tablewriter, desc, depth+1, 1, startdepth +((pos == 1)? 1 : 0));
-                }else if(i == 0){
-                    toString(tablewriter, desc, depth+1, 0, startdepth);
-                }else{
-                    toString(tablewriter, desc, depth+1, -1, startdepth);
-                }
-                i++;
+
+            if(!descs.isEmpty()){
+                builder.append('\n');
             }
+
+            builder.append(toStringTree(descs));
         }
 
+        return builder.toString();
+    }
+
+    private static String toStringTree(Collection<PropertyDescriptor> objects){
+        final StringBuilder sb = new StringBuilder();
+
+        final int size = objects.size();
+
+        final Iterator<PropertyDescriptor> ite = objects.iterator();
+        int i=1;
+        while(ite.hasNext()){
+            String sub = toString(ite.next());
+
+            if(i==size){
+                sb.append(TREE_END);
+                //move text to the right
+                sub = sub.replaceAll("\n", "\n"+TREE_BLANK);
+                sb.append(sub);
+            }else{
+                sb.append(TREE_CROSS);
+                //move text to the right
+                sub = sub.replaceAll("\n", "\n"+TREE_LINE);
+                sb.append(sub);
+                sb.append('\n');
+            }
+            i++;
+        }
+        return sb.toString();
     }
 
 }
