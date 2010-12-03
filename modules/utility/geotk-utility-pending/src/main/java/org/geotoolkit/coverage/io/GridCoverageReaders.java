@@ -54,6 +54,7 @@ import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.geometry.Envelope;
 import org.opengis.metadata.acquisition.AcquisitionInformation;
 import org.opengis.metadata.content.ImageDescription;
 import org.opengis.metadata.identification.DataIdentification;
@@ -384,8 +385,21 @@ public class GridCoverageReaders {
      * Create a TileManager from the given input.
      */
     public static TileManager buildTileManager(Object input, int tileSize, File tileFolder) throws IOException{
+        return buildTileManager(input, null, tileSize, tileFolder);
+    }
+
+    /**
+     * Create a TileManager from the given input.
+     *
+     * @param input : original source
+     * @param gridtoCRS : grid to crs
+     * @param tileSize : wanted tiles size
+     * @param tileFolder : where to store created tiles
+     */
+    public static TileManager buildTileManager(Object input, AffineTransform gridtoCRS, int tileSize, File tileFolder) throws IOException{
         final MosaicBuilder builder = new MosaicBuilder();
         builder.setTileSize(new Dimension(tileSize,tileSize));
+        builder.setGridToCRS(gridtoCRS);
         //let the builder build the best pyramid resolutions
         //builder.setSubsamplings(new int[]{1,2,4,6,8,12,16,20,30});
         builder.setTileDirectory(tileFolder);
@@ -395,6 +409,7 @@ public class GridCoverageReaders {
         final TileManager manager = builder.writeFromInput(input, params);
         return manager;
     }
+
 
     /**
      * Get or create a temp folder to store the mosaic. the folder is based on the

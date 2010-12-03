@@ -98,6 +98,36 @@ public final class DimapConstants {
     public static final String TAG_FRAME_ROW = "FRAME_ROW";
     public static final String TAG_FRAME_COL = "FRAME_COL";
 
+    // Production group --------------------------------------------------------
+    public static final String TAG_PRODUCTION = "Production";
+    public static final String TAG_DATASET_PRODUCER_NAME = "DATASET_PRODUCER_NAME";
+    public static final String TAG_DATASET_PRODUCER_URL = "DATASET_PRODUCER_URL";
+    public static final String TAG_DATASET_PRODUCTION_DATE = "DATASET_PRODUCTION_DATE";
+    public static final String TAG_PRODUCT_TYPE = "PRODUCT_TYPE";
+    public static final String TAG_PRODUCT_INFO = "PRODUCT_INFO";
+    public static final String TAG_JOB_ID = "JOB_ID";
+
+    // Quality assessment group ------------------------------------------------
+    public static final String TAG_QUALITY_ASSESSMENT = "Quality_Assessment";
+    public static final String TAG_QUALITY_TABLES = "QUALITY_TABLES";
+    public static final String TAG_QUALITY_PARAMETER = "Quality_Parameter";
+    public static final String TAG_QUALITY_PARAMETER_DESC = "QUALITY_PARAMETER_DESC";
+    public static final String TAG_QUALITY_PARAMETER_CODE = "QUALITY_PARAMETER_CODE";
+    public static final String TAG_QUALITY_PARAMETER_VALUE = "QUALITY_PARAMETER_VALUE";
+
+    // Dataset sources group ---------------------------------------------------
+    public static final String TAG_DATASET_SOURCES = "Dataset_Sources";
+    public static final String TAG_SOURCE_INFORMATION = "Source_Information";
+    public static final String TAG_SOURCE_ID = "SOURCE_ID";
+    public static final String TAG_SOURCE_TYPE = "SOURCE_TYPE";
+    public static final String TAG_SOURCE_DESCRIPTION = "SOURCE_DESCRIPTION";
+    public static final String TAG_SOURCE_REF = "SOURCE_REF";
+    //TAG_CRS
+    public static final String TAG_SCENE_SOURCE = "Scene_Source";
+    // ...
+    //TAG quality assessment
+
+
     // geoposition group -------------------------------------------------------
     public static final String TAG_GEOPOSITION = "Geoposition";
     public static final String TAG_GEOPOSITION_INSERT = "Geoposition_Insert";

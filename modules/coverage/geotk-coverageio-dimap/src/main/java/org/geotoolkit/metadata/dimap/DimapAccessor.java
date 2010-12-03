@@ -16,7 +16,11 @@
  */
 package org.geotoolkit.metadata.dimap;
 
+import java.net.URISyntaxException;
+import java.text.ParseException;
 import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.metadata.iso.citation.DefaultCitationDate;
 import org.opengis.metadata.citation.DateType;
 import org.opengis.metadata.citation.CitationDate;
@@ -31,6 +35,7 @@ import org.opengis.metadata.identification.CharacterSet;
 import java.util.Locale;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,12 +49,28 @@ import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.TypeMap;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
+import org.geotoolkit.metadata.iso.acquisition.DefaultAcquisitionInformation;
+import org.geotoolkit.metadata.iso.citation.DefaultContact;
+import org.geotoolkit.metadata.iso.citation.DefaultOnlineResource;
+import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
+import org.geotoolkit.metadata.iso.quality.AbstractResult;
+import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
+import org.geotoolkit.metadata.iso.quality.DefaultDataQuality;
+import org.geotoolkit.metadata.iso.quality.DefaultScope;
+import org.geotoolkit.metadata.iso.quality.DefaultUsability;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.NumberRange;
 
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.metadata.Metadata;
+import org.opengis.metadata.citation.Contact;
+import org.opengis.metadata.citation.ResponsibleParty;
+import org.opengis.metadata.citation.Role;
+import org.opengis.metadata.maintenance.ScopeCode;
+import org.opengis.metadata.quality.DataQuality;
+import org.opengis.metadata.quality.Result;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -321,26 +342,112 @@ public final class DimapAccessor {
         //default values
         metadata.setCharacterSet(CharacterSet.UTF_8);
         metadata.setLanguage(Locale.ENGLISH);
+        metadata.setDateStamp(new Date());
 
-        // identification ----------------------------------------------------------
-        //dataset id
+
+
+        //<xsd:element minOccurs="0" ref="Dataset_Id"/> ------------------------
+        // contain base informations : data name
         final Element datasetID = firstElement(doc, TAG_DATASET_ID);
-        final String name = textValueSafe(datasetID, TAG_DATASET_NAME, String.class);
-        final String copyright = textValueSafe(datasetID, TAG_DATASET_COPYRIGHT, String.class);
+        if(datasetID != null){
+            final String name = textValueSafe(datasetID, TAG_DATASET_NAME, String.class);
+            final String copyright = textValueSafe(datasetID, TAG_DATASET_COPYRIGHT, String.class);
 
-        final DefaultDataIdentification identificationInfo = new DefaultDataIdentification();
-        final DefaultCitation citation = new DefaultCitation();
-        citation.setTitle(new SimpleInternationalString(name));
-        Identifier id = new DefaultIdentifier(name);
-        citation.setIdentifiers(Arrays.asList(id));
-        final CitationDate creationDate = new DefaultCitationDate(new Date(), DateType.CREATION);
-        citation.setDates(Arrays.asList(creationDate));
-        identificationInfo.setCitation(citation);
+            final DefaultDataIdentification identificationInfo = new DefaultDataIdentification();
+            final DefaultCitation citation = new DefaultCitation();
+            citation.setTitle(new SimpleInternationalString(name));
+            Identifier id = new DefaultIdentifier(name);
+            citation.setIdentifiers(Arrays.asList(id));
+            final CitationDate creationDate = new DefaultCitationDate(new Date(), DateType.CREATION);
+            citation.setDates(Arrays.asList(creationDate));
+            identificationInfo.setCitation(citation);
 
-        metadata.setIdentificationInfo(Collections.singleton(identificationInfo));
+            metadata.getIdentificationInfo().add(identificationInfo);
+        }
 
+        //<xsd:element minOccurs="0" ref="Dataset_Frame"/> ---------------------
+        //<xsd:element minOccurs="0" ref="Dataset_Use"/> -----------------------
 
-        //TODO
+        //<xsd:element minOccurs="0" ref="Production"/> ------------------------
+        // can be changed in a Responsible party information
+        final Element production = firstElement(doc, TAG_PRODUCTION);
+        if(production != null){
+            final String producerName   = textValueSafe(production, TAG_DATASET_PRODUCER_NAME, String.class);
+            final String producerURL    = textValueSafe(production, TAG_DATASET_PRODUCER_URL, String.class);
+            final String productionDate = textValueSafe(production, TAG_DATASET_PRODUCTION_DATE, String.class);
+            final String productType    = textValueSafe(production, TAG_PRODUCT_TYPE, String.class);
+            final String productInfo    = textValueSafe(production, TAG_PRODUCT_INFO, String.class);
+            final String jobId          = textValueSafe(production, TAG_JOB_ID, String.class);
+
+            final DefaultResponsibleParty party = new DefaultResponsibleParty(Role.ORIGINATOR);
+
+            if(producerURL != null){
+                try {
+                    final DefaultContact contact = new DefaultContact();
+                    contact.setOnlineResource(new DefaultOnlineResource(new URI(producerURL)));
+                    party.setContactInfo(contact);
+                } catch (URISyntaxException ex) {
+                    //dont log, best effort
+                }
+            }
+
+            if(producerName != null){
+                party.setOrganisationName(new SimpleInternationalString(producerName));
+            }
+
+            if(productionDate != null){
+                final DefaultAcquisitionInformation info = new DefaultAcquisitionInformation();
+                try {
+                    Date d = TemporalUtilities.parseDate(productionDate);
+                    //where can we add this ?
+                } catch (ParseException ex) {
+                    //dont log, best effort
+                } catch (NullPointerException ex) {
+                    //dont log, best effort
+                }
+            }
+
+            metadata.getContacts().add(party);
+        }
+
+        //<xsd:element minOccurs="0" ref="Dataset_Components"/> ----------------
+
+        //<xsd:element minOccurs="0" ref="Quality_Assessment"/> ----------------
+        // should be changed into a
+        final Element qualityAssessment = firstElement(doc, TAG_QUALITY_ASSESSMENT);
+        if(qualityAssessment != null){
+            //final DefaultDataQuality quality = new DefaultDataQuality();
+            //how to fit that properly ? can not find a clean solution
+            //metadata.getDataQualityInfo().add(quality);
+        }
+
+        //<xsd:element minOccurs="0" ref="Coordinate_Reference_System"/> -------
+        //has been set from the geotiff informations
+
+        //<xsd:element minOccurs="0" ref="Raster_CS"/> -------------------------
+        //has been set from the geotiff informations
+
+        //<xsd:element minOccurs="0" ref="Geoposition"/> -----------------------
+        //<xsd:element minOccurs="0" ref="Map_Declination"/> -------------------
+        //<xsd:element minOccurs="0" ref="Raster_Dimensions"/> -----------------
+        //<xsd:element minOccurs="0" ref="Raster_Encoding"/> -------------------
+        //<xsd:element minOccurs="0" ref="Data_Processing"/> -------------------
+        //<xsd:element minOccurs="0" ref="Data_Access"/> -----------------------
+        //<xsd:element minOccurs="0" ref="Image_Display"/> ---------------------
+        //<xsd:element minOccurs="0" ref="Image_Interpretation"/> --------------
+
+        //<xsd:element minOccurs="0" ref="Dataset_Sources"/> -------------------
+        // could be mapped to Aquisition informations
+        final Element datasetSources = firstElement(doc, TAG_DATASET_SOURCES);
+        if(datasetSources != null){
+            //TODO
+//            final DefaultAcquisitionInformation info = new DefaultAcquisitionInformation();
+//
+//            metadata.getAcquisitionInformation().add(aqui);
+        }
+        
+
+        //<xsd:element minOccurs="0" ref="Vector_Attributes"/> -----------------
 
         return metadata;
     }
