@@ -316,10 +316,22 @@ final class MetadataProxy<T> implements InvocationHandler {
             if (value == null) value = Float.NaN;
             return value;
         }
+        if (targetType.equals(Long.TYPE)) {
+            Integer value = accessor.getAttributeAsInteger(name);
+            return Long.valueOf((value != null) ? value.longValue() : 0L);
+        }
         if (targetType.equals(Integer.TYPE)) {
             Integer value = accessor.getAttributeAsInteger(name);
             if (value == null) value = 0;
             return value;
+        }
+        if (targetType.equals(Short.TYPE)) {
+            Integer value = accessor.getAttributeAsInteger(name);
+            return Short.valueOf((value != null) ? value.shortValue() : (short) 0);
+        }
+        if (targetType.equals(Byte.TYPE)) {
+            Integer value = accessor.getAttributeAsInteger(name);
+            return Byte.valueOf((value != null) ? value.byteValue() : (byte) 0);
         }
         if (targetType.equals(Boolean.TYPE)) {
             Boolean value = accessor.getAttributeAsBoolean(name);
