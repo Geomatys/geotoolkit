@@ -38,6 +38,7 @@ import java.util.GregorianCalendar;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.ThreadSafe;
@@ -327,6 +328,18 @@ public class Database implements Localized {
     final String getProperty(final ConfigurationKey key) {
         // No need to synchronize since 'Properties' is already synchronized.
         return (properties != null) ? properties.getProperty(key.key, key.defaultValue) : key.defaultValue;
+    }
+
+    /**
+     * Returns the logger to use, or {@code null} for a default (implementation-specific) logger.
+     * Subclasses shall override this method is order to specify their application-specific logger.
+     *
+     * @return The logger to use, or {@code null}.
+     *
+     * @since 3.16
+     */
+    protected Logger getLogger() {
+        return null;
     }
 
     /**

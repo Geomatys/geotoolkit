@@ -35,6 +35,7 @@ import javax.imageio.ImageIO;
 import java.util.concurrent.CountDownLatch;
 
 import org.geotoolkit.test.Commons;
+import org.geotoolkit.test.TestBase;
 import org.geotoolkit.test.gui.SwingBase;
 
 import org.junit.After;
@@ -51,7 +52,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.16 (derived from 3.00)
  */
-public abstract class ImageTestBase {
+public abstract class ImageTestBase extends TestBase {
     /**
      * The image being tested.
      */

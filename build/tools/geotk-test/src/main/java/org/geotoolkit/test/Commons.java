@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  * Provides also shared constants.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.16
  *
  * @since 3.00
  */
@@ -48,6 +48,11 @@ public final class Commons {
      * @since 3.11
      */
     public static final String EPSG_VERSION = "7.5.0.1"; // NOSONAR: This is not an IP address.
+
+    /**
+     * The character to be substituted to {@code '"'} in {@link #printAsJavaCode}.
+     */
+    private static final char OPENING_QUOTE = '\u201C', CLOSING_QUOTE = '\u201D';
 
     /**
      * Do not allows instantiation of this class.
@@ -274,13 +279,67 @@ public final class Commons {
     }
 
     /**
-     * Decodes as plain text a string encoded by {@link Tools#printAsJavaCode}.
+     * Decodes as plain text a string encoded by {@link #printAsJavaCode}.
      *
-     * @param  text The text encoded by {@link Tools#printAsJavaCode}.
+     * @param  text The text encoded by {@link #printAsJavaCode}.
      * @return The decoded text.
      */
     public static String decodeQuotes(final String text) {
-        return text.replace(Tools.OPENING_QUOTE, '"').replace(Tools.CLOSING_QUOTE, '"');
+        return text.replace(OPENING_QUOTE, '"').replace(CLOSING_QUOTE, '"');
+    }
+
+    /**
+     * Prints the given text to the standard output stream, formatted as a Java {@link String}
+     * declaration constant. The quote character is escaped to special unicode characters for
+     * easier reading. The generated code presumes that the following import statement is
+     * declared in the class where to code is going to be copied:
+     *
+     * {@preformat java
+     *     import static org.geotoolkit.test.Commons.*;
+     * }
+     *
+     * @param text The text to format as Java code.
+     */
+    public static void printAsJavaCode(final String text) {
+        final PrintStream out = System.out;
+        out.print("        final String text =");
+        final boolean hasQuotes = text.indexOf('"') >= 0;
+        if (hasQuotes) {
+            out.print(" decodeQuotes(");
+        }
+        out.println();
+
+        final String margin = "                "; // 4 indentation levels (16 spaces).
+        boolean continuing = false;
+        for (final StringIterator it=new StringIterator(text); it.hasNext();) {
+            if (continuing) {
+                out.println("\\n\" +");
+            }
+            continuing = true;
+            out.print(margin);
+            out.print('"');
+            int quotes = 0;
+            final String line = it.next();
+            for (int i=0; i<line.length(); i++) {
+                char c = line.charAt(i);
+                switch (c) {
+                    case OPENING_QUOTE: // fallthrough
+                    case CLOSING_QUOTE: {
+                        throw new IllegalArgumentException("Text already contains quotation marks.");
+                    }
+                    case '"': {
+                        c = (quotes & 1) == 0 ? OPENING_QUOTE : CLOSING_QUOTE;
+                        quotes++;
+                    }
+                }
+                out.print(c);
+            }
+        }
+        out.print('"');
+        if (hasQuotes) {
+            out.print(')');
+        }
+        out.println(';');
     }
 
     /**

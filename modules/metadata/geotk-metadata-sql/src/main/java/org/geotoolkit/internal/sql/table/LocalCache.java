@@ -119,6 +119,13 @@ public interface LocalCache {
         int stamp = UNINITIALIZED;
 
         /**
+         * The execution start time in nanoseconds, used for logging purpose only.
+         *
+         * @since 3.16
+         */
+        long startTime;
+
+        /**
          * Constructs a metadata result for the specified statement.
          *
          * @param statement The prepared statement.
@@ -130,20 +137,32 @@ public interface LocalCache {
         }
 
         /**
-         * Formats this statement. If the prepared statement is an implementation which is known
-         * to have a well suited {@code toString()} method (like the PostgreSQL driver), then that
-         * method is invoked directly. Otherwise this query is formatted as a fallback (in which
-         * case the parameter values are missing).
+         * Formats this statement. Some implementations (e.g. the PostgreSQL driver) format the
+         * SQL statement together with the parameter values. If it seems to be the case (we check
+         * that by searching for the first word, typically {@code SELECT} or {@code INSERT}), then
+         * returns the string formatted by the driver. Otherwise conservatively returns the value
+         * of the {@link #sql} field, but the later doesn't have the parameter values.
          * <p>
          * This method is used only for logging or debugging purpose.
          */
         @Override
         public String toString() {
-            final String className = statement.getClass().getName();
-            if (className.startsWith("org.postgresql")) {
-                return statement.toString();
+            String keyword = sql.trim();
+            final int length = keyword.length();
+            for (int i=0; i<length; i++) {
+                if (Character.isWhitespace(keyword.charAt(i))) {
+                    keyword = keyword.substring(0, i);
+                    break;
+                }
             }
-            return sql;
+            String s = statement.toString();
+            final int i = s.indexOf(keyword);
+            if (i >= 0) {
+                s = s.substring(i);
+            } else {
+                s = sql;
+            }
+            return s;
         }
     }
 }

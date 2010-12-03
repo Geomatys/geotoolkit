@@ -75,7 +75,7 @@ public abstract class BoundedSingletonTable<E extends Entry> extends SingletonTa
     private final Parameter bySpatialExtent;
 
     /**
-     * The spatio-temporal extent of the query. Getter and setter Methods can be invoked
+     * The spatio-temporal extent of the query. Getter and setter methods can be invoked
      * directly on this instance.
      */
     public final CoverageEnvelope envelope;

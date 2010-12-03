@@ -18,8 +18,10 @@
 package org.geotoolkit.coverage.sql;
 
 import java.util.Properties;
+import java.util.logging.Logger;
 import javax.sql.DataSource;
 
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.internal.sql.table.TablePool;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
@@ -30,12 +32,19 @@ import org.geotoolkit.internal.sql.table.SpatialDatabase;
  * Contains also a few additional factories, like {@link PaletteFactory}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.16
  *
  * @since 3.10 (derived from Seagis)
  * @module
  */
 final class TableFactory extends SpatialDatabase {
+    /**
+     * The logger to be used by every tables.
+     *
+     * @since 3.16
+     */
+    private static final Logger LOGGER = Logging.getLogger(TableFactory.class);
+
     /**
      * Pool of layer tables.
      */
@@ -76,5 +85,13 @@ final class TableFactory extends SpatialDatabase {
     public TableFactory(final DataSource datasource, final Properties properties) {
         super(datasource, properties);
         paletteFactory = PaletteFactory.getDefault();
+    }
+
+    /**
+     * Returns the logger to be used by every tables.
+     */
+    @Override
+    protected Logger getLogger() {
+        return LOGGER;
     }
 }

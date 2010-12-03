@@ -42,7 +42,6 @@ import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.geometry.DirectPosition;
 
-import org.geotoolkit.test.Tools;
 import org.geotoolkit.test.Commons;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
@@ -206,7 +205,7 @@ public abstract class TransformTestCase extends org.opengis.test.referencing.Tra
      * "final".
      */
     protected final void printAsJavaCode() {
-        Tools.printAsJavaCode(String.valueOf(transform));
+        Commons.printAsJavaCode(String.valueOf(transform));
     }
 
     /**

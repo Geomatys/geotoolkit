@@ -169,9 +169,11 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
 
     /**
      * Formats a tree of factory dependencies and sent it to the logger at the given level.
+     * We use the logger from the {@link AuthorityFactoryFinder} package because this operation
+     * is more related to factories management than referencing.
      */
     private void log(final Level level, final boolean longitudeFirst) {
-        final Logger logger = Logging.getLogger(DefaultAuthorityFactory.class);
+        final Logger logger = Logging.getLogger(AuthorityFactoryFinder.class);
         if (logger.isLoggable(level)) {
             final FactoryDependencies printer = new FactoryDependencies(this);
             printer.setAbridged(true);

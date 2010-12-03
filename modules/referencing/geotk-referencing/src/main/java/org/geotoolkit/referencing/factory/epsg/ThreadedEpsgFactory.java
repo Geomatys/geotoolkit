@@ -618,7 +618,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
          * Every methods invoked below should be thread-safe. The only things requirying
          * special attention are access to hints and the createBackingStore(Hints) method.
          */
-        final boolean isLoggable = LOGGER.isLoggable(Level.CONFIG);
+        final boolean isLoggable = LOGGER.isLoggable(Level.INFO);
         String product = null, url = null;
         final AbstractAuthorityFactory factory;
         final Hints sourceHints = EMPTY_HINTS.clone();

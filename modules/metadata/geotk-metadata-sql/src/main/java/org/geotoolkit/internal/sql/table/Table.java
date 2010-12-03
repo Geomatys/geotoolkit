@@ -31,6 +31,7 @@ import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.resources.IndexedResourceBundle;
+import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 
 
@@ -52,7 +53,7 @@ import org.geotoolkit.resources.Errors;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @since 3.09 (derived from Seagis)
  * @module
@@ -176,15 +177,9 @@ public abstract class Table implements Localized {
      * If a new statement is created, or if the table has {@linkplain #fireStateChanged
      * changed its state} since the last call, then this method invokes {@link #configure}.
      * <p>
-     * This method must be invoked in a synchronized block as below. Note that the lock
-     * will not prevent concurrent usage of this table. This is just a lock for preventing
-     * the JDBC resources to be reclaimed while they are still in use.
-     *
-     * {@preformat java
-     *     synchronized(getLocalCache()) {
-     *         // Perform all JDBC work here.
-     *     }
-     * }
+     * This method must be invoked in a synchronized block as documented in
+     * {@link #getStatement(LocalCache, QueryType)}. This is verified only if
+     * assertions are enabled.
      *
      * @param  query The SQL query to prepare.
      * @return The prepared statement.
@@ -193,25 +188,11 @@ public abstract class Table implements Localized {
     private LocalCache.Stmt getStatement(final LocalCache cache, final String query) throws SQLException {
         assert Thread.holdsLock(cache);
         final LocalCache.Stmt ce = cache.prepareStatement(this, query);
+        ce.startTime = System.nanoTime();
         if (modificationCount != ce.stamp) {
             final QueryType type = this.type;
             configure(cache, type, ce.statement);
             ce.stamp = modificationCount;
-            final Level level = (type != null) ? type.getLoggingLevel() : Level.FINE;
-            final Logger logger = getLogger();
-            if (logger.isLoggable(level)) {
-                final LogRecord record = new LogRecord(level, ce.toString());
-                record.setSourceClassName(getClass().getName());
-                final String method;
-                switch (type) {
-                    case SELECT: method = "getEntry"; break;
-                    case LIST:   method = "getEntries"; break;
-                    default:     method = "getStatement"; break;
-                }
-                record.setSourceMethodName(method);
-                record.setLoggerName(logger.getName());
-                logger.log(record);
-            }
         }
         return ce;
     }
@@ -224,9 +205,16 @@ public abstract class Table implements Localized {
      * the JDBC resources to be reclaimed while they are still in use.
      *
      * {@preformat java
-     *     LocalCache lc = getLocalCache();
+     *     final LocalCache lc = getLocalCache();
      *     synchronized(lc) {
-     *         // Perform all JDBC work here.
+     *         final LocalCache.Stmt ce = getStatement(lc, type);
+     *         final PreparedStatement statement = ce.statement;
+     *         final ResultSet results = statement.executeQuery();
+     *         while (results.next()) {
+     *             // ...
+     *         }
+     *         results.close();
+     *         release(lc, ce);
      *     }
      * }
      *
@@ -250,9 +238,9 @@ public abstract class Table implements Localized {
     }
 
     /**
-     * Same as {@link #getStatement(QueryType)}, but with a column parameter which affect the
-     * SQL statement to be created. This apply only to queries performing aggregation, like
-     * {@link QueryType#COUNT}.
+     * Same as {@link #getStatement(LocalCache, QueryType)}, but with a column parameter which
+     * affect the SQL statement to be created. This apply only to queries performing aggregation,
+     * like {@link QueryType#COUNT}.
      *
      * @param  lc The value returned by {@link #getLocalCache()}.
      * @param  type The query type.
@@ -283,7 +271,26 @@ public abstract class Table implements Localized {
      * @param statement The statement to release.
      * @throws SQLException If an error occurred while releasing the statement.
      */
-    protected static void release(final LocalCache lc, final LocalCache.Stmt statement) throws SQLException {
+    protected final void release(final LocalCache lc, final LocalCache.Stmt statement) throws SQLException {
+        assert Thread.holdsLock(lc);
+        final Level level = (type != null) ? type.getLoggingLevel() : Level.FINE;
+        final Logger logger = getLogger();
+        if (logger.isLoggable(level)) {
+            final Locale locale = getLocale();
+            final LogRecord record = new LogRecord(level, String.format(locale, "(%s: %.4f s) %s",
+                    Vocabulary.getResources(locale).getString(Vocabulary.Keys.DURATION),
+                    (System.nanoTime() - statement.startTime) / 1E9, statement));
+            record.setSourceClassName(getClass().getName());
+            final String method;
+            switch (type) {
+                case SELECT: method = "getEntry";     break;
+                case LIST:   method = "getEntries";   break;
+                default:     method = "getStatement"; break;
+            }
+            record.setSourceMethodName(method);
+            record.setLoggerName(logger.getName());
+            logger.log(record);
+        }
         Database.release(lc, statement);
     }
 
@@ -509,9 +516,18 @@ public abstract class Table implements Localized {
      * Returns the logger to use. The default implementation looks for the package name
      * of the implementing class.
      *
-     * @return The logger to use.
+     * @return The logger to use (never {@code null}).
+     *
+     * @since 3.16
      */
-    private Logger getLogger() {
+    public final Logger getLogger() {
+        final Database database = query.database;
+        if (database != null) {
+            final Logger logger = database.getLogger();
+            if (logger != null) {
+                return logger;
+            }
+        }
         return Logging.getLogger(getClass());
     }
 

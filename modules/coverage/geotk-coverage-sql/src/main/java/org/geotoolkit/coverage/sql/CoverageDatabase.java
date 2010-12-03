@@ -798,7 +798,7 @@ public class CoverageDatabase implements Localized {
                     record.setSourceClassName(CoverageDatabaseListener.class.getName());
                     record.setSourceMethodName(method);
                     record.setThrown(veto);
-                    Logging.log(CoverageDatabaseListener.class, record);
+                    database.getLogger().log(record);
                 }
             }
         }

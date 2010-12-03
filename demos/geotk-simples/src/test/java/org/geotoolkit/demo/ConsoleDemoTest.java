@@ -18,29 +18,42 @@
 package org.geotoolkit.demo;
 
 import java.io.*;
+import java.util.logging.Level;
 import org.junit.*;
 import static org.junit.Assert.*;
 
+import org.geotoolkit.test.TestBase;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.demo.referencing.CoordinateConversion;
 
 
 /**
  * Ensures that no exception is thrown while running the demos.
- * The remos results are not verified however.
+ * The demos results are not verified however.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.16
  *
  * @since 3.03
  */
-public class ConsoleDemoTest {
+public class ConsoleDemoTest extends TestBase {
     /**
-     * The output and error sreams to use instead of the standard ones.
+     * The output and error streams to use instead of the standard ones.
      * The {@link System#out} and {@link System#err} streams will be
      * redirected there in order to verify their content.
      */
     private ByteArrayOutputStream out, err;
+
+    /**
+     * Shutdown the logging. This is necessary in order to avoid a test
+     * failure in {@link #verifyContent()}.
+     */
+    @Before
+    @Override
+    public void loggingSetup() {
+        Logging.ALL.forceMonolineConsoleOutput(Level.OFF);
+    }
 
     /**
      * Redirects the standard output and error streams before to run the tests.
@@ -55,6 +68,8 @@ public class ConsoleDemoTest {
 
     /**
      * Ensures that the output stream is non-empty and that the error stream is empty.
+     * Note that the error stream is used the the loggers, so we need to shutdown the
+     * logging before the test is run.
      */
     @After
     public void verifyContent() {

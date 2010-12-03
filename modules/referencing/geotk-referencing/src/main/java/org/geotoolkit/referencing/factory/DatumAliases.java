@@ -253,9 +253,14 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
      */
     private void reload() throws IOException {
         assert Thread.holdsLock(this);
-        final LogRecord record = Loggings.format(Level.FINE, Loggings.Keys.LOADING_DATUM_ALIASES_$1, aliasURL);
-        record.setLoggerName(LOGGER.getName());
-        LOGGER.log(record);
+        if (LOGGER.isLoggable(Level.CONFIG)) {
+            String url = aliasURL.getPath();
+            final int s = url.indexOf('!');
+            if (s >= 1) url = url.substring(0, s);
+            final LogRecord record = Loggings.format(Level.CONFIG, Loggings.Keys.LOADING_DATUM_ALIASES_$1, url);
+            record.setLoggerName(LOGGER.getName());
+            LOGGER.log(record);
+        }
         final BufferedReader in = new BufferedReader(new InputStreamReader(aliasURL.openStream()));
         /*
          * Parses the title line. This line contains authority names as column titles.
