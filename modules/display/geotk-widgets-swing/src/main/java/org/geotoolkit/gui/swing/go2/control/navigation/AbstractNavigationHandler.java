@@ -24,9 +24,8 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.decoration.InformationDecoration.LEVEL;
 
 /**
@@ -38,10 +37,10 @@ import org.geotoolkit.gui.swing.go2.decoration.InformationDecoration.LEVEL;
  */
 public class AbstractNavigationHandler implements CanvasHandler{
 
-    protected final Map2D map;
+    protected final JMap2D map;
     protected final ZoomDecoration decorationPane = new ZoomDecoration();
 
-    public AbstractNavigationHandler(Map2D map) {
+    public AbstractNavigationHandler(JMap2D map) {
         this.map = map;
     }
 

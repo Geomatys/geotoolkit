@@ -19,7 +19,7 @@ package org.geotoolkit.gui.swing.go2.decoration;
 
 import javax.swing.JComponent;
 
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.jdesktop.swingx.JXImagePanel;
 
 /**
@@ -33,23 +33,28 @@ public class ImageDecoration extends JXImagePanel implements MapDecoration{
     
     public ImageDecoration(){}
     
+    @Override
     public void refresh() {
         revalidate();
         repaint();
     }
 
+    @Override
     public JComponent geComponent() {
         return this;
     }
     
-    public void setMap2D(Map2D map) {
+    @Override
+    public void setMap2D(JMap2D map) {
         
     }
 
-    public Map2D getMap2D() {
+    @Override
+    public JMap2D getMap2D() {
         return null;
     }
 
+    @Override
     public void dispose() {
     }
 }

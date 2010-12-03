@@ -27,7 +27,7 @@ import java.awt.Image;
 import java.awt.Rectangle;
 import javax.swing.JComponent;
 
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
 
 /**
@@ -42,7 +42,7 @@ public class ZoomDecoration extends JComponent implements MapDecoration{
     private final Color fillColor = new Color(0.7f,0.7f,0.7f,0.3f);
     
     private Image buffer = null;
-    private Map2D map = null;
+    private JMap2D map = null;
     private int startx = 0;
     private int starty = 0;
     private int width = 0;
@@ -120,12 +120,12 @@ public class ZoomDecoration extends JComponent implements MapDecoration{
     }
 
     @Override
-    public void setMap2D(Map2D map) {
+    public void setMap2D(JMap2D map) {
         this.map = map;
     }
 
     @Override
-    public Map2D getMap2D() {
+    public JMap2D getMap2D() {
         return map;
     }
 

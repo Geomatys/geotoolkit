@@ -19,10 +19,10 @@ package org.geotoolkit.gui.swing.go2.control;
 
 
 import java.awt.Component;
-import org.geotoolkit.gui.swing.go2.control.information.InformationAction;
 import javax.swing.JToolBar;
 
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.go2.control.information.InformationAction;
 import org.geotoolkit.gui.swing.go2.control.information.MesureAreaAction;
 import org.geotoolkit.gui.swing.go2.control.information.MesureLenghtAction;
 
@@ -37,7 +37,7 @@ public class JInformationBar extends JToolBar implements MapControlBar{
     private final MesureLenghtAction actionLenght;
     private final MesureAreaAction actionArea;
     private final InformationAction actionInfo;
-    private Map2D map = null;
+    private JMap2D map = null;
 
     public JInformationBar() {
         this(null);
@@ -47,11 +47,11 @@ public class JInformationBar extends JToolBar implements MapControlBar{
      * Creates a new instance of JMap2DControlBar
      * @param pane : related Map2D or null
      */
-    public JInformationBar(Map2D pane) {
+    public JInformationBar(JMap2D pane) {
         this(pane,false);
     }
 
-    public JInformationBar(Map2D pane,boolean bigIcons) {
+    public JInformationBar(JMap2D pane,boolean bigIcons) {
 
         actionLenght = new MesureLenghtAction(bigIcons);
         actionArea = new MesureAreaAction(bigIcons);
@@ -67,7 +67,7 @@ public class JInformationBar extends JToolBar implements MapControlBar{
      * set the related Map2D
      * @param map2d : related Map2D
      */
-    public void setMap(Map2D map2d) {
+    public void setMap(JMap2D map2d) {
         map = map2d;
         actionLenght.setMap(map);
         actionArea.setMap(map);
@@ -75,7 +75,7 @@ public class JInformationBar extends JToolBar implements MapControlBar{
     }
 
     @Override
-    public Map2D getMap() {
+    public JMap2D getMap() {
         return map;
     }
 

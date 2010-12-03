@@ -23,7 +23,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import javax.swing.Icon;
 import javax.swing.event.MouseInputListener;
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.control.navigation.MouseNavigatonListener;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 
@@ -51,7 +51,7 @@ public abstract class AbstractEditionDelegate extends MouseNavigatonListener imp
     public static final Icon ICON_SUBPOLYGON_DELETE = IconBundle.getInstance().getIcon("16_remove_subpolygon");
 
     protected final DefaultEditionHandler handler;
-    private Map2D map;
+    private JMap2D map;
 
     protected AbstractEditionDelegate(DefaultEditionHandler handler){
         super(null);
@@ -63,13 +63,13 @@ public abstract class AbstractEditionDelegate extends MouseNavigatonListener imp
     }
 
     @Override
-    public final void setMap(Map2D map) {
+    public final void setMap(JMap2D map) {
         super.setMap(map);
         this.map = map;
     }
 
     @Override
-    public final Map2D getMap() {
+    public final JMap2D getMap() {
         return map;
     }
 

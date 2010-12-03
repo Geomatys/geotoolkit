@@ -32,7 +32,7 @@ import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.control.selection.DefaultSelectionHandler;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -84,7 +84,7 @@ public class JSelectionBar extends JToolBar implements MapControlBar{
     };
 
         
-    private Map2D map = null;
+    private JMap2D map = null;
 
     /**
      * Creates a new instance of JMap2DControlBar
@@ -100,7 +100,7 @@ public class JSelectionBar extends JToolBar implements MapControlBar{
      * Creates a new instance of JMap2DControlBar
      * @param pane : related Map2D or null
      */
-    public JSelectionBar(Map2D map) {
+    public JSelectionBar(JMap2D map) {
         setMap(map);
 
         final JPopupMenu menu = new JPopupMenu();
@@ -157,7 +157,7 @@ public class JSelectionBar extends JToolBar implements MapControlBar{
     }
 
     @Override
-    public void setMap(Map2D map2d) {
+    public void setMap(JMap2D map2d) {
         map = map2d;
 
         if(map != null){
@@ -171,7 +171,7 @@ public class JSelectionBar extends JToolBar implements MapControlBar{
     }
 
     @Override
-    public Map2D getMap() {
+    public JMap2D getMap() {
         return map;
     }
 

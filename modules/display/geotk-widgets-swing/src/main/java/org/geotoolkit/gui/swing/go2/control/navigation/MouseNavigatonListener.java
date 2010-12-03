@@ -26,7 +26,7 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import javax.swing.event.MouseInputListener;
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.decoration.InformationDecoration.LEVEL;
 
 /**
@@ -40,7 +40,7 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
     
     private final ZoomDecoration decorationPane = new ZoomDecoration();
     private double zoomFactor = 2;
-    private Map2D map;
+    private JMap2D map;
 
     private int startX;
     private int startY;
@@ -49,15 +49,15 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
     private int mousebutton = 0;
     private int panButton = MouseEvent.BUTTON3;
 
-    public MouseNavigatonListener(Map2D map) {
+    public MouseNavigatonListener(JMap2D map) {
         this.map = map;
     }
 
-    public void setMap(Map2D map) {
+    public void setMap(JMap2D map) {
         this.map = map;
     }
 
-    public Map2D getMap() {
+    public JMap2D getMap() {
         return map;
     }
 

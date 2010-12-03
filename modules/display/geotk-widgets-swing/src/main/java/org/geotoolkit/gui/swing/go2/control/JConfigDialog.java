@@ -34,7 +34,7 @@ import org.geotoolkit.display2d.ext.grid.GridPainter;
 import org.geotoolkit.display2d.ext.grid.GridTemplate;
 import org.geotoolkit.gui.swing.crschooser.JCRSChooser;
 import org.geotoolkit.gui.swing.crschooser.JCRSChooser.ACTION;
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.decoration.ColorDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.JNorthArrowDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.JScaleBarDecoration;
@@ -51,12 +51,12 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class JConfigDialog extends javax.swing.JDialog {
 
-    private final Map2D map;
+    private final JMap2D map;
 
     private CoordinateReferenceSystem crs = DefaultGeographicCRS.WGS84;
 
     /** Creates new form JConfigDialog */
-    public JConfigDialog(java.awt.Frame parent,Map2D map) {
+    public JConfigDialog(java.awt.Frame parent,JMap2D map) {
         super(parent, true);
         this.map = map;
         initComponents();

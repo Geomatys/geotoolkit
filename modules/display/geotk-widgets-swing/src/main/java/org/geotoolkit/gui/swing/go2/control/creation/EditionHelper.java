@@ -47,7 +47,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
@@ -687,7 +687,7 @@ public class EditionHelper {
     public void sourceAddGeometry(Geometry geom) {
 
         final FeatureMapLayer editionLayer = handler.getEditedLayer();
-        final Map2D map = handler.getMap();
+        final JMap2D map = handler.getMap();
 
         if (editionLayer != null) {
 
@@ -743,7 +743,7 @@ public class EditionHelper {
         }
 
         final FeatureMapLayer editionLayer = handler.getEditedLayer();
-        final Map2D map = handler.getMap();
+        final JMap2D map = handler.getMap();
 
         if (editionLayer != null && editionLayer.getCollection().isWritable()) {
 
@@ -777,7 +777,7 @@ public class EditionHelper {
         }
 
         final FeatureMapLayer editionLayer = handler.getEditedLayer();
-        final Map2D map = handler.getMap();
+        final JMap2D map = handler.getMap();
 
         if (editionLayer != null && editionLayer.getCollection().isWritable()) {
 

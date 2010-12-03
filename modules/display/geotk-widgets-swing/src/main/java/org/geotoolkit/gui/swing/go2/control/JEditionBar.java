@@ -25,7 +25,7 @@ import javax.swing.JButton;
 import javax.swing.JToolBar;
 import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.display2d.container.ContextContainer2D;
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.control.creation.DefaultEditionHandler;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -41,7 +41,7 @@ public class JEditionBar extends JToolBar implements MapControlBar{
 
     private final JButton guiEdit = new JButton(ICON_EDIT);
 
-    private Map2D map = null;
+    private JMap2D map = null;
 
     private final DefaultEditionHandler handler = new DefaultEditionHandler(map);
 
@@ -72,7 +72,7 @@ public class JEditionBar extends JToolBar implements MapControlBar{
      * Creates a new instance of JMap2DControlBar
      * @param pane : related Map2D or null
      */
-    public JEditionBar(Map2D map) {
+    public JEditionBar(JMap2D map) {
         setMap(map);
 
         guiEdit.addActionListener(listener);
@@ -85,7 +85,7 @@ public class JEditionBar extends JToolBar implements MapControlBar{
      * @param map2d : related Map2D
      */
     @Override
-    public void setMap(Map2D map2d) {
+    public void setMap(JMap2D map2d) {
         map = map2d;
 
         guiEdit.setEnabled(false);
@@ -103,7 +103,7 @@ public class JEditionBar extends JToolBar implements MapControlBar{
     }
 
     @Override
-    public Map2D getMap() {
+    public JMap2D getMap() {
         return map;
     }
 

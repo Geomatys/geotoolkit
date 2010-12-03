@@ -29,7 +29,7 @@ import javax.swing.text.html.HTMLEditorKit;
 
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.GraphicProbe;
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.decoration.AbstractMapDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
 import org.geotoolkit.util.StringUtilities;
@@ -45,7 +45,7 @@ import org.geotoolkit.util.StringUtilities;
 public class DebugAction extends AbstractAction {
 
     private final DebugDecoration deco = new DebugDecoration();
-    private Map2D map = null;
+    private JMap2D map = null;
 
     @Override
     public void actionPerformed(ActionEvent arg0) {
@@ -60,11 +60,11 @@ public class DebugAction extends AbstractAction {
         }
     }
 
-    public Map2D getMap() {
+    public JMap2D getMap() {
         return map;
     }
 
-    public void setMap(Map2D map) {
+    public void setMap(JMap2D map) {
         if (map == this.map) {
             return;
         }
@@ -96,7 +96,7 @@ public class DebugAction extends AbstractAction {
         }
 
         @Override
-        public void setMap2D(Map2D map) {
+        public void setMap2D(JMap2D map) {
             super.setMap2D(map);
 
             if (map != null) {

@@ -36,9 +36,8 @@ import javax.measure.unit.Unit;
 
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.gui.swing.go2.CanvasHandler;
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.control.navigation.MouseNavigatonListener;
-import org.geotoolkit.referencing.operation.matrix.AffineMatrix3;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.util.logging.Logging;
 
@@ -67,9 +66,9 @@ public class LenghtHandler implements CanvasHandler {
 
     private final List<Coordinate> coords = new ArrayList<Coordinate>();
     private final LenghtDecoration deco = new LenghtDecoration();
-    private final Map2D map;
+    private final JMap2D map;
 
-    public LenghtHandler(Map2D map) {
+    public LenghtHandler(JMap2D map) {
         this.map = map;
         mouseInputListener = new MouseListen();
     }

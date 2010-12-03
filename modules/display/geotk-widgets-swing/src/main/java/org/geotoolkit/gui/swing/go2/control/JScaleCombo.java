@@ -38,7 +38,7 @@ import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 import org.opengis.display.canvas.CanvasEvent;
 import org.opengis.display.canvas.CanvasListener;
@@ -51,7 +51,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class JScaleCombo extends JComboBox {
 
-    private Map2D map = null;
+    private JMap2D map = null;
     private final CanvasListener listener = new CanvasListener() {
 
         @Override
@@ -134,7 +134,7 @@ public class JScaleCombo extends JComboBox {
         return edit.getStepSize();
     }
 
-    public void setMap(Map2D map) {
+    public void setMap(JMap2D map) {
         if (this.map != null) {
             this.map.getCanvas().removeCanvasListener(listener);
         }
@@ -147,7 +147,7 @@ public class JScaleCombo extends JComboBox {
 
     }
 
-    public Map2D getMap() {
+    public JMap2D getMap() {
         return map;
     }
 

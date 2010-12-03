@@ -41,8 +41,7 @@ import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 
-import org.geotoolkit.gui.swing.go2.Map2D;
-import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.referencing.operation.TransformException;
@@ -59,7 +58,7 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
     protected final List<Geometry> geometries = new ArrayList<Geometry>();
     private DefaultRenderingContext2D context = null;
     private AffineTransform objToDisp = null;
-    protected Map2D map = null;
+    protected JMap2D map = null;
 
     protected AbstractGeometryDecoration(){
         setOpaque(false);
@@ -93,7 +92,7 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
     }
 
     @Override
-    public void setMap2D(Map2D map) {
+    public void setMap2D(JMap2D map) {
         this.map = map;
 
         if(map != null && map.getCanvas() instanceof J2DCanvas){
@@ -105,7 +104,7 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
     }
 
     @Override
-    public Map2D getMap2D() {
+    public JMap2D getMap2D() {
         return map;
     }
 

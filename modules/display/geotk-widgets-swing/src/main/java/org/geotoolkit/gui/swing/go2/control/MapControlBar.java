@@ -18,7 +18,7 @@
 package org.geotoolkit.gui.swing.go2.control;
 
 import java.awt.Component;
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 
 /**
  *
@@ -27,9 +27,9 @@ import org.geotoolkit.gui.swing.go2.Map2D;
  */
 public interface MapControlBar {
 
-    void setMap(Map2D map);
+    void setMap(JMap2D map);
 
-    Map2D getMap();
+    JMap2D getMap();
 
     Component getComponent();
 

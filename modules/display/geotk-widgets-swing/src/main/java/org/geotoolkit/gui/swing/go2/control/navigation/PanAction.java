@@ -21,7 +21,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
 
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
@@ -34,7 +34,7 @@ public class PanAction extends AbstractAction {
     private static final ImageIcon ICON_ZOOM_PAN_16 = IconBundle.getInstance().getIcon("16_zoom_pan");
     private static final ImageIcon ICON_ZOOM_PAN_24 = IconBundle.getInstance().getIcon("24_zoom_pan");
 
-    private Map2D map = null;
+    private JMap2D map = null;
 
     public PanAction() {
         this(false);
@@ -55,11 +55,11 @@ public class PanAction extends AbstractAction {
         }
     }
 
-    public Map2D getMap() {
+    public JMap2D getMap() {
         return map;
     }
 
-    public void setMap(Map2D map) {
+    public void setMap(JMap2D map) {
         this.map = map;
         setEnabled(map != null);
     }

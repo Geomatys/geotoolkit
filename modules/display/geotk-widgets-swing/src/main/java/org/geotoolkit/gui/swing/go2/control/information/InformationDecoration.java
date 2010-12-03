@@ -32,7 +32,7 @@ import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
 
@@ -50,7 +50,7 @@ public class InformationDecoration extends JComponent implements MapDecoration{
     private final JButton nextButton;
     private final JButton previousButton;
     
-    private Map2D map = null;
+    private JMap2D map = null;
     
     private String[] texts = new String[0];
     private int selected = 0;
@@ -200,7 +200,7 @@ public class InformationDecoration extends JComponent implements MapDecoration{
      * {@inheritDoc }
      */
     @Override
-    public void setMap2D(Map2D map) {
+    public void setMap2D(JMap2D map) {
         this.map = map;
     }
 
@@ -208,7 +208,7 @@ public class InformationDecoration extends JComponent implements MapDecoration{
      * {@inheritDoc }
      */
     @Override
-    public Map2D getMap2D() {
+    public JMap2D getMap2D() {
         return map;
     }
 

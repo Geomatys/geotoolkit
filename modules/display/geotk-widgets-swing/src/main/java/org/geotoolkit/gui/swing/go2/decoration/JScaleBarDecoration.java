@@ -38,8 +38,7 @@ import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.ext.scalebar.DefaultScaleBarTemplate;
 import org.geotoolkit.display2d.ext.scalebar.J2DScaleBarUtilities;
 import org.geotoolkit.display2d.ext.scalebar.ScaleBarTemplate;
-import org.geotoolkit.gui.swing.go2.Map2D;
-import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -50,7 +49,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class JScaleBarDecoration extends JComponent implements MapDecoration{
 
-    private Map2D map = null;
+    private JMap2D map = null;
 
     private ScaleBarTemplate template = new DefaultScaleBarTemplate(null,
                             new Dimension(300,40),10,
@@ -90,7 +89,7 @@ public class JScaleBarDecoration extends JComponent implements MapDecoration{
      * {@inheritDoc }
      */
     @Override
-    public void setMap2D(Map2D map) {
+    public void setMap2D(JMap2D map) {
         this.map = map;
     }
 
@@ -98,7 +97,7 @@ public class JScaleBarDecoration extends JComponent implements MapDecoration{
      * {@inheritDoc }
      */
     @Override
-    public Map2D getMap2D() {
+    public JMap2D getMap2D() {
         return map;
     }
 

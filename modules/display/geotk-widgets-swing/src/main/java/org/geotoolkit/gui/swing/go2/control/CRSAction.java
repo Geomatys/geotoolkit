@@ -25,7 +25,7 @@ import javax.swing.AbstractAction;
 
 import org.geotoolkit.gui.swing.crschooser.JCRSChooser;
 import org.geotoolkit.gui.swing.crschooser.JCRSChooser.ACTION;
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.referencing.operation.TransformException;
 
@@ -38,7 +38,7 @@ public class CRSAction extends AbstractAction {
 
     private static final Logger LOGGER = Logging.getLogger(CRSAction.class);
 
-    private Map2D map = null;
+    private JMap2D map = null;
 
     @Override
     public void actionPerformed(ActionEvent arg0) {
@@ -57,11 +57,11 @@ public class CRSAction extends AbstractAction {
         }
     }
 
-    public Map2D getMap() {
+    public JMap2D getMap() {
         return map;
     }
 
-    public void setMap(Map2D map) {
+    public void setMap(JMap2D map) {
         this.map = map;
         setEnabled(map != null);
     }

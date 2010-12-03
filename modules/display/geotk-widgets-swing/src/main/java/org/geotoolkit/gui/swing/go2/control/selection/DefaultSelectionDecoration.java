@@ -28,7 +28,7 @@ import java.awt.geom.GeneralPath;
 import java.util.List;
 import javax.swing.JComponent;
 
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
 
 /**
@@ -124,12 +124,12 @@ public class DefaultSelectionDecoration extends JComponent implements MapDecorat
     }
     
     @Override
-    public void setMap2D(Map2D map) {
+    public void setMap2D(JMap2D map) {
         
     }
 
     @Override
-    public Map2D getMap2D() {
+    public JMap2D getMap2D() {
         return null;
     }
 

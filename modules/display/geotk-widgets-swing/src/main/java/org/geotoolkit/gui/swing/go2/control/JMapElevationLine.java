@@ -44,7 +44,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.geotoolkit.display.canvas.CanvasController2D;
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.navigator.DoubleRenderer;
 import org.geotoolkit.gui.swing.navigator.JNavigator;
 import org.geotoolkit.gui.swing.navigator.JNavigatorBand;
@@ -71,7 +71,7 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
     private final JPopupMenu menu;
     private final JAnimationMenu animation = new JAnimationMenu() {
         @Override
-        protected void update(Map2D map, double step) {
+        protected void update(JMap2D map, double step) {
             final Double[] range = map.getCanvas().getController().getElevationRange().clone();
 
             if(range[0] != null){
@@ -107,7 +107,7 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
             }
         };
 
-    private volatile Map2D map = null;
+    private volatile JMap2D map = null;
 
     public JMapElevationLine(){
         animation.setSpeedFactor(10);
@@ -375,11 +375,11 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
         modelHaut.addChangeListener(spinnerListener);
     }
 
-    public Map2D getMap() {
+    public JMap2D getMap() {
         return map;
     }
 
-    public void setMap(Map2D map) {
+    public void setMap(JMap2D map) {
         if(this.map != null){
             this.map.getCanvas().removePropertyChangeListener(this);
         }

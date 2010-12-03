@@ -52,7 +52,7 @@ import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.go2.CanvasHandler;
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
@@ -147,7 +147,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
     private boolean squareArea;
     private boolean withinArea;
     private boolean geographicArea;
-    private Map2D map2D;
+    private JMap2D map2D;
     private int key = -1;
 
 
@@ -179,11 +179,11 @@ public class DefaultSelectionHandler implements CanvasHandler {
         this.withinArea = withinArea;
     }
 
-    public Map2D getMap() {
+    public JMap2D getMap() {
         return map2D;
     }
 
-    public void setMap(Map2D map2D) {
+    public void setMap(JMap2D map2D) {
         this.map2D = map2D;
     }
 

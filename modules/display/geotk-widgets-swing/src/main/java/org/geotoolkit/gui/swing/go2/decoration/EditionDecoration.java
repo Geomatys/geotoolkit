@@ -20,7 +20,7 @@ package org.geotoolkit.gui.swing.go2.decoration;
 import java.awt.Color;
 import java.awt.Graphics;
 import javax.swing.JComponent;
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 
 
 /**
@@ -83,11 +83,11 @@ public class EditionDecoration extends JComponent implements MapDecoration{
         return this;
     }
     
-    public void setMap2D(Map2D map) {
+    public void setMap2D(JMap2D map) {
         
     }
 
-    public Map2D getMap2D() {
+    public JMap2D getMap2D() {
         return null;
     }
 

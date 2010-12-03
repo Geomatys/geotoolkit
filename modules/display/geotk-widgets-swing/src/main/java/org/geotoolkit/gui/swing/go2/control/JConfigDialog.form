@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.1" encoding="UTF-8" ?>
 
 <Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <Properties>
@@ -58,7 +58,7 @@
                   <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="guiColor" alignment="1" pref="583" max="32767" attributes="0"/>
+                          <Component id="guiColor" alignment="1" pref="584" max="32767" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="guiGrid" min="-2" max="-2" attributes="0"/>
                               <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -79,7 +79,7 @@
                           <Component id="guiGrid" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="guiCRS" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="11" max="32767" attributes="0"/>
+                      <EmptySpace pref="25" max="32767" attributes="0"/>
                       <Component id="colorApply" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
@@ -140,7 +140,7 @@
                               <Component id="guiUnit" min="-2" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace pref="405" max="32767" attributes="0"/>
+                      <EmptySpace pref="417" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -154,7 +154,7 @@
                           <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="guiUnit" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace pref="326" max="32767" attributes="0"/>
+                      <EmptySpace pref="322" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -199,7 +199,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="guiNorthActivate" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="413" max="32767" attributes="0"/>
+                      <EmptySpace pref="417" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -208,7 +208,7 @@
                   <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="guiNorthActivate" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="373" max="32767" attributes="0"/>
+                      <EmptySpace pref="365" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>

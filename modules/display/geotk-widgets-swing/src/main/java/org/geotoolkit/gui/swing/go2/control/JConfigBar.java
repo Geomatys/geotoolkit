@@ -25,7 +25,7 @@ import javax.swing.JButton;
 import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
@@ -43,7 +43,7 @@ public class JConfigBar extends JToolBar {
     private final ConfigAction ACTION_CONFIG = new ConfigAction();
     private final DebugAction ACTION_DEBUG = new DebugAction();
 
-    private Map2D map = null;
+    private JMap2D map = null;
     private final JButton gui_config = buildButton(ICON_CONFIG, ACTION_CONFIG, MessageBundle.getString("map_config"));
     private final JButton gui_debug = buildButton(ICON_DEBUG, ACTION_DEBUG, MessageBundle.getString("map_debug"));
     private final int largeur = 2;
@@ -59,7 +59,7 @@ public class JConfigBar extends JToolBar {
      * Creates a new instance of JMap2DControlBar
      * @param pane : related Map2D or null
      */
-    public JConfigBar(Map2D pane) {
+    public JConfigBar(JMap2D pane) {
         setMap(pane);
         init();
     }
@@ -87,7 +87,7 @@ public class JConfigBar extends JToolBar {
      * set the related Map2D
      * @param map2d : related Map2D
      */
-    public void setMap(Map2D map2d) {
+    public void setMap(JMap2D map2d) {
         map = map2d;
         ACTION_CONFIG.setMap(map);
         ACTION_DEBUG.setMap(map);

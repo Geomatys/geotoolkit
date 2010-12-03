@@ -26,7 +26,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.OverlayLayout;
 import javax.swing.Timer;
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 
 /**
  * Default information decoration
@@ -36,7 +36,7 @@ import org.geotoolkit.gui.swing.go2.Map2D;
  */
 public class DefaultInformationDecoration extends JPanel implements InformationDecoration {
 
-    private Map2D map = null;;
+    private JMap2D map = null;;
     private final Map<String, LEVEL> messages = new LinkedHashMap<String, LEVEL>();
     private boolean lowlevel = true;
 
@@ -67,12 +67,12 @@ public class DefaultInformationDecoration extends JPanel implements InformationD
     }
 
     @Override
-    public void setMap2D(Map2D map) {
+    public void setMap2D(JMap2D map) {
         this.map = map;
     }
 
     @Override
-    public Map2D getMap2D() {
+    public JMap2D getMap2D() {
         return map;
     }
 

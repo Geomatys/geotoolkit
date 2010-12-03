@@ -18,7 +18,7 @@
 package org.geotoolkit.gui.swing.go2.decoration;
 
 import javax.swing.JComponent;
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 
 
 /**
@@ -47,13 +47,13 @@ public interface MapDecoration {
      * set the related map2d
      * @param map the map2D
      */
-    public void setMap2D(Map2D map);
+    public void setMap2D(JMap2D map);
     
     /**
      * 
      * @return Map2D, the related map2d of this decoration
      */
-    public Map2D getMap2D();
+    public JMap2D getMap2D();
     
     /**
      * 

@@ -54,7 +54,7 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.gui.swing.RoundedBorder;
 import org.geotoolkit.gui.swing.go2.CanvasHandler;
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.misc.LayerListRenderer;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -151,10 +151,10 @@ public class DefaultEditionHandler implements CanvasHandler {
     private final JButton guiRollBack = new JButton(rollbackAction);
     private final JButton guiCommit = new JButton(commitAction);
 
-    private Map2D map;
+    private JMap2D map;
     private AbstractEditionDelegate delegate = null;
 
-    public DefaultEditionHandler(Map2D map) {
+    public DefaultEditionHandler(JMap2D map) {
         this.map = map;
 
         guiLayers.setRenderer(new LayerListRenderer());
@@ -199,7 +199,7 @@ public class DefaultEditionHandler implements CanvasHandler {
         guiRollBack.setEnabled(changes);
     }
 
-    public void setMap(Map2D map){
+    public void setMap(JMap2D map){
         this.map = map;
 
         guiLayers.setEnabled(false);
@@ -223,7 +223,7 @@ public class DefaultEditionHandler implements CanvasHandler {
 
     }
 
-    public Map2D getMap() {
+    public JMap2D getMap() {
         return map;
     }
 

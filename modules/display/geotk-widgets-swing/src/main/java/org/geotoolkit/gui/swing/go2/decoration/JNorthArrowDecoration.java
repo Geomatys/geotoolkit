@@ -31,8 +31,7 @@ import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.ext.northarrow.DefaultNorthArrowTemplate;
 import org.geotoolkit.display2d.ext.northarrow.J2DNorthArrowUtilities;
 import org.geotoolkit.display2d.ext.northarrow.NorthArrowTemplate;
-import org.geotoolkit.gui.swing.go2.Map2D;
-import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 
 /**
  * Decoration displaying a north arrow.
@@ -42,7 +41,7 @@ import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
  */
 public class JNorthArrowDecoration extends JComponent implements MapDecoration{
 
-    private Map2D map = null;
+    private JMap2D map = null;
 
     private final NorthArrowTemplate arrowTemplate;
 
@@ -78,7 +77,7 @@ public class JNorthArrowDecoration extends JComponent implements MapDecoration{
      * {@inheritDoc }
      */
     @Override
-    public void setMap2D(Map2D map) {
+    public void setMap2D(JMap2D map) {
         this.map = map;
     }
 
@@ -86,7 +85,7 @@ public class JNorthArrowDecoration extends JComponent implements MapDecoration{
      * {@inheritDoc }
      */
     @Override
-    public Map2D getMap2D() {
+    public JMap2D getMap2D() {
         return map;
     }
 

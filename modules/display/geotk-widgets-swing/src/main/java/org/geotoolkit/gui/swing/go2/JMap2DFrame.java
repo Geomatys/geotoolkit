@@ -29,8 +29,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
@@ -47,7 +45,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 import javax.swing.WindowConstants;
 
 import org.geotoolkit.display2d.GO2Hints;
@@ -79,6 +76,7 @@ import org.geotoolkit.gui.swing.propertyedit.styleproperty.JAdvancedStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationSingleStylePanel;
 import org.geotoolkit.gui.swing.propertyedit.styleproperty.JClassificationIntervalStylePanel;
 import org.geotoolkit.map.MapContext;
+
 import org.opengis.geometry.Envelope;
 
 /**

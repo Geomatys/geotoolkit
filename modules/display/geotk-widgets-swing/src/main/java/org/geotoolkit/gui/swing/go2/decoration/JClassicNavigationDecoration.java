@@ -45,9 +45,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JComponent;
 
-import org.geotoolkit.display.canvas.AbstractCanvas;
 import org.geotoolkit.display.canvas.ReferencedCanvas2D;
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.util.logging.Logging;
 
 /**
@@ -64,7 +63,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
 
     private static final Logger LOGGER = Logging.getLogger(JClassicNavigationDecoration.class);
 
-    private Map2D map = null;
+    private JMap2D map = null;
 
     private static final int MIN_SIZE = 20;
     private static final int CERCLE_WIDTH = 100;
@@ -565,7 +564,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
     }
 
     @Override
-    public void setMap2D(Map2D map) {
+    public void setMap2D(JMap2D map) {
         
         if(this.map != null){
             this.map.getCanvas().removePropertyChangeListener(ReferencedCanvas2D.OBJECTIVE_TO_DISPLAY_PROPERTY,propertyListener);
@@ -576,7 +575,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
     }
 
     @Override
-    public Map2D getMap2D() {
+    public JMap2D getMap2D() {
         return map;
     }
 

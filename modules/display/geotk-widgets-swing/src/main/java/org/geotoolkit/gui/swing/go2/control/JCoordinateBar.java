@@ -56,7 +56,6 @@ import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.gui.swing.BorderCutter;
 import org.geotoolkit.gui.swing.go2.JMap2D;
-import org.geotoolkit.gui.swing.go2.Map2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
@@ -79,7 +78,7 @@ public class JCoordinateBar extends JToolBar {
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getNumberInstance();
 
     private final myListener listener = new myListener();
-    private Map2D map = null;
+    private JMap2D map = null;
     private String error = MessageBundle.getString("map_control_coord_error");
 
     private final JButton guiHint = new JButton(ICON_HINT);
@@ -99,7 +98,7 @@ public class JCoordinateBar extends JToolBar {
         this(null);
     }
 
-    public JCoordinateBar(Map2D candidate) {
+    public JCoordinateBar(JMap2D candidate) {
         setLayout(new BorderLayout(0,1));
         final JPanel bottom = new JPanel(new GridBagLayout());
         bottom.setOpaque(false);
@@ -370,11 +369,11 @@ public class JCoordinateBar extends JToolBar {
         setMap(candidate);
     }
 
-    public Map2D getMap() {
+    public JMap2D getMap() {
         return map;
     }
 
-    public void setMap(Map2D map) {
+    public void setMap(JMap2D map) {
         guiCombo.setMap(map);
         guiTimeLine.setMap(map);
         guiElevationLine.setMap(map);

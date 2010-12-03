@@ -20,7 +20,7 @@ package org.geotoolkit.gui.swing.contexttree;
 import java.awt.Component;
 
 import javax.swing.tree.TreePath;
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 
 
 /**
@@ -36,9 +36,9 @@ public interface TreePopupItem {
      * the Zoom to layer action.
      * @param map
      */
-    void setMapView(Map2D map);
+    void setMapView(JMap2D map);
 
-    Map2D getMapView();
+    JMap2D getMapView();
 
     void setTree(JContextTree tree);
 

@@ -44,7 +44,7 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
 import org.geotoolkit.gui.swing.RoundedBorder;
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.decoration.AbstractGeometryDecoration;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 
@@ -156,7 +156,7 @@ public final class DefaultEditionDecoration extends AbstractGeometryDecoration {
     }
 
     @Override
-    public void setMap2D(Map2D map2d){
+    public void setMap2D(JMap2D map2d){
         super.setMap2D(map2d);
     }
 

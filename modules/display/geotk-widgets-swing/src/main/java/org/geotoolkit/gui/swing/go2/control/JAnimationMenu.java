@@ -31,7 +31,7 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.Timer;
 
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
@@ -52,7 +52,7 @@ public abstract class JAnimationMenu extends JMenu{
     private final JSpinner refresh = new JSpinner(new SpinnerNumberModel(500, 100, 60000, 100));
     private final JCheckBoxMenuItem backward = new JCheckBoxMenuItem(MessageBundle.getString("backward"));
 
-    private WeakReference<Map2D> map = null;
+    private WeakReference<JMap2D> map = null;
 
     private volatile boolean running = false;
 
@@ -61,7 +61,7 @@ public abstract class JAnimationMenu extends JMenu{
             @Override
             public void actionPerformed(ActionEvent e) {
                 if(map != null){
-                    final Map2D mp = map.get();
+                    final JMap2D mp = map.get();
                     if(mp != null){
                         double step = (Double)factor.getValue();
                         if(backward.isSelected()){
@@ -132,22 +132,22 @@ public abstract class JAnimationMenu extends JMenu{
         return (Integer)refresh.getValue();
     }
 
-    protected abstract void update(Map2D map, double step);
+    protected abstract void update(JMap2D map, double step);
 
     @Override
     public boolean isEnabled() {
         return getMap() != null;
     }
 
-    public Map2D getMap() {
+    public JMap2D getMap() {
         if(map != null){
             return map.get();
         }
         return null;
     }
 
-    public void setMap(Map2D map) {
-        this.map = new WeakReference<Map2D>(map);
+    public void setMap(JMap2D map) {
+        this.map = new WeakReference<JMap2D>(map);
     }
 
 }

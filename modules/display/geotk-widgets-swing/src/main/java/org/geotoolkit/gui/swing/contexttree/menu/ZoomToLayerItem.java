@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 import org.geotoolkit.gui.swing.contexttree.AbstractTreePopupItem;
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.MapLayer;
 import org.opengis.referencing.operation.TransformException;
@@ -37,7 +37,7 @@ public class ZoomToLayerItem extends AbstractTreePopupItem{
         addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                final Map2D map = getMapView();
+                final JMap2D map = getMapView();
                 final MapLayer layer = layerRef.get();
 
                 if(map == null || layer == null) return;

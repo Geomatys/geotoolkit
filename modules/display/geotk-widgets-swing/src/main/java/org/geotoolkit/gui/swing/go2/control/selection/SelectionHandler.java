@@ -19,7 +19,7 @@ package org.geotoolkit.gui.swing.go2.control.selection;
 
 import javax.swing.ImageIcon;
 
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 
 /**
  * selection handler
@@ -29,7 +29,7 @@ import org.geotoolkit.gui.swing.go2.Map2D;
  */
 public interface SelectionHandler {
 
-    void install(Map2D map2d);
+    void install(JMap2D map2d);
     
     void uninstall();
     

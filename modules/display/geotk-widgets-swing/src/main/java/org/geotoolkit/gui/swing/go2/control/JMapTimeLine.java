@@ -36,7 +36,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 import org.geotoolkit.display.canvas.CanvasController2D;
-import org.geotoolkit.gui.swing.go2.Map2D;
+import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.navigator.DateRenderer;
 import org.geotoolkit.gui.swing.navigator.JNavigator;
 import org.geotoolkit.gui.swing.navigator.JNavigatorBand;
@@ -62,7 +62,7 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
     private final JPopupMenu menu;
     private final JAnimationMenu animation = new JAnimationMenu() {
         @Override
-        protected void update(Map2D map, double step) {
+        protected void update(JMap2D map, double step) {
             final Date[] range = map.getCanvas().getController().getTemporalRange().clone();
 
             step =  step * animation.getRefreshInterval();
@@ -80,7 +80,7 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
             }
         }
     };
-    private volatile Map2D map = null;
+    private volatile JMap2D map = null;
 
 
     public JMapTimeLine(){
@@ -301,11 +301,11 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
         addBand(band);
     }
 
-    public Map2D getMap() {
+    public JMap2D getMap() {
         return map;
     }
 
-    public void setMap(Map2D map) {
+    public void setMap(JMap2D map) {
         if(this.map != null){
             this.map.getCanvas().removePropertyChangeListener(this);
         }
