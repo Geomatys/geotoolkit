@@ -27,7 +27,7 @@ import org.geotoolkit.util.logging.Logging;
 /**
  * A set of utilities methods for painting in a {@link Graphics2D} handle.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.16
  *
  * @since 2.0
@@ -35,11 +35,6 @@ import org.geotoolkit.util.logging.Logging;
  */
 @Static
 public final class GraphicsUtilities {
-    /**
-     * Number of spaces to leave between each tab.
-     */
-    private static final int TAB_WIDTH = 4;
-
     /**
      * The creation of {@code GraphicsUtilities} class objects is forbidden.
      */
@@ -58,7 +53,7 @@ public final class GraphicsUtilities {
         String laf = System.getProperty("swing.defaultlaf"); // Documented in UIManager.
         if (laf != null) {
             if (laf.equalsIgnoreCase("Nimbus")) {
-                laf = "com.sun.java.swing.plaf.nimbus.NimbusLookAndFeel";
+                laf = getNimbusLAF();
             } else {
                 // Do not change the user-supplied setting.
                 return;
@@ -69,10 +64,25 @@ public final class GraphicsUtilities {
         } else {
             laf = UIManager.getSystemLookAndFeelClassName();
         }
-        try {
+        if (laf.equals(UIManager.getCrossPlatformLookAndFeelClassName())) {
+            laf = getNimbusLAF(); // Replace Metal L&F by Nimbus L&F.
+        }
+        if (laf != null) try {
             UIManager.setLookAndFeel(laf);
         } catch (Exception e) {
             Logging.recoverableException(caller, method, e);
         }
+    }
+
+    /**
+     * Returns the Nimbus L&F, or {@code null} if not found.
+     */
+    private static String getNimbusLAF() {
+        for (final UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
+            if (info.getName().equalsIgnoreCase("Nimbus")) {
+                return info.getClassName();
+            }
+        }
+        return null;
     }
 }

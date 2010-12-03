@@ -331,15 +331,6 @@ public class MosaicBuilder implements LogProducer {
      * or {@code null} if none. This transform is optional. If specified, then the builder
      * will forward this value to {@link TileManager#setGridToCRS(AffineTransform)}.
      *
-     * {@section Tips}
-     * If the available information is a geodetic envelope rather than a <cite>grid to CRS</cite>
-     * transform, then the transform can be computed from the envelope using
-     * {@link org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper}.
-     * <p>
-     * If the available information is a {@link org.opengis.coverage.grid.RectifiedGrid} rather
-     * than a <cite>grid to CRS</cite>, then the transform can be computed from the rectified
-     * grid using {@link org.geotoolkit.image.io.metadata.MetadataHelper}.
-     *
      * @return The <cite>pixel to geodetic</cite> transform, or {@code null} if none.
      *
      * @since 3.16
@@ -352,6 +343,16 @@ public class MosaicBuilder implements LogProducer {
      * Sets the transform from mosaic pixel coordinates to mosaic geodetic coordinates.
      * This transform is optional. If specified, then the builder will forward this value
      * to {@link TileManager#setGridToCRS(AffineTransform)}.
+     *
+     * {@section Tips}
+     * <ul>
+     *   <li>If the available information is rather a geodetic envelope,
+     *       then the transform can be computed from the envelope using
+     *       {@link org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper}.</li>
+     *   <li>If the available information is rather a {@link org.opengis.coverage.grid.RectifiedGrid},
+     *       then the transform can be computed from the rectified
+     *       grid using {@link org.geotoolkit.image.io.metadata.MetadataHelper}.</li>
+     * </ul>
      *
      * @param tr The <cite>pixel to geodetic</cite> transform, or {@code null} if none.
      *
