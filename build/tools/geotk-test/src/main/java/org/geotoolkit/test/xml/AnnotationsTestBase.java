@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.test;
+package org.geotoolkit.test.xml;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.test.TestBase;
 
 import org.opengis.util.CodeList;
 import org.opengis.annotation.UML;
@@ -36,11 +37,11 @@ import static org.junit.Assert.*;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.16
  *
- * @since 3.05
+ * @since 3.16 (derived from 3.05)
  */
-public abstract class AnnotationsTest {
+public abstract class AnnotationsTestBase extends TestBase {
     /**
      * For formatting error message only.
      */
@@ -59,7 +60,7 @@ public abstract class AnnotationsTest {
     /**
      * Creates a new test suite.
      */
-    protected AnnotationsTest() {
+    protected AnnotationsTestBase() {
         buffer = new StringBuilder();
     }
 

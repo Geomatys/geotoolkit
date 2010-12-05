@@ -18,8 +18,7 @@
 package org.geotoolkit.gui.swing.tree;
 
 import org.junit.*;
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.assertMultilinesEquals;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**

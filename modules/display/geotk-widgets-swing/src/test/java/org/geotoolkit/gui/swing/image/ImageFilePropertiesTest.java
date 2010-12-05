@@ -20,7 +20,7 @@ package org.geotoolkit.gui.swing.image;
 import java.io.File;
 import java.io.IOException;
 import org.geotoolkit.test.TestData;
-import org.geotoolkit.test.gui.SwingBase;
+import org.geotoolkit.test.gui.SwingTestBase;
 
 
 /**
@@ -31,7 +31,7 @@ import org.geotoolkit.test.gui.SwingBase;
  *
  * @since 3.05
  */
-public class ImageFilePropertiesTest extends SwingBase<ImageFileProperties> {
+public class ImageFilePropertiesTest extends SwingTestBase<ImageFileProperties> {
     /**
      * Constructs the test case.
      */

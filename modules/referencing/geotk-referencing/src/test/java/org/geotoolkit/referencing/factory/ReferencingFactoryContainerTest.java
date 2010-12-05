@@ -30,14 +30,14 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.Commons;
-import org.geotoolkit.test.crs.WKT;
+import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.internal.referencing.Identifier3D;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.*;
-import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -90,7 +90,7 @@ public final class ReferencingFactoryContainerTest {
          * this code also tests the Geotk capability to format a 3D CRS (a previous version
          * was throwing an exception).
          */
-        Commons.assertMultilinesEquals(Commons.decodeQuotes(
+        assertMultilinesEquals(Commons.decodeQuotes(
             "COMPD_CS[“NTF 4D”,\n" +
             "  PROJCS[“NTF 3D”,\n" +
             "    GEOGCS[“NTF (Paris) (3D)”,\n" +

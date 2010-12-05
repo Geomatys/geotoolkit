@@ -63,7 +63,7 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
      * content shall be the same than the {@code "test-data/matrix.txt"} file.
      *
      * @return The reader to test.
-     * @throws IOException If an error occurred while creating the format.
+     * @throws IOException If an error occurred while creating the reader.
      */
     @Override
     protected abstract SpatialImageReader createImageReader() throws IOException;

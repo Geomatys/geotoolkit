@@ -55,7 +55,7 @@ import org.opengis.referencing.datum.Ellipsoid;
  * @since 2.1
  */
 @Depend(AbstractMathTransformTest.class)
-public final class GeocentricTransformTest extends TransformTestCase {
+public final class GeocentricTransformTest extends TransformTestBase {
     /**
      * Creates the test suite.
      */

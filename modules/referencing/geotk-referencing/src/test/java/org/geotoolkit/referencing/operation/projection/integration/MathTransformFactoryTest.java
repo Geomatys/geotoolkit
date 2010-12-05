@@ -29,7 +29,7 @@ import org.opengis.geometry.DirectPosition;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.parameter.ParameterWriter;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.referencing.ReferencingTestCase;
+import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 
@@ -50,7 +50,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.1
  */
-public final class MathTransformFactoryTest extends ReferencingTestCase {
+public final class MathTransformFactoryTest extends ReferencingTestBase {
     /**
      * Tolerance for test when units are degrees.
      */

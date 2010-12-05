@@ -50,11 +50,10 @@ import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import org.junit.*;
-import static org.junit.Assert.*;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.TestData;
-import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**

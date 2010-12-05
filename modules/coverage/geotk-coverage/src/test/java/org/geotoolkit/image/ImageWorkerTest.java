@@ -39,7 +39,7 @@ import static java.awt.image.DataBuffer.*;
  *
  * @since 3.00
  */
-public final class ImageWorkerTest extends ImageTestCase {
+public final class ImageWorkerTest extends SampleImageTestBase {
     /**
      * Whatever platform-dependent tests should be enabled. This is used for
      * marking the tests where the result appears to vary between platforms.

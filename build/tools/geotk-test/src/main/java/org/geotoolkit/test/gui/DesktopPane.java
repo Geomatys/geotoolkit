@@ -81,7 +81,7 @@ final class DesktopPane extends JDesktopPane {
      * Adds a test case to be show in the "New" menu.
      * A {@code null} argument cause the addition of a separator.
      */
-    final void addTestCase(final SwingBase<?> testCase) {
+    final void addTestCase(final SwingTestBase<?> testCase) {
         if (testCase != null) {
             newMenu.add(new AbstractAction(getTitle(testCase.testing)) {
                 @Override public void actionPerformed(final ActionEvent event) {
@@ -207,7 +207,7 @@ final class DesktopPane extends JDesktopPane {
     /**
      * Shows the widget created by the given test case.
      */
-    private void show(final SwingBase<?> testCase) {
+    private void show(final SwingTestBase<?> testCase) {
         try {
             for (int i=0; i<testCase.numTests; i++) {
                 show(testCase.create(i), i, testCase.numTests);

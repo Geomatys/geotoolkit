@@ -36,7 +36,7 @@ import static org.junit.Assume.*;
  *
  * @since 3.00
  */
-public class NadconTransformTest extends TransformTestCase {
+public class NadconTransformTest extends TransformTestBase {
     /**
      * Creates a new test suite.
      */

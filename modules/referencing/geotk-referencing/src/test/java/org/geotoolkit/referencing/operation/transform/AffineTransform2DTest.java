@@ -36,7 +36,7 @@ import org.junit.*;
  * @since 3.15
  */
 @Depend(AbstractMathTransformTest.class)
-public final class AffineTransform2DTest extends TransformTestCase {
+public final class AffineTransform2DTest extends TransformTestBase {
     /**
      * Creates a new test suite.
      */
@@ -46,7 +46,7 @@ public final class AffineTransform2DTest extends TransformTestCase {
 
     /**
      * Tests the {@link AffineTransform2D#derivative(Point2D)} method.
-     * Actually this is more a test for the {@link TransformTestCase}
+     * Actually this is more a test for the {@link TransformTestBase}
      * {@code checkDerivative} methods than a test of affine transforms...
      *
      * @throws TransformException Should never happen.

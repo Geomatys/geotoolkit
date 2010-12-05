@@ -30,7 +30,7 @@ import org.geotoolkit.test.Depend;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.operation.transform.CoordinateDomain;
-import org.geotoolkit.referencing.operation.transform.TransformTestCase;
+import org.geotoolkit.referencing.operation.transform.TransformTestBase;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransformTest;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransformTest;
@@ -47,7 +47,7 @@ import static java.lang.Math.*;
  * @since 3.00
  */
 @Depend({ProjectiveTransformTest.class, ConcatenatedTransformTest.class})
-public abstract class ProjectionTestCase extends TransformTestCase {
+public abstract class ProjectionTestBase extends TransformTestBase {
     /**
      * The radius of the sphere used in sphere test cases.
      */
@@ -57,9 +57,9 @@ public abstract class ProjectionTestCase extends TransformTestCase {
      * Creates a new test case using the given hints for fetching the factories.
      *
      * @param type  The base class of the projection being tested.
-     * @param hints The hints to use for fecthing factories, or {@code null} for the default ones.
+     * @param hints The hints to use for fetching factories, or {@code null} for the default ones.
      */
-    protected ProjectionTestCase(final Class<? extends MathTransform> type, final Hints hints) {
+    protected ProjectionTestBase(final Class<? extends MathTransform> type, final Hints hints) {
         super(type, hints);
     }
 

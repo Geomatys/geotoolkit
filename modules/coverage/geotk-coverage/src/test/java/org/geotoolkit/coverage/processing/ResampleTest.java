@@ -62,7 +62,7 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
  *
  * @since 2.1
  */
-public final class ResampleTest extends GridProcessingTestCase {
+public final class ResampleTest extends GridProcessingTestBase {
     /**
      * Returns a projected CRS for test purpose.
      */

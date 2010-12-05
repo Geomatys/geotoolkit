@@ -22,7 +22,7 @@ import org.geotoolkit.gui.swing.*;
 import org.geotoolkit.gui.swing.image.*;
 import org.geotoolkit.gui.swing.coverage.*;
 import org.geotoolkit.gui.swing.referencing.*;
-import org.geotoolkit.test.gui.SwingBase;
+import org.geotoolkit.test.gui.SwingTestBase;
 
 
 /**
@@ -37,7 +37,7 @@ import org.geotoolkit.test.gui.SwingBase;
  *
  * @since 3.05
  */
-public final class SwingSuite extends SwingBase<About> {
+public final class SwingSuite extends SwingTestBase<About> {
     /**
      * Creates a new test suite.
      */
@@ -95,8 +95,8 @@ public final class SwingSuite extends SwingBase<About> {
     /**
      * Shows the widget provided by all the above test cases.
      */
-    private static void show(final Class<? extends SwingBase<?>>... tests) throws Exception {
-        for (final Class<? extends SwingBase<?>> type : tests) {
+    private static void show(final Class<? extends SwingTestBase<?>>... tests) throws Exception {
+        for (final Class<? extends SwingTestBase<?>> type : tests) {
             show(type != null ? type.newInstance() : null);
         }
     }

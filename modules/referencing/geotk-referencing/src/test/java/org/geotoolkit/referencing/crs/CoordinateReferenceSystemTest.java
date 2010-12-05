@@ -22,9 +22,9 @@ import org.geotoolkit.referencing.datum.DatumTest;
 import org.geotoolkit.referencing.IdentifiedObjectTest;
 import org.geotoolkit.referencing.cs.CoordinateSystemTest;
 
-import static org.junit.Assert.*;
 import static org.geotoolkit.test.Commons.serialize;
 import static org.geotoolkit.test.Commons.decodeQuotes;
+import static org.geotoolkit.referencing.ReferencingAssert.*;
 import static org.geotoolkit.referencing.crs.DefaultVerticalCRS.*;
 import static org.geotoolkit.referencing.crs.DefaultTemporalCRS.*;
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.*;
@@ -34,7 +34,7 @@ import static org.geotoolkit.referencing.crs.DefaultEngineeringCRS.*;
 import org.junit.*;
 import org.opengis.test.Validators;
 import org.geotoolkit.test.Depend;
-import org.geotoolkit.referencing.ReferencingTestCase;
+import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 
 /**
@@ -46,7 +46,7 @@ import org.geotoolkit.referencing.ReferencingTestCase;
  * @since 2.2
  */
 @Depend({IdentifiedObjectTest.class, DatumTest.class, CoordinateSystemTest.class})
-public final class CoordinateReferenceSystemTest extends ReferencingTestCase {
+public final class CoordinateReferenceSystemTest extends ReferencingTestBase {
     /**
      * Validates constants.
      */

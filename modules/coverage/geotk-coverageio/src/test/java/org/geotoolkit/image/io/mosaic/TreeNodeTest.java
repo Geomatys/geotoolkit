@@ -26,12 +26,11 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.IOException;
 
-import org.geotoolkit.test.Depend;
-import org.geotoolkit.test.Commons;
-import org.geotoolkit.gui.swing.tree.Trees;
-
 import org.junit.*;
-import static org.junit.Assert.*;
+
+import org.geotoolkit.test.Depend;
+import org.geotoolkit.gui.swing.tree.Trees;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -45,7 +44,7 @@ import static org.junit.Assert.*;
  * @since 2.5
  */
 @Depend(Tile.class)
-public final class TreeNodeTest extends TestBase {
+public final class TreeNodeTest extends MosaicTestBase {
     /**
      * The root of an RTree for {@link #targetTiles}.
      */
@@ -69,7 +68,7 @@ public final class TreeNodeTest extends TestBase {
     @Test
     public void testSwingTree() {
         final javax.swing.tree.TreeNode copy = Trees.copy(root);
-        final int n = Commons.assertTreeEquals(copy, root);
+        final int n = assertTreeEquals(copy, root);
         assertEquals(4737, n);
         final String text1 = Trees.toString(root);
         final String text2 = Trees.toString(copy);

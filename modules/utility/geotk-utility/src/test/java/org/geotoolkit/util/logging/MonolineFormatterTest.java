@@ -22,7 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import org.junit.*;
 
-import static org.geotoolkit.test.Commons.assertMultilinesEquals;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**

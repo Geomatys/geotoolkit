@@ -20,13 +20,16 @@ package org.geotoolkit.referencing;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.test.Depend;
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.geometry.DirectPosition2D;
+
+import org.geotoolkit.test.Depend;
+import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
+import static org.geotoolkit.referencing.ReferencingCommons.*;
 
 
 /**
@@ -38,7 +41,7 @@ import static org.junit.Assume.assumeTrue;
  * @since 3.00
  */
 @Depend(CRS_WithEpsgTest.class)
-public final class CRS_WithGridTest extends ReferencingTestCase {
+public final class CRS_WithGridTest extends ReferencingTestBase {
     /**
      * Tests transformation NADCON grids.
      *

@@ -20,7 +20,7 @@ package org.geotoolkit.referencing.cs;
 import org.opengis.referencing.cs.AxisDirection;
 
 import org.junit.*;
-import org.geotoolkit.referencing.ReferencingTestCase;
+import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import static org.junit.Assert.*;
 
@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.4
  */
-public final class DirectionAlongMeridianTest extends ReferencingTestCase {
+public final class DirectionAlongMeridianTest extends ReferencingTestBase {
     /**
      * For floating point comparisons.
      */

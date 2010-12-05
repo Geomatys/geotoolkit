@@ -25,7 +25,7 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.util.FactoryException;
 
-import org.geotoolkit.test.gui.SwingBase;
+import org.geotoolkit.test.gui.SwingTestBase;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
 
@@ -38,7 +38,7 @@ import org.geotoolkit.factory.FactoryNotFoundException;
  *
  * @since 3.02
  */
-public final class AuthorityCodesComboBoxTest extends SwingBase<AuthorityCodesComboBox> implements PropertyChangeListener {
+public final class AuthorityCodesComboBoxTest extends SwingTestBase<AuthorityCodesComboBox> implements PropertyChangeListener {
     /**
      * Constructs the test case.
      */

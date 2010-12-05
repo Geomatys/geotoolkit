@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.1
  */
-public final class InterpolatorTest extends GridCoverageTestCase {
+public final class InterpolatorTest extends GridCoverageTestBase {
     /**
      * Tests bilinear intersection at pixel edges. It should be equals
      * to the average of the four pixels around.

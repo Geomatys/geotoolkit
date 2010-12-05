@@ -29,19 +29,18 @@ import org.opengis.test.Validators;
 import org.opengis.util.GenericName;
 import org.opengis.referencing.datum.VerticalDatumType;
 
-import org.geotoolkit.referencing.ReferencingTestCase;
+import org.junit.*;
+import org.geotoolkit.test.Depend;
+import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.geotoolkit.referencing.IdentifiedObjectTest;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 
-import static org.junit.Assert.*;
 import static org.geotoolkit.test.Commons.serialize;
+import static org.geotoolkit.referencing.ReferencingAssert.*;
 import static org.geotoolkit.referencing.datum.DefaultPrimeMeridian.*;
 import static org.geotoolkit.referencing.datum.DefaultGeodeticDatum.*;
 import static org.geotoolkit.referencing.datum.DefaultVerticalDatum.*;
 import static org.geotoolkit.referencing.datum.DefaultTemporalDatum.*;
-
-import org.junit.*;
-import org.geotoolkit.test.Depend;
 
 
 /**
@@ -53,7 +52,7 @@ import org.geotoolkit.test.Depend;
  * @since 2.2
  */
 @Depend({IdentifiedObjectTest.class, TemporalDatumTest.class})
-public final class DatumTest extends ReferencingTestCase {
+public final class DatumTest extends ReferencingTestBase {
     /**
      * Validates constant definitions.
      */

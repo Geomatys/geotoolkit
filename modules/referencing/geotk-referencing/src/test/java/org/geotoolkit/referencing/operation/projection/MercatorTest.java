@@ -43,7 +43,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjectionT
  * @since 3.00
  */
 @Depend({ProjectionParametersTest.class, UnitaryProjectionTest.class})
-public final class MercatorTest extends ProjectionTestCase {
+public final class MercatorTest extends ProjectionTestBase {
     /**
      * Tolerance level for comparing floating point numbers.
      */

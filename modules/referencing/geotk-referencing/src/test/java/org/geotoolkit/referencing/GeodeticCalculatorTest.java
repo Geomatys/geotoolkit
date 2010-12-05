@@ -35,6 +35,7 @@ import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
+import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -50,7 +51,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.1
  */
-public final class GeodeticCalculatorTest {
+public final class GeodeticCalculatorTest extends ReferencingTestBase {
     /**
      * Small tolerance value for floating point comparisons.
      */

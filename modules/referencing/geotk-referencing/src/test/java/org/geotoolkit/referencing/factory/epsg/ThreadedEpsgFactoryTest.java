@@ -33,7 +33,7 @@ import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.geometry.Envelope;
 
-import org.geotoolkit.test.crs.WKT;
+import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
@@ -52,7 +52,7 @@ import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.junit.*;
 import static org.junit.Assert.*;
 import static org.junit.Assume.assumeNotNull;
-import static org.geotoolkit.test.Commons.decodeQuotes;
+import static org.geotoolkit.referencing.ReferencingCommons.*;
 
 
 /**
@@ -64,7 +64,7 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
  *
  * @since 2.1
  */
-public class ThreadedEpsgFactoryTest extends EpsgFactoryTestCase {
+public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
     /**
      * Small value for parameter value comparisons.
      */

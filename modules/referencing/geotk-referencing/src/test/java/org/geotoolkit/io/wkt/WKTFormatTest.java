@@ -38,7 +38,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.test.Depend;
 
 import org.junit.*;
-import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
 
 

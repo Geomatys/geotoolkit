@@ -18,7 +18,7 @@
 package org.geotoolkit.referencing.cs;
 
 import org.junit.*;
-import org.geotoolkit.referencing.ReferencingTestCase;
+import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import static org.junit.Assert.*;
 import static org.opengis.referencing.cs.AxisDirection.*;
@@ -32,7 +32,7 @@ import static org.opengis.referencing.cs.AxisDirection.*;
  *
  * @since 3.00
  */
-public final class DirectionsTest extends ReferencingTestCase {
+public final class DirectionsTest extends ReferencingTestBase {
     /**
      * Tests the standards directions.
      */

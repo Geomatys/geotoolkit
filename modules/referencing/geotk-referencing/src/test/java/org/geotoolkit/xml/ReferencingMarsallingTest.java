@@ -64,10 +64,9 @@ import org.geotoolkit.test.TestData;
 
 import org.junit.*;
 
-import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.*;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static org.opengis.referencing.ReferenceSystem.SCOPE_KEY;
-import static org.geotoolkit.test.Commons.assertMultilinesEquals;
 
 
 /**

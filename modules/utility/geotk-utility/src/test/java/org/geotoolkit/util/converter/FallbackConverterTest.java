@@ -18,9 +18,8 @@
 package org.geotoolkit.util.converter;
 
 import org.junit.*;
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.*;
 import org.geotoolkit.test.Depend;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**

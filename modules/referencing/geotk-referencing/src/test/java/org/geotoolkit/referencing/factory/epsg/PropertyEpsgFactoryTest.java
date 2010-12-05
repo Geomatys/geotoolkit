@@ -37,13 +37,14 @@ import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.referencing.ReferencingTestCase;
 import org.geotoolkit.referencing.factory.wkt.PropertyAuthorityFactoryTest;
 
 import org.geotoolkit.test.Depend;
+import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import static org.geotoolkit.referencing.ReferencingCommons.*;
 
 
 /**
@@ -56,7 +57,7 @@ import static org.junit.Assert.*;
  * @since 2.4
  */
 @Depend(PropertyAuthorityFactoryTest.class)
-public final class PropertyEpsgFactoryTest extends ReferencingTestCase {
+public final class PropertyEpsgFactoryTest extends ReferencingTestBase {
     /**
      * The factory to test.
      */

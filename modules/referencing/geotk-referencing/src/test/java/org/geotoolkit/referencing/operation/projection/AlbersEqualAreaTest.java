@@ -36,7 +36,7 @@ import static org.geotoolkit.referencing.operation.provider.AlbersEqualArea.*;
  * @since 3.00
  */
 @Depend(MercatorTest.class)
-public class AlbersEqualAreaTest extends ProjectionTestCase {
+public class AlbersEqualAreaTest extends ProjectionTestBase {
     /**
      * Tolerance level for comparing floating point numbers. Since the Albers Equal Area
      * projection is implemented with iterative methods, we can not ask more than the

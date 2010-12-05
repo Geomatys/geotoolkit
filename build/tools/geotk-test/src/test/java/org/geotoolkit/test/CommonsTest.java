@@ -26,20 +26,11 @@ import static org.geotoolkit.test.Commons.*;
  * Tests the {@link Commons} utility class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.16
  *
  * @since 3.00
  */
 public class CommonsTest {
-    /**
-     * Tests the {@link Commons#assertMultilinesEquals} method.
-     */
-    @Test
-    public void testAssertEqualsMultilines() {
-        assertMultilinesEquals("Line 1\nLine 2\r\nLine 3\n\rLine 5",
-                               "Line 1\rLine 2\nLine 3\n\nLine 5");
-    }
-
     /**
      * Tests the {@link Commons#serialize} method.
      */

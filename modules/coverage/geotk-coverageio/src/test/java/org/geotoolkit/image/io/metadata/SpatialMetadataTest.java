@@ -36,8 +36,7 @@ import org.geotoolkit.metadata.iso.content.DefaultImageDescription;
 
 import org.junit.*;
 
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**

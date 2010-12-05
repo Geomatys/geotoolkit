@@ -34,8 +34,8 @@ import org.geotoolkit.image.io.mosaic.TileTest;
 import org.geotoolkit.image.io.XImageIO;
 
 import org.junit.*;
-import static org.junit.Assert.*;
 import static org.junit.Assume.*;
+import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
 
 
@@ -53,6 +53,13 @@ public final class WorldFileImageWriterTest extends TextImageWriterTestBase {
      * This is usually the default locale.
      */
     private Locale defaultLocale;
+
+    /**
+     * Creates a new test suite.
+     */
+    public WorldFileImageWriterTest() {
+        super(WorldFileImageWriter.class);
+    }
 
     /**
      * Sets the locale to a compile-time value. We need to use a fixed value because the

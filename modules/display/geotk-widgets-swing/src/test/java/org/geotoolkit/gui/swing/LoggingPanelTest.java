@@ -21,7 +21,7 @@ import java.awt.Color;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.geotoolkit.test.gui.SwingBase;
+import org.geotoolkit.test.gui.SwingTestBase;
 import org.geotoolkit.util.logging.Logging;
 
 import org.junit.*;
@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.01
  */
-public final class LoggingPanelTest extends SwingBase<LoggingPanel> {
+public final class LoggingPanelTest extends SwingTestBase<LoggingPanel> {
     /**
      * The logger to use for the test.
      */

@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.gui.swing.referencing;
 
-import org.geotoolkit.test.gui.SwingBase;
+import org.geotoolkit.test.gui.SwingTestBase;
 
 
 /**
@@ -28,7 +28,7 @@ import org.geotoolkit.test.gui.SwingBase;
  *
  * @since 2.3
  */
-public final class CoordinateChooserTest extends SwingBase<CoordinateChooser> {
+public final class CoordinateChooserTest extends SwingTestBase<CoordinateChooser> {
     /**
      * Constructs the test case.
      */

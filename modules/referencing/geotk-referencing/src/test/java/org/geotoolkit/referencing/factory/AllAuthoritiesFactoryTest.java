@@ -28,19 +28,21 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.test.Depend;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.factory.web.AutoCRSFactoryTest;
 import org.geotoolkit.referencing.factory.web.WebCRSFactoryTest;
-import org.geotoolkit.referencing.ReferencingTestCase;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.factory.Hints;
 
+import org.geotoolkit.test.Depend;
+import org.geotoolkit.test.referencing.ReferencingTestBase;
+
 import org.junit.*;
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
+import static org.geotoolkit.referencing.ReferencingCommons.*;
 
 
 /**
@@ -52,7 +54,7 @@ import static org.junit.Assume.*;
  * @since 2.4
  */
 @Depend({WebCRSFactoryTest.class, AutoCRSFactoryTest.class, AuthorityFactoryProxyTest.class})
-public final class AllAuthoritiesFactoryTest extends ReferencingTestCase {
+public final class AllAuthoritiesFactoryTest extends ReferencingTestBase {
     /**
      * Tests the {@link AllAuthoritiesFactory#getAuthorityCodes} method.
      *

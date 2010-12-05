@@ -30,6 +30,7 @@ import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
+import org.geotoolkit.test.TestBase;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.internal.io.Installation;
 
@@ -48,7 +49,7 @@ import static org.junit.Assume.*;
  *
  * @since 3.10
  */
-public class NetcdfTestBase {
+public class NetcdfTestBase extends TestBase {
     /**
      * The file to be used for the tests.
      */

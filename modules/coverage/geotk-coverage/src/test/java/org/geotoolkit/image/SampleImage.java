@@ -33,9 +33,8 @@ import static org.junit.Assert.*;
 import static org.junit.Assume.*;
 
 
-
 /**
- * Enumeration of sample data that can be loaded by {@link ImageTestCase#loadSampleImage}.
+ * Enumeration of sample data that can be loaded by {@link SampleImageTestBase#loadSampleImage}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.12

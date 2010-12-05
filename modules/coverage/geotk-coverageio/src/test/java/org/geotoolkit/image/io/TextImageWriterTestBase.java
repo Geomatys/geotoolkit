@@ -37,13 +37,14 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.FactoryException;
 
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.test.crs.WKT;
+import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
 import org.geotoolkit.image.io.metadata.MetadataAccessor;
 import org.geotoolkit.internal.image.io.DimensionAccessor;
 import org.geotoolkit.internal.image.io.GridDomainAccessor;
+import org.geotoolkit.test.image.ImageWriterTestBase;
 
 import static org.junit.Assert.*;
 
@@ -56,7 +57,16 @@ import static org.junit.Assert.*;
  *
  * @since 3.06 (derived from 2.4)
  */
-public abstract class TextImageWriterTestBase {
+public abstract class TextImageWriterTestBase extends ImageWriterTestBase {
+    /**
+     * Creates a new test suite for the given class.
+     *
+     * @param testing The class to be tested.
+     */
+    protected TextImageWriterTestBase(final Class<? extends SpatialImageWriter> testing) {
+        super(testing);
+    }
+
     /**
      * Creates the image writer using the {@link Locale#CANADA}.
      * This arbitrary locale is fixed in order to keep the build locale-independent.
@@ -64,6 +74,7 @@ public abstract class TextImageWriterTestBase {
      * @return The reader to test.
      * @throws IOException If an error occurred while creating the format.
      */
+    @Override
     protected abstract SpatialImageWriter createImageWriter() throws IOException;
 
     /**

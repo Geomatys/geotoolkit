@@ -51,6 +51,7 @@ import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 
+import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.util.converter.Classes.*;
 
 import org.opengis.test.Validators;
@@ -65,7 +66,7 @@ import org.opengis.test.Validators;
  *
  * @since 2.0
  */
-public abstract class TransformTestCase extends org.opengis.test.referencing.TransformTestCase {
+public abstract class TransformTestBase extends org.opengis.test.referencing.TransformTestCase {
     /**
      * The number of ordinates to use for stressing the math transform. We use a number that
      * encompass at least 2 time the default buffer size in order to test the code that use
@@ -110,7 +111,7 @@ public abstract class TransformTestCase extends org.opengis.test.referencing.Tra
      * @param type  The base class of the transform being tested.
      * @param hints The hints to use for fetching factories, or {@code null} for the default ones.
      */
-    protected TransformTestCase(final Class<? extends MathTransform> type, final Hints hints) {
+    protected TransformTestBase(final Class<? extends MathTransform> type, final Hints hints) {
         assertTrue("Tests should be run with assertions enabled.", type.desiredAssertionStatus());
 
         datumFactory = FactoryFinder.getDatumFactory(hints);
@@ -225,7 +226,7 @@ public abstract class TransformTestCase extends org.opengis.test.referencing.Tra
         final String actual = transform.toWKT();
         final String name = (transform instanceof AbstractMathTransform) ?
                 ((AbstractMathTransform) transform).getName() : null;
-        Commons.assertMultilinesEquals(name, expected, actual);
+        assertMultilinesEquals(name, expected, actual);
         return actual;
     }
 

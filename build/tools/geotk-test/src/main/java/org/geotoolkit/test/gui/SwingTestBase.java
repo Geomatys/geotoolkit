@@ -51,7 +51,7 @@ import static org.junit.Assume.*;
  * @since 2.3
  */
 @SuppressWarnings("serial")
-public abstract class SwingBase<T extends JComponent> {
+public abstract class SwingTestBase<T extends JComponent> {
     /**
      * The name of a system property for setting whatever the widget should be show.
      * If the value returned by the following is {@code true}, then the widgets will
@@ -82,22 +82,22 @@ public abstract class SwingBase<T extends JComponent> {
     final int numTests;
 
     /**
-     * Creates a new instance of {@code SwingBase} which will invoke
+     * Creates a new instance of {@code SwingTestBase} which will invoke
      * {@link #create(int)} only once.
      *
      * @param testing The class being tested.
      */
-    protected SwingBase(final Class<T> testing) {
+    protected SwingTestBase(final Class<T> testing) {
         this(testing, 1);
     }
 
     /**
-     * Creates a new instance of {@code SwingBase}.
+     * Creates a new instance of {@code SwingTestBase}.
      *
      * @param testing The class being tested.
      * @param numTests Number of invocation of {@link #create(int)} to perform.
      */
-    protected SwingBase(final Class<T> testing, final int numTests) {
+    protected SwingTestBase(final Class<T> testing, final int numTests) {
         assertTrue(testing.desiredAssertionStatus());
         assertTrue(JComponent.class.isAssignableFrom(testing));
         assertTrue(numTests >= 1);
@@ -210,7 +210,7 @@ public abstract class SwingBase<T extends JComponent> {
      * @return {@code true} if the component has been shown.
      * @throws PropertyVetoException Should not happen.
      */
-    protected static synchronized boolean show(final SwingBase<?> testCase, final JComponent... components)
+    protected static synchronized boolean show(final SwingTestBase<?> testCase, final JComponent... components)
             throws PropertyVetoException
     {
         boolean added = false;
@@ -237,13 +237,13 @@ public abstract class SwingBase<T extends JComponent> {
     @AfterClass
     public static void waitForFrameDisposal() throws InterruptedException {
         final DesktopPane desktop;
-        synchronized (SwingBase.class) {
-            desktop = SwingBase.desktop;
+        synchronized (SwingTestBase.class) {
+            desktop = SwingTestBase.desktop;
         }
         if (desktop != null) {
             desktop.lock.await();
-            synchronized (SwingBase.class) {
-                SwingBase.desktop = null;
+            synchronized (SwingTestBase.class) {
+                SwingTestBase.desktop = null;
             }
         }
     }

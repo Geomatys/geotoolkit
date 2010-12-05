@@ -31,8 +31,7 @@ import javax.imageio.IIOImage;
 import org.geotoolkit.image.io.TextImageWriterTestBase;
 
 import org.junit.*;
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.assertMultilinesEquals;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -44,6 +43,13 @@ import static org.geotoolkit.test.Commons.assertMultilinesEquals;
  * @since 2.4
  */
 public final class TextMatrixImageWriterTest extends TextImageWriterTestBase {
+    /**
+     * Creates a new test suite.
+     */
+    public TextMatrixImageWriterTest() {
+        super(TextMatrixImageWriter.class);
+    }
+
     /**
      * The provider for the format to be tested.
      */

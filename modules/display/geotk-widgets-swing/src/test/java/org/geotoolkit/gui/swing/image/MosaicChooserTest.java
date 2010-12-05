@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.gui.swing.image;
 
-import org.geotoolkit.test.gui.SwingBase;
+import org.geotoolkit.test.gui.SwingTestBase;
 
 
 /**
@@ -28,7 +28,7 @@ import org.geotoolkit.test.gui.SwingBase;
  *
  * @since 3.00
  */
-public final class MosaicChooserTest extends SwingBase<MosaicChooser> {
+public final class MosaicChooserTest extends SwingTestBase<MosaicChooser> {
     /**
      * Constructs the test case.
      */

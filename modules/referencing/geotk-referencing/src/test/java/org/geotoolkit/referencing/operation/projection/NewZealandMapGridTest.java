@@ -32,7 +32,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.2
  */
-public final class NewZealandMapGridTest extends ProjectionTestCase {
+public final class NewZealandMapGridTest extends ProjectionTestBase {
     /**
      * Sets of geographic coordinates to project.
      */

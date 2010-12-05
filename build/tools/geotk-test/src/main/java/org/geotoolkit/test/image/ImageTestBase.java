@@ -36,7 +36,7 @@ import java.util.concurrent.CountDownLatch;
 
 import org.geotoolkit.test.Commons;
 import org.geotoolkit.test.TestBase;
-import org.geotoolkit.test.gui.SwingBase;
+import org.geotoolkit.test.gui.SwingTestBase;
 
 import org.junit.After;
 import static org.junit.Assert.*;
@@ -66,7 +66,7 @@ public abstract class ImageTestBase extends TestBase {
      *     Boolean.getBoolean(SHOW_PROPERTY_KEY);
      * }
      *
-     * @see SwingBase#SHOW_PROPERTY_KEY
+     * @see SwingTestBase#SHOW_PROPERTY_KEY
      */
     protected boolean viewEnabled;
 
@@ -82,7 +82,7 @@ public abstract class ImageTestBase extends TestBase {
      */
     protected ImageTestBase(final Class<?> testing) {
         assertTrue(testing.desiredAssertionStatus());
-        viewEnabled = Boolean.getBoolean(SwingBase.SHOW_PROPERTY_KEY);
+        viewEnabled = Boolean.getBoolean(SwingTestBase.SHOW_PROPERTY_KEY);
     }
 
     /**

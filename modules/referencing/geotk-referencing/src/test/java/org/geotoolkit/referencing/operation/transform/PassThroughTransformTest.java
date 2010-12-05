@@ -51,7 +51,7 @@ import org.junit.*;
  *
  * @since 2.0
  */
-public final class PassThroughTransformTest extends TransformTestCase {
+public final class PassThroughTransformTest extends TransformTestBase {
     /**
      * The random number generator to be used in this test.
      */

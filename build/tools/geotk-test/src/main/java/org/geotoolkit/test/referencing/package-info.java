@@ -24,4 +24,4 @@
  *
  * @since 3.08
  */
-package org.geotoolkit.test.crs;
+package org.geotoolkit.test.referencing;

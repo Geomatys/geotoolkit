@@ -23,16 +23,16 @@ import org.opengis.test.Validators;
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.cs.AxisDirection;
 
-import org.geotoolkit.test.Depend;
 import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.IdentifiedObjectTest;
-
-import org.junit.*;
-import org.geotoolkit.referencing.ReferencingTestCase;
 import org.geotoolkit.internal.referencing.AxisDirections;
 
-import static org.junit.Assert.*;
+import org.junit.*;
+import org.geotoolkit.test.Depend;
+import org.geotoolkit.test.referencing.ReferencingTestBase;
+
 import static org.geotoolkit.test.Commons.serialize;
+import static org.geotoolkit.referencing.ReferencingAssert.*;
 import static org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis.*;
 
 
@@ -45,7 +45,7 @@ import static org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis.*;
  * @since 2.2
  */
 @Depend({IdentifiedObjectTest.class, DirectionAlongMeridianTest.class})
-public final class CoordinateSystemAxisTest extends ReferencingTestCase {
+public final class CoordinateSystemAxisTest extends ReferencingTestBase {
     /**
      * For floating point number comparisons.
      */

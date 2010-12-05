@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
  * @since 2.5
  */
 @Depend(AbstractMathTransformTest.class)
-public final class MolodenskyTransformTest extends TransformTestCase {
+public final class MolodenskyTransformTest extends TransformTestBase {
     /**
      * Tolerance factor.
      */

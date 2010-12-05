@@ -35,20 +35,20 @@ import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.referencing.operation.Projection;
 
-import org.geotoolkit.test.crs.WKT;
+import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.ReferencingTestCase;
+import org.geotoolkit.referencing.ReferencingCommons;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.crs.DefaultDerivedCRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.referencing.operation.transform.TransformTestCase;
+import org.geotoolkit.referencing.operation.transform.TransformTestBase;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 
@@ -78,7 +78,7 @@ import static org.junit.Assume.*;
  *
  * @since 2.1
  */
-public class CoordinateOperationFactoryTest extends TransformTestCase {
+public class CoordinateOperationFactoryTest extends TransformTestBase {
     /**
      * WKT of compound CRS to be tested.
      */
@@ -855,7 +855,7 @@ public class CoordinateOperationFactoryTest extends TransformTestCase {
      */
     @Test
     public void testMercatorToGoogle() throws Exception {
-        assumeTrue(ReferencingTestCase.isEpsgFactoryAvailable());
+        assumeTrue(ReferencingCommons.isEpsgFactoryAvailable());
         final CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:3395");
         final CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:3857");
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);

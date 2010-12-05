@@ -27,10 +27,10 @@ import org.opengis.metadata.acquisition.Instrument;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.coverage.grid.RectifiedGrid;
 
-import org.geotoolkit.test.Depend;
 import org.junit.*;
+import org.geotoolkit.test.Depend;
 
-import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
 
 

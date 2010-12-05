@@ -28,7 +28,7 @@ import javax.media.jai.operator.ConstantDescriptor;
 import javax.media.jai.operator.GradientMagnitudeDescriptor;
 import javax.media.jai.operator.MultiplyConstDescriptor;
 
-import org.geotoolkit.test.gui.SwingBase;
+import org.geotoolkit.test.gui.SwingTestBase;
 
 
 /**
@@ -39,7 +39,7 @@ import org.geotoolkit.test.gui.SwingBase;
  *
  * @since 2.3
  */
-public final class OperationTreeBrowserTest extends SwingBase<OperationTreeBrowser> {
+public final class OperationTreeBrowserTest extends SwingTestBase<OperationTreeBrowser> {
     /**
      * The image width and height.
      */

@@ -34,7 +34,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.CoverageFactoryFinder;
-import org.geotoolkit.coverage.CoverageTestCase;
+import org.geotoolkit.test.coverage.CoverageTestBase;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
@@ -51,7 +51,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.1
  */
-public abstract class GridCoverageTestCase extends CoverageTestCase {
+public abstract class GridCoverageTestBase extends CoverageTestBase {
     /**
      * Random number generator for this test.
      */

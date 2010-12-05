@@ -21,12 +21,13 @@ import java.util.Random;
 import java.util.Locale;
 import java.io.IOException;
 import java.io.StringWriter;
+import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
-import static org.junit.Assert.*;
 import static java.lang.Math.*;
 import static java.lang.Double.NaN;
 import static java.lang.Double.isNaN;
+import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
 
 
@@ -38,7 +39,7 @@ import static org.geotoolkit.test.Commons.*;
  *
  * @since 3.00
  */
-public class StatisticsTest {
+public class StatisticsTest extends TestBase {
     /**
      * For floating point comparisons.
      */

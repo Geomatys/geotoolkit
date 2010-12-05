@@ -19,7 +19,7 @@ package org.geotoolkit.metadata;
 
 import java.lang.reflect.Modifier;
 import org.opengis.util.CodeList;
-import org.geotoolkit.test.AnnotationsTest;
+import org.geotoolkit.test.xml.AnnotationsTestBase;
 
 import static org.junit.Assert.*;
 
@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.04
  */
-public final class MetadataAnnotationsTest extends AnnotationsTest {
+public final class MetadataAnnotationsTest extends AnnotationsTestBase {
     /**
      * The list of Metadata code list or interfaces to test,
      * in alphabetical order.

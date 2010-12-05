@@ -15,25 +15,19 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.coverage;
+package org.geotoolkit.test.coverage;
 
 import java.awt.image.RenderedImage;
 import java.awt.geom.AffineTransform;
 import javax.media.jai.iterator.RectIter;
 import javax.media.jai.iterator.RectIterFactory;
 
-import org.opengis.geometry.Envelope;
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.referencing.operation.MathTransform;
 
-import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.coverage.grid.Viewer;
-import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+import org.geotoolkit.test.TestBase;
 
 import static org.junit.Assert.*;
 
@@ -48,12 +42,12 @@ import static org.junit.Assert.*;
  *
  * @since 2.1
  */
-public abstract class CoverageTestCase {
+public abstract class CoverageTestBase extends TestBase {
     /**
      * {@code true} if the result of coverage operations should be displayed.
      * This is sometime useful for debugging purpose.
      */
-    protected boolean show = false;
+    protected boolean viewEnabled = false;
 
     /**
      * Small value for comparison of sample values. Since most grid coverage implementations in
@@ -65,7 +59,7 @@ public abstract class CoverageTestCase {
     /**
      * Creates a new test case.
      */
-    protected CoverageTestCase() {
+    protected CoverageTestBase() {
     }
 
     /**
@@ -81,68 +75,13 @@ public abstract class CoverageTestCase {
         if (coverage instanceof GridCoverage) {
             final GridGeometry geometry = ((GridCoverage) coverage).getGridGeometry();
             if (geometry != null) {
-                final MathTransform gridToCRS;
-                if (geometry instanceof GridGeometry2D) {
-                    gridToCRS = ((GridGeometry2D) geometry).getGridToCRS();
-                } else {
-                    gridToCRS = geometry.getGridToCRS();
-                }
+                final MathTransform gridToCRS = geometry.getGridToCRS();
                 if (gridToCRS instanceof AffineTransform) {
                     return (AffineTransform) gridToCRS;
                 }
             }
         }
         return null;
-    }
-
-    /**
-     * Returns the scale of the "grid to CRS" transform, or {@link Double#NaN} if unknown.
-     *
-     * @param  coverage The coverage for which to get the "grid to CRS" scale, or {@code null}.
-     * @return The "grid to CRS" scale, or {@code NaN} if none or if the transform is not affine.
-     */
-    protected static double getScale(final Coverage coverage) {
-        final AffineTransform gridToCRS = getAffineTransform(coverage);
-        return (gridToCRS != null) ? XAffineTransform.getScale(gridToCRS) : Double.NaN;
-    }
-
-    /**
-     * Returns the envelope of the given coverage as a {@link GeneralEnvelope} implementation.
-     *
-     * @param  coverage The coverage for which to get the envelope.
-     * @return The envelope of the given coverage (never {@code null}).
-     */
-    protected static GeneralEnvelope getGeneralEnvelope(final Coverage coverage) {
-        final Envelope envelope = coverage.getEnvelope();
-        assertNotNull(envelope);
-        assertEquals(coverage.getCoordinateReferenceSystem(),
-                     envelope.getCoordinateReferenceSystem());
-        if (coverage instanceof GeneralEnvelope) {
-            return (GeneralEnvelope) envelope;
-        } else {
-            return new GeneralEnvelope(envelope);
-        }
-    }
-
-    /**
-     * Compares the envelopes of two coverages for equality using the smallest
-     * scale factor of their "grid to world" transform as the tolerance.
-     *
-     * @param expected The coverage having the expected envelope.
-     * @param actual   The coverage having the actual envelope.
-     */
-    protected static void assertEnvelopeEquals(Coverage expected, Coverage actual) {
-        final double scaleA = getScale(expected);
-        final double scaleB = getScale(actual);
-        final double tolerance;
-        if (scaleA <= scaleB) {
-            tolerance = scaleA;
-        } else if (!Double.isNaN(scaleB)) {
-            tolerance = scaleB;
-        } else {
-            tolerance = EPS;
-        }
-        assertTrue(getGeneralEnvelope(expected).equals(actual.getEnvelope(), tolerance, false));
     }
 
     /**
@@ -210,17 +149,14 @@ public abstract class CoverageTestCase {
      *
      * @param coverage The coverage to display.
      */
-    protected final void show(Coverage coverage) {
-        if (!show) {
+    protected final void show(final Coverage coverage) {
+        if (!viewEnabled) {
             return;
-        }
-        if (coverage instanceof GridCoverage2D) {
-            coverage = ((GridCoverage2D) coverage).view(ViewType.PACKED);
         }
         final RenderedImage image = coverage.getRenderableImage(0,1).createDefaultRendering();
         try {
             Class.forName("org.geotoolkit.gui.swing.OperationTreeBrowser")
-                 .getMethod("show", new Class<?>[]{RenderedImage.class})
+                 .getMethod("show", new Class<?>[] {RenderedImage.class})
                  .invoke(null, new Object[]{image});
         } catch (RuntimeException e) {
             throw e;
@@ -229,11 +165,7 @@ public abstract class CoverageTestCase {
              * The OperationTreeBrowser is not part of Geotk's core. It is optional and this
              * class should not fails if it is not presents. This is only a helper for debugging.
              */
-            if (coverage instanceof GridCoverage2D) {
-                Viewer.show((GridCoverage2D) coverage);
-            } else {
-                Viewer.show(image);
-            }
+            System.err.println(e);
         }
     }
 }

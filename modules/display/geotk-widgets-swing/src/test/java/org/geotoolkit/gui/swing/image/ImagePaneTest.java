@@ -22,7 +22,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JComponent;
 
 import org.geotoolkit.test.TestData;
-import org.geotoolkit.test.gui.SwingBase;
+import org.geotoolkit.test.gui.SwingTestBase;
 import org.geotoolkit.internal.swing.SwingUtilities;
 
 
@@ -34,7 +34,7 @@ import org.geotoolkit.internal.swing.SwingUtilities;
  *
  * @since 3.07
  */
-public final class ImagePaneTest extends SwingBase<ImagePane> {
+public final class ImagePaneTest extends SwingTestBase<ImagePane> {
     /**
      * Constructs the test case.
      */

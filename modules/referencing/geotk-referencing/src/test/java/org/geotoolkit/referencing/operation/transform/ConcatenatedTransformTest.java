@@ -35,7 +35,7 @@ import org.geotoolkit.test.Depend;
  * @since 3.00
  */
 @Depend(ProjectiveTransformTest.class)
-public final class ConcatenatedTransformTest extends TransformTestCase {
+public final class ConcatenatedTransformTest extends TransformTestBase {
     /**
      * Creates a new test suite.
      */

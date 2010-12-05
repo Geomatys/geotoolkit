@@ -40,7 +40,7 @@ import static org.junit.Assume.assumeNotNull;
  *
  * @since 2.4
  */
-public class StressTest extends EpsgFactoryTestCase {
+public final class StressTest extends EpsgFactoryTestBase {
     /**
      * Number of thread running concurrently. This number must be greater than the default
      * number of workers in {@link ThreadedEpsgFactory}, which is currently {@value #MAX_WORKERS}.

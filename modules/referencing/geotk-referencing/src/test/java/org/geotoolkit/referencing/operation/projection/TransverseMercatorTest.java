@@ -40,7 +40,7 @@ import static org.geotoolkit.referencing.operation.projection.TransverseMercator
  * @since 3.00
  */
 @Depend(MercatorTest.class)
-public class TransverseMercatorTest extends ProjectionTestCase {
+public class TransverseMercatorTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.
      */

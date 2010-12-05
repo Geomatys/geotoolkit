@@ -44,7 +44,7 @@ import static org.geotoolkit.referencing.operation.provider.LambertConformal1SP.
  * @since 3.00
  */
 @Depend(MercatorTest.class)
-public final class LambertConformalTest extends ProjectionTestCase {
+public final class LambertConformalTest extends ProjectionTestBase {
     /**
      * Tolerance level for comparing floating point numbers.
      */

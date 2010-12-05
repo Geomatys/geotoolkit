@@ -17,10 +17,13 @@
  */
 
 /**
- * Tools for Geotk test suites.
+ * Tools for Geotk test suites. This package defines a base class, {@link org.geotoolkit.test.TestBase}, which
+ * is extended by many Geotk test suite. This package defines also an {@link org.geotoolkit.test.Assert} class
+ * which extends {@link org.junit.Assert} with the addition of assertion methods commonly used in Geotk test
+ * suite.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.16
  *
  * @since 3.00
  */

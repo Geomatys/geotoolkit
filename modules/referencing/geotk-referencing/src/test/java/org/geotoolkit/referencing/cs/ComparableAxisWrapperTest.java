@@ -25,7 +25,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 import org.junit.*;
 import org.geotoolkit.test.Depend;
-import org.geotoolkit.referencing.ReferencingTestCase;
+import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import static org.junit.Assert.*;
 
@@ -39,7 +39,7 @@ import static org.junit.Assert.*;
  * @since 2.4
  */
 @Depend(CoordinateSystemAxisTest.class)
-public final class ComparableAxisWrapperTest extends ReferencingTestCase {
+public final class ComparableAxisWrapperTest extends ReferencingTestBase {
     /**
      * Tests sorting of axis.
      */

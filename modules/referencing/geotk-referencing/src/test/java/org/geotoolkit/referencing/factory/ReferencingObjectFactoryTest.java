@@ -38,7 +38,6 @@ import org.opengis.util.GenericName;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 
-import org.geotoolkit.test.Depend;
 import org.geotoolkit.referencing.datum.DatumTest;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
@@ -50,10 +49,12 @@ import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
-import org.geotoolkit.referencing.ReferencingTestCase;
+
+import org.geotoolkit.test.Depend;
+import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
-import static org.junit.Assert.*;
+import static org.geotoolkit.referencing.ReferencingAssert.*;
 
 
 /**
@@ -66,7 +67,7 @@ import static org.junit.Assert.*;
  * @since 2.0
  */
 @Depend({DatumTest.class, CartesianTest.class, CoordinateReferenceSystemTest.class, FactoryFinderTest.class})
-public final class ReferencingObjectFactoryTest extends ReferencingTestCase {
+public final class ReferencingObjectFactoryTest extends ReferencingTestBase {
     /**
      * Convenience method creating a map with only the "{@code name"} property.
      * This is the only mandatory property for object creation.

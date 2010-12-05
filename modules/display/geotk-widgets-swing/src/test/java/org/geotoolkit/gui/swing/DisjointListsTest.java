@@ -19,7 +19,7 @@ package org.geotoolkit.gui.swing;
 
 import java.util.Locale;
 
-import org.geotoolkit.test.gui.SwingBase;
+import org.geotoolkit.test.gui.SwingTestBase;
 
 
 /**
@@ -30,7 +30,7 @@ import org.geotoolkit.test.gui.SwingBase;
  *
  * @since 2.0
  */
-public final class DisjointListsTest extends SwingBase<DisjointLists> {
+public final class DisjointListsTest extends SwingTestBase<DisjointLists> {
     /**
      * Constructs the test case.
      */

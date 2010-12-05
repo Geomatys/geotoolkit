@@ -18,7 +18,7 @@
 package org.geotoolkit.gui.swing.image;
 
 import java.awt.Color;
-import org.geotoolkit.test.gui.SwingBase;
+import org.geotoolkit.test.gui.SwingTestBase;
 import static org.junit.Assert.*;
 
 
@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.13
  */
-public class PaletteComboBoxTest extends SwingBase<PaletteComboBox> {
+public class PaletteComboBoxTest extends SwingTestBase<PaletteComboBox> {
     /**
      * Constructs the test case.
      */

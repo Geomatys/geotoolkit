@@ -41,7 +41,7 @@ import org.junit.*;
  * @since 3.00
  */
 @Depend(AbstractMathTransformTest.class)
-public final class ProjectiveTransformTest extends TransformTestCase {
+public final class ProjectiveTransformTest extends TransformTestBase {
     /**
      * Creates a new test suite.
      */

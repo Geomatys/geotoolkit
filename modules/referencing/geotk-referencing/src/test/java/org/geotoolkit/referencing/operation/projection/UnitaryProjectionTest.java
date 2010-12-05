@@ -35,7 +35,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @since 3.00
  */
 @Depend(ProjectionParametersTest.class)
-public final class UnitaryProjectionTest extends ProjectionTestCase {
+public final class UnitaryProjectionTest extends ProjectionTestBase {
     /**
      * Tolerance level for comparing floating point numbers.
      */

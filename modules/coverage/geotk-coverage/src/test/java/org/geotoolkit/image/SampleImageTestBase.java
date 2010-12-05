@@ -29,20 +29,20 @@ import static org.junit.Assert.*;
 
 
 /**
- * Base class for tests applied on images.
+ * Base class for tests applied on images enumerated in the {@link SampleImage} enum.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.16
  *
  * @since 3.00
  */
-public abstract class ImageTestCase extends ImageTestBase {
+public abstract class SampleImageTestBase extends ImageTestBase {
     /**
      * Creates a new test suite for the given class.
      *
      * @param testing The class to be tested.
      */
-    protected ImageTestCase(final Class<?> testing) {
+    protected SampleImageTestBase(final Class<?> testing) {
         super(testing);
     }
 

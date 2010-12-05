@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.gui.swing.image;
 
-import org.geotoolkit.test.gui.SwingBase;
+import org.geotoolkit.test.gui.SwingTestBase;
 import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 
@@ -33,7 +33,7 @@ import static org.junit.Assume.*;
  *
  * @since 3.00
  */
-public final class ImageFileChooserTest extends SwingBase<ImageFileChooser> {
+public final class ImageFileChooserTest extends SwingTestBase<ImageFileChooser> {
     /**
      * Ensures that the Geotk plugins are registered.
      */

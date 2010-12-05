@@ -34,7 +34,7 @@ import org.geotoolkit.test.Depend;
  * @since 3.00
  */
 @Depend(MercatorTest.class)
-public class KrovakTest extends ProjectionTestCase {
+public class KrovakTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.
      */

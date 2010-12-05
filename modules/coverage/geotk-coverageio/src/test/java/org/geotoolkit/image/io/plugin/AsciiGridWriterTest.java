@@ -29,8 +29,7 @@ import javax.imageio.IIOImage;
 import org.geotoolkit.image.io.TextImageWriterTestBase;
 
 import org.junit.*;
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.assertMultilinesEquals;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -42,6 +41,13 @@ import static org.geotoolkit.test.Commons.assertMultilinesEquals;
  * @since 3.07
  */
 public final class AsciiGridWriterTest extends TextImageWriterTestBase {
+    /**
+     * Creates a new test suite.
+     */
+    public AsciiGridWriterTest() {
+        super(AsciiGridWriter.class);
+    }
+
     /**
      * Creates a writer.
      */

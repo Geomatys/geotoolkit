@@ -31,8 +31,7 @@ import org.geotoolkit.naming.DefaultNameFactory;
 import org.geotoolkit.metadata.iso.content.DefaultFeatureCatalogueDescription;
 
 import org.junit.*;
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**

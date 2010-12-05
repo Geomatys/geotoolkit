@@ -29,6 +29,8 @@ import javax.swing.JScrollPane;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowAdapter;
 
+import org.geotoolkit.test.TestBase;
+
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -40,11 +42,11 @@ import static org.junit.Assert.*;
  * tile manager} is created for those target tiles.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.16
  *
  * @since 2.5
  */
-public abstract class TestBase {
+public abstract class MosaicTestBase extends TestBase {
     /**
      * Source tile size for BlueMarble mosaic.
      */
@@ -87,6 +89,12 @@ public abstract class TestBase {
     protected TileManager manager;
 
     /**
+     * Creates a new test suite.
+     */
+    protected MosaicTestBase() {
+    }
+
+    /**
      * The tile manager factory to be given to the {@linkplain #builder}, or {@code null} for the
      * default one. Subclasses can override this method in order to test specific implementations
      * of {@link TileManager}.
@@ -104,7 +112,7 @@ public abstract class TestBase {
     }
 
     /**
-     * Initializes every fields declared in this {@link TestBase} class.
+     * Initializes every fields declared in this {@link MosaicTestBase} class.
      *
      * @throws IOException If an I/O operation was required and failed.
      */

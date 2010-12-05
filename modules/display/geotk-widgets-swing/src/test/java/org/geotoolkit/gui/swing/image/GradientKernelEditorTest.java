@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.gui.swing.image;
 
-import org.geotoolkit.test.gui.SwingBase;
+import org.geotoolkit.test.gui.SwingTestBase;
 import org.geotoolkit.test.Depend;
 
 
@@ -30,7 +30,7 @@ import org.geotoolkit.test.Depend;
  * @since 2.3
  */
 @Depend(KernelEditorTest.class)
-public final class GradientKernelEditorTest extends SwingBase<GradientKernelEditor> {
+public final class GradientKernelEditorTest extends SwingTestBase<GradientKernelEditor> {
     /**
      * Constructs the test case.
      */

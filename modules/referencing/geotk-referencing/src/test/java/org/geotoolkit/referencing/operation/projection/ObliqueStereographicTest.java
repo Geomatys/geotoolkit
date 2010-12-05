@@ -35,7 +35,7 @@ import org.geotoolkit.test.Depend;
  * @since 3.00
  */
 @Depend(MercatorTest.class)
-public class ObliqueStereographicTest extends ProjectionTestCase {
+public class ObliqueStereographicTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.
      */

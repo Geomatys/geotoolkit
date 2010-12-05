@@ -32,6 +32,7 @@ import org.geotoolkit.referencing.operation.transform.AbstractMathTransform2D;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransformTest;
 
+import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
 
 
@@ -47,7 +48,7 @@ import static org.geotoolkit.test.Commons.*;
  * @since 3.00
  */
 @Depend(ConcatenatedTransformTest.class)
-public final class FormattingTest extends ProjectionTestCase {
+public final class FormattingTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.
      */

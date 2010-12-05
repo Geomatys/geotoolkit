@@ -22,7 +22,7 @@ import javax.measure.unit.SI;
 import javax.swing.SwingConstants;
 import static java.awt.Color.*;
 
-import org.geotoolkit.test.gui.SwingBase;
+import org.geotoolkit.test.gui.SwingTestBase;
 import org.geotoolkit.display.axis.NumberGraduation;
 
 
@@ -34,7 +34,7 @@ import org.geotoolkit.display.axis.NumberGraduation;
  *
  * @since 2.0
  */
-public final class ColorRampTest extends SwingBase<ColorRamp> {
+public final class ColorRampTest extends SwingTestBase<ColorRamp> {
     /**
      * Constructs the test case.
      */

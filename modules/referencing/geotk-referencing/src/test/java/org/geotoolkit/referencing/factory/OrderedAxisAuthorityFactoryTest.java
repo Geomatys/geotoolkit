@@ -44,13 +44,15 @@ import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.factory.epsg.LongitudeFirstEpsgFactory;
 import org.geotoolkit.referencing.factory.epsg.PropertyEpsgFactory;
-import org.geotoolkit.referencing.ReferencingTestCase;
 import org.geotoolkit.util.converter.Classes;
+
 import org.geotoolkit.test.Depend;
+import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
+import static org.geotoolkit.referencing.ReferencingCommons.*;
 
 
 /**
@@ -64,13 +66,13 @@ import static org.junit.Assume.assumeTrue;
  * @since 3.00
  */
 @Depend(FactoryFinderTest.class)
-public final class OrderedAxisAuthorityFactoryTest extends ReferencingTestCase {
+public final class OrderedAxisAuthorityFactoryTest extends ReferencingTestBase {
     /**
      * {@code true} if metadata (especially identifiers) should be erased, or {@code false} if
      * they should be kept. The {@code true} value matches the pre GEOT-854 state, while the
      * {@code false} value matches the post GEOT-854 state.
      *
-     * @see http://jira.codehaus.org/browse/GEOT-854
+     * @see <a href="http://jira.codehaus.org/browse/GEOT-854">GEOT-854</a>
      */
     private static final boolean METADATA_ERASED = false;
 

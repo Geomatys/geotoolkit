@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.1
  */
-public final class GridCoverageTest extends GridCoverageTestCase {
+public final class GridCoverageTest extends GridCoverageTestBase {
     /**
      * Tests a grid coverage filled with random values.
      */

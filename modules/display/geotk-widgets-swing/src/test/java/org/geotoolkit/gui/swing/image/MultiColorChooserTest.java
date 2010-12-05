@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.gui.swing.image;
 
-import org.geotoolkit.test.gui.SwingBase;
+import org.geotoolkit.test.gui.SwingTestBase;
 
 
 /**
@@ -28,7 +28,7 @@ import org.geotoolkit.test.gui.SwingBase;
  *
  * @since 3.01
  */
-public class MultiColorChooserTest extends SwingBase<MultiColorChooser> {
+public class MultiColorChooserTest extends SwingTestBase<MultiColorChooser> {
     /**
      * Constructs the test case.
      */

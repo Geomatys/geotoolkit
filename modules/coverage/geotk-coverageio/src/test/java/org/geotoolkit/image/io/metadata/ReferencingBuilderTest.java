@@ -29,7 +29,7 @@ import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.util.FactoryException;
 
 import org.geotoolkit.test.Depend;
-import org.geotoolkit.test.crs.WKT;
+import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.crs.DefaultProjectedCRS;
@@ -40,7 +40,7 @@ import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 
 import org.junit.*;
-import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
 
 

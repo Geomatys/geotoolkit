@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.gui.swing;
 
-import org.geotoolkit.test.gui.SwingBase;
+import org.geotoolkit.test.gui.SwingTestBase;
 import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageWriter;
@@ -34,7 +34,7 @@ import static org.junit.Assume.*;
  *
  * @since 2.0
  */
-public final class AboutTest extends SwingBase<About> {
+public final class AboutTest extends SwingTestBase<About> {
     /**
      * Ensures that the Geotk plugins are registered.
      */

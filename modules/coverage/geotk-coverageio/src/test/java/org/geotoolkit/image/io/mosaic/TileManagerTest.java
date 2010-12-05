@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  * @since 2.5
  */
 @Depend({GridTileManagerTest.class, TreeTileManagerTest.class})
-public class TileManagerTest extends TestBase {
+public class TileManagerTest extends MosaicTestBase {
     /**
      * The region of interest to be queried.
      */

@@ -36,7 +36,16 @@ import static org.junit.Assert.*;
 
 
 /**
- * The base class for {@link ImageReader} tests.
+ * The base class for {@link ImageReader} tests. This class provides the following tests.
+ * Each test load the same image twice and compare the result:
+ * <p>
+ * <ul>
+ *   <li>{@link #testRandomRegions()}</li>
+ *   <li>{@link #testRandomSubsamplings()}</li>
+ *   <li>{@link #testRandomRegionsAndSubsamplings()}</li>
+ * </ul>
+ * <p>
+ * In addition a few convenience methods are provided.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.16
@@ -44,12 +53,6 @@ import static org.junit.Assert.*;
  * @since 3.08 (derived from 3.06)
  */
 public abstract class ImageReaderTestBase extends ImageTestBase {
-    /**
-     * The precision for comparison of sample values. The values in the test files provided
-     * in this package have 3 significant digits, so the precision is set to the next digit.
-     */
-    protected static final float EPS = 0.0001f;
-
     /**
      * Creates a new test suite for the given class.
      *
@@ -63,7 +66,7 @@ public abstract class ImageReaderTestBase extends ImageTestBase {
      * Creates the image reader initialized to the input to read.
      *
      * @return The reader to test.
-     * @throws IOException If an error occurred while creating the format.
+     * @throws IOException If an error occurred while creating the reader.
      */
     protected abstract ImageReader createImageReader() throws IOException;
 

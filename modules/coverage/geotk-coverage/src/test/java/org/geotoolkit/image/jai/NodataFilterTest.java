@@ -21,7 +21,7 @@ import javax.media.jai.JAI;
 import javax.media.jai.RegistryElementDescriptor;
 import javax.media.jai.registry.RenderedRegistryMode;
 
-import org.geotoolkit.image.ImageTestCase;
+import org.geotoolkit.image.SampleImageTestBase;
 import org.geotoolkit.internal.image.jai.NodataFilterDescriptor;
 
 import org.junit.*;
@@ -36,7 +36,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public final class NodataFilterTest extends ImageTestCase {
+public final class NodataFilterTest extends SampleImageTestBase {
     /**
      * Creates a new test case.
      */

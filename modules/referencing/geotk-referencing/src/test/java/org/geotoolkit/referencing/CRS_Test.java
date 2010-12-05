@@ -33,7 +33,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.OperationNotFoundException;
 
 import org.geotoolkit.test.Depend;
-import org.geotoolkit.test.crs.WKT;
+import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.display.shape.XRectangle2D;

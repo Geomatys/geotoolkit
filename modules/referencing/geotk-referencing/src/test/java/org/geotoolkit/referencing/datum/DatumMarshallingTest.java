@@ -31,8 +31,7 @@ import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.internal.jaxb.referencing.datum.SecondDefiningParameter;
 
 import org.junit.*;
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**

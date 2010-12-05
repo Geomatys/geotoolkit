@@ -35,7 +35,7 @@ import static org.geotoolkit.referencing.operation.provider.CassiniSoldner.*;
  * @since 3.00
  */
 @Depend(MercatorTest.class)
-public class CassiniSoldnerTest extends ProjectionTestCase {
+public class CassiniSoldnerTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.
      */

@@ -22,7 +22,7 @@ import org.geotoolkit.referencing.operation.provider.Mercator1SP;
 import org.junit.*;
 
 import static java.lang.Math.*;
-import static org.geotoolkit.referencing.operation.projection.ProjectionTestCase.parameters;
+import static org.geotoolkit.referencing.operation.projection.ProjectionTestBase.parameters;
 
 
 /**

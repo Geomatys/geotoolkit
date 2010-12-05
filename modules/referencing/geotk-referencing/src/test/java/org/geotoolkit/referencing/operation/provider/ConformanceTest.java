@@ -31,24 +31,25 @@ import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.ReferencingTestCase;
+import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
+import static org.geotoolkit.referencing.ReferencingCommons.*;
 
 
 /**
  * Compares the hard-coded codes declared in the {@code provider} package with the codes found
  * in an authority factory. This is primarily used for comparing the EPSG codes against those
- * declared in the EPSG database, but this could be extented to other authorities as well.
+ * declared in the EPSG database, but this could be extended to other authorities as well.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.07
  *
  * @since 3.03
  */
-public final class ConformanceTest extends ReferencingTestCase {
+public final class ConformanceTest extends ReferencingTestBase {
     /**
      * Tests the conformance of EPSG codes.
      *

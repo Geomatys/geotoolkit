@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.gui.swing.image;
 
-import org.geotoolkit.test.gui.SwingBase;
+import org.geotoolkit.test.gui.SwingTestBase;
 
 
 /**
@@ -28,7 +28,7 @@ import org.geotoolkit.test.gui.SwingBase;
  *
  * @since 2.3
  */
-public final class KernelEditorTest extends SwingBase<KernelEditor> {
+public final class KernelEditorTest extends SwingTestBase<KernelEditor> {
     /**
      * Constructs the test case.
      */

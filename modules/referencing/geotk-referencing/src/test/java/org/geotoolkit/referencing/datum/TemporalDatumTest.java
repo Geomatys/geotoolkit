@@ -23,7 +23,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 
 import org.opengis.referencing.datum.TemporalDatum;
-import org.geotoolkit.referencing.ReferencingTestCase;
+import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.junit.*;
 
 import static org.junit.Assert.*;
@@ -38,7 +38,7 @@ import static org.geotoolkit.referencing.datum.DefaultTemporalDatum.*;
  *
  * @since 2.2
  */
-public class TemporalDatumTest extends ReferencingTestCase {
+public final class TemporalDatumTest extends ReferencingTestBase {
     /**
      * The object to use for formatting dates.
      */
@@ -56,7 +56,7 @@ public class TemporalDatumTest extends ReferencingTestCase {
     /**
      * Verifies the epoch values compared to the julian epoch.
      *
-     * @see http://en.wikipedia.org/wiki/Julian_day
+     * @see <a href="http://en.wikipedia.org/wiki/Julian_day">Julian day on Wikipedia</a>
      */
     @Test
     public void testOrigins() {

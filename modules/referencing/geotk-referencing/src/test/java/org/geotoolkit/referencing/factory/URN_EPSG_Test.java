@@ -23,12 +23,14 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.util.Version;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.ReferencingTestCase;
 import org.geotoolkit.referencing.factory.web.URN_AuthorityFactory;
+
+import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
 import static org.junit.Assume.assumeTrue;
+import static org.geotoolkit.referencing.ReferencingCommons.*;
 
 
 /**
@@ -40,7 +42,7 @@ import static org.junit.Assume.assumeTrue;
  *
  * @since 2.4
  */
-public class URN_EPSG_Test extends ReferencingTestCase {
+public final class URN_EPSG_Test extends ReferencingTestBase {
     /**
      * A custom class for testing versioning.
      */

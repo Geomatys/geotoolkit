@@ -41,7 +41,7 @@ import org.junit.*;
  *
  * @since 2.1
  */
-public final class FloatRasterTest extends GridCoverageTestCase {
+public final class FloatRasterTest extends GridCoverageTestBase {
     /**
      * Tests the creation of a floating point {@link WritableRaster}.
      */
@@ -70,9 +70,7 @@ public final class FloatRasterTest extends GridCoverageTestCase {
         Envelope envelope = new Envelope2D(crs, 0, 0, 30, 30);
         GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
         GridCoverage gc = factory.create("My grayscale coverage", raster, envelope);
-        if (show) {
-            ((GridCoverage2D) gc).show(); // Convenience method specific to Geotk.
-        }
+        show(gc);
         /*
          * The above example created a grayscale image. The example below creates a new grid
          * coverage for the same data, but using a specified color map. Note that the factory
@@ -83,9 +81,7 @@ public final class FloatRasterTest extends GridCoverageTestCase {
         Color[] colors = new Color[] {Color.BLUE, Color.CYAN, Color.WHITE, Color.YELLOW, Color.RED};
         gc = factory.create("My colored coverage", raster, envelope,
                             null, null, null, new Color[][] {colors}, null);
-        if (show) {
-            ((GridCoverage2D) gc).view(ViewType.RENDERED).show();
-        }
+        show(gc);
     }
 
     /**
@@ -105,8 +101,6 @@ public final class FloatRasterTest extends GridCoverageTestCase {
         Envelope envelope = new Envelope2D(crs, 0, 0, 30, 30);
         GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
         GridCoverage gc = factory.create("My grayscale matrix", matrix, envelope);
-        if (show) {
-            ((GridCoverage2D) gc).show(); // Convenience method specific to Geotk.
-        }
+        show(gc);
     }
 }

@@ -24,7 +24,7 @@ import javax.measure.unit.SI;
 
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
-import org.geotoolkit.test.gui.SwingBase;
+import org.geotoolkit.test.gui.SwingTestBase;
 
 import static org.junit.Assert.*;
 
@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.13
  */
-public final class SampleDimensionPanelTest extends SwingBase<SampleDimensionPanel> {
+public final class SampleDimensionPanelTest extends SwingTestBase<SampleDimensionPanel> {
     /**
      * Constructs the test case.
      */

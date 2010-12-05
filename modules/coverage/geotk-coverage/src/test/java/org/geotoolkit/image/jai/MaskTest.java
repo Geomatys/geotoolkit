@@ -25,7 +25,7 @@ import javax.media.jai.registry.RenderedRegistryMode;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.image.SampleImage;
-import org.geotoolkit.image.ImageTestCase;
+import org.geotoolkit.image.SampleImageTestBase;
 import org.geotoolkit.internal.image.jai.MaskDescriptor;
 
 import org.junit.*;
@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
  * @since 3.00
  */
 @Depend(SilhouetteMaskTest.class)
-public final class MaskTest extends ImageTestCase {
+public final class MaskTest extends SampleImageTestBase {
     /**
      * Creates a new test case.
      */

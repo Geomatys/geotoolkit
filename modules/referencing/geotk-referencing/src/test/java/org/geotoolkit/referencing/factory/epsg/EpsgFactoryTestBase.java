@@ -25,8 +25,9 @@ import org.opengis.referencing.IdentifiedObject;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
-import org.geotoolkit.referencing.ReferencingTestCase;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
+
+import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
 
@@ -39,7 +40,7 @@ import org.junit.*;
  *
  * @since 3.00
  */
-public abstract class EpsgFactoryTestCase extends ReferencingTestCase {
+public abstract class EpsgFactoryTestBase extends ReferencingTestBase {
     /**
      * {@code true} for a given type if we have been able to fetch its factory, {@code false}
      * if we failed, or {@code null} if we didn't tried yet. This is used in order to avoid
@@ -64,7 +65,7 @@ public abstract class EpsgFactoryTestCase extends ReferencingTestCase {
      *
      * @param type The class of the factory being tested.
      */
-    protected EpsgFactoryTestCase(final Class<? extends AbstractAuthorityFactory> type) {
+    protected EpsgFactoryTestBase(final Class<? extends AbstractAuthorityFactory> type) {
         this.type = type;
     }
 

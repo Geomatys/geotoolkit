@@ -38,7 +38,7 @@ import static org.geotoolkit.referencing.cs.DefaultCartesianCS.*;
 import static org.geotoolkit.referencing.cs.DefaultEllipsoidalCS.*;
 
 import org.junit.*;
-import org.geotoolkit.referencing.ReferencingTestCase;
+import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 
 /**
@@ -50,7 +50,7 @@ import org.geotoolkit.referencing.ReferencingTestCase;
  * @since 2.2
  */
 @Depend({IdentifiedObjectTest.class, CoordinateSystemAxisTest.class, ComparableAxisWrapperTest.class})
-public final class CoordinateSystemTest extends ReferencingTestCase {
+public final class CoordinateSystemTest extends ReferencingTestBase {
     /**
      * Validates constants.
      */

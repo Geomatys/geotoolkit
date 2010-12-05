@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.gui.swing.image;
 
-import org.geotoolkit.test.gui.SwingBase;
+import org.geotoolkit.test.gui.SwingTestBase;
 
 
 /**
@@ -28,7 +28,7 @@ import org.geotoolkit.test.gui.SwingBase;
  *
  * @since 3.05
  */
-public class IIOMetadataPanelTest extends SwingBase<IIOMetadataPanel> {
+public class IIOMetadataPanelTest extends SwingTestBase<IIOMetadataPanel> {
     /**
      * Constructs the test case.
      */

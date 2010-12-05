@@ -35,7 +35,7 @@ import org.junit.*;
  * @since 3.08
  */
 @Depend(ProjectiveTransformTest.class)
-public final class CopyTransformTest extends TransformTestCase {
+public final class CopyTransformTest extends TransformTestBase {
     /**
      * Creates a new test suite.
      */

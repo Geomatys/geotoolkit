@@ -31,7 +31,7 @@ import org.geotoolkit.coverage.grid.Viewer;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.coverage.grid.GridCoverageTestCase;
+import org.geotoolkit.coverage.grid.GridCoverageTestBase;
 import org.geotoolkit.referencing.crs.DefaultDerivedCRS;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 
@@ -47,7 +47,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.1
  */
-public abstract class GridProcessingTestCase extends GridCoverageTestCase {
+public abstract class GridProcessingTestBase extends GridCoverageTestBase {
     /**
      * Rotates the {@linkplain #coverage current coverage} by the given angle. This
      * method replaces the coverage CRS by a derived one containing the rotated axes.
@@ -106,7 +106,7 @@ public abstract class GridProcessingTestCase extends GridCoverageTestCase {
 
     /**
      * Resamples the {@linkplain #coverage current coverage} to the specified CRS using the specified
-     * hints. The result will be displayed in a window if {@link #show} is set to {@code true}.
+     * hints. The result will be displayed in a window if {@link #viewEnabled} is set to {@code true}.
      *
      * @param targetCRS The target CRS, or {@code null} if the same.
      * @param geometry  The target geometry, or {@code null} if the same.
@@ -127,7 +127,7 @@ public abstract class GridProcessingTestCase extends GridCoverageTestCase {
             AbstractCoverageProcessor.LOGGER.log(Level.FINE, "Applied \"{0}\" JAI operation.", operation);
         }
         coverage = coverage.view(ViewType.PACKED);
-        if (show) {
+        if (viewEnabled) {
             /*
              * Note: In current Resample implementation, simple affine transforms like
              *       translations will not be visible with the simple viewer used here.
@@ -144,7 +144,7 @@ public abstract class GridProcessingTestCase extends GridCoverageTestCase {
     /**
      * Performs an affine transformation on the {@linkplain #coverage current coverage}.
      * The transformation is a translation by 5 units along x and y axes. The result will
-     * be displayed in a window if {@link #show} is set to {@code true}.
+     * be displayed in a window if {@link #viewEnabled} is set to {@code true}.
      *
      * @param hints
      *          An optional set of hints, or {@code null} if none.

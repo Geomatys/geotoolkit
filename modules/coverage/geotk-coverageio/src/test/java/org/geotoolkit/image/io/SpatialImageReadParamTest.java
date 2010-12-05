@@ -28,7 +28,7 @@ import org.junit.*;
 
 import org.geotoolkit.image.io.DimensionSlice.API;
 
-import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.*;
 import static org.geotoolkit.image.io.DimensionSlice.API.*;
 

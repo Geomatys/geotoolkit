@@ -36,7 +36,7 @@ import static org.geotoolkit.test.Commons.serialize;
  *
  * @since 3.00
  */
-public final class GridTransformTest extends TransformTestCase {
+public final class GridTransformTest extends TransformTestBase {
     /**
      * Creates the test suite.
      */

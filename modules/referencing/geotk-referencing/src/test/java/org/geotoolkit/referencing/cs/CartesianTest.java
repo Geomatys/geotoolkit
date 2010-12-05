@@ -25,7 +25,7 @@ import org.geotoolkit.referencing.CRS;
 
 import org.junit.*;
 import org.opengis.test.Validators;
-import org.geotoolkit.referencing.ReferencingTestCase;
+import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import static org.junit.Assert.*;
 
@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.2
  */
-public final class CartesianTest extends ReferencingTestCase {
+public final class CartesianTest extends ReferencingTestBase {
     /**
      * Tests the creation of a cartesian CS with legal and illegal axis.
      */

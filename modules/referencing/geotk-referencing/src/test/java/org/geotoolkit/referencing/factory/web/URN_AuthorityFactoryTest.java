@@ -24,7 +24,6 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.test.Depend;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
@@ -32,12 +31,15 @@ import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.AllAuthoritiesFactoryTest;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.ReferencingTestCase;
 
 import org.junit.*;
+import org.geotoolkit.test.Depend;
+import org.geotoolkit.test.referencing.ReferencingTestBase;
+
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
 import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
+import static org.geotoolkit.referencing.ReferencingCommons.*;
 
 
 /**
@@ -49,7 +51,7 @@ import static org.geotoolkit.factory.AuthorityFactoryFinder.*;
  * @since 2.4
  */
 @Depend({AllAuthoritiesFactoryTest.class, HTTP_AuthorityFactoryTest.class})
-public final class URN_AuthorityFactoryTest extends ReferencingTestCase {
+public final class URN_AuthorityFactoryTest extends ReferencingTestBase {
     /**
      * Makes sure that a singleton instance is registered.
      */

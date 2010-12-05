@@ -37,7 +37,7 @@ import static org.geotoolkit.referencing.operation.provider.Polyconic.*;
  * @since 3.11
  */
 @Depend({ProjectionParametersTest.class, UnitaryProjectionTest.class})
-public final class PolyconicTest extends ProjectionTestCase {
+public final class PolyconicTest extends ProjectionTestBase {
     /**
      * Creates a default test suite.
      */

@@ -31,12 +31,13 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.ReferencingTestCase;
 import org.geotoolkit.referencing.operation.projection.TransverseMercator;
 import org.geotoolkit.referencing.operation.projection.Orthographic;
+import org.geotoolkit.test.referencing.ReferencingTestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import static org.geotoolkit.referencing.ReferencingCommons.*;
 
 
 /**
@@ -49,7 +50,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.2
  */
-public final class AutoCRSFactoryTest extends ReferencingTestCase {
+public final class AutoCRSFactoryTest extends ReferencingTestBase {
     /**
      * The factory to test.
      */

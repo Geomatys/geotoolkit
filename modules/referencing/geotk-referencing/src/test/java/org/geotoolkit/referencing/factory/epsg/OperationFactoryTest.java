@@ -34,10 +34,9 @@ import org.geotoolkit.referencing.operation.CachingCoordinateOperationFactory;
 import org.geotoolkit.util.converter.Classes;
 
 import org.junit.*;
-import static org.junit.Assert.*;
-import static org.junit.Assume.assumeNotNull;
+import static org.junit.Assume.*;
+import static org.geotoolkit.test.Assert.*;
 import static org.geotoolkit.test.Commons.decodeQuotes;
-import static org.geotoolkit.test.Commons.assertMultilinesEquals;
 
 
 /**
@@ -48,7 +47,7 @@ import static org.geotoolkit.test.Commons.assertMultilinesEquals;
  *
  * @since 2.4
  */
-public class OperationFactoryTest extends EpsgFactoryTestCase {
+public final class OperationFactoryTest extends EpsgFactoryTestBase {
     /**
      * The operation factory being tested.
      */
