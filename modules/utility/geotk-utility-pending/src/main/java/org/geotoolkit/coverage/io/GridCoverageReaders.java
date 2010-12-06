@@ -35,6 +35,7 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
 
 import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -49,6 +50,10 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
+import org.geotoolkit.metadata.iso.extent.DefaultExtent;
+import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.util.logging.Logging;
 
@@ -62,6 +67,7 @@ import org.opengis.metadata.quality.DataQuality;
 import org.opengis.metadata.spatial.Georectified;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Utility class to aquiere a coverage reader from a file.
@@ -87,7 +93,8 @@ public class GridCoverageReaders {
      * @param metadata : metadata to fill, if null it will create one.
      * @return Metadata, never null
      */
-    public static DefaultMetadata fillMetadata(GridCoverageReader reader, DefaultMetadata metadata) throws CoverageStoreException{
+    public static DefaultMetadata fillMetadata(GridCoverageReader reader, DefaultMetadata metadata) 
+            throws CoverageStoreException, TransformException{
         if(metadata == null){
             metadata = new DefaultMetadata();
         }
@@ -100,14 +107,22 @@ public class GridCoverageReaders {
         final DataQuality dataQuality           = streamMetadata.getInstanceForType(DataQuality.class);
         final ImageDescription imgDesc          = coverageMetadata.getInstanceForType(ImageDescription.class);
         final Georectified georect              = coverageMetadata.getInstanceForType(Georectified.class);
-        //TODO where add this in metadata ?
+        //There is no place in metadata where we can add this
         //final RectifiedGrid rectGrid            = coverageMetadata.getInstanceForType(RectifiedGrid.class);
 
-        metadata.setIdentificationInfo(Collections.singleton(dataIdent));
-        metadata.setAcquisitionInformation(Collections.singleton(acqInfo));
-        metadata.setDataQualityInfo(Collections.singleton(dataQuality));
-        metadata.setContentInfo(Collections.singleton(imgDesc));
-        metadata.setSpatialRepresentationInfo(Collections.singleton(georect));
+        //Set the envelope
+        final Envelope env = reader.getGridGeometry(0).getEnvelope();
+        final DefaultDataIdentification id = new DefaultDataIdentification(dataIdent);
+        final DefaultExtent extent = new DefaultExtent();
+        extent.getGeographicElements().add(new DefaultGeographicBoundingBox(env));
+        id.getExtents().clear();
+        id.getExtents().add(extent);
+
+        metadata.getIdentificationInfo().add(id);
+        metadata.getAcquisitionInformation().add(acqInfo);
+        metadata.getDataQualityInfo().add(dataQuality);
+        metadata.getContentInfo().add(imgDesc);
+        metadata.getSpatialRepresentationInfo().add(georect);
 
         return metadata;
     }

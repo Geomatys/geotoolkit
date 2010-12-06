@@ -16,11 +16,9 @@
  */
 package org.geotoolkit.metadata.dimap;
 
+import java.util.Collection;
 import java.net.URISyntaxException;
 import java.text.ParseException;
-import java.util.Collections;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.metadata.iso.citation.DefaultCitationDate;
 import org.opengis.metadata.citation.DateType;
 import org.opengis.metadata.citation.CitationDate;
@@ -53,24 +51,15 @@ import org.geotoolkit.metadata.iso.acquisition.DefaultAcquisitionInformation;
 import org.geotoolkit.metadata.iso.citation.DefaultContact;
 import org.geotoolkit.metadata.iso.citation.DefaultOnlineResource;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
-import org.geotoolkit.metadata.iso.quality.AbstractResult;
-import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
-import org.geotoolkit.metadata.iso.quality.DefaultDataQuality;
-import org.geotoolkit.metadata.iso.quality.DefaultScope;
-import org.geotoolkit.metadata.iso.quality.DefaultUsability;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.NumberRange;
 
 import org.opengis.coverage.SampleDimensionType;
-import org.opengis.metadata.Metadata;
-import org.opengis.metadata.citation.Contact;
-import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.metadata.citation.Role;
-import org.opengis.metadata.maintenance.ScopeCode;
-import org.opengis.metadata.quality.DataQuality;
-import org.opengis.metadata.quality.Result;
+import org.opengis.metadata.identification.DataIdentification;
+import org.opengis.metadata.identification.Identification;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -350,10 +339,20 @@ public final class DimapAccessor {
         // contain base informations : data name
         final Element datasetID = firstElement(doc, TAG_DATASET_ID);
         if(datasetID != null){
+            final DefaultDataIdentification identificationInfo;
+
+            final Collection<Identification> ids = metadata.getIdentificationInfo();
+            if(!ids.isEmpty()){
+                final Identification lastId = ids.iterator().next();
+                identificationInfo = new DefaultDataIdentification((DataIdentification) lastId);
+                ids.clear();
+            }else{
+                identificationInfo = new DefaultDataIdentification();
+            }
+            
             final String name = textValueSafe(datasetID, TAG_DATASET_NAME, String.class);
             final String copyright = textValueSafe(datasetID, TAG_DATASET_COPYRIGHT, String.class);
 
-            final DefaultDataIdentification identificationInfo = new DefaultDataIdentification();
             final DefaultCitation citation = new DefaultCitation();
             citation.setTitle(new SimpleInternationalString(name));
             Identifier id = new DefaultIdentifier(name);
@@ -384,8 +383,11 @@ public final class DimapAccessor {
             if(producerURL != null){
                 try {
                     final DefaultContact contact = new DefaultContact();
-                    contact.setOnlineResource(new DefaultOnlineResource(new URI(producerURL)));
-                    party.setContactInfo(contact);
+                    final URI uri = new URI(producerURL);
+                    if(uri.isAbsolute()){
+                        contact.setOnlineResource(new DefaultOnlineResource(uri));
+                        party.setContactInfo(contact);
+                    }
                 } catch (URISyntaxException ex) {
                     //dont log, best effort
                 }
