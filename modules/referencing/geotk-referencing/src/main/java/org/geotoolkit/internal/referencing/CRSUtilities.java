@@ -255,11 +255,16 @@ public final class CRSUtilities {
         if (crs != null) {
             while (crs.getCoordinateSystem().getDimension() != 2) {
                 final List<? extends CoordinateReferenceSystem> c = getComponents(crs);
-                if (c == null) {
-                    throw new TransformException(Errors.format(
-                            Errors.Keys.CANT_REDUCE_TO_TWO_DIMENSIONS_$1, crs.getName()));
+                if (c != null) {
+                    crs = c.get(0);
+                    // Continue the loop, examining only the first component.
+                } else {
+                    crs = CRS.getHorizontalCRS(crs);
+                    if (crs == null) {
+                        throw new TransformException(Errors.format(
+                                Errors.Keys.CANT_REDUCE_TO_TWO_DIMENSIONS_$1, crs.getName()));
+                    }
                 }
-                crs = c.get(0);
             }
         }
         return crs;

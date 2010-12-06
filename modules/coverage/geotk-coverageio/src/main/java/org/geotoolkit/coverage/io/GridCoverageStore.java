@@ -130,7 +130,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
     /**
      * The hints to use for fetching factories. This is initialized to the system defaults.
      */
-    private final Hints hints;
+    final Hints hints;
 
     /**
      * The logging level to use for read and write operations. If {@code null}, then the
@@ -161,18 +161,6 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      * @since 3.14
      */
     boolean ignoreGridTransforms;
-
-    /**
-     * The grid geometry of the coverage requested by the user.
-     * For {@link GridCoverageReader}, it may be different than the geometry of the grid actually read.
-     * For {@link GridCoverageWriter}, the writer is responsible for honoring the user request.
-     * <p>
-     * This field is computed by the {@link #geodeticToPixelCoordinates geodeticToPixelCoordinates}
-     * method only if {@link #ignoreGridTransforms} is {@code false}.
-     *
-     * @since 3.14
-     */
-    transient GridGeometry2D destGridGeometry;
 
     /**
      * The transform from the grid to be written to the source grid. This is the transform to be
@@ -746,18 +734,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
          * coefficient values. This happen for example with Mercator projection close to poles.
          */
         MathTransform destToExtractedGrid = ProjectiveTransform.create(m);
-        destGridGeometry = new GridGeometry2D(PixelInCell.CELL_CORNER, destToExtractedGrid, requestEnvelope, hints);
-        final GridEnvelope destRange = destGridGeometry.getGridRange();
-        for (int i=destRange.getDimension(); --i>=0;) {
-            if (destRange.getSpan(i) <= 0) {
-                String message = formatErrorMessage(Errors.Keys.VALUE_TEND_TOWARD_INFINITY);
-                if (requestCRS != null) {
-                    message = requestCRS.getCoordinateSystem().getAxis(i).getName().getCode()
-                            + ": " + message;
-                }
-                throw new CoverageStoreException(message);
-            }
-        }
+        computeDestGridGeometry(destToExtractedGrid, requestEnvelope, requestCRS);
         /*
          * Concatenate the transforms. We get the transform from what the grid that the user
          * requested to the grid actually used in the source image, assuming the source grid
@@ -776,6 +753,18 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
                             (double) -ymin / (double) ySubsampling));
         }
         return (MathTransform2D) destToExtractedGrid;
+    }
+
+    /**
+     * A callback invoked by {@link #geodeticToPixelCoordinates geodeticToPixelCoordinates},
+     * for {@link ImageCoverageWriter} usage only. The value computed by this method is not
+     * of interest to {@link ImageCoverageReader}, because the reader is allowed to return
+     * a coverage different than the requested one. However writers are requeried to write
+     * the coverage as requested, and consequently need more informations.
+     */
+    void computeDestGridGeometry(MathTransform gridToCRS, Envelope envelope, CoordinateReferenceSystem requestCRS)
+            throws CoverageStoreException
+    {
     }
 
     /**
@@ -891,7 +880,6 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      */
     public void reset() throws CoverageStoreException {
         locale           = null;
-        destGridGeometry = null;
         destGridToSource = null;
         abortRequested   = false;
     }
@@ -910,7 +898,6 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      */
     public void dispose() throws CoverageStoreException {
         locale           = null;
-        destGridGeometry = null;
         destGridToSource = null;
         abortRequested   = false;
     }
