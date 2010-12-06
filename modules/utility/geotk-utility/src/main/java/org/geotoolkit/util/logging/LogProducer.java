@@ -26,10 +26,10 @@ import java.util.logging.Level;
  * logs for monitoring an application.
  * <p>
  * <b>Example:</b> The {@link org.geotoolkit.image.io.mosaic.MosaicImageReader} class can log the
- * set of tiles used for a particular read operations. This information is normally logged at the
- * {@link Level#FINE} (which means that it is typically disabled) because it is costly to create
- * and not of interest when the application works normally. If those logs are needed, the usual
- * approach is to use the {@link java.util.logging} API or edit the {@code logging.properties}
+ * collection of tiles used for a particular read operations. By default, this information is logged
+ * at one of the {@link PerformanceLevel}s, which are usually disabled (in order to avoid the cost
+ * of creating those log messages in production environment). If those logs are needed, the usual
+ * approach is to use the {@link java.util.logging} API or edit the {@code $JAVA_HOME/lib/logging.properties}
  * file. This interface provides an alternative, allowing to raise the level to {@link Level#INFO},
  * which is quite convenient on occasions.
  *
@@ -41,15 +41,18 @@ import java.util.logging.Level;
  */
 public interface LogProducer {
     /**
-     * Returns the current logging level.
+     * Returns the current logging level. If the actual logging level can be any of the
+     * {@link PerformanceLevel} constants depending on the duration of the task being
+     * logged, then this method returns {@link PerformanceLevel#PERFORMANCE}.
      *
      * @return The current logging level.
      */
     Level getLogLevel();
 
     /**
-     * Sets the logging level to the given value.
-     * A {@code null} value restores the default level.
+     * Sets the logging level to the given value. A {@code null} value restore the default level.
+     * The default level is implementation-dependent, but many implementations will chose one of
+     * the {@link PerformanceLevel} constants depending on the duration of the task being logged.
      *
      * @param level The new logging level, or {@code null} for the default.
      */

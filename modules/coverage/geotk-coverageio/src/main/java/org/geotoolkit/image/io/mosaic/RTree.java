@@ -26,15 +26,15 @@ import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.IOException;
 
 import org.geotoolkit.gui.swing.tree.Trees;
-import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.Cloneable;
+
+import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
 
 
 /**
@@ -53,11 +53,6 @@ import org.geotoolkit.util.Cloneable;
  * @module
  */
 final class RTree implements Cloneable {
-    /**
-     * The logger for debugging information.
-     */
-    private static final Logger LOGGER = Logging.getLogger(RTree.class);
-
     /**
      * The logging level for printing a tree of the nodes obtained by {@link #searchTiles}. We
      * use {@link Level#FINER} because it is slightly lower than the {@link MosaicImageReader}

@@ -30,6 +30,8 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
+import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
+
 
 /**
  * Creates a collection of {@link Tile tiles} from their <cite>grid to CRS</cite> affine transform.
@@ -218,7 +220,7 @@ final class RegionCalculator {
                         bounds = tile.getRegion();
                     } catch (IOException exception) {
                         bounds = null;
-                        Logging.unexpectedException(RegionCalculator.class, "tiles", exception);
+                        Logging.unexpectedException(LOGGER, RegionCalculator.class, "tiles", exception);
                     }
                     if (bounds != null) {
                         XAffineTransform.transform(tr, bounds, envelope);

@@ -84,7 +84,7 @@ import org.geotoolkit.resources.Errors;
  * responsibility to close them.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @since 3.14
  * @module
@@ -273,9 +273,9 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                         IOUtilities.close(oldOutput);
                     }
                 }
-                setLogLevel(newWriter, level);
+                setLogLevel(newWriter, logLevel);
                 setLocale(newWriter, locale);
-                if (LOGGER.isLoggable(level)) {
+                if (LOGGER.isLoggable(getFineLevel())) {
                     ImageCoverageStore.logCodecCreation(this, ImageCoverageWriter.class,
                             newWriter, newWriter.getOriginatingProvider());
                 }
@@ -408,7 +408,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
     public void write(final GridCoverage coverage, final GridCoverageWriteParam param)
             throws CoverageStoreException, CancellationException
     {
-        final boolean loggingEnabled = LOGGER.isLoggable(level);
+        final boolean loggingEnabled = isLoggable();
         long fullTime = (loggingEnabled) ? System.nanoTime() : 0;
         /*
          * Prepares an initially empty ImageWriteParam, to be filled later with the values

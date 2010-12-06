@@ -42,6 +42,8 @@ import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
+import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
+
 
 /**
  * Creates {@link TileManager} instances from a collection or a directory of tiles.
@@ -387,13 +389,13 @@ public class TileManagerFactory extends Factory {
         try {
             manager = new GridTileManager(tiles);
         } catch (IllegalArgumentException e) {
-            Logging.recoverableException(GridTileManager.class, "<init>", e);
+            Logging.recoverableException(LOGGER, GridTileManager.class, "<init>", e);
             try {
                 manager = new GDALTileManager(tiles);
             } catch (IllegalArgumentException e2) {
                 // Failed to created the instance optimized for grid.
                 // Fallback on the more generic instance using RTree.
-                Logging.recoverableException(GDALTileManager.class, "<init>", e2);
+                Logging.recoverableException(LOGGER, GDALTileManager.class, "<init>", e2);
                 return new TreeTileManager(tiles);
             }
         }

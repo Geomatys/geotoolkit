@@ -27,6 +27,7 @@ import java.net.URISyntaxException;
 import java.io.*; // We use a lot of those imports.
 import java.util.Iterator;
 import java.util.Collection;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.IIORegistry;
@@ -138,6 +139,14 @@ public class Tile implements Comparable<Tile>, Serializable {
      * For cross-version compatibility during serialization.
      */
     private static final long serialVersionUID = -5417183834232374962L;
+
+    /**
+     * The logger to use for all logging messages in the
+     * {@code org.geotoolkit.image.io.mosaic} package.
+     *
+     * @since 3.16
+     */
+    static final Logger LOGGER = Logging.getLogger(Tile.class);
 
     /*
      * IMPLEMENTATION NOTE: Try to keep Tile as compact as possible memory-wise (i.e. put as few
@@ -662,7 +671,7 @@ public class Tile implements Comparable<Tile>, Serializable {
                     } catch (IndexOutOfBoundsException e) {
                         // We tried to reuse the same stream in order to preserve cached data, but it was
                         // not possible to seek to the beginning. Closes it; we will open a new one later.
-                        Logging.recoverableException(Tile.class, "getImageReader", e);
+                        Logging.recoverableException(LOGGER, Tile.class, "getImageReader", e);
                         stream.close();
                         stream = null;
                     } else {
@@ -1308,7 +1317,7 @@ public class Tile implements Comparable<Tile>, Serializable {
         } catch (URISyntaxException exception) {
             // Ignores - we will keep it as a URL. Logs with "compare" as source method
             // name, since it is the public API that invoked this private method.
-            Logging.recoverableException(Tile.class, "compare", exception);
+            Logging.recoverableException(LOGGER, Tile.class, "compare", exception);
         } else if (input instanceof CharSequence) {
             input = input.toString();
         }

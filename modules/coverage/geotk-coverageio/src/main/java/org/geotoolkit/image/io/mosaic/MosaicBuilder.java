@@ -41,6 +41,7 @@ import org.geotoolkit.math.XMath;
 import org.geotoolkit.math.Fraction;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.LogProducer;
+import org.geotoolkit.util.logging.PerformanceLevel;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
@@ -165,9 +166,10 @@ public class MosaicBuilder implements LogProducer {
     private final FilenameFormatter formatter;
 
     /**
-     * The logging level for tiling information during reads and writes.
+     * The logging level for tiling information during reads and write operations. If {@code null},
+     * then the level shall be selected by {@link PerformanceLevel#forDuration(long, TimeUnit)}.
      */
-    private Level logLevel = Level.FINE;
+    private Level logLevel;
 
     /**
      * Creates a new instance which will use the
@@ -192,26 +194,25 @@ public class MosaicBuilder implements LogProducer {
 
     /**
      * Returns the logging level for information about tiles being read and written.
-     * The default logging level is {@link Level#FINE FINE}.
+     * The default value is one of the {@link PerformanceLevel} constants, determined
+     * according the duration of the operation.
      *
      * @return The current logging level.
      */
     @Override
     public synchronized Level getLogLevel() {
-        return logLevel;
+        final Level level = logLevel;
+        return (level != null) ? level : PerformanceLevel.PERFORMANCE;
     }
 
     /**
-     * Sets the logging level for information about tiles being read and written.
-     * The default value is {@link Level#FINE FINE}. A {@code null} value restores the default.
+     * Sets the logging level for information about tiles being read and written. A {@code null}
+     * value restores the default level documented in the {@link #getLogLevel()} method.
      *
      * @param level The new logging level.
      */
     @Override
-    public synchronized void setLogLevel(Level level) {
-        if (level == null) {
-            level = Level.FINE;
-        }
+    public synchronized void setLogLevel(final Level level) {
         logLevel = level;
     }
 
@@ -1181,7 +1182,7 @@ public class MosaicBuilder implements LogProducer {
             policy = TileWritingPolicy.DEFAULT;
         }
         final Writer writer = new Writer(inputIndex, policy);
-        writer.setLogLevel(getLogLevel());
+        writer.setLogLevel(logLevel); // Don't use getLogLevel() because we want the null value for the default.
         try {
             if (!writer.writeFromInput(input, inputIndex, param, onlyOneImage)) {
                 return null;

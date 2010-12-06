@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.util.*; // Lot of imports used in this class.
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
-import java.util.logging.Logger;
+import java.util.concurrent.TimeUnit;
 import javax.imageio.IIOParamController;
 import javax.imageio.ImageReadParam;
 import javax.imageio.ImageReader;
@@ -46,6 +46,7 @@ import org.geotoolkit.util.Version;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.logging.LogProducer;
+import org.geotoolkit.util.logging.PerformanceLevel;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.internal.io.IOUtilities;
@@ -58,6 +59,8 @@ import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 
+import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
+
 
 /**
  * An image reader built from a mosaic of other image readers. The mosaic is specified as a
@@ -67,7 +70,7 @@ import org.geotoolkit.resources.Loggings;
  * is to read efficiently only subsets of big tiled images.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @since 2.5
  * @module
@@ -121,10 +124,10 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
     private transient ImageTypeSpecifier cachedImageType;
 
     /**
-     * The logging level for tiling information during reads. Note that we choose a default
-     * level slightly higher than the intermediate results logged by {@link RTree}.
+     * The logging level for tiling information during read operations. If {@code null}, then
+     * the level shall be selected by {@link PerformanceLevel#forDuration(long, TimeUnit)}.
      */
-    private Level level = Level.FINE;
+    private Level logLevel;
 
     /**
      * Constructs an image reader with the default provider.
@@ -146,27 +149,38 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
     }
 
     /**
-     * Returns the logging level for tile information during reads.
+     * Returns {@code true} if logging is enabled.
+     */
+    private boolean isLoggable() {
+        Level level = logLevel;
+        if (level == null) {
+            level = PerformanceLevel.SLOWEST;
+        }
+        return LOGGER.isLoggable(level);
+    }
+
+    /**
+     * Returns the logging level for tile information during read operations.
+     * The default value is one of the {@link PerformanceLevel} constants,
+     * determined according the duration of the read operation.
      *
      * @return The current logging level.
      */
     @Override
     public Level getLogLevel() {
-        return level;
+        final Level level = logLevel;
+        return (level != null) ? level : PerformanceLevel.PERFORMANCE;
     }
 
     /**
-     * Sets the logging level for tile information during reads. The default
-     * value is {@link Level#FINE}. A {@code null} value restores the default.
+     * Sets the logging level for tile information during read operations. A {@code null}
+     * value restores the default level documented in the {@link #getLogLevel()} method.
      *
      * @param level The new logging level, or {@code null} for the default.
      */
     @Override
-    public void setLogLevel(Level level) {
-        if (level == null) {
-            level = Level.FINE;
-        }
-        this.level = level;
+    public void setLogLevel(final Level level) {
+        logLevel = level;
     }
 
     /**
@@ -259,7 +273,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
              * is that we will dispose more readers than necessary, which means that we will need
              * to recreate them later. Note that the set of providers may be partially filled.
              */
-            Logging.unexpectedException(MosaicImageReader.class, "setInput", e);
+            Logging.unexpectedException(LOGGER, MosaicImageReader.class, "setInput", e);
         }
         final Iterator<Map.Entry<ImageReaderSpi,ImageReader>> it = readers.entrySet().iterator();
         while (it.hasNext()) {
@@ -277,7 +291,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
                     if (rawInput != tileInput) try {
                         IOUtilities.close(tileInput);
                     } catch (IOException exception) {
-                        Logging.unexpectedException(MosaicImageReader.class, "setInput", exception);
+                        Logging.unexpectedException(LOGGER, MosaicImageReader.class, "setInput", exception);
                     }
                     reader.dispose();
                 }
@@ -329,7 +343,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
                 // Invalid locale. Ignore this exception since it will not prevent the image
                 // reader to work mostly as expected (warning messages may be in a different
                 // locale, which is not a big deal).
-                Logging.recoverableException(MosaicImageReader.class, "getTileReader", e);
+                Logging.recoverableException(LOGGER, MosaicImageReader.class, "getTileReader", e);
             }
         }
         return reader;
@@ -366,7 +380,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
                 try {
                     reader = createReaderInstance(provider);
                 } catch (IOException exception) {
-                    Logging.unexpectedException(MosaicImageReader.class, "getTileReaders", exception);
+                    Logging.unexpectedException(LOGGER, MosaicImageReader.class, "getTileReaders", exception);
                     continue;
                 }
                 entry.setValue(reader);
@@ -505,7 +519,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
             } catch (IllegalArgumentException e) {
                 // Locale not supported by the reader. It may occurs
                 // if not all readers support the same set of locales.
-                Logging.recoverableException(MosaicImageReader.class, "setLocale", e);
+                Logging.recoverableException(LOGGER, MosaicImageReader.class, "setLocale", e);
             }
         }
     }
@@ -592,7 +606,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
             try {
                 type = type.getMethod(methodName, parameterTypes).getDeclaringClass();
             } catch (NoSuchMethodException e) {
-                Logging.unexpectedException(MosaicImageReader.class, "useDefaultImplementation", e);
+                Logging.unexpectedException(LOGGER, MosaicImageReader.class, "useDefaultImplementation", e);
                 return false; // Conservative value.
             }
             if (!type.equals(ImageReader.class)) {
@@ -611,7 +625,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
      * @param  sourceRegion The source region to be read, as computed by {@link #getSourceRegion}.
      * @return {@code true} if {@code MosaicImageReader} can delegates the reading process to the
      *         singleton tile contained in the given collection.
-     * @throws IOException If an I/O operation was requiered and failed.
+     * @throws IOException If an I/O operation was required and failed.
      */
     private static boolean canDelegate(final Collection<Tile> tiles, final Rectangle sourceRegion)
             throws IOException
@@ -917,8 +931,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
          * but unfortunately experience show that this error is not uncommon.
          */
         if (rawTypes != null && rawTypes.remove(null)) {
-            log(Logging.getLogger(MosaicImageReader.class), "getRawImageType",
-                    new LogRecord(Level.WARNING, "Tile.getImageReader().getRawImageType() == null"));
+            log("getRawImageType", new LogRecord(Level.WARNING, "Tile.getImageReader().getRawImageType() == null"));
         }
         return types.keySet();
     }
@@ -1225,11 +1238,10 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
          * then the table will be left to null. If non-null, the table will be completed in
          * the loop below.
          */
-        final Logger logger = Logging.getLogger(MosaicImageReader.class);
         final TableWriter table;
         final long startTime;
         int status; // 0=success, 1=cancelled, 2=failure. Used for logging purpose only.
-        if (logger.isLoggable(level)) {
+        if (isLoggable()) {
             table = new TableWriter(null, TableWriter.SINGLE_VERTICAL_LINE);
             table.writeHorizontalSeparator();
             table.write("Reader\tTile\tIndex\tSize\tSource\tDestination\tSubsampling");
@@ -1404,15 +1416,19 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
              * Logs what we have been able to do up to date.
              */
             if (table != null) {
-                final long stopTime = System.nanoTime();
+                final long duration = System.nanoTime() - startTime;
+                Level level = logLevel;
+                if (level == null) { // Do not rely on the 'level' local variable.
+                    level = PerformanceLevel.forDuration(duration, TimeUnit.NANOSECONDS);
+                }
                 table.writeHorizontalSeparator();
                 final String message = Loggings.getResources(locale).getString(Loggings.Keys.LOADING_REGION_$6,
                         new Number[] {
                             sourceRegion.x, sourceRegion.x + sourceRegion.width  - 1,
                             sourceRegion.y, sourceRegion.y + sourceRegion.height - 1,
-                            (stopTime - startTime) / 1E+6, status})
+                            duration / 1E+6, status})
                         + System.getProperty("line.separator", "\n") + table;
-                log(logger, "read", new LogRecord(level, message));
+                log("read", new LogRecord(level, message));
             }
         }
         processImageComplete();
@@ -1422,11 +1438,11 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
     /**
      * Logs the given record to the given logger.
      */
-    private static void log(final Logger logger, final String method, final LogRecord record) {
+    private static void log(final String method, final LogRecord record) {
         record.setSourceClassName(MosaicImageReader.class.getName());
         record.setSourceMethodName(method);
-        record.setLoggerName(logger.getName());
-        logger.log(record);
+        record.setLoggerName(LOGGER.getName());
+        LOGGER.log(record);
     }
 
     /**
@@ -1523,7 +1539,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
         try {
             close();
         } catch (IOException e) {
-            Logging.unexpectedException(MosaicImageReader.class, "dispose", e);
+            Logging.unexpectedException(LOGGER, MosaicImageReader.class, "dispose", e);
         }
         readerInputs.clear();
         for (final ImageReader reader : readers.values()) {

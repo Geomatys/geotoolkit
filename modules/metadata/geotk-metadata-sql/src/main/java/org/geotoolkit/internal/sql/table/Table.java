@@ -24,12 +24,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Calendar;
 import java.util.logging.Level;
-import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import java.util.logging.LogRecord;
+import java.util.concurrent.TimeUnit;
 
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
+import org.geotoolkit.util.logging.PerformanceLevel;
 import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
@@ -273,13 +275,15 @@ public abstract class Table implements Localized {
      */
     protected final void release(final LocalCache lc, final LocalCache.Stmt statement) throws SQLException {
         assert Thread.holdsLock(lc);
-        final Level level = (type != null) ? type.getLoggingLevel() : Level.FINE;
+        Database.release(lc, statement);
         final Logger logger = getLogger();
+        final long duration = System.nanoTime() - statement.startTime;
+        final Level level = PerformanceLevel.forDuration(duration, TimeUnit.NANOSECONDS);
         if (logger.isLoggable(level)) {
             final Locale locale = getLocale();
             final LogRecord record = new LogRecord(level, String.format(locale, "(%s: %.4f s) %s",
                     Vocabulary.getResources(locale).getString(Vocabulary.Keys.DURATION),
-                    (System.nanoTime() - statement.startTime) / 1E9, statement));
+                    duration / 1E9, statement));
             record.setSourceClassName(getClass().getName());
             final String method;
             switch (type) {
@@ -291,7 +295,6 @@ public abstract class Table implements Localized {
             record.setLoggerName(logger.getName());
             logger.log(record);
         }
-        Database.release(lc, statement);
     }
 
     /**

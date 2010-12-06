@@ -22,6 +22,8 @@ import java.net.MalformedURLException;
 import java.util.NoSuchElementException;
 import org.geotoolkit.util.logging.Logging;
 
+import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
+
 
 /**
  * An iterator over the tiles at a given level. This iterator continue automatically to tiles
@@ -74,7 +76,7 @@ final class GridTileIterator implements Iterator<Tile> {
                     try {
                         tile = level.getTile(x++, y);
                     } catch (MalformedURLException e) {
-                        Logging.unexpectedException(GridTileIterator.class, "next", e);
+                        Logging.unexpectedException(LOGGER, GridTileIterator.class, "next", e);
                         continue; // Search for an other tile.
                     }
                     if (tile != null) {

@@ -19,6 +19,7 @@ package org.geotoolkit.test.stress;
 
 import java.awt.image.RenderedImage;
 import java.util.concurrent.Callable;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
@@ -30,13 +31,14 @@ import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.logging.LogProducer;
+import org.geotoolkit.util.logging.PerformanceLevel;
 
 
 /**
  * Base class for stressors.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @since 3.14
  */
@@ -78,7 +80,8 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
     String threadName;
 
     /**
-     * The level to use for logging message.
+     * The level to use for logging message. If {@code null}, then the level shall
+     * be selected by {@link PerformanceLevel#forDuration(long, TimeUnit)}.
      */
     private Level logLevel;
 
@@ -94,26 +97,35 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
      */
     protected Stressor(final GeneralGridGeometry domain) {
         super(domain);
-        logLevel = Level.FINE;
     }
 
     /**
-     * Returns the current logging level.
+     * Returns {@code true} if logging is enabled.
+     */
+    private boolean isLoggable() {
+        Level level = logLevel;
+        if (level == null) {
+            level = PerformanceLevel.SLOWEST;
+        }
+        return LOGGER.isLoggable(level);
+    }
+
+    /**
+     * Returns the current logging level. The default value is one of the {@link PerformanceLevel}
+     * constants, determined according the duration of the read operation.
      */
     @Override
     public Level getLogLevel() {
-        return logLevel;
+        final Level level = logLevel;
+        return (level != null) ? level : PerformanceLevel.PERFORMANCE;
     }
 
     /**
-     * Sets the logging level to the given value.
-     * A {@code null} value restores the default level.
+     * Sets the logging level to the given value. A {@code null} value restores
+     * the default level documented in the {@link #getLogLevel()} method.
      */
     @Override
     public void setLogLevel(Level level) {
-        if (level == null) {
-            level = Level.FINE;
-        }
         logLevel = level;
     }
 
@@ -133,7 +145,7 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
         final Statistics statistics = new Statistics();
         final StringBuilder buffer;
         final int bufferBase;
-        if (LOGGER.isLoggable(logLevel)) {
+        if (isLoggable()) {
             buffer = new StringBuilder("Thread ").append(threadName);
             buffer.append(Strings.spaces(THREAD_NAME_FIELD_LENGTH - buffer.length())).append(": ");
             bufferBase = buffer.length();
@@ -186,7 +198,11 @@ public abstract class Stressor extends RequestGenerator implements Callable<Stat
                 /*
                  * Log progress information and wait.
                  */
-                final LogRecord record = new LogRecord(logLevel, buffer.toString());
+                Level level = logLevel;
+                if (level == null) {
+                    level = PerformanceLevel.forDuration(time, TimeUnit.NANOSECONDS);
+                }
+                final LogRecord record = new LogRecord(level, buffer.toString());
                 record.setSourceClassName(sourceClassName);
                 record.setSourceMethodName("call");
                 record.setLoggerName(LOGGER.getName());

@@ -49,6 +49,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.logging.LogProducer;
+import org.geotoolkit.util.logging.PerformanceLevel;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.referencing.CRSUtilities;
@@ -74,7 +75,7 @@ import org.geotoolkit.geometry.Envelope2D;
  * {@linkplain #reset() reset} or {@linkplain #dispose() dispose} the reader or writer.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @since 3.12
  * @module
@@ -132,11 +133,12 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
     private final Hints hints;
 
     /**
-     * The logging level to use for read and write operations.
+     * The logging level to use for read and write operations. If {@code null}, then the
+     * level shall be selected by {@link PerformanceLevel#forDuration(long, TimeUnit)}.
      *
      * @since 3.15
      */
-    Level level;
+    Level logLevel;
 
     /**
      * The locale to use for formatting messages, or {@code null} for a default locale.
@@ -198,11 +200,32 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      */
     protected GridCoverageStore() {
         hints = new Hints();
-        level = Level.FINE;
+    }
+
+    /**
+     * Returns {@code true} if logging is enabled.
+     */
+    final boolean isLoggable() {
+        Level level = logLevel;
+        if (level == null) {
+            level = PerformanceLevel.SLOWEST;
+        }
+        return LOGGER.isLoggable(level);
+    }
+
+    /**
+     * Returns the logging level is explicitely set, or the {@link Level#FINE} level
+     * otherwise. This is used for logging operation that are not performance measurement.
+     */
+    final Level getFineLevel() {
+        final Level level = logLevel;
+        return (level != null) ? level : PerformanceLevel.FINE;
     }
 
     /**
      * Returns the logging level to use for read and write operations.
+     * The default value is one of the {@link PerformanceLevel} constants,
+     * determined according the duration of the operation.
      *
      * @return The current logging level.
      *
@@ -210,23 +233,21 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      */
     @Override
     public Level getLogLevel() {
-        return level;
+        final Level level = logLevel;
+        return (level != null) ? level : PerformanceLevel.PERFORMANCE;
     }
 
     /**
-     * Sets the logging level to use for read and write operations. The default
-     * value is {@link Level#FINE}. A {@code null} value restores the default.
+     * Sets the logging level to use for read and write operations. A {@code null}
+     * value restores the default level documented in the {@link #getLogLevel()} method.
      *
      * @param level The new logging level, or {@code null} for the default.
      *
      * @since 3.15
      */
     @Override
-    public void setLogLevel(Level level) {
-        if (level == null) {
-            level = Level.FINE;
-        }
-        this.level = level;
+    public void setLogLevel(final Level level) {
+        logLevel = level;
     }
 
     /**

@@ -37,6 +37,8 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
+
 
 /**
  * A level of overview in a {@linkplain GridTileManager gridded tile manager}. Instances of this
@@ -944,7 +946,7 @@ nextTile:   for (int tileX=minTileX; tileX<maxTileX; tileX++) {
                 } catch (MalformedURLException e) {
                     // If we can't format the name, then it is different than the given tile
                     // input otherwise the user wouldn't have been able to create that tile.
-                    Logging.recoverableException(OverviewLevel.class, "contains", e);
+                    Logging.recoverableException(LOGGER, OverviewLevel.class, "contains", e);
                 }
                 break;
             }

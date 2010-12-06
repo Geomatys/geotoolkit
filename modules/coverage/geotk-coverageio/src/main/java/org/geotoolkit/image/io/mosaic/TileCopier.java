@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Collection;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 
 import java.awt.Dimension;
@@ -45,13 +44,14 @@ import com.sun.media.imageio.stream.FileChannelImageOutputStream;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.rmi.RMI;
 import org.geotoolkit.internal.io.ObjectStream;
 import org.geotoolkit.internal.io.TemporaryFile;
 import org.geotoolkit.internal.rmi.ShareableTask;
 import org.geotoolkit.internal.image.io.RawFile;
 import org.geotoolkit.image.io.UnsupportedImageFormatException;
+
+import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
 
 
 /**
@@ -127,7 +127,6 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
      */
     @Override
     public Map<Tile,RawFile> call() throws IOException {
-        final Logger logger = Logging.getLogger(TileCopier.class);
         final ObjectStream<Tile> tiles = inputs();
         final Map<ImageTypeSpecifier,ImageTypeSpecifier> sharedTypes =
                 new HashMap<ImageTypeSpecifier,ImageTypeSpecifier>();
@@ -142,7 +141,7 @@ final class TileCopier extends ShareableTask<Tile,Map<Tile,RawFile>> {
             final LogRecord record = Loggings.format(Level.FINE, Loggings.Keys.CACHING_$1, tile);
             record.setSourceClassName("MosaicImageWriter"); // The public API which created this task.
             record.setSourceMethodName("writeFromInput");
-            logger.log(record);
+            LOGGER.log(record);
 
             final int imageIndex = tile.getImageIndex();
             final ImageReader reader = tile.getImageReader();

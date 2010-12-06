@@ -39,7 +39,6 @@ import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.ImageOutputStream;
 import java.util.*; // Lot of them in this class.
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 import java.util.concurrent.Future;
 import java.util.concurrent.Callable;
@@ -56,6 +55,8 @@ import org.geotoolkit.util.Version;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.logging.LogProducer;
+import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.logging.PerformanceLevel;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
@@ -70,7 +71,8 @@ import org.geotoolkit.internal.image.io.RawFile;
 import org.geotoolkit.internal.io.TemporaryFile;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.rmi.RMI;
-import org.geotoolkit.util.converter.Classes;
+
+import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
 
 
 /**
@@ -125,9 +127,10 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
     private static final int IMAGE_TILE_SIZE = 64;
 
     /**
-     * The logging level for tiling information during reads and writes.
+     * The logging level for tiling information during read and write operations. If {@code null},
+     * then the level shall be selected by {@link PerformanceLevel#forDuration(long, TimeUnit)}.
      */
-    private Level level = Level.FINE;
+    private Level logLevel;
 
     /**
      * The temporary files created for each input tile.
@@ -152,27 +155,49 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
     }
 
     /**
+     * Returns {@code true} if logging is enabled.
+     */
+    private boolean isLoggable() {
+        Level level = logLevel;
+        if (level == null) {
+            level = PerformanceLevel.SLOWEST;
+        }
+        return LOGGER.isLoggable(level);
+    }
+
+    /**
+     * Returns the logging level is explicitely set, or the {@link Level#FINE} level
+     * otherwise. This is used for logging operations that are not measurement of
+     * execution time.
+     */
+    private Level getFineLevel() {
+        final Level level = logLevel;
+        return (level != null) ? level : PerformanceLevel.FINE;
+    }
+
+    /**
      * Returns the logging level for tile information during read and write operations.
+     * The default value is one of the {@link PerformanceLevel} constants, determined
+     * according the duration of the operation.
      *
      * @return The current logging level.
      */
     @Override
     public Level getLogLevel() {
-        return level;
+        final Level level = logLevel;
+        return (level != null) ? level : PerformanceLevel.PERFORMANCE;
     }
 
     /**
      * Sets the logging level for tile information during read and write operations.
-     * The default value is {@link Level#FINE}. A {@code null} value restores the default.
+     * A {@code null} value restores the default level documented in the {@link #getLogLevel()}
+     * method.
      *
      * @param level The new logging level, or {@code null} for the default.
      */
     @Override
     public void setLogLevel(Level level) {
-        if (level == null) {
-            level = Level.FINE;
-        }
-        this.level = level;
+        logLevel = level;
     }
 
     /**
@@ -437,11 +462,11 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
         final List<Future<?>> tasks     = new ArrayList<Future<?>>();
         final TreeNode        tree      = new GridNode(tiles.toArray(new Tile[tiles.size()]));
         final ImageReadParam  readParam = reader.getDefaultReadParam();
-        final Logger          logger    = Logging.getLogger(MosaicImageWriter.class);
-        final boolean         logWrites = logger.isLoggable(level);
-        final boolean         logReads  = !(reader instanceof MosaicImageReader);
+        final boolean         logWrites = isLoggable();
+        final boolean         logReads  = !(reader instanceof LogProducer);
         if (!logReads) {
-            ((MosaicImageReader) reader).setLogLevel(level);
+            // Use the field, not the local variable, because we want null for the default logging.
+            ((LogProducer) reader).setLogLevel(logLevel);
         }
         if (writeParam != null) {
             if (writeParam.getSourceXSubsampling() != 1 || writeParam.getSubsamplingXOffset() != 0 ||
@@ -503,9 +528,7 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
                 ((MosaicImageReadParam) readParam).setNullForEmptyImage(true);
             }
             if (logReads) {
-                final LogRecord record = getLogRecord(false, Vocabulary.Keys.LOADING_$1, imageTile);
-                record.setLoggerName(logger.getName());
-                logger.log(record);
+                log(false, Vocabulary.Keys.LOADING_$1, imageTile);
             }
             /*
              * Before to attempt image loading, ask explicitly for a garbage collection cycle.
@@ -527,10 +550,8 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
                     throw error;
                 }
                 if (logWrites) {
-                    final LogRecord record = getLogRecord(true, Loggings.Keys.RECOVERABLE_OUT_OF_MEMORY_$1,
+                    log(true, Loggings.Keys.RECOVERABLE_OUT_OF_MEMORY_$1,
                             ((float) imageRegion.width * imageRegion.height) / (1024 * 1024f));
-                    record.setLoggerName(logger.getName());
-                    logger.log(record);
                 }
                 // Go back to the while(!tiles.isEmpty()) condition, which will ask for a
                 // new Tile from the same (not yet modified) collection of tiles but with
@@ -539,7 +560,7 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
             }
             if (logWrites && image != readParam.getDestination()) {
                 // Logs only if we have created a new image.
-                logMemoryUsage(logger);
+                logMemoryUsage();
             }
             assert (image == null) || // Image can be null if MosaicImageReader found no tiles.
                    (image.getWidth()  * imageSubsampling.width  >= imageRegion.width &&
@@ -614,10 +635,7 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
                                     return null;
                                 }
                                 if (logWrites) {
-                                    final LogRecord record =
-                                            getLogRecord(false, Vocabulary.Keys.SAVING_$1, tile);
-                                    record.setLoggerName(logger.getName());
-                                    logger.log(record);
+                                    log(false, Vocabulary.Keys.SAVING_$1, tile);
                                 }
                                 tileInput = tile.getInput();
                                 final ImageWriter writer = cacheEntry.writer;
@@ -684,7 +702,7 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
                         }
                         if (false) { // Removed from compilation except when debugging.
                             final ThreadPoolExecutor e = (ThreadPoolExecutor) executor;
-                            logger.log(Level.FINE,
+                            LOGGER.log(getFineLevel(),
                                     "Active threads: {0}  " +
                                     "Enqueued tasks: {1}  " +
                                     "Available permits: {2}  " +
@@ -791,18 +809,19 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
     }
 
     /**
-     * Returns a log message for the given tile.
+     * Logs message for the given tile.
      *
      * @param log {@code true} if the given key is from the {@link Loggings} bundle,
      *        or {@code false} if it is from the {@link Vocabulary} bundle.
      */
-    private LogRecord getLogRecord(final boolean log, final int key, final Object arg) {
+    private void log(final boolean log, final int key, final Object arg) {
         final IndexedResourceBundle bundle = log ?
                 Loggings.getResources(locale) : Vocabulary.getResources(locale);
-        final LogRecord record = bundle.getLogRecord(level, key, arg);
+        final LogRecord record = bundle.getLogRecord(getFineLevel(), key, arg);
         record.setSourceClassName(MosaicImageWriter.class.getName());
         record.setSourceMethodName("writeFromInput");
-        return record;
+        record.setLoggerName(LOGGER.getName());
+        LOGGER.log(record);
     }
 
     /**
@@ -997,18 +1016,18 @@ search: for (final Tile tile : tiles) {
     /**
      * Send to the given logger some informations about current memory usage.
      */
-    private void logMemoryUsage(final Logger logger) {
+    private void logMemoryUsage() {
         final Vocabulary resources = Vocabulary.getResources(locale);
         final Runtime runtime = Runtime.getRuntime();
         final long totalMemory = runtime.totalMemory();
         final double usage = 1 - (float) runtime.freeMemory() / totalMemory;
-        final LogRecord record = new LogRecord(level,
+        final LogRecord record = new LogRecord(getFineLevel(),
                 resources.getString(Vocabulary.Keys.MEMORY_HEAP_SIZE_$1, totalMemory / (1024*1024L)) + ". " +
                 resources.getString(Vocabulary.Keys.MEMORY_HEAP_USAGE_$1, usage) + '.');
         record.setSourceClassName(MosaicImageWriter.class.getName());
         record.setSourceMethodName("writeFromInput"); // The public API invoking this method.
-        record.setLoggerName(logger.getName());
-        logger.log(record);
+        record.setLoggerName(LOGGER.getName());
+        LOGGER.log(record);
     }
 
     /**
@@ -1336,7 +1355,7 @@ search: for (final Tile tile : tiles) {
                 try {
                     IOUtilities.close(reader.getInput());
                 } catch (IOException e) {
-                    Logging.unexpectedException(Tile.class, "close", e);
+                    Logging.unexpectedException(LOGGER, Tile.class, "close", e);
                 }
                 reader.dispose();
                 reader = null;
@@ -1512,7 +1531,7 @@ search: for (final Tile tile : tiles) {
                     spiType = Class.forName(spiName);
                 } catch (ClassNotFoundException e) {
                     // May be normal. Search for an other writer.
-                    Logging.recoverableException(MosaicImageWriter.class, "getImageWriter", e);
+                    Logging.recoverableException(LOGGER, MosaicImageWriter.class, "getImageWriter", e);
                     continue;
                 }
                 final Object candidate = registry.getServiceProviderByClass(spiType);

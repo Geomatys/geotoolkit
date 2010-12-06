@@ -456,8 +456,12 @@ public class Database implements Localized {
     }
 
     /**
-     * Put the given statement back in the pool. This method is invoked by
+     * Puts the given statement back in the pool. This method is invoked by
      * {@link LocalCache.Stmt#release()} only. The later is the API to use.
+     *
+     * @throws SQLException If an error occurred while closing the <strong>previous</strong>
+     *         statement, if any. It may happen only if the same {@link Table} is queried
+     *         recursively in the same thread.
      */
     static void release(final LocalCache cache, final LocalCache.Stmt entry) throws SQLException {
         final LocalCache.Stmt old = ((Session) cache).put(entry.sql, entry);

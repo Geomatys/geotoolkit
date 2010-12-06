@@ -18,10 +18,12 @@
 package org.geotoolkit.coverage.io;
 
 import java.util.Locale;
+import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import javax.imageio.spi.ImageReaderWriterSpi;
 import java.awt.geom.AffineTransform;
 import java.awt.Dimension;
+import java.util.concurrent.TimeUnit;
 
 import org.opengis.util.InternationalString;
 import org.opengis.coverage.grid.GridCoverage;
@@ -35,6 +37,7 @@ import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.logging.PerformanceLevel;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.coverage.AbstractCoverage;
@@ -55,7 +58,7 @@ import static org.geotoolkit.coverage.io.GridCoverageStore.fixRoundingError;
  * method in this class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @since 3.15
  * @module
@@ -71,6 +74,8 @@ final class ImageCoverageStore {
     /**
      * Logs a "Created encoder|decoder of class Foo" message. This method can
      * be invoked from {@code setInput} or {@code setOutput} methods only.
+     * <p>
+     * The message is logged at the level returned by {@link GridCoverageStore#getFineLevel()}.
      *
      * @param store  The object which is invoking this method.
      * @param caller The caller class (not necessarily {@code object.getClass()}.
@@ -90,7 +95,7 @@ final class ImageCoverageStore {
             Formats.formatDescription(spi, locale, buffer);
             message = buffer.toString();
         }
-        final LogRecord record = new LogRecord(store.level, message);
+        final LogRecord record = new LogRecord(store.getFineLevel(), message);
         record.setLoggerName(LOGGER.getName());
         record.setSourceClassName(caller.getName());
         record.setSourceMethodName(write ? "setOutput" : "setInput");
@@ -250,9 +255,13 @@ final class ImageCoverageStore {
         /*
          * Put everything in a log record.
          */
+        Level level = store.logLevel;
+        if (level == null) {
+            level = PerformanceLevel.forDuration(timeNanos, TimeUnit.NANOSECONDS);
+        }
         final boolean write = (store instanceof GridCoverageWriter);
         final LogRecord record = Loggings.getResources(locale).getLogRecord(
-                store.level, Loggings.Keys.COVERAGE_STORE_$8, new Object[] {
+                level, Loggings.Keys.COVERAGE_STORE_$8, new Object[] {
                         write ? 1 : 0, streamName, name.toString(locale), viewTypes,
                         size, crsName, transform, timeNanos / 1E+6
         });

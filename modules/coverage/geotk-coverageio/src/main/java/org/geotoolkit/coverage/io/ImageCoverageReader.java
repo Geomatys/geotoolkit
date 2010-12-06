@@ -115,7 +115,7 @@ import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @since 3.09 (derived from 2.2)
  * @module
@@ -385,9 +385,9 @@ public class ImageCoverageReader extends GridCoverageReader {
                     if (oldReader != null) {
                         oldReader.dispose();
                     }
-                    setLogLevel(newReader, level);
+                    setLogLevel(newReader, logLevel);
                     setLocale(newReader, locale);
-                    if (LOGGER.isLoggable(level)) {
+                    if (LOGGER.isLoggable(getFineLevel())) {
                         ImageCoverageStore.logCodecCreation(this, ImageCoverageReader.class,
                                 newReader, newReader.getOriginatingProvider());
                     }
@@ -806,7 +806,7 @@ public class ImageCoverageReader extends GridCoverageReader {
     public GridCoverage2D read(final int index, final GridCoverageReadParam param)
             throws CoverageStoreException, CancellationException
     {
-        final boolean loggingEnabled = LOGGER.isLoggable(level);
+        final boolean loggingEnabled = isLoggable();
         long fullTime = (loggingEnabled) ? System.nanoTime() : 0;
         ignoreGridTransforms = !loggingEnabled;
         /*
