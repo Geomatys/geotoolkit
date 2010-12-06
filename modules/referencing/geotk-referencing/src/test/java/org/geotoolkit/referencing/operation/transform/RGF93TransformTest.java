@@ -29,6 +29,7 @@ import org.geotoolkit.referencing.ReferencingCommons;
 
 import org.junit.*;
 import static org.junit.Assume.*;
+import static org.junit.Assert.*;
 
 
 /**

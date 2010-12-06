@@ -24,7 +24,9 @@ import org.opengis.referencing.operation.TransformException;
 
 import org.junit.*;
 import org.opengis.referencing.operation.MathTransform;
+
 import static java.lang.Double.NaN;
+import static org.opengis.test.Assert.*;
 import static org.geotoolkit.test.Commons.serialize;
 
 

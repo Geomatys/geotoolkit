@@ -27,6 +27,7 @@ import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.junit.*;
 
 import static org.junit.Assume.*;
+import static org.junit.Assert.*;
 import static org.geotoolkit.referencing.crs.DefaultTemporalCRS.MODIFIED_JULIAN;
 import static org.geotoolkit.referencing.crs.DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT;
 

@@ -27,6 +27,8 @@ import org.junit.*;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.referencing.operation.transform.CoordinateDomain;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
+
+import static org.opengis.test.Assert.*;
 import static org.geotoolkit.referencing.operation.provider.EquidistantCylindrical.*;
 
 

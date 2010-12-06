@@ -60,6 +60,11 @@
       <artifactId>geoapi-pending</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.opengis</groupId>
+      <artifactId>conformance</artifactId>
+      <scope>compile</scope>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>compile</scope>

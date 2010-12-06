@@ -24,6 +24,7 @@ import org.geotoolkit.referencing.operation.matrix.Matrix4;
 
 import org.junit.*;
 import org.geotoolkit.test.Depend;
+import static org.opengis.test.Assert.*;
 
 
 /**

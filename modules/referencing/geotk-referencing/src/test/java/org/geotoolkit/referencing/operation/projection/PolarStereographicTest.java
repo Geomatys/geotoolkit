@@ -25,6 +25,8 @@ import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.test.Depend;
 
+import static org.junit.Assert.*;
+
 
 /**
  * Tests the {@link PolarStereographic} class.

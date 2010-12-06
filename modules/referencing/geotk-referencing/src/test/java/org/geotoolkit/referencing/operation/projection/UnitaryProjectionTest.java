@@ -22,12 +22,13 @@ import org.geotoolkit.test.Depend;
 
 import static java.lang.Math.*;
 import static java.lang.Double.*;
+import static org.junit.Assert.*;
 import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.*;
 
 
 /**
  * Tests the {@link UnitaryProjection} class. This class uses {@link Mercator}
- * for testing purpose, because it is the simpliest non-trivial projection.
+ * for testing purpose, because it is the simplest non-trivial projection.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00

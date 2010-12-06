@@ -23,14 +23,14 @@ import javax.swing.tree.TreeNode;
 
 
 /**
- * Assertion methods used by the Geotk project in addition of the JUnit assertions.
+ * Assertion methods used by the Geotk project in addition of the JUnit and GeoAPI assertions.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.16
  *
  * @since 3.16 (derived from 3.00)
  */
-public class Assert extends org.junit.Assert {
+public class Assert extends org.opengis.test.Assert {
     /**
      * For subclass constructor only.
      */

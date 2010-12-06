@@ -31,6 +31,7 @@ import org.geotoolkit.util.XArrays;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 
 import org.junit.*;
+import static org.junit.Assert.*;
 
 
 /**

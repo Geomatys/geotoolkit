@@ -23,6 +23,8 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.test.Depend;
+
+import static org.junit.Assert.*;
 import static org.geotoolkit.referencing.operation.provider.CassiniSoldner.*;
 
 

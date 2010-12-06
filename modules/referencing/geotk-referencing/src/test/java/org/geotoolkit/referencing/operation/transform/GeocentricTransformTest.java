@@ -39,6 +39,8 @@ import org.geotoolkit.test.Depend;
 import org.junit.*;
 import org.opengis.referencing.datum.Ellipsoid;
 
+import static org.junit.Assert.*;
+
 
 /**
  * Tests the following transformation classes with the geocentric transform:

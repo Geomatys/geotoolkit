@@ -36,6 +36,7 @@ import org.geotoolkit.referencing.operation.transform.ProjectiveTransformTest;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransformTest;
 
 import static java.lang.Math.*;
+import static org.opengis.test.Assert.*;
 
 
 /**

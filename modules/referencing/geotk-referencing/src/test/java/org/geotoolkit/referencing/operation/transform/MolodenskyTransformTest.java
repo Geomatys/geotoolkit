@@ -29,7 +29,7 @@ import org.geotoolkit.factory.FactoryFinder;
 import static org.geotoolkit.referencing.datum.DefaultEllipsoid.*;
 
 import org.junit.*;
-import static org.junit.Assert.*;
+import static org.opengis.test.Assert.*;
 
 
 /**

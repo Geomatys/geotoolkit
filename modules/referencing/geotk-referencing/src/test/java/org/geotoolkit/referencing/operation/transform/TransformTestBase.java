@@ -255,7 +255,7 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
         }
         if (values != null) {
             assertSame(descriptor, values.getDescriptor());
-            assertEquals(values, transform.getParameterValues());
+            assertParameterEquals(values, transform.getParameterValues());
         }
     }
 
@@ -412,7 +412,7 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
      * @param expected The expected parameter values.
      * @param actual   The actual parameter values.
      */
-    private void assertEquals(final ParameterValueGroup expected, final ParameterValueGroup actual) {
+    private void assertParameterEquals(final ParameterValueGroup expected, final ParameterValueGroup actual) {
         for (final GeneralParameterValue candidate : expected.values()) {
             if (!(candidate instanceof ParameterValue<?>)) {
                 throw new UnsupportedOperationException("Not yet implemented.");

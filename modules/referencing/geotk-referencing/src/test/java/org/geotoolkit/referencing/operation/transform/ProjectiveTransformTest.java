@@ -29,6 +29,8 @@ import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.test.Depend;
 import org.junit.*;
 
+import static org.junit.Assert.*;
+
 
 /**
  * Tests the {@link ProjectiveTransform} class. We use the {@link AffineTransform2D} class

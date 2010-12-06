@@ -25,6 +25,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.geotoolkit.referencing.operation.provider.NADCON;
 
 import static org.junit.Assume.*;
+import static org.junit.Assert.*;
 
 
 /**

@@ -24,6 +24,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.junit.*;
 import org.geotoolkit.test.Depend;
 
+import static org.junit.Assert.*;
 import static org.geotoolkit.referencing.operation.provider.Polyconic.*;
 
 

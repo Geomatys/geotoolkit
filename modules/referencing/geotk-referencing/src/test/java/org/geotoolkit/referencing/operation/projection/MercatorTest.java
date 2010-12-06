@@ -29,6 +29,7 @@ import org.geotoolkit.referencing.operation.transform.CoordinateDomain;
 
 import static java.lang.Math.*;
 import static java.lang.Double.*;
+import static org.opengis.test.Assert.*;
 import static org.geotoolkit.referencing.operation.provider.Mercator1SP.*;
 import static org.geotoolkit.referencing.operation.projection.UnitaryProjectionTest.LN_INFINITY;
 

@@ -33,6 +33,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.test.referencing.TransformTestCase;
 
 import org.junit.*;
+import static org.opengis.test.Assert.*;
 
 
 /**

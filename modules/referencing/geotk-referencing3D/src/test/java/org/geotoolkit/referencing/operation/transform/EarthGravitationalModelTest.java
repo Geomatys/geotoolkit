@@ -33,6 +33,7 @@ import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 
 import org.junit.*;
+import static org.junit.Assert.*;
 
 
 /**

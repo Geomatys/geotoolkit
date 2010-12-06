@@ -25,6 +25,8 @@ import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.test.Depend;
 import org.junit.*;
 
+import static org.junit.Assert.*;
+
 
 /**
  * Tests the {@link CopyTransform} class.

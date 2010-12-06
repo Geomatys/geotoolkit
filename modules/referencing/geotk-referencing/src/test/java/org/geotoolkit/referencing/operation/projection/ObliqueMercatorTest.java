@@ -24,6 +24,8 @@ import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
+
+import static org.junit.Assert.*;
 import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.PARAMETERS;
 
 

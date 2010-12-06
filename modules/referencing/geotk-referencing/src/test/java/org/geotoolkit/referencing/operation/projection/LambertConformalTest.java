@@ -29,6 +29,7 @@ import org.geotoolkit.referencing.operation.transform.CoordinateDomain;
 
 import static java.lang.Math.*;
 import static java.lang.Double.*;
+import static org.junit.Assert.*;
 import static org.geotoolkit.referencing.operation.provider.LambertConformal1SP.*;
 
 
@@ -36,7 +37,7 @@ import static org.geotoolkit.referencing.operation.provider.LambertConformal1SP.
  * Tests the {@link LambertConformal} class. We test using various values of the latitude
  * of origin. We do not test with various values of standard parallels, because it is just
  * as other way to set the value of the <var>n</var> field in {@code LambertConformal}. As
- * long as we make this value varying, the latitude of origin is the simpliest approach.
+ * long as we make this value varying, the latitude of origin is the simplest approach.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.14
