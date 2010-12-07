@@ -15,7 +15,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.referencing.datum;
+package org.geotools.referencing.datum;
 
 import java.util.Map;
 import java.util.Date;

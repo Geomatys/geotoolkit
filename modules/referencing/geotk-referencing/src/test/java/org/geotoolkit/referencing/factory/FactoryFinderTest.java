@@ -23,7 +23,7 @@ import org.opengis.referencing.datum.DatumFactory;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.referencing.datum.GeotoolsFactory; // A dummy factory for testing purpose.
+import org.geotools.referencing.datum.GeotoolsFactory; // A dummy factory for testing purpose.
 
 import org.junit.*;
 import static org.junit.Assert.*;

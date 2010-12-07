@@ -31,9 +31,10 @@ import org.opengis.referencing.datum.PrimeMeridian;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
-import org.geotoolkit.referencing.datum.GeotoolsFactory;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
+
+import org.geotools.referencing.datum.GeotoolsFactory; // A dummy factory for testing purpose.
 
 import org.junit.*;
 import static org.junit.Assert.*;

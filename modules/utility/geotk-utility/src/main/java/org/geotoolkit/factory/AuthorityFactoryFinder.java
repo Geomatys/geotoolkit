@@ -318,7 +318,7 @@ loop:       for (int i=0; ; i++) {
      * @param  authority2 The authority to which {@code authority1} is preferred.
      * @return {@code true} if the ordering was set for at least one category.
      *
-     * @see #setVendorOrdering
+     * @see #setVendorOrdering(String, String)
      */
     @Configuration
     public static boolean setAuthorityOrdering(final String authority1, final String authority2) {
@@ -343,7 +343,7 @@ loop:       for (int i=0; ; i++) {
      * @param  authority2 The vendor to which {@code authority1} is preferred.
      * @return {@code true} if the ordering was unset for at least one category.
      *
-     * @see #unsetVendorOrdering
+     * @see #unsetVendorOrdering(String, String)
      */
     @Configuration
     public static boolean unsetAuthorityOrdering(final String authority1, final String authority2) {

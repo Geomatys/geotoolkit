@@ -251,6 +251,18 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
     }
 
     /**
+     * Returns {@code true} if {@link #availability()} has determined that this factory is not
+     * available. If this factory <strong>may</strong> be available, then this method returns
+     * {@code false}.
+     *
+     * @since 3.16
+     */
+    final boolean unavailable() {
+        final Object s = status;
+        return (s != null) && !Boolean.TRUE.equals(s);
+    }
+
+    /**
      * Returns whatever this factory is available. The factory is considered unavailable if it has
      * been {@linkplain #dispose disposed}, or if no backing store was specified at construction
      * time and {@link ThreadedAuthorityFactory#createBackingStore} threw an exception.

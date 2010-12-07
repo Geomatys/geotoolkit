@@ -215,7 +215,7 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
      */
     @Override
     public Map<RenderingHints.Key, ?> getImplementationHints() {
-        if (!hintsInitialized) {
+        if (!hintsInitialized && !unavailable()) {
             AbstractAuthorityFactory factory = null;
             try {
                 factory = getBackingStore();
@@ -250,7 +250,7 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
 
     /**
      * Returns the number of backing stores that can still be created.
-     * This method is used only for debuging purpose.
+     * This method is used only for debugging purpose.
      */
     final synchronized int remainingBackingStores() {
         return remainingBackingStores;
@@ -272,7 +272,7 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
      *
      * {@section Synchronization}
      * This method needs to be thread-safe. {@code ThreadedAuthorityFactory} does not hold a lock
-     * when invoking this method. Subclasses are responsible to apply their own synchronisation if
+     * when invoking this method. Subclasses are responsible to apply their own synchronization if
      * needed, but are encouraged to avoid doing so if possible.
      * <p>
      * In addition, implementations should not invoke {@link #availability() availability()},

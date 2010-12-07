@@ -459,7 +459,7 @@ public class FactoryRegistry extends ServiceRegistry {
      */
     final void initCause(final FactoryNotFoundException e) {
         final Throwable c = failureCause;
-        if (c!=null && e.getClass().equals(FactoryNotFoundException.class) && e.getCause()==null) {
+        if (c != null && e.getClass().equals(FactoryNotFoundException.class) && e.getCause() == null) {
             e.initCause(c);
         }
     }
@@ -1119,7 +1119,7 @@ public class FactoryRegistry extends ServiceRegistry {
      *
      * @param set {@code true} for setting the ordering, or {@code false} for unsetting.
      */
-    private <T> boolean setOrUnsetOrdering(final Class<T> base,
+    final <T> boolean setOrUnsetOrdering(final Class<T> base,
             final Filter service1, final Filter service2, final boolean set)
     {
         boolean done = false;

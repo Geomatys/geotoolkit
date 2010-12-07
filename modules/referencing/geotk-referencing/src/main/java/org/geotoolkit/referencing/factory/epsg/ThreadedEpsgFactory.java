@@ -646,8 +646,14 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
                 throw new NoSuchFactoryException(message, exception);
             }
             /*
-             * Other kind of error, presumed more serious.
+             * Other kind of error, presumed more serious.  If the SQLException has an other
+             * SQLException has its cause, keep only the root cause (it has more informative
+             * error message on Derby).
              */
+            Throwable cause;
+            while ((cause = exception.getCause()) instanceof SQLException) {
+                exception = (SQLException) cause;
+            }
             throw new FactoryException(message, exception);
         }
         if (isLoggable) {

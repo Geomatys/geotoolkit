@@ -100,7 +100,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * itself is just a convenience wrapper around a {@code FactoryRegistry} instance.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @since 2.1
  * @level basic
@@ -194,8 +194,8 @@ public class FactoryFinder {
                  * may arise unless we specify which one should have precedence over the other.
                  */
                 @Override void pluginScanned(final Class<?> category) {
-                    final VendorFilter filter1 = new VendorFilter("Geotoolkit.org", true);
-                    final VendorFilter filter2 = new VendorFilter("GeoTools", false);
+                    final VendorFilter filter1 = new VendorFilter("org.geotoolkit.", true, true);
+                    final VendorFilter filter2 = new VendorFilter("org.geotools.",   true, false);
                     setOrdering(category, filter1, filter2);
                 }
             };
@@ -747,8 +747,8 @@ public class FactoryFinder {
 
     /**
      * Sets a pairwise ordering between two vendors. If one or both vendors are not
-     * currently registered, or if the desired ordering is already set, nothing happens
-     * and {@code false} is returned.
+     * currently registered, or if the desired ordering is already set, then nothing
+     * happens and {@code false} is returned.
      * <p>
      * The example below said that an ESRI implementation (if available) is
      * preferred over the Geotoolkit.org one:
@@ -761,40 +761,89 @@ public class FactoryFinder {
      * @param  vendor2 The vendor to which {@code vendor1} is preferred.
      * @return {@code true} if the ordering was set for at least one category.
      *
-     * @see AuthorityFactoryFinder#setAuthorityOrdering
+     * @see AuthorityFactoryFinder#setAuthorityOrdering(String, String)
      */
     @Configuration
     public static boolean setVendorOrdering(final String vendor1, final String vendor2) {
-        final VendorFilter filter1 = new VendorFilter(vendor1, true);
-        final VendorFilter filter2 = new VendorFilter(vendor2, false);
-        final boolean changed;
-        synchronized (FactoryFinder.class) {
-            changed = getServiceRegistry().setOrdering(Factory.class, filter1, filter2);
-        }
-        if (changed) {
-            Factories.fireConfigurationChanged(AuthorityFactoryFinder.class);
-        }
-        return changed;
+        return setOrUnsetOrdering(vendor1, vendor2, false, true);
     }
 
     /**
      * Unsets a pairwise ordering between two vendors. If one or both vendors are not
-     * currently registered, or if the desired ordering is already unset, nothing happens
-     * and {@code false} is returned.
+     * currently registered, or if the desired ordering is already unset, then nothing
+     * happens and {@code false} is returned.
      *
      * @param  vendor1 The preferred vendor.
-     * @param  vendor2 The vendor to which {@code vendor1} is preferred.
+     * @param  vendor2 The vendor to which {@code vendor1} was preferred.
      * @return {@code true} if the ordering was unset for at least one category.
      *
-     * @see AuthorityFactoryFinder#unsetAuthorityOrdering
+     * @see AuthorityFactoryFinder#unsetAuthorityOrdering(String, String)
      */
     @Configuration
     public static boolean unsetVendorOrdering(final String vendor1, final String vendor2) {
-        final VendorFilter filter1 = new VendorFilter(vendor1, true);
-        final VendorFilter filter2 = new VendorFilter(vendor2, false);
+        return setOrUnsetOrdering(vendor1, vendor2, false, false);
+    }
+
+    /**
+     * Sets a pairwise ordering between two implementations defined by package names. If one or
+     * both implementations are not currently registered, or if the desired ordering is already
+     * set, then nothing happens and {@code false} is returned.
+     * <p>
+     * This method is preferred to {@link #setVendorOrdering(String, String)} when the package
+     * name are known, because it avoid the potentially costly (on some implementations) call
+     * to {@link Factory#getVendor()}.
+     *
+     * {@note An example of costly <code>getVendor()</code> implementation is the one in the
+     * <code>CachingAuthorityFactory</code> class, because it needs to create the underlying
+     * backing store in order to query its vendor property.}
+     *
+     * @param  package1 The package name of the preferred implementation.
+     * @param  package2 The package name of the implementation to which {@code package1} is preferred.
+     * @return {@code true} if the ordering was set for at least one category.
+     *
+     * @see #setVendorOrdering(String, String)
+     *
+     * @since 3.16
+     */
+    @Configuration
+    public static boolean setImplementationOrdering(final String package1, final String package2) {
+        return setOrUnsetOrdering(package1, package2, true, true);
+    }
+
+    /**
+     * Unsets a pairwise ordering between two implementations defined by package names. If one or
+     * both implementations are not currently registered, or if the desired ordering is already
+     * unset, then nothing happens and {@code false} is returned.
+     *
+     * @param  package1 The preferred vendor.
+     * @param  package2 The vendor to which {@code vendor1} was preferred.
+     * @return {@code true} if the ordering was unset for at least one category.
+     *
+     * @see #unsetVendorOrdering(String, String)
+     *
+     * @since 3.16
+     */
+    @Configuration
+    public static boolean unsetImplementationOrdering(final String package1, final String package2) {
+        return setOrUnsetOrdering(package1, package2, true, false);
+    }
+
+    /**
+     * Sets or unsets a pairwise ordering between two vendors or implementations.
+     *
+     * @param  vendor1 The preferred vendor.
+     * @param  vendor2 The vendor to which {@code vendor1} is preferred.
+     * @param  set {@code true} for setting the ordering, or {@code false} for unsetting.
+     * @return {@code true} if the ordering was changed for at least one category.
+     */
+    private static boolean setOrUnsetOrdering(final String vendor1, final String vendor2,
+            final boolean byPackageName, final boolean set)
+    {
+        final VendorFilter filter1 = new VendorFilter(vendor1, byPackageName, true);
+        final VendorFilter filter2 = new VendorFilter(vendor2, byPackageName, false);
         final boolean changed;
         synchronized (FactoryFinder.class) {
-            changed = getServiceRegistry().unsetOrdering(Factory.class, filter1, filter2);
+            changed = getServiceRegistry().setOrUnsetOrdering(Factory.class, filter1, filter2, set);
         }
         if (changed) {
             Factories.fireConfigurationChanged(AuthorityFactoryFinder.class);
@@ -803,13 +852,19 @@ public class FactoryFinder {
     }
 
     /**
-     * A filter for factories provided by a given vendor.
+     * A filter for factories provided by a given vendor or implementation.
      */
     private static final class VendorFilter implements ServiceRegistry.Filter {
         /**
          * The vendor to filter.
          */
         private final String vendor;
+
+        /**
+         * {@code true} if the vendor should be checked by package name,
+         * or {@code false} if it should be checked by citation.
+         */
+        private final boolean byPackageName;
 
         /**
          * The value to returns if the factory does not specify the vendor.
@@ -819,9 +874,10 @@ public class FactoryFinder {
         /**
          * Constructs a filter for the given vendor.
          */
-        public VendorFilter(final String vendor, final boolean defaultValue) {
-            this.vendor = vendor;
-            this.defaultValue = defaultValue;
+        public VendorFilter(final String vendor, final boolean byPackageName, final boolean defaultValue) {
+            this.vendor        = vendor;
+            this.byPackageName = byPackageName;
+            this.defaultValue  = defaultValue;
         }
 
         /**
@@ -829,6 +885,9 @@ public class FactoryFinder {
          */
         @Override
         public boolean filter(final Object provider) {
+            if (byPackageName) {
+                return provider.getClass().getName().startsWith(vendor);
+            }
             if (provider instanceof Factory) {
                 final Citation candidate = ((Factory) provider).getVendor();
                 if (candidate != null) {
