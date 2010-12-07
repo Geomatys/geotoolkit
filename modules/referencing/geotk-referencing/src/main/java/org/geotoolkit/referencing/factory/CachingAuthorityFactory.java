@@ -276,7 +276,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
          * is thread-safe. It is not a big deal if the status is determined twice by
          * two concurrent threads. It should not happen anyway since this method is
          * usually invoked (indirectly) by FactoryFinder, which is synchronized. It
-         * is much better to avoid synchronisation (if not strictly necessary) in
+         * is much better to avoid synchronization (if not strictly necessary) in
          * order to avoid dead-lock issues.
          */
         Object s = status;

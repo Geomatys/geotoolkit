@@ -1429,8 +1429,8 @@ class MouseReshapeTracker extends MouseInputAdapter implements Shape {
      * When the position of one of the rectangle's edges is edited manually, specifies whether
      * the opposite edge should also be adjusted. By default, the edges are not synchronised.
      *
-     * @param  axis {@link SwingConstants#HORIZONTAL} to change the synchronisation of the left
-     *         and right edges, or {@link SwingConstants#VERTICAL} to change the synchronisation
+     * @param  axis {@link SwingConstants#HORIZONTAL} to change the synchronization of the left
+     *         and right edges, or {@link SwingConstants#VERTICAL} to change the synchronization
      *         of the top and bottom edges.
      * @param  state {@code true} to synchronise the edges, or {@code false} to desynchronise.
      * @throws IllegalArgumentException if {@code axis} isn't one of the valid codes.
@@ -1449,8 +1449,8 @@ class MouseReshapeTracker extends MouseInputAdapter implements Shape {
      * When the position of one of the rectangle's edges is edited manually, specifies whether
      * the opposite edge should also be adjusted. By default, the edges are not synchronised.
      *
-     * @param  axis {@link SwingConstants#HORIZONTAL} to determine the synchronisation of the left
-     *         and right edges, or {@link SwingConstants#VERTICAL} to determine the synchronisation
+     * @param  axis {@link SwingConstants#HORIZONTAL} to determine the synchronization of the left
+     *         and right edges, or {@link SwingConstants#VERTICAL} to determine the synchronization
      *         of the top and bottom edges.
      * @return {@code true} if the specified edges are synchronised, or {@code false} if not
      * @throws IllegalArgumentException if {@code axis} isn't one of the valid codes.

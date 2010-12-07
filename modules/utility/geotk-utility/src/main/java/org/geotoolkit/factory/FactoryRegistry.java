@@ -59,7 +59,7 @@ import org.geotoolkit.resources.Loggings;
  * ordering matter.
  * <p>
  * <strong>NOTE: This class is not thread safe</strong>. Users are responsable
- * for synchronisation. This is usually done in an utility class wrapping this
+ * for synchronization. This is usually done in an utility class wrapping this
  * service registry (e.g. {@link org.geotoolkit.factory.FactoryFinder}).
  *
  * @author Martin Desruisseaux (IRD, Geomatys)

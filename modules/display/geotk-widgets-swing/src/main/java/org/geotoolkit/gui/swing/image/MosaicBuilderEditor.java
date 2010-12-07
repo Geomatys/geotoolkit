@@ -579,7 +579,7 @@ public class MosaicBuilderEditor extends JComponent implements MosaicPerformance
      *
      * {@note Use this method when the widget state will not change anymore. If the user is still
      * editing the values in the widget, then invoking <code>getTileManager()</code> is preferable
-     * than <code>getTileBuilder().getTileManager()</code> for synchronisation reasons.}
+     * than <code>getTileBuilder().getTileManager()</code> for synchronization reasons.}
      *
      * @return The configured mosaic builder.
      * @throws IOException if an I/O operation was required and failed.

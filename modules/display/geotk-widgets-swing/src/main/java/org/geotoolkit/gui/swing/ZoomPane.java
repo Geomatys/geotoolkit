@@ -2030,7 +2030,7 @@ public abstract class ZoomPane extends JComponent implements DeformableViewer {
     }
 
     /**
-     * Cancels the synchronisation between the specified <var>x</var> and <var>y</var> models
+     * Cancels the synchronization between the specified <var>x</var> and <var>y</var> models
      * and the zoom of this {@code ZoomPane} object. The {@link ChangeListener} and
      * {@link ZoomChangeListener} objects that were created are deleted.
      *

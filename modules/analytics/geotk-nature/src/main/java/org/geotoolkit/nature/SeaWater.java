@@ -1,6 +1,6 @@
 /*
- *    GeoTools - The Open Source Java GIS Toolkit
- *    http://geotools.org
+ *    Geotoolkit.org - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
  *
  *    (C) 1999-2010, Open Source Geospatial Foundation (OSGeo)
  *    (C) 2009-2010, Geomatys
@@ -43,7 +43,7 @@ import static java.lang.Math.*;
  */
 public final class SeaWater {
     /*
-     * Note: Les algorithmes originaux de l'UNESCO recevait en entrés
+     * Note: Les algorithmes originaux de l'UNESCO recevaient en entrés
      *       des pressions en décibars. Les algorithmes écrites par
      *       Bernard Pelchat recevaient en entrés des pressions en
      *       MegaPascal. La première ligne de code des algorithmes

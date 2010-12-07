@@ -412,7 +412,7 @@ public final class DeferredPlanarImage extends PlanarImage
      * or it is being released from writing).
      */
     private void fireTileUpdate(final int tileX, final int tileY, final boolean willBeWritable) {
-        final TileObserver[] observers = this.observers; // Avoid the need for synchronisation.
+        final TileObserver[] observers = this.observers; // Avoid the need for synchronization.
         if (observers != null) {
             final int length = observers.length;
             for (int i=0; i<length; i++) {
