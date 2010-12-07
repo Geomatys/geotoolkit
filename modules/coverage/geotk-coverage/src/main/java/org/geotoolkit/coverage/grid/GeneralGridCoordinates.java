@@ -257,14 +257,14 @@ public class GeneralGridCoordinates implements GridCoordinates, Cloneable, Seria
         }
 
         /**
-         * Translates all ordinate values by the given offset. This method is for internal usage by
-         * {@link GeneralGridEnvelope} only, to be invoked only right after construction and before
-         * the instance goes public. This method should not be public since it breaks the
-         * immutability contract.
+         * Decrements all ordinate values. This method is for internal usage by
+         * {@link GeneralGridEnvelope} only, to be invoked only right after construction
+         * and before the instance goes public. This method should not be public since it
+         * breaks the immutability contract.
          */
-        final void translate(final int offset) {
+        final void decrement() {
             for (int i=0; i<coordinates.length; i++) {
-                coordinates[i] += offset;
+                coordinates[i]--;
             }
         }
 

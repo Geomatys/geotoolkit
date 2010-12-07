@@ -85,8 +85,8 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
      * @throws IllegalArgumentException if an ordinate value in the minimum index is not
      *         less than or equal to the corresponding ordinate value in the maximum index.
      */
-    private void checkCoherence() throws IllegalArgumentException {
-        final int dimension = index.length/2;
+    private static void checkCoherence(final int[] index) throws IllegalArgumentException {
+        final int dimension = index.length >>> 1;
         for (int i=0; i<dimension; i++) {
             final int lower = index[i];
             final int upper = index[dimension+i];
@@ -102,7 +102,7 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
      * This is used by {@link #getSubGridEnvelope} before a grid envelope goes public.
      */
     private GeneralGridEnvelope(final int dimension) {
-        index = new int[dimension * 2];
+        index = new int[dimension << 1];
     }
 
     /**
@@ -112,12 +112,12 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
      */
     public GeneralGridEnvelope(final GridEnvelope envelope) {
         final int dimension = envelope.getDimension();
-        index = new int[dimension * 2];
+        index = new int[dimension << 1];
         for (int i=0; i<dimension; i++) {
             index[i] = envelope.getLow(i);
             index[i + dimension] = envelope.getHigh(i) + 1;
         }
-        checkCoherence();
+        checkCoherence(index);
     }
 
     /**
@@ -135,8 +135,8 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
      *          specification), or {@code false} if they are exclusive (as in Java usage).
      *          This argument does not apply to low values, which are always inclusive.
      *
-     * @see #getLow
-     * @see #getHigh
+     * @see #getLow()
+     * @see #getHigh()
      */
     public GeneralGridEnvelope(final int[] low, final int[] high, final boolean isHighIncluded) {
         if (low.length != high.length) {
@@ -151,7 +151,7 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
                 index[i]++;
             }
         }
-        checkCoherence();
+        checkCoherence(index);
     }
 
     /**
@@ -212,13 +212,13 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.ILLEGAL_ARGUMENT_$2, "dimension", dimension));
         }
-        index = new int[dimension * 2];
+        index = new int[dimension << 1];
         index[0] = x;
         index[1] = y;
         index[dimension + 0] = x + width;  // Reminder: upper values in index[] are exclusive.
         index[dimension + 1] = y + height; // So there is no +1 offset to add here.
         Arrays.fill(index, dimension+2, index.length, 1);
-        checkCoherence();
+        checkCoherence(index);
     }
 
     /**
@@ -278,14 +278,14 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
     {
         final double offset = PixelTranslation.getPixelTranslation(anchor) + 0.5;
         final int dimension = envelope.getDimension();
-        index = new int[dimension * 2];
+        index = new int[dimension << 1];
         for (int i=0; i<dimension; i++) {
             // See "note about conversion of floating point values to integers" in the JavaDoc.
             index[i            ] = (int) Math.round(envelope.getMinimum(i) + offset);
             index[i + dimension] = (int) Math.round(envelope.getMaximum(i) + offset);
         }
         if (isHighIncluded) {
-            for (int i=index.length/2; i<index.length; i++) {
+            for (int i=(index.length >>> 1); i<index.length; i++) {
                 index[i]++;
             }
         }
@@ -296,7 +296,7 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
      */
     @Override
     public int getDimension() {
-        return index.length / 2;
+        return index.length >>> 1;
     }
 
     /**
@@ -306,7 +306,7 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
     @Override
     public GridCoordinates getLow() {
         if (low == null) {
-            low = new GeneralGridCoordinates.Immutable(index, 0, index.length/2);
+            low = new GeneralGridCoordinates.Immutable(index, 0, index.length >>> 1);
         }
         return low;
     }
@@ -319,8 +319,8 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
     public GridCoordinates getHigh() {
         if (high == null) {
             final GeneralGridCoordinates.Immutable coords;
-            coords = new GeneralGridCoordinates.Immutable(index, index.length/2, index.length);
-            coords.translate(-1);
+            coords = new GeneralGridCoordinates.Immutable(index, index.length >>> 1, index.length);
+            coords.decrement();
             high = coords;
         }
         return high;
@@ -333,7 +333,7 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
      */
     @Override
     public int getLow(final int dimension) {
-        if (dimension < index.length/2) {
+        if (dimension < (index.length >>> 1)) {
             return index[dimension];
         }
         throw new ArrayIndexOutOfBoundsException(dimension);
@@ -348,7 +348,7 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
     @Override
     public int getHigh(final int dimension) {
         if (dimension >= 0) {
-            return index[dimension + index.length/2] - 1;
+            return index[dimension + (index.length >>> 1)] - 1;
         }
         throw new ArrayIndexOutOfBoundsException(dimension);
     }
@@ -359,7 +359,7 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
      */
     @Override
     public int getSpan(final int dimension) {
-        return index[dimension + index.length/2] - index[dimension];
+        return index[dimension + (index.length >>> 1)] - index[dimension];
     }
 
     /**
@@ -376,7 +376,7 @@ public class GeneralGridEnvelope implements GridEnvelope, Serializable {
     public GeneralGridEnvelope getSubGridEnvelope(final int lower, final int upper)
             throws IndexOutOfBoundsException
     {
-        final int curDim = index.length/2;
+        final int curDim = index.length >>> 1;
         final int newDim = upper - lower;
         if (lower<0 || lower>curDim) {
             throw new IndexOutOfBoundsException(Errors.format(

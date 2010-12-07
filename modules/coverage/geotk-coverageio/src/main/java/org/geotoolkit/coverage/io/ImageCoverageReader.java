@@ -951,9 +951,9 @@ public class ImageCoverageReader extends GridCoverageReader {
             final GridEnvelope gridRange = gridGeometry.getGridRange();
             final int[] low  = gridRange.getLow ().getCoordinateValues();
             final int[] high = gridRange.getHigh().getCoordinateValues();
-            low[xi] = xmin; high[xi] = xmin + image.getWidth();
-            low[yi] = ymin; high[yi] = ymin + image.getHeight();
-            final GridEnvelope newGridRange = new GeneralGridEnvelope(low, high, false);
+            low[xi] = xmin; high[xi] = xmin + image.getWidth()  - 1;
+            low[yi] = ymin; high[yi] = ymin + image.getHeight() - 1;
+            final GridEnvelope newGridRange = new GeneralGridEnvelope(low, high, true);
             if (newGridToCRS != gridToCRS || !newGridRange.equals(gridRange)) {
                 gridGeometry = new GridGeometry2D(newGridRange, PixelInCell.CELL_CORNER,
                         newGridToCRS, gridGeometry.getCoordinateReferenceSystem(), null);
