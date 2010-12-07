@@ -244,7 +244,7 @@ public class ImageCoverageReader extends GridCoverageReader {
     @Override
     public void setLogLevel(final Level level) {
         super.setLogLevel(level);
-        setLogLevel(imageReader, level);
+        copyLevel(imageReader);
     }
 
     /**
@@ -385,7 +385,7 @@ public class ImageCoverageReader extends GridCoverageReader {
                     if (oldReader != null) {
                         oldReader.dispose();
                     }
-                    setLogLevel(newReader, logLevel);
+                    copyLevel(newReader);
                     setLocale(newReader, locale);
                     if (LOGGER.isLoggable(getFineLevel())) {
                         ImageCoverageStore.logCodecCreation(this, ImageCoverageReader.class,
@@ -962,8 +962,11 @@ public class ImageCoverageReader extends GridCoverageReader {
         final GridCoverage2D coverage = factory.create(name, image, gridGeometry, bands, null, properties);
         if (loggingEnabled) {
             fullTime = System.nanoTime() - fullTime;
-            ImageCoverageStore.logOperation(this, ImageCoverageReader.class, input, index,
-                    coverage, null, null, destToExtractedGrid, fullTime);
+            final Level level = getLogLevel(fullTime);
+            if (LOGGER.isLoggable(level)) {
+                ImageCoverageStore.logOperation(level, locale, ImageCoverageReader.class, false,
+                        input, index, coverage, null, null, destToExtractedGrid, fullTime);
+            }
         }
         return coverage;
     }

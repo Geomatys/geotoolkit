@@ -26,13 +26,13 @@ import java.awt.geom.AffineTransform;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.IIOParam;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
-import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
@@ -42,7 +42,6 @@ import org.opengis.referencing.operation.CoordinateOperation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.AxisDirection;
-import org.opengis.referencing.datum.PixelInCell;
 
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.factory.Hints;
@@ -138,7 +137,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      *
      * @since 3.15
      */
-    Level logLevel;
+    private Level logLevel;
 
     /**
      * The locale to use for formatting messages, or {@code null} for a default locale.
@@ -204,10 +203,28 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
     /**
      * Returns the logging level is explicitely set, or the {@link Level#FINE} level
      * otherwise. This is used for logging operation that are not performance measurement.
+     *
+     * @since 3.16
      */
     final Level getFineLevel() {
         final Level level = logLevel;
         return (level != null) ? level : PerformanceLevel.FINE;
+    }
+
+    /**
+     * Returns the logging level to use for an operation of the given duration.
+     *
+     * @param  duration The duration, in nanoseconds.
+     * @return The logging level to use.
+     *
+     * @since 3.16
+     */
+    final Level getLogLevel(final long duration) {
+        Level level = logLevel;
+        if (level == null) {
+            level = PerformanceLevel.forDuration(duration, TimeUnit.NANOSECONDS);
+        }
+        return level;
     }
 
     /**
@@ -242,13 +259,12 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      * If the given object is an instance of {@link LogProducer}, copies the log level.
      *
      * @param object The object on which to set the log level.
-     * @param level  The log level, or {@code null} for the default.
      *
      * @since 3.15
      */
-    static void setLogLevel(final Object object, final Level level) {
+    final void copyLevel(final Object object) {
         if (object instanceof LogProducer) {
-            ((LogProducer) object).setLogLevel(level);
+            ((LogProducer) object).setLogLevel(logLevel);
         }
     }
 
@@ -757,14 +773,20 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
 
     /**
      * A callback invoked by {@link #geodeticToPixelCoordinates geodeticToPixelCoordinates},
-     * for {@link ImageCoverageWriter} usage only. The value computed by this method is not
-     * of interest to {@link ImageCoverageReader}, because the reader is allowed to return
-     * a coverage different than the requested one. However writers are requeried to write
+     * for {@link GridCoverageWriter} usage only.  The value computed by this method is not
+     * of interest to {@link GridCoverageReader}, because the readers are allowed to return
+     * a coverage different than the requested one. However writers are required to write
      * the coverage as requested, and consequently need more informations.
+     * <p>
+     * An additional reason for avoiding to implement this method in readers case is that the
+     * {@link GridGeometry2D} creation may fail if the given math transform is non-invertible,
+     * for example because the matrix is not square. It would cause a useless failure for read
+     * operations.
      */
-    void computeDestGridGeometry(MathTransform gridToCRS, Envelope envelope, CoordinateReferenceSystem requestCRS)
-            throws CoverageStoreException
+    void computeDestGridGeometry(MathTransform destToExtractedGrid, Envelope requestEnvelope,
+            CoordinateReferenceSystem requestCRS) throws CoverageStoreException
     {
+        // Implementation provided by GridCoverageWriter only.
     }
 
     /**

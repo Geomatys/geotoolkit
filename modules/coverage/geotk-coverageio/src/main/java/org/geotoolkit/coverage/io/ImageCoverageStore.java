@@ -23,7 +23,6 @@ import java.util.logging.LogRecord;
 import javax.imageio.spi.ImageReaderWriterSpi;
 import java.awt.geom.AffineTransform;
 import java.awt.Dimension;
-import java.util.concurrent.TimeUnit;
 
 import org.opengis.util.InternationalString;
 import org.opengis.coverage.grid.GridCoverage;
@@ -37,7 +36,6 @@ import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.logging.PerformanceLevel;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.coverage.AbstractCoverage;
@@ -106,8 +104,10 @@ final class ImageCoverageStore {
      * Logs a read or write operation. This method can be invoked from
      * {@code read} or {@code write} methods only.
      *
-     * @param store      The object which is invoking this method.
-     * @param caller     The caller class (not necessarily {@code object.getClass()}.
+     * @param level      The logging level, as provided by {@link GridCoverageStore#getLogLevel(long)}.
+     * @param locale     The locale to use for formatting messages.
+     * @param caller     The caller class.
+     * @param write      {@code true} for a write operation, or {@code false} for a read operation.
      * @param stream     The input or output file or stream.
      * @param imageIndex The index of the image being read or written.
      * @param coverage   The coverage read or written.
@@ -120,8 +120,10 @@ final class ImageCoverageStore {
      * @param timeNanos  The elapsed execution time, in nanoseconds.
      */
     static void logOperation(
-            final GridCoverageStore   store,
+            final Level               level,
+            final Locale              locale,
             final Class<?>            caller,
+            final boolean             write,
                   Object              stream,
             final int                 imageIndex,
             final GridCoverage        coverage,
@@ -130,8 +132,6 @@ final class ImageCoverageStore {
             final MathTransform2D     destToExtractedGrid,
             final long                timeNanos)
     {
-        assert caller.isInstance(store) : caller;
-        final Locale locale = store.locale;
         /*
          * Get a string representation of the input or output. If the input/output is
          * a character sequence, a file or a URI/URL, then its string representation is
@@ -255,11 +255,6 @@ final class ImageCoverageStore {
         /*
          * Put everything in a log record.
          */
-        Level level = store.logLevel;
-        if (level == null) {
-            level = PerformanceLevel.forDuration(timeNanos, TimeUnit.NANOSECONDS);
-        }
-        final boolean write = (store instanceof GridCoverageWriter);
         final LogRecord record = Loggings.getResources(locale).getLogRecord(
                 level, Loggings.Keys.COVERAGE_STORE_$8, new Object[] {
                         write ? 1 : 0, streamName, name.toString(locale), viewTypes,

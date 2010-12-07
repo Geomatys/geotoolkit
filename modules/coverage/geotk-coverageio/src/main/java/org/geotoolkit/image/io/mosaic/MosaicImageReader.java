@@ -1418,7 +1418,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
             if (table != null) {
                 final long duration = System.nanoTime() - startTime;
                 Level level = logLevel;
-                if (level == null) { // Do not rely on the 'level' local variable.
+                if (level == null) {
                     level = PerformanceLevel.forDuration(duration, TimeUnit.NANOSECONDS);
                 }
                 table.writeHorizontalSeparator();

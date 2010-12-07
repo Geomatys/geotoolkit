@@ -113,7 +113,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
     @Override
     public void setLogLevel(final Level level) {
         super.setLogLevel(level);
-        setLogLevel(imageWriter, level);
+        copyLevel(imageWriter);
     }
 
     /**
@@ -273,7 +273,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                         IOUtilities.close(oldOutput);
                     }
                 }
-                setLogLevel(newWriter, logLevel);
+                copyLevel(newWriter);
                 setLocale(newWriter, locale);
                 if (LOGGER.isLoggable(getFineLevel())) {
                     ImageCoverageStore.logCodecCreation(this, ImageCoverageWriter.class,
@@ -579,20 +579,23 @@ public class ImageCoverageWriter extends GridCoverageWriter {
         }
         if (loggingEnabled) {
             fullTime = System.nanoTime() - fullTime;
-            final Dimension size = new Dimension(image.getWidth(), image.getHeight());
-            if (imageParam != null) {
-                final Rectangle request = imageParam.getSourceRegion();
-                if (request != null) {
-                    size.width  = Math.min(size.width,  request.width  / imageParam.getSourceXSubsampling());
-                    size.height = Math.min(size.height, request.height / imageParam.getSourceXSubsampling());
+            final Level level = getLogLevel(fullTime);
+            if (LOGGER.isLoggable(level)) {
+                final Dimension size = new Dimension(image.getWidth(), image.getHeight());
+                if (imageParam != null) {
+                    final Rectangle request = imageParam.getSourceRegion();
+                    if (request != null) {
+                        size.width  = Math.min(size.width,  request.width  / imageParam.getSourceXSubsampling());
+                        size.height = Math.min(size.height, request.height / imageParam.getSourceXSubsampling());
+                    }
                 }
+                CoordinateReferenceSystem crs = null;
+                if (param != null) {
+                    crs = param.getCoordinateReferenceSystem();
+                }
+                ImageCoverageStore.logOperation(level, locale, ImageCoverageWriter.class, true,
+                        output, 0, coverage, size, crs, destToExtractedGrid, fullTime);
             }
-            CoordinateReferenceSystem crs = null;
-            if (param != null) {
-                crs = param.getCoordinateReferenceSystem();
-            }
-            ImageCoverageStore.logOperation(this, ImageCoverageWriter.class, output, 0,
-                    coverage, size, crs, destToExtractedGrid, fullTime);
         }
         if (toDispose != null) {
             toDispose.dispose();
