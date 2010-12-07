@@ -19,8 +19,6 @@ package org.geotoolkit.internal.sql;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.LineNumberReader;
-import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.SQLException;
 
@@ -97,10 +95,7 @@ public final class PostgisInstaller extends ScriptRunner {
         }
         int n = 0;
         if (schema != null) {
-            final LineNumberReader reader = new LineNumberReader(
-                    new StringReader("SET search_path = " + schema + END_OF_STATEMENT));
-            n = run(reader);
-            reader.close();
+            n = run("SET search_path = " + schema + END_OF_STATEMENT);
         }
         File install = new File(directory, INSTALL);
         if (!install.isFile()) {

@@ -431,7 +431,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
                             Errors.Keys.FILE_DOES_NOT_EXIST_$1, script));
                 }
                 numRows += runner.run(in);
-                in.close();
+                // The stream will be closed by the run method.
             }
         }
         runner.close(userConnection == null);

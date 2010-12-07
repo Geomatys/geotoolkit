@@ -21,8 +21,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.FileNotFoundException;
-import java.io.LineNumberReader;
-import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
@@ -188,7 +186,7 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
          * Creates users and language.
          */
         progress(0, null);
-        int n = run("prepare.sql");
+        int n = runFile("prepare.sql");
         /*
          * Creates the postgis schema.
          */
@@ -199,7 +197,7 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
             n += postgis.run(postgisDir);
             postgis.close(false); // Close the statement, not the connection.
             progress(30, PostgisInstaller.DEFAULT_SCHEMA);
-            n += run("postgis-update.sql");
+            n += runFile("postgis-update.sql");
             runner = null;
         }
         /*
@@ -216,23 +214,20 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
          * Creates the metadata schema.
          */
         progress(75, METADATA_SCHEMA);
-        n += run("metadata-create.sql");
+        n += runFile("metadata-create.sql");
         /*
          * Creates the coverages schema.
          */
         progress(80, SCHEMA);
-        n += run("coverages-create.sql");
+        n += runFile("coverages-create.sql");
         final DatabaseMetaData md = getConnection().getMetaData();
         if (Dialect.POSTGRESQL.equals(dialect)) {
             String database = new Host(md.getURL()).path;
             if (database != null) {
                 final String quote = md.getIdentifierQuoteString();
-                final LineNumberReader reader = new LineNumberReader(new StringReader(
-                        "ALTER DATABASE " + quote + database + quote + " SET search_path=public, " +
+                n = run("ALTER DATABASE " + quote + database + quote + " SET search_path=public, " +
                         schema + ", " + METADATA_SCHEMA + ", " + PostgisInstaller.DEFAULT_SCHEMA + END_OF_STATEMENT + '\n' +
-                        "COMMENT ON DATABASE " + quote + database + quote + " IS 'Geotoolkit.org source of coverages.'" + END_OF_STATEMENT));
-                n = run(reader);
-                reader.close();
+                        "COMMENT ON DATABASE " + quote + database + quote + " IS 'Geotoolkit.org source of coverages.'" + END_OF_STATEMENT);
             }
         }
         progress(100, null);
@@ -247,15 +242,14 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
      * @throws IOException If an error occurred while reading the input.
      * @throws SQLException If an error occurred while executing a SQL statement.
      */
-    private int run(final String file) throws IOException, SQLException {
+    private int runFile(final String file) throws IOException, SQLException {
         runner = null;
         final InputStream in = CoverageDatabase.class.getResourceAsStream(file);
         if (in == null) {
             throw new FileNotFoundException(file);
         }
-        final int n = run(in);
-        in.close();
-        return n;
+        return run(in);
+        // The stream will be closed by the run method.
     }
 
     /**

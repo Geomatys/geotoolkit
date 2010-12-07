@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.io.StringReader;
 import java.io.Reader;
 
 import java.sql.Statement;
@@ -210,7 +211,7 @@ public class ScriptRunner implements FilenameFilter {
     /**
      * Returns {@code true} if the file of the given name is a SQL script. The default
      * implementation returns {@code true} if the filename ends with the {@code ".sql"}
-     * extension and if it does not start with {@code "."} (which is for hiden files on
+     * extension and if it does not start with {@code "."} (which is for hidden files on
      * Unix system).
      * <p>
      * Subclasses can override this method if they need to filter the files differently.
@@ -341,7 +342,7 @@ public class ScriptRunner implements FilenameFilter {
         final LineNumberReader in = new LineNumberReader(reader);
         currentFile = file;
         final int count = run(in);
-        in.close();
+        // The stream is closed by the 'in' method (TODO: Use resource management with JDK 7 anyway).
         currentFile = null; // Clear on success only.
         return count;
     }
@@ -350,12 +351,12 @@ public class ScriptRunner implements FilenameFilter {
      * Run the script from the given input stream. Lines are read and grouped up to the
      * terminal {@value #END_OF_STATEMENT} character, then sent to the database.
      *
-     * @param  in The stream to read. Will be read up to the end-of-stream but will not be closed.
+     * @param  in The stream to read. <strong>This stream will be closed</strong> at the end.
      * @return The number of rows added or modified as a result of the script execution.
      * @throws IOException If an error occurred while reading the input.
      * @throws SQLException If an error occurred while executing a SQL statement.
      */
-    public int run(final InputStream in) throws IOException, SQLException {
+    public final int run(final InputStream in) throws IOException, SQLException {
         final Reader reader;
         if (encoding == null) {
             reader = new InputStreamReader(in);
@@ -369,12 +370,12 @@ public class ScriptRunner implements FilenameFilter {
      * Run the script from the given reader. Lines are read and grouped up to the
      * terminal {@value #END_OF_STATEMENT} character, then sent to the database.
      *
-     * @param  in The stream to read. Will be read up to the end-of-stream but will not be closed.
+     * @param  in The stream to read. <strong>This stream will be closed</strong> at the end.
      * @return The number of rows added or modified as a result of the script execution.
      * @throws IOException If an error occurred while reading the input.
      * @throws SQLException If an error occurred while executing a SQL statement.
      */
-    public int run(final LineNumberReader in) throws IOException, SQLException {
+    public final int run(final LineNumberReader in) throws IOException, SQLException {
         int count = 0;
         final StringBuilder buffer = new StringBuilder();
         String line;
@@ -493,7 +494,22 @@ scanLine:   for (; i<length; i++) {
                 }
             }
         }
+        in.close();
         return count;
+    }
+
+    /**
+     * Convenience method invoking {@link #run(LineNumberReader)} for the given SQL statement.
+     *
+     * @param  statement The SQL statement to execute.
+     * @return The number of rows added or modified as a result of the statement execution.
+     * @throws IOException If an error occurred while reading the input (should never happen).
+     * @throws SQLException If an error occurred while executing a SQL statement.
+     *
+     * @since 3.16
+     */
+    public final int run(final String statement) throws IOException, SQLException {
+        return run(new LineNumberReader(new StringReader(statement)));
     }
 
     /**
