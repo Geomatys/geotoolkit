@@ -55,7 +55,7 @@ import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
 
 
 /**
- * Creates {@link TileManger} from a set of images organized according a given
+ * Creates {@link TileManager} from a set of images organized according a given
  * {@linkplain TileLayout tile layout}. This class can work with pre-existing
  * tile files (in which case it just build a {@code TileManager}), or can write
  * the tiles to the disk if the files do not already exist.

@@ -290,7 +290,7 @@ public class RawImageReader extends SpatialImageReader {
         processImageStarted(imageIndex);
         /*
          * The data can be stored directly in the underlying buffer if there is no subsampling.
-         * In order to keep this reader simplier, we also require consecutive pixels in both the
+         * In order to keep this reader simpler, we also require consecutive pixels in both the
          * source and destination image, otherwise we will fallback on the more generic and slower
          * path.
          */

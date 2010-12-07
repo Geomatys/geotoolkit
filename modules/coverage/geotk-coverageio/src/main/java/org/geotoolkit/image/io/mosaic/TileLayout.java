@@ -58,7 +58,7 @@ public enum TileLayout {
 
     /**
      * All tiles cover the same geographic area. Consequently, tiles at the finest resolution may
-     * be very big while tiles at lower resolutions are smaller. This is the simpliest tile layout,
+     * be very big while tiles at lower resolutions are smaller. This is the simplest tile layout,
      * easy to manage but inefficient. It is provided for testing purpose and compatibility with
      * some external softwares using such layout.
      */

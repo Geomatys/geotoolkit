@@ -89,7 +89,7 @@ import static org.geotoolkit.image.io.SampleConversionType.*;
  *
  * {@section Services for implementors}
  * This class provides the following conveniences for implementors. Note that the default behavior
- * described below assumes the simpliest file format: one image made of one band of floating point
+ * described below assumes the simplest file format: one image made of one band of floating point
  * values using a grayscale color palette scaled to fit the range of sample values. This behavior
  * can be changed by overriding the methods listed below.
  *
@@ -872,7 +872,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
         }
         /*
          * Creates a color palette suitable for the range of values in the visible band.
-         * The case for floating points is the simpliest: we should not have any offset,
+         * The case for floating points is the simplest: we should not have any offset,
          * at most a replacement of no-data values. In the case of integer values, we
          * must make sure that the indexed color map is large enough for containing both
          * the highest data value and the highest no-data value.

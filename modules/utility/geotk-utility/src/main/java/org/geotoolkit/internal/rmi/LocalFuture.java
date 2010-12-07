@@ -74,7 +74,7 @@ final class LocalFuture<Output> implements TaskFuture<Output> {
         } else try {
             return task.call();
         } catch (RuntimeException e) {
-            throw e; // Let them propagates, for simplier task trace.
+            throw e; // Let them propagates, for simpler task trace.
         } catch (Exception e) {
             throw new ExecutionException(e);
         }

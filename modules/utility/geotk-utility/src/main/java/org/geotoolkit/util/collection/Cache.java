@@ -634,7 +634,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
 
         /**
          * Do nothing (except checking for programming error), since we don't hold any lock.
-         * We do not localize the exception message since it is targeted to the developper
+         * We do not localize the exception message since it is targeted to the developer
          * rather than the end user.
          *
          * {@note An alternative would have been to store the result in the map anyway.
@@ -742,7 +742,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
 
             /**
              * Do nothing (except checking for programming error), since we don't hold any lock.
-             * We do not localize the exception message since it is targeted to the developper
+             * We do not localize the exception message since it is targeted to the developer
              * rather than the end user.
              *
              * {@note An alternative would have been to store the result in the map anyway.

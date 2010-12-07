@@ -524,9 +524,9 @@ public final class ShapeUtilities {
      * line or a quadratic curve, then this method replaces it by a {@link Line2D} or
      * {@link QuadCurve2D} object respectively.
      *
-     * @param  path The shape to replace by a simplier Java2D construct. This is generally
+     * @param  path The shape to replace by a simpler Java2D construct. This is generally
      *         an instance of {@link Path2D}, but doesn't have to.
-     * @return A simplier Java construct, or {@code path} if no better construct is proposed.
+     * @return A simpler Java construct, or {@code path} if no better construct is proposed.
      */
     public static Shape toPrimitive(final Shape path) {
         final float[] buffer = new float[6];

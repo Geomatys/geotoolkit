@@ -35,7 +35,7 @@ import static java.lang.Double.NaN;
  * de temps couvre le mieux la plage demandée (les dates de début et de fin), et n'examinera
  * la couverture spatiale que si deux images ont une couverture temporelle équivalente. Cette
  * politique est appropriée lorsque les images couvrent à peu près la même région, et que les
- * dates de ces images est le principal facteur qui varie. Les critères de comparaison utilisés
+ * dates de ces images est le principal facteur qui varie. Les critères de comparison utilisés
  * sont:
  * <p>
  * <ul>

@@ -63,7 +63,7 @@
       <organization>Geomatys</organization>
       <timezone>+1</timezone>
       <roles>
-        <role>Java developper</role>
+        <role>Java developer</role>
       </roles>
     </developer>
   </developers>
@@ -75,7 +75,7 @@
         Institut de Recherche pour le Développement (IRD)
       </organization>
       <roles>
-        <role>Java developper</role>
+        <role>Java developer</role>
       </roles>
     </contributor>
   </contributors>

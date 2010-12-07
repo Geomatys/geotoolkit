@@ -143,7 +143,7 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
             properties("Clarke 1866", 7008, null), 6378206.4, 6356583.8 , SI.METRE);
 
     /**
-     * A sphere with a radius of 6371000 {@linkplain SI#METRE metres}. Spheres use a simplier
+     * A sphere with a radius of 6371000 {@linkplain SI#METRE metres}. Spheres use a simpler
      * algorithm for {@linkplain #orthodromicDistance orthodromic distance computation}, which
      * may be faster and more robust.
      *

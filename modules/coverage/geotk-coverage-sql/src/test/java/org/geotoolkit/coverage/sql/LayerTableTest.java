@@ -49,8 +49,8 @@ import static org.junit.Assert.*;
 @Depend(SeriesTableTest.class)
 public final class LayerTableTest extends CatalogTestBase {
     /**
-     * The name of the simpliest layer to be tested. This layer contains only PNG images in
-     * WGS84, one image for each date. Consequently this is the simpliest layer we can test.
+     * The name of the simplest layer to be tested. This layer contains only PNG images in
+     * WGS84, one image for each date. Consequently this is the simplest layer we can test.
      */
     public static final String TEMPERATURE = "SST (World - 8 days)";
 
@@ -130,7 +130,7 @@ public final class LayerTableTest extends CatalogTestBase {
 
     /**
      * Tests the {@link LayerTableTest#getEntry} and @link LayerTableTest#getEntries} methods
-     * on the simpliest layer, which use WGS84 CRS. Also tests a few methods on the
+     * on the simplest layer, which use WGS84 CRS. Also tests a few methods on the
      * {@link LayerEntry} object.
      *
      * @throws SQLException If the test can't connect to the database.

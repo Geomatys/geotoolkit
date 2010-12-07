@@ -65,7 +65,7 @@ class HeuristicRegistry extends ConverterRegistry {
             final ClassPair<S,T> key = new ClassPair<S,T>(source, target);
             return key.cast(converter);
             // Do not register, because we want to keep the tree free of converters
-            // having an interface as its source (to keep the system simplier).
+            // having an interface as its source (to keep the system simpler).
         }
         return super.converter(source, target);
     }

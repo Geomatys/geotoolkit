@@ -156,7 +156,7 @@ public class DefaultOnlineResource extends MetadataEntity implements OnlineResou
 
     /**
      * The online resources for <A HREF="http://java.sun.com/">Sun Microsystems</A>.
-     * This online resources point to the Java developper site.
+     * This online resources point to the Java developer site.
      *
      * @since 2.2
      */

@@ -88,7 +88,7 @@ public final class PropertyAccessorTest {
         assertEquals("getISBN() property",  "ISBN",  accessor.name(accessor.indexOf("ISBN" ), UML_IDENTIFIER));
         assertNull(accessor.name(-1, JAVABEANS_PROPERTY));
         /*
-         * Method name - this is the simpliest name(...) implementation.
+         * Method name - this is the simplest name(...) implementation.
          */
         assertEquals("getAlternateTitles() property", "getAlternateTitles",
                 accessor.name(accessor.indexOf("alternateTitle"), METHOD_NAME));

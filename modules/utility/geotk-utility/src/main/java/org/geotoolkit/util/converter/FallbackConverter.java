@@ -409,7 +409,7 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
      * <p>
      * This method creates a simplified tree, in that the cascading of fallbacks converter
      * of same {@link #targetClass} are hiden: only their leaves are created. The purpose is
-     * to help the developper to focus more on the important elements (the leaf converters)
+     * to help the developer to focus more on the important elements (the leaf converters)
      * and be less distracted by the amount of {@code FallbackConverter}s traversed in order
      * to reach those leaves.
      *

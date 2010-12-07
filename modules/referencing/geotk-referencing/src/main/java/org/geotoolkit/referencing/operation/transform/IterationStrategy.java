@@ -172,7 +172,7 @@ public enum IterationStrategy {
             /*
              * Target coordinates will be stored after source coordinates. If the two subarrays
              * do not overlap, we still can use ASCENDING order (the DESCENDING order would do
-             * the job as well, but we try to favor the simplier ascending order).
+             * the job as well, but we try to favor the simpler ascending order).
              */
             delta = -delta;
             if (delta >= numPts*srcDim) {

@@ -129,7 +129,7 @@ public final class ColorPalette implements Serializable {
      */
     public static String findName(final Color[] colors, ComboBoxModel choices, PaletteFactory factory) {
         /*
-         * Determines the palette name or RGB code. In the simpliest
+         * Determines the palette name or RGB code. In the simplest
          * case, we have a single Color object to format as "#RRGGBB".
          */
         if (colors.length == 1) {

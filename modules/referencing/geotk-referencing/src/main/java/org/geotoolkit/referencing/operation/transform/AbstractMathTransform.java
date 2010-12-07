@@ -67,7 +67,7 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  * implements {@code MathTransform2D}. Subclasses must declare {@code implements MathTransform2D}
  * themself if they know to maps two-dimensional coordinate systems.
  * <p>
- * The simpliest way to implement this abstract class is to provide an implementation for the
+ * The simplest way to implement this abstract class is to provide an implementation for the
  * following methods only:
  * <p>
  * <ul>

@@ -389,7 +389,7 @@ public class ReferencingBuilder {
      * Adds the given parameter value using the given accessor. If the parameter value is actually
      * a {@link ParameterValueGroup}, then its child are added recursively.
      * <p>
-     * In order to keep the metadata simplier, this method omits some parameters that are equal
+     * In order to keep the metadata simpler, this method omits some parameters that are equal
      * to the default value. In order to reduce the risk of error, we omits a parameter only if
      * its default value is 0, or 1 in the particular case of the scale factor.
      *

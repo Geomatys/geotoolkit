@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
  */
 public final class JNDITest {
     /**
-     * Tests {@link JNDI#fixName} using simpliest name or no context.
+     * Tests {@link JNDI#fixName} using simplest name or no context.
      * We avoid the tests that would require a real initial context.
      */
     @Test

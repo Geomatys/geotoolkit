@@ -434,7 +434,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      *   not allow many elements to have the same name (actually this is not strictly forbidden, but
      *   the getter methods return information only about the first occurrence of a given name).
      *   Converting an element to an attribute allow it to appear with the same name under different
-     *   nodes, and can make the tree considerably simplier (at the cost of losing all the sub-tree
+     *   nodes, and can make the tree considerably simpler (at the cost of losing all the sub-tree
      *   below the converted element). Example:</p>
      *
      * <blockquote><pre>substitution.put({@linkplain Citation}.class, String.class);</pre></blockquote></li>

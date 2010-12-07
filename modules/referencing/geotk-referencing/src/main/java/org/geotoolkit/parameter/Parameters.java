@@ -430,7 +430,7 @@ public final class Parameters {
          * want to create a new parameter is the user didn't supplied one. Search the parameter
          * ourself (so we don't create any), and returns null if we don't find any.
          *
-         * TODO: A simplier solution would be to add a 'isDefined' method in GeoAPI,
+         * TODO: A simpler solution would be to add a 'isDefined' method in GeoAPI,
          *       or something similar.
          */
         final GeneralParameterDescriptor search;

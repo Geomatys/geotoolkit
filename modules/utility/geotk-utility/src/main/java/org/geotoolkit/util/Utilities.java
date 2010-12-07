@@ -77,7 +77,7 @@ public final class Utilities {
 
     /**
      * Returns {@code true} if the given booleans are equals. This overloaded flavor is provided
-     * only for allowing developper to invoke {@code equals} methods without consideration for
+     * only for allowing developer to invoke {@code equals} methods without consideration for
      * the argument type.
      *
      * @param o1 The first value to compare.
@@ -92,7 +92,7 @@ public final class Utilities {
 
     /**
      * Returns {@code true} if the given characters are equals. This overloaded flavor is provided
-     * only for allowing developper to invoke {@code equals} methods without consideration for
+     * only for allowing developer to invoke {@code equals} methods without consideration for
      * the argument type.
      *
      * @param o1 The first value to compare.
@@ -107,7 +107,7 @@ public final class Utilities {
 
     /**
      * Returns {@code true} if the given bytes are equals. This overloaded flavor is provided
-     * only for allowing developper to invoke {@code equals} methods without consideration for
+     * only for allowing developer to invoke {@code equals} methods without consideration for
      * the argument type.
      *
      * @param o1 The first value to compare.
@@ -122,7 +122,7 @@ public final class Utilities {
 
     /**
      * Returns {@code true} if the given shorts are equals. This overloaded flavor is provided
-     * only for allowing developper to invoke {@code equals} methods without consideration for
+     * only for allowing developer to invoke {@code equals} methods without consideration for
      * the argument type.
      *
      * @param o1 The first value to compare.
@@ -137,7 +137,7 @@ public final class Utilities {
 
     /**
      * Returns {@code true} if the given integers are equals. This overloaded flavor is provided
-     * only for allowing developper to invoke {@code equals} methods without consideration for
+     * only for allowing developer to invoke {@code equals} methods without consideration for
      * the argument type.
      *
      * @param o1 The first value to compare.
@@ -152,7 +152,7 @@ public final class Utilities {
 
     /**
      * Returns {@code true} if the given longs are equals. This overloaded flavor is provided
-     * only for allowing developper to invoke {@code equals} methods without consideration for
+     * only for allowing developer to invoke {@code equals} methods without consideration for
      * the argument type.
      *
      * @param o1 The first value to compare.

@@ -401,7 +401,7 @@ public final class Logging {
      * is tried, <i>etc.</i> until an acceptable factory is found.
      * <p>
      * This method usually doesn't need to be invoked explicitly, since it is automatically
-     * invoked on {@code Logging} class initialization. However developpers may invoke it if
+     * invoked on {@code Logging} class initialization. However developers may invoke it if
      * new {@code LoggerFactory}s are added later on the classpath of a running JVM.
      *
      * @since 3.00
@@ -532,7 +532,7 @@ search:     while (configs.hasMoreElements()) try {
      *   <li><p>When an exception occurred in a private method used internally by a public
      *       method, we sometime want to log the warning for the public method instead,
      *       since the user is not expected to know anything about the existence of the
-     *       private method. If a developper really want to know about the private method,
+     *       private method. If a developer really want to know about the private method,
      *       the stack trace is still available anyway.</p></li>
      * </ul>
      *

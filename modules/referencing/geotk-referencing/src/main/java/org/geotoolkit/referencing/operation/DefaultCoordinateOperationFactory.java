@@ -191,7 +191,7 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
         }
         /*
          * Now perform "instanceof" checks for all supported types. We check CompoundCRS first
-         * because experience shows that it produces simplier transformation chains than if we
+         * because experience shows that it produces simpler transformation chains than if we
          * check them last.
          */
         ////////////////////////////////////////////

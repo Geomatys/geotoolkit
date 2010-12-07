@@ -45,7 +45,7 @@ final class LocalExecutor implements TaskExecutor {
      * Creates a new executor.
      *
      * @param threaded {@code true} for using an executor service, or {@code false} for running
-     *        the task directly in the current thread. The later has simplier task trace.
+     *        the task directly in the current thread. The later has simpler task trace.
      */
     LocalExecutor(final boolean threaded) {
         executor = threaded ? Executors.newCachedThreadPool(Threads.THREAD_FACTORY) : null;
