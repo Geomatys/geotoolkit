@@ -18,8 +18,9 @@
 package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElement;
-import org.geotoolkit.metadata.iso.acquisition.DefaultEnvironmentalRecord;
 import org.opengis.metadata.acquisition.EnvironmentalRecord;
+import org.geotoolkit.metadata.iso.acquisition.DefaultEnvironmentalRecord;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -27,7 +28,7 @@ import org.opengis.metadata.acquisition.EnvironmentalRecord;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @version 3.16
  *
  * @since 3.02
  * @module
@@ -66,7 +67,7 @@ public final class EnvironmentalRecordAdapter extends MetadataAdapter<Environmen
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MI_EnvironmentalRecord")
+    @XmlElement(name = "MI_EnvironmentalRecord", namespace = Namespaces.GMI)
     public DefaultEnvironmentalRecord getElement() {
         final EnvironmentalRecord metadata = this.metadata;
         return (metadata instanceof DefaultEnvironmentalRecord) ?

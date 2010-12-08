@@ -18,8 +18,9 @@
 package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElement;
-import org.geotoolkit.metadata.iso.acquisition.DefaultPlatformPass;
 import org.opengis.metadata.acquisition.PlatformPass;
+import org.geotoolkit.metadata.iso.acquisition.DefaultPlatformPass;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -27,7 +28,7 @@ import org.opengis.metadata.acquisition.PlatformPass;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @version 3.16
  *
  * @since 3.02
  * @module
@@ -66,7 +67,7 @@ public final class PlatformPassAdapter extends MetadataAdapter<PlatformPassAdapt
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MI_PlatformPass")
+    @XmlElement(name = "MI_PlatformPass", namespace = Namespaces.GMI)
     public DefaultPlatformPass getElement() {
         final PlatformPass metadata = this.metadata;
         return (metadata instanceof DefaultPlatformPass) ?

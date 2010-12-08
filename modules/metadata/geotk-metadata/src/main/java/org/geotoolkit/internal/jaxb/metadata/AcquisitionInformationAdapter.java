@@ -18,8 +18,9 @@
 package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElement;
-import org.geotoolkit.metadata.iso.acquisition.DefaultAcquisitionInformation;
 import org.opengis.metadata.acquisition.AcquisitionInformation;
+import org.geotoolkit.metadata.iso.acquisition.DefaultAcquisitionInformation;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -27,7 +28,7 @@ import org.opengis.metadata.acquisition.AcquisitionInformation;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @version 3.16
  *
  * @since 3.02
  * @module
@@ -66,7 +67,7 @@ public final class AcquisitionInformationAdapter extends MetadataAdapter<Acquisi
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MI_AcquisitionInformation")
+    @XmlElement(name = "MI_AcquisitionInformation", namespace = Namespaces.GMI)
     public DefaultAcquisitionInformation getElement() {
         final AcquisitionInformation metadata = this.metadata;
         return (metadata instanceof DefaultAcquisitionInformation) ?

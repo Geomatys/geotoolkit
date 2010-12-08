@@ -18,8 +18,9 @@
 package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElement;
-import org.geotoolkit.metadata.iso.spatial.DefaultGCP;
 import org.opengis.metadata.spatial.GCP;
+import org.geotoolkit.metadata.iso.spatial.DefaultGCP;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -27,7 +28,7 @@ import org.opengis.metadata.spatial.GCP;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @version 3.16
  *
  * @since 3.02
  * @module
@@ -66,7 +67,7 @@ public final class GCPAdapter extends MetadataAdapter<GCPAdapter,GCP> {
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MI_GCP")
+    @XmlElement(name = "MI_GCP", namespace = Namespaces.GMI)
     public DefaultGCP getElement() {
         final GCP metadata = this.metadata;
         return (metadata instanceof DefaultGCP) ?

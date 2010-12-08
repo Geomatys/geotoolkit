@@ -18,8 +18,9 @@
 package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElement;
-import org.geotoolkit.metadata.iso.content.DefaultRangeElementDescription;
 import org.opengis.metadata.content.RangeElementDescription;
+import org.geotoolkit.metadata.iso.content.DefaultRangeElementDescription;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -27,7 +28,7 @@ import org.opengis.metadata.content.RangeElementDescription;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @version 3.16
  *
  * @since 3.02
  * @module
@@ -66,7 +67,7 @@ public final class RangeElementDescriptionAdapter extends MetadataAdapter<RangeE
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MI_RangeElementDescription")
+    @XmlElement(name = "MI_RangeElementDescription", namespace = Namespaces.GMI)
     public DefaultRangeElementDescription getElement() {
         final RangeElementDescription metadata = this.metadata;
         return (metadata instanceof DefaultRangeElementDescription) ?
