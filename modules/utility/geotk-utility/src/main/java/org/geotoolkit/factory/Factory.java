@@ -47,7 +47,7 @@ import org.geotoolkit.resources.Errors;
 /**
  * Base class for Geotoolkit.org factories. {@link FactoryRegistry} handles {@code Factory}
  * subclasses specially, but extending this class is not mandatory ({@code FactoryRegistry}
- * will work with arbitrary implementations as well}). This base class provides some convenience
+ * will work with arbitrary implementations as well). This base class provides some convenience
  * features for subclasses:
  * <p>
  * <ul>
@@ -179,7 +179,7 @@ public abstract class Factory {
      * {@linkplain org.opengis.referencing.datum.DatumAuthorityFactory datum authority factory}
      * uses an ordinary {@linkplain org.opengis.referencing.datum.DatumFactory datum factory},
      * its method could be implemented as below (note that we should not check if the datum
-     * factory is null, since key with null value is the expected behaviour in this case).
+     * factory is null, since key with null value is the expected behavior in this case).
      *
      * {@preformat java
      *     hints.put(Hints.DATUM_FACTORY, datumFactory);
@@ -328,7 +328,7 @@ public abstract class Factory {
          * are found for the given fully-qualified name. This variant is useful when a class may
          * or may not be on the classpath.
          *
-         * @param type The fully-qualified nale of the factory which should be selected after
+         * @param type The fully-qualified name of the factory which should be selected after
          *        the enclosing one.
          * @param subclasses {@code false} if the ordering should apply to the given class only,
          *        or {@code true} if it should apply to subclasses of {@code type} as well.
@@ -359,7 +359,7 @@ public abstract class Factory {
          * are found for the given fully-qualified name. This variant is useful when a class may
          * or may not be on the classpath.
          *
-         * @param type The fully-qualified nale of the factory which should be selected before
+         * @param type The fully-qualified name of the factory which should be selected before
          *        the enclosing one.
          * @param subclasses {@code false} if the ordering should apply to the given class only,
          *        or {@code true} if it should apply to subclasses of {@code type} as well.
@@ -570,7 +570,7 @@ public abstract class Factory {
     /**
      * The default conformance result returned by {@link Factory#availability()}. This class
      * is <cite>live</cite>, i.e. the {@link #pass()} method will return {@code false} if the
-     * encloding factory has been {@linkplain Factory#dispose disposed} without the need to
+     * enclosing factory has been {@linkplain Factory#dispose disposed} without the need to
      * create a new instance of {@code Availability}.
      *
      * @author Martin Desruisseaux (Geomatys)
@@ -663,11 +663,11 @@ public abstract class Factory {
         }
 
         /**
-         * Returns {@code true} if the encloding factory is ready for use. The default
-         * implementation returns {@code true} if no throwable was given at constrution
+         * Returns {@code true} if the enclosing factory is ready for use. The default
+         * implementation returns {@code true} if no throwable was given at construction
          * time and the enclosing factory has not been {@linkplain Factory#dispose disposed}.
          *
-         * @return {@code true} if the encloding factory is ready for use.
+         * @return {@code true} if the enclosing factory is ready for use.
          */
         @Override
         public Boolean pass() {

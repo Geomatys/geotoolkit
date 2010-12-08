@@ -53,8 +53,9 @@ import org.geotoolkit.referencing.operation.projection.TransverseMercator;
  * 1.0 specification (it has been added later).
  * <p>
  * The parameters are as below:
+ * <p>
  * <ul>
- *   <li><p>{@code code} - the projection code, as one of the following values:</p>
+ *   <li>{@code code} - the projection code, as one of the following values:
  *     <ul>
  *       <li>42001 for the {@linkplain TransverseMercator Universal Transverse Mercator} projection.</li>
  *       <li>42002 for the {@linkplain TransverseMercator Transverse Mercator} projection.</li>
@@ -62,18 +63,32 @@ import org.geotoolkit.referencing.operation.projection.TransverseMercator;
  *       <li>42004 for the {@linkplain Equirectangular Equirectangular} projection.</li>
  *       <li>42005 for the Mollweide projection.</li>
  *     </ul>
- *   </li><li><p>
+ *   </li><li>
  *     {@code unit} - the unit of measurement code, as one of the codes documented
  *     in the {@link Units#valueOfEPSG(int)} method. This code is optional. If not
- *     provided, then the default value is 9001 (<cite>metre</cite>).</p>
- *   </li><li><p>
+ *     provided, then the default value is 9001 (<cite>metre</cite>).
+ *   </li><li>
  *     {@code long0} - the central meridian. For UTM projections (42001), it can be computed as
  *     (<var>zone</var>*6 - 183) where <var>zone</var> is the UTM zone in the range 1 to 60
- *     inclusive.</p>
- *   </li><li><p>
- *     {@code lat0} - the latitude of origin.</p>
+ *     inclusive.
+ *   </li><li>
+ *     {@code lat0} - the latitude of origin.
  *   </li>
  * </ul>
+ *
+ * {@section Examples}
+ * An orthographic CRS centered at 100 degrees West longitude and 45 degrees North latitude,
+ * with ordinates in metres.
+ *
+ * {@preformat text
+ *     AUTO2:42003,1,-100,45
+ * }
+ *
+ * Same CRS as above, but with conversion factor allowing ordinate values in U.S. feet:
+ *
+ * {@preformat text
+ *     AUTO2:42003,0.3048006096012192,-100,45
+ * }
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)

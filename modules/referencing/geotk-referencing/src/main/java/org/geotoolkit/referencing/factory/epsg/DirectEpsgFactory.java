@@ -78,6 +78,7 @@ import org.geotoolkit.referencing.operation.DefaultSingleOperation;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.DefaultOperationMethod;
 import org.geotoolkit.referencing.operation.DefaultConcatenatedOperation;
+import org.geotoolkit.internal.referencing.factory.ImplementationHints;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
@@ -118,12 +119,14 @@ import org.geotoolkit.lang.ThreadSafe;
  * @author Andrea Aime (TOPP)
  * @version 3.16
  *
+ * @see ThreadedEpsgFactory
  * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
  *
  * @since 1.2
  * @module
  */
 @ThreadSafe(concurrent = false)
+@ImplementationHints(forceLongitudeFirst=false)
 public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuthorityFactory,
         CSAuthorityFactory, DatumAuthorityFactory, CoordinateOperationAuthorityFactory
 {

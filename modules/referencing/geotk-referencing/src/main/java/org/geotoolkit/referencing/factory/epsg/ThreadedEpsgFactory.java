@@ -48,6 +48,7 @@ import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.referencing.factory.ThreadedAuthorityFactory;
 import org.geotoolkit.referencing.factory.NoSuchFactoryException;
+import org.geotoolkit.internal.referencing.factory.ImplementationHints;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
@@ -92,12 +93,14 @@ import org.geotoolkit.lang.ThreadSafe;
  * @author Jody Garnett (Refractions)
  * @version 3.00
  *
+ * @see DirectEpsgFactory
  * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
  *
  * @since 2.1
  * @module
  */
 @ThreadSafe(concurrent = true)
+@ImplementationHints(forceLongitudeFirst=false)
 public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRSAuthorityFactory,
         CSAuthorityFactory, DatumAuthorityFactory, CoordinateOperationAuthorityFactory
 {

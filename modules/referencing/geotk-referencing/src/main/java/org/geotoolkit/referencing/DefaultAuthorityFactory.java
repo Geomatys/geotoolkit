@@ -40,6 +40,7 @@ import org.geotoolkit.referencing.factory.AllAuthoritiesFactory;
 import org.geotoolkit.referencing.factory.MultiAuthoritiesFactory;
 import org.geotoolkit.referencing.factory.CachingAuthorityFactory;
 import org.geotoolkit.referencing.factory.FactoryDependencies;
+import org.geotoolkit.internal.referencing.factory.ImplementationHints;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Loggings;
@@ -55,9 +56,9 @@ import org.geotoolkit.lang.ThreadSafe;
  *   <li>Uses {@link AllAuthoritiesFactory} to select CRS Authorities from the code.</li>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Andrea Aime (TOPP)
- * @version 3.00
+ * @version 3.16
  *
  * @since 2.3
  * @module
@@ -119,6 +120,22 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
         hints.put(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, longitudeFirst);
         for (int i=factories.size(); --i>=0;) {
             CRSAuthorityFactory factory = factories.get(i);
+            /*
+             * Special case for factories having a hard-coded value for the "force longitude
+             * first axis order" hint. Avoid the cost of querying the factory registry again,
+             * because it may create a new connection to the database just for checking the
+             * hints.
+             */
+            final ImplementationHints hardHints = factory.getClass().getAnnotation(ImplementationHints.class);
+            if (hardHints != null) {
+                if (hardHints.forceLongitudeFirst() != longitudeFirst) {
+                    factories.remove(i);
+                    continue;
+                }
+            }
+            /*
+             * General case for factories that doesn't declare hard-coded hints.
+             */
             final String authority = Citations.getIdentifier(factory.getAuthority());
             hints.put(Hints.CRS_AUTHORITY_FACTORY, filter.type = factory.getClass());
             try {

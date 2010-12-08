@@ -791,7 +791,7 @@ public class FactoryFinder {
      * <p>
      * This method is preferred to {@link #setVendorOrdering(String, String)} when the package
      * name are known, because it avoid the potentially costly (on some implementations) call
-     * to {@link Factory#getVendor()}.
+     * to {@link org.opengis.util.Factory#getVendor()}.
      *
      * {@note An example of costly <code>getVendor()</code> implementation is the one in the
      * <code>CachingAuthorityFactory</code> class, because it needs to create the underlying

@@ -31,13 +31,14 @@ import org.geotoolkit.internal.Threads;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.converter.Classes;
 
 
 /**
  * A caching authority factory which delegates to different instances of a backing store for
  * concurrency in multi-thread environment. This factory delays the {@linkplain #createBackingStore
  * creation of a backing store} until first needed, and {@linkplain AbstractAuthorityFactory#dispose
- * dispose} it after some timeout. This approach allows to etablish a connection to a database (for
+ * dispose} it after some timeout. This approach allows to establish a connection to a database (for
  * example) and keep it only for a relatively short amount of time.
  *
  * {@section Multi-threading}
@@ -56,7 +57,7 @@ import org.geotoolkit.util.logging.Logging;
 public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
     /**
      * A backing store used by {@link ThreadedAuthorityFactory}. A new instance is created
-     * everytime a backing factory is {@linkplain ThreadedAuthorityFactory#release released}.
+     * every time a backing factory is {@linkplain ThreadedAuthorityFactory#release released}.
      * In a mono-thread application, there is typically only one instance at a given time.
      * However if more than one than one thread are requesting new objects concurrently,
      * than many instances may exist for the same {@code ThreadedAuthorityFactory}.
@@ -82,6 +83,14 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
         Store(final AbstractAuthorityFactory factory) {
             this.factory = factory;
             timestamp = System.currentTimeMillis();
+        }
+
+        /**
+         * Returns a string representation for debugging purpose only.
+         */
+        @Override
+        public String toString() {
+            return String.format("Store[%s at %tT]", Classes.getShortClassName(factory), timestamp);
         }
     }
 
@@ -116,6 +125,14 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
          * to {@link #release}. When this value reach zero, the factory is really released.
          */
         int count;
+
+        /**
+         * Returns a string representation for debugging purpose only.
+         */
+        @Override
+        public String toString() {
+            return "Usage[" + Classes.getShortClassName(factory) + ": " + count + ']';
+        }
     }
 
     /**
