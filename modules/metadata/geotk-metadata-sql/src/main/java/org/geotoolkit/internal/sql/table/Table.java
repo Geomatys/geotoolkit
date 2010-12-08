@@ -285,13 +285,7 @@ public abstract class Table implements Localized {
                     Vocabulary.getResources(locale).getString(Vocabulary.Keys.DURATION),
                     duration / 1E9, statement));
             record.setSourceClassName(getClass().getName());
-            final String method;
-            switch (type) {
-                case SELECT: method = "getEntry";     break;
-                case LIST:   method = "getEntries";   break;
-                default:     method = "getStatement"; break;
-            }
-            record.setSourceMethodName(method);
+            record.setSourceMethodName(type.method);
             record.setLoggerName(logger.getName());
             logger.log(record);
         }

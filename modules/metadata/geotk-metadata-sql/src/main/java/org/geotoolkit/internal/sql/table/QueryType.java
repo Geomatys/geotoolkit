@@ -33,7 +33,7 @@ public enum QueryType {
      * {@link SingletonTable#getEntry(String)} or {@link SingletonTable#getEntry(int)},
      * depending if the identifier is numeric or not.
      */
-    SELECT,
+    SELECT("getEntry"),
 
     /**
      * Checks if an entry exists. This query is similar to {@link #SELECT} except that it
@@ -41,48 +41,61 @@ public enum QueryType {
      * are usually the same than {@link #SELECT} and we are only interested to see if the
      * result set contains at least one entry.
      */
-    EXISTS,
+    EXISTS("exists"),
 
     /**
      * Every entries will be listed. This is the kind of query executed by
      * {@link SingletonTable#getEntries()}.
      */
-    LIST,
+    LIST("getEntries"),
 
     /**
      * List only the identifier of every entries. This is the kind of query executed by
      * {@link SingletonTable#getIdentifiers()}.
      */
-    LIST_ID,
+    LIST_ID("getIdentifiers"),
 
     /**
      * Count the entries.
      */
-    COUNT,
+    COUNT("count"),
 
     /**
      * Selects spatio-temporal envelope in a set of entries. This is the kind of
      * query executed by {@link BoundedSingletonTable#getEnvelope()}.
      */
-    BOUNDING_BOX,
+    BOUNDING_BOX("trimEnvelope"),
 
     /**
      * Selects a list of available dates or depths.
      */
-    AVAILABLE_DATA,
+    AVAILABLE_DATA("getAvailableTimes"),
 
     /**
      * An entry to be added in a table.
      */
-    INSERT,
+    INSERT("addEntries"),
 
     /**
      * An entry to be deleted from a table.
      */
-    DELETE,
+    DELETE("delete"),
 
     /**
      * Many entries to be deleted from a table.
      */
-    DELETE_ALL
+    DELETE_ALL("deleteAll");
+
+    /**
+     * Name of the method which typically use this enum.
+     * This is used for logging purpose only.
+     */
+    final String method;
+
+    /**
+     * Creates a new enum, which is expected to be typically used by a method of the given name.
+     */
+    private QueryType(final String method) {
+        this.method = method;
+    }
 }

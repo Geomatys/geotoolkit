@@ -292,7 +292,7 @@ final class CategoryTable extends Table {
      *
      * @since 3.13
      */
-    public void addCategories(final String format, final List<List<Category>> categories) throws SQLException {
+    public void addEntries(final String format, final List<List<Category>> categories) throws SQLException {
         final CategoryQuery query = (CategoryQuery) this.query;
         final Locale locale = getLocale();
         final LocalCache lc = getLocalCache();

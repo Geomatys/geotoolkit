@@ -367,7 +367,7 @@ check:  for (final GridSampleDimension band : bands) {
                 release(lc, ce);
                 if (inserted) {
                     if (!bands.isEmpty()) {
-                        getSampleDimensionTable().addSampleDimensions(name, bands);
+                        getSampleDimensionTable().addEntries(name, bands);
                     }
                     success = true;
                 }

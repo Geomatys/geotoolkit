@@ -214,7 +214,7 @@ final class SampleDimensionTable extends Table {
      *
      * @since 3.13
      */
-    public void addSampleDimensions(final String format, final List<GridSampleDimension> bands) throws SQLException {
+    public void addEntries(final String format, final List<GridSampleDimension> bands) throws SQLException {
         final SampleDimensionQuery query = (SampleDimensionQuery) super.query;
         final LocalCache lc = getLocalCache();
         synchronized (lc) {
@@ -254,7 +254,7 @@ final class SampleDimensionTable extends Table {
                 }
                 release(lc, ce);
                 if (!isEmpty) {
-                    getCategoryTable().addCategories(format, categories);
+                    getCategoryTable().addEntries(format, categories);
                 }
                 success = true;
             } finally {
