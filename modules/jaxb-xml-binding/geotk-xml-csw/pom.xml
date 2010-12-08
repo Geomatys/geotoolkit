@@ -89,6 +89,11 @@
     </dependency>
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
+      <artifactId>geotk-xml-metadata-imagery</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-xml-xsd</artifactId>
       <version>${project.version}</version>
     </dependency>

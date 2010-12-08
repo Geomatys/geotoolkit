@@ -56,6 +56,10 @@ public class CSWClassesContext {
         //ISO 19115 class
         classeList.add(DefaultMetadata.class);
 
+        //ISO 19115-2 class
+        classeList.add(org.geotoolkit.metadata.imagery.DefaultMetadata.class);
+        classeList.add(org.geotoolkit.metadata.imagery.DefaultCoverageDescription.class);
+
         //ISO 19115 French profile class
         classeList.addAll(FRA_CLASSES);
 

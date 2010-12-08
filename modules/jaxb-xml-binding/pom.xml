@@ -95,6 +95,7 @@
     <module>geotk-xml-csw</module>
     <module>geotk-xml-ebrim</module>
     <module>geotk-xml-feature-catalogue</module>
+    <module>geotk-xml-metadata-imagery</module>
     <module>geotk-xml-gml</module>
     <module>geotk-xml-kml</module>
     <module>geotk-xml-observation</module>
