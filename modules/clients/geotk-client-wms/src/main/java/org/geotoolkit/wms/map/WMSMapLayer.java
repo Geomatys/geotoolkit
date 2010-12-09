@@ -641,7 +641,8 @@ public class WMSMapLayer extends AbstractMapLayer {
 
         if(stack != null){
             final String srid = CRS.lookupIdentifier(crs, true);
-            for(int i=0;i<stack.length;i++){
+            //start by the most accurate layer
+            for(int i=stack.length-1; i>=0; i--){
                 for (String str : stack[i].getCRS()) {
                     if (srid.equalsIgnoreCase(str)) {
                         return true;
@@ -660,18 +661,21 @@ public class WMSMapLayer extends AbstractMapLayer {
      * Find the best original crs of the data in the capabilities.
      */
     CoordinateReferenceSystem findOriginalCRS() throws FactoryException {
-        final AbstractLayer layer = server.getCapabilities().getLayerFromName(layers[0]);
+        final AbstractLayer[] stack = server.getCapabilities().getLayerStackFromName(layers[0]);
 
-        if(layer != null){
-            for (String str : layer.getCRS()) {
-                //search and return the first crs that we succesfuly parsed.
-                try{
-                    CoordinateReferenceSystem crs = CRS.decode(str);
-                    if(crs != null){
-                        return crs;
+        if(stack != null){
+            //start by the most accurate layer
+            for(int i=stack.length-1; i>=0; i--){
+                for (final String srid : stack[i].getCRS()) {
+                    //search and return the first crs that we succesfuly parsed.
+                    try{
+                        CoordinateReferenceSystem crs = CRS.decode(srid);
+                        if(crs != null){
+                            return crs;
+                        }
+                    }catch(FactoryException ex){
+                        LOGGER.log(Level.FINE, "Could not parse crs code : {0}", srid);
                     }
-                }catch(FactoryException ex){
-                    LOGGER.log(Level.FINE, "Could not parse crs code : {0}", str);
                 }
             }
         }else{
