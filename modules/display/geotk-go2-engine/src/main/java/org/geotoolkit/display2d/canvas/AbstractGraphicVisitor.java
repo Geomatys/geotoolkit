@@ -18,9 +18,12 @@
 package org.geotoolkit.display2d.canvas;
 
 import java.awt.geom.Rectangle2D;
+import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map.Entry;
 import javax.measure.converter.ConversionException;
 import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
 
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -38,7 +41,6 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
-import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.Logging;
 
@@ -49,10 +51,10 @@ import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.operation.TransformException;
 
 /**
- * A visitor which can be applied to the 
- * {@link org.opengis.display.primitive.Graphic} objects of a scene and through 
- * the {@code Graphic} objects, to the underlying 
- * {@link org.opengis.feature.Feature} or 
+ * A visitor which can be applied to the
+ * {@link org.opengis.display.primitive.Graphic} objects of a scene and through
+ * the {@code Graphic} objects, to the underlying
+ * {@link org.opengis.feature.Feature} or
  * {@link org.opengis.coverage.grid.GridCoverage}.
  *
  * @author Johann Sorel (Geomatys)
@@ -102,16 +104,12 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
     }
 
     /**
-     * Returns the data values of the given coverage, or {@code null} if the 
+     * Returns the data values of the given coverage, or {@code null} if the
      * values can not be obtained.
-     * 
-     * TODO: flesh out this explanation. Is the area clipped? what's with the 
-     * columns?
      *
-     * first column is the value : Float
-     * second column is the unit : Unit
+     * @return list : each entry contain a gridsampledimension and value associated.
      */
-    protected static Object[][] getCoverageValues(final ProjectedCoverage gra, RenderingContext2D context, SearchAreaJ2D queryArea){
+    protected static List<Entry<GridSampleDimension,Object>> getCoverageValues(final ProjectedCoverage gra, RenderingContext2D context, SearchAreaJ2D queryArea){
 
         final CoverageMapLayer layer = gra.getCoverageLayer();
         Envelope objBounds = context.getCanvasObjectiveBounds();
@@ -182,13 +180,10 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
         float[] values = null;
         values = coverage.evaluate(dp, values);
 
-        final Object[][] results = new Object[values.length][2];
+        final List<Entry<GridSampleDimension,Object>> results = new ArrayList<Entry<GridSampleDimension, Object>>();
         for (int i=0; i<values.length; i++){
-            final float value = values[i];
             final GridSampleDimension sample = coverage.getSampleDimension(i);
-            final Unit<?> unit = sample.getUnits();
-            results[i][0] = value;
-            results[i][1] = unit;
+            results.add(new SimpleImmutableEntry<GridSampleDimension, Object>(sample, values[i]));
         }
         return results;
     }

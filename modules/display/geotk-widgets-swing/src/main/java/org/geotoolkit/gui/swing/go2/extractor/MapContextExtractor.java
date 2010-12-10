@@ -21,7 +21,9 @@ import com.vividsolutions.jts.geom.Geometry;
 import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import javax.measure.unit.Unit;
+import org.geotoolkit.coverage.GridSampleDimension;
 
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
@@ -106,12 +108,12 @@ public class MapContextExtractor extends AbstractGraphicVisitor {
 
     @Override
     public void visit(ProjectedCoverage projectedCoverage, RenderingContext2D context, SearchAreaJ2D queryArea) {
-        final Object[][] results = getCoverageValues(projectedCoverage, context, queryArea);
+        final List<Entry<GridSampleDimension,Object>> results = getCoverageValues(projectedCoverage, context, queryArea);
 
         final StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < results.length; i++) {
-            final Object value = results[i][0];
-            final Unit unit = (Unit) results[i][1];
+        for (final Entry<GridSampleDimension,Object> entry : results) {
+            final Object value = entry.getValue();
+            final Unit unit = entry.getKey().getUnits();
             if (value == null) {
                 continue;
             }
@@ -120,7 +122,6 @@ public class MapContextExtractor extends AbstractGraphicVisitor {
                 builder.append(" ").append(unit.toString());
             }
         }
-        
         descriptions.add(builder.toString());
     }
 
