@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Johann Sorel
+ *    (C) 2008 - 2010, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -24,13 +24,20 @@ import java.awt.event.MouseWheelListener;
 import java.awt.event.MouseEvent;
 import java.awt.Rectangle;
 import java.awt.geom.Area;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.event.MouseInputListener;
 
+import org.geotoolkit.display.canvas.GraphicVisitor;
+import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
+import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.gui.swing.go2.JMap2D;
-import org.geotoolkit.gui.swing.go2.extractor.MapContextExtractor;
 import org.geotoolkit.gui.swing.go2.control.navigation.AbstractNavigationHandler;
+
+import org.opengis.display.primitive.Graphic;
 
 /**
  * Information handler.
@@ -42,13 +49,21 @@ public class InformationHandler extends AbstractNavigationHandler {
 
     private final MouseListen mouseInputListener = new MouseListen();
     private final InformationDecoration infoPane = new InformationDecoration();
-    private final MapContextExtractor extractor = new MapContextExtractor();
+    private InformationPresenter presenter = new InformationPresenter();
     private double zoomFactor = 2;
 
     public InformationHandler(JMap2D map) {
         super(map);
     }
-        
+
+    public InformationPresenter getPresenter() {
+        return presenter;
+    }
+
+    public void setPresenter(InformationPresenter presenter) {
+        this.presenter = presenter;
+    }
+    
     /**
      * {@inheritDoc }
      */
@@ -95,16 +110,14 @@ public class InformationHandler extends AbstractNavigationHandler {
 
             mousebutton = e.getButton();
             if (mousebutton == MouseEvent.BUTTON1) {
-                System.out.println("Start search");
                 final Area searchArea = new Area(new Rectangle(e.getPoint().x-2,e.getPoint().y-2,4,4));
-                map.getCanvas().getGraphicsIn(searchArea, extractor, VisitFilter.INTERSECTS);
-                final List<String> infos = extractor.getDescriptions();
-                System.out.println("End search");
+                final InformationVisitor visitor = new InformationVisitor();
+                map.getCanvas().getGraphicsIn(searchArea, visitor, VisitFilter.INTERSECTS);
 
-                if(!infos.isEmpty()){
-                    infoPane.drawText(infos.toArray(new String[infos.size()]), e.getPoint());
+                if(!visitor.graphics.isEmpty()){
+                    infoPane.display(visitor.graphics, presenter, e.getPoint(), visitor.ctx, visitor.area);
                 }else{
-                    infoPane.drawText(null, null);
+                    infoPane.display(null, null, null, null,null);
                 }
                 
             } else if (mousebutton == MouseEvent.BUTTON3) {
@@ -170,4 +183,32 @@ public class InformationHandler extends AbstractNavigationHandler {
         }
     }
 
+
+    private static class InformationVisitor implements GraphicVisitor{
+
+        private final List<Graphic> graphics = new ArrayList<Graphic>();
+        private RenderingContext2D ctx = null;
+        private SearchAreaJ2D area = null;
+
+        @Override
+        public void startVisit() {
+        }
+
+        @Override
+        public void endVisit() {
+        }
+
+        @Override
+        public void visit(Graphic graphic, RenderingContext context, SearchArea area) {
+            this.graphics.add(graphic);
+            this.ctx = (RenderingContext2D) context;
+            this.area = (SearchAreaJ2D) area;
+        }
+
+        @Override
+        public boolean isStopRequested() {
+            return false;
+        }
+
+    }
 }

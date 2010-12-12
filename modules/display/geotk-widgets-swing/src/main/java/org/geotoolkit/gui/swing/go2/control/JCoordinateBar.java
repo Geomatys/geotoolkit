@@ -445,9 +445,9 @@ public class JCoordinateBar extends JToolBar {
                 return;
             }
 
-            CoordinateReferenceSystem crs = map.getCanvas().getObjectiveCRS();
+            final CoordinateReferenceSystem crs = map.getCanvas().getObjectiveCRS();
             
-            StringBuilder sb = new StringBuilder("  ");
+            final StringBuilder sb = new StringBuilder("  ");
             sb.append(crs.getCoordinateSystem().getAxis(0).getAbbreviation());
             sb.append(" : ");
             sb.append(NUMBER_FORMAT.format(coord.getX()));

@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Johann Sorel
+ *    (C) 2008 - 2010, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,23 +17,28 @@
  */
 package org.geotoolkit.gui.swing.go2.control.information;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.ComponentOrientation;
-import java.awt.GridLayout;
-import java.awt.Insets;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JEditorPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
+import javax.swing.JToolBar;
+import javax.swing.plaf.basic.BasicInternalFrameUI;
 
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
+import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.gui.swing.go2.JMap2D;
-import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
 
 /**
@@ -42,142 +47,121 @@ import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class InformationDecoration extends JComponent implements MapDecoration{
+public class InformationDecoration extends JLayeredPane implements MapDecoration{
 
-    private final JPanel infoPane = new JPanel(new BorderLayout());
-    private final JEditorPane textPane = new JEditorPane();
-    private final JButton closeButton;
-    private final JButton nextButton;
-    private final JButton previousButton;
-    
+    private final JInternalFrame frame = new JInternalFrame();
+    private final AbstractAction nextAction;
+    private final AbstractAction previousAction;
+    private final JLabel label = new JLabel("0/0");
+
     private JMap2D map = null;
     
-    private String[] texts = new String[0];
+    private List<? extends Object> selecteds = new ArrayList<Object>();
+    private InformationPresenter presenter = null;
+    private RenderingContext2D context = null;
+    private SearchAreaJ2D area = null;
     private int selected = 0;
-    private Point2D point = null;
+
+
     
     public InformationDecoration(){
-        setLayout(null);
+        setOpaque(false);
 
         //configure buttons ----------------------------------------------------
 
-        closeButton = new JButton(new AbstractAction("", IconBundle.getInstance().getIcon("16_delete")) {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                drawText(null, null);
-            }
-        });
-        closeButton.setBorderPainted(false);
-        closeButton.setContentAreaFilled(false);
-
-        nextButton = new JButton(new AbstractAction("",IconBundle.getInstance().getIcon("16_vertical_next")) {
+        nextAction = new AbstractAction(" > ") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setSelectedInfo(selected+1);
             }
-        });
-        nextButton.setDisabledIcon(IconBundle.EMPTY_ICON_16);
-        nextButton.setMargin(new Insets(0, 0, 0, 0));
-        nextButton.setBorderPainted(false);
-        nextButton.setContentAreaFilled(false);
+        };
 
-        previousButton = new JButton(new AbstractAction("",IconBundle.getInstance().getIcon("16_vertical_previous")) {
+        previousAction = new AbstractAction(" < ") {
             @Override
             public void actionPerformed(ActionEvent e) {
                 setSelectedInfo(selected-1);
             }
+        };
+
+        GridBagConstraints cst = new GridBagConstraints();
+        final JToolBar toolbar = new JToolBar();
+        toolbar.setLayout(new GridBagLayout());
+        toolbar.setFloatable(false);
+        cst.gridx = 0;
+        toolbar.add(new JButton(previousAction),cst);
+        cst.gridx = 1;
+        toolbar.add(new JButton(nextAction),cst);
+        cst.gridx = 2;
+        cst.weightx = 1;
+        toolbar.add(label,cst);
+        cst.weightx = 0;
+        cst.gridx=3;
+        toolbar.add(new JButton(new AbstractAction("X") {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                frame.setVisible(false);
+            }
+        }),cst);
+        toolbar.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+        frame.setUI(new BasicInternalFrameUI(frame){
+            @Override
+            protected JComponent createNorthPane(JInternalFrame w) {
+                return toolbar;
+            }
+            @Override
+            protected JComponent createEastPane(JInternalFrame w) {
+                return null;
+            }
+            @Override
+            protected JComponent createWestPane(JInternalFrame w) {
+                return null;
+            }
+            @Override
+            protected JComponent createSouthPane(JInternalFrame w) {
+                return null;
+            }
+
         });
-        previousButton.setDisabledIcon(IconBundle.EMPTY_ICON_16);
-        previousButton.setMargin(new Insets(0, 0, 0, 0));
-        previousButton.setBorderPainted(false);
-        previousButton.setContentAreaFilled(false);
 
-        final JPanel top = new JPanel(new GridLayout(3,1,0,0));
-        top.setOpaque(false);
-        top.add(closeButton);
-        top.add(previousButton);
-        top.add(nextButton);
+        frame.setClosable(true);
+        frame.setResizable(true);
+        frame.setIconifiable(false);
+        frame.setFrameIcon(null);
+        frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+        add(frame);
 
-        final JPanel border = new JPanel(new BorderLayout(1,1));
-        border.setOpaque(true);
-        border.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 1));
-        border.setBackground(Color.WHITE);
-        border.setOpaque(true);
-        border.add(BorderLayout.NORTH,top);
-        
-        textPane.setContentType("text/html");
-        textPane.setEditable(false);
-        textPane.setOpaque(false);
-        textPane.setMargin(new Insets(0, 2, 2, 4));
-        final JScrollPane scroll = new JScrollPane(textPane);
-        scroll.setComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-        scroll.setBorder(null);
-        scroll.setOpaque(false);
-        scroll.setBackground(new Color(0f,0f,0f,0f));
-        scroll.getViewport().setOpaque(false);
-        scroll.getViewport().setBorder(null);
-        
-        infoPane.setOpaque(true);
-        infoPane.setBackground(new Color(1f,1f,1f,0.9f));
-        infoPane.add(BorderLayout.WEST,border);
-        infoPane.add(BorderLayout.CENTER,scroll);
-        setOpaque(false);
     }
 
     private void setSelectedInfo(final int index){
         selected = index;
 
-        String text = texts[index];
-
-        textPane.setText(text);
-        infoPane.setSize(300, 250);
-//        infoPane.setSize(infoPane.getPreferredSize());
-
-        int x = (int)point.getX();
-        int y = (int)point.getY();
-
-        if(x+infoPane.getWidth() > getWidth()){
-            x = getWidth()-infoPane.getWidth();
-        }
-        if(y+infoPane.getHeight() > getHeight()){
-            y = getHeight()-infoPane.getHeight();
-        }
-
-        if(index != 0){
-            previousButton.setEnabled(true);
-            previousButton.setToolTipText(selected +"/"+texts.length);
-        }else{
-            previousButton.setEnabled(false);
-            previousButton.setToolTipText(null);
-        }
-
-        if(index < (texts.length-1)){
-            nextButton.setEnabled(true);
-            nextButton.setToolTipText(selected+2 +"/"+texts.length);
-        }else{
-            nextButton.setEnabled(false);
-            nextButton.setToolTipText(null);
-        }
-        
-        infoPane.setLocation(x,y);
-        add(infoPane);
-        revalidate();
-        repaint();
-
+        final Object candidate = selecteds.get(index);
+        frame.setContentPane(presenter.createComponent(candidate,context,area));
+        previousAction.setEnabled(index != 0);
+        nextAction.setEnabled(index < (selecteds.size()-1));
+        label.setText("  "+(selected+1) +"/"+selecteds.size()+"  ");
     }
 
-    public void drawText(String[] texts, Point2D where){
-        this.texts = texts;
-        this.point = where;
-                
-        if(texts != null || where != null){
-            setSelectedInfo(0);
-        }else{
-            texts = new String[0];
-            remove(infoPane);
-            revalidate();
-            repaint();
+    public void display(List<? extends Object> selecteds, 
+            InformationPresenter presenter, Point2D where, RenderingContext2D context, SearchAreaJ2D area){
+
+        this.presenter = presenter;
+        this.selecteds = selecteds;
+        this.context = context;
+
+        if(selecteds == null || where == null){
+            frame.setVisible(false);
         }
+
+        frame.setLocation((int)where.getX(),(int)where.getY());
+        setSelectedInfo(0);
+        frame.pack();
+        final Dimension size = frame.getSize();
+        if(size.width > 400) size.width = 400;
+        if(size.height > 400) size.height = 400;
+        frame.setSize(size);
+        frame.setVisible(true);
     }
     
     /**
@@ -185,7 +169,6 @@ public class InformationDecoration extends JComponent implements MapDecoration{
      */
     @Override
     public void refresh() {
-        repaint();
     }
 
     /**

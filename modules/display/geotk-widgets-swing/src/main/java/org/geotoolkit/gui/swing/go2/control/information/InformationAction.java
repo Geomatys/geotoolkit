@@ -36,6 +36,7 @@ public class InformationAction extends AbstractAction {
     private static final ImageIcon ICON_INFO_24 = IconBundle.getInstance().getIcon("24_deco_info");
 
     private JMap2D map = null;
+    private InformationPresenter presenter = null;
 
     public InformationAction(){
         this(false);
@@ -46,10 +47,22 @@ public class InformationAction extends AbstractAction {
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_information"));
     }
 
+    public InformationPresenter getPresenter() {
+        return presenter;
+    }
+
+    public void setPresenter(InformationPresenter presenter) {
+        this.presenter = presenter;
+    }
+
     @Override
     public void actionPerformed(ActionEvent arg0) {
-        if (map != null ) {
-            map.setHandler(new InformationHandler(map));
+        if (map != null) {
+            final InformationHandler handler = new InformationHandler(map);
+            if(presenter != null){
+                handler.setPresenter(presenter);
+            }
+            map.setHandler(handler);
         }
     }
 

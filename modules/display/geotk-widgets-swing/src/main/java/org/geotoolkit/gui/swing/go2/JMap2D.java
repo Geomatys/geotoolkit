@@ -21,6 +21,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -335,7 +336,7 @@ public class JMap2D extends JPanel{
      * @return Component
      */
     public Component getComponent() {
-        return mainDecorationPane;
+        return geoComponent;
     }
 
     /**

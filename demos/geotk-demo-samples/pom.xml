@@ -26,6 +26,11 @@
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
+            <artifactId>geotk-epsg-javadb</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-widgets-swing</artifactId>
         </dependency>
 
@@ -99,6 +104,7 @@
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derby</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
     </dependencies>
