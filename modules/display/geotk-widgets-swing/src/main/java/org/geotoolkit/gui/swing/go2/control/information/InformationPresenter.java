@@ -20,10 +20,13 @@ package org.geotoolkit.gui.swing.go2.control.information;
 import java.awt.Color;
 import java.awt.ComponentOrientation;
 import java.awt.Insets;
+import java.util.List;
+import java.util.Map.Entry;
 import javax.measure.unit.Unit;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
+import org.geotoolkit.coverage.GridSampleDimension;
 
 import org.geotoolkit.display2d.canvas.AbstractGraphicVisitor;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
@@ -67,16 +70,16 @@ public class InformationPresenter {
     }
 
     private JComponent createComponent(ProjectedCoverage coverage, RenderingContext2D context, SearchAreaJ2D area){
-        final Object[][] results = Bridge.readCoverageValues(coverage, context, area);
+        final List<Entry<GridSampleDimension,Object>> results = Bridge.readCoverageValues(coverage, context, area);
 
         final StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < results.length; i++) {
-            final Object value = results[i][0];
-            final Unit unit = (Unit) results[i][1];
+        for (Entry<GridSampleDimension,Object> entry : results) {
+            final Object value = entry.getValue();
             if (value == null) {
                 continue;
             }
             builder.append(value);
+            final Unit unit = entry.getKey().getUnits();
             if (unit != null) {
                 builder.append(' ').append(unit.toString());
             }
@@ -99,12 +102,12 @@ public class InformationPresenter {
     }
 
 
-    protected Object[][] visit(ProjectedCoverage projectedCoverage, RenderingContext2D context, SearchAreaJ2D queryArea) {
+    protected List<Entry<GridSampleDimension,Object>> visit(ProjectedCoverage projectedCoverage, RenderingContext2D context, SearchAreaJ2D queryArea) {
         return Bridge.readCoverageValues(projectedCoverage, context, queryArea);
     }
 
     private abstract static class Bridge extends AbstractGraphicVisitor{
-        public static Object[][] readCoverageValues(ProjectedCoverage projectedCoverage,
+        public static List<Entry<GridSampleDimension,Object>> readCoverageValues(ProjectedCoverage projectedCoverage,
                             RenderingContext2D context, SearchAreaJ2D queryArea){
             return getCoverageValues(projectedCoverage, context, queryArea);
         }
