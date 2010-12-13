@@ -22,11 +22,12 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.geotoolkit.xml.Namespaces;
 
 /**
- * The CoverageDescription implementation extract from ISO 19115-2 extending the one from ISO 19115.
+ * The Georectified implementation extract from ISO 19115-2 extending the one from ISO 19115.
  *
- * @author Guilhem Legal
+ * @author Guilhem Legal (Geomatys)
+ *
  */
-@XmlRootElement(name = "MI_CoverageDescription", namespace = Namespaces.GMI)
-public class DefaultCoverageDescription extends org.geotoolkit.metadata.iso.content.DefaultCoverageDescription {
+@XmlRootElement(name = "MI_Georectified", namespace = Namespaces.GMI)
+public class DefaultGeorectified extends org.geotoolkit.metadata.iso.spatial.DefaultGeorectified {
 
 }
