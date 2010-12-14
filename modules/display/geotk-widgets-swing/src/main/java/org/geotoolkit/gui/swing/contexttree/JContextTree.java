@@ -41,13 +41,13 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.DropMode;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
@@ -57,7 +57,9 @@ import javax.swing.event.CellEditorListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeCellEditor;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -66,8 +68,8 @@ import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.gui.swing.style.JOpacitySlider;
-import org.geotoolkit.map.ContextListener;
 import org.geotoolkit.map.GraphicBuilder;
+import org.geotoolkit.map.ItemListener;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
@@ -76,29 +78,28 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
+import org.geotoolkit.util.NullArgumentException;
+import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.logging.Logging;
+import org.jdesktop.swingx.JXTable;
 
 import org.opengis.style.Description;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Rule;
 
-public class JContextTree extends JScrollPane implements ContextListener {
+public class JContextTree extends JScrollPane {
 
-    private static final DataFlavor LAYER_FLAVOR = new DataFlavor(org.geotoolkit.map.MapLayer.class, "geo/layer");
+    private static final DataFlavor ITEM_FLAVOR = new DataFlavor(org.geotoolkit.map.MapItem.class, "geo/item");
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
-    private static final ImageIcon ICON_LAYER_VISIBLE = IconBundle.getInstance().getIcon("16_maplayer_visible");
-    private static final ImageIcon ICON_LAYER_UNVISIBLE = IconBundle.getInstance().getIcon("16_maplayer_unvisible");
     private static final ImageIcon ICON_FTS = IconBundle.getInstance().getIcon("16_style_fts");
+    private static final ImageIcon ICON_GROUP = IconBundle.getInstance().getIcon("16_attach");
 
     private final List<TreePopupItem> controls = new ArrayList<TreePopupItem>();
-    private final DefaultMutableTreeNode root = new DefaultMutableTreeNode(null);
-    private final DefaultTreeModel model = new DefaultTreeModel(root);
-    private final JTree tree = new JTree(model);
+    private final JTree tree = new JTree(new DefaultTreeModel(new DefaultMutableTreeNode()));
     private final TreePopup popup = new TreePopup(this);
-    private MapContext context = null;
 
     private final ContextCellRenderer editor = new ContextCellRenderer();
     private final ContextCellRenderer renderer = new ContextCellRenderer();
-    private final ContextListener.Weak weakListener = new ContextListener.Weak(this);
 
     public JContextTree() {
         add(tree);
@@ -116,7 +117,6 @@ public class JContextTree extends JScrollPane implements ContextListener {
         setViewportView(tree);
         setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         initCellEditAcceleration();
-
     }
 
     public void setRootVisible(boolean visible){
@@ -135,75 +135,19 @@ public class JContextTree extends JScrollPane implements ContextListener {
         tree.setEditable(edit);
     }
 
-    public void setContext(MapContext context) {
-        if(this.context != null){
-            weakListener.unregisterSource(this.context);
+    public void setContext(final MapContext context) {
+        final DefaultMutableTreeNode node;
+        if(context != null){
+            node = new MapItemTreeNode(context);
+        }else{
+            node = new DefaultMutableTreeNode();
         }
-        this.context = context;
-
-        if(this.context != null){
-            weakListener.registerSource(this.context);
-        }
-        updateContent();
+        tree.setModel(new DefaultTreeModel(node));
     }
 
     public MapContext getContext() {
-        return context;
-    }
-
-    private void updateContent() {
-
-        root.removeAllChildren();
-        root.setUserObject(context);
-
-        if (context == null) {
-            return;
-        }
-
-        final List<MapLayer> reversed = new ArrayList<MapLayer>(context.layers());
-        Collections.reverse(reversed);
-
-        for (MapLayer layer : reversed) {
-            root.add(createNode(layer));
-        }
-        model.reload();
-        
-        tree.revalidate();
-        tree.repaint();
-    }
-
-    private void updateLayer(MapLayer layer) {
-        final DefaultMutableTreeNode node = createNode(layer);
-
-        for (int i = 0; i < root.getChildCount(); i++) {
-            final DefaultMutableTreeNode candidate = (DefaultMutableTreeNode) root.getChildAt(i);
-            if(candidate.getUserObject().equals(layer)){
-                if(!tree.isEditing() || tree.stopEditing()){
-                    final TreePath selectedPath = tree.getSelectionPath();
-                    final TreePath candidatePath = new TreePath(model.getPathToRoot(candidate));
-                    final boolean expanded = tree.isExpanded(candidatePath);
-                    final boolean selected = candidatePath.equals(selectedPath);
-                    model.removeNodeFromParent(candidate);
-                    model.insertNodeInto(node, root, i);
-                    final TreePath newPath = new TreePath(model.getPathToRoot(node));
-
-                    if(expanded){
-                        tree.expandPath(newPath);
-                    }else{
-                        model.reload(node);
-                    }
-                    tree.expandPath(new TreePath(root));
-
-                    if(selected){
-                        tree.setSelectionPath(newPath);
-                    }
-
-                    break;
-                }
-            }
-
-        }
-
+        final DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getModel().getRoot();
+        return (MapContext) node.getUserObject();
     }
 
     /**
@@ -215,46 +159,6 @@ public class JContextTree extends JScrollPane implements ContextListener {
 
     JTree getRealTree(){
         return tree;
-    }
-
-    private DefaultMutableTreeNode createNode(MapLayer layer){
-
-        final DefaultMutableTreeNode layerNode = new DefaultMutableTreeNode(layer);
-
-        final GraphicBuilder gb = layer.getGraphicBuilder(GraphicJ2D.class);
-
-        if(gb != null){
-            //this kind of layer have there own style systems we rely on it
-            try {
-                final Image img = gb.getLegend(layer);
-                final DefaultMutableTreeNode imgNode = new DefaultMutableTreeNode(img);
-                layerNode.add(imgNode);
-            } catch (PortrayalException ex) {
-                Logger.getLogger(JContextTree.class.getName()).log(Level.WARNING, null, ex);
-            }
-
-        }else{
-            final List<MutableFeatureTypeStyle> ftss = layer.getStyle().featureTypeStyles();
-            if(ftss.size() == 1){
-                for(FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
-                    for(Rule rule : fts.rules()){
-                        final DefaultMutableTreeNode ruleNode = new DefaultMutableTreeNode(rule);
-                        layerNode.add(ruleNode);
-                    }
-                }
-            }else{
-                for(FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
-                    final DefaultMutableTreeNode ftsNode = new DefaultMutableTreeNode(fts);
-                    for(Rule rule : fts.rules()){
-                        final DefaultMutableTreeNode ruleNode = new DefaultMutableTreeNode(rule);
-                        ftsNode.add(ruleNode);
-                    }
-                    layerNode.add(ftsNode);
-                }
-            }
-
-        }
-        return layerNode;
     }
 
     private int getRowAt(Point p){
@@ -370,29 +274,6 @@ public class JContextTree extends JScrollPane implements ContextListener {
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    //Layer listener ///////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////
-
-    @Override
-    public void propertyChange(PropertyChangeEvent event) {
-    }
-
-    @Override
-    public void layerChange(CollectionChangeEvent<MapLayer> event) {
-        if(event.getType() != CollectionChangeEvent.ITEM_CHANGED){
-            updateContent();
-
-        }else{
-            final MapLayer layer = event.getItems().iterator().next();
-            updateLayer(layer);
-        }
-    }
-
-    @Override
-    public void itemChange(CollectionChangeEvent<MapItem> event) {
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
     //private classes //////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
@@ -478,17 +359,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
             panel.revalidate();
             panel.repaint();
 
-            if (obj instanceof MapContext) {
-                final MapContext context = (MapContext) obj;
-                if(edition){
-                    this.field.setText(label(context.getDescription()));
-                    panel.add(field);
-                }else{
-                    this.label.setText(label(context.getDescription()));
-                    panel.add(label);
-                }
-
-            } else if (obj instanceof MapLayer) {
+            if (obj instanceof MapLayer) {
                 final MapLayer layer = (MapLayer) obj;
 
                 opacity.setOpacity(layer.getOpacity());
@@ -501,11 +372,27 @@ public class JContextTree extends JScrollPane implements ContextListener {
                     this.field.setText(label(layer.getDescription()));
                     panel.add(field);
                 }else{
-                    this.label.setText(label(layer.getDescription()));
+                    this.label.setText(label(layer.getDescription())+" ");
                     panel.add(label);
                 }
 
-            } else if(obj instanceof FeatureTypeStyle){
+            } else if (obj instanceof MapItem) {
+                final MapItem context = (MapItem) obj;
+
+                if(!(context instanceof MapContext)){
+                    this.icon.setIcon(ICON_GROUP);
+                    panel.add(icon);
+                }
+
+                if(edition){
+                    this.field.setText(label(context.getDescription()));
+                    panel.add(field);
+                }else{
+                    this.label.setText(label(context.getDescription())+" ");
+                    panel.add(label);
+                }
+
+            }else if(obj instanceof FeatureTypeStyle){
                 final FeatureTypeStyle fts = (FeatureTypeStyle) obj;
                 this.icon.setIcon(ICON_FTS);
                 panel.add(icon);
@@ -551,17 +438,17 @@ public class JContextTree extends JScrollPane implements ContextListener {
 
         @Override
         public Object getCellEditorValue() {
-            if (value instanceof MapContext) {
-                final MapContext context = (MapContext) value;
-                final Description old = context.getDescription();
-                context.setDescription(SF.description(new SimpleInternationalString(field.getText()), old.getAbstract()));
-
-            } else if (value instanceof MapLayer) {
+            if (value instanceof MapLayer) {
                 final MapLayer layer = (MapLayer) value;
                 final Description old = layer.getDescription();
                 layer.setDescription(SF.description(new SimpleInternationalString(field.getText()), old.getAbstract()));
                 layer.setSelectable(selectCheck.isSelected());
                 layer.setVisible(visibleCheck.isSelected());
+            } else if (value instanceof MapItem) {
+                final MapItem item = (MapItem) value;
+                final Description old = item.getDescription();
+                item.setDescription(SF.description(new SimpleInternationalString(field.getText()), old.getAbstract()));
+
             }
 
             Object temp = this.value;
@@ -574,7 +461,7 @@ public class JContextTree extends JScrollPane implements ContextListener {
             final TreePath path = tree.getSelectionPath();
             if(path != null){
                 final Object obj = ((DefaultMutableTreeNode)path.getLastPathComponent()).getUserObject();
-                return obj instanceof MapContext || obj instanceof MapLayer;
+                return obj instanceof MapItem;
             }
             return false;
         }
@@ -615,23 +502,17 @@ public class JContextTree extends JScrollPane implements ContextListener {
             final TreePath path = tree.getSelectionPath();
             final DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
 
-            if (node != null && node.getUserObject() instanceof MapLayer) {
-                return new LaterTransferable((MapLayer) node.getUserObject());
-            } else {
-                return null;
+            if (node != null && (node.getUserObject() instanceof MapItem && !(node.getUserObject() instanceof MapContext))) {
+                return new MapItemTransferable(path);
             }
 
-        }
-
-        @Override
-        public Icon getVisualRepresentation(Transferable t) {
-            return ICON_LAYER_VISIBLE;
+            return null;
         }
 
         @Override
         public boolean canImport(TransferHandler.TransferSupport support) {
 
-            if (!support.isDataFlavorSupported(LAYER_FLAVOR) || !support.isDrop()) {
+            if (!support.isDataFlavorSupported(ITEM_FLAVOR) || !support.isDrop()) {
                 return false;
             }
 
@@ -646,77 +527,227 @@ public class JContextTree extends JScrollPane implements ContextListener {
             }
 
             final JTree.DropLocation dropLocation = (JTree.DropLocation) support.getDropLocation();
-            final TreePath path = dropLocation.getPath();
+            final TreePath dropPath = dropLocation.getPath();
             final Transferable transferable = support.getTransferable();
+            int dropIndex = dropLocation.getChildIndex();
 
-            MapLayer transferedLayer;
+            final TreePath sourcePath;
             try {
-                transferedLayer = (MapLayer) transferable.getTransferData(LAYER_FLAVOR);
-            } catch (IOException e) {
+                sourcePath = (TreePath) transferable.getTransferData(ITEM_FLAVOR);
+            } catch (UnsupportedFlavorException ex) {
+                Logging.getLogger(JContextTree.class).log(Level.INFO, null, ex);
                 return false;
-            } catch (UnsupportedFlavorException e) {
+            } catch (IOException ex) {
+                Logging.getLogger(JContextTree.class).log(Level.INFO, null, ex);
                 return false;
             }
 
-            final DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) path.getLastPathComponent();
+            if(sourcePath == null){
+                return false;
+            }
+
+            final DefaultMutableTreeNode lastNode = ((DefaultMutableTreeNode)sourcePath.getLastPathComponent());
+            final MapItem dragged = (MapItem) lastNode.getUserObject();
+            final MapItem lastParent = (MapItem) ((DefaultMutableTreeNode)lastNode.getParent()).getUserObject();
+
+            if(XArrays.contains(dropPath.getPath(), lastNode)){
+                //trying to drop a node in himself, not possible
+                return true;
+            }
+
+
+            DefaultMutableTreeNode parentNode = (DefaultMutableTreeNode) dropPath.getLastPathComponent();
             Object parent = parentNode.getUserObject();
-
-            while( !(parent instanceof MapContext) && !(parent instanceof MapLayer)){
-                parent = ((DefaultMutableTreeNode)parentNode.getParent()).getUserObject();
+            if(!(parent instanceof MapItem)){
+                return true;
             }
 
+            //flip drop index
+            if(dropIndex != -1){
+                dropIndex = ((MapItem)parent).items().size() - dropIndex;
+            }
 
-            if(parent instanceof MapContext){
-                final MapContext context = (MapContext) parent;
-                context.layers().remove(transferedLayer);
-                context.layers().add(transferedLayer);
-            }else if(parent instanceof MapLayer){
-
-                final MapContext context = getContext();
+            if(parent instanceof MapLayer){
+                //we adjust the drop location
+                final MapItem newParent = (MapItem) ((DefaultMutableTreeNode)(parentNode.getParent())).getUserObject();
                 final MapLayer layer = (MapLayer) parent;
-
-                if(layer == transferedLayer){
-                    return true;
+                parent = newParent;
+                dropIndex = newParent.items().indexOf(layer);
+            }
+            
+            
+            //this far we are sure it's a MapItem
+            final MapItem newParent = (MapItem) parent;
+            
+            if(lastParent == newParent && dropIndex != -1){
+                //moving node is the same parent, readjust dropIndex
+                if(lastParent.items().indexOf(dragged) < dropIndex){
+                    dropIndex--;
                 }
 
-                final int index = context.layers().indexOf(layer);
-                context.layers().remove(transferedLayer);
-                context.layers().add(index,transferedLayer);
-
             }else{
+                dropIndex = 0;
             }
+            
+            //remove from previous position
+            lastParent.items().remove(dragged);
+            newParent.items().add(dropIndex, dragged);
 
             return true;
         }
     }
 
-    private class LaterTransferable implements Transferable {
+    private class MapItemTransferable implements Transferable {
 
-        private final MapLayer layer;
+        private final TreePath path;
 
-        private LaterTransferable(MapLayer mapLayer) {
-            this.layer = mapLayer;
+        private MapItemTransferable(TreePath path) {
+            this.path = path;
         }
 
         @Override
         public DataFlavor[] getTransferDataFlavors() {
-            return new DataFlavor[]{LAYER_FLAVOR};
+            return new DataFlavor[]{ITEM_FLAVOR};
         }
 
         @Override
         public boolean isDataFlavorSupported(DataFlavor flavor) {
-            return flavor.equals(LAYER_FLAVOR);
+            return flavor.equals(ITEM_FLAVOR);
         }
 
         @Override
         public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-            if(flavor.equals(LAYER_FLAVOR)){
-                return layer;
-            }else{
-                return null;
+            if(ITEM_FLAVOR.equals(flavor)){
+                return path;
             }
+            return null;
         }
     }
 
+    private class MapItemTreeNode extends DefaultMutableTreeNode implements ItemListener{
+
+        private MapItemTreeNode(MapItem item){
+            super(item);
+            if(item == null){
+                throw new NullArgumentException("Item can not be null.");
+            }
+            item.addItemListener(new ItemListener.Weak(item, MapItemTreeNode.this));
+
+            resetStructure();
+        }
+
+        @Override
+        public MapItem getUserObject() {
+            return (MapItem)super.getUserObject();
+        }
+
+        @Override
+        public void setUserObject(Object userObject) {
+            //not allowed to modify this object
+        }
+
+        private synchronized void resetStructure(){
+            removeAllChildren();
+            final MapItem item = (MapItem) getUserObject();
+            
+            final List<MapItem> childs = new ArrayList<MapItem>(item.items());
+            Collections.reverse(childs);
+            for(final MapItem child : childs){
+                final MapItemTreeNode childNode = new MapItemTreeNode(child);
+                add(childNode);
+            }
+            
+            if(item instanceof MapLayer){
+                fillStyleNodes((MapLayer)item);
+            }
+        }
+
+        @Override
+        public synchronized void itemChange(CollectionChangeEvent<MapItem> event) {
+
+            if(CollectionChangeEvent.ITEM_ADDED == event.getType()){
+
+                final List<MapItem> childs = new ArrayList<MapItem>(getUserObject().items());
+                Collections.reverse(childs);
+
+                int i=0;
+                for(MapItem child : childs){
+                    final MapItemTreeNode pair = (i<getChildCount()) ? ((MapItemTreeNode)getChildAt(i)) : null;
+                    if(pair == null || !child.equals(pair.getUserObject())){
+                        //this child was added
+                        ((DefaultTreeModel)tree.getModel()).insertNodeInto(new MapItemTreeNode(child), this, i);
+                    }
+                    i++;
+                }
+
+            }else if(CollectionChangeEvent.ITEM_REMOVED == event.getType()){
+
+                final List<MutableTreeNode> toRemove = new ArrayList<MutableTreeNode>();
+
+                for(final MapItem item : event.getItems()){
+                    for(int i=0,n=getChildCount(); i<n;i++){
+                        final DefaultMutableTreeNode child = ((DefaultMutableTreeNode)getChildAt(i));
+                        if(item.equals( child.getUserObject())){
+                            toRemove.add(child);
+                        }
+                    }
+                }
+
+                for(final MutableTreeNode n : toRemove){
+                    ((DefaultTreeModel)tree.getModel()).removeNodeFromParent(n);
+                }
+            }
+        }
+
+        @Override
+        public void propertyChange(PropertyChangeEvent evt) {
+
+            if(MapLayer.STYLE_PROPERTY.equals(evt.getPropertyName())){
+                //must regenerate style node elements
+                resetStructure();
+                ((DefaultTreeModel)tree.getModel()).nodeStructureChanged(this);
+            }else{
+                ((DefaultTreeModel)tree.getModel()).nodeChanged(this);
+            }
+        }
+
+        private void fillStyleNodes(MapLayer layer){
+
+            final GraphicBuilder gb = layer.getGraphicBuilder(GraphicJ2D.class);
+
+            if(gb != null){
+                //this kind of layer have there own style systems we rely on it
+                try {
+                    final Image img = gb.getLegend(layer);
+                    final DefaultMutableTreeNode imgNode = new DefaultMutableTreeNode(img);
+                    this.add(imgNode);
+                } catch (PortrayalException ex) {
+                    Logger.getLogger(JContextTree.class.getName()).log(Level.WARNING, null, ex);
+                }
+
+            }else{
+                final List<MutableFeatureTypeStyle> ftss = layer.getStyle().featureTypeStyles();
+                if(ftss.size() == 1){
+                    for(FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
+                        for(Rule rule : fts.rules()){
+                            final DefaultMutableTreeNode ruleNode = new DefaultMutableTreeNode(rule);
+                            this.add(ruleNode);
+                        }
+                    }
+                }else{
+                    for(FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
+                        final DefaultMutableTreeNode ftsNode = new DefaultMutableTreeNode(fts);
+                        for(Rule rule : fts.rules()){
+                            final DefaultMutableTreeNode ruleNode = new DefaultMutableTreeNode(rule);
+                            ftsNode.add(ruleNode);
+                        }
+                        this.add(ftsNode);
+                    }
+                }
+
+            }
+        }
+
+    }
 
 }

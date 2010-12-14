@@ -25,6 +25,7 @@ import org.geotoolkit.gui.swing.contexttree.menu.ContextPropertyItem;
 import org.geotoolkit.gui.swing.contexttree.menu.DeleteItem;
 import org.geotoolkit.gui.swing.contexttree.menu.LayerFeatureItem;
 import org.geotoolkit.gui.swing.contexttree.menu.LayerPropertyItem;
+import org.geotoolkit.gui.swing.contexttree.menu.NewGroupItem;
 import org.geotoolkit.gui.swing.contexttree.menu.SeparatorItem;
 import org.geotoolkit.gui.swing.contexttree.menu.ZoomToLayerItem;
 import org.geotoolkit.gui.swing.propertyedit.ClearSelectionAction;
@@ -92,6 +93,7 @@ public class WidgetsDemo extends javax.swing.JFrame {
         item.actions().add(new DeleteSelectionAction());
 
         guiTree.controls().add(item);
+        guiTree.controls().add(new NewGroupItem());
         guiTree.controls().add(new ZoomToLayerItem());
         guiTree.controls().add(new SeparatorItem());
         guiTree.controls().add(new DeleteItem());
