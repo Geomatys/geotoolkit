@@ -27,6 +27,9 @@
  */
 package org.geotoolkit.data.postgis;
 
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
 
 /**
@@ -947,7 +950,7 @@ public class Base64 {
         Base64.InputStream bis = null;
         try {
             // Set up some useful variables
-            java.io.File file = new java.io.File(filename);
+            final File file = new File(filename);
             byte[] buffer = null;
             int length = 0;
             int numBytes = 0;
@@ -961,8 +964,8 @@ public class Base64 {
 
             // Open a stream
             bis = new Base64.InputStream(
-                    new java.io.BufferedInputStream(
-                    new java.io.FileInputStream(file)), Base64.DECODE);
+                    new BufferedInputStream(
+                    new FileInputStream(file)), Base64.DECODE);
 
             // Read until done
             while ((numBytes = bis.read(buffer, length, 4096)) >= 0) {
@@ -978,9 +981,10 @@ public class Base64 {
             System.err.println("Error decoding from file " + filename);
         } // end catch: IOException
         finally {
-            try {
-                bis.close();
-            } catch (Exception e) {
+            if(bis != null){
+                try {
+                    bis.close();
+                } catch (Exception e) {}
             }
         }   // end finally
 

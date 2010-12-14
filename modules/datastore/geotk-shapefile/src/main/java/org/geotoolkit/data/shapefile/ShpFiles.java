@@ -122,17 +122,22 @@ public class ShpFiles {
                 try {
                     url = new File(path.toString()).toURI().toURL();
                 } catch (MalformedURLException ex) {
-                    throw new IllegalArgumentException(ex);
+                    throw new IllegalArgumentException(
+                            "Path object can not be converted to a valid URL",ex);
                 }
             }
         }else if(path instanceof File){
             try {
                 url = ((File) path).toURI().toURL();
             } catch (MalformedURLException ex) {
-                throw new IllegalArgumentException(ex);
+                throw new IllegalArgumentException(
+                        "Path object can not be converted to a valid URL",ex);
             }
         }else if(path instanceof URL){
             url = (URL) path;
+        }else{
+            throw new IllegalArgumentException(
+                    "Path object can not be converted to a valid URL : " +path);
         }
 
         loadQuadTree = loadQix;
