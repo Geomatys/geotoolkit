@@ -637,7 +637,7 @@ public class ImageProperties extends JComponent implements Dialog {
     }
 
     /**
-     * Split a class name into a more human readeable sentence
+     * Split a class name into a more human readable sentence
      * (e.g. "PixelInterleavedSampleModel" into "Pixel interleaved sample model").
      *
      * @param  object The object to format, or {@code null} if undefined.

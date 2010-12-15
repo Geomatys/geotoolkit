@@ -161,7 +161,7 @@ final class TestReader extends TextImageReader {
     }
 
     /**
-     * Checks if the {@linkplain #getReader reader} seems to contains a readeable ASCII file.
+     * Checks if the {@linkplain #getReader reader} seems to contains a readable ASCII file.
      * This method tries to read the first few lines. The caller is responsable for invoking
      * {@link #close} after this method.
      *

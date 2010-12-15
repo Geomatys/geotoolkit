@@ -97,7 +97,7 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueStereographic
  * "latitude_of_origin"} parameter is supplied and is not consistent with the projection
  * classification (for example a latitude different from &plusmn;90&deg; for the polar case),
  * then the oblique or polar case will be automatically inferred from the latitude. In other
- * words, the latitude of origin has precedence on the projection classification. If omited,
+ * words, the latitude of origin has precedence on the projection classification. If omitted,
  * then the default value is 90&deg;N for {@code "Polar_Stereographic"} and 0&deg; for
  * {@code "Oblique_Stereographic"}.
  * <p>

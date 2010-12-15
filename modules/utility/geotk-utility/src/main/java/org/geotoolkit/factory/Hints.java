@@ -1161,7 +1161,7 @@ public class Hints extends RenderingHints {
          * given to the constructor:
          * <p>
          * <ul>
-         *   <li>If {@code false}, then the file must exists and be {@linkplain File#canRead readeable}.</li>
+         *   <li>If {@code false}, then the file must exists and be {@linkplain File#canRead readable}.</li>
          *   <li>If {@code true}, then there is a choice:<ul>
          *       <li>If the file exists, it must be {@linkplain File#canWrite writeable}.</li>
          *       <li>Otherwise the file must have a {@linkplain File#getParent parent} and

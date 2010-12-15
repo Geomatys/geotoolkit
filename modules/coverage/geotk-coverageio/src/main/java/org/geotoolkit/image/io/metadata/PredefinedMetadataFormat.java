@@ -343,7 +343,7 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
         String[] identifiers = super.getCodeList(codeType);
         if (AxisDirection.class.equals(codeType)) {
             for (int i=0; i<identifiers.length; i++) {
-                // Replace "CS_AxisOrientationEnum.CS_AO_Other" by something more readeable.
+                // Replace "CS_AxisOrientationEnum.CS_AO_Other" by something more readable.
                 if (identifiers[i].endsWith("Other")) {
                     identifiers[i] = "other";
                 }

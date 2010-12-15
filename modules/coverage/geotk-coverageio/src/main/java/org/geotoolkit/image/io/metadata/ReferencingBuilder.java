@@ -117,7 +117,7 @@ public class ReferencingBuilder {
     private static final double EPS = 1E-10;
 
     /**
-     * {@code true} if the elements that are equal to the default value should be omited.
+     * {@code true} if the elements that are equal to the default value should be omitted.
      * This apply to write operations only.
      */
     private static final boolean OMMIT_DEFAULTS = true;

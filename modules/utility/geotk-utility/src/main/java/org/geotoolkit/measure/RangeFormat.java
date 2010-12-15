@@ -544,7 +544,7 @@ public class RangeFormat extends Format {
         /*
          * Skip leading whitespace and find the first non-blank character.  It is usually
          * an opening bracket, except if minimal and maximal values are the same in which
-         * case the brackets may be omited.
+         * case the brackets may be omitted.
          */
         char c;
         do if (index >= length) {
