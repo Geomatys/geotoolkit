@@ -51,12 +51,12 @@ public class DefaultName implements Name,Serializable {
     /**
      * Namespace / scope
      */
-    private  final String namespace;
+    private final String namespace;
 
     /**
      * Local part
      */
-    private  final String local;
+    private final String local;
 
     private final String separator;
 
@@ -129,7 +129,7 @@ public class DefaultName implements Name,Serializable {
         if (local == null) {
             return namespace;
         }
-        return new StringBuffer(namespace).append(separator).append(local).toString();
+        return new StringBuilder(namespace).append(separator).append(local).toString();
     }
 
     /**

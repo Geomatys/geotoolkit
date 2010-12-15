@@ -46,6 +46,7 @@ import org.geotoolkit.util.converter.NonconvertibleObjectException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
@@ -115,6 +116,22 @@ public class DomUtilities {
         }else{
             return null;
         }
+    }
+
+    /**
+     * Return the first node in the given node children which localName
+     * matchs the given name. Or null if there are no such node.
+     */
+    public static Node getNodeByLocalName(final Node parent, final String name) {
+        final NodeList lst = parent.getChildNodes();
+
+        for(int i=0,n=lst.getLength();i<n;i++){
+            final Node child = lst.item(i);
+            if(name.equalsIgnoreCase(child.getLocalName())){
+                return child;
+            }
+        }
+        return null;
     }
 
     /**
