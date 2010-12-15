@@ -474,12 +474,17 @@ public class ObservationEntry implements Observation, Entry {
 
     /**
      * Update the result of the obervation by setting the specified String value and numbers of result.
-     *
+     * and the last date of measure.
+     * 
      * @param values A datablock of values.
      * @param nbResult the number of result in the datablock.
+      * @param lastDate The last date of measure. If this parameter is null, the last date will be kept.
      * @throws IllegalArgumentException if the resulat of the observation is not a DataArray.
      */
-    public void updateDataArrayResult(String values, int nbResult) {
+    public void updateDataArrayResult(String values, int nbResult, String lastDate) {
+        if (lastDate != null) {
+            extendSamplingTime(lastDate);
+        }
         if (getResult() instanceof DataArrayPropertyType) {
             DataArrayEntry array = ((DataArrayPropertyType)getResult()).getDataArray();
             array.updateArray(values, nbResult);
