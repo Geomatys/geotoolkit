@@ -91,6 +91,9 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      * The dimension of <var>x</var> ordinates, which is {@value}. This is used for example with
      * multi-dimensional dataset (e.g. cubes), in order to determine which dataset dimension to
      * associated the {@link java.awt.image.RenderedImage#getWidth() image width}.
+     * <p>
+     * <b>WARNING:</b> If this value is modified, then every calls to CRSUtilities.getCRS2D(...)
+     * in this class and subclasses will need to be replaced by something more sophisticated.
      *
      * @since 3.14
      */
@@ -100,6 +103,8 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      * The dimension of <var>y</var> ordinates, which is {@value}. This is used for example with
      * multi-dimensional dataset (e.g. cubes), in order to determine which dataset dimension to
      * associated the {@link java.awt.image.RenderedImage#getHeight() image height}.
+     * <p>
+     * <b>WARNING:</b> See the warning in {@link #X_DIMENSION}.
      *
      * @since 3.14
      */
@@ -129,7 +134,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
     /**
      * The hints to use for fetching factories. This is initialized to the system defaults.
      */
-    final Hints hints;
+    private final Hints hints;
 
     /**
      * The logging level to use for read and write operations. If {@code null}, then the
@@ -629,7 +634,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
         if (envelope == null || resolution == null) {
             CoordinateReferenceSystem crs = CRSUtilities.getCRS2D(requestCRS);
             if (crs == null) {
-                crs = dataCRS;
+                crs = dataCRS; // 'dataCRS' is already 2D.
             } else if (dataCRS != null && !CRS.equalsIgnoreMetadata(dataCRS, crs)) {
                 final CoordinateOperation op = createOperation(dataCRS, crs);
                 geodeticBounds = CRS.transform(op, geodeticBounds, geodeticBounds);
@@ -696,17 +701,15 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
          * process (they are typically ignored for reading process).
          */
         final boolean flipX, flipY;
-        final int requestDimension;
         if (requestCRS != null || dataCRS != null) {
             CoordinateSystem cs = (requestCRS != null ? requestCRS : dataCRS).getCoordinateSystem();
             flipX =  isOpposite(cs.getAxis(X_DIMENSION).getDirection());
             flipY = !isOpposite(cs.getAxis(Y_DIMENSION).getDirection());
-            requestDimension = cs.getDimension();
         } else {
             flipX = false;
             flipY = true;
-            requestDimension = crsToGrid.getSourceDimensions();
         }
+        final int requestDimension = requestEnvelope.getDimension();
         final Matrix m = MatrixFactory.create(requestDimension + 1, 3);
         m.setElement(requestDimension, 2, 1);
         /*
@@ -714,7 +717,7 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
          * direction (typically the Y axis), we take the maximum rather than the minimum. The scale
          * factor will be reversed later.
          */
-        for (int i=requestEnvelope.getDimension(); --i>=0;) {
+        for (int i=requestDimension; --i>=0;) {
             final double t;
             if ((flipX && i == X_DIMENSION) || (flipY && i == Y_DIMENSION)) {
                 t = requestEnvelope.getMaximum(i);
@@ -745,17 +748,24 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
         m.setElement(Y_DIMENSION, Y_DIMENSION, scaleY);
         /*
          * At this point, we are ready to create the 'gridToCRS' transform of the target coverage.
-         * We take this opportunity for creating the full grid geometry of the requested coverage.
+         * We take this opportunity for creating the full grid envelope of the requested coverage.
          * Note that the grid envelope is empty if the transform from grid to envelope as infinite
          * coefficient values. This happen for example with Mercator projection close to poles.
          */
         MathTransform destToExtractedGrid = ProjectiveTransform.create(m);
-        computeDestGridGeometry(destToExtractedGrid, requestEnvelope, requestCRS);
+        computeRequestedBounds(destToExtractedGrid, requestEnvelope, requestCRS);
         /*
-         * Concatenate the transforms. We get the transform from what the grid that the user
-         * requested to the grid actually used in the source image, assuming the source grid
-         * was read using the values we have set in the IIOParam object.
+         * Concatenate the transforms. We get the transform from the grid that the user
+         * requested to the grid actually used in the source image, assuming the source
+         * grid was read using the values we have set in the IIOParam object.
          */
+        if (requestToDataCRS == null) {
+            final int sourceDim = destToExtractedGrid.getTargetDimensions();
+            if (sourceDim != 2) {
+                requestToDataCRS = ProjectiveTransform.create(ProjectiveTransform.createSelectMatrix(
+                        sourceDim, new int[] {X_DIMENSION, Y_DIMENSION}));
+            }
+        }
         if (requestToDataCRS != null) {
             destToExtractedGrid = ConcatenatedTransform.create(destToExtractedGrid, requestToDataCRS);
         }
@@ -783,8 +793,8 @@ public abstract class GridCoverageStore implements LogProducer, Localized {
      * for example because the matrix is not square. It would cause a useless failure for read
      * operations.
      */
-    void computeDestGridGeometry(MathTransform destToExtractedGrid, Envelope requestEnvelope,
-            CoordinateReferenceSystem requestCRS) throws CoverageStoreException
+    void computeRequestedBounds(MathTransform destToExtractedGrid, Envelope requestEnvelope,
+            CoordinateReferenceSystem requestCRS) throws TransformException, CoverageStoreException
     {
         // Implementation provided by GridCoverageWriter only.
     }

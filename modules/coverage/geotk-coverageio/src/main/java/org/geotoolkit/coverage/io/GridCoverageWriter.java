@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.coverage.io;
 
+import java.awt.Rectangle;
 import java.util.concurrent.CancellationException;
 import javax.imageio.ImageWriter;
 
@@ -25,10 +26,12 @@ import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.coverage.grid.GeneralGridEnvelope;
 
 
 /**
@@ -70,13 +73,12 @@ public abstract class GridCoverageWriter extends GridCoverageStore {
     Object output;
 
     /**
-     * The grid geometry of the coverage requested by the user.
-     * This field is computed by the {@link #geodeticToPixelCoordinates geodeticToPixelCoordinates}
-     * method only if {@link #ignoreGridTransforms} is {@code false}.
+     * The bounds of the image requested by the user. This field is computed indirectly
+     * by the {@link #geodeticToPixelCoordinates geodeticToPixelCoordinates} method.
      *
      * @since 3.14
      */
-    transient GridGeometry2D destGridGeometry;
+    transient Rectangle requestedBounds;
 
     /**
      * Creates a new instance.
@@ -140,28 +142,33 @@ public abstract class GridCoverageWriter extends GridCoverageStore {
 
     /**
      * A callback invoked by {@link #geodeticToPixelCoordinates geodeticToPixelCoordinates}
-     * in order to compute the {@link #destGridGeometry} value. This value is of interest to
+     * in order to compute the {@link #requestedBounds} value. This value is of interest to
      * the writer only (not to {@link ImageCoverageReader}), because the reader is allowed
      * to returns a different coverage than the requested one, while the writer have to write
      * the image as requested.
      */
     @Override
-    final void computeDestGridGeometry(final MathTransform destToExtractedGrid,
+    final void computeRequestedBounds(final MathTransform destToExtractedGrid,
             final Envelope requestEnvelope, final CoordinateReferenceSystem requestCRS)
-            throws CoverageStoreException
+            throws TransformException, CoverageStoreException
     {
-        destGridGeometry = new GridGeometry2D(PixelInCell.CELL_CORNER, destToExtractedGrid, requestEnvelope, hints);
-        final GridEnvelope destRange = destGridGeometry.getGridRange();
-        for (int i=destRange.getDimension(); --i>=0;) {
-            if (destRange.getSpan(i) <= 0) {
+        final GridEnvelope gridEnvelope = new GeneralGridEnvelope(
+                CRS.transform(destToExtractedGrid.inverse(), requestEnvelope),
+                PixelInCell.CELL_CORNER, false);
+        for (int i=gridEnvelope.getDimension(); --i>=0;) {
+            if (gridEnvelope.getSpan(i) <= 0) {
                 String message = formatErrorMessage(Errors.Keys.VALUE_TEND_TOWARD_INFINITY);
                 if (requestCRS != null) {
-                    message = requestCRS.getCoordinateSystem().getAxis(i).getName().getCode()
-                            + ": " + message;
+                    message = requestCRS.getCoordinateSystem().getAxis(i).getName().getCode() + ": " + message;
                 }
                 throw new CoverageStoreException(message);
             }
         }
+        requestedBounds = new Rectangle(
+                gridEnvelope.getLow (X_DIMENSION),
+                gridEnvelope.getLow (Y_DIMENSION),
+                gridEnvelope.getSpan(X_DIMENSION),
+                gridEnvelope.getSpan(Y_DIMENSION));
     }
 
     /**
@@ -173,7 +180,7 @@ public abstract class GridCoverageWriter extends GridCoverageStore {
      */
     @Override
     public void reset() throws CoverageStoreException {
-        destGridGeometry = null;
+        requestedBounds = null;
         output = null;
         super.reset();
     }
@@ -188,7 +195,7 @@ public abstract class GridCoverageWriter extends GridCoverageStore {
      */
     @Override
     public void dispose() throws CoverageStoreException {
-        destGridGeometry = null;
+        requestedBounds = null;
         output = null;
         super.dispose();
     }

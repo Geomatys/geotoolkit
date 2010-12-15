@@ -462,7 +462,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
             destToExtractedGrid = geodeticToPixelCoordinates(gridGeometry, param, imageParam);
             imageParam.setSourceBands(param.getSourceBands());
             final Rectangle sourceRegion  = imageParam.getSourceRegion();
-            final Rectangle requestRegion = destGridGeometry.getGridRange2D();
+            final Rectangle requestRegion = requestedBounds;
             if (interp != Interpolation.INTERP_NEAREST || !isIdentity(destToExtractedGrid) ||
                     isGreater(requestRegion.width,  imageParam.getSourceXSubsampling(), sourceRegion.width) ||
                     isGreater(requestRegion.height, imageParam.getSourceYSubsampling(), sourceRegion.height))
