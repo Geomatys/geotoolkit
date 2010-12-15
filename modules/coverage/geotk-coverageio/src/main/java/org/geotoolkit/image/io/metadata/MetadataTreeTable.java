@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.image.io.metadata;
 
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Locale;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.metadata.IIOMetadataFormat;
@@ -30,6 +32,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.converter.AnyConverter;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
+import org.geotoolkit.gui.swing.tree.Trees;
 
 
 /**
@@ -43,7 +46,7 @@ import org.geotoolkit.util.converter.NonconvertibleObjectException;
  * The root of the tree is obtained by {@link #getRootNode()}. The table contains at most
  * {@value #COLUMN_COUNT} columns, described below:
  * <ol>
- *   <li>A human-readeable name of the nodes.</li>
+ *   <li>A human-readable name of the nodes.</li>
  *   <li>A description of the node.</li>
  *   <li>The {@linkplain Class#getSimpleName() simple class names} of values.</li>
  *   <li>The range of occurrences (how many time the node can be repeated).</li>
@@ -57,7 +60,7 @@ import org.geotoolkit.util.converter.NonconvertibleObjectException;
  * it doesn't need to be the specialized implementations defined in Geotk.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.16
  *
  * @see org.geotoolkit.gui.swing.image.IIOMetadataPanel
  *
@@ -74,7 +77,7 @@ public class MetadataTreeTable implements Localized {
     public static final int COLUMN_COUNT = 7;
 
     /**
-     * The column which contains the values. This is the column which is omited if this
+     * The column which contains the values. This is the column which is omitted if this
      * table describe only an {@link IIOMetadataFormat} without {@link IIOMetadata}.
      *
      * @since 3.05
@@ -201,7 +204,7 @@ public class MetadataTreeTable implements Localized {
     }
 
     /**
-     * Returns {@code true} if the tree returned by {@link #getRootNode()} can be simplifed.
+     * Returns {@code true} if the tree returned by {@link #getRootNode()} can be simplified.
      * Simplification are convenient for GUI purpose, but usually not appropriate for
      * programmatic purpose. The simplifications, if allowed, are:
      * <p>
@@ -250,7 +253,7 @@ public class MetadataTreeTable implements Localized {
             final boolean hasValue = (metadata != null);
             final Node xmlNode = hasValue ? metadata.getAsTree(format.getRootName()) : null;
             final MetadataTreeNode root = new MetadataTreeNode(this, format.getRootName(), xmlNode, hasValue);
-            addChilds(root);
+            addChilds(root, new HashMap<String,Object>());
             tree = root;
         }
         return tree;
@@ -261,10 +264,11 @@ public class MetadataTreeTable implements Localized {
      * This method invokes itself recursively.
      *
      * @param  addTo The parent into which the childs need to be added.
-     * @param  xmlNode If {@code addTo} is associated with a XML tree node, that node.
+     * @param  done  A safety against infinite recursivity. The keys are the name of childs
+     *               in the process of being added. The value are the node for which t
      * @return {@code true} if at least one element or attribute has been added.
      */
-    private boolean addChilds(final MetadataTreeNode addTo) {
+    private boolean addChilds(final MetadataTreeNode addTo, final Map<String,Object> done) {
         boolean added = false;
         final boolean includeEmpty = !addTo.hasValue || !simplificationAllowed;
         /*
@@ -291,17 +295,20 @@ public class MetadataTreeTable implements Localized {
             }
         }
         /*
-         * Adds the child elements after the attribute.
+         * Adds the child elements after the attributes. This method does not verify if the
+         * elements are childs of this node; they could be childs of an unrelated node.
+         * However the IIOMetadataFormat API is defined in such a way that we shall not
+         * define different elements with the same name.
          */
         childs = format.getChildNames(name);
         if (childs != null) {
             for (final String childName : childs) {
                 if (childName != null) {
                     /*
-                     * Get the number of elements having the child name. This method does not verify
-                     * if the elements are childs of this node; they could be childs of an unrelated
-                     * node. However the IIOMetadataFormat API is defined in such a way that we shall
-                     * not define different elements with the same name.
+                     * If there is some values associated to the metadata, count the number of
+                     * occurrence of the child element (may be greater than 1 if the policy is
+                     * CHILD_POLICY_REPEAT). Otherwise (if we are formatting the metadata format
+                     * instead than the values) add the child exactly once.
                      */
                     int count = 1;
                     NodeList elements = null;
@@ -313,15 +320,40 @@ public class MetadataTreeTable implements Localized {
                     }
                     for (int i=0; i<count; i++) {
                         final Node xmlChild = (elements != null) ? elements.item(i) : null;
-                        final MetadataTreeNode child = new MetadataTreeNode(this, childName, xmlChild, addTo.hasValue);
-                        if (addChilds(child) || includeEmpty || child.getUserObject() != null) {
-                            addTo.add(child);
-                            added = true;
+                        /*
+                         * Check for recursive invocation with the same child name. I'm not sure
+                         * if this is legal, but it happen with the TIFF format provided by JAI.
+                         * If the child to add is already in the process of being added, we will
+                         * skip the second occurrence.
+                         */
+                        final Object newNode = (xmlChild != null) ? xmlChild : Void.TYPE;
+                        final Object oldNode = done.put(childName, newNode);
+                        if (newNode != oldNode) {
+                            final MetadataTreeNode child = new MetadataTreeNode(this, childName, xmlChild, addTo.hasValue);
+                            if (addChilds(child, done) || includeEmpty || child.getUserObject() != null) {
+                                addTo.add(child);
+                                added = true;
+                            }
+                        }
+                        if ((oldNode != null ? done.put(childName, oldNode) : done.remove(childName)) != newNode) {
+                            throw new AssertionError(childName);
                         }
                     }
                 }
             }
         }
         return added;
+    }
+
+    /**
+     * Returns a string representation of this tree table. The current implementation
+     * formats a tree, but it could change in future Geotk version. Consequently this
+     * method should be used for debugging purpose only.
+     *
+     * @since 3.16
+     */
+    @Override
+    public String toString() {
+        return Trees.toString(getRootNode());
     }
 }
