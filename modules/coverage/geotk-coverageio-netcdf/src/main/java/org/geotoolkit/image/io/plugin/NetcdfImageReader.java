@@ -1295,7 +1295,7 @@ public class NetcdfImageReader extends FileImageReader implements
         /**
          * Default list of file's extensions.
          */
-        private static final String[] SUFFIXES = new String[] {"nc", "cdf", "grib", "grb", "grb1", "grb2", "ncml"};
+        private static final String[] SUFFIXES = new String[] {"nc", "ncml", "cdf", "grib", "grib1", "grib2", "grb", "grb1", "grb2"};
 
         /**
          * Constructs a default {@code NetcdfImageReader.Spi}. The fields are initialized as

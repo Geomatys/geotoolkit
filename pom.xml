@@ -150,6 +150,7 @@
     <derby.version>10.6.2.1</derby.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- TODO: Use <sourceEncoding>UTF-8</sourceEncoding> with Maven 3 -->
+    <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
   </properties>
 
 
@@ -165,6 +166,7 @@
   <!-- =========================================================== -->
   <dependencyManagement>
     <dependencies>
+
       <!-- GeoAPI and its dependencies -->
       <dependency>
         <groupId>org.opengis</groupId>
@@ -182,18 +184,21 @@
         <artifactId>jsr-275</artifactId>
         <version>0.9.3</version>
       </dependency>
+
       <!-- Imaging -->
       <dependency>
         <groupId>javax.media</groupId>
         <artifactId>jai_imageio</artifactId>
         <version>1.1</version>
       </dependency>
+
       <!-- Mathematic, geometries, SVG... -->
       <dependency>
         <groupId>java3d</groupId>
         <artifactId>vecmath</artifactId>
         <version>1.5.2</version>
       </dependency>
+
       <!-- Logging -->
       <dependency>
         <groupId>log4j</groupId>
@@ -201,10 +206,22 @@
         <version>1.2.12</version>  <!-- Same as the dependency in commons-logging -->
       </dependency>
       <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-api</artifactId>
+        <version>1.6.1</version>
+      </dependency>
+      <dependency>
+        <groupId>org.slf4j</groupId>
+        <artifactId>slf4j-jdk14</artifactId>
+        <version>1.6.1</version>
+        <scope>runtime</scope> <!-- Should never be needed at compile time. -->
+      </dependency>
+      <dependency>
         <groupId>commons-logging</groupId>
         <artifactId>commons-logging</artifactId>
         <version>1.1.1</version>
       </dependency>
+
       <!--
         NetCDF dependency. If the version is updated, remember to update also the link to javadoc
         later in this pom.xml file, the server/javadoc/links.html file, and the information below.
@@ -219,8 +236,24 @@
       <dependency>
         <groupId>edu.ucar</groupId>
         <artifactId>netcdf</artifactId>
-        <version>4.2</version>
+        <version>4.2u1</version>
       </dependency>
+      <dependency>
+        <groupId>edu.ucar</groupId>
+        <artifactId>opendap</artifactId>
+        <version>2.2</version>
+      </dependency>
+      <dependency>
+        <groupId>edu.ucar</groupId>
+        <artifactId>bufrTables</artifactId>
+        <version>2.0u2</version>
+      </dependency>
+      <dependency>
+        <groupId>edu.ucar</groupId>
+        <artifactId>grib</artifactId>
+        <version>8.0.27</version>
+      </dependency>
+
       <!-- Database and Server -->
       <dependency>
         <groupId>org.apache.derby</groupId>
@@ -244,6 +277,7 @@
         <version>1.4.3</version>
         <scope>provided</scope> <!-- Already included in JEE -->
       </dependency>
+
       <!-- GUI -->
       <dependency>
         <groupId>org.swinglabs</groupId>
@@ -261,6 +295,7 @@
         <version>1.0</version>
         <scope>runtime</scope>
       </dependency>
+
       <!-- Tests -->
       <dependency>
         <groupId>junit</groupId>
@@ -344,6 +379,9 @@
               <addClasspath>true</addClasspath>
               <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
             </manifest>
+            <manifestEntries>
+              <Built-On>${maven.build.timestamp}</Built-On>
+            </manifestEntries>
           </archive>
         </configuration>
       </plugin>
