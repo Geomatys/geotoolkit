@@ -32,8 +32,10 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.Feature;
@@ -98,11 +100,7 @@ public final class MapBuilder {
      * Create a default coverage maplayer with a gridCoverage, a style and the grid name.
      */
     public static CoverageMapLayer createCoverageLayer(final GridCoverage2D grid, final MutableStyle style, final String name){
-        if(name == null){
-            throw new NullPointerException("Name can not be null");
-        }
-
-        return new DefaultCoverageMapLayer(new SimpleCoverageReader(grid), style, new DefaultName(name) );
+        return createCoverageLayer(new SimpleCoverageReader(grid), style, name);
     }
 
     /**
@@ -112,7 +110,9 @@ public final class MapBuilder {
          if(name == null){
             throw new NullPointerException("Name can not be null");
         }
-        return new DefaultCoverageMapLayer(reader, style, new DefaultName(name) );
+        final CoverageMapLayer layer = new DefaultCoverageMapLayer(reader, style, new DefaultName(name) );
+        layer.setDescription(new DefaultDescription(new SimpleInternationalString(name), new SimpleInternationalString(name)));
+        return layer;
     }
 
     /**

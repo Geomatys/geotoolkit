@@ -36,14 +36,7 @@
 
 package org.geotoolkit.metadata.geotiff;
 
-import org.opengis.util.NoSuchIdentifierException;
-import org.opengis.referencing.operation.MathTransformFactory;
-import org.opengis.referencing.cs.CSFactory;
-import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import java.util.Collections;
-import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.operation.Conversion;
-import org.opengis.referencing.crs.ProjectedCRS;
 import java.util.Map;
 import java.util.HashMap;
 import java.io.IOException;
@@ -51,6 +44,7 @@ import javax.measure.unit.SI;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 
+import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.image.io.metadata.ReferencingBuilder;
@@ -79,6 +73,12 @@ import org.opengis.referencing.datum.PrimeMeridian;
 import org.opengis.referencing.datum.DatumFactory;
 import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.util.FactoryException;
+import org.opengis.util.NoSuchIdentifierException;
+import org.opengis.referencing.operation.MathTransformFactory;
+import org.opengis.referencing.cs.CSFactory;
+import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.operation.Conversion;
+import org.opengis.referencing.crs.ProjectedCRS;
 
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader.*;
@@ -93,7 +93,7 @@ import static org.geotoolkit.metadata.geotiff.GeoTiffMetaDataReader.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GeoTiffCRSReader {
+final class GeoTiffCRSReader {
 
     /**
      * Cached {@link MathTransformFactory} for building {@link MathTransform}

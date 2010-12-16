@@ -36,15 +36,16 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import static com.sun.media.imageio.plugins.tiff.GeoTIFFTagSet.*;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
+import static org.geotoolkit.metadata.geotiff.GeoTiffMetaDataUtils.*;
+import static org.geotoolkit.util.DomUtilities.*;
 
 /**
  * Utility class to read geotiff metadata tags.
+ * http://www.remotesensing.org/geotiff/faq.html
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -166,19 +167,34 @@ public final class GeoTiffMetaDataReader {
     private void fillGridMetaDatas(SpatialMetadata metadatas, ValueMap entries) throws IOException{
         final GridDomainAccessor accesor = new GridDomainAccessor(metadatas);
 
+        /*
+         * FAQ GEOTIFF :
+         * Setting the GTRasterTypeGeoKey value to RasterPixelIsPoint or RasterPixelIsArea
+         * alters how the raster coordinate space is to be interpreted.
+         * This is defined in section 2.5.2.2 of the GeoTIFF specification.
+         * => In the case of PixelIsArea (default) a pixel is treated as an area
+         * and the raster coordinate (0,0) is the top left corner of the top left pixel.
+         * => PixelIsPoint treats pixels as point samples with empty space between the "pixel" samples.
+         * In this case raster (0,0) is the location of the top left raster pixel.
+         *
+         * Note : GeoTiff mix the concepts of CellGeometry and PixelOrientation.
+         */
+
         //get the raster type
         final Object value = entries.get(GTRasterTypeGeoKey);
-        final CellGeometry cell;
+        final PixelOrientation orientation;
         if(value != null){
             int type = (Integer)value;
             if(type < 1 || type > 2){
                 throw new IOException("Unexpected raster type : "+ type);
             }else{
-                cell = (type==RasterPixelIsArea)?CellGeometry.AREA:CellGeometry.POINT;
+                orientation = (type==RasterPixelIsArea)?PixelOrientation.UPPER_LEFT:PixelOrientation.CENTER;
             }
         }else{
-            cell = CellGeometry.AREA;
+            orientation = PixelOrientation.UPPER_LEFT;
         }
+        final CellGeometry cellGeometry = (orientation == PixelOrientation.UPPER_LEFT)
+                                          ? CellGeometry.AREA:CellGeometry.POINT;
         
         //read the image bounds
         final Rectangle bounds = readBounds();
@@ -188,7 +204,7 @@ public final class GeoTiffMetaDataReader {
         if(transform != null){
             //we have the transformation directly, just copy values in the
             //spatial metadatas
-            accesor.setAll(transform, bounds, cell, PixelOrientation.CENTER);
+            accesor.setAll(transform, bounds, cellGeometry, orientation);
             return;
         }
 
@@ -199,12 +215,12 @@ public final class GeoTiffMetaDataReader {
             //TODO the is a third value in the tie point
             final double scaleX         = pixelScale[0];
             final double scaleY         = -pixelScale[1];
-            final double tiePointColumn = tiePoint[0] + ((cell==CellGeometry.AREA) ? -0.5: 0);
-            final double tiePointRow    = tiePoint[1] + ((cell==CellGeometry.AREA) ? -0.5 : 0);
+            final double tiePointColumn = tiePoint[0];
+            final double tiePointRow    = tiePoint[1];
             final double translateX     = tiePoint[3] - (scaleX * tiePointColumn);
             final double translateY     = tiePoint[4] - (scaleY * tiePointRow);
             final AffineTransform gridToCRS = new AffineTransform(scaleX, 0, 0, scaleY, translateX, translateY);
-            accesor.setAll(gridToCRS, bounds, cell, PixelOrientation.CENTER);
+            accesor.setAll(gridToCRS, bounds, cellGeometry, orientation);
             return;
         }
 
@@ -396,157 +412,4 @@ public final class GeoTiffMetaDataReader {
         return Classes.getShortName(this.getClass()) +"\n"+Trees.toString(Trees.xmlToSwing(root));
     }
     
-    /**
-     * Return the first node in the given node children which number attribut value
-     * match the given number.
-     */
-    private static Node getNodeByNumber(final Node parent, final int number) {
-        final NodeList lst = parent.getChildNodes();
-
-        for(int i=0,n=lst.getLength();i<n;i++){
-            final Node child = lst.item(i);
-            //check it's the node we are looking for
-            final String attVal = getAttributeValue(child,ATT_NUMBER);
-            if (attVal != null && Integer.parseInt(attVal) == number) {
-                return child;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Return the first node in the given node children which localName
-     * matchs the given name.
-     */
-    private static Node getNodeByLocalName(final Node parent, final String name) {
-        final NodeList lst = parent.getChildNodes();
-
-        for(int i=0,n=lst.getLength();i<n;i++){
-            final Node child = lst.item(i);
-            if(name.equalsIgnoreCase(child.getLocalName())){
-                return child;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Return the first node in the given node children which name attribute
-     * matchs the given name.
-     */
-    private static Node getNodeByAttributeName(final Node parent, final String name) {
-        final NodeList lst = parent.getChildNodes();
-
-        for(int i=0,n=lst.getLength();i<n;i++){
-            final Node child = lst.item(i);
-            if(name.equalsIgnoreCase(getAttributeValue(child, ATT_NAME))){
-                return child;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Returns the attribut value or null if attribut does not exist.
-     */
-    private static String getAttributeValue(Node candidate, String attributName){
-        final NamedNodeMap attributs = candidate.getAttributes();
-        if(attributs != null){
-            final Node attribut = attributs.getNamedItem(attributName);
-            if(attribut != null){
-                return attribut.getNodeValue();
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Read a TIFFShort node value.
-     */
-    private static int readTiffShort(final Node candidate) {
-        return Integer.parseInt(getAttributeValue(candidate, ATT_VALUE));
-    }
-
-    /**
-     * Read a TIFFShorts node values.
-     */
-    private static int[] readTiffShorts(final Node candidate) {
-        final NodeList lst = candidate.getChildNodes();
-        final int size = lst.getLength();
-        if(size == 0){
-            return null;
-        }
-        final int[] shorts = new int[size];
-        for(int i=0;i<shorts.length;i++){
-            shorts[i] = readTiffShort(lst.item(i));
-        }
-        return shorts;
-    }
-
-    /**
-     * Read a TIFFLong node value.
-     */
-    private static long readTiffLong(final Node candidate) {
-        return Long.parseLong(getAttributeValue(candidate, ATT_VALUE));
-    }
-
-    /**
-     * Read a TIFFLongs node values.
-     */
-    private static long[] readTiffLongs(final Node candidate) {
-        final NodeList lst = candidate.getChildNodes();
-        final int size = lst.getLength();
-        if(size == 0){
-            return null;
-        }
-
-        final long[] longs = new long[size];
-        for(int i=0;i<longs.length;i++){
-            longs[i] = readTiffLong(lst.item(i));
-        }
-        return longs;
-    }
-
-    /**
-     * Read a TIFFDouble node value.
-     */
-    private static double readTiffDouble(final Node candidate) {
-        return Double.parseDouble(getAttributeValue(candidate, ATT_VALUE));
-    }
-
-    /**
-     * Read a TIFFdoubles node values.
-     */
-    private static double[] readTiffDoubles(final Node candidate) {
-        final NodeList lst = candidate.getChildNodes();
-        final int size = lst.getLength();
-        if(size == 0){
-            return null;
-        }
-
-        final double[] doubles = new double[size];
-        for(int i=0;i<doubles.length;i++){
-            doubles[i] = readTiffDouble(lst.item(i));
-        }
-        return doubles;
-    }
-
-    /**
-     * Read a TIFFAscii node value.
-     */
-    private static String readTiffAscii(final Node candidate) {
-        final String valueAttribute = getAttributeValue(candidate, ATT_VALUE);
-        return valueAttribute;
-    }
-
-    /**
-     * Read a TIFFAsciis node values.
-     * There are not several String here, they are all concatenate in a single
-     * String in one ASCII sub node.
-     */
-    private static String readTiffAsciis(final Node candidate) {
-        final Node subNode = getNodeByLocalName(candidate, TAG_GEOTIFF_ASCII);
-        return readTiffAscii(subNode);
-    }
-
 }

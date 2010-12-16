@@ -17,9 +17,12 @@
 
 package org.geotoolkit.image.io.plugin;
 
+import com.sun.media.imageioimpl.plugins.tiff.TIFFImageMetadata;
+
 import java.io.IOException;
 import java.util.Locale;
 import javax.imageio.IIOImage;
+import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.ImageWriter;
 import javax.imageio.metadata.IIOMetadata;
@@ -27,13 +30,22 @@ import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.spi.ServiceRegistry;
 
+import org.geotoolkit.image.io.ImageMetadataException;
 import org.geotoolkit.image.io.ImageWriterAdapter;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.lang.Configuration;
+import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataUtils;
 import org.geotoolkit.metadata.geotiff.GeoTiffMetaDataWriter;
+import org.geotoolkit.util.DomUtilities;
 import org.geotoolkit.util.Version;
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.Logging;
+import org.opengis.util.FactoryException;
+
+import org.w3c.dom.Node;
+
+import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 
 /**
  * Writer for the <cite>Geotiff</cite> format. This writer wraps an other image writer
@@ -75,9 +87,57 @@ public class GeoTiffImageWriter extends ImageWriterAdapter{
      */
     @Override
     public void write(IIOMetadata streamMetadata, IIOImage image, ImageWriteParam param) throws IOException {
-        final SpatialMetadata metadata = getDefaultStreamMetadata(param);
-        final GeoTiffMetaDataWriter writer = new GeoTiffMetaDataWriter();
-        streamMetadata = writer.fillMetadata(streamMetadata, metadata);
+
+        
+        IIOMetadata iiometadata = image.getMetadata();
+        if(!(iiometadata instanceof SpatialMetadata)){
+            //no spatial metadatas, fallback on tiff writer
+            super.write(streamMetadata, image, param);
+            return;
+        }
+
+        final SpatialMetadata spatialMetadata = (SpatialMetadata)iiometadata;
+
+        Node tiffTree = null;
+
+        final String tiffFormatName = main.getOriginatingProvider().getNativeImageMetadataFormatName();
+
+        final String[] formatNames = iiometadata.getMetadataFormatNames();
+        if(XArrays.contains(formatNames, "geotiff")){
+            //already has a geotiff metadata associated
+        }else if(XArrays.contains(formatNames, tiffFormatName)){
+            //has a tiff metadata but no geotiff metadatas
+            tiffTree = iiometadata.getAsTree(tiffFormatName);
+            if(GeoTiffMetaDataUtils.isGeoTiffTree(tiffTree)){
+                //tiff with geotiff tags, also valid, no need to fill parameters.
+                tiffTree = null;
+            }
+        }else{
+            //no tiff metadatas, create one
+            final ImageTypeSpecifier spec = ImageTypeSpecifier.createFromRenderedImage(image.getRenderedImage());
+            iiometadata = main.getDefaultImageMetadata(spec, param);
+            iiometadata = main.convertImageMetadata(iiometadata, spec, param);
+            tiffTree = iiometadata.getAsTree(tiffFormatName);
+            image.setMetadata(iiometadata);
+        }
+
+        if(tiffTree != null){
+            final GeoTiffMetaDataWriter writer = new GeoTiffMetaDataWriter();
+            try {
+                writer.fillMetadata(tiffTree, spatialMetadata);
+            } catch (ImageMetadataException ex) {
+                throw new IOException(ex);
+            } catch (FactoryException ex) {
+                throw new IOException(ex);
+            }
+
+            //the tree changes are not stored in the model, imageio bug ?
+            //I didn't found a way to update the tree so I recreate the iiometadata.
+            iiometadata = new TIFFImageMetadata(
+                    TIFFImageMetadata.parseIFD(DomUtilities.getNodeByLocalName(tiffTree, TAG_GEOTIFF_IFD)));
+            image.setMetadata(iiometadata);
+        }
+
         super.write(streamMetadata, image, param);
     }
 
@@ -224,5 +284,5 @@ public class GeoTiffImageWriter extends ImageWriterAdapter{
      * Providers for common formats. Each provider needs to be a different class because
      * {@link ServiceRegistry} allows the registration of only one instance of each class.
      */
-    static final class TIFF extends Spi {TIFF() {super("TIFF"      );}}
+    static final class TIFF extends Spi {TIFF() {super("TIFF");}}
 }
