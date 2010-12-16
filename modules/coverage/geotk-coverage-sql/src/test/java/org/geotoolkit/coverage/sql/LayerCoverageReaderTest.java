@@ -22,20 +22,23 @@ import java.sql.SQLException;
 import java.awt.geom.Rectangle2D;
 
 import org.geotoolkit.test.Depend;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.sql.table.CatalogTestBase;
 
 import org.junit.*;
-import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.*;
+import static org.geotoolkit.test.Commons.*;
 
 
 /**
  * Tests {@link LayerCoverageReader}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.16
  *
  * @since 3.10 (derived from Seagis)
  */
@@ -93,6 +96,48 @@ public final class LayerCoverageReaderTest extends CatalogTestBase {
 
         final Layer layer = reader.getInput();
         assertEquals(LayerTableTest.TEMPERATURE, layer.getName());
+
+        SpatialMetadata metadata = reader.getStreamMetadata();
+        assertNotNull(metadata);
+        assertMultilinesEquals(decodeQuotes(
+            SpatialMetadataFormat.FORMAT_NAME + '\n' +
+            "└───DiscoveryMetadata\n" +
+            "    └───Extent\n" +
+            "        └───GeographicElement\n" +
+            "            ├───westBoundLongitude=“-180.0”\n" +
+            "            ├───eastBoundLongitude=“180.0”\n" +
+            "            ├───southBoundLatitude=“-90.0”\n" +
+            "            ├───northBoundLatitude=“90.0”\n" +
+            "            └───inclusion=“true”\n"), metadata.toString());
+        metadata = reader.getCoverageMetadata(0);
+        assertNotNull(metadata);
+        assertMultilinesEquals(decodeQuotes(
+            SpatialMetadataFormat.FORMAT_NAME + '\n' +
+            "├───ImageDescription\n" +
+            "│   └───Dimensions\n" +
+            "│       └───Dimension\n" +
+            "│           ├───descriptor=“SST [-3 … 32.25°C]”\n" +
+            "│           ├───minValue=“-2.85”\n" +
+            "│           ├───maxValue=“35.25”\n" +
+            "│           ├───units=“Cel”\n" +
+            "│           ├───validSampleValues=“[1 … 255]”\n" +
+            "│           ├───fillSampleValues=“0”\n" +
+            "│           ├───scaleFactor=“0.15”\n" +
+            "│           ├───offset=“-3.0”\n" +
+            "│           └───transferFunctionType=“linear”\n" +
+            "├───RectifiedGridDomain\n" +
+            "│   ├───origin=“-180.0 90.0 6431.0”\n" +
+            "│   └───OffsetVectors\n" +
+            "│       ├───OffsetVector\n" +
+            "│       │   └───values=“0.087890625 0.0 0.0”\n" +
+            "│       ├───OffsetVector\n" +
+            "│       │   └───values=“0.0 -0.087890625 0.0”\n" +
+            "│       └───OffsetVector\n" +
+            "│           └───values=“0.0 0.0 8.0”\n" +
+            "└───SpatialRepresentation\n" +
+            "    ├───numberOfDimensions=“3”\n" +
+            "    ├───centerPoint=“-0.0439453125 0.0439453125 6455.0”\n" +
+            "    └───pointInPixel=“upperLeft”\n"), metadata.toString());
 
         final CoverageEnvelope envelope = layer.getEnvelope(null, null);
         envelope.setTimeRange(LayerTableTest.SUB_START_TIME, LayerTableTest.SUB_END_TIME);
@@ -162,6 +207,34 @@ public final class LayerCoverageReaderTest extends CatalogTestBase {
 
         final Layer layer = reader.getInput();
         assertEquals(LayerTableTest.BLUEMARBLE, layer.getName());
+
+        SpatialMetadata metadata = reader.getStreamMetadata();
+        assertNotNull(metadata);
+        assertMultilinesEquals(decodeQuotes(
+            SpatialMetadataFormat.FORMAT_NAME + '\n' +
+            "└───DiscoveryMetadata\n" +
+            "    └───Extent\n" +
+            "        └───GeographicElement\n" +
+            "            ├───westBoundLongitude=“-180.0”\n" +
+            "            ├───eastBoundLongitude=“180.0”\n" +
+            "            ├───southBoundLatitude=“-90.0”\n" +
+            "            ├───northBoundLatitude=“90.0”\n" +
+            "            └───inclusion=“true”\n"), metadata.toString());
+        metadata = reader.getCoverageMetadata(0);
+        assertNotNull(metadata);
+        assertMultilinesEquals(decodeQuotes(
+            SpatialMetadataFormat.FORMAT_NAME + '\n' +
+            "├───RectifiedGridDomain\n" +
+            "│   ├───origin=“-180.0 90.0”\n" +
+            "│   └───OffsetVectors\n" +
+            "│       ├───OffsetVector\n" +
+            "│       │   └───values=“0.125 0.0”\n" +
+            "│       └───OffsetVector\n" +
+            "│           └───values=“0.0 -0.125”\n" +
+            "└───SpatialRepresentation\n" +
+            "    ├───numberOfDimensions=“2”\n" +
+            "    ├───centerPoint=“-0.0625 0.0625”\n" +
+            "    └───pointInPixel=“upperLeft”\n"), metadata.toString());
 
         final CoverageEnvelope envelope = layer.getEnvelope(null, 100);
         envelope.setHorizontalRange(new Rectangle2D.Double(-40, -40, 80, 80));

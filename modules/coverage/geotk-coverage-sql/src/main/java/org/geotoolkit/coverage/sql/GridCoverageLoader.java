@@ -35,10 +35,12 @@ import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.metadata.spatial.PixelOrientation;
 
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -80,7 +82,7 @@ import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingErro
  * finished, in order to close the underlying input stream.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @since 3.10
  * @module
@@ -182,10 +184,9 @@ final class GridCoverageLoader extends ImageCoverageReader {
                 throw new CoverageStoreException(ex);
             }
         }
+        clearCache();
         super.setInput(input);
         entry = e; // Set the field only on success.
-        streamMetadata = null;
-        imageMetadata  = null;
         /*
          * For the NetCDF format, find the names of the variables to read. They are the names
          * declared in the SampleDimensions table. Each variable will be assigned to one band.
@@ -278,42 +279,46 @@ final class GridCoverageLoader extends ImageCoverageReader {
     }
 
     /**
-     * Returns the metadata associated with the stream as a whole.
-     * This method fetches the metadata from the database only, ignoring the file metadata.
+     * Creates stream metadata for the given geographic bounding box.
      */
-    @Override
-    public SpatialMetadata getStreamMetadata() throws CoverageStoreException {
-        SpatialMetadata metadata = streamMetadata;
-        if (metadata == null) {
-            metadata = new SpatialMetadata(SpatialMetadataFormat.STREAM);
-            if (entry != null) {
-                final DiscoveryAccessor accessor = new DiscoveryAccessor(metadata) {
-                    @Override protected double nice(final double value) {
-                        return fixRoundingError(value);
-                    }
-                };
-                accessor.setGeographicElement(entry.getGeographicBoundingBox());
-            }
-            streamMetadata = metadata;
+    static SpatialMetadata createStreamMetadata(final GeographicBoundingBox bbox) {
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.STREAM);
+        if (bbox != null) {
+            final DiscoveryAccessor accessor = new DiscoveryAccessor(metadata) {
+                @Override protected double nice(final double value) {
+                    return fixRoundingError(value);
+                }
+            };
+            accessor.setGeographicElement(bbox);
         }
         return metadata;
     }
 
     /**
-     * Returns the metadata associated with the given coverage.
-     * This method fetches the metadata from the database only, ignoring the file metadata.
+     * Returns the metadata associated with the stream as a whole. This method fetches
+     * the metadata from the database only; it does not attempt to read the image file.
      */
     @Override
-    public SpatialMetadata getCoverageMetadata(final int index) throws CoverageStoreException {
-        ensureValidIndex(index);
-        SpatialMetadata metadata = imageMetadata;
-        if (metadata != null) {
-            return metadata;
+    public SpatialMetadata getStreamMetadata() throws CoverageStoreException {
+        SpatialMetadata metadata = streamMetadata;
+        if (metadata == null) {
+            streamMetadata = metadata = createStreamMetadata(entry.getGeographicBoundingBox());
         }
-        final List<GridSampleDimension> bands = format.sampleDimensions;
-        metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        return metadata;
+    }
+
+    /**
+     * Creates image metadata for the given sample dimensions and grid geometry.
+     *
+     * @param locale   The locale to use with {@link InternationalString} attributes.
+     * @param bands    The sample dimension, or {@code null} if none.
+     * @param geometry The grid geometry, or {@code null} if none.
+     */
+    static SpatialMetadata createImageMetadata(final Locale locale,
+            final List<GridSampleDimension> bands, final GeneralGridGeometry geometry)
+    {
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
         if (bands != null) {
-            final Locale locale = getLocale();
             final DimensionAccessor accessor = new DimensionAccessor(metadata);
             for (GridSampleDimension band : bands) {
                 accessor.selectChild(accessor.appendChild());
@@ -370,7 +375,6 @@ final class GridCoverageLoader extends ImageCoverageReader {
         /*
          * Add the "SpatialRepresentation" and "RectifiedGridDomain" nodes.
          */
-        final GridGeometry2D geometry = getGridGeometry(index);
         if (geometry != null) {
             final MathTransform      gridToCRS    = geometry.getGridToCRS(PixelInCell.CELL_CORNER);
             final GridDomainAccessor accessor     = new GridDomainAccessor(metadata);
@@ -404,7 +408,21 @@ final class GridCoverageLoader extends ImageCoverageReader {
                 }
             }
         }
-        imageMetadata = metadata;
+        return metadata;
+    }
+
+    /**
+     * Returns the metadata associated with the given coverage. This method fetches the
+     * metadata from the database only; it does not attempt to read the image file.
+     */
+    @Override
+    public SpatialMetadata getCoverageMetadata(final int index) throws CoverageStoreException {
+        ensureValidIndex(index);
+        SpatialMetadata metadata = imageMetadata;
+        if (metadata == null) {
+            imageMetadata = metadata = createImageMetadata(getLocale(),
+                    format.sampleDimensions, getGridGeometry(index));
+        }
         return metadata;
     }
 
@@ -534,13 +552,21 @@ final class GridCoverageLoader extends ImageCoverageReader {
     }
 
     /**
+     * Clears the cached object. This method needs to be invoked when the input changed,
+     * in order to force the calculation of new objects for the new input.
+     */
+    private void clearCache() {
+        entry          = null;
+        streamMetadata = null;
+        imageMetadata  = null;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public void reset() throws CoverageStoreException {
-        entry          = null;
-        streamMetadata = null;
-        imageMetadata  = null;
+        clearCache();
         super.reset();
     }
 
@@ -549,9 +575,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
      */
     @Override
     public void dispose() throws CoverageStoreException {
-        entry          = null;
-        streamMetadata = null;
-        imageMetadata  = null;
+        clearCache();
         super.dispose();
     }
 

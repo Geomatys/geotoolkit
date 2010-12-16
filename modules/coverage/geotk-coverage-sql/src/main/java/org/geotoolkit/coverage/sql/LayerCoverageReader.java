@@ -40,6 +40,7 @@ import org.geotoolkit.display.shape.DoubleDimension2D;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.image.io.IIOListeners;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.resources.Errors;
 
 
@@ -61,7 +62,7 @@ import org.geotoolkit.resources.Errors;
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.16
  *
  * @see CoverageDatabase#createGridCoverageReader(String)
  * @see CoverageDatabase#readSlice(CoverageQuery)
@@ -92,13 +93,20 @@ public class LayerCoverageReader extends GridCoverageReader {
      * The most frequently used grid geometry.
      * This is computed when first needed.
      */
-    private GeneralGridGeometry gridGeometry;
+    private transient GeneralGridGeometry gridGeometry;
 
     /**
      * The most commonly used sample dimensions, or {@code null} if none.
      * This is computed when first needed.
      */
-    private List<GridSampleDimension> sampleDimensions;
+    private transient List<GridSampleDimension> sampleDimensions;
+
+    /**
+     * Metadata created when first needed.
+     *
+     * @since 3.16
+     */
+    private transient SpatialMetadata streamMetadata, imageMetadata;
 
     /**
      * Creates a new reader for the given database. The {@link #setInput(Object)}
@@ -157,7 +165,7 @@ public class LayerCoverageReader extends GridCoverageReader {
     }
 
     /**
-     * Returns the current layer which is used as input.
+     * Returns the current layer which is used as input, or {@code null} if none.
      */
     @Override
     public final Layer getInput() throws CoverageStoreException {
@@ -187,9 +195,7 @@ public class LayerCoverageReader extends GridCoverageReader {
                         Classes.getClass(input), Layer.class));
             }
         }
-        names            = null;
-        gridGeometry     = null;
-        sampleDimensions = null;
+        clearCache();
         super.setInput(input);
     }
 
@@ -253,6 +259,40 @@ public class LayerCoverageReader extends GridCoverageReader {
             }
         }
         return sampleDimensions;
+    }
+
+    /**
+     * Returns the metadata associated with the stream as a whole. This method fetches
+     * the metadata from the database only; it does not attempt to read the image file.
+     *
+     * @since 3.16
+     */
+    @Override
+    public SpatialMetadata getStreamMetadata() throws CoverageStoreException {
+        ensureInputSet();
+        SpatialMetadata metadata = streamMetadata;
+        if (metadata == null) {
+            streamMetadata = metadata = GridCoverageLoader.createStreamMetadata(
+                    getInput().getGeographicBoundingBox());
+        }
+        return metadata;
+    }
+
+    /**
+     * Returns the metadata associated with the given coverage. This method fetches the
+     * metadata from the database only; it does not attempt to read the image file.
+     *
+     * @since 3.16
+     */
+    @Override
+    public SpatialMetadata getCoverageMetadata(final int index) throws CoverageStoreException {
+        ensureValidIndex(index);
+        SpatialMetadata metadata = imageMetadata;
+        if (metadata == null) {
+            imageMetadata = metadata = GridCoverageLoader.createImageMetadata(getLocale(),
+                    getSampleDimensions(index), getGridGeometry(index));
+        }
+        return metadata;
     }
 
     /**
@@ -333,5 +373,35 @@ public class LayerCoverageReader extends GridCoverageReader {
             return ref.read(param, listeners);
         }
         return null;
+    }
+
+    /**
+     * Clears the cached object. This method needs to be invoked when the input changed,
+     * in order to force the calculation of new objects for the new input.
+     */
+    private void clearCache() {
+        names            = null;
+        gridGeometry     = null;
+        sampleDimensions = null;
+        streamMetadata   = null;
+        imageMetadata    = null;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void reset() throws CoverageStoreException {
+        clearCache();
+        super.reset();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void dispose() throws CoverageStoreException {
+        clearCache();
+        super.dispose();
     }
 }
