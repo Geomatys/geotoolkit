@@ -29,6 +29,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.metadata.spatial.PixelOrientation; // For javadoc
 
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.Cloneable;
@@ -564,7 +565,9 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      *         <code>{@linkplain #isDefined isDefined}({@linkplain #GRID_TO_CRS})</code>
      *         returned {@code false}).
      *
-     * @see GridGeometry2D#getGridToCRS(org.opengis.referencing.datum.PixelInCell)
+     * @see GridGeometry2D#getGridToCRS(PixelOrientation)
+     * @see org.geotoolkit.referencing.cs.DiscreteReferencingFactory#getAffineTransform(GridGeometry, PixelInCell)
+     * @see org.geotoolkit.metadata.iso.spatial.PixelTranslation
      *
      * @since 2.3
      */

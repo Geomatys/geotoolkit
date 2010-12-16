@@ -127,6 +127,9 @@ public final class LayerCoverageReaderTest extends CatalogTestBase {
             "│           └───transferFunctionType=“linear”\n" +
             "├───RectifiedGridDomain\n" +
             "│   ├───origin=“-180.0 90.0 6431.0”\n" +
+            "│   ├───Limits\n" +
+            "│   │   ├───low=“0 0 0”\n" +
+            "│   │   └───high=“4095 2047 6”\n" +
             "│   └───OffsetVectors\n" +
             "│       ├───OffsetVector\n" +
             "│       │   └───values=“0.087890625 0.0 0.0”\n" +
@@ -136,7 +139,7 @@ public final class LayerCoverageReaderTest extends CatalogTestBase {
             "│           └───values=“0.0 0.0 8.0”\n" +
             "└───SpatialRepresentation\n" +
             "    ├───numberOfDimensions=“3”\n" +
-            "    ├───centerPoint=“-0.0439453125 0.0439453125 6455.0”\n" +
+            "    ├───centerPoint=“0.0 0.0 6459.0”\n" +
             "    └───pointInPixel=“upperLeft”\n"), metadata.toString());
 
         final CoverageEnvelope envelope = layer.getEnvelope(null, null);
@@ -226,6 +229,9 @@ public final class LayerCoverageReaderTest extends CatalogTestBase {
             SpatialMetadataFormat.FORMAT_NAME + '\n' +
             "├───RectifiedGridDomain\n" +
             "│   ├───origin=“-180.0 90.0”\n" +
+            "│   ├───Limits\n" +
+            "│   │   ├───low=“0 0”\n" +
+            "│   │   └───high=“2879 1439”\n" +
             "│   └───OffsetVectors\n" +
             "│       ├───OffsetVector\n" +
             "│       │   └───values=“0.125 0.0”\n" +
@@ -233,7 +239,7 @@ public final class LayerCoverageReaderTest extends CatalogTestBase {
             "│           └───values=“0.0 -0.125”\n" +
             "└───SpatialRepresentation\n" +
             "    ├───numberOfDimensions=“2”\n" +
-            "    ├───centerPoint=“-0.0625 0.0625”\n" +
+            "    ├───centerPoint=“0.0 0.0”\n" +
             "    └───pointInPixel=“upperLeft”\n"), metadata.toString());
 
         final CoverageEnvelope envelope = layer.getEnvelope(null, 100);

@@ -37,6 +37,7 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.datum.PixelInCell;
 
 import org.geotoolkit.util.Range;
 import org.geotoolkit.test.Depend;
@@ -47,6 +48,7 @@ import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.internal.image.io.IrregularAxesConverterTest;
+import org.geotoolkit.internal.referencing.MatrixUtilities;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -57,7 +59,7 @@ import static java.lang.Double.NaN;
  * Tests the {@link NetcdfCRS} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.16
  *
  * @since 3.08
  */
@@ -224,7 +226,7 @@ public final class NetcdfCRSTest extends NetcdfTestBase {
              * The error (3 metres in the translation term of the y axis) is assumed to be caused
              * by slightly different input values.
              */
-            assertTrue(new GeneralMatrix(
+            assertTrue("GridToCRS of a ProjectedCRS", new GeneralMatrix(
                     new double[] {55597,     0,     0,     0, -19959489},
                     new double[] {    0, 55597,     0,     0, -13843768},
                     new double[] {    0,     0,   NaN,     0,         5},
@@ -232,12 +234,28 @@ public final class NetcdfCRSTest extends NetcdfTestBase {
                     new double[] {    0,     0,     0,     0,         1}).equals(matrix, 1));
         } else {
             assertNull(gridToCRS);
-            assertTrue(new GeneralMatrix(
+            assertTrue("GridToCRS of a GeographicCRS", new GeneralMatrix(
                     new double[] {NaN,   0,   0,   0,  -179.5}, // Actually, the scale should be 0.5
                     new double[] {  0, NaN,   0,   0,   -77.0105},
                     new double[] {  0,   0, NaN,   0,     5.0},
                     new double[] {  0,   0,   0, NaN, 20975.0},
                     new double[] {  0,   0,   0,   0,     1.0}).equals(matrix, 1));
+        }
+        /*
+         * Ask again the affine transform, this time from the grid geometry.
+         */
+        assertTrue("getAffineTransform(GridGeometry, CELL_CENTER) should give the same result.",
+                MatrixUtilities.epsilonEqual(matrix, DiscreteReferencingFactory.getAffineTransform(
+                (GridGeometry) crs, PixelInCell.CELL_CENTER), 0, false));
+        ((GeneralMatrix) matrix).sub((GeneralMatrix) DiscreteReferencingFactory.getAffineTransform(
+                (GridGeometry) crs, PixelInCell.CELL_CORNER));
+        if (isProjected) {
+            assertTrue("CELL_CENTER - CELL_CORNER should be half of a pixel size.", new GeneralMatrix(
+                    new double[] {0, 0,   0,   0, 27799},
+                    new double[] {0, 0,   0,   0, 27799},
+                    new double[] {0, 0, NaN,   0,   NaN},
+                    new double[] {0, 0,   0, NaN,   NaN},
+                    new double[] {0, 0,   0,   0,     0}).equals(matrix, 1));
         }
     }
 

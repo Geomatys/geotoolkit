@@ -242,10 +242,10 @@ final class NetcdfMetadata extends SpatialMetadata {
         if (crs == null) {
             crs = regularCRS;
         }
-        new ReferencingBuilder(this).setCoordinateReferenceSystem(crs);
         if (regularCRS instanceof GridGeometry) {
-            new GridDomainAccessor(this).setGridGeometry((GridGeometry) regularCRS);
+            new GridDomainAccessor(this).setGridGeometry((GridGeometry) regularCRS, null, null, 1);
         }
+        new ReferencingBuilder(this).setCoordinateReferenceSystem(crs);
     }
 
     /**

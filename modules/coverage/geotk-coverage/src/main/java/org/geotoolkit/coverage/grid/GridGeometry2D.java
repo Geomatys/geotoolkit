@@ -875,6 +875,9 @@ public class GridGeometry2D extends GeneralGridGeometry {
      * @throws InvalidGridGeometryException if a transform is not available
      *         for this grid geometry.
      *
+     * @see #getGridToCRS(PixelInCell)
+     * @see org.geotoolkit.metadata.iso.spatial.PixelTranslation
+     *
      * @since 2.3
      */
     public MathTransform getGridToCRS(final PixelOrientation orientation) {

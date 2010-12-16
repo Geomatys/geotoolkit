@@ -163,6 +163,27 @@ public final class MatrixUtilities {
     }
 
     /**
+     * Modifies the given matrix in order to reverse the axis at the given dimension.
+     * The matrix is assumed affine, but this is not verified.
+     *
+     * @param matrix    The matrix to modify.
+     * @param dimension The dimension of the axis to reverse.
+     * @param span      The envelope span at the dimension of the axis to be reversed,
+     *                  in units of the source coordinate system.
+     *
+     * @since 3.16
+     */
+    public static void reverseAxis(final Matrix matrix, final int dimension, final double span) {
+        final int numRows = matrix.getNumRow();
+        final int lastCol = matrix.getNumCol() - 1;
+        for (int j=0; j<numRows; j++) {
+            final double scale = matrix.getElement(j, dimension);
+            matrix.setElement(j, dimension, -scale);
+            matrix.setElement(j, lastCol, matrix.getElement(j, lastCol) + scale*span);
+        }
+    }
+
+    /**
      * Inverts the specified matrix, maybe (but not always) in place. If the matrix can't be
      * inverted (for example because of a {@link SingularMatrixException}), then the exception
      * is wrapped into a {@link NoninvertibleTransformException}.

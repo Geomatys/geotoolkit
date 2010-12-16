@@ -75,36 +75,9 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
             SpatialMetadataFormat.FORMAT_NAME + '\n' +
             "├───RectifiedGridDomain\n" +
             "│   ├───origin=“-1.9959489E7 1.3899365E7 5.0 20975.0”\n" +
-            "│   ├───CoordinateReferenceSystem\n" +
-            "│   │   ├───name=“NetCDF:time depth latitude longitude”\n" +
-            "│   │   └───CoordinateSystem\n" +
-            "│   │       ├───name=“NetCDF:time depth latitude longitude”\n" +
-            "│   │       ├───dimension=“4”\n" +
-            "│   │       └───Axes\n" +
-            "│   │           ├───CoordinateSystemAxis\n" +
-            "│   │           │   ├───name=“Easting”\n" +
-            "│   │           │   ├───axisAbbrev=“E”\n" +
-            "│   │           │   ├───direction=“east”\n" +
-            "│   │           │   └───unit=“m”\n" +
-            "│   │           ├───CoordinateSystemAxis\n" +
-            "│   │           │   ├───name=“Northing”\n" +
-            "│   │           │   ├───axisAbbrev=“N”\n" +
-            "│   │           │   ├───direction=“north”\n" +
-            "│   │           │   └───unit=“m”\n" +
-            "│   │           ├───CoordinateSystemAxis\n" +
-            "│   │           │   ├───name=“NetCDF:depth”\n" +
-            "│   │           │   ├───axisAbbrev=“d”\n" +
-            "│   │           │   ├───direction=“down”\n" +
-            "│   │           │   ├───minimumValue=“5.0”\n" +
-            "│   │           │   ├───maximumValue=“1950.0”\n" +
-            "│   │           │   └───unit=“m”\n" +
-            "│   │           └───CoordinateSystemAxis\n" +
-            "│   │               ├───name=“NetCDF:time”\n" +
-            "│   │               ├───axisAbbrev=“t”\n" +
-            "│   │               ├───direction=“future”\n" +
-            "│   │               ├───minimumValue=“20975.0”\n" +
-            "│   │               ├───maximumValue=“20975.0”\n" +
-            "│   │               └───unit=“d”\n" +
+            "│   ├───Limits\n" +
+            "│   │   ├───low=“0 0 0 0”\n" +
+            "│   │   └───high=“719 498 58 0”\n" +
             "│   ├───OffsetVectors\n" +
             "│   │   ├───OffsetVector\n" +
             "│   │   │   └───values=“55597.46 0.0 0.0 0.0”\n" +
@@ -114,9 +87,39 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
             "│   │   │   └───values=“0.0 0.0 NaN 0.0”\n" +
             "│   │   └───OffsetVector\n" +
             "│   │       └───values=“0.0 0.0 0.0 NaN”\n" +
-            "│   └───Limits\n" +
-            "│       ├───low=“0 0 0 0”\n" +
-            "│       └───high=“719 498 58 0”\n";
+            "│   └───CoordinateReferenceSystem\n" +
+            "│       ├───name=“NetCDF:time depth latitude longitude”\n" +
+            "│       └───CoordinateSystem\n" +
+            "│           ├───name=“NetCDF:time depth latitude longitude”\n" +
+            "│           ├───dimension=“4”\n" +
+            "│           └───Axes\n" +
+            "│               ├───CoordinateSystemAxis\n" +
+            "│               │   ├───name=“Easting”\n" +
+            "│               │   ├───axisAbbrev=“E”\n" +
+            "│               │   ├───direction=“east”\n" +
+            "│               │   └───unit=“m”\n" +
+            "│               ├───CoordinateSystemAxis\n" +
+            "│               │   ├───name=“Northing”\n" +
+            "│               │   ├───axisAbbrev=“N”\n" +
+            "│               │   ├───direction=“north”\n" +
+            "│               │   └───unit=“m”\n" +
+            "│               ├───CoordinateSystemAxis\n" +
+            "│               │   ├───name=“NetCDF:depth”\n" +
+            "│               │   ├───axisAbbrev=“d”\n" +
+            "│               │   ├───direction=“down”\n" +
+            "│               │   ├───minimumValue=“5.0”\n" +
+            "│               │   ├───maximumValue=“1950.0”\n" +
+            "│               │   └───unit=“m”\n" +
+            "│               └───CoordinateSystemAxis\n" +
+            "│                   ├───name=“NetCDF:time”\n" +
+            "│                   ├───axisAbbrev=“t”\n" +
+            "│                   ├───direction=“future”\n" +
+            "│                   ├───minimumValue=“20975.0”\n" +
+            "│                   ├───maximumValue=“20975.0”\n" +
+            "│                   └───unit=“d”\n" +
+            "├───SpatialRepresentation\n" +
+            "│   ├───numberOfDimensions=“4”\n" +
+            "│   └───centerPoint=“27798.73166114092 1.862645149230957E-9 NaN NaN”\n";
 
     /**
      * Numbers which were simplified in the above metadata. This simplification

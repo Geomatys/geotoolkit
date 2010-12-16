@@ -34,10 +34,13 @@ import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Matrix;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.coverage.grid.GridGeometry;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.coverage.grid.GeneralGridGeometry;
+import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
@@ -314,17 +317,20 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
     /**
      * Computes a <cite>grid to CRS</cite> affine transform for the given CRS, mapping
      * {@linkplain org.opengis.referencing.datum.PixelInCell#CELL_CENTER cell center}.
-     * This method processes in two steps:
+     * This method processes with the following steps:
      * <p>
      * <ol>
      *   <li>If the given CRS implements the {@link GridGeometry} interface, then this method
-     *       checks the value of {@link GridGeometry#getGridToCRS()}. If that value is an
-     *       affine transform, its matrix is returned.</li>
+     *       checks the value returned by the {@link GridGeometry#getGridToCRS()} method. If
+     *       that value is a linear transform, then {@linkplain LinearTransform#getMatrix()
+     *       its matrix} is returned.</li>
      *   <li>Otherwise if the given CRS is an instance of {@link CompoundCRS}, then the above
-     *       check is performed for each {@linkplain CompoundCRS#getComponents() component}.</li>
-     *   <li>Otherwise this method gets the discrete axes from the given CRS, and delegates to
-     *       the {@link #getAffineTransform(DiscreteCoordinateSystemAxis[])} method. Note that
-     *       the conditions documented in the above method apply.</li>
+     *       check is performed for each {@linkplain CompoundCRS#getComponents() component} and
+     *       the component matrix are assembled in a single matrix.</li>
+     *   <li>Otherwise if all axes in the given CRS are discrete, then this method gets those axes
+     *       and delegates to the {@link #getAffineTransform(DiscreteCoordinateSystemAxis[])} method.
+     *       Note that the conditions documented in the above method apply.</li>
+     *   <li>Otherwise this method returns {@code null}.</li>
      * </ol>
      *
      * @param  crs The Coordinate Reference System for which to get the <cite>grid to CRS</cite>
@@ -342,6 +348,15 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
                 return matrix;
             }
         }
+        return createAffineTransform(crs);
+    }
+
+    /**
+     * Implementation of {@link #getAffineTransform(CoordinateReferenceSystem)} without
+     * the check for instance of {@link GridGeometry}. This method is the fallback for
+     * both the above-cited method, and for {@link #getGridToCRS(GridGeometry, PixelInCell)}.
+     */
+    private static Matrix createAffineTransform(final CoordinateReferenceSystem crs) {
         final CoordinateSystem cs = crs.getCoordinateSystem();
         final DiscreteCoordinateSystemAxis[] axes = new DiscreteCoordinateSystemAxis[cs.getDimension()];
         for (int i=0; i<axes.length; i++) {
@@ -363,7 +378,8 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
      * convert dates to numerical values.
      *
      * @param  crs  The Coordinate Reference System object that own the given axes.
-     * @param  axes The axes to use for computing the transform.
+     * @param  axes The axes to use for computing the transform. If this array contains any
+     *              null element, then this method returns {@code null}.
      * @return The <cite>grid to CRS</cite> transform mapping cell centers for the given axes
      *         as a matrix, or {@code null} if such matrix can not be computed.
      */
@@ -482,5 +498,68 @@ scan:   for (final CoordinateReferenceSystem component : crs.getComponents()) {
             }
         }
         return matrix;
+    }
+
+    /**
+     * Returns the <cite>grid to CRS</cite> affine transform for the given grid geometry.
+     * <p>
+     * <ol>
+     *   <li>First, this method invokes {@link GridGeometry#getGridToCRS()} (or the specialized
+     *       variant {@link GeneralGridGeometry#getGridToCRS(PixelInCell)} if possible). If the
+     *       returned transform is linear, then {@linkplain LinearTransform#getMatrix() its matrix}
+     *       is returned.</li>
+     *   <li>Otherwise if the given geometry is also a CRS with discrete axes (for example
+     *       {@link org.geotoolkit.referencing.adapters.NetcdfCRS}), then this method performs
+     *       the same calculation than {@link #getAffineTransform(CoordinateReferenceSystem)}.</li>
+     *   <li>Otherwise this method returns {@code null}.</li>
+     * </ol>
+     *
+     * @param  geometry The geometry for which to get the <cite>grid to CRS</cite> affine transform.
+     * @param  pixelInCell Whatever the transform should map the cell center or corner, or {@code null}
+     *         for the default (typically {@linkplain PixelInCell#CELL_CENTER cell center}).
+     * @return The <cite>grid to CRS</cite> transform mapping cell centers for the CRS axes
+     *         as a matrix, or {@code null} if such matrix can not be computed.
+     *
+     * @see GeneralGridGeometry#getGridToCRS(PixelInCell)
+     * @see PixelTranslation
+     *
+     * @since 3.16
+     */
+    public static Matrix getAffineTransform(final GridGeometry geometry, PixelInCell pixelInCell) {
+        ensureNonNull("geometry", geometry);
+        MathTransform tr;
+        if (pixelInCell != null && geometry instanceof GeneralGridGeometry) {
+            tr = ((GeneralGridGeometry) geometry).getGridToCRS(pixelInCell);
+            pixelInCell = null; // Indicates that the offset is already applied.
+        } else {
+            tr = geometry.getGridToCRS();
+        }
+        Matrix gridToCRS = MatrixFactory.getMatrix(tr);
+        /*
+         * If the grid geometry does not define "grid to CRS" transform, or if that
+         * transform is not linear, compute a transform from the discrete axes.
+         */
+        if (gridToCRS == null && geometry instanceof CoordinateReferenceSystem) {
+            gridToCRS = createAffineTransform((CoordinateReferenceSystem) geometry);
+        }
+        /*
+         * If the caller asked for the pixel corner rather than pixel center,
+         * applies a translation of 0.5 pixel along all dimensions.
+         */
+        if (gridToCRS != null && pixelInCell != null) {
+            final double offset = PixelTranslation.getPixelTranslation(pixelInCell);
+            if (offset != 0) {
+                final int lastColumn = gridToCRS.getNumCol() - 1;
+                for (int j=gridToCRS.getNumRow(); --j>=0;) {
+                    double sum = 0;
+                    for (int i=0; i<lastColumn; i++) {
+                        sum += offset * gridToCRS.getElement(j, i);
+                    }
+                    sum += gridToCRS.getElement(j, lastColumn); // Do it last for reducing rounding errors.
+                    gridToCRS.setElement(j, lastColumn, sum);
+                }
+            }
+        }
+        return gridToCRS;
     }
 }

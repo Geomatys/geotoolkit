@@ -323,6 +323,26 @@ nextPixel:          do {
         if (sv != sr && Math.abs(sv - sr) <= EPS) {
             value = sr / 36000;
         }
+        if (value == 0) {
+            value = 0; // Replace negative zero by positive zero.
+        }
         return value;
+    }
+
+    /**
+     * Invokes {@link #fixRoundingError(double)} for all elements in the given array.
+     * Values in the given array will be modified in-place, and the same array is
+     * returned for convenience.
+     *
+     * @param  values The array of values to fix for rounding error.
+     * @return The given array, which now contains potentially modified values.
+     *
+     * @since 3.16
+     */
+    public static double[] fixRoundingError(final double[] values) {
+        for (int i=0; i<values.length; i++) {
+            values[i] = fixRoundingError(values[i]);
+        }
+        return values;
     }
 }

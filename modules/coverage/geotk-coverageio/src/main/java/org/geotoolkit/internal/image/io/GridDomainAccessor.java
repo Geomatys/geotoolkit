@@ -27,15 +27,21 @@ import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.metadata.spatial.CellGeometry;
 import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.operation.Matrix;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.referencing.datum.PixelInCell;
 
-import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.MetadataAccessor;
 import org.geotoolkit.referencing.cs.DiscreteReferencingFactory;
-import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
+import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
+import org.geotoolkit.internal.referencing.MatrixUtilities;
+import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME;
+import static org.geotoolkit.internal.image.io.DimensionAccessor.fixRoundingError;
 
 
 /**
@@ -84,51 +90,67 @@ public final class GridDomainAccessor extends MetadataAccessor {
      * Sets the limits, origin and offset vectors from the given grid geometry.
      * The <cite>grid to CRS</cite> transform needs to be linear in order to get
      * the offset vectors formatted.
+     * <p>
+     * The value of the {@code pixelInCell} argument, if non-null, is given in the call to
+     * {@link DiscreteReferencingFactory#getAffineTransform(GridGeometry, PixelInCell)}.
+     * This has an impact of the value of the {@code origin} attribute.
      *
-     * @param geometry The grid geometry.
+     * @param geometry      The grid geometry.
+     * @param pixelInCell   The value to assign to the {@code "pointInPixel"} attribute, or {@code null}.
+     * @param cellGeometry  The value to assign to the {@code "cellGeometry"} attribute, or {@code null}.
+     * @param axisToReverse The axis to reverse (typically 1 for the <var>y</var> axis), or -1 if none.
      *
      * @since 3.15
      */
-    public void setGridGeometry(final GridGeometry geometry) {
-        final GridEnvelope envelope = geometry.getGridRange();
-        final Matrix gridToCRS;
-        if (geometry instanceof CoordinateReferenceSystem) {
-            /*
-             * This happen especially with NetCDF data, where coordinate axes have discrete values.
-             * The DiscreteReferencingFactory class is more sophesticated than the MatrixUtilities
-             * class in such case, since it fallback on an analysis of axes if getGridToCRS() can
-             * not provide a linear transform.
-             */
-            gridToCRS = DiscreteReferencingFactory.getAffineTransform((CoordinateReferenceSystem) geometry);
-        } else {
-            gridToCRS = MatrixFactory.getMatrix(geometry.getGridToCRS());
+    public void setGridGeometry(final GridGeometry geometry, final PixelInCell pixelInCell,
+            final CellGeometry cellGeometry, final int axisToReverse)
+    {
+        final MathTransform gridToCRS     = geometry.getGridToCRS(); // Really want pixel center.
+        final GridEnvelope  gridEnvelope  = geometry.getGridRange();
+        final int           gridDimension = gridEnvelope.getDimension();
+        final int           crsDimension  = gridToCRS.getTargetDimensions();
+        double[]            center        = new double[Math.max(crsDimension, gridDimension)];
+        final int[]         lower         = new int   [gridDimension];
+        final int[]         upper         = new int   [gridDimension];
+        for (int i=0; i<gridDimension; i++) {
+            lower [i] = gridEnvelope.getLow (i);
+            upper [i] = gridEnvelope.getHigh(i);
+            center[i] = 0.5 * (lower[i] + upper[i]);
         }
-        final int dim = envelope.getDimension();
-        final int[]    lower  = new int   [dim];
-        final int[]    upper  = new int   [dim];
-        final double[] origin = new double[dim];
-        final double[] vector = new double[dim];
-        for (int j=0; j<dim; j++) {
-            lower[j] = envelope.getLow (j);
-            upper[j] = envelope.getHigh(j);
-            if (gridToCRS != null) {
-                origin[j] = gridToCRS.getElement(j, dim);
-                for (int i=0; i<dim; i++) {
-                    vector[i] = gridToCRS.getElement(j, i);
-                }
-                // TODO: Remove the special case below when GEOTK-117 has been fixed.
-                if (j == 1) {
-                    vector[j] = -vector[j];
-                    origin[j] -= vector[j] * envelope.getSpan(j);
-                }
-                // End of pre-GEOTK-117 patch to delete.
-                addOffsetVector(vector);
-            }
-        }
-        if (gridToCRS != null) {
-            setOrigin(origin);
+        try {
+            gridToCRS.transform(center, 0, center, 0, 1);
+            center = fixRoundingError(XArrays.resize(center, crsDimension));
+            setSpatialRepresentation(center, cellGeometry, PixelTranslation.getPixelOrientation(pixelInCell));
+        } catch (TransformException e) {
+            // Should not happen. If it happen anyway, this is not a fatal error.
+            // The above metadata will be missing from the IIOMetadata object, but
+            // they were mostly for information purpose anyway.
+            Logging.unexpectedException(GridDomainAccessor.class, "setGridGeometry", e);
         }
         setLimits(lower, upper);
+        /*
+         * Now set the origin and offset vectors, which are inferred from the gritToCRS matrix.
+         * This is possible only if the transform is affine.
+         */
+        final Matrix matrix = DiscreteReferencingFactory.getAffineTransform(geometry, pixelInCell);
+        if (matrix != null) {
+            if (axisToReverse >= 0) {
+                MatrixUtilities.reverseAxis(matrix, axisToReverse, gridEnvelope.getSpan(axisToReverse));
+            }
+            final int lastColumn = matrix.getNumCol() - 1;
+            final double[] origin = new double[crsDimension];
+            for (int j=0; j<crsDimension; j++) {
+                origin[j] = matrix.getElement(j, lastColumn);
+            }
+            setOrigin(fixRoundingError(origin));
+            final double[] vector = new double[gridDimension];
+            for (int j=0; j<crsDimension; j++) {
+                for (int i=0; i<lastColumn; i++) {
+                    vector[i] = matrix.getElement(j, i);
+                }
+                addOffsetVector(fixRoundingError(vector));
+            }
+        }
     }
 
     /**
@@ -173,8 +195,8 @@ public final class GridDomainAccessor extends MetadataAccessor {
      * Sets the values of the {@code "SpatialRepresentation"} attributes.
      *
      * @param centerPoint  The value to assign to the {@code "centerPoint"}  attribute.
-     * @param cellGeometry The value to assign to the {@code "cellGeometry"} attribute.
-     * @param pointInPixel The value to assign to the {@code "pointInPixel"} attribute.
+     * @param cellGeometry The value to assign to the {@code "cellGeometry"} attribute, or {@code null}.
+     * @param pointInPixel The value to assign to the {@code "pointInPixel"} attribute, or {@code null}.
      */
     public void setSpatialRepresentation(final double[] centerPoint, final CellGeometry cellGeometry,
             final PixelOrientation pointInPixel)

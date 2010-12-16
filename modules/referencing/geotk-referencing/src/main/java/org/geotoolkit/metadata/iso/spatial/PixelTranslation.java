@@ -36,10 +36,20 @@ import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 
 
 /**
- * The translation to apply for different values of {@link PixelOrientation}.
+ * The translation to apply for different values of {@link PixelOrientation}
+ * or {@link PixelInCell}. The translation are returned by a call to one of
+ * the static {@code getPixelTranslation(...)} methods, where the argument is
+ * either a {@code PixelOrientation} for the two-dimensional case, or a
+ * {@code PixelInCell} for the <var>n</var>-dimensional case.
+ * <p>
+ * This class provides also a few {@code translate(...)} convenience methods, which
+ * apply the pixel translation on a given {@linkplain MathTransform math transform}.
  *
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
+ *
+ * @see org.geotoolkit.coverage.grid.GeneralGridGeometry#getGridToCRS(PixelInCell)
+ * @see org.geotoolkit.coverage.grid.GridGeometry2D#getGridToCRS(PixelOrientation)
  *
  * @since 2.5
  * @module
