@@ -304,11 +304,11 @@ public class GetCoverageType implements GetCoverage {
             return null;
         }
         final GridEnvelopeType gridEnv = domainSubset.getSpatialSubSet().getGrid().getLimits().getGridEnvelope();
-        if (gridEnv.getHigh().size() < 2) {
+        if (gridEnv.getHigh().getCoordinateValues().length < 2) {
             return null;
         }
-        final int width  = gridEnv.getHigh().get(0).intValue();
-        final int height = gridEnv.getHigh().get(1).intValue();
+        final int width  = gridEnv.getHigh().getCoordinateValue(0);
+        final int height = gridEnv.getHigh().getCoordinateValue(1);
         return new Dimension(width, height);
     }
 

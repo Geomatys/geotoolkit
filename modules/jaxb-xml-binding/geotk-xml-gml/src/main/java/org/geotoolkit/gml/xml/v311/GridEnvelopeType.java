@@ -16,14 +16,14 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.coverage.grid.GeneralGridCoordinates;
+import org.opengis.coverage.grid.GridCoordinates;
+import org.opengis.coverage.grid.GridEnvelope;
 
 
 /**
@@ -55,14 +55,14 @@ import javax.xml.bind.annotation.XmlType;
     "low",
     "high"
 })
-public class GridEnvelopeType {
+public class GridEnvelopeType implements GridEnvelope {
 
     @XmlList
     @XmlElement(required = true)
-    private List<Integer> low;
+    private int[] low;
     @XmlList
     @XmlElement(required = true)
-    private List<Integer> high;
+    private int[] high;
 
     /**
      * Empty constructor used by JAXB
@@ -70,11 +70,25 @@ public class GridEnvelopeType {
     GridEnvelopeType(){
         
     }
-    
+
     /**
      * Build a new Grid envelope
      */
-    public GridEnvelopeType(List<Integer> low, List<Integer> high){
+    public GridEnvelopeType(GridEnvelope env){
+        if (env != null) {
+            if (env.getHigh() != null) {
+                this.high = env.getHigh().getCoordinateValues();
+            }
+            if (env.getLow() != null) {
+                this.low  = env.getLow().getCoordinateValues();
+            }
+        }
+    }
+
+    /**
+     * Build a new Grid envelope
+     */
+    public GridEnvelopeType(int[] low, int[] high){
         this.high = high;
         this.low  = low;
     }
@@ -82,21 +96,41 @@ public class GridEnvelopeType {
     /**
      * Gets the value of the low property.
      */
-    public List<Integer> getLow() {
-        if (low == null){
-            low = new ArrayList<Integer>();
-        }
-        return Collections.unmodifiableList(low);
+    public GridCoordinates getLow() {
+        return new GeneralGridCoordinates(low);
     }
 
     /**
      * Gets the value of the high property.
      */
-    public List<Integer> getHigh() {
-        if (high == null){
-            high = new ArrayList<Integer>();
+    public GridCoordinates getHigh() {
+        return new GeneralGridCoordinates(high);
+    }
+
+    public int getDimension() {
+        if (low != null) {
+            return low.length;
         }
-        return Collections.unmodifiableList(high);
+        return 0;
+    }
+
+
+    public int getLow(int i) throws IndexOutOfBoundsException {
+        if (low != null && i < low.length) {
+            return low[i];
+        }
+        return -1;
+    }
+
+    public int getHigh(int i) throws IndexOutOfBoundsException {
+        if (high != null && i < high.length) {
+            return high[i];
+        }
+        return -1;
+    }
+
+    public int getSpan(int i) throws IndexOutOfBoundsException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

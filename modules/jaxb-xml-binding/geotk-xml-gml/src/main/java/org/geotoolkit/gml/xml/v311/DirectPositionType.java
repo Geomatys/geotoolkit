@@ -143,7 +143,7 @@ public class DirectPositionType implements DirectPosition {
      *
      * @param values a List of coordinates.
      */
-    public DirectPositionType(Double... values) {
+    public DirectPositionType(double... values) {
         this.value = new ArrayList<Double>();
         for (Double pt: values) {
             this.value.add(pt);

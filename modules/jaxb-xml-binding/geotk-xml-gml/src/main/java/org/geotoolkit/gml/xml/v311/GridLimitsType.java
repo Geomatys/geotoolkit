@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.coverage.grid.GridEnvelope;
 
 
 /**
@@ -61,14 +62,18 @@ public class GridLimitsType {
     /**
      * Build a new Grid limits
      */
-    public GridLimitsType(GridEnvelopeType gridEnvelope){
-        this.gridEnvelope = gridEnvelope;
+    public GridLimitsType(GridEnvelope gridEnvelope){
+        if (gridEnvelope instanceof GridEnvelopeType) {
+            this.gridEnvelope = (GridEnvelopeType) gridEnvelope;
+        } else {
+            this.gridEnvelope = new GridEnvelopeType(gridEnvelope);
+        }
     }
     
     /**
      * Build a new Grid limits
      */
-    public GridLimitsType(List<Integer> low, List<Integer> high){
+    public GridLimitsType(int[] low, int[] high){
         this.gridEnvelope = new GridEnvelopeType(low, high);
     }
     

@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.opengis.coverage.grid.Grid;
 import org.opengis.filter.expression.ExpressionVisitor;
 
 
@@ -85,6 +86,14 @@ public class GridType extends AbstractGeometryType {
             dimension = axisName.size();
         }
         this.limits = limits; 
+    }
+
+    public GridType(Grid grid) {
+        if (grid != null) {
+            axisName = grid.getAxisNames();
+            this.dimension = grid.getDimension();
+            this.limits = new GridLimitsType(grid.getExtent());
+        }
     }
     
     /**
