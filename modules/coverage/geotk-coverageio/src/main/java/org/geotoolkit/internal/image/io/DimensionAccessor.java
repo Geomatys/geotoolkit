@@ -96,33 +96,43 @@ public final class DimensionAccessor extends MetadataAccessor {
 
     /**
      * Sets the {@code "minValue"} and {@code "maxValue"} attributes to the given range.
-     * They are the geophysical value, already transformed by the transfert function if
+     * They are the geophysical value, already transformed by the transfer function if
      * there is one.
+     * <p>
+     * This method replaces {@link Float#MAX_VALUE} by infinite values, because the
+     * maximum value is often used in many format for meaning "infinity".
      *
      * @param minimum The value to be assigned to the {@code "minValue"} attribute.
      * @param maximum The value to be assigned to the {@code "maxValue"} attribute.
      */
-    public void setValueRange(final float minimum, final float maximum) {
+    public void setValueRange(float minimum, float maximum) {
+        if (minimum == -Float.MAX_VALUE) minimum = Float.NEGATIVE_INFINITY;
+        if (maximum ==  Float.MAX_VALUE) maximum = Float.POSITIVE_INFINITY;
         setAttribute("minValue", minimum);
         setAttribute("maxValue", maximum);
     }
 
     /**
      * Sets the {@code "minValue"} and {@code "maxValue"} attributes to the given range.
-     * They are the geophysical value, already transformed by the transfert function if
+     * They are the geophysical value, already transformed by the transfer function if
      * there is one.
+     * <p>
+     * This method replaces {@link Double#MAX_VALUE} by infinite values, because the
+     * maximum value is often used in many format for meaning "infinity".
      *
      * @param minimum The value to be assigned to the {@code "minValue"} attribute.
      * @param maximum The value to be assigned to the {@code "maxValue"} attribute.
      */
-    public void setValueRange(final double minimum, final double maximum) {
+    public void setValueRange(double minimum, double maximum) {
+        if (minimum == -Double.MAX_VALUE) minimum = Double.NEGATIVE_INFINITY;
+        if (maximum ==  Double.MAX_VALUE) maximum = Double.POSITIVE_INFINITY;
         setAttribute("minValue", minimum);
         setAttribute("maxValue", maximum);
     }
 
     /**
      * Sets the {@code "validSampleValues"} attribute to the given range. This is the range of
-     * values encoded in the file, before the transformation by the transfert function if there
+     * values encoded in the file, before the transformation by the transfer function if there
      * is one.
      * <p>
      * This method does nothing if the given range is infinite.
@@ -138,7 +148,7 @@ public final class DimensionAccessor extends MetadataAccessor {
 
     /**
      * Sets the {@code "validSampleValues"} attribute to the given range. This is the range of
-     * values encoded in the file, before the transformation by the transfert function if there
+     * values encoded in the file, before the transformation by the transfer function if there
      * is one.
      *
      * @param range The value to be assigned to the {@code "validSampleValues"} attribute.
@@ -218,7 +228,7 @@ public final class DimensionAccessor extends MetadataAccessor {
     /**
      * Sets the minimum and maximum values from the pixel values. This method is costly
      * and should be invoked only for relatively small images, after we checked that the
-     * extremums are not already declared in the metadata.
+     * extremum are not already declared in the metadata.
      *
      * @param  reader The image reader to use for reading the pixel values.
      * @param  imageIndex The index of the image to read (usually 0).
