@@ -18,6 +18,7 @@
 package org.geotoolkit.util.logging;
 
 import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import org.junit.*;
@@ -42,23 +43,25 @@ public final class MonolineFormatterTest {
     /**
      * The previous locale, before to set a constant locale for the test.
      */
-    private Locale defaultLocale;
+    private static Locale defaultLocale;
 
     /**
      * Sets a constant locale for the purpose of this test.
      */
-    @Before
-    public void setLocale() {
+    @BeforeClass
+    public static void setLocale() {
         defaultLocale = Locale.getDefault();
         Locale.setDefault(Locale.FRANCE);
+        ResourceBundle.clearCache();
     }
 
     /**
      * Restore the locale to its default value after the test.
      */
-    @After
-    public void restoreLocale() {
+    @AfterClass
+    public static void restoreLocale() {
         Locale.setDefault(defaultLocale);
+        ResourceBundle.clearCache();
     }
 
     /**
