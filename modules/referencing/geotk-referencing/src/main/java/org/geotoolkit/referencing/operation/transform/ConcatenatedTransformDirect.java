@@ -25,7 +25,7 @@ import org.geotoolkit.lang.Immutable;
 
 
 /**
- * Concatenated transform where the transfert dimension is the same than source and target
+ * Concatenated transform where the transfer dimension is the same than source and target
  * dimension. This fact allows some optimizations, the most important one being the possibility
  * to avoid the use of an intermediate buffer in some case.
  *

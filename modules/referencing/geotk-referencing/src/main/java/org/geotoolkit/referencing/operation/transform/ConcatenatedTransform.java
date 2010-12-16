@@ -641,7 +641,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
             throws TransformException
     {
         assert isValid();
-        //  Note: If we know that the transfert dimension is the same than source
+        //  Note: If we know that the transfer dimension is the same than source
         //        and target dimension, then we don't need to use an intermediate
         //        point. This optimization is done in ConcatenatedTransformDirect.
         return transform2.transform(transform1.transform(ptSrc, null), ptDst);
@@ -677,7 +677,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
         int bufferDim = transform2.getSourceDimensions();
         int targetDim = transform2.getTargetDimensions();
         /*
-         * If the transfert dimension is not greater than the target dimension, then we
+         * If the transfer dimension is not greater than the target dimension, then we
          * don't need to use an intermediate buffer. Note that this optimization is done
          * inconditionnaly in ConcatenatedTransformDirect.
          */

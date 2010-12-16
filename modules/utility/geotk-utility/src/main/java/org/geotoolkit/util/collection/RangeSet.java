@@ -190,9 +190,9 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
      * Initializes transient fields. Invoked on construction and on deserialization.
      */
     private void initialize() {
-        Class<?> transfertClass = elementClass;
-        isDate = Date.class.isAssignableFrom(transfertClass);
-        isNumeric = Number.class.isAssignableFrom(transfertClass);
+        Class<?> transferClass = elementClass;
+        isDate = Date.class.isAssignableFrom(transferClass);
+        isNumeric = Number.class.isAssignableFrom(transferClass);
         if (!isNumeric) try {
             final ObjectConverter<T,Number> direct;
             final ObjectConverter<? extends Number,T> inverse;
@@ -203,13 +203,13 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
                 if (isAcceptable(inverse)) {
                     converter = direct;
                     inverseConverter = inverse;
-                    transfertClass = direct.getTargetClass();
+                    transferClass = direct.getTargetClass();
                 }
             }
         } catch (NonconvertibleObjectException e) {
             // Ignore - it is perfectly legal if there is no converter to numbers.
         }
-        arrayElementClass = wrapperToPrimitive(transfertClass);
+        arrayElementClass = wrapperToPrimitive(transferClass);
         arrayElementCode  = getEnumConstant(arrayElementClass);
     }
 

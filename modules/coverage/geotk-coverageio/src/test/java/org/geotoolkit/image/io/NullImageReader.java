@@ -63,7 +63,7 @@ public class NullImageReader extends SpatialImageReader {
     }
 
     /**
-     * Creates a reader with a dummy provider with the given transfert function.
+     * Creates a reader with a dummy provider with the given transfer function.
      *
      * @param dataType The data type as one of {@link java.awt.image.DataBuffer} constants.
      * @param minimum  The minimum sample value.

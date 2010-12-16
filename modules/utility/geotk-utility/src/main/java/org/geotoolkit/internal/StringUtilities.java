@@ -99,8 +99,8 @@ public final class StringUtilities {
      *
      * <ol>
      *   <li><p>Invoke {@link #separateWords(CharSequence)}, which separate the words on
-     *     the basis of character case. For example {@code "transfertFunctionType"} become
-     *     {@code "transfert function type"}. This works fine for ISO 19115 naming.</p></li>
+     *     the basis of character case. For example {@code "transferFunctionType"} become
+     *     {@code "transfer function type"}. This works fine for ISO 19115 naming.</p></li>
      *
      *   <li><p>Next this method replaces {@code '_'} by a space in order to take in account
      *     the other naming convention, which is to use {@code '_'} as a word separator as in

@@ -20,7 +20,7 @@ Performing a Geotoolkit.org release
     program described below.
 
   * The home directory on <<<$GEOTK_SERVER>>> (defined below) shall contains a <<<geotk-release>>>
-    directory with a <<<packs>>> sub-directory. They are used temporarily for files transfert.
+    directory with a <<<packs>>> sub-directory. They are used temporarily for files transfer.
 
 
 * Performing a GeoAPI release

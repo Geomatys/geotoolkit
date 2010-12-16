@@ -102,7 +102,7 @@ public class CategoryRecord implements Cloneable, Serializable {
     private transient NumberRange<Double> valueRange;
 
     /**
-     * The type of the transfert fonction.
+     * The type of the transfer fonction.
      * <p>
      * <ul>
      *   <li>0: none</li>
@@ -114,7 +114,7 @@ public class CategoryRecord implements Cloneable, Serializable {
     private int functionType;
 
     /**
-     * The coefficients of the transfert function.
+     * The coefficients of the transfer function.
      */
     private double offset, scale;
 

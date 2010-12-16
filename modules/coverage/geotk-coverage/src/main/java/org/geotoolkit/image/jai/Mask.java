@@ -153,7 +153,7 @@ public class Mask extends PointOpImage {
             return;
         }
         /*
-         * Below is a copy-and-paste of the same code for the 3 transfert types. While the
+         * Below is a copy-and-paste of the same code for the 3 transfer types. While the
          * textual code look identical except for the 2 first lines, many methods that are
          * actually invoked are different because of method overloading.
          */

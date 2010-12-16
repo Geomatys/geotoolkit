@@ -43,7 +43,7 @@ abstract class SampleValues {
 
     /**
      * Returns a new instance for the given number of bands.
-     * The transfert type must be one of the {@link DataBuffer} constants.
+     * The transfer type must be one of the {@link DataBuffer} constants.
      */
     public static SampleValues getInstance(final int transferType, final int numBands) {
         switch (transferType) {
@@ -55,7 +55,7 @@ abstract class SampleValues {
 
     /**
      * Returns a new instance for the given type wrapping the given sample values.
-     * The transfert type must be one of the {@link DataBuffer} constants.
+     * The transfer type must be one of the {@link DataBuffer} constants.
      */
     public static SampleValues getInstance(final int transferType, final double[] values) {
         switch (transferType) {

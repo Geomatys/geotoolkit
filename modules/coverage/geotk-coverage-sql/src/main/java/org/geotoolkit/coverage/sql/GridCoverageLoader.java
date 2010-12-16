@@ -364,7 +364,7 @@ final class GridCoverageLoader extends ImageCoverageReader {
                     accessor.setFillSampleValues(XArrays.resize(fillValues, fillValuesCount));
                 }
                 /*
-                 * Add the transfert function.
+                 * Add the transfer function.
                  */
                 if (tf != null) {
                     accessor.setTransfertFunction(fixRoundingError(tf.scale),

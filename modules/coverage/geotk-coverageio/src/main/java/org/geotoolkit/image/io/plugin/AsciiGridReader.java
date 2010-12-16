@@ -230,7 +230,7 @@ public class AsciiGridReader extends TextImageReader {
     private transient ImageReader binaryReader;
 
     /**
-     * The buffer used for data transfert. This is created only when first needed.
+     * The buffer used for data transfer. This is created only when first needed.
      * If more than one image is read with the same reader, this buffer will be
      * recycled for each image.
      */

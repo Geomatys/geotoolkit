@@ -300,7 +300,7 @@ public final class ColorUtilities {
      * This method returns {@link DataBuffer#TYPE_BYTE} or {@link DataBuffer#TYPE_USHORT}.
      *
      * @param mapSize The number of colors in the map.
-     * @return The suggested transfert type.
+     * @return The suggested transfer type.
      */
     public static int getTransferType(final int mapSize) {
         return (mapSize <= 256) ? TYPE_BYTE : TYPE_USHORT;
