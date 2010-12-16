@@ -242,7 +242,7 @@ public class WarpFactory {
         }
         /*
          * The tolerance factor is scaled as below. The explanation below is for
-         * a one-dimensional case,  but the two dimensional case works on the same
+         * a one-dimensional case, but the two dimensional case works on the same
          * principle.
          *
          * Let assume that we computed the derivative of y=f(x) at two locations: x₁ and x₃.

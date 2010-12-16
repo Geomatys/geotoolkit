@@ -612,7 +612,9 @@ final class Resampler2D extends GridCoverage2D {
                 operation = "Warp";
                 final Warp warp;
                 if (forceAdapter) {
-                    warp = WarpFactory.DEFAULT.create(name, transform, sourceBB);
+                    // NOTE: last argument is targetBB rather than sourceBB because
+                    // the transform is from the target image to the source image.
+                    warp = WarpFactory.DEFAULT.create(name, transform, targetBB);
                 } else {
                     final Rectangle imageBB;
                     if (layout.getMinX  (sourceImage) == targetBB.x &&
@@ -900,7 +902,9 @@ final class Resampler2D extends GridCoverage2D {
              * Otherwise we assume that the difference is caused by rounding error and we will try
              * progressive empirical adjustment in order to get the rectangles to fit.
              */
-            final Warp warp = WarpFactory.DEFAULT.create(name, transform, sourceBB);
+            // NOTE: last argument is targetBB rather than sourceBB because
+            // the transform is from the target image to the source image.
+            final Warp warp = WarpFactory.DEFAULT.create(name, transform, targetBB);
             if (true) {
                 return warp;
             }
