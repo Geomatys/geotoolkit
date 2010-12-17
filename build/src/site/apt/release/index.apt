@@ -1,6 +1,8 @@
 Performing a Geotoolkit.org release
 
-  This page is for Geotk release managers only.
+  This page is for Geotk release managers only. It describes how to create and deploy the
+  Geotoolkit.org Maven artifacts, create the bundles, javadoc, list of API changes and push
+  those documents on the web server.
 
 
 * Requirements
@@ -35,8 +37,8 @@ Performing a Geotoolkit.org release
   the Geotk version numbers and the deployment server:
 
 --------------------------------------------------------
-export OLD_VERSION="3.12"
-export NEW_VERSION="3.13"
+export OLD_VERSION="3.16"
+export NEW_VERSION="3.17"
 export GEOTK_SERVER=(... insert foo@server.com here ...)
 --------------------------------------------------------
 
