@@ -110,6 +110,27 @@ public class SpatialDomainType {
             this.grid.add(gmlFactory.createGrid((GridType)grid));
         }
     }
+
+    /**
+     * Build a new Spatial Domain type version 1.0.0
+     */
+    public SpatialDomainType(List<EnvelopeEntry> envelopes, List<GridType> grids) {
+        ObjectFactory gmlFactory = new ObjectFactory();
+        this.envelope = new ArrayList<JAXBElement<? extends EnvelopeEntry>>();
+        for (EnvelopeEntry env : envelopes) {
+            if (env != null) {
+                this.envelope.add(gmlFactory.createEnvelope(env));
+            }
+        }
+        this.grid = new ArrayList<JAXBElement<? extends GridType>>();
+        for (GridType gr : grids) {
+            if (gr instanceof RectifiedGridType) {
+                this.grid.add(gmlFactory.createRectifiedGrid((RectifiedGridType)gr));
+            } else if (gr instanceof GridType) {
+                this.grid.add(gmlFactory.createGrid((GridType)gr));
+            }
+        }
+    }
     
     /**
      * Build a new full Spatial Domain type version 1.0.0

@@ -17,7 +17,6 @@
 package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -68,7 +67,7 @@ public class RectifiedGridType extends GridType {
     public RectifiedGridType(RectifiedGrid grid) {
        super(grid);
        if (grid != null) {
-           origin       = new PointType(grid.getOrigin());
+           origin       = new PointType(grid.getOrigin(), false);
            offsetVector = new ArrayList<VectorType>();
            
            final List<double[]> vectors = grid.getOffsetVectors();
@@ -85,11 +84,22 @@ public class RectifiedGridType extends GridType {
         return origin;
     }
 
+    public void setOrigin(PointType origin) {
+        this.origin = origin;
+    }
+
     /**
-     * Gets the value of the offsetVector property(unmodifiable).
+     * Gets the value of the offsetVector property.
      */
     public List<VectorType> getOffsetVector() {
-        return Collections.unmodifiableList(offsetVector);
+        return offsetVector;
+    }
+
+    /**
+     * Sets the value of the offsetVector property
+     */
+    public void setOffsetVector(List<VectorType> offsetVector) {
+        this.offsetVector = offsetVector;
     }
 
 }

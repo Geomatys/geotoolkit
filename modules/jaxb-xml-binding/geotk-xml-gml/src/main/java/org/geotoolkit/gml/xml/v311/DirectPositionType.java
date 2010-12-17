@@ -35,10 +35,10 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
- * DirectPosition instances hold the coordinates for a position within some coordinate reference system (CRS). Since 
- * 			DirectPositions, as data types, will often be included in larger objects (such as geometry elements) that have references to CRS, the 
- * 			"srsName" attribute will in general be missing, if this particular DirectPosition is included in a larger element with such a reference to a 
- * 			CRS. In this case, the CRS is implicitly assumed to take on the value of the containing object's CRS.
+ * DirectPosition instances hold the coordinates for a position within some coordinate reference system (CRS).
+ * Since DirectPositions, as data types, will often be included in larger objects (such as geometry elements) that have references to CRS,
+ * the "srsName" attribute will in general be missing, if this particular DirectPosition is included in a larger element with such a reference to a
+ * CRS. In this case, the CRS is implicitly assumed to take on the value of the containing object's CRS.
  * 
  * <p>Java class for DirectPositionType complex type.
  * 
@@ -157,20 +157,31 @@ public class DirectPositionType implements DirectPosition {
      * @param values a List of coordinates.
      */
     public DirectPositionType(DirectPosition position) {
+        this(position, true);
+    }
+
+    /**
+     * Build a light direct position.
+     *
+     * @param values a List of coordinates.
+     */
+    public DirectPositionType(DirectPosition position, boolean srsInfo) {
         if (position != null) {
             this.value = new ArrayList<Double>();
             for (double d : position.getCoordinate()) {
                 value.add(d);
             }
-            CoordinateReferenceSystem crs = position.getCoordinateReferenceSystem();
-            if ( crs != null) {
-                try {
-                    this.srsName = CRS.lookupIdentifier(crs, true);
-                } catch (FactoryException ex) {
-                    Logging.getLogger(DirectPositionType.class).log(Level.WARNING, null, ex);
+            if (srsInfo) {
+                CoordinateReferenceSystem crs = position.getCoordinateReferenceSystem();
+                if ( crs != null) {
+                    try {
+                        this.srsName = CRS.lookupIdentifier(crs, true);
+                    } catch (FactoryException ex) {
+                        Logging.getLogger(DirectPositionType.class).log(Level.WARNING, null, ex);
+                    }
                 }
+                this.srsDimension = position.getDimension();
             }
-            this.srsDimension = position.getDimension();
         }
     }
 

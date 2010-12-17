@@ -18,6 +18,8 @@ package org.geotoolkit.gml.xml.v311;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,6 +28,11 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.internal.sql.table.Entry;
+import org.geotoolkit.referencing.CRS;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -69,7 +76,9 @@ import org.geotoolkit.internal.sql.table.Entry;
 @XmlSeeAlso({
     EnvelopeWithTimePeriodType.class
 })
-public class EnvelopeEntry implements Entry {
+public class EnvelopeEntry implements Entry, Envelope {
+
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.gml.xml.v311");
 
     @XmlAttribute(namespace="http://www.opengis.net/gml")
     private String id;
@@ -114,6 +123,22 @@ public class EnvelopeEntry implements Entry {
         this.srsDimension = null;
     }
 
+    public EnvelopeEntry(Envelope env) {
+        this.pos = new ArrayList<DirectPositionType>();
+        if (env != null) {
+            this.pos.add(new DirectPositionType(env.getLowerCorner(), false));
+            this.pos.add(new DirectPositionType(env.getUpperCorner(), false));
+            final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
+            if (crs != null) {
+                try {
+                    srsName = "EPSG:" + CRS.lookupEpsgCode(crs, true);
+                } catch (FactoryException ex) {
+                    LOGGER.log(Level.SEVERE, "Factory exception xhile creating GML envelope from opengis one", ex);
+                }
+            }
+        }
+    }
+
     /**
      * Return the gml identifier of the envelope
      * @return
@@ -127,6 +152,7 @@ public class EnvelopeEntry implements Entry {
      *
      * @return id
      */
+    @Override
     public Comparable<?> getIdentifier() {
         return id;
     }
@@ -148,6 +174,7 @@ public class EnvelopeEntry implements Entry {
      *     {@link DirectPositionType }
      *     
      */
+    @Override
     public DirectPositionType getLowerCorner() {
         return lowerCorner;
     }
@@ -172,6 +199,7 @@ public class EnvelopeEntry implements Entry {
      *     {@link DirectPositionType }
      *     
      */
+    @Override
     public DirectPositionType getUpperCorner() {
         return upperCorner;
     }
@@ -404,5 +432,38 @@ public class EnvelopeEntry implements Entry {
             s.append('\n');
         }
         return s.toString();
+    }
+
+    public CoordinateReferenceSystem getCoordinateReferenceSystem() {
+        if (srsName != null) {
+            try {
+                return CRS.decode(srsName);
+            } catch (NoSuchAuthorityCodeException ex) {
+                LOGGER.log(Level.SEVERE, "NoSuchAuthorityCodeException while looking for GML envelope crs:" + srsName, ex);
+            } catch (FactoryException ex) {
+                LOGGER.log(Level.SEVERE, "FactoryException while looking for GML envelope crs:" + srsName, ex);
+            }
+        }
+        return null;
+    }
+
+    public int getDimension() {
+        return srsDimension;
+    }
+
+    public double getMinimum(int i) throws IndexOutOfBoundsException {
+        return lowerCorner.getOrdinate(i);
+    }
+
+    public double getMaximum(int i) throws IndexOutOfBoundsException {
+        return upperCorner.getOrdinate(i);
+    }
+
+    public double getMedian(int i) throws IndexOutOfBoundsException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public double getSpan(int i) throws IndexOutOfBoundsException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

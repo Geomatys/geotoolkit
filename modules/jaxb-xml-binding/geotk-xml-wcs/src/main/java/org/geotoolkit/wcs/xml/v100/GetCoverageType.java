@@ -41,6 +41,7 @@ import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
 
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.logging.Logging;
+import org.opengis.coverage.grid.GridCoordinates;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -301,14 +302,21 @@ public class GetCoverageType implements GetCoverage {
             domainSubset.getSpatialSubSet().getGrid().getLimits() == null                   ||
             domainSubset.getSpatialSubSet().getGrid().getLimits().getGridEnvelope() == null)
         {
+            System.out.println("somthing is null");
             return null;
         }
         final GridEnvelopeType gridEnv = domainSubset.getSpatialSubSet().getGrid().getLimits().getGridEnvelope();
-        if (gridEnv.getHigh().getCoordinateValues().length < 2) {
+        GridCoordinates high = gridEnv.getHigh();
+        if (high == null) {
+            System.out.println("higth is null");
             return null;
         }
-        final int width  = gridEnv.getHigh().getCoordinateValue(0);
-        final int height = gridEnv.getHigh().getCoordinateValue(1);
+        if (high.getCoordinateValues().length < 2) {
+            System.out.println("high number of coord is < 2" + high.getCoordinateValues().length);
+            return null;
+        }
+        final int width  = high.getCoordinateValue(0);
+        final int height = high.getCoordinateValue(1);
         return new Dimension(width, height);
     }
 

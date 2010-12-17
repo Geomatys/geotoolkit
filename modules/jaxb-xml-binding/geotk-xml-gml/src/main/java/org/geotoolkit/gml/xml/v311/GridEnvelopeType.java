@@ -97,14 +97,20 @@ public class GridEnvelopeType implements GridEnvelope {
      * Gets the value of the low property.
      */
     public GridCoordinates getLow() {
-        return new GeneralGridCoordinates(low);
+        if (low != null) {
+            return new GeneralGridCoordinates(low);
+        }
+        return null;
     }
 
     /**
      * Gets the value of the high property.
      */
     public GridCoordinates getHigh() {
-        return new GeneralGridCoordinates(high);
+        if (high != null) {
+            return new GeneralGridCoordinates(high);
+        }
+        return null;
     }
 
     public int getDimension() {

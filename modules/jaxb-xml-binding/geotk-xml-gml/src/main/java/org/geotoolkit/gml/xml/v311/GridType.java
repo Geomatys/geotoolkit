@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.gml.xml.v311;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -90,9 +90,9 @@ public class GridType extends AbstractGeometryType {
 
     public GridType(Grid grid) {
         if (grid != null) {
-            axisName = grid.getAxisNames();
+            this.axisName  = grid.getAxisNames();
             this.dimension = grid.getDimension();
-            this.limits = new GridLimitsType(grid.getExtent());
+            this.limits    = new GridLimitsType(grid.getExtent());
         }
     }
     
@@ -104,10 +104,27 @@ public class GridType extends AbstractGeometryType {
     }
 
     /**
-     * Gets the value of the axisName property (unmodifiable).
+     * Sets the value of the limits property.
+     */
+    public void setLimits(GridLimitsType limits) {
+        this.limits = limits;
+    }
+
+    /**
+     * Gets the value of the axisName property.
      */
     public List<String> getAxisName() {
-        return Collections.unmodifiableList(axisName);
+        if (axisName == null) {
+            axisName = new ArrayList<String>();
+        }
+        return axisName;
+    }
+
+    /**
+     * Sets the value of the axisName property.
+     */
+    public void setAxisName(List<String> axisName) {
+        this.axisName = axisName;
     }
 
     /**
@@ -116,6 +133,14 @@ public class GridType extends AbstractGeometryType {
     public Integer getDimension() {
         return dimension;
     }
+
+    /**
+     * Gets the value of the dimension property.
+     */
+    public void setDimension(Integer dimension) {
+        this.dimension = dimension;
+    }
+
 
     @Override
     public Object evaluate(Object object) {

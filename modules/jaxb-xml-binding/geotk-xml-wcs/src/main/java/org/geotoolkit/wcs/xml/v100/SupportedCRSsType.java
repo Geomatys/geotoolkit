@@ -17,7 +17,6 @@
 package org.geotoolkit.wcs.xml.v100;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -108,22 +107,55 @@ public class SupportedCRSsType {
      * Gets the value of the requestResponseCRSs property (unmodifiable).
      */
     public List<CodeListType> getRequestResponseCRSs() {
-        return Collections.unmodifiableList(requestResponseCRSs);
+        return requestResponseCRSs;
+    }
+
+    public void setRequestResponseCRSs(List<CodeListType> requestResponseCRSs) {
+        this.requestResponseCRSs = requestResponseCRSs;
+    }
+
+    public void addRequestResponseCRSs(CodeListType requestResponseCRSs) {
+        if (this.requestResponseCRSs == null) {
+            this.requestResponseCRSs = new ArrayList<CodeListType>();
+        }
+        this.requestResponseCRSs.add(requestResponseCRSs);
     }
 
     /**
      * Gets the value of the requestCRSs property (unmodifiable).
      */
     public List<CodeListType> getRequestCRSs() {
-        return Collections.unmodifiableList(requestCRSs);
+        return requestCRSs;
     }
 
+    public void setRequestCRSs(List<CodeListType> requestCRSs) {
+        this.requestCRSs = requestCRSs;
+    }
+
+    public void addRequestCRSs(CodeListType requestCRSs) {
+        if (this.requestCRSs == null) {
+            this.requestCRSs = new ArrayList<CodeListType>();
+        }
+        this.requestCRSs.add(requestCRSs);
+    }
+    
     /**
      * Gets the value of the responseCRSs property (unmodifiable).
      * 
      */
     public List<CodeListType> getResponseCRSs() {
-        return Collections.unmodifiableList(responseCRSs);
+        return responseCRSs;
+    }
+
+    public void setResponseCRSs(List<CodeListType> responseCRSs) {
+        this.responseCRSs = responseCRSs;
+    }
+
+    public void addResponseCRSs(CodeListType responseCRSs) {
+        if (this.responseCRSs == null) {
+            this.responseCRSs = new ArrayList<CodeListType>();
+        }
+        this.responseCRSs.add(responseCRSs);
     }
 
     /**
@@ -131,7 +163,17 @@ public class SupportedCRSsType {
      * 
      */
     public List<CodeListType> getNativeCRSs() {
-        return Collections.unmodifiableList(nativeCRSs);
+        return nativeCRSs;
     }
 
+    public void setNativeCRSs(List<CodeListType> nativeCRSs) {
+        this.nativeCRSs = nativeCRSs;
+    }
+
+    public void addNativeCRSs(CodeListType nativeCRSs) {
+        if (this.nativeCRSs == null) {
+            this.nativeCRSs = new ArrayList<CodeListType>();
+        }
+        this.nativeCRSs.add(nativeCRSs);
+    }
 }
