@@ -1,3 +1,8 @@
+                             ------------------------------
+                                  Downloading binaries
+                             ------------------------------
+
+
 Downloading Geotoolkit.org Binaries
 
   Binary versions of Geotk are available in several different formats. The easiest approach
@@ -40,7 +45,7 @@ Downloading Geotoolkit.org Binaries
 <properties>
   <!-- Define the version that we want to use here, so
        we have a single line to change when upgrating. -->
-  <geotk.version>3.14</geotk.version>
+  <geotk.version>3.16</geotk.version>
 </properties>
 
 <dependencies>
@@ -118,6 +123,8 @@ Downloading Geotoolkit.org Binaries
 |                                        | \u2022 geotk-storage.jar           |                               |
 |                                        | \u2022 jai_imageio.jar             |                               |
 |                                        | \u2022 netcdf.jar                  |                               |
+|                                        | \u2022 unidataCommon.jar           |                               |
+|                                        | \u2022 grib.jar                    |                               |
 |                                        | \u2022 opendap.jar                 |                               |
 |                                        | \u2022 bufrTables.jar              |                               |
 |                                        | \u2022 jdom.jar                    |                               |
@@ -154,11 +161,11 @@ Downloading Geotoolkit.org Binaries
   installation directory.
 
   For example, users who wish to use the georeferencing functionality of Geotk can select the
-  <<<geotk-bundle-referencing-3.14.pack.gz>>> archive for download. Once downloaded, the archive
+  <<<geotk-bundle-referencing-3.16.pack.gz>>> archive for download. Once downloaded, the archive
   can then be expanded with the following command:
 
 -----------------------------------------------------------------------------------
-unpack200 geotk-bundle-referencing-3.14.pack.gz geotk-bundle-referencing.jar
+unpack200 geotk-bundle-referencing-3.16.pack.gz geotk-bundle-referencing.jar
 -----------------------------------------------------------------------------------
 
   where the name of the target file, <<<geotk-bundle-referencing.jar>>> in this example, can be any

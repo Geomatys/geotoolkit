@@ -16,6 +16,7 @@ cd release
 mkdir changes
 hg clone ../public clone
 
+javac ../public/build/src/site/resources/release/Move.java -d .
 ln -s ../public/build/src/site/resources/release/update-version.xml
 ln -s ../public/build/src/site/resources/release/fix-html.xml
 ln -s ../public/build/src/site/resources/release/release.sh

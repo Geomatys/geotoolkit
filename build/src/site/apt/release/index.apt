@@ -1,3 +1,8 @@
+                             ------------------------------
+                                  Performing a release
+                             ------------------------------
+
+
 Performing a Geotoolkit.org release
 
   This page is for Geotk release managers only. It describes how to create and deploy the
@@ -7,7 +12,7 @@ Performing a Geotoolkit.org release
 
 * Requirements
 
-  * Maven and Ant shall be available on the path.
+  * Maven, Ant, Java and the Java compiler shall be available on the path.
 
   * The <<<.m2/settings.xml>>> file shall contain connection information
     to the <<<dav:http://maven.geotoolkit.org/>>> server.
@@ -49,5 +54,8 @@ cd public
 mvn clean test
 ../release/release.sh
 ---------------------
+
+
+* Performing a Geotk-pending release
 
   (TODO - next steps to be documented later)
