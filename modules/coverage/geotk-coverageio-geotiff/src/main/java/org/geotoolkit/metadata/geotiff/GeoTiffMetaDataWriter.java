@@ -130,11 +130,6 @@ public class GeoTiffMetaDataWriter {
             modifiedRasterToModel = gridToCRS;
         }
 
-        // /////////////////////////////////////////////////////////////////////
-        // Setting raster type to pixel centre since the ogc specifications
-        // require so.
-        // /////////////////////////////////////////////////////////////////////
-        stack.addShort(GTRasterTypeGeoKey, RasterPixelIsPoint);
 
         // /////////////////////////////////////////////////////////////////////
         // AXES DIRECTION

@@ -483,8 +483,8 @@ final class GeoTiffCRSWriter {
             stack.addAscii(PCSCitationGeoKey, name);
 
             // params
-            stack.addDouble(ProjNatOriginLongGeoKey, parameters.parameter("longitude_of_center").doubleValue()); //no direct match found ?
-            stack.addDouble(ProjNatOriginLatGeoKey,  parameters.parameter("latitude_of_center").doubleValue()); //no direct match found ?
+            stack.addDouble(ProjNatOriginLongGeoKey, parameters.parameter("longitude_of_center").doubleValue()); //TODO no direct match found ?
+            stack.addDouble(ProjNatOriginLatGeoKey,  parameters.parameter("latitude_of_center").doubleValue()); //TODO no direct match found ?
             stack.addDouble(ProjFalseEastingGeoKey,  value(parameters,AlbersEqualArea.FALSE_EASTING));
             stack.addDouble(ProjFalseNorthingGeoKey, value(parameters,AlbersEqualArea.FALSE_NORTHING));
             stack.addDouble(ProjStdParallel1GeoKey,  value(parameters,AlbersEqualArea.STANDARD_PARALLEL_1));
