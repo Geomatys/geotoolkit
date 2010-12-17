@@ -263,7 +263,7 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
          * but under different names. We use the "GML in JPEG 2000" names.
          */
         addTree(standard, GridEnvelope.class, "Limits", "RectifiedGridDomain", substitution);
-        removeAttribute("Limits",              "dimension"); // Redundant with the one in RectifiedGridDomain.
+        removeAttribute("Limits",              "dimension"); // Geotk extension not in ISO 19123.
         removeAttribute("RectifiedGridDomain", "dimension"); // Redundant with the one in SpatialRepresentation.
         /*
          * There is no public API for this functionality at this time...

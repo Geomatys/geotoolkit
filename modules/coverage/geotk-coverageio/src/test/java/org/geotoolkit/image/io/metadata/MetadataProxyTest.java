@@ -30,6 +30,7 @@ import org.opengis.metadata.content.ImagingCondition;
 import org.opengis.metadata.identification.Keywords;
 import org.opengis.metadata.identification.Resolution;
 import org.opengis.metadata.identification.DataIdentification;
+import org.opengis.coverage.grid.RectifiedGrid;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.util.NumberRange;
@@ -45,7 +46,7 @@ import static org.geotoolkit.test.Commons.*;
  * Tests {@link MetadataProxy}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
+ * @version 3.16
  *
  * @since 3.06
  */
@@ -260,5 +261,38 @@ public final class MetadataProxyTest {
         assertTrue(it.hasNext());
         assertEquals(Double.valueOf(40), it.next().getDistance());
         assertFalse(it.hasNext());
+    }
+
+    /**
+     * Tests the {@code RectifiedGridDomain} node.
+     *
+     * @since 3.16
+     */
+    @Test
+    public void testRectifiedGrid() {
+        final SpatialMetadata metadata = new SpatialMetadata(SpatialMetadataFormat.IMAGE);
+        final MetadataAccessor rootAccessor = new MetadataAccessor(metadata, null, "RectifiedGridDomain", null);
+        rootAccessor.setAttribute("origin", -180.0, 90.0);
+        MetadataAccessor accessor = new MetadataAccessor(rootAccessor, "Limits", null);
+        accessor.setAttribute("low",  new int[] {  0,   0});
+        accessor.setAttribute("high", new int[] {719, 359});
+        accessor = new MetadataAccessor(rootAccessor, "OffsetVectors", "OffsetVector");
+        accessor.selectChild(accessor.appendChild()); accessor.setAttribute("values", 0.5,  0);
+        accessor.selectChild(accessor.appendChild()); accessor.setAttribute("values", 0, -0.5);
+        /*
+         * Build the metadata proxy.
+         */
+        final RectifiedGrid grid = rootAccessor.newProxyInstance(RectifiedGrid.class);
+        assertNull(grid.getCells());
+        assertEquals(2, grid.getExtent().getDimension());
+        assertEquals(2, grid.getOffsetVectors().size());
+        assertTrue(Arrays.equals(new double[] { 0.5,    0}, grid.getOffsetVectors().get(0)));
+        assertTrue(Arrays.equals(new double[] { 0.0, -0.5}, grid.getOffsetVectors().get(1)));
+        assertTrue(Arrays.equals(new double[] {-180,   90}, grid.getOrigin().getCoordinate()));
+        assertArrayEquals(new int[] {0,     0}, grid.getExtent().getLow ().getCoordinateValues());
+        assertArrayEquals(new int[] {719, 359}, grid.getExtent().getHigh().getCoordinateValues());
+        assertEquals(0,   grid.getExtent().getLow (1));
+        assertEquals(359, grid.getExtent().getHigh(1));
+        assertEquals(360, grid.getExtent().getSpan(1));
     }
 }

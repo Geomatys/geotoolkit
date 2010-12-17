@@ -35,6 +35,7 @@ import javax.measure.unit.Unit;
 import org.opengis.util.CodeList;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
+import org.opengis.coverage.grid.GridEnvelope;
 
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
@@ -83,6 +84,9 @@ final class MetadataProxy<T> implements InvocationHandler {
      * {@code true} for enabling the process of a few Geotk-specific special cases. This field
      * should always be {@code true}. It is defined mostly as a way to spot every places where
      * some special cases are defined.
+     *
+     * @see #getAttributeLength(String)
+     * @see #getAttributeAsInteger(String, int)
      */
     private static final boolean SPECIAL_CASE = true;
 
@@ -243,6 +247,24 @@ final class MetadataProxy<T> implements InvocationHandler {
     }
 
     /**
+     * For an attribute containing an array, return the length of that array.
+     * This is used only for implementing a few {@link #SPECIAL_CASE special cases}.
+     */
+    private int getAttributeLength(final String name) {
+        final int[] values = accessor.getAttributeAsIntegers(name, false);
+        return (values != null) ? values.length : 0;
+    }
+
+    /**
+     * For an attribute containing an array, return the attribute at the given index from that
+     * array. This is used only for implementing a few {@link #SPECIAL_CASE special cases}.
+     */
+    private int getAttributeAsInteger(final String name, final int index) {
+        final int[] values = accessor.getAttributeAsIntegers(name, false);
+        return (values != null) ? values[index] : 0;
+    }
+
+    /**
      * Invoked when a method from the metadata interface has been invoked.
      *
      * @param  proxy  The proxy instance that the method was invoked on.
@@ -284,7 +306,28 @@ final class MetadataProxy<T> implements InvocationHandler {
             throw new UnsupportedOperationException(Errors.format(
                     Errors.Keys.UNKNOWN_COMMAND_$1, methodName));
         }
+        /*
+         * If an argument is provided to the method, this is an error since we don't know
+         * how to handle that, except for a few hard-coded special cases.
+         */
         if (numArgs != 0) {
+            if (SPECIAL_CASE && numArgs == 1) {
+                final Object arg = args[0];
+                if (arg instanceof Integer) {
+                    final int dim = (Integer) arg;
+                    if (proxy instanceof GridEnvelope) {
+                        // TODO: Use String in switch with JDK 7.
+                        if (methodName.equals("getLow")) {
+                            return getAttributeAsInteger("low", dim);
+                        } else if (methodName.equals("getHigh")) {
+                            return getAttributeAsInteger("high", dim);
+                        } else if (methodName.equals("getSpan")) {
+                            return getAttributeAsInteger("high", dim) -
+                                   getAttributeAsInteger("low",  dim) + 1;
+                        }
+                    }
+                }
+            }
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.UNEXPECTED_ARGUMENT_FOR_INSTRUCTION_$1, methodName));
         }
@@ -322,7 +365,14 @@ final class MetadataProxy<T> implements InvocationHandler {
         }
         if (targetType.equals(Integer.TYPE)) {
             Integer value = accessor.getAttributeAsInteger(name);
-            if (value == null) value = 0;
+            if (value == null) {
+                value = 0;
+                if (SPECIAL_CASE) {
+                    if (methodName.equals("getDimension") && proxy instanceof GridEnvelope) {
+                        value = Math.max(getAttributeLength("low"), getAttributeLength("high"));
+                    }
+                }
+            }
             return value;
         }
         if (targetType.equals(Short.TYPE)) {
