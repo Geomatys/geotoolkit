@@ -66,7 +66,7 @@ public class RectifiedGridType extends GridType {
     }
 
     public RectifiedGridType(RectifiedGrid grid) {
-        super(grid);
+       super(grid);
        if (grid != null) {
            origin       = new PointType(grid.getOrigin());
            offsetVector = new ArrayList<VectorType>();

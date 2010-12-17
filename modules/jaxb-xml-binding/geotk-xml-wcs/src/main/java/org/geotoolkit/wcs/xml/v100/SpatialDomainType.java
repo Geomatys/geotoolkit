@@ -29,6 +29,7 @@ import org.geotoolkit.gml.xml.v311.PolygonType;
 import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
 import org.geotoolkit.gml.xml.v311.GridType;
 import org.geotoolkit.gml.xml.v311.ObjectFactory;
+import org.geotoolkit.gml.xml.v311.RectifiedGridType;
 
 /**
  * Definition of the spatial domain of a coverage. 
@@ -103,8 +104,10 @@ public class SpatialDomainType {
             this.envelope.add(gmlFactory.createEnvelope(envelope));
         }
         this.grid = new ArrayList<JAXBElement<? extends GridType>>();
-        if (grid != null) {
-            this.grid.add(gmlFactory.createGrid(grid));
+        if (grid instanceof RectifiedGridType) {
+            this.grid.add(gmlFactory.createRectifiedGrid((RectifiedGridType)grid));
+        } else if (grid instanceof GridType) {
+            this.grid.add(gmlFactory.createGrid((GridType)grid));
         }
     }
     
