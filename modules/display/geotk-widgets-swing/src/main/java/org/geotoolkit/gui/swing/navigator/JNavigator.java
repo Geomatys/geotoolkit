@@ -17,6 +17,7 @@
 
 package org.geotoolkit.gui.swing.navigator;
 
+import java.util.List;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -33,8 +34,7 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.ArrayList;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -55,7 +55,7 @@ public class JNavigator extends JPanel implements
     private NavigatorRenderer renderer;
     private final JComponent graduation = new JComponent(){};
     private final JPanel bandsPan = new JPanel(new GridLayout(0, 1));
-    private final Set<JNavigatorBand> bands = new TreeSet<JNavigatorBand>();
+    private final List<JNavigatorBand> bands = new ArrayList<JNavigatorBand>();
 
     private int orientation = SwingConstants.SOUTH;
 
@@ -71,6 +71,8 @@ public class JNavigator extends JPanel implements
         super(new BorderLayout(0,0));
         renderer = new DoubleRenderer();
         bandsPan.setOpaque(false);
+        bandsPan.setInheritsPopupMenu(true);
+        graduation.setInheritsPopupMenu(true);
 
         model.addPropertyChangeListener(listener);
         this.graduation.setOpaque(false);
@@ -89,7 +91,6 @@ public class JNavigator extends JPanel implements
         bandsPan.addMouseMotionListener(this);
         bandsPan.addMouseWheelListener(this);
         bandsPan.addKeyListener(this);
-
     }
 
     @Override

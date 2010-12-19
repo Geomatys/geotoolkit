@@ -114,7 +114,14 @@ public class JFeatureOutLine extends Outline{
     }
       
     private static MutableTreeNode toNode(Property property){
-        final DefaultMutableTreeNode node = new DefaultMutableTreeNode(property);
+        final DefaultMutableTreeNode node = new DefaultMutableTreeNode(property){
+
+            @Override
+            public String toString() {
+                return ((Property)getUserObject()).getName().toString();
+            }
+
+        };
         if(property instanceof ComplexAttribute){
             final ComplexAttribute att = (ComplexAttribute) property;
             for(Property prop : att.getProperties()){

@@ -28,6 +28,11 @@ public abstract class JNavigatorBand extends JComponent {
 
     private NavigatorModel model = null;
 
+    public JNavigatorBand(){
+        setOpaque(false);
+        setInheritsPopupMenu(true);
+    }
+
     public NavigatorModel getModel() {
         return model;
     }

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C)2009, Johann Sorel
+ *    (C)2009-2010, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,6 @@ package org.geotoolkit.gui.swing.go2.control;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.MouseInfo;
@@ -39,7 +38,6 @@ import org.geotoolkit.display.canvas.CanvasController2D;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.navigator.DateRenderer;
 import org.geotoolkit.gui.swing.navigator.JNavigator;
-import org.geotoolkit.gui.swing.navigator.JNavigatorBand;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.referencing.operation.TransformException;
@@ -63,7 +61,11 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
     private final JAnimationMenu animation = new JAnimationMenu() {
         @Override
         protected void update(JMap2D map, double step) {
-            final Date[] range = map.getCanvas().getController().getTemporalRange().clone();
+            Date[] range = map.getCanvas().getController().getTemporalRange();
+            if(range == null){
+                return;
+            }
+            range = range.clone();
 
             step =  step * animation.getRefreshInterval();
 
@@ -291,14 +293,6 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
         });
 
         setComponentPopupMenu(menu);
-        AreaBand band = new AreaBand();
-        band.setComponentPopupMenu(menu);
-        band.addMouseListener(this);
-        band.addMouseMotionListener(this);
-        band.addMouseWheelListener(this);
-        band.addKeyListener(this);
-
-        addBand(band);
     }
 
     public JMap2D getMap() {
@@ -423,64 +417,56 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
         }
     }
 
-    private class AreaBand extends JNavigatorBand{
+    @Override
+    protected void paintChildren(Graphics g) {
+        super.paintChildren(g);
 
-        public AreaBand(){
-            setPreferredSize(new Dimension(50, 50));
+        if(map == null) return;
+
+        final Date[] range = map.getCanvas().getController().getTemporalRange();
+
+        if(range == null) return;
+
+        if(range[0] == null && range[1] == null) return;
+
+        double start = -5;
+        double end = getWidth() +5;
+        double center = -5;
+
+        if(range[0] != null) start = getModel().getGraphicValueAt(range[0].getTime());
+        if(range[1] != null) end = getModel().getGraphicValueAt(range[1].getTime());
+
+
+        //apply change if there are some
+        if(edit != null){
+            if(selected == 0){
+                start = getModel().getGraphicValueAt(edit.getTime());
+            }else if(selected == 2){
+                end = getModel().getGraphicValueAt(edit.getTime());
+            }else if(selected == 1){
+                long middleDate = (range[0].getTime() + range[1].getTime()) / 2l;
+                long step = edit.getTime() - middleDate;
+                start = getModel().getGraphicValueAt(range[0].getTime() + step);
+                end = getModel().getGraphicValueAt(range[1].getTime() + step);
+            }
         }
 
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-
-            if(map == null) return;
-
-            final Date[] range = map.getCanvas().getController().getTemporalRange();
-
-            if(range == null) return;
-
-            if(range[0] == null && range[1] == null) return;
-
-            double start = -5;
-            double end = getWidth() +5;
-            double center = -5;
-
-            if(range[0] != null) start = getModel().getGraphicValueAt(range[0].getTime());
-            if(range[1] != null) end = getModel().getGraphicValueAt(range[1].getTime());
-
-
-            //apply change if there are some
-            if(edit != null){
-                if(selected == 0){
-                    start = getModel().getGraphicValueAt(edit.getTime());
-                }else if(selected == 2){
-                    end = getModel().getGraphicValueAt(edit.getTime());
-                }else if(selected == 1){
-                    long middleDate = (range[0].getTime() + range[1].getTime()) / 2l;
-                    long step = edit.getTime() - middleDate;
-                    start = getModel().getGraphicValueAt(range[0].getTime() + step);
-                    end = getModel().getGraphicValueAt(range[1].getTime() + step);
-                }
-            }
-
-            if(range[0] != null && range[1] != null){
-                center = (start+end)/2;
-            }
-
-
-            final Graphics2D g2d = (Graphics2D) g;
-            g2d.setColor(SECOND);
-            g2d.fillRect((int)start,0,(int)(end-start),getHeight());
-
-            g2d.setColor(MAIN);
-            g2d.setStroke(new BasicStroke(LIMIT_WIDTH*2));
-            g2d.drawLine((int)start, 0, (int)start, getHeight());
-            g2d.drawLine((int)end, 0, (int)end, getHeight());
-
-            g2d.setStroke(new BasicStroke(LIMIT_WIDTH*4));
-            g2d.drawLine((int)center, 0, (int)center, getHeight());
+        if(range[0] != null && range[1] != null){
+            center = (start+end)/2;
         }
 
+
+        final Graphics2D g2d = (Graphics2D) g;
+        g2d.setColor(SECOND);
+        g2d.fillRect((int)start,0,(int)(end-start),getHeight());
+
+        g2d.setColor(MAIN);
+        g2d.setStroke(new BasicStroke(LIMIT_WIDTH*2));
+        g2d.drawLine((int)start, 0, (int)start, getHeight());
+        g2d.drawLine((int)end, 0, (int)end, getHeight());
+
+        g2d.setStroke(new BasicStroke(LIMIT_WIDTH*4));
+        g2d.drawLine((int)center, 0, (int)center, getHeight());
     }
 
 }
