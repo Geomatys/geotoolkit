@@ -49,11 +49,8 @@ public class StatelessDynamicLayerJ2D extends AbstractLayerJ2D<MapLayer>{
      * {@inheritDoc }
      */
     @Override
-    public void paint(final RenderingContext2D renderingContext) {
-                
-        //we abort painting if the layer is not visible.
-        if (!layer.isVisible()) return;
-
+    public void paintLayer(final RenderingContext2D renderingContext) {
+        
         final GraphicBuilder<? extends GraphicJ2D> gb = layer.getGraphicBuilder(GraphicJ2D.class);
 
         if(gb != null){

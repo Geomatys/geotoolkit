@@ -17,7 +17,10 @@
 
 package org.geotoolkit.display2d.container.stateless;
 
+import java.awt.AlphaComposite;
+import java.awt.Graphics2D;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.awt.image.ColorModel;
 import java.awt.image.SampleModel;
@@ -27,8 +30,10 @@ import java.util.EventObject;
 import javax.media.jai.JAI;
 import javax.media.jai.TileFactory;
 import javax.media.jai.TileRecycler;
+import org.geotoolkit.display2d.GO2Utilities;
 
 import org.geotoolkit.display2d.canvas.J2DCanvas;
+import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.LayerListener;
@@ -135,5 +140,38 @@ public abstract class AbstractLayerJ2D<T extends MapLayer> extends AbstractGraph
     @Override
     public void itemChange(CollectionChangeEvent<MapItem> event) {
     }
+
+    @Override
+    public final void paint(RenderingContext2D context) {
+
+        //we abort painting if the layer is not visible.
+        if (!layer.isVisible()) return;
+
+        //we abort if opacity is to low
+        final double opacity = layer.getOpacity();
+        if(opacity < 1e-6) return;
+
+
+        if(1-opacity < 1e-6){
+            //we are very close to opacity one, no need to create a intermediate image
+            paintLayer(context);
+        }else{
+            //create an intermediate layer which will be painted on the main context
+            //after with the given opacity
+            final Rectangle rect = context.getCanvasDisplayBounds();
+            final BufferedImage inter = new BufferedImage(rect.width, rect.height, BufferedImage.TYPE_INT_ARGB);
+            final Graphics2D g2d = inter.createGraphics();
+            final RenderingContext2D interContext = context.create(g2d);
+            paintLayer(interContext);
+
+            //paint intermediate image
+            final Graphics2D g = context.getGraphics();
+            g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)opacity));
+            g.drawImage(inter, 0, 0, null);
+        }
+
+    }
+
+    protected abstract void paintLayer(RenderingContext2D context);
 
 }

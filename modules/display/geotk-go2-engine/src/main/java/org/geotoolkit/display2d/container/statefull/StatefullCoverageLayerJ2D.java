@@ -118,11 +118,8 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
      * {@inheritDoc }
      */
     @Override
-    public void paint(final RenderingContext2D renderingContext) {
-        
-        //we abort painting if the layer is not visible.
-        if (!layer.isVisible()) return;        
-             
+    public void paintLayer(final RenderingContext2D renderingContext) {
+                     
         final Name coverageName = layer.getCoverageName();
         final CachedRule[] rules = GO2Utilities.getValidCachedRules(layer.getStyle(), 
                 renderingContext.getSEScale(), coverageName);
@@ -133,10 +130,10 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
             return;
         }
 
-        paintRasterLayer(layer, rules, renderingContext);
+        paintRaster(layer, rules, renderingContext);
     }
 
-    private void paintRasterLayer(final CoverageMapLayer layer, final CachedRule[] rules,
+    private void paintRaster(final CoverageMapLayer layer, final CachedRule[] rules,
             final RenderingContext2D context) {
         updateCache(context);
 
