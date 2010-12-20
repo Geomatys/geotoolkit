@@ -8,6 +8,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Insets;
 import java.awt.image.BufferedImage;
+import java.net.URISyntaxException;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -24,10 +25,13 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.map.MapBuilder;
 import org.geotoolkit.map.MapContext;
 import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.pending.demo.symbology.Styles;
 import org.geotoolkit.sld.xml.Specification.SymbologyEncoding;
 import org.geotoolkit.sld.xml.XMLUtilities;
+import org.geotoolkit.style.DefaultDescription;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.MutableStyleFactory;
+import org.geotoolkit.util.SimpleInternationalString;
 import org.opengis.util.FactoryException;
 
 
@@ -36,7 +40,7 @@ public class LegendDemo {
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
                                                    new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
 
-    public static void main(String[] args) throws PortrayalException, JAXBException, FactoryException {
+    public static void main(String[] args) throws PortrayalException, JAXBException, FactoryException, URISyntaxException {
 
         //generate a map context
         final MapContext context = createContext();
@@ -74,16 +78,30 @@ public class LegendDemo {
         frm.setVisible(true);
     }
 
-    private static MapContext createContext() throws JAXBException, FactoryException{
+    private static MapContext createContext() throws JAXBException, FactoryException, URISyntaxException{
         final MapContext context = MapBuilder.createContext();
 
         final XMLUtilities xmlutil = new XMLUtilities();
 
+        //lines styles
         final MutableStyle style2 = xmlutil.readStyle(LegendDemo.class.getResource("/data/style/legend2.xml"), SymbologyEncoding.V_1_1_0);
         final MapLayer layer2 = MapBuilder.createEmptyMapLayer();
         layer2.setStyle(style2);
         layer2.setDescription(SF.description("Highway", "Highway"));
         context.layers().add(layer2);
+
+        //point styles
+        final MapLayer layerMark = MapBuilder.createEmptyMapLayer();
+        layerMark.setStyle(Styles.markPoint());
+        layerMark.setDescription(new DefaultDescription(
+                new SimpleInternationalString("Cities"), new SimpleInternationalString("")));
+        context.layers().add(layerMark);
+
+        final MapLayer layerImage = MapBuilder.createEmptyMapLayer();
+        layerImage.setStyle(Styles.imagePoint());
+        layerImage.setDescription(new DefaultDescription(
+                new SimpleInternationalString("Fishing areas"), new SimpleInternationalString("")));
+        context.layers().add(layerImage);
 
         return context;
     }

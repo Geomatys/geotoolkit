@@ -18,18 +18,15 @@
 package org.geotoolkit.display2d.style.renderer;
 
 
-import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedPointSymbolizer;
-import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.map.MapLayer;
 
-import org.opengis.filter.expression.Expression;
-import org.opengis.style.GraphicalSymbol;
-import org.opengis.style.Mark;
+import org.opengis.feature.Feature;
 import org.opengis.style.PointSymbolizer;
 
 /**
@@ -74,57 +71,20 @@ public class DefaultPointSymbolizerRendererService extends AbstractSymbolizerRen
      * {@inheritDoc }
      */
     @Override
-    public void glyph(Graphics2D target, Rectangle2D rectangle, CachedPointSymbolizer symbol, MapLayer layer) {
-        target.setClip(rectangle);
+    public void glyph(Graphics2D g2d, Rectangle2D rectangle, CachedPointSymbolizer symbol, MapLayer layer) {
+        g2d.setClip(rectangle);
         
-        final Expression expOpa = symbol.getSource().getGraphic().getOpacity();
-        final Expression expRotation = symbol.getSource().getGraphic().getRotation();
-        final Expression expSize = symbol.getSource().getGraphic().getSize();
-        
-        final float opacity;
-        final float rotation;
-        float size;
-        
-        if(GO2Utilities.isStatic(expOpa)){
-            opacity = expOpa.evaluate(null, Number.class).floatValue();
-        }else{
-            opacity = 0.6f;
-        }
-                
-        if(GO2Utilities.isStatic(expRotation)){
-            rotation = expRotation.evaluate(null, Number.class).floatValue();
-        }else{
-            rotation = 0f;
-        }
-        
-        if(GO2Utilities.isStatic(expSize)){
-            Number n = expSize.evaluate(null, Number.class);
-            if(n != null){
-                size = n.floatValue();
-            }else{
-                size = 8f;
-            }
-        }else{
-            size = 8f;
-        }
-        
-        if(size> rectangle.getHeight()){
-            size = (float)rectangle.getHeight();
-        }
-        
-        target.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, opacity));
-        target.translate(rectangle.getCenterX(), rectangle.getCenterY());
-                
-        target.rotate(Math.toRadians(rotation), 0,0);
-        
-        for(final GraphicalSymbol graphic : symbol.getSource().getGraphic().graphicalSymbols()){
-            if(graphic instanceof Mark){
-                GO2Utilities.renderGraphic((Mark) graphic,size,target);
-            }
-        }
-        
-        target.rotate(-Math.toRadians(rotation), 0,0);
+        final Feature feature = null;
+        final float coeff = 1;
+        final BufferedImage img = symbol.getImage(feature, coeff, null);
+        final float[] disps = new float[]{0,0};
+        final float[] anchor = new float[]{0.5f,0.5f};
+        disps[0] *= coeff ;
+        disps[1] *= coeff ;
 
+        final int x = (int) (-img.getWidth()*anchor[0] + rectangle.getCenterX() + disps[0]);
+        final int y = (int) (-img.getHeight()*anchor[1] + rectangle.getCenterY() - disps[1]);
+        g2d.drawImage(img, x, y, null);
     }
 
 }
