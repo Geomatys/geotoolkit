@@ -22,6 +22,7 @@ import javax.imageio.IIOImage;
 import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
@@ -801,6 +802,34 @@ public class GeoTiffRWTest {
                 new AffineTransform(256, 0, 0, -256, 440818, 3751222));
 
     }
+
+    @Test
+    public void testStreamWriting() throws CoverageStoreException, IOException{
+
+        File file = TestData.file(GeoTiffRWTest.class, "002025_0100_010722_l7_01_utm2.tiff");
+        ImageCoverageReader reader = new ImageCoverageReader();
+        reader.setInput(file);
+
+        try{
+            //first test
+            GridCoverage2D coverage = (GridCoverage2D) reader.read(0, null);
+
+            final File tempFile = File.createTempFile("coverage", ".tiff");
+            tempFile.deleteOnExit();
+            final FileOutputStream stream = new FileOutputStream(tempFile);
+
+            final IIOImage iioimage = new IIOImage(coverage.getRenderedImage(), null, reader.getCoverageMetadata(0));
+            final ImageWriter writer = ImageIO.getImageWritersByFormatName("geotiff").next();
+            writer.setOutput(ImageIO.createImageOutputStream(stream));
+            writer.write(null, iioimage, null);
+            writer.dispose();
+
+        }finally{
+            reader.dispose();
+        }
+
+    }
+
 
     private void test(String fileName, CoordinateReferenceSystem crs, AffineTransform gridToCRS)
             throws FileNotFoundException, IOException, CoverageStoreException{
