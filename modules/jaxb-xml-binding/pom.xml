@@ -118,6 +118,7 @@
     <module>geotk-xml-xacml</module>
     <module>geotk-xml-xsd</module>
     <module>geotk-xml-natSDI</module>
+    <module>geotk-xml-geonetcab</module>
   </modules>
 
 </project>

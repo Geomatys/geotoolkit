@@ -136,11 +136,11 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      * @param service the initials of the web serviceType (WMS, SOS, WCS, CSW, ...).
      * This string correspound to the resource name in lower case.
      */
-    public void updateURL(String url, String service) {
+    public void updateURL(String url) {
        for (Operation op: operation) {
             for (DCP dcp: op.getDCP()) {
                 for (OnlineResourceType method:dcp.getHTTP().getGetOrPost()) {
-                    method.setHref(url + service.toLowerCase() + "?");
+                    method.setHref(url);
                 }
             }
        }

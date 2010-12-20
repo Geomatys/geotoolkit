@@ -302,17 +302,14 @@ public class GetCoverageType implements GetCoverage {
             domainSubset.getSpatialSubSet().getGrid().getLimits() == null                   ||
             domainSubset.getSpatialSubSet().getGrid().getLimits().getGridEnvelope() == null)
         {
-            System.out.println("somthing is null");
             return null;
         }
         final GridEnvelopeType gridEnv = domainSubset.getSpatialSubSet().getGrid().getLimits().getGridEnvelope();
         GridCoordinates high = gridEnv.getHigh();
         if (high == null) {
-            System.out.println("higth is null");
             return null;
         }
         if (high.getCoordinateValues().length < 2) {
-            System.out.println("high number of coord is < 2" + high.getCoordinateValues().length);
             return null;
         }
         final int width  = high.getCoordinateValue(0);
