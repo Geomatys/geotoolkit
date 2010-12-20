@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,6 @@ import java.awt.image.SampleModel;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -37,7 +36,6 @@ import java.util.logging.Level;
 
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display2d.container.ContextContainer2D;
@@ -78,7 +76,6 @@ import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.binaryspatial.LooseBBox;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.geotoolkit.style.StyleUtilities;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 
 import org.opengis.display.primitive.Graphic;
@@ -108,7 +105,7 @@ import static org.geotoolkit.display2d.GO2Utilities.*;
  * @author johann sorel (Geomatys)
  * @module pending
  */
-public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
+public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLayer>{
 
     protected Query currentQuery = null;
 
@@ -123,19 +120,19 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
     public void paintLayer(final RenderingContext2D renderingContext) {
 
         //search for a special graphic renderer
-        final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) layer.getGraphicBuilder(GraphicJ2D.class);
+        final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) item.getGraphicBuilder(GraphicJ2D.class);
         if(builder != null){
-            //there is a special graphic builder, no need to check anything, the custom
-            // graphic will take care of it
-            paintVectorLayer(builder, renderingContext);
+            //let the parent class handle it
+            super.paintLayer(renderingContext);
+            return;
         }
 
-        final FeatureType sft = layer.getCollection().getFeatureType();
+        final FeatureType sft = item.getCollection().getFeatureType();
         final CachedRule[] rules;
 
-        final Style style = layer.getStyle();
+        final Style style = item.getStyle();
 
-        final Filter selectionFilter = layer.getSelectionFilter();
+        final Filter selectionFilter = item.getSelectionFilter();
         if(selectionFilter != null && !Filter.EXCLUDE.equals(selectionFilter)){
             //merge the style and filter with the selection
             final List<Rule> selectionRules;
@@ -143,7 +140,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                    style, renderingContext.getSEScale(), sft);
 
             final List<CachedRule> mixedRules = new ArrayList<CachedRule>();
-            final MutableStyle selectionStyle = layer.getSelectionStyle();
+            final MutableStyle selectionStyle = item.getSelectionStyle();
             if(selectionStyle == null){
                 selectionRules = GO2Utilities.getValidRules(
                         ContextContainer2D.DEFAULT_SELECTION_STYLE, renderingContext.getSEScale(), sft);
@@ -196,17 +193,10 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         paintVectorLayer(rules, renderingContext);
     }
 
-    protected void paintVectorLayer(GraphicBuilder builder, final RenderingContext2D renderingContext){
-        final Collection<GraphicJ2D> graphics = builder.createGraphics(layer, canvas);
-        for(GraphicJ2D gra : graphics){
-            gra.paint(renderingContext);
-        }
-    }
-
     protected void paintVectorLayer(final CachedRule[] rules, final RenderingContext2D context) {
 
         final CanvasMonitor monitor = context.getMonitor();
-        currentQuery = prepareQuery(context, layer, rules);
+        currentQuery = prepareQuery(context, item, rules);
         final Query query = currentQuery;
 
         if(monitor.stopRequested()) return;
@@ -219,7 +209,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
 
         final FeatureCollection<Feature> features;
         try{
-            features = ((FeatureCollection<Feature>)layer.getCollection()).subCollection(query);
+            features = ((FeatureCollection<Feature>)item.getCollection()).subCollection(query);
         }catch(DataStoreException ex){
             context.getMonitor().exceptionOccured(ex, Level.WARNING);
             //can not continue this layer with this error
@@ -390,7 +380,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
                 if(k==1){
                     //we have collected all ids from the last round, let's optimize the query
                     try {
-                        col = layer.getCollection().subCollection(idQuery(context, layer,
+                        col = item.getCollection().subCollection(idQuery(context, item,
                                 new CachedRule[]{rule}, new DefaultId(ruleFeatures)));
                     } catch (DataStoreException ex) {
                         throw new PortrayalException(ex);
@@ -684,16 +674,16 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
     @Override
     public List<Graphic> getGraphicAt(RenderingContext rdcontext, SearchArea mask, VisitFilter filter, List<Graphic> graphics) {
 
-        if(!layer.isSelectable()) return graphics;
+        if(!item.isSelectable()) return graphics;
 
         if(!(rdcontext instanceof RenderingContext2D)) return graphics;
         final RenderingContext2D c2d = (RenderingContext2D) rdcontext;
 
         //nothing visible so no possible selection
-        if (!layer.isVisible()) return graphics;
+        if (!item.isVisible()) return graphics;
 
-        final Name featureTypeName = layer.getCollection().getFeatureType().getName();
-        final CachedRule[] rules = GO2Utilities.getValidCachedRules(layer.getStyle(),
+        final Name featureTypeName = item.getCollection().getFeatureType().getName();
+        final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
                 c2d.getSEScale(), featureTypeName);
 
         //we perform a first check on the style to see if there is at least
@@ -705,9 +695,9 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         if(graphics == null) graphics = new ArrayList<Graphic>();
 
         if(mask instanceof SearchAreaJ2D){
-            return searchGraphicAt(layer, rules, c2d, (SearchAreaJ2D)mask, filter, graphics);
+            return searchGraphicAt(item, rules, c2d, (SearchAreaJ2D)mask, filter, graphics);
         }else{
-            return searchGraphicAt(layer, rules, c2d, new DefaultSearchAreaJ2D(mask), filter, graphics);
+            return searchGraphicAt(item, rules, c2d, new DefaultSearchAreaJ2D(mask), filter, graphics);
         }
     }
 
@@ -952,7 +942,7 @@ public class StatelessFeatureLayerJ2D extends AbstractLayerJ2D<FeatureMapLayer>{
         final AffineTransform2D objtoDisp              = renderingContext.getObjectiveToDisplay();
 
         if(params == null){
-            params = new StatefullContextParams(getCanvas(),layer);
+            params = new StatefullContextParams(getCanvas(),item);
         }
 
         params.displayCRS = displayCRS;

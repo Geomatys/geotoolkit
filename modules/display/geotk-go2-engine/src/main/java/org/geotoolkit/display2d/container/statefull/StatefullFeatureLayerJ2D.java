@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -144,7 +144,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         updateCache(context);
 
         final CanvasMonitor monitor = context.getMonitor();
-        currentQuery = prepareQuery(context, layer, rules);
+        currentQuery = prepareQuery(context, item, rules);
         final Query query = currentQuery;
 
         final Name[] copy = query.getPropertyNames();
@@ -162,7 +162,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
 
         final FeatureCollection<? extends Feature> features;
         try{
-            features = layer.getCollection().subCollection(query);
+            features = item.getCollection().subCollection(query);
         }catch(DataStoreException ex){
             context.getMonitor().exceptionOccured(ex, Level.WARNING);
             //can not continue this layer with this error

@@ -53,6 +53,8 @@ public abstract class AbstractMapItem implements MapItem {
     protected String name = null;
 
     protected Description desc = null;
+    
+    protected boolean visible = true;
 
     /**
      * Constructor that can used by subclass only.
@@ -115,6 +117,34 @@ public abstract class AbstractMapItem implements MapItem {
             this.desc = desc;
         }
         firePropertyChange(DESCRIPTION_PROPERTY, oldDesc, this.desc);
+    }
+
+    /**
+     * Getter for property visible.
+     *
+     * @return Value of property visible.
+     */
+    @Override
+    public boolean isVisible() {
+        return this.visible;
+    }
+
+    /**
+     * Setter for property visible.
+     *
+     * @param visible : New value of property visible.
+     */
+    @Override
+    public void setVisible(boolean visible) {
+        final boolean oldVisible;
+        synchronized (this) {
+            oldVisible = this.visible;
+            if(oldVisible == visible){
+                return;
+            }
+            this.visible = visible;
+        }
+        firePropertyChange(VISIBILITY_PROPERTY, oldVisible, this.visible);
     }
 
     /**

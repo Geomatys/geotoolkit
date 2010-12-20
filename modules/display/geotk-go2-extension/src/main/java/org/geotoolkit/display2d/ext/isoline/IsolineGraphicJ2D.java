@@ -132,10 +132,10 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
     }
 
     @Override
-    public void paint(RenderingContext2D context) {
+    public void paintLayer(RenderingContext2D context) {
 
         //we abort painting if the layer is not visible.
-        if (!layer.isVisible()) {
+        if (!item.isVisible()) {
             return;
         }
 
@@ -146,7 +146,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
         g2.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
 
         final FeatureCollection<SimpleFeature> collection =
-                    (FeatureCollection<SimpleFeature>) layer.getCollection();
+                    (FeatureCollection<SimpleFeature>) item.getCollection();
 
         try {
             final FeatureIterator<SimpleFeature> iterator = collection.iterator();
@@ -177,7 +177,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
 
             final int s = coords.size();
             final Rectangle2D rect = new Rectangle2D.Double(minx,miny,maxx-minx,maxy-miny);
-            final Envelope refEnv = layer.getBounds();
+            final Envelope refEnv = item.getBounds();
             final double[] x = new double[s];
             final double[] y = new double[s];
             final double[] z = new double[s];

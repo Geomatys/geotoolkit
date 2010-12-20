@@ -36,7 +36,6 @@ import org.opengis.geometry.Envelope;
 public interface MapLayer extends MapItem {
     
     public static final String STYLE_PROPERTY = "style";
-    public static final String VISIBILITY_PROPERTY = "visibility";
     public static final String OPACITY_PROPERTY = "opacity";
     public static final String SELECTABLE_PROPERTY = "selectable";
     public static final String QUERY_PROPERTY = "query";
@@ -69,24 +68,6 @@ public interface MapLayer extends MapItem {
      * @param style The new style
      */
     void setStyle(MutableStyle style);
-
-    /**
-     * Determine whether this layer is visible on a map pane or whether the
-     * layer is hidden.
-     *
-     * @return <code>true</code> if the layer is visible, or <code>false</code>
-     *         if the layer is hidden.
-     */
-    boolean isVisible();
-
-    /**
-     * Specify whether this layer is visible on a map pane or whether the layer
-     * is hidden. A {@link PropertyChangeEvent} is fired if the visibility changed.
-     *
-     * @param visible Show the layer if <code>true</code>, or hide the layer if
-     *        <code>false</code>
-     */
-    void setVisible(boolean visible);
 
     /**
      * 

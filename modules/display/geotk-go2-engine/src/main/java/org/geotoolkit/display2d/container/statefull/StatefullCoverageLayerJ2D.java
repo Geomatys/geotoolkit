@@ -34,7 +34,7 @@ import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
-import org.geotoolkit.display2d.container.stateless.AbstractLayerJ2D;
+import org.geotoolkit.display2d.container.stateless.StatelessMapLayerJ2D;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
@@ -44,7 +44,6 @@ import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.type.Name;
-import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
@@ -52,13 +51,12 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer>{
+public class StatefullCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapLayer>{
 
     private final StatefullProjectedCoverage projectedCoverage;
 
     //compare values to update caches if necessary
     private final StatefullContextParams params;
-    private CoordinateReferenceSystem dataCRS;
     private CoordinateReferenceSystem lastObjectiveCRS = null;
 
     public StatefullCoverageLayerJ2D(J2DCanvas canvas, CoverageMapLayer layer){
@@ -66,12 +64,9 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
 
         try {
             final GeneralGridGeometry ggg = layer.getCoverageReader().getGridGeometry(0);
-            if(ggg != null){
-                this.dataCRS = ggg.getCoordinateReferenceSystem();
-            }else{
+            if(ggg == null){
                 Logger.getLogger(StatefullCoverageLayerJ2D.class.getName()).log(
                         Level.WARNING, "Could not access envelope of layer {0}", layer.getName());
-                this.dataCRS = null;
             }
             
         } catch (CoverageStoreException ex) {
@@ -120,8 +115,8 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
     @Override
     public void paintLayer(final RenderingContext2D renderingContext) {
                      
-        final Name coverageName = layer.getCoverageName();
-        final CachedRule[] rules = GO2Utilities.getValidCachedRules(layer.getStyle(), 
+        final Name coverageName = item.getCoverageName();
+        final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
                 renderingContext.getSEScale(), coverageName);
 
         //we perform a first check on the style to see if there is at least
@@ -130,18 +125,18 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
             return;
         }
 
-        paintRaster(layer, rules, renderingContext);
+        paintRaster(item, rules, renderingContext);
     }
 
-    private void paintRaster(final CoverageMapLayer layer, final CachedRule[] rules,
+    private void paintRaster(final CoverageMapLayer item, final CachedRule[] rules,
             final RenderingContext2D context) {
         updateCache(context);
 
         //search for a special graphic renderer
-        final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) layer.getGraphicBuilder(GraphicJ2D.class);
+        final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) item.getGraphicBuilder(GraphicJ2D.class);
         if(builder != null){
             //this layer has a special graphic rendering, use it instead of normal rendering
-            final Collection<GraphicJ2D> graphics = builder.createGraphics(layer, canvas);
+            final Collection<GraphicJ2D> graphics = builder.createGraphics(item, canvas);
             for(GraphicJ2D gra : graphics){
                 gra.paint(context);
             }
@@ -172,13 +167,13 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
     public List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, VisitFilter filter, List<Graphic> graphics) {
 
         if(!(context instanceof RenderingContext2D) ) return graphics;
-        if(!layer.isSelectable())                     return graphics;
-        if(!layer.isVisible())                        return graphics;
+        if(!item.isSelectable())                     return graphics;
+        if(!item.isVisible())                        return graphics;
 
         final RenderingContext2D renderingContext = (RenderingContext2D) context;
 
-        final Name coverageName = layer.getCoverageName();
-        final CachedRule[] rules = GO2Utilities.getValidCachedRules(layer.getStyle(), 
+        final Name coverageName = item.getCoverageName();
+        final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
                 renderingContext.getSEScale(), coverageName);
 
         //we perform a first check on the style to see if there is at least
@@ -189,9 +184,9 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
 
         if(graphics == null) graphics = new ArrayList<Graphic>();
         if(mask instanceof SearchAreaJ2D){
-            graphics = searchAt(layer,rules,renderingContext,(SearchAreaJ2D)mask,filter,graphics);
+            graphics = searchAt(item,rules,renderingContext,(SearchAreaJ2D)mask,filter,graphics);
         }else{
-            graphics = searchAt(layer,rules,renderingContext,new DefaultSearchAreaJ2D(mask),filter,graphics);
+            graphics = searchAt(item,rules,renderingContext,new DefaultSearchAreaJ2D(mask),filter,graphics);
         }
         
 
@@ -223,22 +218,6 @@ public class StatefullCoverageLayerJ2D extends AbstractLayerJ2D<CoverageMapLayer
         }
 
         return graphics;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public CoverageMapLayer getUserObject() {
-        return layer;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public Envelope getEnvelope() {
-        return super.getEnvelope();
     }
 
     @Override

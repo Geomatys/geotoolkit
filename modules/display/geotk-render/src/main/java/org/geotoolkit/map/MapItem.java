@@ -31,6 +31,7 @@ public interface MapItem {
 
     public static final String NAME_PROPERTY = "name";
     public static final String DESCRIPTION_PROPERTY = "description";
+    public static final String VISIBILITY_PROPERTY = "visibility";
     
     /**
      * Set the item name, this should be used as an
@@ -54,6 +55,24 @@ public interface MapItem {
      * used for user interfaces.
      */
     Description getDescription();
+
+    /**
+     * Determine whether this item is visible on a map pane or whether the
+     * item is hidden.
+     *
+     * @return <code>true</code> if the item is visible, or <code>false</code>
+     *         if the item is hidden.
+     */
+    boolean isVisible();
+
+    /**
+     * Specify whether this item is visible on a map pane or whether the item
+     * is hidden. A {@link PropertyChangeEvent} is fired if the visibility changed.
+     *
+     * @param visible Show the item if <code>true</code>, or hide the item if
+     *        <code>false</code>
+     */
+    void setVisible(boolean visible);
 
     /**
      * Returns the living list of all items. You may add, remove or change items

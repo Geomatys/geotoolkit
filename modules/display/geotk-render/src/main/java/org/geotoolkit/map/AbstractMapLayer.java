@@ -50,8 +50,6 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
 
     protected ElevationModel elevation = null;
 
-    protected boolean visible = true;
-
     protected boolean selectable = false;
 
     private double opacity = 1d;
@@ -135,34 +133,6 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
             this.selectionStyle = style;
         }
         firePropertyChange(SELECTION_STYLE_PROPERTY, oldStyle, this.selectionStyle);
-    }
-
-    /**
-     * Getter for property visible.
-     * 
-     * @return Value of property visible.
-     */
-    @Override
-    public boolean isVisible() {
-        return this.visible;
-    }
-
-    /**
-     * Setter for property visible.
-     * 
-     * @param visible : New value of property visible.
-     */
-    @Override
-    public void setVisible(boolean visible) {
-        final boolean oldVisible;
-        synchronized (this) {
-            oldVisible = this.visible;
-            if(oldVisible == visible){
-                return;
-            }
-            this.visible = visible;
-        }
-        firePropertyChange(VISIBILITY_PROPERTY, oldVisible, this.visible);
     }
 
     /**

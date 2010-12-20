@@ -47,7 +47,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ScrollPaneConstants;
@@ -59,7 +58,6 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.MutableTreeNode;
 import javax.swing.tree.TreeCellEditor;
-import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
@@ -81,7 +79,6 @@ import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.Logging;
-import org.jdesktop.swingx.JXTable;
 
 import org.opengis.style.Description;
 import org.opengis.style.FeatureTypeStyle;
@@ -307,8 +304,8 @@ public class JContextTree extends JScrollPane {
 
                 @Override
                 public void actionPerformed(ActionEvent e) {
-                    if (value != null && value instanceof MapLayer) {
-                        ((MapLayer) value).setVisible(visibleCheck.isSelected());
+                    if (value != null && value instanceof MapItem) {
+                        ((MapItem) value).setVisible(visibleCheck.isSelected());
                     }
                 }
             });
@@ -377,18 +374,21 @@ public class JContextTree extends JScrollPane {
                 }
 
             } else if (obj instanceof MapItem) {
-                final MapItem context = (MapItem) obj;
-
-                if(!(context instanceof MapContext)){
+                final MapItem item = (MapItem) obj;
+                
+                if(!(item instanceof MapContext)){
                     this.icon.setIcon(ICON_GROUP);
                     panel.add(icon);
                 }
 
+                this.visibleCheck.setSelected(item.isVisible());
+                panel.add(visibleCheck);
+
                 if(edition){
-                    this.field.setText(label(context.getDescription()));
+                    this.field.setText(label(item.getDescription()));
                     panel.add(field);
                 }else{
-                    this.label.setText(label(context.getDescription())+" ");
+                    this.label.setText(label(item.getDescription())+" ");
                     panel.add(label);
                 }
 

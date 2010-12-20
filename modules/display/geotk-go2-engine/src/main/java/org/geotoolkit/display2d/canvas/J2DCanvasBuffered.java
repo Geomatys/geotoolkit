@@ -39,11 +39,12 @@ import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.canvas.painter.SolidColorPainter;
 import org.geotoolkit.display2d.container.statefull.StatefullContextJ2D;
-import org.geotoolkit.display2d.container.stateless.StatelessContextJ2D;
+import org.geotoolkit.display2d.container.stateless.StatelessMapItemJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapItem;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.visitor.ListingColorVisitor;
@@ -279,12 +280,9 @@ public class J2DCanvasBuffered extends J2DCanvas{
         });
 
         for(Graphic gra : graphics){
-            if(gra instanceof StatelessContextJ2D){
-                final StatelessContextJ2D cn = (StatelessContextJ2D) gra;
-                colors = extractColors(cn.getContext(), colors);
-            }else if(gra instanceof StatefullContextJ2D){
-                final StatefullContextJ2D cn = (StatefullContextJ2D) gra;
-                colors = extractColors(cn.getContext(), colors);
+            if(gra instanceof StatelessMapItemJ2D){
+                final StatelessMapItemJ2D cn = (StatelessMapItemJ2D) gra;
+                colors = extractColors(cn.getUserObject(), colors);
             }else{
                 //can not extract colors
                 return null;
@@ -294,9 +292,14 @@ public class J2DCanvasBuffered extends J2DCanvas{
         return colors;
     }
 
-    private static SortedSet<Integer> extractColors(MapContext context, SortedSet<Integer> buffer){
-        for(MapLayer layer : context.layers()){
-            buffer = extractColors(layer, buffer);
+    private static SortedSet<Integer> extractColors(MapItem context, SortedSet<Integer> buffer){
+        for(MapItem child : context.items()){
+            if(child instanceof MapLayer){
+                buffer = extractColors((MapLayer)child, buffer);
+            }else{
+                buffer = extractColors(child, buffer);
+            }
+            
             if(buffer == null){
                 //unpredictable colors
                 return buffer;
