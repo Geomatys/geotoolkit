@@ -35,7 +35,6 @@ import javax.imageio.spi.ImageReaderSpi;
 
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.math.Fraction;
-import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.LogProducer;
 import org.geotoolkit.util.logging.PerformanceLevel;
 import org.geotoolkit.lang.ThreadSafe;
@@ -71,7 +70,7 @@ import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.16
+ * @version 3.17
  *
  * @see org.geotoolkit.gui.swing.image.MosaicBuilderEditor
  *
@@ -503,65 +502,24 @@ public class MosaicBuilder implements LogProducer {
                 return null;
             }
             /*
-             * If the tile layout is CONSTANT_GEOGRAPHIC_AREA, increasing the subsampling will have
-             * the effect of reducing the tile size by the same amount, so we are better to choose
-             * subsamplings that are divisors of the tile size.
-             *
-             * If the tile layout is CONSTANT_TILE_SIZE, increasing the subsampling will have the
-             * effect of reducing the number of tiles required for covering the whole image. So we
-             * are better to choose subsamplings that are divisors of the number of tiles. If the
-             * number of tiles are not integers, we round towards nearest integers in the hope that
-             * we get a number closer to user's intend.
-             *
-             * If the tile layout is unknown, we don't really know what to choose. We fallback on
-             * some values that seem reasonable, but our fallback may change in future version.
-             * It doesn't hurt any code in this module - the only consequence is that tiling may
-             * be suboptimal.
-             */
-            final boolean constantArea = TileLayout.CONSTANT_GEOGRAPHIC_AREA.equals(layout);
-            int nx = tileSize.width;
-            int ny = tileSize.height;
-            if (!constantArea) {
-                // Must performs the division in the same way than in suggestedTileSize(...).
-                nx = Fraction.round(untiledBounds.width,  nx);
-                ny = Fraction.round(untiledBounds.height, ny);
-            }
-            int[] xSubsamplings = XMath.divisors(nx);
-            if (nx != ny) {
-                /*
-                 * Subsamplings are different along x and y axis. We need at least arrays of the
-                 * same length. While not strictly required, it is better that xSubsampling and
-                 * ySubsampling are equal, assuming that pixels are square (otherwise we could
-                 * multiply by a height/width ratio; it may be done in a future version). Current
-                 * implementation keep the union of divisors.
-                 */
-                final int[] ySubsamplings = XMath.divisors(ny);
-                xSubsamplings = XArrays.union(xSubsamplings, ySubsamplings);
-            }
-            /*
              * Trims the subsamplings which would produce tiles smaller than the minimum size
              * (for CONSTANT_GEOGRAPHIC_AREA layout) or which would produce more than one tile
-             * enclosing the whole image (for CONSTANT_TILE_SIZE layout). First, we calculate
-             * as (nx,ny) the maximum subsamplings expected (inclusive). Then we search those
-             * maximum in the actual subsampling and assign to (nx,ny) the new array length.
+             * enclosing the whole image (for CONSTANT_TILE_SIZE layout). We calculate (nx,ny)
+             * which are the maximum subsamplings expected (inclusive).
              */
-            if (constantArea) {
+            final int nx, ny;
+            if (TileLayout.CONSTANT_GEOGRAPHIC_AREA.equals(layout)) {
                 nx = tileSize.width  / MIN_TILE_SIZE;
                 ny = tileSize.height / MIN_TILE_SIZE;
             } else {
                 nx = (untiledBounds.width  - 1) / tileSize.width  + 1;
                 ny = (untiledBounds.height - 1) / tileSize.height + 1;
             }
-            // Increments (++) below are inconditional (outside the "if" block).
-            nx = Arrays.binarySearch(xSubsamplings, nx); if (nx < 0) nx = ~nx; nx++;
-            ny = Arrays.binarySearch(xSubsamplings, ny); if (ny < 0) ny = ~ny; ny++;
-            final int length = Math.min(Math.max(nx, ny), xSubsamplings.length);
-            subsamplings = new int[length * 2];
-            int source = 0;
-            for (int i=0; i<length; i++) {
-                subsamplings[source++] = xSubsamplings[i];
-                subsamplings[source++] = xSubsamplings[i];
+            final int[] sub = new int[Integer.SIZE - Integer.numberOfLeadingZeros(Math.max(nx, ny) - 1)];
+            for (int i=0, s=1; i<sub.length; i++, s <<= 1) {
+                sub[i] = s;
             }
+            setSubsamplings(sub);
         }
         final Dimension[] dimensions = new Dimension[subsamplings.length / 2];
         int source = 0;

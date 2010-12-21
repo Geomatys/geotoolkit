@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
  * Tests {@link MosaicBuilder}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.17
  *
  * @since 2.5
  */
@@ -60,7 +60,7 @@ public final class MosaicBuilderTest extends MosaicTestBase {
         assertEquals(480, size.height);
 
         Dimension[] subsamplings = builder.getSubsamplings();
-        int[] expected = new int[] {1,2,3,4,5,6,9,10,12,15,18,20,30,36,45,60,90,180};
+        int[] expected = new int[] {1,2,4,8,16,32,64,128,256};
         for (int i=0; i<subsamplings.length; i++) {
             assertEquals("width["  + i + ']', expected[i], subsamplings[i].width);
             assertEquals("height[" + i + ']', expected[i], subsamplings[i].height);
@@ -69,7 +69,7 @@ public final class MosaicBuilderTest extends MosaicTestBase {
         builder.setTileSize(new Dimension(960,960));
         builder.setSubsamplings((Dimension[]) null); // For forcing new computation.
         subsamplings = builder.getSubsamplings();
-        expected = new int[] {1,2,3,5,6,9,10,15,18,30,45,90};
+        expected = new int[] {1,2,4,8,16,32,64,128};
         for (int i=0; i<subsamplings.length; i++) {
             assertEquals("width["  + i + ']', expected[i], subsamplings[i].width);
             assertEquals("height[" + i + ']', expected[i], subsamplings[i].height);
