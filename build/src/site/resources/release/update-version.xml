@@ -20,6 +20,7 @@
       <include name="**/*.apt"/>
       <include name="**/*.java"/>
       <include name="**/pom.xml"/>
+      <include name="**/setenv.sh"/>
       <exclude name="modules/utility/geotk-utility/src/main/java/org/geotoolkit/util/Version.java"/>
       <replacefilter token="SNAPSHOT" value="${geotk.version}"/>
     </replace>

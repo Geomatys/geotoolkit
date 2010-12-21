@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# ---------------------------------------------
+# Given an arbitrary amount of authority codes,
+# formats the CRS as "Well Known Text" (WKT).
+# ---------------------------------------------
+
+set -o errexit
+set -o nounset
+
+# Common initialization.
+BASE_DIR=`dirname $0`/..
+export BASE_DIR
+. $BASE_DIR/etc/setenv.sh
+
+# Execution.
+java $OPTS -jar $JARS/geotk-epsg-javadb-$GEOTOOLKIT_VERSION.jar --encoding=UTF-8 "$@"

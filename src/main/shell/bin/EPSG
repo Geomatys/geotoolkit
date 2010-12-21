@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# -------------------------------------------
+# Given an arbitrary amount of EPSG codes,
+# formats the CRS as "Well Known Text" (WKT).
+# -------------------------------------------
+
+`dirname $0`/CRS --authority=EPSG "$@"
