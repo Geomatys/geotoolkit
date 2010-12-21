@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.internal.jaxb.naturesdi.TaxonomicClassificationAdapter;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.geotoolkit.util.Utilities;
 import org.opengis.metadata.citation.Citation;
 
 /**
@@ -151,5 +152,30 @@ public class NATSDI_SpeciesInformation implements org.opengis.metadata.naturesdi
             sb.append("taxonomicClassification").append(taxonomicClassification).append('\n');
         }
         return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof NATSDI_SpeciesInformation) {
+            NATSDI_SpeciesInformation that = (NATSDI_SpeciesInformation) obj;
+            return Utilities.equals(this.authorCitation, that.authorCitation) &&
+                   Utilities.equals(this.classificationSystemAuthority, that.classificationSystemAuthority) &&
+                   Utilities.equals(this.speciesVernacularName, that.speciesVernacularName) &&
+                   Utilities.equals(this.taxonomicClassification, that.taxonomicClassification);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 19 * hash + (this.taxonomicClassification != null ? this.taxonomicClassification.hashCode() : 0);
+        hash = 19 * hash + (this.classificationSystemAuthority != null ? this.classificationSystemAuthority.hashCode() : 0);
+        hash = 19 * hash + (this.authorCitation != null ? this.authorCitation.hashCode() : 0);
+        hash = 19 * hash + (this.speciesVernacularName != null ? this.speciesVernacularName.hashCode() : 0);
+        return hash;
     }
 }

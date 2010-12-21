@@ -23,6 +23,7 @@ package org.geotoolkit.naturesdi;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.metadata.identification.Keywords;
 
 /**
@@ -71,5 +72,38 @@ public class NATSDI_TaxonomicClassification implements org.opengis.metadata.natu
      */
     public void setTaxonRankValue(Keywords taxonRankValue) {
         this.taxonRankValue = taxonRankValue;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("NATSDI_TaxonomicClassification\n");
+        if (taxonRankName != null) {
+            sb.append("taxonRankName:").append(taxonRankName).append('\n');
+        }
+        if (taxonRankValue != null) {
+            sb.append("taxonRankValue:").append(taxonRankValue).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof NATSDI_TaxonomicClassification) {
+            NATSDI_TaxonomicClassification that = (NATSDI_TaxonomicClassification) obj;
+            return Utilities.equals(this.taxonRankName, that.taxonRankName) &&
+                   Utilities.equals(this.taxonRankValue, that.taxonRankValue);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89 * hash + (this.taxonRankName != null ? this.taxonRankName.hashCode() : 0);
+        hash = 89 * hash + (this.taxonRankValue != null ? this.taxonRankValue.hashCode() : 0);
+        return hash;
     }
 }
