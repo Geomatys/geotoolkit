@@ -145,7 +145,7 @@ public class StatementPool<K,V extends StatementEntry> extends LinkedHashMap<K,V
         if (c == null) {
             assert isEmpty();
             connection = c = dataSource.getConnection();
-            Threads.executor(true, true).execute(this);
+            Threads.executor(true).execute(this);
         }
         return c;
     }

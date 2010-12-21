@@ -48,7 +48,7 @@ final class LocalExecutor implements TaskExecutor {
      *        the task directly in the current thread. The later has simpler task trace.
      */
     LocalExecutor(final boolean threaded) {
-        executor = threaded ? Executors.newCachedThreadPool(Threads.THREAD_FACTORY) : null;
+        executor = threaded ? Executors.newCachedThreadPool(Threads.createThreadFactory("LocalExecutor #")) : null;
     }
 
     /**

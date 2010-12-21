@@ -35,7 +35,7 @@ import org.geotoolkit.util.logging.Logging;
  * grouping the threads created by Geotk together under the same parent tree node.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.17
  *
  * @since 3.03
  * @module
@@ -68,16 +68,7 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
     }
 
     /**
-     * The thread factory for worker threads created by the Geotk library.
-     * This factory should be used by every method that use {@link Executors}
-     * directly instead than {@link #executor(boolean, boolean)}.
-     *
-     * @since 3.16
-     */
-    public static final ThreadFactory THREAD_FACTORY = new Threads(false, false);
-
-    /**
-     * The executors to be returned by {@link #executor(int)}.
+     * The executors to be returned by {@link #executor(boolean)}.
      * Will be created only when first needed, and then considered as final.
      */
     private static ExecutorService[] EXECUTORS;
@@ -94,11 +85,31 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
     private final boolean daemon;
 
     /**
+     * The prefix to put at the beginning of thread names.
+     */
+    private final String prefix;
+
+    /**
      * For internal usage only.
      */
-    private Threads(final boolean disposer, final boolean daemon) {
+    private Threads(final boolean disposer, final boolean daemon, final String prefix) {
         this.disposer = disposer;
         this.daemon   = daemon;
+        this.prefix   = prefix;
+    }
+
+    /**
+     * Creates a factory for worker threads created by the Geotk library.
+     * This factory should be used by every method that use {@link Executors}
+     * directly instead than {@link #executor(boolean)}.
+     *
+     * @param  prefix The prefix to put in front of thread names.
+     * @return The thread factory.
+     *
+     * @since 3.17
+     */
+    public static ThreadFactory createThreadFactory(final String prefix) {
+        return new Threads(false, false, prefix);
     }
 
     /**
@@ -114,20 +125,22 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
      *   <li><p><b>Normal:</b> Any background task which is not about disposing resources.</p></li>
      * </ul>
      *
+     * The executor threads will be daemon. However the submitted tasks should still be fully
+     * completed because the shutdown hook will wait for tasks to complete, up to some timeout
+     * delay.
+     * <p>
      * Callers should not keep a reference to the returned executor for a long time.
      * It is preferable to use it as soon as possible and discard.
      *
      * @param  disposer {@code true} if the executor is for resources disposal tasks.
-     * @param  daemon {@code true} if the threads to be created should be daemon threads.
      * @return The executor.
      */
-    public static synchronized Executor executor(final boolean disposer, final boolean daemon) {
-        int index = (disposer) ? 2 : 0;
-        if (daemon) index |= 1;
+    public static synchronized Executor executor(final boolean disposer) {
+        final int index = (disposer) ? 1 : 0;
         ExecutorService[] executors = EXECUTORS;
         if (executors == null) {
             ensureShutdownHookRegistered();
-            EXECUTORS = executors = new ExecutorService[4];
+            EXECUTORS = executors = new ExecutorService[2];
         }
         ExecutorService executor = executors[index];
         if (executor == null) {
@@ -137,7 +150,7 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
              * become idle very soon after their creation.
              */
             final int maximumPoolSize = disposer ? 4 : 100;
-            final ThreadFactory factory = (index == 3) ? THREAD_FACTORY : new Threads(disposer, daemon);
+            final ThreadFactory factory = new Threads(disposer, true, "Pooled daemon #");
             executors[index] = executor = new ThreadPoolExecutor(0, maximumPoolSize, 60L, TimeUnit.SECONDS,
                     new LinkedBlockingQueue<Runnable>(), factory);
         }
@@ -152,7 +165,7 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
      */
     @Override
     public Thread newThread(final Runnable task) {
-        final String name = "Pooled " + (daemon ? "daemon" : "thread") + ' ' + incrementAndGet();
+        final String name = prefix + incrementAndGet();
         final Thread thread = new Thread(disposer ? RESOURCE_DISPOSERS : WORKERS, task, name);
         thread.setPriority(Thread.NORM_PRIORITY + 1); // WORKERS group will lower this value.
         thread.setDaemon(daemon);
@@ -170,7 +183,7 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
         try {
             Class.forName("org.geotoolkit.factory.ShutdownHook", true, Threads.class.getClassLoader());
         } catch (Exception e) {
-            Logging.unexpectedException(Threads.class, "ensureShutdownHook", e);
+            Logging.unexpectedException(Threads.class, "ensureShutdownHookRegistered", e);
         }
     }
 

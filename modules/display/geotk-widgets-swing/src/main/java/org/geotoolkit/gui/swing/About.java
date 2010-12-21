@@ -505,14 +505,14 @@ public class About extends JComponent implements Dialog {
         public synchronized void start() {
             if (worker == null) {
                 worker = new DaemonThread(Threads.WORKERS, this, resources.getString(Vocabulary.Keys.ABOUT));
+                worker.setPriority(Thread.NORM_PRIORITY - 1);
                 worker.start();
             }
         }
 
         /**
-         * Met à jour le contenu de la liste à interval régulier. Cette méthode est exécutée
-         * dans une boucle jusqu'à ce qu'elle soit interrompue en donnant la valeur nulle à
-         * {@link #tasks}.
+         * Updates the content of the "About" pane on a regular basis. The loop can
+         * be interrupted by setting the {@link #tasks} field to {@code null}.
          */
         @Override
         public synchronized void run() {
@@ -563,15 +563,16 @@ public class About extends JComponent implements Dialog {
                 try {
                     wait(4000);
                 } catch (InterruptedException exception) {
-                    // Someone doesn't want to let us sleep. Go back to work.
+                    // Someone asked for interruption. The panel will not be updated anymore.
+                    break;
                 }
             }
             worker = null;
         }
 
         /**
-         * Met à jour le contenu de la liste. Cette méthode
-         * est appelée périodiquement dans le thread de Swing.
+         * Updates the content of the thread list. This method shall be
+         * invoked on the Swing thread only.
          */
         private synchronized void update(final String[] newNames,
                                          final String totalMemory,

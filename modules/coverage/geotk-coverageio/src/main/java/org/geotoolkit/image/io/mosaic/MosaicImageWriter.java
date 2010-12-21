@@ -457,7 +457,7 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
          * RTree initialized with the tiles remaining after the removal in the previous block.
          */
         final int             nThreads  = Runtime.getRuntime().availableProcessors();
-        final ExecutorService executor  = Executors.newFixedThreadPool(nThreads, Threads.THREAD_FACTORY);
+        final ExecutorService executor  = Executors.newFixedThreadPool(nThreads, Threads.createThreadFactory("MosaicImageWriter #"));
         final Semaphore  submitPermits  = new Semaphore(nThreads + 1);
         final List<Future<?>> tasks     = new ArrayList<Future<?>>();
         final TreeNode        tree      = new GridNode(tiles.toArray(new Tile[tiles.size()]));

@@ -576,7 +576,7 @@ public class CoverageList extends JComponent {
              * to prevent other SwingWorkers to work.
              */
             if (executor == null) {
-                executor = Threads.executor(false, true);
+                executor = Threads.executor(false);
             }
             executor.execute(new Runnable() {
                 @Override public void run() {

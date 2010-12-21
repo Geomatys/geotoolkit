@@ -47,10 +47,10 @@ import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.NullArgumentException;
-import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
+import org.geotoolkit.internal.Threads;
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.table.ConfigurationKey;
@@ -75,7 +75,7 @@ import org.geotoolkit.resources.Errors;
  * in order to have more work executed concurrently.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.17
  *
  * @since 3.10
  * @module
@@ -187,7 +187,10 @@ public class CoverageDatabase implements Localized {
         if (properties != null) {
             final CoverageDatabase database = new CoverageDatabase(properties) {
                 @Override public void dispose() {
-                    // No op, because this instance may be shared.
+                    synchronized (CoverageDatabase.class) {
+                        instance = null;
+                    }
+                    super.dispose();
                 }
             };
             instance = new WeakReference<CoverageDatabase>(database);
@@ -228,7 +231,7 @@ public class CoverageDatabase implements Localized {
      * The executor used by {@link CoverageDatabase}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.11
+     * @version 3.17
      *
      * @since 3.11
      * @module
@@ -239,7 +242,8 @@ public class CoverageDatabase implements Localized {
          */
         Executor() {
             super(0, MAXIMUM_THREADS, 1, TimeUnit.MINUTES,
-                  new ArrayBlockingQueue<Runnable>(MAXIMUM_TASKS, true));
+                  new ArrayBlockingQueue<Runnable>(MAXIMUM_TASKS, true),
+                  Threads.createThreadFactory("CoverageDatabase #"));
         }
 
         /**

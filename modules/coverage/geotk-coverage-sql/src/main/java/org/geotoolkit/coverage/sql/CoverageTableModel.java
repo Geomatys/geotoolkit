@@ -912,7 +912,7 @@ public class CoverageTableModel extends AbstractTableModel {
             if (entry != null) {
                 if (running == null) {
                     running = new FileChecker();
-                    Threads.executor(false, true).execute(running);
+                    Threads.executor(false).execute(running);
                 }
                 running.list.add(entry);
             }
