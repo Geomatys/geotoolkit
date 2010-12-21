@@ -14,4 +14,4 @@ export BASE_DIR
 . $BASE_DIR/etc/setenv.sh
 
 # Execution.
-java $OPTS -jar $JARS/geotk-epsg-javadb-$GEOTOOLKIT_VERSION.jar --encoding=UTF-8 "$@"
+java $OPTS -jar $JARS/geotk-epsg-javadb-$GEOTOOLKIT_VERSION.jar "$@"
