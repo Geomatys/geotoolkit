@@ -82,11 +82,6 @@
     </dependency>
     <dependency>
       <groupId>edu.ucar</groupId>
-      <artifactId>bufrTables</artifactId>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>edu.ucar</groupId>
       <artifactId>grib</artifactId>
       <scope>runtime</scope>
     </dependency>
