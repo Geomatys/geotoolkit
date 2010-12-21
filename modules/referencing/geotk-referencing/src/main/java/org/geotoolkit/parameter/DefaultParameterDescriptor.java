@@ -35,6 +35,7 @@ import org.opengis.parameter.ParameterDescriptor;
 
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.ComparisonMode;
@@ -58,7 +59,8 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  * @param <T> The type of elements to be returned by {@link ParameterValue#getValue}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @author Johann Sorel (Geomatys)
+ * @version 3.17
  *
  * @see Parameter
  * @see DefaultParameterDescriptorGroup
@@ -557,5 +559,23 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
         if (maximum      != null) code = code*31 + maximum     .hashCode();
         if (unit         != null) code = code*31 + unit        .hashCode();
         return code;
+    }
+
+    /**
+     * Returns a string representation of this descriptor. The string returned by this
+     * method is for information purpose only and may change in future version.
+     *
+     * @since 3.17
+     */
+    @Override
+    public String toString() {
+        final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(this))
+                .append("[\"").append(getName().getCode()).append("\"");
+        if (valueClass   != null) buffer.append(", class=")  .append(Classes.getShortName(valueClass));
+        if (unit         != null) buffer.append(", unit=")   .append(unit);
+        if (defaultValue != null) buffer.append(", default=").append(defaultValue);
+        if (minimum      != null) buffer.append(", minimum=").append(minimum);
+        if (maximum      != null) buffer.append(", maximum=").append(maximum);
+        return buffer.append(']').toString();
     }
 }

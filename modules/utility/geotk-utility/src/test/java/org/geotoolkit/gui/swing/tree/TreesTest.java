@@ -17,6 +17,9 @@
  */
 package org.geotoolkit.gui.swing.tree;
 
+import java.util.Arrays;
+import java.util.AbstractMap;
+
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 
@@ -25,7 +28,7 @@ import static org.geotoolkit.test.Assert.*;
  * Tests the {@link Trees} implementation.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.17
  *
  * @since 3.00
  */
@@ -66,5 +69,25 @@ public final class TreesTest {
                 "└───Node #3\n";
         final TreeNode root = Trees.parse(text);
         assertMultilinesEquals(text, Trees.toString(root));
+    }
+
+    /**
+     * Tests {@link Trees#objectToSwing(Object)}.
+     *
+     * @since 3.17
+     */
+    @Test
+    public void testObjectToSwing() {
+        final Object object = new Object[] {
+            Arrays.asList("Node #1", "Node #2"),
+            new AbstractMap.SimpleEntry<String,String>("Node #3", "Dummy")
+        };
+        final MutableTreeNode root = Trees.objectToSwing(object);
+        assertMultilinesEquals(
+                "Array\n" +
+                "├───List\n" +
+                "│   ├───Node #1\n" +
+                "│   └───Node #2\n" +
+                "└───Node #3\n", Trees.toString(root));
     }
 }

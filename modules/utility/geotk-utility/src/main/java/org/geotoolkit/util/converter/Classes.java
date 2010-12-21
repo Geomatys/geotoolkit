@@ -328,7 +328,7 @@ public final class Classes {
     }
 
     /**
-     * Returns all classes implemented by the given collection of objects. If the given collection
+     * Returns the classes of all objects in the given collection. If the given collection
      * contains some null elements, then the returned set will contains a null element as well.
      * The returned set is modifiable and can be freely updated by the caller.
      * <p>
@@ -380,6 +380,34 @@ public final class Classes {
                 getAllInterfaces(i, interfaces);
             }
         }
+    }
+
+    /**
+     * Returns the interface implemented by the given class and assignable to the given base
+     * interface. Example:
+     * <p>
+     * <ul>
+     *   <li>{@code getInterface(ArrayList.class, Collection.class)} returns {@code List.class}.</li>
+     * </ul>
+     *
+     * @param  <T>  The type of the {@code baseInterface} class argument.
+     * @param  type A class for which the implemented interface is desired.
+     * @param  baseInterface The base type of the interface to search.
+     * @return {@code null} if no interface matching the given criterion is found.
+     *
+     * @since 3.17
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Class<? extends T> getInterface(Class<?> type, final Class<T> baseInterface) {
+        while (type != null) {
+            for (final Class<?> i : type.getInterfaces()) {
+                if (baseInterface.isAssignableFrom(i)) {
+                    return (Class<T>) i;
+                }
+            }
+            type = type.getSuperclass();
+        }
+        return null;
     }
 
     /**

@@ -21,8 +21,10 @@ import java.io.*;
 import java.util.Set;
 import java.util.List;
 import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.NavigableSet;
 import java.util.RandomAccess;
 
 import org.junit.*;
@@ -33,7 +35,7 @@ import static org.junit.Assert.*;
  * Tests the {@link Classes} static methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
+ * @version 3.17
  *
  * @since 2.5
  */
@@ -73,6 +75,16 @@ public final class ClassesTest {
         assertTrue(interfaces.contains(RandomAccess.class));
         assertTrue(interfaces.contains(Serializable.class));
         assertTrue(interfaces.contains(Cloneable   .class));
+    }
+
+    /**
+     * Tests {@link Classes#getInterface}.
+     *
+     * @since 3.17
+     */
+    @Test
+    public void testGetInterface() {
+        assertEquals(NavigableSet.class, Classes.getInterface(TreeSet.class, Collection.class));
     }
 
     /**

@@ -20,10 +20,13 @@ package org.geotoolkit.gui.swing.tree;
 import java.io.Console;
 import java.io.PrintWriter;
 import java.io.IOException;
+import java.util.Map;
 import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.Iterator;
+import java.lang.reflect.Array;
 import javax.swing.JTree;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -36,6 +39,7 @@ import org.w3c.dom.Node;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.io.LineReader;
 import org.geotoolkit.io.LineReaders;
 import org.geotoolkit.io.ContentFormatException;
@@ -56,7 +60,7 @@ import org.geotoolkit.resources.Errors;
  * }
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.04
+ * @version 3.17
  *
  * @since 2.0
  * @module
@@ -113,15 +117,14 @@ public final class Trees {
     }
 
     /**
-     * Implémentation de la recherche des chemins. Cette
-     * méthode s'appele elle-même d'une façon récursive.
+     * Implementation of the path search. This method invokes itself recursively.
      *
-     * @param  model  Modèle dans lequel rechercher le chemin.
-     * @param  value  Objet à rechercher dans {@link org.geotoolkit.gui.swing.tree.TreeNode#getUserObject}.
-     * @param  path   Chemin parcouru jusqu'à maintenant.
-     * @param  length Longueur valide de {@code path}.
-     * @param  list   Liste dans laquelle ajouter les {@link TreePath} trouvés.
-     * @return {@code path}, ou un nouveau tableau s'il a fallu l'agrandir.
+     * @param  model  The tree model in which to search for a path.
+     * @param  value  The expected {@link org.geotoolkit.gui.swing.tree.TreeNode#getUserObject()}.
+     * @param  path   The path found up to date.
+     * @param  length The number of valid elements in the {@code path} array.
+     * @param  list   Where to add new {@link TreePath} as they are found.
+     * @return {@code path}, or a new array if it was necessary to increase its size.
      */
     private static Object[] getPathsToUserObject(final TreeModel model, final Object value,
             Object[] path, final int length, final List<TreePath> list)
@@ -142,6 +145,64 @@ public final class Trees {
             path = getPathsToUserObject(model, value, path, length+1, list);
         }
         return path;
+    }
+
+    /**
+     * Returns a tree representation of the given object.
+     * This method processes the following cases especially:
+     * <p>
+     * <ul>
+     *   <li>If the given object is an ordinary object (not an array, collection or map),
+     *       then this method returns a single {@link DefaultMutableTreeNode} which contain
+     *       the given object as {@linkplain TreeNode#getUserObject() user object}.</li>
+     *   <li>If the given object is an instance of {@link java.util.Map.Entry}, then this
+     *       method returns a {@link NamedTreeNode} which contain the entry key as the name,
+     *       and the entry value as {@linkplain TreeNode#getUserObject() user object}.</li>
+     *   <li>If the given object is an array, collection or a map, then a root element is created
+     *       with the name of the implemented collection interface, and each collection elements
+     *       are added recursively as children of the above-cited node.</li>
+     * </ul>
+     *
+     * @param  object The array, collection or single object to format.
+     * @return The given object as a Swing tree.
+     *
+     * @since 3.17
+     */
+    public static MutableTreeNode objectToSwing(final Object object) {
+        final DefaultMutableTreeNode node;
+        Iterator<?> iterator = null;
+        Class<?> baseInterface = null;
+        if (object instanceof Iterable<?>) {
+            baseInterface = Iterable.class;
+            iterator = ((Iterable<?>) object).iterator();
+        } else if (object instanceof Map<?,?>) {
+            baseInterface = Map.class;
+            iterator = ((Map<?,?>) object).entrySet().iterator();
+        }
+        if (iterator != null) {
+            node = new DefaultMutableTreeNode(Classes.getShortName(
+                    Classes.getInterface(object.getClass(), baseInterface)));
+            while (iterator.hasNext()) {
+                node.add(objectToSwing(iterator.next()));
+            }
+        } else {
+            if (object.getClass().isArray()) {
+                node = new DefaultMutableTreeNode("Array");
+                final int length = Array.getLength(object);
+                for (int i=0; i<length; i++) {
+                    node.add(objectToSwing(Array.get(object, i)));
+                }
+            } else {
+                if (object instanceof Map.Entry<?,?>) {
+                    final Map.Entry<?,?> entry = (Map.Entry<?,?>) object;
+                    node = new NamedTreeNode(String.valueOf(entry.getKey()), entry.getValue());
+                } else {
+                    node = new DefaultMutableTreeNode(object);
+                }
+                node.setAllowsChildren(false);
+            }
+        }
+        return node;
     }
 
     /**
