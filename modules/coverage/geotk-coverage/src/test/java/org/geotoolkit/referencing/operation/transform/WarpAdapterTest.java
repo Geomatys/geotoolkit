@@ -94,7 +94,7 @@ public final class WarpAdapterTest {
          */
         boolean direct = true;
         do {
-            Warp warp = WarpTransform2D.getWarp(null, direct ? tr : new PrivateTransform2D(tr));
+            Warp warp = WarpFactory.DEFAULT.create(null, direct ? tr : new PrivateTransform2D(tr));
             assertEquals(direct ? WarpAffine.class : WarpAdapter.class, warp.getClass());
 
             final float[] coordinates = warp.warpPoint(0, 0, null);
@@ -105,7 +105,7 @@ public final class WarpAdapterTest {
     }
 
     /**
-     * Tests the {@link WarpTransform2D#getWarp} method with an affine transform.
+     * Ensures that {@link WarpAdapter} computes the same values than {@link WarpAffine}.
      *
      * @since 3.14
      */

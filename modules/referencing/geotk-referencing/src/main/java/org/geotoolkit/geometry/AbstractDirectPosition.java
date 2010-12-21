@@ -103,20 +103,6 @@ public abstract class AbstractDirectPosition implements DirectPosition {
     }
 
     /**
-     * The default implementation delegates to {@link #setLocation(DirectPosition)}.
-     *
-     * @param position The new position.
-     *
-     * @since 2.5
-     *
-     * @deprecated Renamed {@link #setLocation(DirectPosition)}.
-     */
-    @Deprecated
-    public void setDirectPosition(final DirectPosition position) {
-        setLocation(position);
-    }
-
-    /**
      * Returns a sequence of numbers that hold the coordinate of this position in its
      * reference system.
      *

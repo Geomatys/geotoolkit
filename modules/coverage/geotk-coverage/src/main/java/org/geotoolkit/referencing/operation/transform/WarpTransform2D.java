@@ -31,7 +31,6 @@ import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
-import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.lang.Immutable;
@@ -132,10 +131,10 @@ public class WarpTransform2D extends AbstractMathTransform implements MathTransf
      *
      * @param srcBounds Bounding box of source coordinates, or {@code null} if unknown.
      * @param srcCoords Source coordinates.
-     * @param srcOffset The inital entry of {@code srcCoords} to be used.
+     * @param srcOffset The initial entry of {@code srcCoords} to be used.
      * @param dstBounds Bounding box of destination coordinates, or {@code null} if unknown.
      * @param dstCoords Destination coordinates.
-     * @param dstOffset The inital entry of {@code destCoords} to be used.
+     * @param dstOffset The initial entry of {@code destCoords} to be used.
      * @param numCoords The number of coordinates from {@code srcCoords} and {@code destCoords} to be used.
      * @param degree    The desired degree of the warp polynomials.
      */
@@ -295,42 +294,6 @@ public class WarpTransform2D extends AbstractMathTransform implements MathTransf
             return ((WarpAdapter) warp).getTransform();
         }
         return new WarpTransform2D(warp, (Warp) null);
-    }
-
-    /**
-     * Returns a {@linkplain Warp image warp} for the specified transform. The
-     * {@link Warp#warpPoint(int,int,float[]) Warp.warpPoint} method transforms coordinates from
-     * source to target CRS. Note that JAI's {@linkplain WarpDescriptor warp operation} needs a
-     * warp object with the opposite semantic (i.e. the image warp shall transform coordinates from
-     * target to source CRS). Consequently, consider invoking {@code getWarp(transform.inverse())}
-     * if the warp object is going to be used in an image reprojection.
-     *
-     * {@section Transforming pixel center coordinate}
-     * The <cite>Java Advanced Imaging</cite> {@code Warp} semantic is to apply the transforms
-     * as below:
-     * <p>
-     * <ul>
-     *   <li>Offset all input ordinates by 0.5 in order to get the coordinates of pixel centers.</li>
-     *   <li>Apply the transform.</li>
-     *   <li>Offset all output ordinates by -0.5 in order to compensate for the input offset.</li>
-     * </ul>
-     * <p>
-     * This semantic implies that
-     * {@linkplain org.opengis.coverage.grid.GridGeometry#getGridToCRS() grid to CRS} transforms
-     * were computed using {@link org.opengis.metadata.spatial.PixelOrientation#UPPER_LEFT}, as
-     * in Java2D usage.
-     *
-     * @param  name The image name or {@linkplain org.geotoolkit.coverage.grid.GridCoverage2D coverage}
-     *         name, or {@code null} if unknown. Used only for formatting error message if some
-     *         {@link TransformException} are thrown by the supplied transform.
-     * @param  transform The transform to returns as an image warp.
-     * @return The warp for the given transform.
-     *
-     * @deprecated Moved to {@link WarpFactory#create(CharSequence, MathTransform2D)}
-     */
-    @Deprecated
-    public static Warp getWarp(CharSequence name, final MathTransform2D transform) {
-        return WarpFactory.DEFAULT.create(name, transform);
     }
 
     /**

@@ -247,16 +247,6 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
     }
 
     /**
-     * @deprecated Renamed {@link #getOccurrences()}.
-     *
-     * @return The range of occurrences (never null).
-     */
-    @Deprecated
-    public NumberRange<Integer> getOccurences() {
-        return getOccurrences();
-    }
-
-    /**
      * Returns the range of occurrences that are valid for this node. This method never returns
      * {@code null} since the {@linkplain NumberRange#getMinValue() minimum value} of occurrences
      * is at least 0.

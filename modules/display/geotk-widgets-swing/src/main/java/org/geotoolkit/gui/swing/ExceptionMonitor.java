@@ -17,9 +17,7 @@
  */
 package org.geotoolkit.gui.swing;
 
-import java.awt.Rectangle;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -113,23 +111,6 @@ public final class ExceptionMonitor {
             };
             SwingUtilities.invokeAndWait(monitor);
         }
-    }
-
-    /**
-     * Writes the specified exception trace in the specified graphics context.  This method is
-     * useful when an exception has occurred inside a {@link Component#paint} method and we want
-     * to write it rather than leaving an empty window.
-     *
-     * @param graphics Graphics context in which to write exception. The graphics context should
-     *        be in its initial state (default affine transform, default color, etc...)
-     * @param widgetBounds Size of the trace which was being drawn.
-     * @param exception Exception whose trace we want to write.
-     *
-     * @deprecated Moved to the {@link Exceptions} utility class.
-     */
-    @Deprecated
-    public static void paintStackTrace(Graphics2D graphics, Rectangle widgetBounds, Throwable exception) {
-        Exceptions.paintStackTrace(graphics, widgetBounds, exception);
     }
 
     /**

@@ -19,7 +19,6 @@ package org.geotoolkit.image.io.mosaic;
 
 import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.io.IOException;
@@ -34,9 +33,6 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 
-import org.opengis.geometry.Envelope;
-import org.opengis.referencing.datum.PixelInCell;
-
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.math.Fraction;
 import org.geotoolkit.util.XArrays;
@@ -45,7 +41,6 @@ import org.geotoolkit.util.logging.PerformanceLevel;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.image.io.IIOListeners;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
@@ -125,15 +120,6 @@ public class MosaicBuilder implements LogProducer {
      * @since 3.16
      */
     private AffineTransform gridToCRS;
-
-    /**
-     * The geodetic envelope for the mosaic as a whole, or {@code null} if none.
-     * The envelope is optional. If specified, then this builder will use the
-     * envelope for assigning values to {@link Tile#getGridToCRS()}.
-     *
-     * @see #setGeodeticEnvelope(Rectangle2D)
-     */
-    private Rectangle2D mosaicEnvelope;
 
     /**
      * The mosaic bounding box in pixel coordinates. The initial value is {@code null}.
@@ -361,45 +347,6 @@ public class MosaicBuilder implements LogProducer {
      */
     public synchronized void setGridToCRS(final AffineTransform tr) {
         gridToCRS = (tr != null) ? new AffineTransform(tr) : null;
-    }
-
-    /**
-     * Returns the geodetic envelope for the mosaic as a whole, or {@code null} if none. The
-     * envelope is optional. If specified, then the builder will use the envelope for assigning
-     * values to {@link Tile#getGridToCRS()}.
-     *
-     * @return The current geodetic envelope, or {@code null} if none.
-     *
-     * @deprecated Replaced by {@link #getGridToCRS()}.
-     */
-    @Deprecated
-    public synchronized Envelope getMosaicEnvelope() {
-        return (mosaicEnvelope != null) ? new Envelope2D(null, mosaicEnvelope) : null;
-    }
-
-    /**
-     * Sets the geodetic envelope for the mosaic as a whole, or {@code null} if none.
-     * The envelope is optional. If specified, then the builder will invoke
-     * {@link TileManager#setGridToCRS(AffineTransform)} with a transform computed
-     * from the geodetic envelope and the {@linkplain #getUntiledImageBounds pixel envelope}.
-     * <p>
-     * Creating "<cite>grid to CRS</cite>" from an envelope is ambiguous since we don't know if axis
-     * need to be interchanged, <var>y</var> axis flipped, <i>etc.</i> Subclasses can gain more
-     * control by overriding the {@link #createGridToEnvelopeMapper(TileManager)} method.
-     * <p>
-     * Note that this method should <strong>not</strong> be invoked if the source {@link Tile}
-     * objects were given an {@link AffineTransform} at construction time, either directly or
-     * indirectly through a TFW file.
-     *
-     * @param envelope The new geodetic envelope, or {@code null} if none.
-     *
-     * @see #createGridToEnvelopeMapper(TileManager)
-     *
-     * @deprecated Replaced by {@link #setGridToCRS(AffineTransform)}.
-     */
-    @Deprecated
-    public synchronized void setMosaicEnvelope(final Envelope envelope) {
-        mosaicEnvelope = (envelope != null) ? new Envelope2D(envelope) : null;
     }
 
     /**
@@ -755,21 +702,13 @@ public class MosaicBuilder implements LogProducer {
             }
         }
         /*
-         * After TileManager creation, computes the "grid to CRS" transform if an envelope
-         * was given to this builder. If no envelope were given but a transform was already
+         * After TileManager creation, if a transform was already
          * specified in the input tiles, inherit that transform.
          */
-        if (gridToCRS == null) {
-            if (mosaicEnvelope != null && !mosaicEnvelope.isEmpty()) {
-                final GridToEnvelopeMapper mapper = createGridToEnvelopeMapper(output);
-                mapper.setGridRange(untiledBounds);
-                mapper.setEnvelope(mosaicEnvelope);
-                gridToCRS = (AffineTransform) mapper.createTransform();
-            } else if (input != null) {
-                final ImageGeometry geometry = input.getGridGeometry();
-                if (geometry != null) {
-                    gridToCRS = geometry.getGridToCRS();
-                }
+        if (gridToCRS == null && input != null) {
+            final ImageGeometry geometry = input.getGridGeometry();
+            if (geometry != null) {
+                gridToCRS = geometry.getGridToCRS();
             }
         }
         if (gridToCRS != null) {
@@ -1261,29 +1200,6 @@ public class MosaicBuilder implements LogProducer {
      */
     protected String generateFilename(final int level, final int column, final int row) {
         return formatter.generateFilename(level, column, row);
-    }
-
-    /**
-     * Invoked automatically when a "<cite>grid to CRS</cite>" transform needs to be computed. The
-     * default implementation returns a new {@link GridToEnvelopeMapper} instance in its default
-     * configuration, except for the {@linkplain GridToEnvelopeMapper#setPixelAnchor pixel anchor}
-     * which is set to {@link PixelInCell#CELL_CORNER CELL_CORNER} (OGC specification maps pixel
-     * center, while Java I/O maps pixel upper-left corner).
-     * <p>
-     * Subclasses may override this method in order to configure the mapper in an other way.
-     *
-     * @param tiles The tiles for which a "<cite>grid to CRS</cite>" transform needs to be computed.
-     * @return An "grid to envelope" mapper having the desired configuration.
-     *
-     * @see #setMosaicEnvelope
-     *
-     * @deprecated Replaced by {@code get/setGridToCRS(...)} method pair.
-     */
-    @Deprecated
-    protected GridToEnvelopeMapper createGridToEnvelopeMapper(final TileManager tiles) {
-        final GridToEnvelopeMapper mapper = new GridToEnvelopeMapper();
-        mapper.setPixelAnchor(PixelInCell.CELL_CORNER);
-        return mapper;
     }
 
     /**
