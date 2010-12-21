@@ -17,11 +17,14 @@
 
 package org.geotoolkit.process;
 
+import org.geotoolkit.parameter.Parameters;
+import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public abstract class AbstractProcess implements Process{
 
@@ -79,6 +82,10 @@ public abstract class AbstractProcess implements Process{
     @Override
     public void setInput(ParameterValueGroup parameter) {
         inputParameters = parameter;
+        final ConformanceResult res = Parameters.isValid(inputParameters, inputParameters.getDescriptor());
+        if(!res.pass()){
+            throw new IllegalArgumentException("Input parameters are unvalid.");
+        }
     }
 
     @Override

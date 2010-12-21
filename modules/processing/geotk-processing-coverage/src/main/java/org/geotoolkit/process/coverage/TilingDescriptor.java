@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009-2010, Geomatys
+ *    (C) 2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,19 +16,19 @@
  */
 package org.geotoolkit.process.coverage;
 
-import com.vividsolutions.jts.geom.Geometry;
+import java.io.File;
 
-import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Description of a coverage to polygon process.
@@ -36,56 +36,57 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public final class CoverageToVectorDescriptor extends AbstractProcessDescriptor{
+public final class TilingDescriptor extends AbstractProcessDescriptor{
 
-    public static final String NAME = "CoverageToVector";
+    public static final String NAME = "tyling";
 
     /**
      * Mandatory - Coverage to process
      */
-    public static final GeneralParameterDescriptor COVERAGE =
-            new DefaultParameterDescriptor("coverage","Coverage to process.",GridCoverage2D.class,null,true);
+    public static final GeneralParameterDescriptor IN_SOURCE_FILE =
+            new DefaultParameterDescriptor("source","Coverage to tyle.",File.class,null,true);
 
     /**
-     * Optional - Ranges to regroup
+     * Mandatory - Output folder
      */
-    public static final GeneralParameterDescriptor RANGES =
-            new DefaultParameterDescriptor("ranges","Ranges to regroup.",NumberRange[].class,null,false);
+    public static final GeneralParameterDescriptor IN_TILES_FOLDER =
+            new DefaultParameterDescriptor("target","Folder where tiles will be stored.",File.class,null,true);
 
-    /**
-     * Optional - selected band, default 0
-     */
-    public static final GeneralParameterDescriptor BAND =
-            new DefaultParameterDescriptor("band","Band to transform",Integer.class,0,false);
 
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup(NAME+"InputParameters",
-                new GeneralParameterDescriptor[]{COVERAGE,RANGES,BAND});
+                new GeneralParameterDescriptor[]{IN_SOURCE_FILE,IN_TILES_FOLDER});
 
     /**
-     * Mandatory - Result of vectorisation
+     * Mandatory - Resulting tile manager
      */
-    public static final GeneralParameterDescriptor GEOMETRIES =
-            new DefaultParameterDescriptor("geometries","Result of vectorisation.",Geometry[].class,null,true);
+    public static final GeneralParameterDescriptor OUT_TILE_MANAGER =
+            new DefaultParameterDescriptor("manager","Tile manager.",TileManager.class,null,true);
+
+    /**
+     * Optional - Coordinate Reference system of the tyle manager.
+     */
+    public static final GeneralParameterDescriptor OUT_CRS =
+            new DefaultParameterDescriptor("crs","Tile manager's coordinate reference system.",CoordinateReferenceSystem.class,null,false);
 
 
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new DefaultParameterDescriptorGroup(NAME+"OutputParameters",
-                new GeneralParameterDescriptor[]{GEOMETRIES});
+                new GeneralParameterDescriptor[]{OUT_TILE_MANAGER,OUT_CRS});
     
-    public static final ProcessDescriptor INSTANCE = new CoverageToVectorDescriptor();
+    public static final ProcessDescriptor INSTANCE = new TilingDescriptor();
 
 
-    private CoverageToVectorDescriptor(){
+    private TilingDescriptor(){
         super(NAME, CoverageProcessFactory.IDENTIFICATION,
-                new SimpleInternationalString("Transform a coverage in features "
-                + "by agregating pixels as geometries when they are in the same range."),
+                new SimpleInternationalString("Create a pyramid/mosaic from the given"
+                + "source. Created tiles are stored in the given folder."),
                 INPUT_DESC, OUTPUT_DESC);
     }
 
     @Override
     public Process createProcess() {
-        return new CoverageToVectorProcess();
+        return new TilingProcess();
     }
 
 }

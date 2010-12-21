@@ -26,18 +26,21 @@ import java.util.Set;
  * Abstract process factory.
  * 
  * @author Johann Sorel (Geomatys)
+ * @module pending
  */
 public abstract class AbstractProcessFactory implements ProcessFactory {
 
     private final Map<String,ProcessDescriptor> descriptors = new HashMap<String,ProcessDescriptor>();
 
-    protected void addDescriptor(ProcessDescriptor desc){
-        final String name = desc.getName().getCode();
-        descriptors.put(name, desc);
+    protected AbstractProcessFactory(final ProcessDescriptor ... descs){
+        for(final ProcessDescriptor desc : descs){
+            final String name = desc.getName().getCode();
+            descriptors.put(name, desc);
+        }
     }
 
     @Override
-    public ProcessDescriptor getDescriptor(String name) throws IllegalArgumentException{
+    public final ProcessDescriptor getDescriptor(String name) throws IllegalArgumentException{
         final ProcessDescriptor desc = descriptors.get(name);
         if(desc == null){
             throw new IllegalArgumentException("No process descriptor for name : "+ name);
@@ -47,19 +50,19 @@ public abstract class AbstractProcessFactory implements ProcessFactory {
     }
 
     @Override
-    public ProcessDescriptor[] getDescriptors() {
+    public final ProcessDescriptor[] getDescriptors() {
         final Collection<ProcessDescriptor> values = descriptors.values();
         return values.toArray(new ProcessDescriptor[values.size()]);
     }
 
     @Override
-    public String[] getNames() {
+    public final String[] getNames() {
         final Set<String> keys = descriptors.keySet();
         return keys.toArray(new String[keys.size()]);
     }
 
     @Override
-    public Process create(String name) throws IllegalArgumentException {
+    public final Process create(String name) throws IllegalArgumentException {
         return getDescriptor(name).createProcess();
     }
 

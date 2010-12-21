@@ -30,12 +30,12 @@ import org.opengis.metadata.identification.Identification;
 /**
  *
  * @author Johann sorel (Geomatys)
+ * @module pending
  */
 public class CoverageProcessFactory extends AbstractProcessFactory{
 
-    public static String NAME = "coverage";
-
-    private static final DefaultServiceIdentification IDENTIFICATION;
+    public static final String NAME = "coverage";
+    static final DefaultServiceIdentification IDENTIFICATION;
 
     static {
         IDENTIFICATION = new DefaultServiceIdentification();
@@ -43,12 +43,11 @@ public class CoverageProcessFactory extends AbstractProcessFactory{
         DefaultCitation citation = new DefaultCitation(NAME);
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
-
     }
 
-
     public CoverageProcessFactory(){
-        addDescriptor(new CoverageToVectorDescriptor(IDENTIFICATION));
+        super(CoverageToVectorDescriptor.INSTANCE,
+              TilingDescriptor.INSTANCE);
     }
 
     @Override

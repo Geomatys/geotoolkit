@@ -67,8 +67,8 @@ public class CoverageToVectorProcess extends AbstractProcess {
     //current pixel block
     private final Block block = new Block();
 
-    CoverageToVectorProcess(ProcessDescriptor descriptor) {
-        super(descriptor);
+    CoverageToVectorProcess() {
+        super(CoverageToVectorDescriptor.INSTANCE);
     }
 
     public Geometry[] toPolygon(GridCoverage2D coverage, final NumberRange[] ranges, int band)

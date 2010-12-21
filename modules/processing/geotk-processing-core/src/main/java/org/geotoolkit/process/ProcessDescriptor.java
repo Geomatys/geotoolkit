@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2010, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@ package org.geotoolkit.process;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.util.InternationalString;
 
 /**
  * Description of a process input and output parameters.
@@ -33,6 +34,12 @@ public interface ProcessDescriptor {
      * The authority property shall match the factory identification.
      */
     Identifier getName();
+
+    /**
+     * General description of this process.
+     * @return InternationalString or null
+     */
+    InternationalString getAbstract();
 
     /**
      * Input parameters description.
