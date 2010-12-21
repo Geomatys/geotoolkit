@@ -27,7 +27,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -185,6 +189,27 @@ public class FileUtilities {
         br.close();
         return sb.toString();
     }
+
+    /**
+     * Read the contents of a stream into string.
+     *
+     * @param f the file name
+     * @return The file contents as string
+     * @throws IOException if the file does not exist or cannot be read.
+     */
+    public static String getStringFromStream(InputStream stream) throws IOException {
+
+        final StringBuilder sb  = new StringBuilder();
+        final BufferedReader br = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
+        String line;
+        while ((line = br.readLine()) != null) {
+            sb.append(line).append('\n');
+        }
+        br.close();
+        stream.close();
+        return sb.toString();
+    }
+
 
     /**
      * Searches in the Context ClassLoader for the named directory and returns it.

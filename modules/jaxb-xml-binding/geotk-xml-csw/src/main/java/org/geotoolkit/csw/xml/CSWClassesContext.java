@@ -16,12 +16,18 @@
  */
 package org.geotoolkit.csw.xml;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.geotoolkit.ows.xml.v100.ExceptionReport;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
+import org.geotoolkit.util.FileUtilities;
+import org.geotoolkit.util.StringUtilities;
 
 
 /**
@@ -29,6 +35,8 @@ import org.geotoolkit.metadata.iso.DefaultMetadata;
  * @author Guilhem Legal (Geomatys)
  */
 public class CSWClassesContext {
+
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.csw.xml");
 
     protected CSWClassesContext() {}
 
@@ -105,6 +113,25 @@ public class CSWClassesContext {
                                         org.geotoolkit.feature.catalog.ListedValueImpl.class,
                                         org.geotoolkit.feature.catalog.PropertyTypeImpl.class,
                                         org.geotoolkit.util.Multiplicity.class));
+
+
+
+        try {
+            final InputStream stream        = CSWClassesContext.class.getResourceAsStream("extra-classes");
+            final String s                  = FileUtilities.getStringFromStream(stream);
+            final List<String> extraClasses = StringUtilities.toStringList(s, '\n');
+            for (String extraClassName : extraClasses) {
+                try {
+                    Class extraClass = Class.forName(extraClassName);
+                    classeList.add(extraClass);
+                } catch (ClassNotFoundException ex) {
+                    LOGGER.log(Level.INFO, "unable to find extra class:" + extraClassName, ex);
+                }
+
+            }
+        } catch (IOException ex) {
+            LOGGER.log(Level.SEVERE, "IO exception while getting extra-classes file", ex);
+        }
 
         return classeList;
     }
