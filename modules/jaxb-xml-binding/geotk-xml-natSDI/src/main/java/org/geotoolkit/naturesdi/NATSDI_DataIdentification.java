@@ -44,14 +44,14 @@ public class NATSDI_DataIdentification extends DefaultDataIdentification impleme
     /**
      * @return the speciesInformation
      */
-    public List<NATSDI_SpeciesInformation> getSpeciesInformation() {
+    public synchronized List<NATSDI_SpeciesInformation> getSpeciesInformation() {
         return speciesInformation = nonNullList(speciesInformation, NATSDI_SpeciesInformation.class);
     }
 
     /**
      * @param speciesInformation the speciesInformation to set
      */
-    public void setSpeciesInformation(List<NATSDI_SpeciesInformation> newValues) {
+    public synchronized void setSpeciesInformation(List<NATSDI_SpeciesInformation> newValues) {
         speciesInformation = copyList(newValues, speciesInformation, NATSDI_SpeciesInformation.class);
     }
 
