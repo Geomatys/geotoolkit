@@ -85,12 +85,14 @@ public class HotineObliqueMercator extends ObliqueMercator {
     public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Hotine_Oblique_Mercator"),
-            new NamedIdentifier(Citations.EPSG,    "Hotine Oblique Mercator"),
+            new NamedIdentifier(Citations.EPSG,    "Hotine Oblique Mercator (variant A)"), // Starting from 7.6
+            new NamedIdentifier(Citations.EPSG,    "Hotine Oblique Mercator"), // Prior to EPSG version 7.6
             new IdentifierCode (Citations.EPSG,     9812),
             new NamedIdentifier(Citations.GEOTIFF, "CT_ObliqueMercator_Hotine"),
             // Note: The GeoTIFF numerical code (3) is already used by CT_ObliqueMercator.
             new NamedIdentifier(Citations.ESRI,    "Hotine_Oblique_Mercator_Azimuth_Natural_Origin"),
             new NamedIdentifier(Citations.ESRI,    "Rectified_Skew_Orthomorphic_Natural_Origin"),
+            new NamedIdentifier(Citations.GEOTOOLKIT, "Rectified Skew Orthomorphic (RSO)"), // Legacy EPSG
             sameNameAs(Citations.GEOTOOLKIT, ObliqueMercator.PARAMETERS)
         }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR,          SEMI_MINOR, ROLL_LONGITUDE,

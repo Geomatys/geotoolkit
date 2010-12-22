@@ -40,7 +40,12 @@ public final class EpsgScriptRunnerTest {
      */
     @Test
     public void testReplacePattern() {
-        // Statement as in the EPSG scripts.
+        // Statement as in the EPSG scripts prior as of EPSG version 7.06.
+        assertTrue(Pattern.matches(EpsgScriptRunner.REPLACE_STATEMENT,
+                "UPDATE epsg_datum\n" +
+                "SET datum_name = replace(datum_name, CHR(182), CHR(10))"));
+
+        // Statement as in the EPSG scripts prior to EPSG version 7.06.
         assertTrue(Pattern.matches(EpsgScriptRunner.REPLACE_STATEMENT,
                 "UPDATE epsg_datum\n" +
                 "SET datum_name = replace(datum_name, CHAR(182), CHAR(10))"));

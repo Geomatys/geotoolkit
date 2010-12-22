@@ -119,7 +119,8 @@ public class Mercator2SP extends MapProjection {
     public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,  "Mercator_2SP"),
-            new NamedIdentifier(Citations.EPSG, "Mercator (2SP)"),
+            new NamedIdentifier(Citations.EPSG, "Mercator (variant B)"), // Starting from 7.6
+            new NamedIdentifier(Citations.EPSG, "Mercator (2SP)"), // Prior to EPSG version 7.6
             new IdentifierCode (Citations.EPSG,  9805),
             new NamedIdentifier(Citations.ESRI, "Mercator"),
                      sameNameAs(Citations.GEOTIFF,    Mercator1SP.PARAMETERS),

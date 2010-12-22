@@ -36,8 +36,10 @@ import static org.junit.Assert.*;
 
 
 /**
- * Tests {@link EpsgInstaller}. Current implementation merely tests
- * that the operation success without any exception being thrown.
+ * Tests {@link EpsgInstaller}. Every databases created by this test suite exists only in
+ * memory. This class does not write anything to disk (except maybe some temporary files).
+ * <p>
+ * Current implementation merely tests that the operation success without any exception being thrown.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.10

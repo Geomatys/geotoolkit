@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.StringTokenizer;
 import java.util.regex.Matcher;
@@ -36,7 +35,7 @@ import org.geotoolkit.internal.sql.ScriptRunner;
  * be used for other flavors (not officially supported by EPSG) like JavaDB.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.17
  *
  * @since 3.00
  * @module
@@ -109,23 +108,10 @@ final class EpsgScriptRunner extends ScriptRunner {
             suffixes.add(script);
         }
         /*
-         * Checks for supported data type.
-         */
-        boolean supportsText = false;
-        final DatabaseMetaData metadata = connection.getMetaData();
-        ResultSet result = metadata.getTypeInfo();
-        while (result.next()) {
-            String type = result.getString("TYPE_NAME");
-            if (type.equalsIgnoreCase("TEXT")) {
-                supportsText = true;
-                break;
-            }
-        }
-        result.close();
-        /*
          * Checks for supported functions.
          */
         boolean supportsReplace = false;
+        final DatabaseMetaData metadata = connection.getMetaData();
         final String functions = metadata.getStringFunctions();
         for (final StringTokenizer tk = new StringTokenizer(functions, ","); tk.hasMoreTokens();) {
             final String token = tk.nextToken().trim();
@@ -140,34 +126,16 @@ final class EpsgScriptRunner extends ScriptRunner {
             skip = Pattern.compile(REPLACE_STATEMENT, Pattern.CASE_INSENSITIVE).matcher("");
         }
         replaceParagraphs = false; // Never supported for now.
-        /*
-         * Some databases do not support the TEXT data type (for example JavaDB).
-         * In such case (detected by the above loop), replace TEXT by VARCHAR with
-         * an empirically determined size limit.
-         */
-        if (!supportsText) {
-            replacements.put("TEXT", "VARCHAR(4000)");
-        }
         switch (dialect) {
-            /*
-             * PostgreSQL expects the "CHAR" function to be actually spelled "CHR". We can not rely
-             * on the metadata.getFunctions(...) method because it is not implemented in PostgreSQL
-             * JDBC driver version 8.3-603.jdbc4, and metadata.getStringFunctions() wrongly reports
-             * "char".
-             */
-            case POSTGRESQL: {
-                replacements.put("CHAR", "CHR");
-                supportsCommit = false;
-                break;
-            }
             /*
              * HSQLDB doesn't seem to support the {@code UNIQUE} keyword in {@code CREATE TABLE}
              * statements. In addition, we must declare explicitly that we want the tables to be
-             * cached on disk.
+             * cached on disk. Finally, HSQL expects "CHR" to be spelled "CHAR".
              */
             case HSQL: {
                 replacements.put("CREATE TABLE", "CREATE CACHED TABLE");
                 replacements.put("UNIQUE", "");
+                replacements.put("CHR", "CHAR");
                 supportsCommit = true;
                 maxRowsPerInsert = 1;
                 break;
@@ -184,6 +152,10 @@ final class EpsgScriptRunner extends ScriptRunner {
              */
             case DERBY: {
                 replacements.put("UNIQUE", "UNIQUE NOT NULL");
+                supportsCommit = false;
+                break;
+            }
+            case POSTGRESQL: {
                 supportsCommit = false;
                 break;
             }

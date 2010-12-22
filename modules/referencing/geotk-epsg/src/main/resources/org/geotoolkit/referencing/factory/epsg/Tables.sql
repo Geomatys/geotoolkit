@@ -10,7 +10,7 @@ CONSTRAINT pk_alias PRIMARY KEY ( alias_code ) );
 CREATE TABLE epsg_area (
 area_code                                          INTEGER NOT NULL,
 area_name                                          VARCHAR(80) NOT NULL,
-area_of_use                                        TEXT NOT NULL,
+area_of_use                                        VARCHAR(4000) NOT NULL,
 area_south_bound_lat                               DOUBLE PRECISION,
 area_north_bound_lat                               DOUBLE PRECISION,
 area_west_bound_lon                                DOUBLE PRECISION,
@@ -36,7 +36,7 @@ request                                            VARCHAR(254) NOT NULL,
 tables_affected                                    VARCHAR(254),
 codes_affected                                     VARCHAR(254),
 change_comment                                     VARCHAR(254),
-action                                             TEXT,
+action                                             VARCHAR(4000),
 CONSTRAINT pk_change PRIMARY KEY ( change_id ) );
 
 CREATE TABLE epsg_coordinateaxis (
@@ -122,8 +122,8 @@ CREATE TABLE epsg_coordoperationmethod (
 coord_op_method_code                               INTEGER NOT NULL,
 coord_op_method_name                               VARCHAR(50) NOT NULL,
 reverse_op                                         SMALLINT NOT NULL,
-formula                                            TEXT,
-example                                            TEXT,
+formula                                            VARCHAR(4000),
+example                                            VARCHAR(4000),
 remarks                                            VARCHAR(254),
 information_source                                 VARCHAR(254),
 data_source                                        VARCHAR(40) NOT NULL,
@@ -135,7 +135,7 @@ CONSTRAINT pk_coordinate_operationmethod PRIMARY KEY ( coord_op_method_code ) );
 CREATE TABLE epsg_coordoperationparam (
 parameter_code                                     INTEGER NOT NULL,
 parameter_name                                     VARCHAR(80) NOT NULL,
-description                                        TEXT,
+description                                        VARCHAR(4000),
 information_source                                 VARCHAR(254),
 data_source                                        VARCHAR(40) NOT NULL,
 revision_date                                      DATE NOT NULL,

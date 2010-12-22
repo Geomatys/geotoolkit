@@ -152,7 +152,8 @@ public class Krovak extends MapProjection {
             new NamedIdentifier(Citations.OGC,        "Krovak"),
             new NamedIdentifier(Citations.GEOTIFF,    "Krovak"),
             new NamedIdentifier(Citations.GEOTOOLKIT, "Krovak Oblique Conformal Conic"),
-            new NamedIdentifier(Citations.EPSG,       "Krovak Oblique Conic Conformal"),
+            new NamedIdentifier(Citations.GEOTOOLKIT, "Krovak Oblique Conic Conformal"), // Legacy EPSG
+            new NamedIdentifier(Citations.EPSG,       "Krovak"), // Starting from EPSG version 7.6
             new IdentifierCode (Citations.EPSG,        9819),
         }, new ParameterDescriptor<?>[] {
             SEMI_MAJOR, SEMI_MINOR, ROLL_LONGITUDE,

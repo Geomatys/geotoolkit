@@ -44,9 +44,9 @@ import org.geotoolkit.internal.StringUtilities;
 
 
 /**
- * Generated a list of supported CRS. This class is not really a test, but failure to execute
- * it would be an indication of problem. This class is for manual execution after the EPSG
- * database has been updated, or the projection implementations changed.
+ * Generated a list of supported CRS in the current directory. This class is not really a test,
+ * but failure to execute it would be an indication of problem. This class is for manual execution
+ * after the EPSG database has been updated, or the projection implementations changed.
  * <p>
  * The result are formatted in the HTML format.
  *

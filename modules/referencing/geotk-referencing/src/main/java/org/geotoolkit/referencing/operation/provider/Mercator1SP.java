@@ -135,7 +135,8 @@ public class Mercator1SP extends MapProjection {
     public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Mercator_1SP"),
-            new NamedIdentifier(Citations.EPSG,    "Mercator (1SP)"),
+            new NamedIdentifier(Citations.EPSG,    "Mercator (variant A)"), // Starting from 7.6
+            new NamedIdentifier(Citations.EPSG,    "Mercator (1SP)"), // Prior to EPSG version 7.6.
             new NamedIdentifier(Citations.EPSG,    "Mercator (Spherical)"),
             new NamedIdentifier(Citations.EPSG,    "Mercator (1SP) (Spherical)"),
             new IdentifierCode (Citations.EPSG,     9804), // The ellipsoidal case

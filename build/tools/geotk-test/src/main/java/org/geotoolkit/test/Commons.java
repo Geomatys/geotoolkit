@@ -44,7 +44,7 @@ public class Commons {
      *
      * @since 3.11
      */
-    public static final String EPSG_VERSION = "7.5.0.1"; // NOSONAR: This is not an IP address.
+    public static final String EPSG_VERSION = "7.6";
 
     /**
      * The character to be substituted to {@code '"'} in {@link #printAsJavaCode}.

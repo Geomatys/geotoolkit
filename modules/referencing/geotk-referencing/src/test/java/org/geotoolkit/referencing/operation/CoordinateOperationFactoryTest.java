@@ -41,7 +41,6 @@ import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.ReferencingCommons;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.crs.DefaultDerivedCRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
@@ -60,6 +59,7 @@ import static org.geotoolkit.referencing.crs.DefaultTemporalCRS.UNIX;
 import static org.geotoolkit.referencing.crs.DefaultEngineeringCRS.GENERIC_2D;
 import static org.geotoolkit.referencing.crs.DefaultEngineeringCRS.CARTESIAN_2D;
 import static org.geotoolkit.referencing.crs.DefaultEngineeringCRS.CARTESIAN_3D;
+import static org.geotoolkit.referencing.ReferencingCommons.isEpsgFactoryAvailable;
 import static org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy.*;
 
 import org.junit.*;
@@ -307,6 +307,7 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
      */
     @Test
     public void testDatumShift() throws Exception {
+        assumeTrue(isEpsgFactoryAvailable());
         assertEquals("Factory is not using the expected datum shift method.", getDatumShiftMethod(),
                 ((Factory) opFactory).getImplementationHints().get(Hints.DATUM_SHIFT_METHOD));
 
@@ -855,7 +856,7 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
      */
     @Test
     public void testMercatorToGoogle() throws Exception {
-        assumeTrue(ReferencingCommons.isEpsgFactoryAvailable());
+        assumeTrue(isEpsgFactoryAvailable());
         final CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:3395");
         final CoordinateReferenceSystem targetCRS = CRS.decode("EPSG:3857");
         final CoordinateOperation op = opFactory.createOperation(sourceCRS, targetCRS);

@@ -110,7 +110,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      *
      * @see http://www.geotoolkit.org/build/tools/geotk-epsg-pack/index.html
      */
-    static final String VERSION = "7.05";
+    static final String VERSION = "7.06";
 
     /**
      * The user configuration file, which is {@value}. This file is used if no {@link DataSource}

@@ -149,7 +149,9 @@ public class ObliqueMercator extends MapProjection {
     public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Oblique_Mercator"),
-            new NamedIdentifier(Citations.EPSG,    "Oblique Mercator"),
+            new NamedIdentifier(Citations.EPSG,    "Hotine Oblique Mercator (variant B)"), // Starting from 7.6
+            new NamedIdentifier(Citations.EPSG,    "Oblique Mercator"), // Prior to EPSG database version 7.6
+            new NamedIdentifier(Citations.EPSG,    "Rectified Skew Orthomorphic (RSO)"),
             new IdentifierCode (Citations.EPSG,     9815),
             new NamedIdentifier(Citations.GEOTIFF, "CT_ObliqueMercator"),
             new IdentifierCode (Citations.GEOTIFF,  3), // Also used by CT_ObliqueMercator_Hotine

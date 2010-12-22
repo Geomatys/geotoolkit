@@ -60,7 +60,7 @@ import static org.geotoolkit.referencing.ReferencingCommons.*;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Vadim Semenov
- * @version 3.16
+ * @version 3.17
  *
  * @since 2.1
  */
@@ -367,7 +367,20 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
         assertTrue (datum instanceof AuthorityCodes);
         assertFalse(datum.isEmpty());
         assertTrue (datum.size() > 0);
-        assertTrue(Collections.disjoint(datum, crs));
+        if (false) {
+            // The two sets were distincts prior EPSG version 7.06.
+            // Starting from 7.06, there is some overlaps.
+            assertTrue(Collections.disjoint(datum, crs));
+        } else {
+            final Set<String> intersect = new HashSet<String>(crs);
+            intersect.retainAll(datum);
+            final int size = intersect.size();
+            assertTrue("CRS set size",   size <= crs.size());
+            assertTrue("Datum set size", size <= datum.size());
+            assertTrue("Number of overlaps: " + size, size <= 51);
+            assertTrue("CRS set sanity",   crs  .containsAll(intersect));
+            assertTrue("Datum set sanity", datum.containsAll(intersect));
+        }
 
         final Set<String> geodeticDatum = factory.getAuthorityCodes(GeodeticDatum.class);
         assertTrue (geodeticDatum instanceof AuthorityCodes);
@@ -614,7 +627,7 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
         assertTrue   (operation1 instanceof Transformation);
         assertNotSame(sourceCRS, targetCRS);
         assertFalse  (operation1.getMathTransform().isIdentity());
-        assertEquals (999, AbstractCoordinateOperation.getAccuracy(operation1), 1E-6);
+        assertEquals (2.5, AbstractCoordinateOperation.getAccuracy(operation1), 1E-6);
         /*
          * ED50 (4230)  -->  WGS 84 (4326)  using
          * Position Vector 7-param. transformation (9606).
