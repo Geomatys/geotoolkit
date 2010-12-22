@@ -140,21 +140,7 @@ final class EpsgScriptRunner extends ScriptRunner {
                 maxRowsPerInsert = 1;
                 break;
             }
-            /*
-             * JavaDB requires that every columns with the "UNIQUE" constraint are explicitly
-             * declared as "NOT NULL". Most columns are declared that way in the EPSG scripts
-             * except the "coord_axis_code" column in the "epsg_coordinateaxis" table  (as of
-             * EPSG database version 6.18).
-             *
-             * Note: replacing systematically "UNIQUE" by "UNIQUE NOT NULL" cause a duplication
-             * of the "NOT NULL" part when it was already included in the EPSG script.  However
-             * JavaDB seems to accept this redundancy.
-             */
-            case DERBY: {
-                replacements.put("UNIQUE", "UNIQUE NOT NULL");
-                supportsCommit = false;
-                break;
-            }
+            case DERBY:
             case POSTGRESQL: {
                 supportsCommit = false;
                 break;

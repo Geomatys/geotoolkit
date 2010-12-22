@@ -40,7 +40,7 @@ action                                             VARCHAR(4000),
 CONSTRAINT pk_change PRIMARY KEY ( change_id ) );
 
 CREATE TABLE epsg_coordinateaxis (
-coord_axis_code                                    INTEGER UNIQUE,
+coord_axis_code                                    INTEGER NOT NULL UNIQUE,
 coord_sys_code                                     INTEGER NOT NULL,
 coord_axis_name_code                               INTEGER NOT NULL,
 coord_axis_orientation                             VARCHAR(24) NOT NULL,

@@ -40,6 +40,9 @@ cp $EPSG_SCRIPTS/EPSG_v7_6.mdb_FKeys_MySQL.sql  FKeys.sql
         * In the statement creating the <<<epsg_datum>>> table, change the type of the <<<realization_epoch>>>
           column to <<<SMALLINT>>>.
 
+        * In the statement creating the <<<coordinateaxis>>> table, add the <<<NOT NULL>>> constraint
+          to the <<<coord_axis_code>>> column.
+
         * In the statement creating the <<<change>>> table, remove the <<<UNIQUE>>> constraint on the
           <<<change_id>>> column and add a <<<CONSTRAINT pk_change PRIMARY KEY (change_id)>>> line instead.
 
