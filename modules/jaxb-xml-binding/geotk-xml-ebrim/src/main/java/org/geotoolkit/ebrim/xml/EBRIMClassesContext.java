@@ -43,12 +43,13 @@ public final class EBRIMClassesContext extends CSWClassesContext {
     public static List<Class> getAllClassesList() {
         final List<Class> classes = CSWClassesContext.getAllClassesList();
 
-        //Ebrim classes
+        //Ebrim classes 3.0
         classes.add(IdentifiableType.class);
         classes.add(ExtrinsicObjectType.class);
         classes.add(org.geotoolkit.ebrim.xml.v300.ObjectFactory.class);
         classes.add(org.geotoolkit.wrs.xml.v100.ObjectFactory.class);
 
+        //Ebrim classes 2.5
         classes.add(RegistryObjectType.class);
         classes.add(org.geotoolkit.ebrim.xml.v250.ObjectFactory.class);
         classes.add(org.geotoolkit.wrs.xml.v090.ObjectFactory.class);

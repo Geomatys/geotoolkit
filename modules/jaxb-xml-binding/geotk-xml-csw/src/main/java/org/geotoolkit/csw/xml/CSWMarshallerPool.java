@@ -20,6 +20,7 @@ package org.geotoolkit.csw.xml;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
+import org.geotoolkit.xml.AnchoredMarshallerPool;
 import org.geotoolkit.xml.MarshallerPool;
 
 /**
@@ -31,7 +32,7 @@ public class CSWMarshallerPool {
     private static MarshallerPool instance;
     static {
         try {
-            instance = new MarshallerPool(CSWClassesContext.getAllClasses());
+            instance = new AnchoredMarshallerPool(CSWClassesContext.getAllClasses());
         } catch (JAXBException ex) {
             Logger.getLogger(CSWMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }

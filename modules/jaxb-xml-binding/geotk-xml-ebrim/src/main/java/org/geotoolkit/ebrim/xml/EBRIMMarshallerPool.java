@@ -20,6 +20,7 @@ package org.geotoolkit.ebrim.xml;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
+import org.geotoolkit.xml.AnchoredMarshallerPool;
 import org.geotoolkit.xml.MarshallerPool;
 
 /**
@@ -31,7 +32,7 @@ public class EBRIMMarshallerPool {
     private static MarshallerPool instance;
     static {
         try {
-            instance = new MarshallerPool(EBRIMClassesContext.getAllClasses());
+            instance = new AnchoredMarshallerPool(EBRIMClassesContext.getAllClasses());
         } catch (JAXBException ex) {
             Logger.getLogger(EBRIMMarshallerPool.class.getName()).log(Level.SEVERE, null, ex);
         }
