@@ -27,7 +27,6 @@ import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
 
 import org.opengis.util.FactoryException;
-import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.datum.GeodeticDatum;
@@ -403,7 +402,7 @@ public class EarthGravitationalModel extends VerticalTransform {
     @Override
     public ParameterValueGroup getParameterValues() {
         return new ParameterGroup(getParameterDescriptors(),
-               new ParameterValue<?>[] {new Parameter<Integer>(ORDER, nmax)});
+               new Parameter<Integer>(ORDER, nmax));
     }
 
     /**

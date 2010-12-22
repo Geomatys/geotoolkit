@@ -100,7 +100,8 @@ public class DateRange extends Range<Date> {
      * Invoked for argument checking by the super-class constructor.
      */
     @Override
-    void checkElementClass() throws IllegalArgumentException {
+    final void checkElementClass() throws IllegalArgumentException {
+        // No need to call super.checkElementClass() because Date implements Comparable.
         if (!Date.class.isAssignableFrom(elementClass)) {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.ILLEGAL_CLASS_$2, elementClass, Date.class));

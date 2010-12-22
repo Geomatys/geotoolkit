@@ -370,7 +370,6 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
         final ParameterValue<Integer> dim = new Parameter<Integer>(Molodensky.DIM);
         dim.setValue(getSourceDimensions());
         return new ParameterGroup(getParameterDescriptors(),
-               new ParameterValue<?>[] {
                    dim,
                    new FloatParameter(Molodensky.DX,             dx),
                    new FloatParameter(Molodensky.DY,             dy),
@@ -378,8 +377,7 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
                    new FloatParameter(Molodensky.SRC_SEMI_MAJOR, a),
                    new FloatParameter(Molodensky.SRC_SEMI_MINOR, b),
                    new FloatParameter(Molodensky.TGT_SEMI_MAJOR, a + da),
-                   new FloatParameter(Molodensky.TGT_SEMI_MINOR, b + db)
-               });
+                   new FloatParameter(Molodensky.TGT_SEMI_MINOR, b + db));
     }
 
     /**

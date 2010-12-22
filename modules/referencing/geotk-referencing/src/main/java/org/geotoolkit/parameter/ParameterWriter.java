@@ -20,8 +20,10 @@ package org.geotoolkit.parameter;
 import java.util.*;
 import java.io.Writer;
 import java.io.Console;
-import java.io.FilterWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.FilterWriter;
 import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.NumberFormat;
@@ -45,6 +47,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.Localized;
 
+import static org.geotoolkit.io.TableWriter.*;
 import static org.geotoolkit.util.collection.XCollections.hashMapCapacity;
 
 
@@ -55,7 +58,7 @@ import static org.geotoolkit.util.collection.XCollections.hashMapCapacity;
  * drawing box characters (e.g. unicode).
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.03
+ * @version 3.17
  *
  * @since 2.1
  * @module
@@ -109,10 +112,27 @@ public class ParameterWriter extends FilterWriter implements Localized {
     private boolean colorEnabled;
 
     /**
-     * Creates a new formatter writing parameters to the default output stream.
+     * {@code true} if the table should be formatted in a brief format. If {@code true}, then
+     * for each descriptor only the {@linkplain IdentifiedObject#getName() name} is formatted;
+     * {@linkplain IdentifiedObject#getAlias() aliases} and {@linkplain IdentifiedObject#getIdentifiers()
+     * identifiers} are omitted. In addition, no line separator will be inserted between
+     * parameters since most parameters will fit on a single line.
+     *
+     * @since 3.17
+     */
+    private boolean brief;
+
+    /**
+     * Creates a new formatter writing parameters to the {@linkplain System#console() console}
+     * if there is one, or to the {@linkplain System#out default output stream} otherwise. If
+     * the output is the console and the {@linkplain X3.64} standard is enabled, than the
+     * default value of {@link #isColorEnabled()} will be {@code true}.
      */
     public ParameterWriter() {
-        this(standardOutput());
+        super(standardOutput());
+        if (out instanceof PrintWriter) { // Implies out == System.console().writer();
+            colorEnabled = X364.isSupported();
+        }
     }
 
     /**
@@ -138,7 +158,8 @@ public class ParameterWriter extends FilterWriter implements Localized {
     }
 
     /**
-     * Prints the elements of an operation to the default output stream.
+     * Prints the elements of an operation to the {@linkplain System#console() console} with colored
+     * syntax if possible, or to the {@linkplain System#out default output stream} otherwise.
      * This is a convenience method for:
      *
      * {@preformat java
@@ -158,7 +179,8 @@ public class ParameterWriter extends FilterWriter implements Localized {
     }
 
     /**
-     * Prints the elements of a descriptor group to the output stream.
+     * Prints the elements of a descriptor group to the {@linkplain System#console() console} with
+     * colored syntax if possible, or to the {@linkplain System#out default output stream} otherwise.
      * This is a convenience method for:
      *
      * {@preformat java
@@ -178,11 +200,12 @@ public class ParameterWriter extends FilterWriter implements Localized {
     }
 
     /**
-     * Prints the elements of a parameter group to the default output stream.
+     * Prints the elements of a parameter group to the {@linkplain System#console() console} with
+     * colored syntax if possible, or to the {@linkplain System#out default output stream} otherwise.
      * This is a convenience method for:
      *
      * {@preformat java
-     *     new ParameterWriter().format(value)
+     *     new ParameterWriter().format(values)
      * }
      *
      * @param values The parameter values to write.
@@ -195,6 +218,69 @@ public class ParameterWriter extends FilterWriter implements Localized {
             // Should never happen, since we are writing to System.out.
             throw new AssertionError(exception);
         }
+    }
+
+    // There is no toString(OperationMethod) convenience method, because
+    // they already have a toString() implementation producing pseudo-WKT.
+
+    /**
+     * Returns a string representation of the given descriptor group in the
+     * {@linkplain #isBrief() brief} format. This is a convenience method for:
+     *
+     * {@preformat java
+     *     StringWriter    buffer = new StringWriter();
+     *     ParameterWriter writer = new ParameterWriter(buffer);
+     *     writer.setBrief(true);
+     *     writer.format(descriptor);
+     *     return buffer.toString();
+     * }
+     *
+     * @param  descriptor The parameter descriptor to format.
+     * @return The string representation of the given parameter descriptor.
+     *
+     * @since 3.17
+     */
+    public static String toString(final ParameterDescriptorGroup descriptor) {
+        final StringWriter buffer = new StringWriter();
+        final ParameterWriter writer = new ParameterWriter(buffer);
+        writer.brief = true;
+        try {
+            writer.format(descriptor);
+        } catch (IOException exception) {
+            // Should never happen, since we are writing to a StringBuffer.
+            throw new AssertionError(exception);
+        }
+        return buffer.toString();
+    }
+
+    /**
+     * Returns a string representation of the given parameter group in the
+     * {@linkplain #isBrief() brief} format. This is a convenience method for:
+     *
+     * {@preformat java
+     *     StringWriter    buffer = new StringWriter();
+     *     ParameterWriter writer = new ParameterWriter(buffer);
+     *     writer.setBrief(true);
+     *     writer.format(values);
+     *     return buffer.toString();
+     * }
+     *
+     * @param  values The parameter values to format.
+     * @return The string representation of the given parameter values.
+     *
+     * @since 3.17
+     */
+    public static String toString(final ParameterValueGroup values) {
+        final StringWriter buffer = new StringWriter();
+        final ParameterWriter writer = new ParameterWriter(buffer);
+        writer.brief = true;
+        try {
+            writer.format(values);
+        } catch (IOException exception) {
+            // Should never happen, since we are writing to a StringBuffer.
+            throw new AssertionError(exception);
+        }
+        return buffer.toString();
     }
 
     /**
@@ -253,18 +339,19 @@ public class ParameterWriter extends FilterWriter implements Localized {
          */
         final Writer  out           = this.out;
         final Locale  locale        = this.locale;
+        final boolean brief         = this.brief;
         final boolean colorEnabled  = this.colorEnabled;
         final String  lineSeparator = System.getProperty("line.separator", "\n");
         final Vocabulary resources  = Vocabulary.getResources(locale);
-        new ParameterTableRow(group, locale, null).write(out, colorEnabled, false, lineSeparator);
+        new ParameterTableRow(group, locale, null, brief).write(out, colorEnabled, false, lineSeparator);
         out.write(lineSeparator);
         /*
          * Formats the table header (i.e. the column names).
          */
-        char horizontalLine = TableWriter.DOUBLE_HORIZONTAL_LINE;
+        char horizontalLine = brief ? SINGLE_HORIZONTAL_LINE : DOUBLE_HORIZONTAL_LINE;
         final TableWriter table = new TableWriter(out);
         table.setMultiLinesCells(true);
-        table.nextLine(horizontalLine);
+        table.nextLine(DOUBLE_HORIZONTAL_LINE);
 header: for (int i=0; ; i++) {
             boolean eol = false;
             final int key;
@@ -326,7 +413,7 @@ header: for (int i=0; ; i++) {
             }
             ParameterTableRow row = descriptorValues.get(descriptor);
             if (row == null) {
-                row = new ParameterTableRow(descriptor, locale, value);
+                row = new ParameterTableRow(descriptor, locale, value, brief);
                 descriptorValues.put(descriptor, row);
             } else {
                 row.addValue(value);
@@ -346,8 +433,10 @@ header: for (int i=0; ; i++) {
         final Double POSITIVE_INFINITY = Double.POSITIVE_INFINITY; // Auto-boxing
         final Double NEGATIVE_INFINITY = Double.NEGATIVE_INFINITY; // Auto-boxing
         for (final Map.Entry<GeneralParameterDescriptor,ParameterTableRow> entry : descriptorValues.entrySet()) {
-            table.nextLine(horizontalLine);
-            horizontalLine = TableWriter.SINGLE_HORIZONTAL_LINE;
+            if (horizontalLine != 0) {
+                table.nextLine(horizontalLine);
+            }
+            horizontalLine = brief ? 0 : SINGLE_HORIZONTAL_LINE;
             final ParameterTableRow row = entry.getValue();
             row.width = authorityLength;
             row.write(table, false, colorEnabled, lineSeparator);
@@ -369,7 +458,7 @@ header: for (int i=0; ; i++) {
                 boolean negative = false;
                 final boolean isNumber = Number.class.isAssignableFrom(valueClass);
                 if (isNumber) {
-                    table.setAlignment(TableWriter.ALIGN_RIGHT);
+                    table.setAlignment(ALIGN_RIGHT);
                     if (minimum == null) minimum = NEGATIVE_INFINITY;
                     if (maximum == null) maximum = POSITIVE_INFINITY;
                     negative = ((Number) minimum).doubleValue() < 0;
@@ -401,7 +490,7 @@ header: for (int i=0; ; i++) {
                     }
                 }
                 table.nextColumn();
-                table.setAlignment(TableWriter.ALIGN_LEFT);
+                table.setAlignment(ALIGN_LEFT);
                 final Unit<?> unit = descriptor.getUnit();
                 if (unit != null) {
                     if (unitFormat == null) {
@@ -412,7 +501,7 @@ header: for (int i=0; ; i++) {
             }
             table.nextLine();
         }
-        table.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
+        table.nextLine(DOUBLE_HORIZONTAL_LINE);
         table.flush();
         /*
          * Now formats all groups deferred to the end of this table, with recursive calls to
@@ -548,7 +637,7 @@ header: for (int i=0; ; i++) {
          * names will treated especially, because cit ontains ambiguous names.
          */
         synchronized (lock) {
-            final TableWriter table = new TableWriter(out, TableWriter.SINGLE_VERTICAL_LINE);
+            final TableWriter table = new TableWriter(out, SINGLE_VERTICAL_LINE);
             table.setMultiLinesCells(true);
             table.writeHorizontalSeparator();
             /*
@@ -684,8 +773,40 @@ header: for (int i=0; ; i++) {
     }
 
     /**
+     * Returns {@code true} if the table is formatted in a brief format. If {@code true}, then
+     * for each descriptor only the {@linkplain IdentifiedObject#getName() name} is formatted;
+     * {@linkplain IdentifiedObject#getAlias() aliases} and {@linkplain IdentifiedObject#getIdentifiers()
+     * identifiers} are omitted. In addition, no line separator will be inserted between
+     * parameters since most parameters will fit on a single line.
+     *
+     * @return {@code true} for the brief format, or {@code false} for the complete format.
+     *
+     * @since 3.17
+     */
+    public boolean isBrief() {
+        synchronized (lock) {
+            return brief;
+        }
+    }
+
+    /**
+     * Sets whatever the table should formatted in a brief format.
+     *
+     * @param b {@code true} for the brief format, or {@code false} for the complete format.
+     *
+     * @since 3.17
+     */
+    public void setBrief(final boolean b) {
+        synchronized (lock) {
+            brief = b;
+        }
+    }
+
+    /**
      * Returns {@code true} if this writer is allowed to send color instructions for
-     * {@linkplain X364 X3.64} compatible terminal. The default value is {@code false}.
+     * {@linkplain X364 X3.64} compatible terminal. The default value is {@code false},
+     * unless the {@linkplain #ParameterWriter() no-argument} constructor was used and
+     * the console seems to be compatible with the X3.64 standard.
      *
      * @return {@code true} if this writer is allowed to send X3.64 sequences.
      *
@@ -699,8 +820,11 @@ header: for (int i=0; ; i++) {
 
     /**
      * Sets whatever this writer is allowed to send color instructions for {@linkplain X364 X3.64}
-     * compatible terminal. This is used for example in order to emphase the identifier in a list
-     * of alias. The default value is {@code false}.
+     * compatible terminal. This is used for example in order to emphases the identifier in a list
+     * of alias.
+     * <p>
+     * The default value is {@code false}, unless the {@linkplain #ParameterWriter() no-argument}
+     * constructor was used and the console seems to be compatible with the X3.64 standard.
      *
      * @param enabled {@code true} to allow this writer to send X3.64 sequences.
      *

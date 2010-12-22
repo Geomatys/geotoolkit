@@ -165,7 +165,7 @@ public final class Citations {
     public static final Citation GEOTOOLKIT;
     static {
         final CitationConstant c = new CitationConstant(DefaultResponsibleParty.GEOTOOLKIT, "GEOTOOLKIT");
-        c.addAuthority("Geotoolkit.org", false);
+        c.addAuthority("Geotk", false);
         c.freeze();
         GEOTOOLKIT = c;
     }

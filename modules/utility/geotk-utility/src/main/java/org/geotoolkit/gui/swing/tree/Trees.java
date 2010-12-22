@@ -152,7 +152,9 @@ public final class Trees {
      * This method processes the following cases especially:
      * <p>
      * <ul>
-     *   <li>If the given object is an ordinary object (not an array, collection or map),
+     *   <li>If the given object is an instance of {@link Node}, then this method delegates
+     *       to {@link #xmlToSwing(Node)}.</li>
+     *   <li>If the given object is a value object (not an array, collection or map),
      *       then this method returns a single {@link DefaultMutableTreeNode} which contain
      *       the given object as {@linkplain TreeNode#getUserObject() user object}.</li>
      *   <li>If the given object is an instance of {@link java.util.Map.Entry}, then this
@@ -192,6 +194,8 @@ public final class Trees {
                 for (int i=0; i<length; i++) {
                     node.add(objectToSwing(Array.get(object, i)));
                 }
+            } else if (object instanceof Node) {
+                return xmlToSwing((Node) object);
             } else {
                 if (object instanceof Map.Entry<?,?>) {
                     final Map.Entry<?,?> entry = (Map.Entry<?,?>) object;

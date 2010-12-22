@@ -38,7 +38,7 @@
               <gmd:identifier>
                 <gmd:MD_Identifier>
                   <gmd:code>
-                    <gco:CharacterString>Geotoolkit.org</gco:CharacterString>
+                    <gco:CharacterString>Geotk</gco:CharacterString>
                   </gmd:code>
                 </gmd:MD_Identifier>
               </gmd:identifier>

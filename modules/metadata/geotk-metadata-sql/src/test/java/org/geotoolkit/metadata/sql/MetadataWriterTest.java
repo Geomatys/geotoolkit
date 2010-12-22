@@ -100,10 +100,10 @@ public final class MetadataWriterTest {
      * @throws SQLException If an error occurred while writing or reading the database.
      */
     private void write() throws SQLException {
-        assertEquals("OGC",            source.add(Citations.OGC));
-        assertEquals("EPSG",           source.add(Citations.EPSG));
-        assertEquals("Geotoolkit.org", source.add(Citations.GEOTOOLKIT));
-        assertEquals("JAI",            source.add(Citations.JAI));
+        assertEquals("OGC",   source.add(Citations.OGC));
+        assertEquals("EPSG",  source.add(Citations.EPSG));
+        assertEquals("Geotk", source.add(Citations.GEOTOOLKIT));
+        assertEquals("JAI",   source.add(Citations.JAI));
     }
 
     /**
@@ -124,10 +124,10 @@ public final class MetadataWriterTest {
      */
     private void search() throws SQLException {
         assertNull(source.search(Citations.ORACLE));
-        assertEquals("JAI",            source.search(Citations.JAI));
-        assertEquals("EPSG",           source.search(Citations.EPSG));
-        assertEquals("OGC",            source.search(Citations.OGC));
-        assertEquals("Geotoolkit.org", source.search(Citations.GEOTOOLKIT));
+        assertEquals("JAI",   source.search(Citations.JAI));
+        assertEquals("EPSG",  source.search(Citations.EPSG));
+        assertEquals("OGC",   source.search(Citations.OGC));
+        assertEquals("Geotk", source.search(Citations.GEOTOOLKIT));
         assertNull(source.search(Citations.ESRI));
         assertNull(source.search(DefaultResponsibleParty.ESRI));
         assertEquals("EPSG", source.search(DefaultResponsibleParty.EPSG));

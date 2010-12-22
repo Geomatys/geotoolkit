@@ -44,7 +44,7 @@ import static org.geotoolkit.util.Strings.spaces;
  * A row in the table to be formatted by {@link ParameterWriter}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.17
  *
  * @since 3.00
  * @module
@@ -83,8 +83,9 @@ final class ParameterTableRow {
      * @param object The object for which to get the (<var>authority</var>,<var>name(s)</var>).
      * @param locale The locale for formatting the names.
      * @param value  The initial singleton value. More may be added later.
+     * @param brief  {@code true} for excluding aliases and identifiers.
      */
-    ParameterTableRow(final IdentifiedObject object, final Locale locale, final Object value) {
+    ParameterTableRow(final IdentifiedObject object, final Locale locale, final Object value, final boolean brief) {
         this.value = value;
         /*
          * Creates a collection which will contain the identifier and all aliases
@@ -93,20 +94,22 @@ final class ParameterTableRow {
         identifiers = new LinkedHashMap<String,Set<Object>>();
         final Identifier identifier = object.getName();
         addIdentifier(getAuthority(identifier), identifier.getCode()); // Really want .getCode()
-        final Collection<GenericName> alias = object.getAlias();
-        if (alias != null) {
-            for (final GenericName candidate : alias) {
-                String authority = null;
-                if (candidate instanceof Identifier) {
-                    authority = getAuthority((Identifier) candidate);
+        if (!brief) {
+            final Collection<GenericName> alias = object.getAlias();
+            if (alias != null) {
+                for (final GenericName candidate : alias) {
+                    String authority = null;
+                    if (candidate instanceof Identifier) {
+                        authority = getAuthority((Identifier) candidate);
+                    }
+                    addIdentifier(authority, candidate.tip().toInternationalString().toString(locale));
                 }
-                addIdentifier(authority, candidate.tip().toInternationalString().toString(locale));
             }
-        }
-        final Collection<? extends Identifier> ids = object.getIdentifiers();
-        if (ids != null) {
-            for (final Identifier id : ids) {
-                addIdentifier(getAuthority(id), id); // No .getCode() here.
+            final Collection<? extends Identifier> ids = object.getIdentifiers();
+            if (ids != null) {
+                for (final Identifier id : ids) {
+                    addIdentifier(getAuthority(id), id); // No .getCode() here.
+                }
             }
         }
     }

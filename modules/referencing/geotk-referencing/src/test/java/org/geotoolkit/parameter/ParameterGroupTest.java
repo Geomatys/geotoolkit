@@ -35,6 +35,7 @@ import static org.opengis.test.Validators.*;
  *
  * @since 2.1
  */
+@SuppressWarnings("serial")
 public final class ParameterGroupTest {
     /**
      * Tests parameter values group.
@@ -105,7 +106,7 @@ public final class ParameterGroupTest {
          *    - v3   is optional
          * --------------------------------------------- */
         properties = name("group");
-        group      = new ParameterGroup(properties, new Parameter[] {v1, v2, v3});
+        group      = new ParameterGroup(properties, v1, v2, v3);
         descriptor = group.getDescriptor();
         content    = descriptor.descriptors();
 
@@ -169,7 +170,7 @@ public final class ParameterGroupTest {
         assertEquals("values.size()", 3, values.size());
 
         // Tests equality
-        assertEquals("new", group, group=new ParameterGroup(descriptor, new Parameter[] {v1b, v2b, v3b}));
+        assertEquals("new", group, group = new ParameterGroup(descriptor, v1b, v2b, v3b));
 
         /* --------------------------------------------- *
          * Case (v1, v2) where:
@@ -177,7 +178,7 @@ public final class ParameterGroupTest {
          *    - v2   is mandatory
          *    - v3   is optional and initially omitted
          * --------------------------------------------- */
-        group      = new ParameterGroup(descriptor, new Parameter[] {v1, v2});
+        group      = new ParameterGroup(descriptor, v1, v2);
         descriptor = group.getDescriptor();
         values     = group.values();
         automatic  = v3.getDescriptor().createValue();
@@ -236,14 +237,14 @@ public final class ParameterGroupTest {
          *    - v4   is optional and can be included twice.
          * --------------------------------------------- */
         try {
-            group = new ParameterGroup(properties, new Parameter[] {v1, v3, v4, v3b});
+            group = new ParameterGroup(properties, v1, v3, v4, v3b);
             fail("Adding two 'v3' value should not be allowed");
         } catch (InvalidParameterCardinalityException e) {
             // This is the expected exception.
             assertEquals("3", e.getParameterName());
             assertNotNull(e.getMessage());
         }
-        group      = new ParameterGroup(properties, new Parameter[] {v1, v4, v3, v4b});
+        group      = new ParameterGroup(properties, v1, v4, v3, v4b);
         descriptor = group.getDescriptor();
         values     = group.values();
         automatic  = v3.getDescriptor().createValue();
@@ -266,21 +267,21 @@ public final class ParameterGroupTest {
         assertTrue     ("contains(automatic)", values.contains(automatic));
 
         try {
-            new ParameterGroup(descriptor, new Parameter[] {v4, v3});
+            new ParameterGroup(descriptor, v4, v3);
             fail("Parameter 1 was mandatory.");
         } catch (InvalidParameterCardinalityException exception) {
             // This is the expected exception.
             assertEquals("1", exception.getParameterName());
         }
         try {
-            new ParameterGroup(descriptor, new Parameter[] {v1, v4, v3, v3b});
+            new ParameterGroup(descriptor, v1, v4, v3, v3b);
             fail("Parameter 3 was not allowed to be inserted twice.");
         } catch (InvalidParameterCardinalityException exception) {
             // This is the expected exception.
             assertEquals("3", exception.getParameterName());
         }
         try {
-            new ParameterGroup(descriptor, new Parameter[] {v1, v3, v1b});
+            new ParameterGroup(descriptor, v1, v3, v1b);
             fail("Parameter 1 was not allowed to be inserted twice.");
         } catch (InvalidParameterCardinalityException exception) {
             // This is the expected exception.
@@ -292,7 +293,7 @@ public final class ParameterGroupTest {
          *    - v1   is mandatory
          *    - v2   is mandatory
          * --------------------------------------------- */
-        group      = new ParameterGroup(properties, new Parameter[] {v1, v2});
+        group      = new ParameterGroup(properties, v1, v2);
         descriptor = group.getDescriptor();
         content    = descriptor.descriptors();
         writer.format(group); // Ensure there is no exception there.
@@ -334,7 +335,7 @@ public final class ParameterGroupTest {
          *    - v1   is mandatory
          *    - v3   is optional
          * --------------------------------------------- */
-        group      = new ParameterGroup(properties, new Parameter[] {v1, v3});
+        group      = new ParameterGroup(properties, v1, v3);
         descriptor = group.getDescriptor();
         content    = descriptor.descriptors();
         writer.format(group); // Ensure there is no exception there.
@@ -374,18 +375,18 @@ public final class ParameterGroupTest {
         /* --------------------------------------------- *
          * Construction tests
          * --------------------------------------------- */
-        group = new ParameterGroup(properties, new Parameter[] {v1, v2, v3, v4, v4b});
+        group = new ParameterGroup(properties, v1, v2, v3, v4, v4b);
         writer.format(group); // Ensure there is no exception there.
         assertEquals("values.size()", 5, group.values().size());
         try {
-            new ParameterGroup(properties, new Parameter[] {v1, v2, v3, v3b});
+            new ParameterGroup(properties, v1, v2, v3, v3b);
             fail("Parameter 3 was not allowed to be inserted twice.");
         } catch (InvalidParameterCardinalityException e) {
             // This is the expected exception.
             assertEquals("3", e.getParameterName());
         }
         try {
-            new ParameterGroup(properties, new Parameter[] {v1, v3, v1b});
+            new ParameterGroup(properties, v1, v3, v1b);
             fail("Parameter 1 was not allowed to be inserted twice.");
         } catch (InvalidParameterCardinalityException e) {
             // This is the expected exception.

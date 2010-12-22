@@ -111,5 +111,7 @@ public final class ParameterDescriptorTest {
         } catch (IllegalArgumentException exception) {
             // This is the expected exception.
         }
+        assertEquals("DefaultParameterDescriptor[\"Test\", mandatory, class=Double, " +
+                "valid=[4.0 … 20.0], default=12.0, unit=m]", descriptor.toString());
     }
 }

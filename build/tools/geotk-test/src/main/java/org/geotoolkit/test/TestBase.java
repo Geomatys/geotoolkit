@@ -19,7 +19,7 @@ package org.geotoolkit.test;
 
 import java.util.logging.Level;
 
-import org.junit.Before;
+import org.junit.*;
 
 
 /**
@@ -27,7 +27,7 @@ import org.junit.Before;
  * are commons to all subclasses.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.17
  *
  * @since 3.16
  */
@@ -42,8 +42,8 @@ public abstract class TestBase {
      * Configures the logging handler and the logging level to use for the test suite.
      * This method uses reflection for installing the handler provided in Geotk.
      */
-    @Before
-    public void loggingSetup() {
+    @BeforeClass
+    public static void loggingSetup() {
         try {
             final Class<?> logging = Class.forName("org.geotoolkit.util.logging.Logging");
             logging.getMethod("forceMonolineConsoleOutput", Level.class).invoke(

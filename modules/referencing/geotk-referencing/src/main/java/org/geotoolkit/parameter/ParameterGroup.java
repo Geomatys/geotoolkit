@@ -23,6 +23,7 @@ package org.geotoolkit.parameter;
 import java.util.Map;
 import java.util.Set;
 import java.util.List;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -48,11 +49,11 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
  * A group of related parameter values. The same group can be repeated more than once in
  * an {@linkplain org.opengis.referencing.operation.Operation operation} or higher level
  * {@link ParameterValueGroup}, if those instances contain different values of one or more
- * {@link ParameterValue}s which suitably distinquish among those groups.
+ * {@link ParameterValue}s which suitably distinguish among those groups.
  *
  * @author Martin Desruisseaux (IRD)
  * @author Jody Garnett (Refractions)
- * @version 3.00
+ * @version 3.17
  *
  * @see DefaultParameterDescriptorGroup
  * @see Parameter
@@ -70,8 +71,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
      * An empty parameter value group. This group contains no parameter value.
      */
     public static final ParameterValueGroup EMPTY = new ParameterGroup(
-            Collections.singletonMap(ParameterDescriptorGroup.NAME_KEY, "Void"),
-            new ParameterValue<?>[0]);
+            Collections.singletonMap(ParameterDescriptorGroup.NAME_KEY, "Void"));
 
     /**
      * The {@linkplain #values() parameter values} for this group.
@@ -121,14 +121,11 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
      *         range of minimum and maximum occurrences declared in the descriptor.
      */
     public ParameterGroup(final ParameterDescriptorGroup descriptor,
-                          final GeneralParameterValue[]  values)
+                          final GeneralParameterValue... values)
     {
         super(descriptor);
         ensureNonNull("values", values);
-        this.values = new ArrayList<GeneralParameterValue>(values.length);
-        for (int i=0; i<values.length; i++) {
-            this.values.add(values[i]);
-        }
+        this.values = new ArrayList<GeneralParameterValue>(Arrays.asList(values));
         final List<GeneralParameterDescriptor> parameters = descriptor.descriptors();
         final Map<GeneralParameterDescriptor,int[]> occurrences =
                 new LinkedHashMap<GeneralParameterDescriptor,int[]>(XCollections.hashMapCapacity(parameters.size()));
@@ -149,12 +146,9 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
      * @throws IllegalStateException If the number of parameter values is not in the
      *         range of minimum and maximum occurrences declared in the descriptor.
      */
-    public ParameterGroup(final Map<String,?> properties, final GeneralParameterValue[] values) {
+    public ParameterGroup(final Map<String,?> properties, final GeneralParameterValue... values) {
         super(createDescriptor(properties, values));
-        this.values = new ArrayList<GeneralParameterValue>(values.length);
-        for (int i=0; i<values.length; i++) {
-            this.values.add(values[i]);
-        }
+        this.values = new ArrayList<GeneralParameterValue>(Arrays.asList(values));
     }
 
     /**

@@ -165,7 +165,7 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
     }
 
     /**
-     * Ensures that the given range use the same element class than this range.
+     * Ensures that the given range uses the same element class than this range.
      */
     @SuppressWarnings("unchecked")
     private Range<? extends T> ensureCompatible(final Range<?> range) throws IllegalArgumentException {
@@ -190,6 +190,10 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
      * {@link DateRange}.
      */
     void checkElementClass() throws IllegalArgumentException {
+        if (!Comparable.class.isAssignableFrom(elementClass)) {
+            throw new IllegalArgumentException(Errors.format(
+                    Errors.Keys.ILLEGAL_CLASS_$2, elementClass, Comparable.class));
+        }
     }
 
     /**

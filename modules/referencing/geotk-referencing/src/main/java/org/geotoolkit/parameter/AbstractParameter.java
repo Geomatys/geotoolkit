@@ -24,6 +24,7 @@ import java.util.Set;
 import java.io.Writer;
 import java.io.IOException;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.lang.reflect.Array;
 import javax.measure.unit.Unit;
 
@@ -290,7 +291,7 @@ public abstract class AbstractParameter extends FormattableObject
 
     /**
      * Writes the content of this parameter to the specified table. This method make it easier
-     * to align values properly than overriding the {@link #toString} method. The table's columns
+     * to align values properly than overriding the {@link #toString} method. The table columns
      * are defined as below:
      * <p>
      * <ol>

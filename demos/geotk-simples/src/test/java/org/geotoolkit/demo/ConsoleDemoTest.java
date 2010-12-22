@@ -19,11 +19,11 @@ package org.geotoolkit.demo;
 
 import java.io.*;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.*;
 import static org.junit.Assert.*;
 
 import org.geotoolkit.test.TestBase;
-import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.demo.referencing.CoordinateConversion;
 
@@ -49,10 +49,9 @@ public class ConsoleDemoTest extends TestBase {
      * Shutdown the logging. This is necessary in order to avoid a test
      * failure in {@link #verifyContent()}.
      */
-    @Before
-    @Override
-    public void loggingSetup() {
-        Logging.ALL.forceMonolineConsoleOutput(Level.OFF);
+    @BeforeClass
+    public static void shutdownLogging() {
+        Logger.getLogger("org.geotoolkit").setLevel(Level.OFF);
     }
 
     /**

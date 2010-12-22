@@ -227,7 +227,7 @@ public final class Classes {
      *
      * @param  method The getter or setter method for which to obtain the parameterized type.
      * @return The upper bound of parameterized type, or {@code null} if the given method
-     *         do not opperate on an object of a parameterized type.
+     *         do not operate on an object of a parameterized type.
      *
      * @category type
      */
@@ -879,7 +879,7 @@ compare:for (int i=0; i<c1.length; i++) {
 
     /**
      * Returns the smallest class capable to hold the specified value.
-     * This is similar to {@link #finestClass(long)}, but extented to floating point values.
+     * This is similar to {@link #finestClass(long)}, but extended to floating point values.
      *
      * @param  value The value to be wrapped in a {@link Number}.
      * @return The finest type capable to hold the given value.
@@ -960,7 +960,7 @@ compare:for (int i=0; i<c1.length; i++) {
 
     /**
      * Returns the number of the smallest class capable to hold the specified value.
-     * This is similar to {@link #finestNumber(long)}, but extented to floating point values.
+     * This is similar to {@link #finestNumber(long)}, but extended to floating point values.
      *
      * @param  value The value to be wrapped in a {@link Number}.
      * @return The finest type capable to hold the given value.
@@ -1140,7 +1140,7 @@ compare:for (int i=0; i<c1.length; i++) {
     /**
      * Returns one of {@link #DOUBLE}, {@link #FLOAT}, {@link #LONG}, {@link #INTEGER},
      * {@link #SHORT}, {@link #BYTE}, {@link #CHARACTER}, {@link #BOOLEAN} or {@link #OTHER}
-     * constants for the given type. This is a commodity for usage in {@code switch} statememnts.
+     * constants for the given type. This is a commodity for usage in {@code switch} statements.
      *
      * @param type A type (usually either a primitive type or its wrapper).
      * @return The constant for the given type, or {@link #OTHER} if unknown.
@@ -1164,11 +1164,18 @@ compare:for (int i=0; i<c1.length; i++) {
      * of {@code "java.lang.String"} for a {@link String} object. It will also name
      * array according Java language usage,  for example {@code "double[]"} instead
      * of {@code "[D"}.
+     * <p>
+     * This method is similar to the {@link Class#getSimpleName()} method, except that
+     * if the given class is an inner class, then the returned value is prefixed with
+     * the outer class name. For example this method returns {@code "Point2D.Double"}
+     * instead of {@code "Double"}.
      *
      * @param  classe The object class (may be {@code null}).
-     * @return A short class name for the specified object.
+     * @return A short class name for the specified object, or {@code "<*>"} if the
+     *         given class was null.
      *
      * @see #getShortClassName(Object)
+     * @see Class#getSimpleName()
      *
      * @category type
      */
@@ -1238,7 +1245,7 @@ compare:for (int i=0; i<c1.length; i++) {
     }
 
     /**
-     * Returns an exception for an unkown type.
+     * Returns an exception for an unknown type.
      */
     private static IllegalArgumentException unknownType(final Class<?> type) {
         return new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type));

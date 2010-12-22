@@ -17,10 +17,10 @@
  */
 package org.geotoolkit.util.logging;
 
-import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+
+import org.geotoolkit.test.LocaleDependantTestBase;
 import org.junit.*;
 
 import static org.geotoolkit.test.Assert.*;
@@ -30,39 +30,15 @@ import static org.geotoolkit.test.Assert.*;
  * Tests the {@link MonolineFormatter} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.17
  *
  * @since 3.16
  */
-public final class MonolineFormatterTest {
+public final class MonolineFormatterTest extends LocaleDependantTestBase {
     /**
      * The formatter to be tested.
      */
     private final MonolineFormatter formatter = new MonolineFormatter(null);
-
-    /**
-     * The previous locale, before to set a constant locale for the test.
-     */
-    private static Locale defaultLocale;
-
-    /**
-     * Sets a constant locale for the purpose of this test.
-     */
-    @BeforeClass
-    public static void setLocale() {
-        defaultLocale = Locale.getDefault();
-        Locale.setDefault(Locale.FRANCE);
-        ResourceBundle.clearCache();
-    }
-
-    /**
-     * Restore the locale to its default value after the test.
-     */
-    @AfterClass
-    public static void restoreLocale() {
-        Locale.setDefault(defaultLocale);
-        ResourceBundle.clearCache();
-    }
 
     /**
      * Tests formatting of a multi-line message.

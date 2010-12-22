@@ -27,7 +27,6 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Collections;
 import java.util.LinkedList;
-import javax.swing.tree.MutableTreeNode;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
@@ -45,8 +44,6 @@ import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.gui.swing.tree.Trees;
 
 
 /**
@@ -332,16 +329,14 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
     }
 
     /**
-     * Returns a string representation of this descriptor. The string returned by this
-     * method is for information purpose only and may change in future version.
+     * Returns a string representation of this descriptor. The default implementation
+     * delegates to {@link ParameterWriter#toString(ParameterDescriptorGroup)}, which
+     * will format this descriptor in a table.
      *
      * @since 3.17
      */
     @Override
     public String toString() {
-        final MutableTreeNode root = Trees.objectToSwing(parameters);
-        root.setUserObject(Classes.getShortClassName(this) + "[\"" + getName() + "\", [" +
-                getMinimumOccurs() + '\u2026' + getMaximumOccurs() + "]]");
-        return Trees.toString(root);
+        return ParameterWriter.toString(this);
     }
 }

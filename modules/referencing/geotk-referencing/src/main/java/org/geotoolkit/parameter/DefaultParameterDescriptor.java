@@ -570,12 +570,21 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
     @Override
     public String toString() {
         final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(this))
-                .append("[\"").append(getName().getCode()).append("\"");
-        if (valueClass   != null) buffer.append(", class=")  .append(Classes.getShortName(valueClass));
-        if (unit         != null) buffer.append(", unit=")   .append(unit);
-        if (defaultValue != null) buffer.append(", default=").append(defaultValue);
-        if (minimum      != null) buffer.append(", minimum=").append(minimum);
-        if (maximum      != null) buffer.append(", maximum=").append(maximum);
+                .append("[\"").append(getName().getCode()).append("\", ")
+                .append(getMinimumOccurs() == 0 ? "optional" : "mandatory");
+        buffer.append(", class=").append(Classes.getShortName(valueClass));
+        if (minimum != null || maximum != null) {
+            buffer.append(", valid=[").append(minimum != null ? minimum : "-\u221E")
+                  .append(" \u2026 ") .append(maximum != null ? maximum :  "\u221E").append(']');
+        } else if (validValues != null) {
+            buffer.append(", valid=").append(validValues);
+        }
+        if (defaultValue != null) {
+            buffer.append(", default=").append(defaultValue);
+        }
+        if (unit != null) {
+            buffer.append(", unit=").append(unit);
+        }
         return buffer.append(']').toString();
     }
 }

@@ -19,7 +19,6 @@ package org.geotoolkit.referencing.operation.transform;
 
 import java.io.Serializable;
 
-import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform;
@@ -147,10 +146,8 @@ public class ExponentialTransform1D extends AbstractMathTransform implements Mat
     @Override
     public ParameterValueGroup getParameterValues() {
         return new ParameterGroup(getParameterDescriptors(),
-            new ParameterValue<?>[] {
                 new FloatParameter(BASE,  base),
-                new FloatParameter(SCALE, scale)
-            });
+                new FloatParameter(SCALE, scale));
     }
 
     /**

@@ -390,8 +390,9 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
      * Invoked for argument checking by the super-class constructor.
      */
     @Override
-    void checkElementClass() throws IllegalArgumentException {
+    final void checkElementClass() throws IllegalArgumentException {
         ensureNumberClass(elementClass);
+        super.checkElementClass(); // Check that the type implements also Comparable.
     }
 
     /**
@@ -487,7 +488,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
      * Returns {@code true} if the specified value is within this range.
      *
      * @param  value The value to check for inclusion.
-     * @return {@code true} if the given value is withing this range.
+     * @return {@code true} if the given value is within this range.
      * @throws IllegalArgumentException if the given value is not comparable.
      */
     public boolean contains(final Number value) throws IllegalArgumentException {

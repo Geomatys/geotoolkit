@@ -47,15 +47,13 @@ import static org.geotoolkit.util.converter.Classes.*;
 
 /**
  * An ordered set of ranges. {@code RangeSet} objects store an arbitrary number of
- * {@linkplain Range ranges} in any Java's primitives ({@code int}, {@code float},
- * <i>etc.</i>) or any {@linkplain Comparable comparable} objects. Ranges may
- * be added in any order. When a range is added, {@code RangeSet} first looks for an
- * existing range overlapping the specified range. If an overlapping range is found,
- * ranges are merged as of {@link Range#union}. Consequently, ranges returned by
- * {@link #iterator} may not be the same than added ranges.
+ * {@linkplain Range ranges} in any Java primitives ({@code int}, {@code float},
+ * <i>etc.</i>) or any {@linkplain Comparable comparable} objects.
  * <p>
- * All entries in this set can be seen as {@link Range} objects.
- * This class is <strong>not</strong> thread-safe.
+ * Ranges can be added in any order. When a range is added, {@code RangeSet} first looks for an
+ * existing range overlapping the specified range. If an overlapping range is found,
+ * ranges are merged as of {@link Range#union(Range)}. Consequently, ranges returned by
+ * {@link #iterator} may not be the same than added ranges.
  *
  * @param <T> The type of range elements.
  *
@@ -353,7 +351,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
 
     /**
      * Adds a range to this set. Ranges may be added in any order. If the specified range
-     * overlaps an existing range, the two ranges will be merged as of {@link Range#union}.
+     * overlaps an existing range, the two ranges will be merged as of {@link Range#union(Range)}.
      * <p>
      * <b>Note:</b> current version do not support open intervals
      * (i.e. {@code Range.is[Min/Max]Included()} must return {@code true}).
@@ -1220,9 +1218,8 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
     }
 
     /**
-     * Returns a string representation of this set of ranges.
-     * The returned string is implementation dependent.
-     * It is usually provided for debugging purposes.
+     * Returns a string representation of this set of ranges. The returned string
+     * is implementation dependent and should be used for debugging purposes only.
      */
     @Override
     public String toString() {
@@ -1234,14 +1231,14 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
                 buffer.append(',');
             }
             buffer.append('{') .append(range.getMinValue())
-                  .append("..").append(range.getMaxValue()).append('}');
+                  .append('\u2026').append(range.getMaxValue()).append('}');
             first = false;
         }
         return buffer.append(']').toString();
     }
 
     /**
-     * Invoked before serialiation. Trims the internal array to the minimal size
+     * Invoked before serialization. Trims the internal array to the minimal size
      * in order to reduce the size of the object to be serialized.
      */
     private void writeObject(final ObjectOutputStream out) throws IOException {
