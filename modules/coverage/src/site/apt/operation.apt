@@ -1,3 +1,8 @@
+                             ------------------------------
+                               Operations on GridCoverage
+                             ------------------------------
+
+
 Operations on a Grid Coverage
 
   The Geotk coverage module provides the <<<Operations>>> class for convenience, as was shown in the

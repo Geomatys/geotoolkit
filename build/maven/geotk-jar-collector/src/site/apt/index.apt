@@ -1,3 +1,8 @@
+                             ------------------------------
+                                          Usage
+                             ------------------------------
+
+
 JAR collector
 
   Copies all JAR files (including dependencies) in the target directory of the parent project

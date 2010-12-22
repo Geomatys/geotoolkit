@@ -1,3 +1,8 @@
+                             ------------------------------
+                                 Create a GridCoverage
+                             ------------------------------
+
+
 Create a Grid Coverage
 
   The process of creating a <<<GridCoverage>>> starts with creating an <<<ImageReader>>> to access

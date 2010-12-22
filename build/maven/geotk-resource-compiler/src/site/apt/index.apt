@@ -1,3 +1,8 @@
+                             ------------------------------
+                                          Usage
+                             ------------------------------
+
+
 Internationalization files compiler
 
   Compiles internationalization files. They are Java properties files transformed
