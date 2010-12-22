@@ -55,7 +55,11 @@
     @XmlJavaTypeAdapter(TrainingAdapter.class),
     @XmlJavaTypeAdapter(UseRestrictionsAdapter.class),
     @XmlJavaTypeAdapter(UserDefinedMetadataAdapter.class),
-    @XmlJavaTypeAdapter(UsersRestrictionsAdapter.class)
+    @XmlJavaTypeAdapter(UsersRestrictionsAdapter.class),
+    @XmlJavaTypeAdapter(URIAdapter.class),
+
+    // Primitive type handling
+    @XmlJavaTypeAdapter(BooleanAdapter.class), @XmlJavaTypeAdapter(type=boolean.class, value=BooleanAdapter.class)
 })
 package org.geotoolkit.geotnetcab;
 
@@ -68,6 +72,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 import org.geotoolkit.internal.jaxb.code.*;
 import org.geotoolkit.internal.jaxb.metadata.*;
 import org.geotoolkit.internal.jaxb.geonetcab.*;
+import org.geotoolkit.internal.jaxb.primitive.BooleanAdapter;
 import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
 import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;
 

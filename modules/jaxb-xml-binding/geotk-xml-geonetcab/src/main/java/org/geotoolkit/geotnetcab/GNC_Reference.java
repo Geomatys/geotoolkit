@@ -46,6 +46,6 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GNC_Reference_Type")
 @XmlRootElement(name = "GNC_Reference", namespace = "http://www.mdweb-project.org/files/xsd")
-public class GNC_Reference extends GNC_MaterialResource {
+public class GNC_Reference extends GNC_MaterialResource implements org.opengis.metadata.geonetcab.GNC_Reference {
 
 }

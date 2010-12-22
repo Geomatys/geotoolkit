@@ -52,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
     "typeOfDocuments"
 })
 @XmlRootElement(name = "GNC_Document", namespace = "http://www.mdweb-project.org/files/xsd")
-public class GNC_Document extends GNC_MaterialResource {
+public class GNC_Document extends GNC_MaterialResource implements org.opengis.metadata.geonetcab.GNC_Document {
 
     @XmlElement(required = true)
     private GNC_DocumentsTypeCode typeOfDocuments;

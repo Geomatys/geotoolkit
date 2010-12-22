@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.metadata.extent.GeographicDescription;
 
 
@@ -57,7 +58,7 @@ import org.opengis.metadata.extent.GeographicDescription;
     "extentOfRestrictions",
     "otherConstraints"
 })
-public class GNC_UsersRestrictions {
+public class GNC_UsersRestrictions implements org.opengis.metadata.geonetcab.GNC_UsersRestrictions {
 
     @XmlElement(required = true)
     private GNC_OrganisationTypeCode categoryOfUsers;
@@ -96,6 +97,7 @@ public class GNC_UsersRestrictions {
      * 
      * 
      */
+    @Override
     public List<GeographicDescription> getExtentOfRestrictions() {
         if (extentOfRestrictions == null) {
             extentOfRestrictions = new ArrayList<GeographicDescription>();
@@ -122,6 +124,7 @@ public class GNC_UsersRestrictions {
      *     {@link String }
      *     
      */
+    @Override
     public String getOtherConstraints() {
         return otherConstraints;
     }
@@ -136,6 +139,30 @@ public class GNC_UsersRestrictions {
      */
     public void setOtherConstraints(String value) {
         this.otherConstraints = value;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof GNC_UsersRestrictions) {
+            GNC_UsersRestrictions that = (GNC_UsersRestrictions) obj;
+            return Utilities.equals(this.categoryOfUsers, that.categoryOfUsers) &&
+                   Utilities.equals(this.extentOfRestrictions, that.extentOfRestrictions) &&
+                   Utilities.equals(this.otherConstraints, that.otherConstraints);
+
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 89 * hash + (this.categoryOfUsers != null ? this.categoryOfUsers.hashCode() : 0);
+        hash = 89 * hash + (this.extentOfRestrictions != null ? this.extentOfRestrictions.hashCode() : 0);
+        hash = 89 * hash + (this.otherConstraints != null ? this.otherConstraints.hashCode() : 0);
+        return hash;
     }
 
 }

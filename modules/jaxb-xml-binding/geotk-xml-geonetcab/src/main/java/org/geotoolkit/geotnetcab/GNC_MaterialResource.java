@@ -56,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GNC_MaterialResource_Type", propOrder = {
     "isStillInProduction",
-    "feedback",
+    "userDefinedMetadata",
     "access",
     "relationType"
 })
@@ -67,11 +67,11 @@ import javax.xml.bind.annotation.XmlType;
     GNC_Product.class
 })
 @XmlRootElement(name = "GNC_MaterialResource", namespace = "http://www.mdweb-project.org/files/xsd")
-public class GNC_MaterialResource extends GNC_Resource {
+public class GNC_MaterialResource extends GNC_Resource implements org.opengis.metadata.geonetcab.GNC_MaterialResource {
 
     @XmlElement(required = true)
     private Boolean isStillInProduction;
-    private List<GNC_UserDefinedMetadata> feedback;
+    private List<GNC_UserDefinedMetadata> userDefinedMetadata;
     private List<GNC_Access> access;
     private List<GNC_RelationType> relationType;
 
@@ -83,6 +83,7 @@ public class GNC_MaterialResource extends GNC_Resource {
      *     {@link Boolean }
      *     
      */
+    @Override
     public Boolean getIsStillInProduction() {
         return isStillInProduction;
     }
@@ -107,22 +108,23 @@ public class GNC_MaterialResource extends GNC_Resource {
      * 
      * 
      */
-    public List<GNC_UserDefinedMetadata> getFeedback() {
-        if (feedback == null) {
-            feedback = new ArrayList<GNC_UserDefinedMetadata>();
+    @Override
+    public List<GNC_UserDefinedMetadata> getUserDefinedMetadata() {
+        if (userDefinedMetadata == null) {
+            userDefinedMetadata = new ArrayList<GNC_UserDefinedMetadata>();
         }
-        return this.feedback;
+        return this.userDefinedMetadata;
     }
 
-    public void setFeedback(List<GNC_UserDefinedMetadata> feedback) {
-        this.feedback = feedback;
+    public void setUserDefinedMetadata(List<GNC_UserDefinedMetadata> feedback) {
+        this.userDefinedMetadata = feedback;
     }
 
-    public void setFeedback(GNC_UserDefinedMetadata feedback) {
-        if (this.feedback == null) {
-            this.feedback = new ArrayList<GNC_UserDefinedMetadata>();
+    public void setUserDefinedMetadata(GNC_UserDefinedMetadata userDefinedMetadata) {
+        if (this.userDefinedMetadata == null) {
+            this.userDefinedMetadata = new ArrayList<GNC_UserDefinedMetadata>();
         }
-        this.feedback.add(feedback);
+        this.userDefinedMetadata.add(userDefinedMetadata);
     }
 
     /**
@@ -133,6 +135,7 @@ public class GNC_MaterialResource extends GNC_Resource {
      * 
      * 
      */
+    @Override
     public List<GNC_Access> getAccess() {
         if (access == null) {
             access = new ArrayList<GNC_Access>();
@@ -159,6 +162,7 @@ public class GNC_MaterialResource extends GNC_Resource {
      * 
      * 
      */
+    @Override
     public List<GNC_RelationType> getRelationType() {
         if (relationType == null) {
             relationType = new ArrayList<GNC_RelationType>();

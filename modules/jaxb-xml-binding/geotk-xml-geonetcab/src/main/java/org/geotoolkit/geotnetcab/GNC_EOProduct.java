@@ -55,7 +55,7 @@ import org.opengis.metadata.lineage.Lineage;
     "typeOfEOProducts"
 })
 @XmlRootElement(name = "GNC_EOProduct", namespace = "http://www.mdweb-project.org/files/xsd")
-public class GNC_EOProduct extends GNC_Product {
+public class GNC_EOProduct extends GNC_Product implements org.opengis.metadata.geonetcab.GNC_EOProduct {
 
     @XmlElement(required = true)
     private Lineage lineage;
@@ -70,6 +70,7 @@ public class GNC_EOProduct extends GNC_Product {
      *     {@link Lineage }
      *     
      */
+    @Override
     public Lineage getLineage() {
         return lineage;
     }

@@ -58,7 +58,7 @@ import javax.xml.bind.annotation.XmlType;
     GNC_EOProduct.class
 })
 @XmlRootElement(name = "GNC_Product", namespace = "http://www.mdweb-project.org/files/xsd")
-public class GNC_Product extends GNC_MaterialResource {
+public class GNC_Product extends GNC_MaterialResource implements org.opengis.metadata.geonetcab.GNC_Product {
 
     @XmlElement(required = true)
     private GNC_ProductTypeCode typeOfProducts;

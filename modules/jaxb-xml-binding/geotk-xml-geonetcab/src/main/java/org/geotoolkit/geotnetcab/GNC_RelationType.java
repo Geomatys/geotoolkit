@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -54,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
     "relationName",
     "organisationIdentifier"
 })
-public class GNC_RelationType {
+public class GNC_RelationType implements org.opengis.metadata.geonetcab.GNC_RelationType {
 
     @XmlElement(required = true)
     private GNC_RelationNameCode relationName;
@@ -93,6 +94,7 @@ public class GNC_RelationType {
      * 
      * 
      */
+    @Override
     public List<GNC_OrganisationEntitie> getOrganisationIdentifier() {
         if (organisationIdentifier == null) {
             organisationIdentifier = new ArrayList<GNC_OrganisationEntitie>();
@@ -111,4 +113,25 @@ public class GNC_RelationType {
         this.organisationIdentifier.add(organisationIdentifier);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof GNC_RelationType) {
+            GNC_RelationType that = (GNC_RelationType) obj;
+            return Utilities.equals(this.organisationIdentifier, that.organisationIdentifier) &&
+                   Utilities.equals(this.relationName, that.relationName);
+
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 67 * hash + (this.relationName != null ? this.relationName.hashCode() : 0);
+        hash = 67 * hash + (this.organisationIdentifier != null ? this.organisationIdentifier.hashCode() : 0);
+        return hash;
+    }
 }

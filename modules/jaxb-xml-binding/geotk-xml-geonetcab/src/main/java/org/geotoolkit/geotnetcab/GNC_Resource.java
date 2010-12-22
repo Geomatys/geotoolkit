@@ -55,22 +55,23 @@ import org.opengis.metadata.citation.OnlineResource;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GNC_Resource_Type", propOrder = {
     "onlineInformation",
-    "references"
+    "reference"
 })
 @XmlSeeAlso({
     GNC_OrganisationEntitie.class,
     GNC_MaterialResource.class
 })
 @XmlRootElement(name = "GNC_Resource", namespace = "http://www.mdweb-project.org/files/xsd")
-public class GNC_Resource extends DefaultDataIdentification {
+public class GNC_Resource extends DefaultDataIdentification implements org.opengis.metadata.geonetcab.GNC_Resource {
 
     private List<OnlineResource> onlineInformation;
-    private List<GNC_Resource> references;
+    private List<GNC_Resource> reference;
 
     /**
      * Gets the value of the onlineInformation property.
      * 
      */
+    @Override
     public List<OnlineResource> getOnlineInformation() {
         if (onlineInformation == null) {
             onlineInformation = new ArrayList<OnlineResource>();
@@ -101,30 +102,31 @@ public class GNC_Resource extends DefaultDataIdentification {
      * Gets the value of the references property.
      * 
      */
-    public List<GNC_Resource> getReferences() {
-        if (references == null) {
-            references = new ArrayList<GNC_Resource>();
+    @Override
+    public List<GNC_Resource> getReference() {
+        if (reference == null) {
+            reference = new ArrayList<GNC_Resource>();
         }
-        return this.references;
+        return this.reference;
     }
 
     /**
      * Sets the value of the references property.
      *
      */
-    public void setReferences(List<GNC_Resource> references) {
-        this.references = references;
+    public void setReference(List<GNC_Resource> reference) {
+        this.reference = reference;
     }
 
     /**
      * Sets the value of the references property.
      *
      */
-    public void setReferences(GNC_Resource references) {
-        if (this.references == null) {
-            this.references = new ArrayList<GNC_Resource>();
+    public void setReference(GNC_Resource reference) {
+        if (this.reference == null) {
+            this.reference = new ArrayList<GNC_Resource>();
         }
-        this.references.add(references);
+        this.reference.add(reference);
     }
 
 }

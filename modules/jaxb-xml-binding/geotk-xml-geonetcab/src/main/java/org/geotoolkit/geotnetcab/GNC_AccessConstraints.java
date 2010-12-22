@@ -21,6 +21,7 @@
 
 package org.geotoolkit.geotnetcab;
 
+import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -61,11 +63,11 @@ import javax.xml.bind.annotation.XmlType;
     "nonCommercialUse",
     "thematicUsage",
     "useRestrictions",
-    "userRestrictions"
+    "usersRestrictions"
 })
-public class GNC_AccessConstraints {
+public class GNC_AccessConstraints implements org.opengis.metadata.geonetcab.GNC_AccessConstraints {
 
-    private URL dataAccessConditionPortal;
+    private URI dataAccessConditionPortal;
     @XmlElement(required = true)
     private String nameOfConditions;
     @XmlElement(required = true)
@@ -74,7 +76,7 @@ public class GNC_AccessConstraints {
     private List<GNC_ThematicTypeCode> thematicUsage;
     @XmlElement(required = true)
     private GNC_UseRestrictions useRestrictions;
-    private List<GNC_UsersRestrictions> userRestrictions;
+    private List<GNC_UsersRestrictions> usersRestrictions;
 
     /**
      * Gets the value of the dataAccessConditionPortal property.
@@ -84,7 +86,8 @@ public class GNC_AccessConstraints {
      *     {@link URL }
      *     
      */
-    public URL getDataAccessConditionPortal() {
+    @Override
+    public URI getDataAccessConditionPortal() {
         return dataAccessConditionPortal;
     }
 
@@ -96,7 +99,7 @@ public class GNC_AccessConstraints {
      *     {@link URL }
      *     
      */
-    public void setDataAccessConditionPortal(URL value) {
+    public void setDataAccessConditionPortal(URI value) {
         this.dataAccessConditionPortal = value;
     }
 
@@ -108,6 +111,7 @@ public class GNC_AccessConstraints {
      *     {@link String }
      *     
      */
+    @Override
     public String getNameOfConditions() {
         return nameOfConditions;
     }
@@ -132,6 +136,7 @@ public class GNC_AccessConstraints {
      *     {@link Boolean }
      *     
      */
+    @Override
     public Boolean getNonCommercialUse() {
         return nonCommercialUse;
     }
@@ -183,6 +188,7 @@ public class GNC_AccessConstraints {
      *     {@link GNCUseRestrictionsPropertyType }
      *     
      */
+    @Override
     public GNC_UseRestrictions getUseRestrictions() {
         return useRestrictions;
     }
@@ -207,21 +213,52 @@ public class GNC_AccessConstraints {
      * 
      * 
      */
-    public List<GNC_UsersRestrictions> getUserRestrictions() {
-        if (userRestrictions == null) {
-            userRestrictions = new ArrayList<GNC_UsersRestrictions>();
+    @Override
+    public List<GNC_UsersRestrictions> getUsersRestrictions() {
+        if (usersRestrictions == null) {
+            usersRestrictions = new ArrayList<GNC_UsersRestrictions>();
         }
-        return this.userRestrictions;
+        return this.usersRestrictions;
     }
 
-    public void setUserRestrictions(List<GNC_UsersRestrictions> userRestrictions) {
-        this.userRestrictions = userRestrictions;
+    public void setUsersRestrictions(List<GNC_UsersRestrictions> usersRestrictions) {
+        this.usersRestrictions = usersRestrictions;
     }
 
-    public void setUserRestrictions(GNC_UsersRestrictions userRestrictions) {
-        if (this.userRestrictions == null) {
-            this.userRestrictions = new ArrayList<GNC_UsersRestrictions>();
+    public void setUsersRestrictions(GNC_UsersRestrictions usersRestrictions) {
+        if (this.usersRestrictions == null) {
+            this.usersRestrictions = new ArrayList<GNC_UsersRestrictions>();
         }
-        this.userRestrictions.add(userRestrictions);
+        this.usersRestrictions.add(usersRestrictions);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof GNC_AccessConstraints) {
+            GNC_AccessConstraints that = (GNC_AccessConstraints) obj;
+            return Utilities.equals(this.dataAccessConditionPortal, that.dataAccessConditionPortal) &&
+                   Utilities.equals(this.nameOfConditions, that.nameOfConditions) &&
+                   Utilities.equals(this.nonCommercialUse, that.nonCommercialUse) &&
+                   Utilities.equals(this.thematicUsage, that.thematicUsage) &&
+                   Utilities.equals(this.useRestrictions, that.useRestrictions) &&
+                   Utilities.equals(this.usersRestrictions, that.usersRestrictions);
+
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (this.dataAccessConditionPortal != null ? this.dataAccessConditionPortal.hashCode() : 0);
+        hash = 97 * hash + (this.nameOfConditions != null ? this.nameOfConditions.hashCode() : 0);
+        hash = 97 * hash + (this.nonCommercialUse != null ? this.nonCommercialUse.hashCode() : 0);
+        hash = 97 * hash + (this.thematicUsage != null ? this.thematicUsage.hashCode() : 0);
+        hash = 97 * hash + (this.useRestrictions != null ? this.useRestrictions.hashCode() : 0);
+        hash = 97 * hash + (this.usersRestrictions != null ? this.usersRestrictions.hashCode() : 0);
+        return hash;
     }
 }

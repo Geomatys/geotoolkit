@@ -16,11 +16,11 @@
  */
 package org.geotoolkit.geonetcab;
 
+import java.net.URISyntaxException;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
 import java.util.Date;
 import org.geotoolkit.geotnetcab.GNC_UsersRestrictions;
 import java.net.MalformedURLException;
-import java.net.URL;
 import org.geotoolkit.geotnetcab.GNC_Product;
 import org.geotoolkit.geotnetcab.GNC_Document;
 import java.util.List;
@@ -86,7 +86,7 @@ public class GNCXMLBindingTest {
      * @throws JAXBException
      */
     @Test
-    public void marshallingTest() throws JAXBException, MalformedURLException {
+    public void marshallingTest() throws JAXBException, MalformedURLException, URISyntaxException {
 
         Marshaller marshaller = pool.acquireMarshaller();
         DefaultMetadata meta = new DefaultMetadata();
@@ -140,27 +140,27 @@ public class GNCXMLBindingTest {
         GNC_Access access = new GNC_Access();
         access.setDescription("desc1");
         GNC_AccessConstraints ac = new GNC_AccessConstraints();
-        ac.setDataAccessConditionPortal(new URL("http://danstonchat.com"));
+        ac.setDataAccessConditionPortal(new URI("http://danstonchat.com"));
         ac.setNameOfConditions("names");
         ac.setNonCommercialUse(Boolean.TRUE);
         ac.setThematicUsage(GNC_ThematicTypeCode.AGRICULTURE);
         GNC_UseRestrictions ur = new GNC_UseRestrictions();
         ur.setGeographicRestrictions(Boolean.FALSE);
         ur.setOtherConstraints("military");
-        ur.setExtentOfRestrictionsl(new DefaultGeographicDescription());
+        ur.setExtentOfRestrictions(new DefaultGeographicDescription());
         ac.setUseRestrictions(ur);
         GNC_UsersRestrictions urr = new GNC_UsersRestrictions();
         urr.setCategoryOfUsers(GNC_OrganisationTypeCode.EXPERTS);
         urr.setOtherConstraints("confidential");
         urr.setExtentOfRestrictions(new DefaultGeographicDescription());
-        ac.setUserRestrictions(urr);
+        ac.setUsersRestrictions(urr);
         access.setDetailAccessConstraints(ac);
         materialResource.setAccess(access);
         GNC_UserDefinedMetadata umeta = new GNC_UserDefinedMetadata();
         umeta.setDateStamp(new Date(1454124));
         umeta.setFeedbackStatement("stmt");
         umeta.setUserContact(DefaultResponsibleParty.ORACLE);
-        materialResource.setFeedback(umeta);
+        materialResource.setUserDefinedMetadata(umeta);
         GNC_RelationType relType = new GNC_RelationType();
         relType.setRelationName(GNC_RelationNameCode.USEDBY);
         materialResource.setRelationType(relType);
@@ -187,7 +187,7 @@ public class GNCXMLBindingTest {
         GNC_EOProduct eoproduct = new GNC_EOProduct();
         references.add(eoproduct);
         
-        identInfo2.setReferences(references);
+        identInfo2.setReference(references);
 
         meta.setIdentificationInfo(Arrays.asList(identInfo2));
         sw = new StringWriter();
@@ -213,10 +213,12 @@ public class GNCXMLBindingTest {
                            "                    </gmd:linkage>" +'\n' +
                            "                </gmd:CI_OnlineResource>" +'\n' +
                            "            </ns8:onlineInformation>" +'\n' +
-                           "            <ns8:references>" +'\n' +
+                           "            <ns8:reference>" +'\n' +
                            "                <ns8:GNC_MaterialResource>" +'\n' +
-                           "                    <ns8:isStillInProduction>true</ns8:isStillInProduction>" +'\n' +
-                           "                    <ns8:feedback>" +'\n' +
+                           "                    <ns8:isStillInProduction>" +'\n' +
+                           "                        <gco:Boolean>true</gco:Boolean>" +'\n' +
+                           "                    </ns8:isStillInProduction>" +'\n' +
+                           "                    <ns8:userDefinedMetadata>" +'\n' +
                            "                        <ns8:GNC_UserDefinedMetadata>" +'\n' +
                            "                            <ns8:dateStamp>1970-01-01T01:24:14.124+01:00</ns8:dateStamp>" +'\n' +
                            "                            <ns8:feedbackStatement>" +'\n' +
@@ -247,7 +249,7 @@ public class GNCXMLBindingTest {
                            "                                </gmd:CI_ResponsibleParty>" +'\n' +
                            "                            </ns8:userContact>" +'\n' +
                            "                        </ns8:GNC_UserDefinedMetadata>" +'\n' +
-                           "                    </ns8:feedback>" +'\n' +
+                           "                    </ns8:userDefinedMetadata>" +'\n' +
                            "                    <ns8:access>" +'\n' +
                            "                        <ns8:GNC_Access>" +'\n' +
                            "                            <ns8:description>" +'\n' +
@@ -255,26 +257,32 @@ public class GNCXMLBindingTest {
                            "                            </ns8:description>" +'\n' +
                            "                            <ns8:detailAccessConstraints>" +'\n' +
                            "                                <ns8:GNC_AccessConstraints>" +'\n' +
-                           "                                    <ns8:dataAccessConditionPortal>http://danstonchat.com</ns8:dataAccessConditionPortal>" +'\n' +
+                           "                                    <ns8:dataAccessConditionPortal>" +'\n' +
+                           "                                        <gmd:URL>http://danstonchat.com</gmd:URL>" +'\n' +
+                           "                                    </ns8:dataAccessConditionPortal>" +'\n' +
                            "                                    <ns8:nameOfConditions>" +'\n' +
                            "                                        <gco:CharacterString>names</gco:CharacterString>" +'\n' +
                            "                                    </ns8:nameOfConditions>" +'\n' +
-                           "                                    <ns8:nonCommercialUse>true</ns8:nonCommercialUse>" +'\n' +
+                           "                                    <ns8:nonCommercialUse>" +'\n' +
+                           "                                        <gco:Boolean>true</gco:Boolean>" +'\n' +
+                           "                                    </ns8:nonCommercialUse>" +'\n' +
                            "                                    <ns8:thematicUsage>" +'\n' +
                            "                                        <ns8:GNC_ThematicTypeCode codeList=\"http://www.tc211.org/ISO19139/resources/codeList.xml#Agriculture\" codeListValue=\"Agriculture\"/>" +'\n' +
                            "                                    </ns8:thematicUsage>" +'\n' +
                            "                                    <ns8:useRestrictions>" +'\n' +
                            "                                        <ns8:GNC_UseRestrictions>" +'\n' +
-                           "                                            <ns8:extentOfRestrictionsl>" +'\n' +
+                           "                                            <ns8:extentOfRestrictions>" +'\n' +
                            "                                                <gmd:EX_GeographicDescription/>" +'\n' +
-                           "                                            </ns8:extentOfRestrictionsl>" +'\n' +
-                           "                                            <ns8:geographicRestrictions>false</ns8:geographicRestrictions>" +'\n' +
+                           "                                            </ns8:extentOfRestrictions>" +'\n' +
+                           "                                            <ns8:geographicRestrictions>" +'\n' +
+                           "                                                <gco:Boolean>false</gco:Boolean>" +'\n' +
+                           "                                            </ns8:geographicRestrictions>" +'\n' +
                            "                                            <ns8:otherConstraints>" +'\n' +
                            "                                                <gco:CharacterString>military</gco:CharacterString>" +'\n' +
                            "                                            </ns8:otherConstraints>" +'\n' +
                            "                                        </ns8:GNC_UseRestrictions>" +'\n' +
                            "                                    </ns8:useRestrictions>" +'\n' +
-                           "                                    <ns8:userRestrictions>" +'\n' +
+                           "                                    <ns8:usersRestrictions>" +'\n' +
                            "                                        <ns8:GNC_UsersRestrictions>" +'\n' +
                            "                                            <ns8:categoryOfUsers>" +'\n' +
                            "                                                <ns8:GNC_OrganisationTypeCode codeList=\"http://www.tc211.org/ISO19139/resources/codeList.xml#Experts\" codeListValue=\"Experts\"/>" +'\n' +
@@ -286,7 +294,7 @@ public class GNCXMLBindingTest {
                            "                                                <gco:CharacterString>confidential</gco:CharacterString>" +'\n' +
                            "                                            </ns8:otherConstraints>" +'\n' +
                            "                                        </ns8:GNC_UsersRestrictions>" +'\n' +
-                           "                                    </ns8:userRestrictions>" +'\n' +
+                           "                                    </ns8:usersRestrictions>" +'\n' +
                            "                                </ns8:GNC_AccessConstraints>" +'\n' +
                            "                            </ns8:detailAccessConstraints>" +'\n' +
                            "                        </ns8:GNC_Access>" +'\n' +
@@ -299,28 +307,28 @@ public class GNCXMLBindingTest {
                            "                        </ns8:GNC_RelationType>" +'\n' +
                            "                    </ns8:relationType>" +'\n' +
                            "                </ns8:GNC_MaterialResource>" +'\n' +
-                           "            </ns8:references>" +'\n' +
-                           "            <ns8:references>" +'\n' +
+                           "            </ns8:reference>" +'\n' +
+                           "            <ns8:reference>" +'\n' +
                            "                <ns8:GNC_Reference/>" +'\n' +
-                           "            </ns8:references>" +'\n' +
-                           "            <ns8:references>" +'\n' +
+                           "            </ns8:reference>" +'\n' +
+                           "            <ns8:reference>" +'\n' +
                            "                <ns8:GNC_Document/>" +'\n' +
-                           "            </ns8:references>" +'\n' +
-                           "            <ns8:references>" +'\n' +
+                           "            </ns8:reference>" +'\n' +
+                           "            <ns8:reference>" +'\n' +
                            "                <ns8:GNC_Product/>" +'\n' +
-                           "            </ns8:references>" +'\n' +
-                           "            <ns8:references>" +'\n' +
+                           "            </ns8:reference>" +'\n' +
+                           "            <ns8:reference>" +'\n' +
                            "                <ns8:GNC_Service/>" +'\n' +
-                           "            </ns8:references>" +'\n' +
-                           "            <ns8:references>" +'\n' +
+                           "            </ns8:reference>" +'\n' +
+                           "            <ns8:reference>" +'\n' +
                            "                <ns8:GNC_Software/>" +'\n' +
-                           "            </ns8:references>" +'\n' +
-                           "            <ns8:references>" +'\n' +
+                           "            </ns8:reference>" +'\n' +
+                           "            <ns8:reference>" +'\n' +
                            "                <ns8:GNC_Training/>" +'\n' +
-                           "            </ns8:references>" +'\n' +
-                           "            <ns8:references>" +'\n' +
+                           "            </ns8:reference>" +'\n' +
+                           "            <ns8:reference>" +'\n' +
                            "                <ns8:GNC_EOProduct/>" +'\n' +
-                           "            </ns8:references>" +'\n' +
+                           "            </ns8:reference>" +'\n' +
                            "            <ns8:typeOfOrganisation>" +'\n' +
                            "                <ns8:GNC_OrganisationTypeCode codeList=\"http://www.tc211.org/ISO19139/resources/codeList.xml#Experts\" codeListValue=\"Experts\"/>" +'\n' +
                            "            </ns8:typeOfOrganisation>" +'\n' +
@@ -339,7 +347,7 @@ public class GNCXMLBindingTest {
      * @throws JAXBException
      */
     @Test
-    public void unmarshallingTest() throws JAXBException, MalformedURLException {
+    public void unmarshallingTest() throws JAXBException, MalformedURLException, URISyntaxException {
 
         Unmarshaller unmarshaller = pool.acquireUnmarshaller();
         String xml = 
@@ -381,9 +389,11 @@ public class GNCXMLBindingTest {
                 + "                    </gmd:linkage>" + '\n'
                 + "                </gmd:CI_OnlineResource>" + '\n'
                 + "            </ns8:onlineInformation>" + '\n'
-                + "            <ns8:references>" + '\n'
+                + "            <ns8:reference>" + '\n'
                 + "                <ns8:GNC_MaterialResource>" + '\n'
-                + "                    <ns8:isStillInProduction>true</ns8:isStillInProduction>" + '\n'
+                + "                    <ns8:isStillInProduction>" + '\n'
+                + "                        <gco:Boolean>true</gco:Boolean>" + '\n'
+                + "                   </ns8:isStillInProduction>" + '\n'
                 + "                    <ns8:access>" + '\n'
                 + "                        <ns8:GNC_Access>" + '\n'
                 + "                            <ns8:description>" + '\n'
@@ -391,26 +401,32 @@ public class GNCXMLBindingTest {
                 + "                            </ns8:description>" + '\n'
                 + "                            <ns8:detailAccessConstraints>" + '\n'
                 + "                                <ns8:GNC_AccessConstraints>" + '\n'
-                + "                                    <ns8:dataAccessConditionPortal>http://danstonchat.com</ns8:dataAccessConditionPortal>" + '\n'
+                + "                                    <ns8:dataAccessConditionPortal>" + '\n'
+                + "                                         <gmd:URL>http://danstonchat.com</gmd:URL>" + '\n'
+                + "                                    </ns8:dataAccessConditionPortal>" + '\n'
                 + "                                    <ns8:nameOfConditions>" + '\n'
                 + "                                        <gco:CharacterString>names</gco:CharacterString>" + '\n'
                 + "                                    </ns8:nameOfConditions>" + '\n'
-                + "                                    <ns8:nonCommercialUse>true</ns8:nonCommercialUse>" + '\n'
+                + "                                    <ns8:nonCommercialUse>" + '\n'
+                + "                                        <gco:Boolean>true</gco:Boolean>"+ '\n'
+                + "                                   </ns8:nonCommercialUse>" + '\n'
                 + "                                    <ns8:thematicUsage>" + '\n'
                 + "                                        <ns8:GNC_ThematicTypeCode codeList=\"http://www.tc211.org/ISO19139/resources/codeList.xml#Agriculture\" codeListValue=\"Agriculture\"/>" + '\n'
                 + "                                    </ns8:thematicUsage>" + '\n'
                 + "                                    <ns8:useRestrictions>" + '\n'
                 + "                                        <ns8:GNC_UseRestrictions>" + '\n'
-                + "                                            <ns8:extentOfRestrictionsl>" + '\n'
+                + "                                            <ns8:extentOfRestrictions>" + '\n'
                 + "                                                <gmd:EX_GeographicDescription/>" + '\n'
-                + "                                            </ns8:extentOfRestrictionsl>" + '\n'
-                + "                                            <ns8:geographicRestrictions>false</ns8:geographicRestrictions>" + '\n'
+                + "                                            </ns8:extentOfRestrictions>" + '\n'
+                + "                                            <ns8:geographicRestrictions>" + '\n'
+                + "                                                <gco:Boolean>false</gco:Boolean>" + '\n'
+                + "                                            </ns8:geographicRestrictions>" + '\n'
                 + "                                            <ns8:otherConstraints>" + '\n'
                 + "                                                <gco:CharacterString>military</gco:CharacterString>" + '\n'
                 + "                                            </ns8:otherConstraints>" + '\n'
                 + "                                        </ns8:GNC_UseRestrictions>" + '\n'
                 + "                                    </ns8:useRestrictions>" + '\n'
-                + "                                    <ns8:userRestrictions>" + '\n'
+                + "                                    <ns8:usersRestrictions>" + '\n'
                 + "                                        <ns8:GNC_UsersRestrictions>" + '\n'
                 + "                                            <ns8:categoryOfUsers>" + '\n'
                 + "                                                <ns8:GNC_OrganisationTypeCode codeList=\"http://www.tc211.org/ISO19139/resources/codeList.xml#Experts\" codeListValue=\"Experts\"/>" + '\n'
@@ -422,34 +438,34 @@ public class GNCXMLBindingTest {
                 + "                                                <gco:CharacterString>confidential</gco:CharacterString>" + '\n'
                 + "                                            </ns8:otherConstraints>" + '\n'
                 + "                                        </ns8:GNC_UsersRestrictions>" + '\n'
-                + "                                    </ns8:userRestrictions>" + '\n'
+                + "                                    </ns8:usersRestrictions>" + '\n'
                 + "                                </ns8:GNC_AccessConstraints>" + '\n'
                 + "                            </ns8:detailAccessConstraints>" + '\n'
                 + "                        </ns8:GNC_Access>" + '\n'
                 + "                    </ns8:access>" + '\n'
                 + "                </ns8:GNC_MaterialResource>" + '\n'
-                + "            </ns8:references>" + '\n'
-                + "            <ns8:references>" + '\n'
+                + "            </ns8:reference>" + '\n'
+                + "            <ns8:reference>" + '\n'
                 + "                <ns8:GNC_Reference/>" + '\n'
-                + "            </ns8:references>" + '\n'
-                + "            <ns8:references>" + '\n'
+                + "            </ns8:reference>" + '\n'
+                + "            <ns8:reference>" + '\n'
                 + "                <ns8:GNC_Document/>" + '\n'
-                + "            </ns8:references>" + '\n'
-                + "            <ns8:references>" + '\n'
+                + "            </ns8:reference>" + '\n'
+                + "            <ns8:reference>" + '\n'
                 + "                <ns8:GNC_Product/>" + '\n'
-                + "            </ns8:references>" + '\n'
-                + "            <ns8:references>" + '\n'
+                + "            </ns8:reference>" + '\n'
+                + "            <ns8:reference>" + '\n'
                 + "                <ns8:GNC_Service/>" + '\n'
-                + "            </ns8:references>" + '\n'
-                + "            <ns8:references>" + '\n'
+                + "            </ns8:reference>" + '\n'
+                + "            <ns8:reference>" + '\n'
                 + "                <ns8:GNC_Software/>" + '\n'
-                + "            </ns8:references>" + '\n'
-                + "            <ns8:references>" + '\n'
+                + "            </ns8:reference>" + '\n'
+                + "            <ns8:reference>" + '\n'
                 + "                <ns8:GNC_Training/>" + '\n'
-                + "            </ns8:references>" + '\n'
-                + "            <ns8:references>" + '\n'
+                + "            </ns8:reference>" + '\n'
+                + "            <ns8:reference>" + '\n'
                 + "                <ns8:GNC_EOProduct/>" + '\n'
-                + "            </ns8:references>" + '\n'
+                + "            </ns8:reference>" + '\n'
                 + "            <ns8:typeOfOrganisation>" + '\n'
                 + "                <ns8:GNC_OrganisationTypeCode codeList=\"http://www.tc211.org/ISO19139/resources/codeList.xml#Experts\" codeListValue=\"Experts\"/>" + '\n'
                 + "            </ns8:typeOfOrganisation>" + '\n'
@@ -472,20 +488,20 @@ public class GNCXMLBindingTest {
         GNC_Access access = new GNC_Access();
         access.setDescription("desc1");
         GNC_AccessConstraints ac = new GNC_AccessConstraints();
-        ac.setDataAccessConditionPortal(new URL("http://danstonchat.com"));
+        ac.setDataAccessConditionPortal(new URI("http://danstonchat.com"));
         ac.setNameOfConditions("names");
         ac.setNonCommercialUse(Boolean.TRUE);
         ac.setThematicUsage(GNC_ThematicTypeCode.AGRICULTURE);
         GNC_UseRestrictions ur = new GNC_UseRestrictions();
         ur.setGeographicRestrictions(Boolean.FALSE);
         ur.setOtherConstraints("military");
-        ur.setExtentOfRestrictionsl(new DefaultGeographicDescription());
+        ur.setExtentOfRestrictions(new DefaultGeographicDescription());
         ac.setUseRestrictions(ur);
         GNC_UsersRestrictions urr = new GNC_UsersRestrictions();
         urr.setCategoryOfUsers(GNC_OrganisationTypeCode.EXPERTS);
         urr.setOtherConstraints("confidential");
         urr.setExtentOfRestrictions(new DefaultGeographicDescription());
-        ac.setUserRestrictions(urr);
+        ac.setUsersRestrictions(urr);
         access.setDetailAccessConstraints(ac);
         materialResource.setAccess(access);
         references.add(materialResource);
@@ -511,7 +527,7 @@ public class GNCXMLBindingTest {
         GNC_EOProduct eoproduct = new GNC_EOProduct();
         references.add(eoproduct);
 
-        identInfo2.setReferences(references);
+        identInfo2.setReference(references);
         
         identInfo2.setTypeOfOrganisation(GNC_OrganisationTypeCode.EXPERTS);
         expResult.setIdentificationInfo(Arrays.asList(identInfo2));

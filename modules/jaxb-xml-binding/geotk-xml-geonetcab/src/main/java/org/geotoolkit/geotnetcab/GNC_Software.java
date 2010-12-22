@@ -56,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
     "typeOf"
 })
 @XmlRootElement(name = "GNC_Software", namespace = "http://www.mdweb-project.org/files/xsd")
-public class GNC_Software extends GNC_Product {
+public class GNC_Software extends GNC_Product implements org.opengis.metadata.geonetcab.GNC_Software {
 
     @XmlElement(required = true)
     private List<GNC_ApplicationFieldCode> applicationField;

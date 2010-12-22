@@ -52,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
     "typeOfOrganisation"
 })
 @XmlRootElement(name = "GNC_OrganisationEntitie", namespace = "http://www.mdweb-project.org/files/xsd")
-public class GNC_OrganisationEntitie extends GNC_Resource {
+public class GNC_OrganisationEntitie extends GNC_Resource implements org.opengis.metadata.geonetcab.GNC_OrganisationEntitie {
 
     @XmlElement(required = true)
     private GNC_OrganisationTypeCode typeOfOrganisation;
@@ -65,6 +65,7 @@ public class GNC_OrganisationEntitie extends GNC_Resource {
      *     {@link GNCOrganisationTypeCodePropertyType }
      *     
      */
+    @Override
     public GNC_OrganisationTypeCode getTypeOfOrganisation() {
         return typeOfOrganisation;
     }

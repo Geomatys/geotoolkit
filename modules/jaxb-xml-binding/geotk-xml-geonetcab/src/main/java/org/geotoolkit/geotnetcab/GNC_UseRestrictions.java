@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.metadata.extent.GeographicDescription;
 
 
@@ -53,41 +54,42 @@ import org.opengis.metadata.extent.GeographicDescription;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GNC_UseRestrictions_Type", propOrder = {
-    "extentOfRestrictionsl",
+    "extentOfRestrictions",
     "geographicRestrictions",
     "otherConstraints"
 })
-public class GNC_UseRestrictions {
+public class GNC_UseRestrictions implements org.opengis.metadata.geonetcab.GNC_UseRestrictions {
 
-    private List<GeographicDescription> extentOfRestrictionsl;
+    private List<GeographicDescription> extentOfRestrictions;
     @XmlElement(required = true)
     private Boolean geographicRestrictions;
     private String otherConstraints;
 
     /**
-     * Gets the value of the extentOfRestrictionsl property.
+     * Gets the value of the extentOfRestrictions property.
      * 
      * Objects of the following type(s) are allowed in the list
      * {@link GeographicDescription }
      * 
      * 
      */
-    public List<GeographicDescription> getExtentOfRestrictionsl() {
-        if (extentOfRestrictionsl == null) {
-            extentOfRestrictionsl = new ArrayList<GeographicDescription>();
+    @Override
+    public List<GeographicDescription> getExtentOfRestrictions() {
+        if (extentOfRestrictions == null) {
+            extentOfRestrictions = new ArrayList<GeographicDescription>();
         }
-        return this.extentOfRestrictionsl;
+        return this.extentOfRestrictions;
     }
 
-    public void setExtentOfRestrictionsl(List<GeographicDescription> extentOfRestrictionsl) {
-        this.extentOfRestrictionsl = extentOfRestrictionsl;
+    public void setExtentOfRestrictions(List<GeographicDescription> extentOfRestrictions) {
+        this.extentOfRestrictions = extentOfRestrictions;
     }
 
-    public void setExtentOfRestrictionsl(GeographicDescription extentOfRestrictionsl) {
-        if (this.extentOfRestrictionsl == null) {
-            this.extentOfRestrictionsl = new ArrayList<GeographicDescription>();
+    public void setExtentOfRestrictions(GeographicDescription extentOfRestrictions) {
+        if (this.extentOfRestrictions == null) {
+            this.extentOfRestrictions = new ArrayList<GeographicDescription>();
         }
-        this.extentOfRestrictionsl.add(extentOfRestrictionsl);
+        this.extentOfRestrictions.add(extentOfRestrictions);
     }
 
     /**
@@ -98,6 +100,7 @@ public class GNC_UseRestrictions {
      *     {@link Boolean }
      *     
      */
+    @Override
     public Boolean getGeographicRestrictions() {
         return geographicRestrictions;
     }
@@ -122,6 +125,7 @@ public class GNC_UseRestrictions {
      *     {@link String }
      *     
      */
+    @Override
     public String getOtherConstraints() {
         return otherConstraints;
     }
@@ -138,4 +142,27 @@ public class GNC_UseRestrictions {
         this.otherConstraints = value;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof GNC_UseRestrictions) {
+            GNC_UseRestrictions that = (GNC_UseRestrictions) obj;
+            return Utilities.equals(this.extentOfRestrictions, that.extentOfRestrictions) &&
+                   Utilities.equals(this.geographicRestrictions, that.geographicRestrictions) &&
+                   Utilities.equals(this.otherConstraints, that.otherConstraints);
+
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 71 * hash + (this.extentOfRestrictions != null ? this.extentOfRestrictions.hashCode() : 0);
+        hash = 71 * hash + (this.geographicRestrictions != null ? this.geographicRestrictions.hashCode() : 0);
+        hash = 71 * hash + (this.otherConstraints != null ? this.otherConstraints.hashCode() : 0);
+        return hash;
+    }
 }

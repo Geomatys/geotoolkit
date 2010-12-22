@@ -26,6 +26,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for GNC_Access_Type complex type.
@@ -52,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
     "description",
     "detailAccessConstraints"
 })
-public class GNC_Access {
+public class GNC_Access implements org.opengis.metadata.geonetcab.GNC_Access{
 
     private String description;
     private List<GNC_AccessConstraints> detailAccessConstraints;
@@ -65,6 +66,7 @@ public class GNC_Access {
      *     {@link String }
      *     
      */
+    @Override
     public String getDescription() {
         return description;
     }
@@ -89,6 +91,7 @@ public class GNC_Access {
      * 
      * 
      */
+    @Override
     public List<GNC_AccessConstraints> getDetailAccessConstraints() {
         if (detailAccessConstraints == null) {
             detailAccessConstraints = new ArrayList<GNC_AccessConstraints>();
@@ -107,4 +110,25 @@ public class GNC_Access {
         this.detailAccessConstraints.add(detailAccessConstraints);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof GNC_Access) {
+            GNC_Access that = (GNC_Access) obj;
+            return Utilities.equals(this.description, that.description) &&
+                   Utilities.equals(this.detailAccessConstraints, that.detailAccessConstraints);
+
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 13 * hash + (this.description != null ? this.description.hashCode() : 0);
+        hash = 13 * hash + (this.detailAccessConstraints != null ? this.detailAccessConstraints.hashCode() : 0);
+        return hash;
+    }
 }

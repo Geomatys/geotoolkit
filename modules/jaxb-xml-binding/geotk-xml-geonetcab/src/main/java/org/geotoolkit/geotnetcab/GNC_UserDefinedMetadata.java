@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.metadata.citation.ResponsibleParty;
 
 
@@ -58,7 +59,7 @@ import org.opengis.metadata.citation.ResponsibleParty;
     "feedbackStatement",
     "userContact"
 })
-public class GNC_UserDefinedMetadata {
+public class GNC_UserDefinedMetadata implements org.opengis.metadata.geonetcab.GNC_UserDefinedMetadata {
 
     @XmlElement(required = true)
     private Date dateStamp;
@@ -74,6 +75,7 @@ public class GNC_UserDefinedMetadata {
      *     {@link Date }
      *     
      */
+    @Override
     public Date getDateStamp() {
         return dateStamp;
     }
@@ -98,6 +100,7 @@ public class GNC_UserDefinedMetadata {
      *     {@link String }
      *     
      */
+    @Override
     public String getFeedbackStatement() {
         return feedbackStatement;
     }
@@ -122,6 +125,7 @@ public class GNC_UserDefinedMetadata {
      * 
      * 
      */
+    @Override
     public List<ResponsibleParty> getUserContact() {
         if (userContact == null) {
             userContact = new ArrayList<ResponsibleParty>();
@@ -138,5 +142,29 @@ public class GNC_UserDefinedMetadata {
             this.userContact = new ArrayList<ResponsibleParty>();
         }
         this.userContact.add(userContact);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof GNC_UserDefinedMetadata) {
+            GNC_UserDefinedMetadata that = (GNC_UserDefinedMetadata) obj;
+            return Utilities.equals(this.dateStamp, that.dateStamp) &&
+                   Utilities.equals(this.feedbackStatement, that.feedbackStatement) &&
+                   Utilities.equals(this.userContact, that.userContact);
+
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 19 * hash + (this.dateStamp != null ? this.dateStamp.hashCode() : 0);
+        hash = 19 * hash + (this.feedbackStatement != null ? this.feedbackStatement.hashCode() : 0);
+        hash = 19 * hash + (this.userContact != null ? this.userContact.hashCode() : 0);
+        return hash;
     }
 }

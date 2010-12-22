@@ -58,7 +58,7 @@ import javax.xml.bind.annotation.XmlType;
     "trainingOn"
 })
 @XmlRootElement(name = "GNC_Training", namespace = "http://www.mdweb-project.org/files/xsd")
-public class GNC_Training extends GNC_Product {
+public class GNC_Training extends GNC_Product implements org.opengis.metadata.geonetcab.GNC_Training {
 
     @XmlElement(required = true)
     private GNC_TrainingDurationCode duration;
@@ -122,6 +122,7 @@ public class GNC_Training extends GNC_Product {
      * 
      * 
      */
+    @Override
     public List<GNC_Software> getTrainingOn() {
         if (trainingOn == null) {
             trainingOn = new ArrayList<GNC_Software>();

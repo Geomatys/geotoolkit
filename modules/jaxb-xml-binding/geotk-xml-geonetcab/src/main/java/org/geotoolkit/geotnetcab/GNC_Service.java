@@ -56,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
     "isBasedOn"
 })
 @XmlRootElement(name = "GNC_Service", namespace = "http://www.mdweb-project.org/files/xsd")
-public class GNC_Service extends GNC_MaterialResource {
+public class GNC_Service extends GNC_MaterialResource implements org.opengis.metadata.geonetcab.GNC_Service {
 
     @XmlElement(required = true)
     private List<GNC_ServicesTypeCode> typeOfService;
@@ -85,6 +85,7 @@ public class GNC_Service extends GNC_MaterialResource {
      * 
      * 
      */
+    @Override
     public List<GNC_Product> getIsBasedOn() {
         if (isBasedOn == null) {
             isBasedOn = new ArrayList<GNC_Product>();
