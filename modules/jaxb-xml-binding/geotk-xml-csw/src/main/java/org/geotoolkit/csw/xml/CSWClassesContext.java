@@ -125,7 +125,7 @@ public class CSWClassesContext {
                     Class extraClass = Class.forName(extraClassName);
                     classeList.add(extraClass);
                 } catch (ClassNotFoundException ex) {
-                    LOGGER.log(Level.INFO, "unable to find extra class:" + extraClassName, ex);
+                    LOGGER.log(Level.FINER, "unable to find extra class:" + extraClassName, ex);
                 }
 
             }
