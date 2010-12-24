@@ -33,13 +33,12 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 
 
 /**
- * The provider for "<cite>Equidistant Cylindrical</cite>" projection (EPSG:1028).
+ * The provider for "<cite>Equidistant Cylindrical</cite>" projection (EPSG:1028, EPSG:1029).
  *
- * {@note EPSG defines two codes for this projection, 9823 being the spherical case and 1028 the
+ * {@note EPSG defines two codes for this projection, 1029 being the spherical case and 1028 the
  *        ellipsoidal case. However the formulas are the same in both cases, with an additional
  *        adjustment of Earth radius in the ellipsoidal case. Consequently they are implemented
- *        in Geotk by the same class. Note however that the 9823 code is deprecated and replaced
- *        by EPSG:1029.}
+ *        in Geotk by the same class.}
  *
  * The programmatic names and parameters are enumerated at
  * <A HREF="http://www.remotesensing.org/geotiff/proj_list/equirectangular.html">Equirectangular
@@ -52,7 +51,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
  *
  * @author John Grange
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.17
  *
  * @since 2.2
  * @module
@@ -86,17 +85,13 @@ public class EquidistantCylindrical extends MapProjection {
      *
      * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
      * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
-     *
-     * {@note ESRI includes a "<code>standard_parallel_1</code>" parameter instead of
-     *        "<cite>Latitude of natural origin</cite>". The ESRI name is also the one
-     *        used by Synder, and is declared as an alias.}
      */
     public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN =
             Identifiers.LATITUDE_OF_ORIGIN.select(
-                "latitude_of_origin",           // OGC
-                "Latitude of natural origin",   // EPSG
-                "Standard_Parallel_1",          // ESRI
-                "ProjCenterLat");               // GeoTIFF
+                "latitude_of_origin",                // OGC
+                "Latitude of 1st standard parallel", // EPSG
+                "Standard_Parallel_1",               // ESRI
+                "ProjCenterLat");                    // GeoTIFF
 
     /**
      * The operation parameter descriptor for the {@linkplain
@@ -125,10 +120,9 @@ public class EquidistantCylindrical extends MapProjection {
         new ReferenceIdentifier[] {
             new NamedIdentifier(Citations.OGC,     "Equidistant_Cylindrical"),
             new NamedIdentifier(Citations.EPSG,    "Equidistant Cylindrical"),
-            new DeprecatedName (Citations.EPSG,    "Equidistant Cylindrical (Spherical)"),
-            new IdentifierCode (Citations.EPSG,     1028),       // The ellipsoidal case
-            new IdentifierCode (Citations.EPSG,     9842, 1028), // The ellipsoidal case (deprecated)
-            new IdentifierCode (Citations.EPSG,     9823, 1029), // The cylindrical case (deprecated)
+            new NamedIdentifier(Citations.EPSG,    "Equidistant Cylindrical (Spherical)"),
+            new IdentifierCode (Citations.EPSG,     1028), // The ellipsoidal case
+            new IdentifierCode (Citations.EPSG,     1029), // The spherical case
             new NamedIdentifier(Citations.GEOTIFF, "CT_Equirectangular"),
             new IdentifierCode (Citations.GEOTIFF,  17),
             new NamedIdentifier(Citations.GEOTOOLKIT, Vocabulary.formatInternational(
@@ -170,12 +164,81 @@ public class EquidistantCylindrical extends MapProjection {
     }
 
     /**
-     * The provider for "<cite>Equidistant Cylindrical (Spherical)</cite>" projection (EPSG:1029).
+     * Legacy provider for "<cite>Equidistant Cylindrical</cite>" projection (EPSG:9842).
      * This provider is declared explicitly only because EPSG uses a distinct code with different
      * parameter names for this case.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.16
+     * @version 3.17
+     *
+     * @since 3.17 (derived from 3.16)
+     * @module
+     */
+    @Immutable
+    public static class Legacy extends EquidistantCylindrical {
+        /**
+         * For cross-version compatibility.
+         */
+        private static final long serialVersionUID = 4746070625216996314L;
+
+        /**
+         * The operation parameter descriptor for the {@linkplain
+         * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#centralMeridian
+         * central meridian} parameter value.
+         *
+         * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
+         * Valid values range is [-180 &hellip; 180]&deg; and default value is 0&deg;.
+         */
+        public static final ParameterDescriptor<Double> CENTRAL_MERIDIAN =
+                Identifiers.CENTRAL_MERIDIAN.select(
+                    "central_meridian",             // OGC
+                    "Central_Meridian",             // ESRI
+                    "Longitude of false origin",    // EPSG
+                    "ProjCenterLong");              // GeoTIFF
+
+        /**
+         * The operation parameter descriptor for the {@linkplain
+         * org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#latitudeOfOrigin
+         * latitude of origin} parameter value.
+         *
+         * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
+         * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
+         */
+        public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN =
+                Identifiers.LATITUDE_OF_ORIGIN.select(
+                    "latitude_of_origin",           // OGC
+                    "Latitude of natural origin",   // EPSG
+                    "Standard_Parallel_1",          // ESRI
+                    "ProjCenterLat");               // GeoTIFF
+
+        /**
+         * The parameters group.
+         */
+        public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
+            new ReferenceIdentifier[] {
+                new DeprecatedName(Citations.EPSG, "Equidistant Cylindrical"),
+                new IdentifierCode(Citations.EPSG,  9842, 1028)
+            }, new ParameterDescriptor<?>[] {
+                SEMI_MAJOR,       SEMI_MINOR, ROLL_LONGITUDE,
+                CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN,
+                FALSE_EASTING,    FALSE_NORTHING
+            });
+
+        /**
+         * Constructs a new provider.
+         */
+        public Legacy() {
+            super(PARAMETERS);
+        }
+    }
+
+    /**
+     * Legacy provider for "<cite>Equidistant Cylindrical (Spherical)</cite>" projection (EPSG:9823).
+     * This provider is declared explicitly only because EPSG uses a distinct code with different
+     * parameter names for this case.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.17
      *
      * @since 3.16
      * @module
@@ -195,20 +258,15 @@ public class EquidistantCylindrical extends MapProjection {
          * This parameter is <a href="package-summary.html#Obligation">mandatory</a>.
          * Valid values range is [-90 &hellip; 90]&deg; and default value is 0&deg;.
          */
-        public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN =
-                Identifiers.LATITUDE_OF_ORIGIN.select(
-                    "latitude_of_origin",                // OGC
-                    "Latitude of 1st standard parallel", // EPSG
-                    "Standard_Parallel_1",               // ESRI
-                    "ProjCenterLat");                    // GeoTIFF
+        public static final ParameterDescriptor<Double> LATITUDE_OF_ORIGIN = Legacy.LATITUDE_OF_ORIGIN;
 
         /**
          * The parameters group.
          */
         public static final ParameterDescriptorGroup PARAMETERS = Identifiers.createDescriptorGroup(
             new ReferenceIdentifier[] {
-                new NamedIdentifier(Citations.EPSG, "Equidistant Cylindrical (Spherical)"),
-                new IdentifierCode (Citations.EPSG, 1029)
+                new DeprecatedName(Citations.EPSG, "Equidistant Cylindrical (Spherical)"),
+                new IdentifierCode(Citations.EPSG,  9823, 1029)
             }, new ParameterDescriptor<?>[] {
                 SEMI_MAJOR,       SEMI_MINOR, ROLL_LONGITUDE,
                 CENTRAL_MERIDIAN, LATITUDE_OF_ORIGIN,

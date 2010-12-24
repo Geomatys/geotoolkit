@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
  * Tests the registration of transforms in {@link DefaultMathTransformFactory}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.17
  *
  * @since 3.00
  */
@@ -106,12 +106,15 @@ public class DefaultMathTransformFactoryTest {
         final OperationMethod deprecated  = factory.getOperationMethod("EPSG:9823");
         // Following should intentionally be tested immediately after EPSG:9823.
         assertSame(spherical, factory.getOperationMethod("Equidistant Cylindrical (Spherical)"));
-        assertNotSame(ellipsoidal, spherical);
-        assertSame   (ellipsoidal, deprecated);
+        assertSame("EPSG:1028 and 1029 are implemented by the same class.", ellipsoidal, spherical);
+        assertNotSame("Deprecated methods have their one implementation.", ellipsoidal, deprecated);
 
         assertFalse(isDeprecated(ellipsoidal, "Equidistant Cylindrical"));
-        assertTrue (isDeprecated(ellipsoidal, "Equidistant Cylindrical (Spherical)"));
         assertFalse(isDeprecated(spherical,   "Equidistant Cylindrical (Spherical)"));
+        assertTrue (isDeprecated(deprecated,  "Equidistant Cylindrical (Spherical)"));
+
+        assertSame(spherical,   factory.getOperationMethod("Equidistant Cylindrical (Spherical)"));
+        assertSame(ellipsoidal, factory.getOperationMethod("Equidistant Cylindrical"));
     }
 
     /**

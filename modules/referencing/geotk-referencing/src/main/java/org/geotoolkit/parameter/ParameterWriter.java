@@ -496,7 +496,13 @@ header: for (int i=0; ; i++) {
                     if (unitFormat == null) {
                         unitFormat = UnitFormat.getInstance(locale);
                     }
-                    table.write(unitFormat.format(unit));
+                    String symbol;
+                    try {
+                        symbol = unitFormat.format(unit);
+                    } catch (IllegalArgumentException e) {
+                        symbol = Classes.getShortClassName(unit);
+                    }
+                    table.write(symbol);
                 }
             }
             table.nextLine();
