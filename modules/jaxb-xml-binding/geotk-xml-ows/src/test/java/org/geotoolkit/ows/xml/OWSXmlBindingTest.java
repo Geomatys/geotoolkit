@@ -47,13 +47,21 @@ public class OWSXmlBindingTest {
 
     private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.filter");
 
-    private MarshallerPool pool;
+    private static final MarshallerPool pool = ExceptionReportMarshallerPool.getInstance();
     private Unmarshaller unmarshaller;
     private Marshaller   marshaller;
 
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
+
+
     @Before
     public void setUp() throws JAXBException {
-        pool = ExceptionReportMarshallerPool.getInstance();
         marshaller = pool.acquireMarshaller();
         unmarshaller = pool.acquireUnmarshaller();
     }

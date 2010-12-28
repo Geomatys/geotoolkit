@@ -19,9 +19,6 @@ package org.geotoolkit.natureSDI;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
@@ -40,12 +37,19 @@ import static org.junit.Assert.*;
  */
 public class NatureSDIXMLBindingTest {
 
-    private MarshallerPool pool;
+    private static MarshallerPool pool;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        pool = new MarshallerPool(NATSDI_DataIdentification.class);
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
 
     @Before
     public void setUp() throws JAXBException {
-        pool = new MarshallerPool(NATSDI_DataIdentification.class);
-        
     }
 
     @After

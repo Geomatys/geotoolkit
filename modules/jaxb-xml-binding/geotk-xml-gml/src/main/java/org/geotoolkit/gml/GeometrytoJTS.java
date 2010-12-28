@@ -551,29 +551,21 @@ public class GeometrytoJTS {
                         } else {
 
                             if(coords.isEmpty()){
-                                for(JAXBElement ele : lsst.getPosOrPointPropertyOrPointRep()){
-                                    Object v = ele.getValue();
-                                    if(v instanceof DirectPositionType){
-                                        DirectPositionType pos = (DirectPositionType)v;
-                                        coords.add(new Coordinate(pos.getOrdinate(0), pos.getOrdinate(1)));
-                                    }else{
-                                        throw new IllegalArgumentException("not supported yet");
-                                    }
+                                for (DirectPositionType pos : lsst.getPos()) {
+                                    coords.add(new Coordinate(pos.getOrdinate(0), pos.getOrdinate(1)));
+                                }
+                                if (lsst.getPointPropertyOrPointRep().size() > 0) {
+                                    throw new IllegalArgumentException("not supported yet");
                                 }
                             } else {
-                                for(JAXBElement ele : lsst.getPosOrPointPropertyOrPointRep()){
-                                    Object v = ele.getValue();
-                                    if(v instanceof DirectPositionType){
-                                        DirectPositionType pos = (DirectPositionType)v;
-
-                                        Coordinate c = new Coordinate(pos.getOrdinate(0), pos.getOrdinate(1));
-
-                                        if(!c.equals2D(coords.getLast())){
-                                            coords.add(c);
-                                        }
-                                    } else {
-                                        throw new IllegalArgumentException("not supported yet");
+                                for(DirectPositionType pos : lsst.getPos()){
+                                    final Coordinate c = new Coordinate(pos.getOrdinate(0), pos.getOrdinate(1));
+                                    if (!c.equals2D(coords.getLast())){
+                                        coords.add(c);
                                     }
+                                }
+                                if (lsst.getPointPropertyOrPointRep().size() > 0) {
+                                    throw new IllegalArgumentException("not supported yet");
                                 }
                             }
                         }

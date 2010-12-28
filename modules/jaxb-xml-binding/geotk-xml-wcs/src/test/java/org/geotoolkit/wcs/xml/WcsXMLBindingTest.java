@@ -23,7 +23,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 //Junit dependencies
-import org.geotoolkit.gml.xml.v311.ObjectFactory;
 import org.geotoolkit.ows.xml.v110.CodeType;
 import org.geotoolkit.wcs.xml.v100.OutputType;
 import org.geotoolkit.xml.MarshallerPool;
@@ -37,13 +36,19 @@ import static org.junit.Assert.*;
  */
 public class WcsXMLBindingTest {
 
-    private MarshallerPool pool;
+    private static final MarshallerPool pool = WCSMarshallerPool.getInstance();
     private Marshaller   marshaller;
-    private static ObjectFactory FACTORY = new ObjectFactory();
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
 
     @Before
     public void setUp() throws JAXBException {
-        pool = WCSMarshallerPool.getInstance();
         marshaller = pool.acquireMarshaller();
     }
 

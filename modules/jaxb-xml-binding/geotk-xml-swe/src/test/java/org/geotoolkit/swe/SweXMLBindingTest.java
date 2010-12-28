@@ -38,12 +38,20 @@ import static org.junit.Assert.*;
  */
 public class SweXMLBindingTest {
 
-    private MarshallerPool pool;
+    private static MarshallerPool pool;
     private Marshaller   marshaller;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        pool = new MarshallerPool("org.geotoolkit.swe.xml.v101:org.geotoolkit.internal.jaxb.geometry");
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
 
     @Before
     public void setUp() throws JAXBException {
-        pool = new MarshallerPool("org.geotoolkit.swe.xml.v101:org.geotoolkit.internal.jaxb.geometry");
         marshaller = pool.acquireMarshaller();
     }
 

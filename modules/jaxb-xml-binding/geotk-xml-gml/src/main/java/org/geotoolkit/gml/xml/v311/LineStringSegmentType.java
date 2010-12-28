@@ -22,6 +22,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
@@ -31,7 +32,7 @@ import org.opengis.geometry.DirectPosition;
 
 /**
  * A LineStringSegment is a curve segment that is defined by two or more coordinate tuples, with linear interpolation between them.
- * 				Note: LineStringSegment implements GM_LineString of ISO 19107.
+ * Note: LineStringSegment implements GM_LineString of ISO 19107.
  * 
  * <p>Java class for LineStringSegmentType complex type.
  * 
@@ -63,7 +64,8 @@ import org.opengis.geometry.DirectPosition;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LineStringSegmentType", propOrder = {
-    "posOrPointPropertyOrPointRep",
+    "pointPropertyOrPointRep",
+    "pos",
     "posList",
     "coordinates"
 })
@@ -71,10 +73,12 @@ public class LineStringSegmentType extends AbstractCurveSegmentType {
 
     @XmlElementRefs({
         @XmlElementRef(name = "pointProperty", namespace = "http://www.opengis.net/gml", type = JAXBElement.class),
-        @XmlElementRef(name = "pos", namespace = "http://www.opengis.net/gml", type = JAXBElement.class),
         @XmlElementRef(name = "pointRep", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     })
-    private List<JAXBElement<?>> posOrPointPropertyOrPointRep;
+    private List<JAXBElement<?>> pointPropertyOrPointRep;
+
+    @XmlElement(name = "pos", namespace = "http://www.opengis.net/gml")
+    private List<DirectPositionType> pos;
     private DirectPositionListType posList;
     private CoordinatesType coordinates;
     @XmlAttribute
@@ -88,11 +92,9 @@ public class LineStringSegmentType extends AbstractCurveSegmentType {
             CurveInterpolationType interpolation, List<DirectPosition> positions) {
         super(numDerivativesAtStart, numDerivativesAtEnd, numDerivativeInterior);
         this.interpolation = interpolation;
-        posOrPointPropertyOrPointRep = new ArrayList<JAXBElement<?>>();
-        ObjectFactory factory = new ObjectFactory();
-        for (DirectPosition pos : positions) {
-            DirectPositionType position = new DirectPositionType(pos);
-            posOrPointPropertyOrPointRep.add(factory.createPos(position));
+        for (DirectPosition currentPos : positions) {
+            DirectPositionType position = new DirectPositionType(currentPos);
+            this.pos.add(position);
         }
     }
 
@@ -100,17 +102,41 @@ public class LineStringSegmentType extends AbstractCurveSegmentType {
      * Gets the value of the posOrPointPropertyOrPointRep property.
      * 
      * Objects of the following type(s) are allowed in the list
-     * {@link JAXBElement }{@code <}{@link DirectPositionType }{@code >}
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
      * {@link JAXBElement }{@code <}{@link PointPropertyType }{@code >}
      * 
      * 
      */
-    public List<JAXBElement<?>> getPosOrPointPropertyOrPointRep() {
-        if (posOrPointPropertyOrPointRep == null) {
-            posOrPointPropertyOrPointRep = new ArrayList<JAXBElement<?>>();
+    public List<JAXBElement<?>> getPointPropertyOrPointRep() {
+        if (pointPropertyOrPointRep == null) {
+            pointPropertyOrPointRep = new ArrayList<JAXBElement<?>>();
         }
-        return this.posOrPointPropertyOrPointRep;
+        return this.pointPropertyOrPointRep;
+    }
+
+    /**
+     * Gets the value of the posOrPointPropertyOrPointRep property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@link DirectPositionType }
+     *
+     */
+    public List<DirectPositionType> getPos() {
+        if (pos == null) {
+            pos = new ArrayList<DirectPositionType>();
+        }
+        return this.pos;
+    }
+
+    public void setPos(List<DirectPositionType> pos) {
+        this.pos = pos;
+    }
+
+    public void setPos(DirectPositionType pos) {
+        if (this.pos == null) {
+            this.pos = new ArrayList<DirectPositionType>();
+        }
+        this.pos.add(pos);
     }
 
     /**
@@ -200,10 +226,10 @@ public class LineStringSegmentType extends AbstractCurveSegmentType {
             final LineStringSegmentType that = (LineStringSegmentType) object;
 
             boolean jb = false;
-            if (this.getPosOrPointPropertyOrPointRep().size() == that.getPosOrPointPropertyOrPointRep().size()) {
+            if (this.getPointPropertyOrPointRep().size() == that.getPointPropertyOrPointRep().size()) {
                 jb = true;
-                for (int i = 0; i < this.getPosOrPointPropertyOrPointRep().size(); i++) {
-                    if (!JAXBElementEquals(this.getPosOrPointPropertyOrPointRep().get(i), this.getPosOrPointPropertyOrPointRep().get(i))) {
+                for (int i = 0; i < this.getPointPropertyOrPointRep().size(); i++) {
+                    if (!JAXBElementEquals(this.getPointPropertyOrPointRep().get(i), this.getPointPropertyOrPointRep().get(i))) {
                         jb = false;
                     }
                 }
@@ -211,6 +237,7 @@ public class LineStringSegmentType extends AbstractCurveSegmentType {
             return Utilities.equals(this.coordinates,    that.coordinates)   &&
                    Utilities.equals(this.posList,        that.posList)       &&
                    Utilities.equals(this.interpolation,  that.interpolation) &&
+                   Utilities.equals(this.pos,            that.pos) &&
                    jb;
         }
         return false;
@@ -219,7 +246,8 @@ public class LineStringSegmentType extends AbstractCurveSegmentType {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 79 * hash + (this.posOrPointPropertyOrPointRep != null ? this.posOrPointPropertyOrPointRep.hashCode() : 0);
+        hash = 79 * hash + (this.pos != null ? this.pos.hashCode() : 0);
+        hash = 79 * hash + (this.pointPropertyOrPointRep != null ? this.pointPropertyOrPointRep.hashCode() : 0);
         hash = 79 * hash + (this.posList != null ? this.posList.hashCode() : 0);
         hash = 79 * hash + (this.coordinates != null ? this.coordinates.hashCode() : 0);
         return hash;
@@ -246,10 +274,16 @@ public class LineStringSegmentType extends AbstractCurveSegmentType {
         if (posList != null) {
             sb.append("posList:").append(posList).append('\n');
         }
-        if (posOrPointPropertyOrPointRep != null) {
-            sb.append("posOrPointPropertyOrPointRep:").append('\n');
-            for (JAXBElement<?>  inte : posOrPointPropertyOrPointRep) {
+        if (pointPropertyOrPointRep != null) {
+            sb.append("pointPropertyOrPointRep:").append('\n');
+            for (JAXBElement<?>  inte : pointPropertyOrPointRep) {
                 sb.append(inte.getValue()).append('\n');
+            }
+        }
+        if (pos != null) {
+            sb.append("pos:").append('\n');
+            for (DirectPositionType inte : pos) {
+                sb.append(inte).append('\n');
             }
         }
         return sb.toString();

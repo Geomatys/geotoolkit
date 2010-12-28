@@ -67,12 +67,19 @@ import static org.junit.Assert.*;
  */
 public class GNCXMLBindingTest {
 
-    private MarshallerPool pool;
+    private static MarshallerPool pool;
+
+    @BeforeClass
+    public static void setUpClass() throws Exception {
+        pool = new MarshallerPool(DefaultMetadata.class, ObjectFactory.class);
+    }
+
+    @AfterClass
+    public static void tearDownClass() throws Exception {
+    }
 
     @Before
     public void setUp() throws JAXBException {
-        pool = new MarshallerPool(DefaultMetadata.class, ObjectFactory.class);
-        
     }
 
     @After
