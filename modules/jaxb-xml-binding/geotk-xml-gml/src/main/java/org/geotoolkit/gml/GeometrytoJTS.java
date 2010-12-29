@@ -219,13 +219,13 @@ public class GeometrytoJTS {
     }
     
     public static Polygon toJTS(PolygonType gml) throws FactoryException{
-        final AbstractRingPropertyType ext = gml.getExterior().getValue();
-        final List<JAXBElement<AbstractRingPropertyType>> ints = gml.getInterior();
+        final AbstractRingPropertyType ext = gml.getExterior();
+        final List<AbstractRingPropertyType> ints = gml.getInterior();
 
         final LinearRing exterior = toJTS(ext.getAbstractRing());
         final LinearRing[] holes = new LinearRing[ints.size()];
         for(int i=0;i<holes.length;i++){
-            holes[i] = toJTS(ints.get(i).getValue().getAbstractRing());
+            holes[i] = toJTS(ints.get(i).getAbstractRing());
         }
 
         final Polygon polygon = GF.createPolygon(exterior, holes);

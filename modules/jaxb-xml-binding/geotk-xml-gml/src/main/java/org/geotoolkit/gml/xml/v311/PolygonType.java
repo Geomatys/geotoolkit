@@ -81,15 +81,39 @@ public class PolygonType extends AbstractSurfaceType {
 
     /**
      * Gets the value of the exterior property.
+     *
+     * @return
+     *     possible object is
+     *     {@link AbstractRingPropertyType }
+     *
+     */
+    public AbstractRingPropertyType getExterior() {
+        if (exterior != null) {
+            return exterior.getValue();
+        }
+        return null;
+    }
+
+    /**
+     * Gets the value of the exterior property.
      * 
      * @return
      *     possible object is
      *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
      *     
      */
-    public JAXBElement<AbstractRingPropertyType> getExterior() {
+    public JAXBElement<AbstractRingPropertyType> getJbExterior() {
         return exterior;
+    }
+
+    /**
+     * Sets the value of the exterior property.
+     *
+     * @param value allowed object is {@link AbstractRingPropertyType }
+     */
+    public void setExterior(AbstractRingPropertyType value) {
+        final ObjectFactory factory = new ObjectFactory();
+        this.exterior = factory.createExterior(value);
     }
 
     /**
@@ -98,11 +122,29 @@ public class PolygonType extends AbstractSurfaceType {
      * @param value
      *     allowed object is
      *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
-     *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
      *     
      */
-    public void setExterior(JAXBElement<AbstractRingPropertyType> value) {
+    public void setJbExterior(JAXBElement<AbstractRingPropertyType> value) {
         this.exterior = ((JAXBElement<AbstractRingPropertyType> ) value);
+    }
+
+    /**
+     * Gets the value of the interior property.
+     *
+     * Objects of the following type(s) are allowed in the list
+     * {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
+     *
+     *
+     */
+    public List<AbstractRingPropertyType> getInterior() {
+        final List<AbstractRingPropertyType> result = new ArrayList<AbstractRingPropertyType>();
+        if (interior == null) {
+            interior = new ArrayList<JAXBElement<AbstractRingPropertyType>>();
+        }
+        for (JAXBElement<AbstractRingPropertyType> inte : interior) {
+            result.add(inte.getValue());
+        }
+        return result;
     }
 
     /**
@@ -114,11 +156,37 @@ public class PolygonType extends AbstractSurfaceType {
      * 
      * 
      */
-    public List<JAXBElement<AbstractRingPropertyType>> getInterior() {
+    public List<JAXBElement<AbstractRingPropertyType>> getJbInterior() {
         if (interior == null) {
             interior = new ArrayList<JAXBElement<AbstractRingPropertyType>>();
         }
         return this.interior;
+    }
+
+    public void setJbInterior(List<JAXBElement<AbstractRingPropertyType>> interior) {
+        this.interior = interior;
+    }
+
+    public void setInterior(List<AbstractRingPropertyType> interior) {
+        if (this.interior == null) {
+            this.interior = new ArrayList<JAXBElement<AbstractRingPropertyType>>();
+        }
+        if (interior != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            for (AbstractRingPropertyType ring : interior) {
+                this.interior.add(factory.createInterior(ring));
+            }
+        }
+    }
+
+    public void setInterior(AbstractRingPropertyType interior) {
+        if (this.interior == null) {
+            this.interior = new ArrayList<JAXBElement<AbstractRingPropertyType>>();
+        }
+        if (interior != null) {
+            final ObjectFactory factory = new ObjectFactory();
+            this.interior.add(factory.createInterior(interior));
+        }
     }
 
     @Override
