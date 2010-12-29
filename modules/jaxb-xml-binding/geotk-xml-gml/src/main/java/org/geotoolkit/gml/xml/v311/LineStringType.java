@@ -22,6 +22,7 @@ import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlElementRefs;
 import javax.xml.bind.annotation.XmlType;
@@ -64,7 +65,8 @@ import org.opengis.geometry.DirectPosition;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "LineStringType", propOrder = {
-    "posOrPointPropertyOrPointRep",
+    "pointPropertyOrPointRep",
+    "pos",
     "posList",
     "coordinates"
 })
@@ -72,13 +74,15 @@ public class LineStringType extends AbstractCurveType {
 
     @XmlElementRefs({
         @XmlElementRef(name = "pointProperty", namespace = "http://www.opengis.net/gml", type = JAXBElement.class),
-        @XmlElementRef(name = "pos", namespace = "http://www.opengis.net/gml", type = JAXBElement.class),
         @XmlElementRef(name = "coord", namespace = "http://www.opengis.net/gml", type = JAXBElement.class),
         @XmlElementRef(name = "pointRep", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     })
-    protected List<JAXBElement<?>> posOrPointPropertyOrPointRep;
-    protected DirectPositionListType posList;
-    protected CoordinatesType coordinates;
+    private List<JAXBElement<?>> pointPropertyOrPointRep;
+
+    @XmlElement(name = "pos", namespace = "http://www.opengis.net/gml")
+    private List<DirectPositionType> pos;
+    private DirectPositionListType posList;
+    private CoordinatesType coordinates;
 
     /**
      * An empty constructor used by JAXB.
@@ -96,11 +100,10 @@ public class LineStringType extends AbstractCurveType {
      * Build a new LineString with the specified coordinates
      */
     public LineStringType(List<DirectPosition> positions) {
-        posOrPointPropertyOrPointRep = new ArrayList<JAXBElement<?>>();
-        ObjectFactory factory = new ObjectFactory();
-        for (DirectPosition pos : positions) {
-            DirectPositionType position = new DirectPositionType(pos);
-            posOrPointPropertyOrPointRep.add(factory.createPos(position));
+        this.pos = new ArrayList<DirectPositionType>();
+        for (DirectPosition currentPos : positions) {
+            DirectPositionType position = new DirectPositionType(currentPos);
+            pos.add(position);
         }
     }
 
@@ -109,25 +112,17 @@ public class LineStringType extends AbstractCurveType {
      */
     public LineStringType(String id, String srsname, Collection<DirectPositionType> positions) {
         super(id, srsname);
-        posOrPointPropertyOrPointRep = new ArrayList<JAXBElement<?>>();
-        ObjectFactory factory = new ObjectFactory();
-        for (DirectPositionType pos : positions) {
-            posOrPointPropertyOrPointRep.add(factory.createPos(pos));
+        this.pos = new ArrayList<DirectPositionType>();
+        for (DirectPositionType currentPos : positions) {
+            pos.add(currentPos);
         }
     }
 
-    public List<DirectPositionType> getPositions() {
-        List<DirectPositionType> result = new ArrayList<DirectPositionType>();
-        if (posOrPointPropertyOrPointRep == null) {
-            posOrPointPropertyOrPointRep = new ArrayList<JAXBElement<?>>();
-            return result;
+    public List<DirectPositionType> getPos() {
+        if (pos == null) {
+            pos = new ArrayList<DirectPositionType>();
         }
-        for (JAXBElement jb : posOrPointPropertyOrPointRep) {
-            if (jb.getValue() instanceof DirectPositionType) {
-                result.add((DirectPositionType) jb.getValue());
-            }
-        }
-        return result;
+        return pos;
     }
     /**
      * Gets the value of the posOrPointPropertyOrPointRep property.
@@ -140,11 +135,11 @@ public class LineStringType extends AbstractCurveType {
      * 
      * 
      */
-    public List<JAXBElement<?>> getPosOrPointPropertyOrPointRep() {
-        if (posOrPointPropertyOrPointRep == null) {
-            posOrPointPropertyOrPointRep = new ArrayList<JAXBElement<?>>();
+    public List<JAXBElement<?>> getPointPropertyOrPointRep() {
+        if (pointPropertyOrPointRep == null) {
+            pointPropertyOrPointRep = new ArrayList<JAXBElement<?>>();
         }
-        return this.posOrPointPropertyOrPointRep;
+        return this.pointPropertyOrPointRep;
     }
 
     /**
@@ -207,16 +202,17 @@ public class LineStringType extends AbstractCurveType {
             final LineStringType that = (LineStringType) object;
 
             boolean jb = false;
-            if (this.getPosOrPointPropertyOrPointRep().size() == that.getPosOrPointPropertyOrPointRep().size()) {
+            if (this.getPointPropertyOrPointRep().size() == that.getPointPropertyOrPointRep().size()) {
                 jb = true;
-                for (int i = 0; i < this.getPosOrPointPropertyOrPointRep().size(); i++) {
-                    if (!JAXBElementEquals(this.getPosOrPointPropertyOrPointRep().get(i), that.getPosOrPointPropertyOrPointRep().get(i))) {
+                for (int i = 0; i < this.getPointPropertyOrPointRep().size(); i++) {
+                    if (!JAXBElementEquals(this.getPointPropertyOrPointRep().get(i), that.getPointPropertyOrPointRep().get(i))) {
                         jb = false;
                     }
                 }
             }
-            return Utilities.equals(this.coordinates,            that.coordinates) &&
-                   Utilities.equals(this.posList,            that.posList)         &&
+            return Utilities.equals(this.coordinates, that.coordinates) &&
+                   Utilities.equals(this.posList,     that.posList)     &&
+                   Utilities.equals(this.pos,         that.pos)         &&
                    jb;
         }
         return false;
@@ -225,9 +221,10 @@ public class LineStringType extends AbstractCurveType {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 79 * hash + (this.posOrPointPropertyOrPointRep != null ? this.posOrPointPropertyOrPointRep.hashCode() : 0);
+        hash = 79 * hash + (this.pointPropertyOrPointRep != null ? this.pointPropertyOrPointRep.hashCode() : 0);
         hash = 79 * hash + (this.posList != null ? this.posList.hashCode() : 0);
         hash = 79 * hash + (this.coordinates != null ? this.coordinates.hashCode() : 0);
+        hash = 79 * hash + (this.pos != null ? this.pos.hashCode() : 0);
         return hash;
     }
 
@@ -252,10 +249,16 @@ public class LineStringType extends AbstractCurveType {
         if(coordinates != null) {
             s.append("coordinates=").append(coordinates).append('\n');
         }
-        if(posOrPointPropertyOrPointRep != null) {
-            s.append("pos - point :").append('\n');
-            for (JAXBElement jb : posOrPointPropertyOrPointRep) {
+        if(pointPropertyOrPointRep != null) {
+            s.append("point :").append('\n');
+            for (JAXBElement jb : pointPropertyOrPointRep) {
                 s.append(jb.getValue()).append('\n');
+            }
+        }
+        if(pos != null) {
+            s.append("pos :").append('\n');
+            for (DirectPositionType jb : pos) {
+                s.append(jb).append('\n');
             }
         }
         return s.toString();
