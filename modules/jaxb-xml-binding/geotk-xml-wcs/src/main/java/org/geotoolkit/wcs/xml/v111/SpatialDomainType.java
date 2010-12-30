@@ -131,7 +131,7 @@ public class SpatialDomainType {
      * 
      */
     public List<JAXBElement<? extends BoundingBoxType>> getBoundingBox() {
-        return Collections.unmodifiableList(boundingBox);
+        return boundingBox;
     }
 
     /**
@@ -145,11 +145,19 @@ public class SpatialDomainType {
         return gridCRS;
     }
 
+    public void setGridCRS(GridCrsType grid) {
+        this.gridCRS = grid;
+    }
+
     /**
      * Gets the value of the transformation property.
      */
     public AbstractCoordinateOperationType getTransformation() {
         return transformation;
+    }
+
+    public void setTransformation(AbstractCoordinateOperationType transformation) {
+        this.transformation = transformation;
     }
 
     /**
@@ -159,6 +167,10 @@ public class SpatialDomainType {
     public ImageCRSRefType getImageCRS() {
         return imageCRS;
     }
+
+    public void setImageCRS(ImageCRSRefType imageCRS) {
+        this.imageCRS = imageCRS;
+    }
     
     /**
      * Unordered list of polygons whose union (combined areas) covers the spatial domain of this coverage.
@@ -167,7 +179,7 @@ public class SpatialDomainType {
      * 
      */
     public List<PolygonType> getPolygon() {
-       return Collections.unmodifiableList(polygon);
+       return polygon;
     }
 
 }

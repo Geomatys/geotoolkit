@@ -16,10 +16,10 @@
  */
 package org.geotoolkit.ows.xml.v110;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -28,6 +28,10 @@ import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.referencing.CRS;
+import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -65,6 +69,8 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class BoundingBoxType {
 
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.ows.xml.v110");
+
     @XmlList
     @XmlElement(name = "LowerCorner", type = Double.class)
     private List<Double> lowerCorner  = new ArrayList<Double>();
@@ -76,7 +82,7 @@ public class BoundingBoxType {
     private String crs;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger dimensions;
+    private Integer dimensions;
 
     BoundingBoxType(){
     }
@@ -91,12 +97,32 @@ public class BoundingBoxType {
      * @param miny
      */
     public BoundingBoxType(String crs, double minx, double miny, double maxx, double maxy){
-        this.dimensions = new BigInteger("2");
+        this.dimensions = 2;
         this.lowerCorner.add(minx);
         this.lowerCorner.add(miny);
         this.upperCorner.add(maxx);
         this.upperCorner.add(maxy);
         this.crs = crs;
+    }
+
+    public BoundingBoxType(Envelope envelope) {
+        if (envelope != null) {
+            for (Double d : envelope.getLowerCorner().getCoordinate()) {
+                this.lowerCorner.add(d);
+            }
+            for (Double d : envelope.getUpperCorner().getCoordinate()) {
+                this.upperCorner.add(d);
+            }
+            final CoordinateReferenceSystem crss = envelope.getCoordinateReferenceSystem();
+            if (crss != null) {
+                try {
+                    crs = "EPSG:" + CRS.lookupEpsgCode(crss, true);
+                } catch (FactoryException ex) {
+                    LOGGER.log(Level.SEVERE, "Factory exception while creating OWS BoundingBox from opengis one", ex);
+                }
+            }
+            this.dimensions = envelope.getDimension();
+        }
     }
     
     /**
@@ -104,7 +130,7 @@ public class BoundingBoxType {
      * (unmodifiable)
      */
     public List<Double> getLowerCorner() {
-        return Collections.unmodifiableList(lowerCorner);
+        return lowerCorner;
     }
 
     /**
@@ -112,7 +138,7 @@ public class BoundingBoxType {
      * (unmodifiable)
      */
     public List<Double> getUpperCorner() {
-        return Collections.unmodifiableList(upperCorner);
+        return upperCorner;
     }
 
     /**
@@ -126,7 +152,7 @@ public class BoundingBoxType {
     /**
      * Gets the value of the dimensions property.
      */
-    public BigInteger getDimensions() {
+    public Integer getDimensions() {
         return dimensions;
     }
 }

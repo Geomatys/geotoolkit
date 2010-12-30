@@ -19,6 +19,8 @@ package org.geotoolkit.wcs.xml.v111;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -30,6 +32,10 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.v311.CodeType;
+import org.geotoolkit.referencing.CRS;
+import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.util.FactoryException;
 
 
 /**
@@ -71,6 +77,8 @@ import org.geotoolkit.gml.xml.v311.CodeType;
 })
 public class GridCrsType {
 
+    private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.wcs.xml.v111");
+    
     @XmlElement(namespace = "http://www.opengis.net/gml")
     private CodeType srsName;
     @XmlElement(name = "GridBaseCRS", required = true)
@@ -113,6 +121,36 @@ public class GridCrsType {
         this.srsName     = srsName;
         this.gridOrigin  = gridOrigin;
     }
+
+    public GridCrsType(RectifiedGrid grid) {
+        if (grid != null) {
+            if (grid.getOrigin() != null) {
+                this.gridOrigin = new ArrayList<Double>();
+                for (double d : grid.getOrigin().getCoordinate()) {
+                    this.gridOrigin.add(d);
+                }
+            }
+            if (grid.getOffsetVectors() != null) {
+                this.gridOffsets = new ArrayList<Double>();
+                for (double[] da : grid.getOffsetVectors()) {
+                    for (double d : da) {
+                        this.gridOffsets.add(d);
+                    }
+                }
+            }
+            final CoordinateReferenceSystem crss = grid.getCoordinateReferenceSystem();
+            if (crss != null) {
+                try {
+                    srsName = new CodeType("EPSG:" + CRS.lookupEpsgCode(crss, true));
+                } catch (FactoryException ex) {
+                    LOGGER.log(Level.WARNING, "Factory exception while creating WCS GRIDType from opengis one", ex);
+                }  catch (NullPointerException ex) {
+                    LOGGER.log(Level.WARNING, "Null Pointer exception while creating WCS GRIDType from opengis one", ex);
+                }
+            }
+
+        }
+    }
     
     /**
      * Gets the value of the srsName property.
@@ -129,15 +167,22 @@ public class GridCrsType {
         return gridBaseCRS;
     }
 
+    public void setGridBaseCRS(String gridBaseCRS) {
+        this.gridBaseCRS = gridBaseCRS;
+    }
+
    /**
-     * When this GridType reference is omitted, the OperationMethod shall be the most commonly used method in a GridCRS, which is referenced by the default URN "urn:ogc:def:method:WCS:1.1:2dSimpleGrid". 
+     * When this GridType reference is omitted, the OperationMethod shall be the most commonly used method in a GridCRS,
+    * which is referenced by the default URN "urn:ogc:def:method:WCS:1.1:2dSimpleGrid".
      */
     public String getGridType() {
         return gridType;
     }
 
     /**
-     * When this GridOrigin position is omitted, the origin defaults be the most commonly used origin in a GridCRS used in the output part of a GetCapabilities operation request, namely "0 0". Gets the value of the gridOrigin property.
+     * When this GridOrigin position is omitted, 
+     * the origin defaults be the most commonly used origin in a GridCRS used in the output part of a GetCapabilities operation request, namely "0 0".
+     * Gets the value of the gridOrigin property.
      */
     public List<Double> getGridOrigin() {
         if (gridOrigin == null) {
