@@ -31,12 +31,15 @@
  * <ul>
  *   <li>A set of static methods in the {@link org.geotoolkit.gui.swing.tree.Trees} class.</li>
  *   <li>A {@link org.geotoolkit.gui.swing.tree.TreeTableNode} interface used as a bridge
- *       toward <cite>Swingx</cite> {@code JTreeTable}.</li>
- *   <li>A {@link org.geotoolkit.gui.swing.tree.TreeNodeFilter} interface.</li>
+ *       toward <cite>Swingx</cite> {@link org.jdesktop.swingx.JXTreeTable}.</li>
+ *   <li>A {@link org.geotoolkit.gui.swing.tree.TreeNodeFilter} interface for copying a portion
+ *       of a tree.</li>
+ *   <li>Implementation of {@link org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode#toString()} can
+ *       format {@link org.opengis.util.InternationalString} according a {@link java.util.Locale}.</li>
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.04
+ * @version 3.17
  *
  * @since 2.0
  * @module

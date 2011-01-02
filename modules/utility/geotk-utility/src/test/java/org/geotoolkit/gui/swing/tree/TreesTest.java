@@ -17,8 +17,10 @@
  */
 package org.geotoolkit.gui.swing.tree;
 
+import java.util.Locale;
 import java.util.Arrays;
 import java.util.AbstractMap;
+import org.geotoolkit.resources.Vocabulary;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
@@ -89,5 +91,25 @@ public final class TreesTest {
                 "│   ├───Node #1\n" +
                 "│   └───Node #2\n" +
                 "└───Node #3\n", Trees.toString(root));
+    }
+
+    /**
+     * Tests the formatting of localized labels.
+     *
+     * @since 3.17
+     */
+    @Test
+    public void testLocalized() {
+        final LocalizedTreeNode root = new LocalizedTreeNode(Vocabulary.formatInternational(Vocabulary.Keys.UNDEFINED));
+        final NamedTreeNode child = new NamedTreeNode(Vocabulary.formatInternational(Vocabulary.Keys.UNKNOWN));
+        root.add(child);
+
+        root.locale = Locale.ENGLISH;
+        assertEquals("Undefined", root.toString());
+        assertEquals("Unknown",  child.toString());
+
+        root.locale = Locale.FRENCH;
+        assertEquals("Indéfini", root.toString());
+        assertEquals("Inconnu", child.toString());
     }
 }

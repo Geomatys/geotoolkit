@@ -17,17 +17,23 @@
  */
 package org.geotoolkit.gui.swing.tree;
 
-import javax.swing.JTree;
+import java.util.Locale;
+import org.opengis.util.InternationalString;
 
 
 /**
- * A tree node with a name which may be different than the user object. The {@link JTree}
- * component invokes the {@link #toString} method for populating the tree widget. This class
- * overrides the default implementation (<code>{@linkplain #getUserObject userObject}.toString</code>)
- * with a custom label.
+ * A tree node with a name which may be different than the {@linkplain #userObject user object}.
+ * Because the {@link javax.swing.JTree} component invokes the {@link #toString()} method for
+ * populating the tree widget, this class is useful when the label to display is different than
+ * the value of {@code userObject.toString()}.
+ * <p>
+ * Every constructors in this class expect a name of type {@link CharSequence}. The names are
+ * typically instances of {@link String}, but instances of {@link InternationalString} are
+ * also accepted. In the later case, the {@link #toString()} method may return a localized
+ * string depending on the return value of {@link #getLocale()}.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.17
  *
  * @since 2.0
  * @module
@@ -39,52 +45,70 @@ public class NamedTreeNode extends DefaultMutableTreeNode {
     private static final long serialVersionUID = -5052321314347001298L;
 
     /**
-     * The node label to be returned by {@link #toString}.
+     * The node label to be returned by {@link #toString()}.
      */
-    private final String name;
+    private final CharSequence name;
 
     /**
      * Creates a tree node that has no parent and no children, but which allows children.
      *
-     * @param name The node name to be returned by {@link #toString}.
+     * @param name The node name to be returned by {@link #toString()}.
      */
-    public NamedTreeNode(final String name) {
+    public NamedTreeNode(final CharSequence name) {
         super();
-        this.name = name;
+        this.name = freeze(name);
     }
 
     /**
      * Creates a tree node with no parent, no children, but which allows
      * children, and initializes it with the specified user object.
      *
-     * @param name The node name to be returned by {@link #toString}.
+     * @param name The node name to be returned by {@link #toString()}.
      * @param userObject an Object provided by the user that constitutes the node's data
      */
-    public NamedTreeNode(final String name, final Object userObject) {
+    public NamedTreeNode(final CharSequence name, final Object userObject) {
         super(userObject);
-        this.name = name;
+        this.name = freeze(name);
     }
 
     /**
      * Creates a tree node with no parent, no children, initialized with
      * the specified user object, and that allows children only if specified.
      *
-     * @param name The node name to be returned by {@link #toString}.
+     * @param name The node name to be returned by {@link #toString()}.
      * @param userObject an Object provided by the user that constitutes the node's data
-     * @param allowsChildren if true, the node is allowed to have child nodes -- otherwise,
+     * @param allowsChildren if true, the node is allowed to have child nodes. Otherwise,
      *        it is always a leaf node
      */
-    public NamedTreeNode(final String name, Object userObject, boolean allowsChildren) {
+    public NamedTreeNode(final CharSequence name, Object userObject, boolean allowsChildren) {
         super(userObject, allowsChildren);
-        this.name = name;
+        this.name = freeze(name);
     }
 
     /**
-     * Returns this node label. This method is invoked by {@link JTree} for populating
-     * the tree widget.
+     * Ensures that the given name is either an instance of {@link InternationalString},
+     * {@link String} or {@code null}. This is mostly a safety against change of
+     * {@link StringBuilder} content.
+     */
+    private static CharSequence freeze(final CharSequence name) {
+        if (name == null || name instanceof InternationalString) {
+            return name;
+        }
+        return name.toString();
+    }
+
+    /**
+     * Returns the name given at construction time. If that name is an instance of
+     * {@link InternationalString} and the {@link #getLocale()} method returns a
+     * non-null value, then the {@link InternationalString#toString(Locale)} value
+     * is returned.
      */
     @Override
     public String toString() {
-        return name;
+        if (name instanceof InternationalString) {
+            final Locale locale = getLocale();
+            return (locale != null) ? ((InternationalString) name).toString(locale) : name.toString();
+        }
+        return (String) name; // May be null.
     }
 }

@@ -17,25 +17,33 @@
  */
 package org.geotoolkit.gui.swing.tree;
 
+import java.util.Locale;
 import java.util.Enumeration;
+import org.opengis.util.InternationalString;
+import org.geotoolkit.util.Localized;
 import org.geotoolkit.lang.Workaround;
 
 
 /**
  * General-purpose node in a tree data structure. This default implementation implements
- * Geotk {@link MutableTreeNode} interface, which inherits a {@code getUserObject()}
- * method. This method is provided in Swing {@link javax.swing.tree.DefaultMutableTreeNode}
+ * the Geotk {@link MutableTreeNode} interface, which inherits a {@code getUserObject()}
+ * method. This method is provided in the Swing {@link javax.swing.tree.DefaultMutableTreeNode}
  * implementation but seems to have been forgotten in all Swing interfaces.
+ * <p>
+ * In addition, the {@link #toString()} method has been overridden in order to process
+ * {@link InternationalString} specially: if the value returned by {@link #getLocale()}
+ * is non-null, then that value is used for getting a {@link String} from the
+ * {@code InternationalString} object.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.03
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.17
  *
  * @since 2.0
  * @module
  */
 @Workaround(library="JDK", version="1.4")
 public class DefaultMutableTreeNode extends javax.swing.tree.DefaultMutableTreeNode
-        implements MutableTreeNode
+        implements MutableTreeNode, Localized
 {
     /**
      * Serial number for compatibility with different versions.
@@ -78,5 +86,50 @@ public class DefaultMutableTreeNode extends javax.swing.tree.DefaultMutableTreeN
     @SuppressWarnings("unchecked")
     public Enumeration<? extends javax.swing.tree.TreeNode> children() {
         return super.children();
+    }
+
+    /**
+     * Returns the locale to use for the value returned by {@link #toString()}. The default
+     * implementation returns the locale of the {@linkplain #getParent() parent}, if any,
+     * or {@code null} otherwise.
+     *
+     * @since 3.17
+     */
+    @Override
+    public Locale getLocale() {
+        javax.swing.tree.TreeNode parent = getParent();
+        while (parent != null) {
+            if (parent instanceof Localized) {
+                return ((Localized) parent).getLocale();
+            }
+            parent = parent.getParent();
+        }
+        return null;
+    }
+
+    /**
+     * Returns the string value of the {@linkplain #userObject user object}, or {@code null}
+     * if none. This method is invoked by {@link javax.swing.JTree} for populating the tree
+     * widget. The string can be localized if the following conditions are meet:
+     * <p>
+     * <ul>
+     *   <li>the user object is an instance of {@link InternationalString},</li>
+     *   <li>the locale returned by {@link #getLocale()} is non-null.</li>
+     * </ul>
+     * <p>
+     * In such case, this method returns the value of {@link InternationalString#toString(Locale)}.
+     *
+     * @return The localized string value of the {@linkplain #userObject user object},
+     *         or {@code null} if none.
+     */
+    @Override
+    public String toString() {
+        if (userObject instanceof InternationalString) {
+            final Locale locale = getLocale();
+            if (locale != null) {
+                return ((InternationalString) userObject).toString(locale);
+            }
+        }
+        return super.toString();
     }
 }

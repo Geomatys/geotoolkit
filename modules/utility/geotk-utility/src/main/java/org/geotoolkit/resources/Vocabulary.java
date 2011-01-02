@@ -1687,7 +1687,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int UNITS = 308;
 
         /**
-         * Unknow
+         * Unknown
          */
         public static final int UNKNOWN = 309;
 
