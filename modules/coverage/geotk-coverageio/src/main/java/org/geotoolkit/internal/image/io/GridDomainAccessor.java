@@ -105,47 +105,57 @@ public final class GridDomainAccessor extends MetadataAccessor {
     public void setGridGeometry(final GridGeometry geometry, final PixelInCell pixelInCell,
             final CellGeometry cellGeometry, final int axisToReverse)
     {
-        final MathTransform gridToCRS     = geometry.getGridToCRS(); // Really want pixel center.
-        final GridEnvelope  gridEnvelope  = geometry.getGridRange();
-        final int           gridDimension = gridEnvelope.getDimension();
-        final int           crsDimension  = gridToCRS.getTargetDimensions();
-        double[]            center        = new double[Math.max(crsDimension, gridDimension)];
-        final int[]         lower         = new int   [gridDimension];
-        final int[]         upper         = new int   [gridDimension];
-        for (int i=0; i<gridDimension; i++) {
-            lower [i] = gridEnvelope.getLow (i);
-            upper [i] = gridEnvelope.getHigh(i);
-            center[i] = 0.5 * (lower[i] + upper[i]);
+        final GridEnvelope gridEnvelope = geometry.getGridRange();
+        if (gridEnvelope != null) {
+            final int gridDimension = gridEnvelope.getDimension();
+            final int[] lower = new int[gridDimension];
+            final int[] upper = new int[gridDimension];
+            for (int i=0; i<gridDimension; i++) {
+                lower[i] = gridEnvelope.getLow (i);
+                upper[i] = gridEnvelope.getHigh(i);
+            }
+            final MathTransform gridToCRS = geometry.getGridToCRS(); // Really want pixel center.
+            if (gridToCRS != null) {
+                final int crsDimension = gridToCRS.getTargetDimensions();
+                double[] center = new double[Math.max(crsDimension, gridDimension)];
+                for (int i=0; i<gridDimension; i++) {
+                    center[i] = 0.5 * (lower[i] + upper[i]);
+                }
+                try {
+                    gridToCRS.transform(center, 0, center, 0, 1);
+                    center = fixRoundingError(XArrays.resize(center, crsDimension));
+                    setSpatialRepresentation(center, cellGeometry, PixelTranslation.getPixelOrientation(pixelInCell));
+                } catch (TransformException e) {
+                    // Should not happen. If it happen anyway, this is not a fatal error.
+                    // The above metadata will be missing from the IIOMetadata object, but
+                    // they were mostly for information purpose anyway.
+                    Logging.unexpectedException(GridDomainAccessor.class, "setGridGeometry", e);
+                }
+            }
+            setLimits(lower, upper);
         }
-        try {
-            gridToCRS.transform(center, 0, center, 0, 1);
-            center = fixRoundingError(XArrays.resize(center, crsDimension));
-            setSpatialRepresentation(center, cellGeometry, PixelTranslation.getPixelOrientation(pixelInCell));
-        } catch (TransformException e) {
-            // Should not happen. If it happen anyway, this is not a fatal error.
-            // The above metadata will be missing from the IIOMetadata object, but
-            // they were mostly for information purpose anyway.
-            Logging.unexpectedException(GridDomainAccessor.class, "setGridGeometry", e);
-        }
-        setLimits(lower, upper);
         /*
-         * Now set the origin and offset vectors, which are inferred from the gritToCRS matrix.
+         * Now set the origin and offset vectors, which are inferred from the gridToCRS matrix.
          * This is possible only if the transform is affine.
          */
         final Matrix matrix = DiscreteReferencingFactory.getAffineTransform(geometry, pixelInCell);
         if (matrix != null) {
             if (axisToReverse >= 0) {
+                if (gridEnvelope == null) {
+                    return; // Can't write a correct origin without this information.
+                }
                 MatrixUtilities.reverseAxis(matrix, axisToReverse, gridEnvelope.getSpan(axisToReverse));
             }
-            final int lastColumn = matrix.getNumCol() - 1;
+            final int gridDimension = matrix.getNumCol() - 1;
+            final int crsDimension  = matrix.getNumRow() - 1;
             final double[] origin = new double[crsDimension];
             for (int j=0; j<crsDimension; j++) {
-                origin[j] = matrix.getElement(j, lastColumn);
+                origin[j] = matrix.getElement(j, gridDimension);
             }
             setOrigin(fixRoundingError(origin));
             final double[] vector = new double[gridDimension];
             for (int j=0; j<crsDimension; j++) {
-                for (int i=0; i<lastColumn; i++) {
+                for (int i=0; i<gridDimension; i++) {
                     vector[i] = matrix.getElement(j, i);
                 }
                 addOffsetVector(fixRoundingError(vector));
