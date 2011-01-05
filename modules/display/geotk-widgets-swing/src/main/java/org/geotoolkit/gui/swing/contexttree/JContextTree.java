@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2010, Johann Sorel
+ *    (C) 2008 - 2011, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -140,6 +140,7 @@ public class JContextTree extends JScrollPane {
             node = new DefaultMutableTreeNode();
         }
         tree.setModel(new DefaultTreeModel(node));
+        tree.expandPath(new TreePath(node.getPath()));
     }
 
     public MapContext getContext() {
@@ -675,7 +676,9 @@ public class JContextTree extends JScrollPane {
                     final MapItemTreeNode pair = (i<getChildCount()) ? ((MapItemTreeNode)getChildAt(i)) : null;
                     if(pair == null || !child.equals(pair.getUserObject())){
                         //this child was added
-                        ((DefaultTreeModel)tree.getModel()).insertNodeInto(new MapItemTreeNode(child), this, i);
+                        MapItemTreeNode childNode = new MapItemTreeNode(child);
+                        ((DefaultTreeModel)tree.getModel()).insertNodeInto(childNode, this, i);
+                        tree.expandPath(new TreePath(this.getPath()));
                     }
                     i++;
                 }

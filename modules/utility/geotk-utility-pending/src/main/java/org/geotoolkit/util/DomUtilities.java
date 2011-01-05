@@ -104,19 +104,45 @@ public class DomUtilities {
 
     /**
      * Search and return the first node with a given tag name.
+     * This will search recursivly in the node
      *
      * @param parent : node to explore
      * @param tagName : child node name
      * @return first element with tagName in parent node or null
      */
     public static Element firstElement(Element parent, String tagName){
-        final NodeList lst = parent.getElementsByTagName(tagName);
-        if(lst.getLength() > 0){
-            return (Element) lst.item(0);
-        }else{
-            return null;
-        }
+        return firstElement(parent, tagName, true);
     }
+
+    /**
+     * Search and return the first node with a given tag name.
+     *
+     * @param parent : node to explore
+     * @param tagName : child node name
+     * @param recursive : search in sub nodes or not
+     * @return first element with tagName in parent node or null
+     */
+    public static Element firstElement(Element parent, String tagName, boolean recursive){
+
+        if(recursive){
+            final NodeList lst = parent.getElementsByTagName(tagName);
+            if(lst.getLength() > 0){
+                return (Element) lst.item(0);
+            }
+        }else{
+            //search only in this node
+            final NodeList lst = parent.getChildNodes();
+            for(int i=0,n=lst.getLength();i<n;i++){
+                final Node child = lst.item(i);
+                if(child instanceof Element && tagName.equalsIgnoreCase(child.getLocalName())){
+                    return (Element) child;
+                }
+            }
+        }
+        return null;
+    }
+
+
 
     /**
      * Return the first node in the given node children which localName
@@ -146,7 +172,7 @@ public class DomUtilities {
      * @return T or null if no node with tagname was found or convertion to given class failed.
      */
     public static <T> T textValue(Element parent, String tagName, Class<T> clazz) throws NonconvertibleObjectException{
-        final Element ele = firstElement(parent, tagName);
+        final Element ele = firstElement(parent, tagName, true);
         if(ele == null) return null;
         final String text = ele.getTextContent();
         if(text == null) return null;
