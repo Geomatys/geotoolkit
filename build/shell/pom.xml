@@ -165,7 +165,7 @@
                         <configuration>
                             <tasks>
                                 <property name="shellFolder" value="./src/main/shell/" />
-                                <property name="targetFolder" value="./target/" />
+                                <property name="targetFolder" value="../../target/bundles" />
                                 <property name="toZipFolder" value="./target/tozip/" />
 
                                 <!-- copy shell scripts -->
