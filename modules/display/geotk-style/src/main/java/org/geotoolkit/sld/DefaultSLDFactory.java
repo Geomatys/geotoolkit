@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -80,47 +80,49 @@ public class DefaultSLDFactory extends Factory implements MutableSLDFactory{
     }
 
     @Override
-    public SLDLibrary createSLDLibrary(OnlineResource online) {
+    public SLDLibrary createSLDLibrary(final OnlineResource online) {
         return new DefaultSLDLibrary(online);
     }
 
     @Override
-    public RemoteOWS createRemoteOWS(String service, OnlineResource online) {
+    public RemoteOWS createRemoteOWS(final String service, final OnlineResource online) {
         return new DefaultRemoteOWS(service, online);
     }
 
     @Override
-    public InlineFeature createInLineFeature(Collection<Collection<Feature>> features) {
+    public InlineFeature createInLineFeature(final Collection<Collection<Feature>> features) {
         return new DefaultInlineFeature(features);
     }
 
     @Override
-    public CoverageConstraint createCoverageConstraint(String name, CoverageExtent extent) {
+    public CoverageConstraint createCoverageConstraint(
+            final String name, final CoverageExtent extent) {
         return new DefaultCoverageConstraint(name, extent);
     }
 
     @Override
-    public FeatureTypeConstraint createFeatureTypeConstraint(Name name, Filter filter, List<Extent> extents) {
+    public FeatureTypeConstraint createFeatureTypeConstraint(final Name name,
+            final Filter filter, final List<Extent> extents) {
         return new DefaultFeatureTypeConstraint(name, filter, extents);
     }
 
     @Override
-    public CoverageExtent createCoverageExtent(String timeperiod) {
+    public CoverageExtent createCoverageExtent(final String timeperiod) {
         return new DefaultCoverageExtent(timeperiod, null);
     }
 
     @Override
-    public CoverageExtent createCoverageExtent(List<RangeAxis> ranges) {
+    public CoverageExtent createCoverageExtent(final List<RangeAxis> ranges) {
         return new DefaultCoverageExtent(null, ranges);
     }
 
     @Override
-    public Extent createExtent(String name, String value) {
+    public Extent createExtent(final String name, final String value) {
         return new DefaultExtent(name, value);
     }
 
     @Override
-    public RangeAxis createRangeAxis(String name, String value) {
+    public RangeAxis createRangeAxis(final String name, final String value) {
         return new DefaultRangeAxis(name, value);
     }
 }

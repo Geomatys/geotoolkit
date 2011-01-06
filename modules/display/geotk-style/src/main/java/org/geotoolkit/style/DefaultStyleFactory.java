@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -110,27 +110,42 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     // TEMPORARY FIX ///////////////////////////////////////////////////////////
 
     @Override
-    public LineSymbolizer lineSymbolizer(String name, Expression geometry, Description description, Unit<?> unit, Stroke stroke, Expression offset) {
+    public LineSymbolizer lineSymbolizer(final String name, final Expression geometry,
+            final Description description, final Unit<?> unit,
+            final Stroke stroke, final Expression offset) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public PointSymbolizer pointSymbolizer(String name, Expression geometry, Description description, Unit<?> unit, Graphic graphic) {
+    public PointSymbolizer pointSymbolizer(final String name, final Expression geometry,
+            final Description description, final Unit<?> unit, final Graphic graphic) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public PolygonSymbolizer polygonSymbolizer(String name, Expression geometry, Description description, Unit<?> unit, Stroke stroke, Fill fill, Displacement displacement, Expression offset) {
+    public PolygonSymbolizer polygonSymbolizer(final String name,
+            final Expression geometry, final Description description,
+            final Unit<?> unit, final Stroke stroke, final Fill fill,
+            final Displacement displacement, final Expression offset) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public RasterSymbolizer rasterSymbolizer(String name, Expression geometry, Description description, Unit<?> unit, Expression opacity, ChannelSelection channelSelection, OverlapBehavior overlapsBehaviour, ColorMap colorMap, ContrastEnhancement contrast, ShadedRelief shaded, Symbolizer outline) {
+    public RasterSymbolizer rasterSymbolizer(final String name,
+            final Expression geometry, final Description description,
+            final Unit<?> unit, final Expression opacity,
+            final ChannelSelection channelSelection,
+            final OverlapBehavior overlapsBehaviour, final ColorMap colorMap,
+            final ContrastEnhancement contrast, final ShadedRelief shaded,
+            final Symbolizer outline) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public TextSymbolizer textSymbolizer(String name, Expression geometry, Description description, Unit<?> unit, Expression label, Font font, LabelPlacement placement, Halo halo, Fill fill) {
+    public TextSymbolizer textSymbolizer(final String name, final Expression geometry,
+            final Description description, final Unit<?> unit,
+            final Expression label, final Font font, final LabelPlacement placement,
+            final Halo halo, final Fill fill) {
         throw new UnsupportedOperationException("Not supported yet.");
     }    
 
@@ -188,8 +203,9 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     }
 
     @Override
-    public MutableStyle style(String name, Description description, boolean isDefault,
-            List<FeatureTypeStyle> featureTypeStyles, Symbolizer defaultSymbolizer) {
+    public MutableStyle style(final String name, final Description description,
+            final boolean isDefault, final List<FeatureTypeStyle> featureTypeStyles,
+            final Symbolizer defaultSymbolizer) {
         final MutableStyle style = new DefaultMutableStyle();
         style.setName(name);
         style.setDescription(description);
@@ -229,8 +245,10 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     }
 
     @Override
-    public MutableFeatureTypeStyle featureTypeStyle(String name, Description description,
-            Id definedFor, Set<Name> featureTypeNames, Set<SemanticType> types, List<Rule> rules) {
+    public MutableFeatureTypeStyle featureTypeStyle(final String name,
+            final Description description, final Id definedFor,
+            final Set<Name> featureTypeNames, final Set<SemanticType> types,
+            final List<Rule> rules) {
         final MutableFeatureTypeStyle fts = new DefaultMutableFeatureTypeStyle();
         fts.setName(name);
         fts.setDescription(description);
@@ -271,8 +289,9 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     }
 
     @Override
-    public MutableRule rule(String name, Description description, GraphicLegend legend,
-            double min, double max, List<Symbolizer> symbolizers, Filter filter) {
+    public MutableRule rule(final String name, final Description description,
+            final GraphicLegend legend, final double min, final double max,
+            final List<Symbolizer> symbolizers, final Filter filter) {
         final MutableRule rule = new DefaultMutableRule();
         rule.setName(name);
         rule.setDescription(description);
@@ -294,7 +313,8 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     }
 
     @Override
-    public PointSymbolizer pointSymbolizer(final Graphic graphic, final String geometryPropertyName){
+    public PointSymbolizer pointSymbolizer(final Graphic graphic,
+            final String geometryPropertyName){
         return new DefaultPointSymbolizer(
                 graphic, 
                 DEFAULT_UOM, 
@@ -304,8 +324,9 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     }
 
     @Override
-    public PointSymbolizer pointSymbolizer(String name, String geom, Description desc,
-            Unit<?> unit, Graphic graphic) {
+    public PointSymbolizer pointSymbolizer(final String name,
+            final String geom, final Description desc,
+            final Unit<?> unit, final Graphic graphic) {
         return new DefaultPointSymbolizer(graphic, unit, geom, name, desc);
     }
 
@@ -315,7 +336,8 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     }
 
     @Override
-    public LineSymbolizer lineSymbolizer(final Stroke stroke, final String geometryPropertyName){
+    public LineSymbolizer lineSymbolizer(final Stroke stroke,
+            final String geometryPropertyName){
         return new DefaultLineSymbolizer(
                 stroke, 
                 FF.literal(0),
@@ -326,8 +348,9 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     }
     
     @Override
-    public LineSymbolizer lineSymbolizer(String name, String geom, Description desc,
-            Unit<?> uom, Stroke stroke, Expression offset) {
+    public LineSymbolizer lineSymbolizer(final String name, final String geom,
+            final Description desc, final Unit<?> uom,
+            final Stroke stroke, final Expression offset) {
         return new DefaultLineSymbolizer(stroke, offset, uom, geom, name, desc);
     }
 
@@ -351,8 +374,9 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     }
 
     @Override
-    public PolygonSymbolizer polygonSymbolizer(String name, String geom, Description desc,
-            Unit<?> uom, Stroke stroke, Fill fill, Displacement disp, Expression offset) {
+    public PolygonSymbolizer polygonSymbolizer(final String name, final String geom,
+            final Description desc, final Unit<?> uom, final Stroke stroke,
+            final Fill fill, final Displacement disp, final Expression offset) {
         return new DefaultPolygonSymbolizer(stroke, fill, disp, offset, uom, geom, name, desc);
     }
 
@@ -377,8 +401,10 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     }
 
     @Override
-    public TextSymbolizer textSymbolizer(String name, String geom, Description desc,
-            Unit<?> uom, Expression label, Font font, LabelPlacement placement, Halo halo, Fill fill) {
+    public TextSymbolizer textSymbolizer(final String name, final String geom,
+            final Description desc, final Unit<?> uom, final Expression label,
+            final Font font, final LabelPlacement placement,
+            final Halo halo, final Fill fill) {
         return new DefaultTextSymbolizer(label, font, placement, halo, fill, uom, geom, name, desc);
     }
 
@@ -389,9 +415,11 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     }
 
     @Override
-    public RasterSymbolizer rasterSymbolizer(final String geometryPropertyName, final Expression opacity,
-        final ChannelSelection channel, final OverlapBehavior overlap, final ColorMap colorMap, final ContrastEnhancement ce,
-        final ShadedRelief relief, final Symbolizer outline){
+    public RasterSymbolizer rasterSymbolizer(final String geometryPropertyName, 
+            final Expression opacity, final ChannelSelection channel,
+            final OverlapBehavior overlap, final ColorMap colorMap,
+            final ContrastEnhancement ce, final ShadedRelief relief,
+            final Symbolizer outline){
         return new DefaultRasterSymbolizer(
                 opacity,
                 channel,
@@ -407,16 +435,20 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     }
 
     @Override
-    public RasterSymbolizer rasterSymbolizer(String name, String geom, Description desc,
-            Unit<?> uom, Expression opacity, ChannelSelection selection,
-            OverlapBehavior overlap, ColorMap colorMap, ContrastEnhancement enchance,
-            ShadedRelief relief, Symbolizer outline) {
+    public RasterSymbolizer rasterSymbolizer(final String name, final String geom,
+            final Description desc, final Unit<?> uom, final Expression opacity,
+            final ChannelSelection selection, final OverlapBehavior overlap,
+            final ColorMap colorMap, final ContrastEnhancement enchance,
+            final ShadedRelief relief, final Symbolizer outline) {
         return new DefaultRasterSymbolizer(opacity, selection, overlap, colorMap,
                 enchance, relief, outline, uom, geom, name, desc);
     }
 
     @Override
-    public ExtensionSymbolizer extensionSymbolizer(String name, String geometry, Description description, Unit<?> unit, String extensionName, Map<String, Expression> parameters) {
+    public ExtensionSymbolizer extensionSymbolizer(final String name,
+            final String geometry, final Description description,
+            final Unit<?> unit, final String extensionName,
+            final Map<String, Expression> parameters) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -652,7 +684,8 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     }
 
     @Override
-    public Stroke stroke(final Expression color, final Expression width, final Expression opacity){
+    public Stroke stroke(final Expression color,
+            final Expression width, final Expression opacity){
         return new  DefaultStroke(
                 color, 
                 opacity, 
@@ -685,12 +718,13 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     }
 
     @Override
-    public ShadedRelief shadedRelief(Expression relief, boolean bright) {
+    public ShadedRelief shadedRelief(final Expression relief, final boolean bright) {
         return new DefaultShadedRelief(bright, relief);
     }
 
     @Override
-    public ColorMap colorMap(Expression propertyName, Expression... mapping) {
+    public ColorMap colorMap(final Expression propertyName,
+            final Expression... mapping) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -700,7 +734,8 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     }
 
     @Override
-    public ColorReplacement colorReplacement(Expression propertyName, Expression... mapping) {
+    public ColorReplacement colorReplacement(final Expression propertyName,
+            final Expression... mapping) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -710,12 +745,14 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     }
 
     @Override
-    public ContrastEnhancement contrastEnhancement(Expression gamma, ContrastMethod method) {
+    public ContrastEnhancement contrastEnhancement(final Expression gamma,
+            final ContrastMethod method) {
         return new DefaultContrastEnhancement(method, gamma);
     }
 
     @Override
-    public ExternalGraphic externalGraphic(Icon icon, Collection<ColorReplacement> replaces) {
+    public ExternalGraphic externalGraphic(final Icon icon,
+            final Collection<ColorReplacement> replaces) {
         return new DefaultExternalGraphic(icon, replaces);
     }
 
@@ -748,27 +785,31 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     }
 
     @Override
-    public ExternalGraphic externalGraphic(final OnlineResource resource, final String format, final Collection<ColorReplacement> replaces){
+    public ExternalGraphic externalGraphic(final OnlineResource resource,
+            final String format, final Collection<ColorReplacement> replaces){
         return new DefaultExternalGraphic(resource, format, replaces);
     }
 
     @Override
-    public ExternalMark externalMark(Icon icon) {
+    public ExternalMark externalMark(final Icon icon) {
         return new DefaultExternalMark(icon);
     }
 
     @Override
-    public ExternalMark externalMark(final OnlineResource online, final String format, final int index){
+    public ExternalMark externalMark(final OnlineResource online,
+            final String format, final int index){
         return new DefaultExternalMark(online, format, index);
     }
 
     @Override
-    public Fill fill(final GraphicFill fill, final Expression color, final Expression opacity){
+    public Fill fill(final GraphicFill fill, final Expression color,
+            final Expression opacity){
         return new DefaultFill(fill,color,opacity); 
     }
 
     @Override
-    public Font font(final List<Expression> family, final Expression style, final Expression weight, final Expression size){
+    public Font font(final List<Expression> family, final Expression style,
+            final Expression weight, final Expression size){
         return new DefaultFont(family, style, weight, size);
     }
 
@@ -907,8 +948,10 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     }
 
     @Override
-    public GraphicLegend graphicLegend(List<GraphicalSymbol> symbols, Expression opacity,
-            Expression size, Expression rotation, AnchorPoint anchorPoint, Displacement displacement) {
+    public GraphicLegend graphicLegend(final List<GraphicalSymbol> symbols,
+            final Expression opacity, final Expression size,
+            final Expression rotation, final AnchorPoint anchorPoint,
+            final Displacement displacement) {
         return new DefaultGraphicLegend(symbols,
                 opacity, size, rotation,
                 anchorPoint, displacement);
@@ -922,7 +965,8 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
     }
 
     @Override
-    public ChannelSelection channelSelection(SelectedChannelType red, SelectedChannelType green, SelectedChannelType blue) {
+    public ChannelSelection channelSelection(final SelectedChannelType red,
+            final SelectedChannelType green, final SelectedChannelType blue) {
         return new DefaultChannelSelection(red,green,blue);
     }
 

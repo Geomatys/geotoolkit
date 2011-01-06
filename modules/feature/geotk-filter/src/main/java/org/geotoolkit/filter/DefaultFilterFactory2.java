@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009, Geomatys
+ *    (C) 2009-2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -151,7 +151,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public BBOX bbox(String propertyName, double minx, double miny, double maxx, double maxy, String srs) {
+    public BBOX bbox(final String propertyName, final double minx,
+            final double miny, final double maxx, final double maxy, final String srs) {
         final PropertyName name = property(propertyName);
         return bbox(name,minx,miny,maxx,maxy,srs);
     }
@@ -160,7 +161,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public BBOX bbox(Expression e, double minx, double miny, double maxx, double maxy, String srs) {
+    public BBOX bbox(final Expression e, final double minx, final double miny,
+            final double maxx, final double maxy, final String srs) {
 
         final DefaultBoundingBox env;
 
@@ -183,7 +185,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
         if(crs == null && !srs.startsWith("CRS:") && !srs.startsWith("EPSG:")){
             //we presume all epsg given are using the epsg authority
             //this is a necessity since the last geotools modules aren't correctly providing the authority
-            String test = "EPSG:"+srs;
+            final String test = "EPSG:"+srs;
 
             try {
                 crs = CRS.decode(test);
@@ -197,7 +199,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
         if(crs == null && !srs.startsWith("CRS:") && !srs.startsWith("EPSG:")){
             //we presume all epsg given are using the epsg authority
             //this is a necessity since the last geotools modules aren't correctly providing the authority
-            String test = "CRS:"+srs;
+            final String test = "CRS:"+srs;
 
             try {
                 crs = CRS.decode(test);
@@ -225,7 +227,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public BBOX bbox(Expression e, BoundingBox bounds) {
+    public BBOX bbox(final Expression e, final BoundingBox bounds) {
         if(e != null && !(e instanceof PropertyName)){
             throw new IllegalArgumentException("Expression expected to be a PropertyName, instead found a " + e.getClass());
         }
@@ -236,7 +238,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Beyond beyond(String propertyName, Geometry geometry, double distance, String units) {
+    public Beyond beyond(final String propertyName, final Geometry geometry,
+            final double distance, final String units) {
         final PropertyName name = property(propertyName);
         final Literal geom = literal(geometry);
         return beyond(name, geom,distance,units);
@@ -246,7 +249,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Beyond beyond(Expression left, Expression right, double distance, String units) {
+    public Beyond beyond(final Expression left, final Expression right,
+            final double distance, final String units) {
         return new DefaultBeyond(left, right, distance, units);
     }
 
@@ -254,7 +258,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Contains contains(String propertyName, Geometry geometry) {
+    public Contains contains(final String propertyName, final Geometry geometry) {
         final PropertyName name = property(propertyName);
         final Literal geom = literal(geometry);
         return contains(name, geom);
@@ -264,7 +268,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Contains contains(Expression left, Expression right) {
+    public Contains contains(final Expression left, final Expression right) {
         return new DefaultContains(left, right);
     }
 
@@ -272,7 +276,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Crosses crosses(String propertyName, Geometry geometry) {
+    public Crosses crosses(final String propertyName, final Geometry geometry) {
         final PropertyName name = property(propertyName);
         final Literal geom = literal(geometry);
         return crosses(name, geom);
@@ -282,7 +286,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Crosses crosses(Expression left, Expression right) {
+    public Crosses crosses(final Expression left, final Expression right) {
         return new DefaultCrosses(left, right);
     }
 
@@ -290,7 +294,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Disjoint disjoint(String propertyName, Geometry geometry) {
+    public Disjoint disjoint(final String propertyName, final Geometry geometry) {
         final PropertyName name = property(propertyName);
         final Literal geom = literal(geometry);
         return disjoint(name, geom);
@@ -300,7 +304,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Disjoint disjoint(Expression left, Expression right) {
+    public Disjoint disjoint(final Expression left, final Expression right) {
         return new DefaultDisjoint(left, right);
     }
 
@@ -308,7 +312,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public DWithin dwithin(String propertyName, Geometry geometry, double distance, String units) {
+    public DWithin dwithin(final String propertyName, final Geometry geometry,
+            final double distance, final String units) {
         final PropertyName name = property(propertyName);
         final Literal geom = literal(geometry);
         return dwithin(name, geom,distance,units);
@@ -318,7 +323,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public DWithin dwithin(Expression left, Expression right, double distance, String units) {
+    public DWithin dwithin(final Expression left, final Expression right,
+            final double distance, final String units) {
         return new DefaultDWithin(left, right, distance, units);
     }
 
@@ -326,7 +332,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Equals equals(String propertyName, Geometry geometry) {
+    public Equals equals(final String propertyName, final Geometry geometry) {
         final PropertyName name = property(propertyName);
         final Literal geom = literal(geometry);
         return equal(name, geom);
@@ -336,7 +342,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Equals equal(Expression left, Expression right) {
+    public Equals equal(final Expression left, final Expression right) {
         return new DefaultEquals(left, right);
     }
 
@@ -344,7 +350,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Intersects intersects(String propertyName, Geometry geometry) {
+    public Intersects intersects(final String propertyName, final Geometry geometry) {
         final PropertyName name = property(propertyName);
         final Literal geom = literal(geometry);
         return intersects(name, geom);
@@ -354,7 +360,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Intersects intersects(Expression left, Expression right) {
+    public Intersects intersects(final Expression left, final Expression right) {
         return new DefaultIntersect(left, right);
     }
 
@@ -362,7 +368,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Overlaps overlaps(String propertyName, Geometry geometry) {
+    public Overlaps overlaps(final String propertyName, final Geometry geometry) {
         final PropertyName name = property(propertyName);
         final Literal geom = literal(geometry);
         return overlaps(name, geom);
@@ -372,7 +378,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Overlaps overlaps(Expression left, Expression right) {
+    public Overlaps overlaps(final Expression left, final Expression right) {
         return new DefaultOverlaps(left, right);
     }
 
@@ -380,7 +386,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Touches touches(String propertyName, Geometry geometry) {
+    public Touches touches(final String propertyName, final Geometry geometry) {
         final PropertyName name = property(propertyName);
         final Literal geom = literal(geometry);
         return touches(name, geom);
@@ -390,7 +396,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Touches touches(Expression left, Expression right) {
+    public Touches touches(final Expression left, final Expression right) {
         return new DefaultTouches(left, right);
     }
 
@@ -398,7 +404,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Within within(String propertyName, Geometry geometry) {
+    public Within within(final String propertyName, final Geometry geometry) {
         final PropertyName name = property(propertyName);
         final Literal geom = literal(geometry);
         return within(name, geom);
@@ -408,7 +414,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Within within(Expression left, Expression right) {
+    public Within within(final Expression left, final Expression right) {
         return new DefaultWithin(left, right);
     }
 
@@ -422,7 +428,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public FeatureId featureId(String id) {
+    public FeatureId featureId(final String id) {
         return new DefaultFeatureId(id);
     }
 
@@ -430,7 +436,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public GmlObjectId gmlObjectId(String id) {
+    public GmlObjectId gmlObjectId(final String id) {
         return new DefaultGmlObjectId(id);
     }
 
@@ -444,7 +450,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public And and(Filter filter1, Filter filter2) {
+    public And and(final Filter filter1, final Filter filter2) {
         return new DefaultAnd(filter1, filter2);
     }
 
@@ -452,7 +458,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public And and(List<Filter> filters) {
+    public And and(final List<Filter> filters) {
         return new DefaultAnd(filters);
     }
 
@@ -460,7 +466,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Or or(Filter filter1, Filter filter2) {
+    public Or or(final Filter filter1, final Filter filter2) {
         return new DefaultOr(filter1, filter2);
     }
 
@@ -468,7 +474,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Or or(List<Filter> filters) {
+    public Or or(final List<Filter> filters) {
         return new DefaultOr(filters);
     }
 
@@ -476,7 +482,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Not not(Filter filter) {
+    public Not not(final Filter filter) {
         return new DefaultNot(filter);
     }
 
@@ -484,7 +490,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Id id(Set<? extends Identifier> ids) {
+    public Id id(final Set<? extends Identifier> ids) {
         return new DefaultId(ids);
     }
 
@@ -492,7 +498,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public PropertyName property(Name name) {
+    public PropertyName property(final Name name) {
         return property(name.getLocalPart());
     }
 
@@ -500,7 +506,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public PropertyName property(String name) {
+    public PropertyName property(final String name) {
         return new DefaultPropertyName(name);
     }
 
@@ -508,7 +514,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public PropertyIsBetween between(Expression expr, Expression lower, Expression upper) {
+    public PropertyIsBetween between(final Expression expr,
+            final Expression lower, final Expression upper) {
         return new DefaultPropertyIsBetween(expr, lower, upper);
     }
 
@@ -516,7 +523,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public PropertyIsEqualTo equals(Expression expr1, Expression expr2) {
+    public PropertyIsEqualTo equals(final Expression expr1, final Expression expr2) {
         return equal(expr1,expr2,true);
     }
 
@@ -524,7 +531,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public PropertyIsEqualTo equal(Expression expr1, Expression expr2, boolean matchCase) {
+    public PropertyIsEqualTo equal(final Expression expr1,
+            final Expression expr2, final boolean matchCase) {
         return new DefaultPropertyIsEqualTo(expr1, expr2, matchCase);
     }
 
@@ -532,7 +540,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public PropertyIsNotEqualTo notEqual(Expression expr1, Expression expr2) {
+    public PropertyIsNotEqualTo notEqual(final Expression expr1, final Expression expr2) {
         return notEqual(expr1, expr2,false);
     }
 
@@ -540,7 +548,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public PropertyIsNotEqualTo notEqual(Expression expr1, Expression expr2, boolean matchCase) {
+    public PropertyIsNotEqualTo notEqual(final Expression expr1,
+            final Expression expr2, final boolean matchCase) {
         return new DefaultPropertyIsNotEqualTo(expr1, expr2, matchCase);
     }
 
@@ -548,7 +557,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public PropertyIsGreaterThan greater(Expression expr1, Expression expr2) {
+    public PropertyIsGreaterThan greater(final Expression expr1,
+            final Expression expr2) {
         return greater(expr1,expr2,false);
     }
 
@@ -556,7 +566,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public PropertyIsGreaterThan greater(Expression expr1, Expression expr2, boolean matchCase) {
+    public PropertyIsGreaterThan greater(final Expression expr1,
+            final Expression expr2, final boolean matchCase) {
         return new DefaultPropertyIsGreaterThan(expr1, expr2, matchCase);
     }
 
@@ -564,7 +575,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public PropertyIsGreaterThanOrEqualTo greaterOrEqual(Expression expr1, Expression expr2) {
+    public PropertyIsGreaterThanOrEqualTo greaterOrEqual(
+            final Expression expr1, final Expression expr2) {
         return greaterOrEqual(expr1, expr2,false);
     }
 
@@ -572,7 +584,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public PropertyIsGreaterThanOrEqualTo greaterOrEqual(Expression expr1, Expression expr2, boolean matchCase) {
+    public PropertyIsGreaterThanOrEqualTo greaterOrEqual(
+            final Expression expr1, final Expression expr2, final boolean matchCase) {
         return new DefaultPropertyIsGreaterThanOrEqualTo(expr1, expr2, matchCase);
     }
 
@@ -580,7 +593,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public PropertyIsLessThan less(Expression expr1, Expression expr2) {
+    public PropertyIsLessThan less(final Expression expr1, final Expression expr2) {
         return less(expr1, expr2, false);
     }
 
@@ -588,7 +601,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public PropertyIsLessThan less(Expression expr1, Expression expr2, boolean matchCase) {
+    public PropertyIsLessThan less(final Expression expr1,
+            final Expression expr2, final boolean matchCase) {
         return new DefaultPropertyIsLessThan(expr1, expr2, matchCase);
     }
 
@@ -596,7 +610,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public PropertyIsLessThanOrEqualTo lessOrEqual(Expression expr1, Expression expr2) {
+    public PropertyIsLessThanOrEqualTo lessOrEqual(
+            final Expression expr1, final Expression expr2) {
         return lessOrEqual(expr1, expr2, false);
     }
 
@@ -604,7 +619,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public PropertyIsLessThanOrEqualTo lessOrEqual(Expression expr1, Expression expr2, boolean matchCase) {
+    public PropertyIsLessThanOrEqualTo lessOrEqual(final Expression expr1,
+            final Expression expr2, final boolean matchCase) {
         return new DefaultPropertyIsLessThanOrEqualTo(expr1, expr2, matchCase);
     }
 
@@ -612,7 +628,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public PropertyIsLike like(Expression expr, String pattern) {
+    public PropertyIsLike like(final Expression expr, final String pattern) {
         return like(expr,pattern,"*","?","\\");
     }
 
@@ -620,7 +636,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public PropertyIsLike like(Expression expr, String pattern, String wildcard, String singleChar, String escape) {
+    public PropertyIsLike like(final Expression expr, final String pattern,
+            final String wildcard, final String singleChar, final String escape) {
         return like(expr,pattern,wildcard,singleChar,escape,false);
     }
     
@@ -628,7 +645,9 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public PropertyIsLike like(Expression expr, String pattern, String wildcard, String singleChar, String escape, boolean matchCase) {
+    public PropertyIsLike like(final Expression expr, final String pattern,
+            final String wildcard, final String singleChar,
+            final String escape, final boolean matchCase) {
         return new DefaultPropertyIsLike(expr, pattern, wildcard, singleChar, escape, matchCase);
     }
 
@@ -636,7 +655,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public PropertyIsNull isNull(Expression expr) {
+    public PropertyIsNull isNull(final Expression expr) {
         return new DefaultPropertyIsNull(expr);
     }
 
@@ -650,7 +669,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Add add(Expression expr1, Expression expr2) {
+    public Add add(final Expression expr1, final Expression expr2) {
         return new DefaultAdd(expr1, expr2);
     }
 
@@ -658,7 +677,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Divide divide(Expression expr1, Expression expr2) {
+    public Divide divide(final Expression expr1, final Expression expr2) {
         return new DefaultDivide(expr1, expr2);
     }
 
@@ -666,7 +685,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Multiply multiply(Expression expr1, Expression expr2) {
+    public Multiply multiply(final Expression expr1, final Expression expr2) {
         return new DefaultMultiply(expr1, expr2);
     }
 
@@ -674,7 +693,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Subtract subtract(Expression expr1, Expression expr2) {
+    public Subtract subtract(final Expression expr1, final Expression expr2) {
         return new DefaultSubtract(expr1, expr2);
     }
 
@@ -682,7 +701,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Function function(String name, Expression ... parameters) {
+    public Function function(final String name, final Expression ... parameters) {
         return org.geotoolkit.filter.function.Functions.function(name, null, parameters);
     }
 
@@ -690,7 +709,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Literal literal(Object obj) {
+    public Literal literal(final Object obj) {
         if(obj instanceof Envelope){
             //special case for envelopes to change them in JTS geometries
             return new DefaultEnvelopeLiteral((Envelope) obj);
@@ -703,7 +722,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Literal literal(byte b) {
+    public Literal literal(final byte b) {
         return new DefaultLiteral<Byte>(b);
     }
 
@@ -711,7 +730,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Literal literal(short s) {
+    public Literal literal(final short s) {
         return new DefaultLiteral<Short>(s);
     }
 
@@ -719,7 +738,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Literal literal(int i) {
+    public Literal literal(final int i) {
         return new DefaultLiteral<Integer>(i);
     }
 
@@ -727,7 +746,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Literal literal(long l) {
+    public Literal literal(final long l) {
         return new DefaultLiteral<Long>(l);
     }
 
@@ -735,7 +754,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Literal literal(float f) {
+    public Literal literal(final float f) {
         return new DefaultLiteral<Float>(f);
     }
 
@@ -743,7 +762,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Literal literal(double d) {
+    public Literal literal(final double d) {
         return new DefaultLiteral<Double>(d);
     }
 
@@ -751,7 +770,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Literal literal(char c) {
+    public Literal literal(final char c) {
         return new DefaultLiteral<Character>(c);
     }
 
@@ -759,7 +778,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Literal literal(boolean b) {
+    public Literal literal(final boolean b) {
         return new DefaultLiteral<Boolean>(b);
     }
 
@@ -773,7 +792,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public SortBy sort(String propertyName, SortOrder order) {
+    public SortBy sort(final String propertyName, final SortOrder order) {
         final PropertyName name = property(propertyName);
         return new DefaultSortBy(name,order);
     }
@@ -788,7 +807,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Operator operator(String name) {
+    public Operator operator(final String name) {
         return new DefaultOperator(name);
     }
 
@@ -796,7 +815,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public SpatialOperator spatialOperator(String name, GeometryOperand[] geometryOperands) {
+    public SpatialOperator spatialOperator(final String name,
+            final GeometryOperand[] geometryOperands) {
         return new DefaultSpatialOperator(name, geometryOperands);
     }
 
@@ -804,7 +824,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public FunctionName functionName(String name, int nargs) {
+    public FunctionName functionName(final String name, final int nargs) {
         return new DefaultFunctionName(name, null, nargs);
     }
 
@@ -812,7 +832,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public Functions functions(FunctionName[] functionNames) {
+    public Functions functions(final FunctionName[] functionNames) {
         return new DefaultFunctions(functionNames);
     }
 
@@ -820,7 +840,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public SpatialOperators spatialOperators(SpatialOperator[] spatialOperators) {
+    public SpatialOperators spatialOperators(final SpatialOperator[] spatialOperators) {
         return new DefaultSpatialOperators(spatialOperators);
     }
 
@@ -828,7 +848,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public ComparisonOperators comparisonOperators(Operator[] comparisonOperators) {
+    public ComparisonOperators comparisonOperators(final Operator[] comparisonOperators) {
         return new DefaultComparisonOperators(comparisonOperators);
     }
 
@@ -836,7 +856,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public ArithmeticOperators arithmeticOperators(boolean simple, Functions functions) {
+    public ArithmeticOperators arithmeticOperators(final boolean simple,
+            final Functions functions) {
         return new DefaultArithmeticOperators(simple, functions);
     }
 
@@ -844,7 +865,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public ScalarCapabilities scalarCapabilities(ComparisonOperators comparison, ArithmeticOperators arithmetic, boolean logical) {
+    public ScalarCapabilities scalarCapabilities(final ComparisonOperators comparison,
+            final ArithmeticOperators arithmetic, final boolean logical) {
         return new DefaultScalarCapabilities(logical, comparison, arithmetic);
     }
 
@@ -852,7 +874,8 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public SpatialCapabilities spatialCapabilities(GeometryOperand[] geometryOperands, SpatialOperators spatial) {
+    public SpatialCapabilities spatialCapabilities(
+            final GeometryOperand[] geometryOperands, final SpatialOperators spatial) {
         return new DefaultSpatialCapabilities(geometryOperands, spatial);
     }
 
@@ -860,7 +883,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public IdCapabilities idCapabilities(boolean eid, boolean fid) {
+    public IdCapabilities idCapabilities(final boolean eid, final boolean fid) {
         return new DefaultIdCapabilities(eid, fid);
     }
 
@@ -868,7 +891,9 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      * {@inheritDoc }
      */
     @Override
-    public FilterCapabilities capabilities(String version, ScalarCapabilities scalar, SpatialCapabilities spatial, IdCapabilities id) {
+    public FilterCapabilities capabilities(final String version,
+            final ScalarCapabilities scalar, final SpatialCapabilities spatial,
+            final IdCapabilities id) {
         return new DefaultFilterCapabilities(version, id, spatial, scalar);
     }
 
