@@ -38,8 +38,8 @@ public class ZoomOutAction extends AbstractAction {
 
     private static final Logger LOGGER = Logging.getLogger(ZoomOutAction.class);
 
-    private static final ImageIcon ICON_ZOOM_OUT_16 = IconBundle.getInstance().getIcon("16_zoom_out");
-    private static final ImageIcon ICON_ZOOM_OUT_24 = IconBundle.getInstance().getIcon("24_zoom_out");
+    private static final ImageIcon ICON_ZOOM_OUT_16 = IconBundle.getIcon("16_zoom_out");
+    private static final ImageIcon ICON_ZOOM_OUT_24 = IconBundle.getIcon("24_zoom_out");
 
     private JMap2D map = null;
 

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Johann Sorel
+ *    (C) 2009-2011, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -108,7 +108,7 @@ public class JScaleCombo extends JComboBox {
     public void setScales(final List<Number> scales) {
         removeItemListener(action);
 
-        Number selected = (Number) getSelectedItem();
+        final Number selected = (Number) getSelectedItem();
 
         this.scales.clear();
 
@@ -116,7 +116,7 @@ public class JScaleCombo extends JComboBox {
             this.scales.addAll(scales);
         }
 
-        scales.set(0, selected);
+        this.scales.set(0, selected);
         setSelectedIndex(0);
         repaint();
         addItemListener(action);

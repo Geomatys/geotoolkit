@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009-2010, Geomatys
+ *    (C) 2009-2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -104,6 +104,7 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
     /**
      * {@inheritDoc}
      */
+    @Override
     public Integer getFeatureCount() {
         return featureCount;
     }
@@ -111,6 +112,7 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
     /**
      * {@inheritDoc}
      */
+    @Override
     public void setFeatureCount(Integer featureCount) {
         this.featureCount = featureCount;
     }
@@ -132,7 +134,7 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
         }
 
         requestParameters.put("INFO_FORMAT", infoFormat);
-        requestParameters.put("QUERY_LAYERS", StringUtilities.toCommaSeparatedValues(queryLayers));
+        requestParameters.put("QUERY_LAYERS", StringUtilities.toCommaSeparatedValues((Object[])queryLayers));
 
         if (featureCount != null && featureCount > 0)
             requestParameters.put("FEATURE_COUNT", String.valueOf(featureCount));

@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  * 
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009, Geomatys
+ *    (C) 2009-2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.temporal.object;
 
+import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.Utilities;
 import org.opengis.temporal.CalendarDate;
 import org.opengis.temporal.CalendarEra;
@@ -110,7 +111,7 @@ public class DefaultCalendarDate extends DefaultTemporalPosition implements Cale
             s.append("calendarEraName:").append(calendarEraName).append('\n');
         }
         if (calendarDate != null) {
-            s.append("calendarDate:").append(calendarDate).append('\n');
+            s.append("calendarDate:").append(StringUtilities.toCommaSeparatedValues(calendarDate)).append('\n');
         }
         return s.toString();
     }

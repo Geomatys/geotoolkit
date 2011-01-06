@@ -34,8 +34,8 @@ public class JSpecialExpressionButton extends JButton{
 
     public static final String EXPRESSION_PROPERTY = "expression";
     
-    private static final Icon ICON_EXP_NO = IconBundle.getInstance().getIcon("16_expression_no");
-    private static final Icon ICON_EXP_YES = IconBundle.getInstance().getIcon("16_expression_yes");
+    private static final Icon ICON_EXP_NO = IconBundle.getIcon("16_expression_no");
+    private static final Icon ICON_EXP_YES = IconBundle.getIcon("16_expression_yes");
     private Expression exp = null;
     private MapLayer layer = null;
     private final JExpressionDialog dialog = new JExpressionDialog();

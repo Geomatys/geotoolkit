@@ -82,12 +82,12 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
 
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(null);
 
-    private static final Icon ICON_STYLE = IconBundle.getInstance().getIcon("16_style");
-    private static final Icon ICON_FTS = IconBundle.getInstance().getIcon("16_style_fts");
-    private static final Icon ICON_RULE = IconBundle.getInstance().getIcon("16_style_rule");
-    private static final Icon ICON_NEW = IconBundle.getInstance().getIcon("16_add_data");
-    private static final Icon ICON_DUPLICATE = IconBundle.getInstance().getIcon("16_duplicate");
-    private static final Icon ICON_DELETE = IconBundle.getInstance().getIcon("16_delete");
+    private static final Icon ICON_STYLE = IconBundle.getIcon("16_style");
+    private static final Icon ICON_FTS = IconBundle.getIcon("16_style_fts");
+    private static final Icon ICON_RULE = IconBundle.getIcon("16_style_rule");
+    private static final Icon ICON_NEW = IconBundle.getIcon("16_add_data");
+    private static final Icon ICON_DUPLICATE = IconBundle.getIcon("16_duplicate");
+    private static final Icon ICON_DELETE = IconBundle.getIcon("16_delete");
     
     private T style = null;
     private StyleTreeModel<T> treemodel = null;

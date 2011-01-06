@@ -51,7 +51,7 @@ public class NewGroupItem extends AbstractTreePopupItem{
     }
 
     private void init(){
-        setIcon( IconBundle.getInstance().getIcon("16_attach") );
+        setIcon( IconBundle.getIcon("16_attach") );
 
         addActionListener(new ActionListener() {
             @Override

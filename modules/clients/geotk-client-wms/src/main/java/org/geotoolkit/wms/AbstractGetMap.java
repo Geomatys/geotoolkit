@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009-2010, Geomatys
+ *    (C) 2009-2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -274,13 +274,13 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
         requestParameters.put("FORMAT", format);
         requestParameters.put("WIDTH", String.valueOf(dimension.width));
         requestParameters.put("HEIGHT", String.valueOf(dimension.height));
-        requestParameters.put("LAYERS", StringUtilities.toCommaSeparatedValues(layers));
+        requestParameters.put("LAYERS", StringUtilities.toCommaSeparatedValues((Object[])layers));
         requestParameters.putAll(toString(envelope));
 
         String stylesParam = "";
 
         if (styles != null && styles.length > 0 && styles[0] != null) {
-            stylesParam = StringUtilities.toCommaSeparatedValues(styles);
+            stylesParam = StringUtilities.toCommaSeparatedValues((Object[])styles);
         }
         
         requestParameters.put("STYLES", stylesParam);

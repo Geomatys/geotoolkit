@@ -88,8 +88,8 @@ public class JContextTree extends JScrollPane {
 
     private static final DataFlavor ITEM_FLAVOR = new DataFlavor(org.geotoolkit.map.MapItem.class, "geo/item");
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
-    private static final ImageIcon ICON_FTS = IconBundle.getInstance().getIcon("16_style_fts");
-    private static final ImageIcon ICON_GROUP = IconBundle.getInstance().getIcon("16_attach");
+    private static final ImageIcon ICON_FTS = IconBundle.getIcon("16_style_fts");
+    private static final ImageIcon ICON_GROUP = IconBundle.getIcon("16_attach");
 
     private final List<TreePopupItem> controls = new ArrayList<TreePopupItem>();
     private final JTree tree = new JTree(new DefaultTreeModel(new DefaultMutableTreeNode()));

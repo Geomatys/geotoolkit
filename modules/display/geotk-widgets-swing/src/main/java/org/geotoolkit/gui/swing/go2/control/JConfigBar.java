@@ -37,8 +37,8 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  */
 public class JConfigBar extends JToolBar {
 
-    private static final ImageIcon ICON_CONFIG = IconBundle.getInstance().getIcon("16_map2d_optimize");
-    private static final ImageIcon ICON_DEBUG = IconBundle.getInstance().getIcon("16_deco_debug");
+    private static final ImageIcon ICON_CONFIG = IconBundle.getIcon("16_map2d_optimize");
+    private static final ImageIcon ICON_DEBUG = IconBundle.getIcon("16_deco_debug");
 
     private final ConfigAction ACTION_CONFIG = new ConfigAction();
     private final DebugAction ACTION_DEBUG = new DebugAction();

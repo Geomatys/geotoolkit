@@ -109,12 +109,14 @@ public class FileSystemIndexStore implements IndexStore {
         } finally {
             try {
                 channel.close();
-            } catch (Exception e) {
-            }
-
-            try {
-                fos.close();
-            } catch (Exception e) {
+            } catch (IOException e) {
+                throw new StoreException(e);
+            }finally{
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    throw new StoreException(e);
+                }
             }
         }
     }

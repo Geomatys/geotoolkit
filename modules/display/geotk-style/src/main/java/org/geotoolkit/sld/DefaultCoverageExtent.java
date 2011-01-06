@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@ package org.geotoolkit.sld;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import org.geotoolkit.util.StringUtilities;
 
 import org.geotoolkit.util.Utilities;
 
@@ -112,7 +113,7 @@ class DefaultCoverageExtent implements CoverageExtent{
         }
         if(ranges != null){
             builder.append(" RangeAxis=");
-            builder.append(ranges.toArray());
+            builder.append(StringUtilities.toCommaSeparatedValues(ranges));
         }
         builder.append(']');
         return builder.toString();

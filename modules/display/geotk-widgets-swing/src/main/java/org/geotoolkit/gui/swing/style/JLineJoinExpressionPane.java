@@ -43,9 +43,9 @@ import org.opengis.filter.expression.Expression;
  */
 public class JLineJoinExpressionPane extends StyleElementEditor<Expression>{
 
-    private static final ImageIcon ICON_JOIN_ROUND = IconBundle.getInstance().getIcon("16_linejoin_round");
-    private static final ImageIcon ICON_JOIN_MITRE = IconBundle.getInstance().getIcon("16_linejoin_mitre");
-    private static final ImageIcon ICON_JOIN_BEVEL = IconBundle.getInstance().getIcon("16_linejoin_bevel");
+    private static final ImageIcon ICON_JOIN_ROUND = IconBundle.getIcon("16_linejoin_round");
+    private static final ImageIcon ICON_JOIN_MITRE = IconBundle.getIcon("16_linejoin_mitre");
+    private static final ImageIcon ICON_JOIN_BEVEL = IconBundle.getIcon("16_linejoin_bevel");
 
     /** Creates new form JColorExpressionPane */
     public JLineJoinExpressionPane() {

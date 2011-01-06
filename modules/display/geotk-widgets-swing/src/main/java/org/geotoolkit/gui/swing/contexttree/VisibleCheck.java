@@ -33,8 +33,8 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
  */
 class VisibleCheck extends JCheckBox {
 
-    private static final ImageIcon ICO_VISIBLE = IconBundle.getInstance().getIcon("16_visible");
-    private static final ImageIcon ICO_NOVISIBLE = IconBundle.getInstance().getIcon("16_novisible");
+    private static final ImageIcon ICO_VISIBLE = IconBundle.getIcon("16_visible");
+    private static final ImageIcon ICO_NOVISIBLE = IconBundle.getIcon("16_novisible");
 
     @Override
     public void paintComponent(Graphics g) {

@@ -357,7 +357,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
 
     @Override
     public ImageIcon getIcon() {
-        return IconBundle.getInstance().getIcon("16_classification_single");
+        return IconBundle.getIcon("16_classification_single");
     }
 
     @Override
@@ -434,7 +434,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-            DeleteRenderer.this.setIcon(IconBundle.getInstance().getIcon("16_delete"));
+            DeleteRenderer.this.setIcon(IconBundle.getIcon("16_delete"));
             return DeleteRenderer.this;
         }
         
@@ -448,7 +448,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
         public DeleteEditor() {
             button.setBorderPainted(false);
             button.setContentAreaFilled(false);
-            button.setIcon(IconBundle.getInstance().getIcon("16_delete"));
+            button.setIcon(IconBundle.getIcon("16_delete"));
 
             button.addActionListener(new ActionListener() {
                 @Override

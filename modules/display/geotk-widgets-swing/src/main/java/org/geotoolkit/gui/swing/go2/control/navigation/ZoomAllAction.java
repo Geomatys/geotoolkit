@@ -41,8 +41,8 @@ public class ZoomAllAction extends AbstractAction {
 
     private static final Logger LOGGER = Logging.getLogger(ZoomAllAction.class);
 
-    private static final ImageIcon ICON_ZOOM_ALL_16 = IconBundle.getInstance().getIcon("16_zoom_all");
-    private static final ImageIcon ICON_ZOOM_ALL_24 = IconBundle.getInstance().getIcon("24_zoom_all");
+    private static final ImageIcon ICON_ZOOM_ALL_16 = IconBundle.getIcon("16_zoom_all");
+    private static final ImageIcon ICON_ZOOM_ALL_24 = IconBundle.getIcon("24_zoom_all");
 
     public ZoomAllAction() {
         this(false);

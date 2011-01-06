@@ -49,6 +49,7 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.PointSymbolizer;
@@ -62,6 +63,8 @@ import org.opengis.style.TextSymbolizer;
  * @module pending
  */
 public class JAdvancedStylePanel<T extends Object> extends StyleElementEditor<T> implements PropertyPane {
+
+    private static final Logger LOGGER = Logging.getLogger(JAdvancedStylePanel.class);
 
     private final WeakHashMap<Class,StyleElementEditor> guiPanels = new WeakHashMap<Class, StyleElementEditor>();
 
@@ -123,14 +126,16 @@ public class JAdvancedStylePanel<T extends Object> extends StyleElementEditor<T>
         if(val == null){
             try {
                 val = (StyleElementEditor) clazz.newInstance();
+                val.setLayer(getLayer());
             } catch (InstantiationException ex) {
-                Logger.getLogger(JAdvancedStylePanel.class.getName()).log(Level.WARNING, null, ex);
+                LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
             } catch (IllegalAccessException ex) {
-                Logger.getLogger(JAdvancedStylePanel.class.getName()).log(Level.WARNING, null, ex);
+               LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
             }
             guiPanels.put(clazz, val);
+        }else{
+            val.setLayer(getLayer());
         }
-        val.setLayer(getLayer());
         return val;
     }
 
@@ -232,7 +237,7 @@ public class JAdvancedStylePanel<T extends Object> extends StyleElementEditor<T>
 
     @Override
     public ImageIcon getIcon() {
-        return IconBundle.getInstance().getIcon("16_advanced_style");
+        return IconBundle.getIcon("16_advanced_style");
     }
 
     @Override

@@ -221,7 +221,7 @@ public class JFeatureOutLine extends Outline{
             final MutableTreeNode node = (MutableTreeNode) o;
             final Property prop = (Property) node.getUserObject();
             if(prop instanceof ComplexAttribute){
-                return IconBundle.getInstance().getIcon("16_attach");
+                return IconBundle.getIcon("16_attach");
             }else{
                 return IconBundle.EMPTY_ICON;
             }            

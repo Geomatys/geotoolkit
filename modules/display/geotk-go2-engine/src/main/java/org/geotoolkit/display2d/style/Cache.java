@@ -21,6 +21,8 @@ import java.util.Collection;
 import java.util.Collections;
 
 import java.util.HashSet;
+import java.util.logging.Logger;
+import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.Feature;
 
 /**
@@ -30,6 +32,9 @@ import org.opengis.feature.Feature;
  * @module pending
  */
 public abstract class Cache<T extends Object> {
+
+    protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.style");
+
     /**
      * Empty collection used for attributs when the style needs
      * no feature attributs or if the style can not be visible.

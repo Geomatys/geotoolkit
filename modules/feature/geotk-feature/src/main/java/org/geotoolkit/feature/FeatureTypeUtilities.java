@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2004-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -53,6 +54,7 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.PropertyIsLessThan;
 import org.opengis.filter.PropertyIsLessThanOrEqualTo;
 import org.opengis.filter.expression.Literal;
+import org.opengis.feature.Property;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -74,7 +76,6 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
-import org.opengis.feature.Property;
 
 /**
  * Utility methods for working against the FeatureType interface.
@@ -157,14 +158,12 @@ public class FeatureTypeUtilities {
         TYPE_ENCODE.put(Date.class, "Date");
         TYPE_MAP.put("Date", Date.class);
 
-
-        URI uri;
         try {
-            uri = new URI("http://www.opengis.net/gml");
+            DEFAULT_NAMESPACE = new URI("http://www.opengis.net/gml");
         } catch (URISyntaxException e) {
-            uri = null;	//will never happen
+            //will never happen
+            throw new IllegalStateException("Failed to parse URI.");
         }
-        DEFAULT_NAMESPACE = uri;
 
         SimpleFeatureType featureType = null;
         try {

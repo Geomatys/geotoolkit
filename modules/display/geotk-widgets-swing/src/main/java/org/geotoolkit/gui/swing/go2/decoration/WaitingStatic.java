@@ -45,8 +45,8 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
  */
 public class WaitingStatic extends JPanel{
 
-    private static final ImageIcon ICO_NOVER = IconBundle.getInstance().getIcon("32_play");
-    private static final ImageIcon ICO_OVER = IconBundle.getInstance().getIcon("32_stop");
+    private static final ImageIcon ICO_NOVER = IconBundle.getIcon("32_play");
+    private static final ImageIcon ICO_OVER = IconBundle.getIcon("32_stop");
     
     private final JButton stopRendering;
     private JMap2D map = null;
@@ -80,7 +80,7 @@ public class WaitingStatic extends JPanel{
         g2.fillRoundRect(0, 0, width, height, 16,16);
 
         try{
-            BufferedImage EMPTY_ICON = IconBundle.getInstance().getBuffer("EARTH_WHITE");
+            BufferedImage EMPTY_ICON = IconBundle.getBuffer("EARTH_WHITE");
             Paint imgPaint = new TexturePaint(EMPTY_ICON, new Rectangle(width, height));
             g2.setPaint(imgPaint);
             g2.fillRoundRect(0, 0, width, height, 16,16);

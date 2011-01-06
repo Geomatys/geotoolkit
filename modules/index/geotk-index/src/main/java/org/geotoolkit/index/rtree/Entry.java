@@ -55,16 +55,6 @@ public class Entry<T> implements Cloneable {
     }
 
     /**
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    public boolean equals(Object obj) {
-        Entry e = (Entry) obj;
-
-        return this.bounds.equals(e.getBounds())
-                && this.data.equals(e.getData());
-    }
-
-    /**
      * DOCUMENT ME!
      * 
      * @param envelope
@@ -80,6 +70,7 @@ public class Entry<T> implements Cloneable {
     /**
      * @see java.lang.Object#clone()
      */
+    @Override
     protected Object clone() {
         Entry ret = new Entry(new Envelope(this.bounds), this.data);
         ret.setListener(this.listener);
@@ -90,6 +81,7 @@ public class Entry<T> implements Cloneable {
     /**
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         return "Entry --> " + this.bounds + " - key: " + this.data;
     }
@@ -102,4 +94,31 @@ public class Entry<T> implements Cloneable {
     public void setListener(EntryBoundsChangeListener listener) {
         this.listener = listener;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Entry<T> other = (Entry<T>) obj;
+        if (this.bounds != other.bounds && (this.bounds == null || !this.bounds.equals(other.bounds))) {
+            return false;
+        }
+        if (this.data != other.data && (this.data == null || !this.data.equals(other.data))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 73 * hash + (this.bounds != null ? this.bounds.hashCode() : 0);
+        hash = 73 * hash + (this.data != null ? this.data.hashCode() : 0);
+        return hash;
+    }
+
 }

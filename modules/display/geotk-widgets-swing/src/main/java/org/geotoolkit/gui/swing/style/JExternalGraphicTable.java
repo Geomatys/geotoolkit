@@ -53,10 +53,10 @@ import org.opengis.style.ExternalGraphic;
  */
 public class JExternalGraphicTable extends StyleElementEditor<ExternalGraphic[]> {
 
-    private static final Icon ICO_UP = IconBundle.getInstance().getIcon("16_uparrow");
-    private static final Icon ICO_DOWN = IconBundle.getInstance().getIcon("16_downarrow");
-    private static final Icon ICO_NEW = IconBundle.getInstance().getIcon("16_add_data");
-    private static final Icon ICO_DELETE = IconBundle.getInstance().getIcon("16_delete");
+    private static final Icon ICO_UP = IconBundle.getIcon("16_uparrow");
+    private static final Icon ICO_DOWN = IconBundle.getIcon("16_downarrow");
+    private static final Icon ICO_NEW = IconBundle.getIcon("16_add_data");
+    private static final Icon ICO_DELETE = IconBundle.getIcon("16_delete");
     
     private MapLayer layer = null;
     private final ExternalGraphicModel model = new ExternalGraphicModel(new ExternalGraphic[]{});

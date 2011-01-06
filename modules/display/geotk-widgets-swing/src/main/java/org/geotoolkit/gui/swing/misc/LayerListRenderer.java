@@ -39,7 +39,7 @@ import org.geotoolkit.map.MapLayer;
  */
 public class LayerListRenderer extends DefaultListCellRenderer {
 
-    private static final ImageIcon ICON_LAYER_VISIBLE = IconBundle.getInstance().getIcon("16_maplayer_visible");
+    private static final ImageIcon ICON_LAYER_VISIBLE = IconBundle.getIcon("16_maplayer_visible");
     private final Border border = BorderFactory.createLineBorder(Color.LIGHT_GRAY,1);
     private final Border nullborder = BorderFactory.createEmptyBorder(1,1,1,1);
     

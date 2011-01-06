@@ -70,7 +70,7 @@ public class JSymbolizerStylePanel extends JPanel implements PropertyPane {
 
     @Override
     public ImageIcon getIcon() {
-        return IconBundle.getInstance().getIcon("16_simple_style");
+        return IconBundle.getIcon("16_simple_style");
     }
 
     @Override

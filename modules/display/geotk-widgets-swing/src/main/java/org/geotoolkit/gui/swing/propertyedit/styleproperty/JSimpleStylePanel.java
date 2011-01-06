@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Johann Sorel
+ *    (C) 2008 - 2011, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -31,9 +31,15 @@ import javax.swing.JToolBar;
 
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.propertyedit.PropertyPane;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.gui.swing.style.JRasterSymbolizerPane;
+import org.geotoolkit.gui.swing.style.JTextSymbolizerPane;
+import org.geotoolkit.gui.swing.style.StyleElementEditor;
 import org.geotoolkit.gui.swing.style.JLineSymbolizerPane;
 import org.geotoolkit.gui.swing.style.JPointSymbolizerPane;
 import org.geotoolkit.gui.swing.style.JPolygonSymbolizerPane;
+import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -45,13 +51,6 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
-
-import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.gui.swing.style.JRasterSymbolizerPane;
-import org.geotoolkit.gui.swing.style.JTextSymbolizerPane;
-import org.geotoolkit.gui.swing.style.StyleElementEditor;
-import org.geotoolkit.style.DefaultStyleFactory;
-import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.PointSymbolizer;
@@ -64,7 +63,7 @@ import org.opengis.style.TextSymbolizer;
 /**
  * Simple style panel
  * 
- * @author  Johann Sorel
+ * @author Johann Sorel
  * @module pending
  */
 public class JSimpleStylePanel extends JTabbedPane implements PropertyPane {
@@ -117,7 +116,7 @@ public class JSimpleStylePanel extends JTabbedPane implements PropertyPane {
 
     @Override
     public ImageIcon getIcon() {
-        return IconBundle.getInstance().getIcon("16_simple_style");
+        return IconBundle.getIcon("16_simple_style");
     }
 
     @Override
@@ -138,88 +137,20 @@ public class JSimpleStylePanel extends JTabbedPane implements PropertyPane {
         stylePane.removeAll();
         textSymbolPane.setLayer(layer);
 
-        if (layer != null) {
-                
-            if(layer instanceof FeatureMapLayer){
-                final FeatureMapLayer featureLayer = (FeatureMapLayer) layer;
-                final Class val = featureLayer.getCollection().getFeatureType().getGeometryDescriptor().getType().getBinding();
+        if(layer instanceof FeatureMapLayer){
+            final FeatureMapLayer featureLayer = (FeatureMapLayer) layer;
+            final Class val = featureLayer.getCollection().getFeatureType().getGeometryDescriptor().getType().getBinding();
 
-                if (val.equals(Polygon.class) || val.equals(MultiPolygon.class)) {
-                    detail = new JPolygonSymbolizerPane();
-                    detail.setLayer(layer);
-
-                    loop:
-                    for(final FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
-                        for(final Rule rule : fts.rules()){
-                            for(final Symbolizer symbol : rule.symbolizers()){
-                                if(symbol instanceof PolygonSymbolizer){
-                                    ((StyleElementEditor<PolygonSymbolizer>)detail).parse((PolygonSymbolizer) symbol);
-                                    break loop;
-                                }
-                            }
-                        }
-                    }
-
-                    JScrollPane jsp = new JScrollPane(detail);
-                    jsp.setBorder(null);
-                    jsp.setViewportBorder(null);
-                    stylePane.add(BorderLayout.CENTER, jsp );
-                } else if (val.equals(MultiLineString.class) || val.equals(LineString.class)) {
-                    detail = new JLineSymbolizerPane();
-                    detail.setLayer(layer);
-
-                    loop:
-                    for(final FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
-                        for(final Rule rule : fts.rules()){
-                            for(final Symbolizer symbol : rule.symbolizers()){
-                                if(symbol instanceof LineSymbolizer){
-                                    ((StyleElementEditor<LineSymbolizer>)detail).parse((LineSymbolizer) symbol);
-                                    break loop;
-                                }
-                            }
-                        }
-                    }
-
-                    JScrollPane jsp = new JScrollPane(detail);
-                    jsp.setBorder(null);
-                    jsp.setViewportBorder(null);
-                    stylePane.add(BorderLayout.CENTER, jsp );
-                } else if (val.equals(Point.class) || val.equals(MultiPoint.class)) {
-                    detail = new JPointSymbolizerPane();
-                    detail.setLayer(layer);
-
-                    loop:
-                    for(final FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
-                        for(final Rule rule : fts.rules()){
-                            for(final Symbolizer symbol : rule.symbolizers()){
-                                if(symbol instanceof PointSymbolizer){
-                                    ((StyleElementEditor<PointSymbolizer>)detail).parse((PointSymbolizer) symbol);
-                                    break loop;
-                                }
-                            }
-                        }
-                    }
-
-                    JScrollPane jsp = new JScrollPane(detail);
-                    jsp.setBorder(null);
-                    jsp.setViewportBorder(null);
-                    stylePane.add(BorderLayout.CENTER, jsp );
-                } else {        
-                    detail = null;
-                    stylePane.add(BorderLayout.CENTER,new JLabel("<b>" + MessageBundle.getString("property_style_unknown_simplestyle") + "</b>"));
-                }
-                
-                
-            }else if(layer instanceof CoverageMapLayer){
-                detail = new JRasterSymbolizerPane();
-                    detail.setLayer(layer);
+            if (val.equals(Polygon.class) || val.equals(MultiPolygon.class)) {
+                detail = new JPolygonSymbolizerPane();
+                detail.setLayer(layer);
 
                 loop:
                 for(final FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
                     for(final Rule rule : fts.rules()){
                         for(final Symbolizer symbol : rule.symbolizers()){
-                            if(symbol instanceof RasterSymbolizer){
-                                ((StyleElementEditor<RasterSymbolizer>)detail).parse((RasterSymbolizer) symbol);
+                            if(symbol instanceof PolygonSymbolizer){
+                                ((StyleElementEditor<PolygonSymbolizer>)detail).parse((PolygonSymbolizer) symbol);
                                 break loop;
                             }
                         }
@@ -230,20 +161,85 @@ public class JSimpleStylePanel extends JTabbedPane implements PropertyPane {
                 jsp.setBorder(null);
                 jsp.setViewportBorder(null);
                 stylePane.add(BorderLayout.CENTER, jsp );
+            } else if (val.equals(MultiLineString.class) || val.equals(LineString.class)) {
+                detail = new JLineSymbolizerPane();
+                detail.setLayer(layer);
+
+                loop:
+                for(final FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
+                    for(final Rule rule : fts.rules()){
+                        for(final Symbolizer symbol : rule.symbolizers()){
+                            if(symbol instanceof LineSymbolizer){
+                                ((StyleElementEditor<LineSymbolizer>)detail).parse((LineSymbolizer) symbol);
+                                break loop;
+                            }
+                        }
+                    }
+                }
+
+                JScrollPane jsp = new JScrollPane(detail);
+                jsp.setBorder(null);
+                jsp.setViewportBorder(null);
+                stylePane.add(BorderLayout.CENTER, jsp );
+            } else if (val.equals(Point.class) || val.equals(MultiPoint.class)) {
+                detail = new JPointSymbolizerPane();
+                detail.setLayer(layer);
+
+                loop:
+                for(final FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
+                    for(final Rule rule : fts.rules()){
+                        for(final Symbolizer symbol : rule.symbolizers()){
+                            if(symbol instanceof PointSymbolizer){
+                                ((StyleElementEditor<PointSymbolizer>)detail).parse((PointSymbolizer) symbol);
+                                break loop;
+                            }
+                        }
+                    }
+                }
+
+                JScrollPane jsp = new JScrollPane(detail);
+                jsp.setBorder(null);
+                jsp.setViewportBorder(null);
+                stylePane.add(BorderLayout.CENTER, jsp );
+            } else {
+                detail = null;
+                stylePane.add(BorderLayout.CENTER,new JLabel("<b>" + MessageBundle.getString("property_style_unknown_simplestyle") + "</b>"));
             }
-            
+
+        }else if(layer instanceof CoverageMapLayer){
+            detail = new JRasterSymbolizerPane();
+                detail.setLayer(layer);
+
+            loop:
+            for(final FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
+                for(final Rule rule : fts.rules()){
+                    for(final Symbolizer symbol : rule.symbolizers()){
+                        if(symbol instanceof RasterSymbolizer){
+                            ((StyleElementEditor<RasterSymbolizer>)detail).parse((RasterSymbolizer) symbol);
+                            break loop;
+                        }
+                    }
+                }
+            }
+
+            JScrollPane jsp = new JScrollPane(detail);
+            jsp.setBorder(null);
+            jsp.setViewportBorder(null);
+            stylePane.add(BorderLayout.CENTER, jsp );
         }
 
         check.setSelected(false);
 
-        loop:
-        for(final FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
-            for(final Rule rule : fts.rules()){
-                for(final Symbolizer symbol : rule.symbolizers()){
-                    if(symbol instanceof TextSymbolizer){
-                        textSymbolPane.parse((TextSymbolizer) symbol);
-                        check.setSelected(true);
-                        break loop;
+        if(layer != null){
+            loop:
+            for(final FeatureTypeStyle fts : layer.getStyle().featureTypeStyles()){
+                for(final Rule rule : fts.rules()){
+                    for(final Symbolizer symbol : rule.symbolizers()){
+                        if(symbol instanceof TextSymbolizer){
+                            textSymbolPane.parse((TextSymbolizer) symbol);
+                            check.setSelected(true);
+                            break loop;
+                        }
                     }
                 }
             }

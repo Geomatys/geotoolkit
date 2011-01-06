@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -83,8 +83,8 @@ public class CachedFont extends Cache<Font>{
         if(fontFamily != null){
             name = fontFamily;
         }else{
-            List<Expression> families = font.getFamily();
-            if (families != null || !families.isEmpty()) {
+            final List<Expression> families = font.getFamily();
+            if (families != null && !families.isEmpty()) {
                 name = GO2Utilities.evaluate(font.getStyle(), feature, String.class, "arial");
             }else{
                 name = "Dialog";

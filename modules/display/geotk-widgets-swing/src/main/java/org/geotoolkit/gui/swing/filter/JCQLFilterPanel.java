@@ -281,7 +281,7 @@ public class JCQLFilterPanel extends javax.swing.JPanel implements FilterPanel{
     }
 
     public ImageIcon getIcon() {
-        return IconBundle.getInstance().getIcon("16_filter_cql");
+        return IconBundle.getIcon("16_filter_cql");
     }
 
     public String getToolTip() {

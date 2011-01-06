@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.image.BufferedImage;
+import java.util.logging.Level;
 import javax.swing.Icon;
 
 import org.geotoolkit.display.shape.TransformedShape;
@@ -40,6 +41,8 @@ import org.opengis.style.Mark;
  * @module pending
  */
 public class CachedMark extends Cache<Mark>{
+
+    private static final WellKnownMarkFactory WKMF = new WellKnownMarkFactory();
     
     //IDS for cache map
     private Shape cachedWKN = null;
@@ -97,8 +100,10 @@ public class CachedMark extends Cache<Mark>{
         }else if(GO2Utilities.isStatic(expWKN)){
             
             try {
-                cachedWKN = new WellKnownMarkFactory().getShape(null, expWKN, null);
-            } catch (Exception ex) {}
+                cachedWKN = WKMF.getShape(null, expWKN, null);
+            } catch (Exception ex) {
+                LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
+            }
             
             //we return false, invalid marker
             if(cachedWKN == null){                
@@ -155,8 +160,10 @@ public class CachedMark extends Cache<Mark>{
         
         if(candidateWKN == null){
             try {
-                candidateWKN = new WellKnownMarkFactory().getShape(null, wkn, feature);
-            } catch (Exception ex) {}
+                candidateWKN = WKMF.getShape(null, wkn, feature);
+            } catch (Exception ex) {
+                LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
+            }
         }
         
         if(wkn != null || external != null){

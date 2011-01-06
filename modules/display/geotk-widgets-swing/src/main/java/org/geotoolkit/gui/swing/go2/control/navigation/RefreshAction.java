@@ -32,8 +32,8 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  */
 public class RefreshAction extends AbstractAction {
 
-    private static final ImageIcon ICON_REFRESH_16 = IconBundle.getInstance().getIcon("16_data_reload");
-    private static final ImageIcon ICON_REFRESH_24 = IconBundle.getInstance().getIcon("24_data_reload");
+    private static final ImageIcon ICON_REFRESH_16 = IconBundle.getIcon("16_data_reload");
+    private static final ImageIcon ICON_REFRESH_24 = IconBundle.getIcon("24_data_reload");
 
     private JMap2D map = null;
 

@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,7 @@
 package org.geotoolkit.style;
 
 import java.util.Arrays;
+import org.geotoolkit.util.StringUtilities;
 import org.opengis.style.ChannelSelection;
 import org.opengis.style.SelectedChannelType;
 import org.opengis.style.StyleVisitor;
@@ -125,7 +126,7 @@ public class DefaultChannelSelection implements ChannelSelection{
         builder.append("[ChannelSelection : ");
         if(rgb != null){
             builder.append(" RGB=");
-            builder.append(rgb);
+            builder.append(StringUtilities.toStringTree((Object[])rgb));
         }else if(gray != null){
             builder.append(" GRAY=");
             builder.append(gray);

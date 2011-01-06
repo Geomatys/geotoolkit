@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C)2010, Geomatys
+ *    (C)2010-2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -498,6 +498,7 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
             Double[] range = map.getCanvas().getController().getElevationRange();
 
             if(range == null){
+                range = new Double[2];
                 range[0] = Double.NEGATIVE_INFINITY;
                 range[1] = Double.POSITIVE_INFINITY;
             }else{

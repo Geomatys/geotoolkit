@@ -33,8 +33,8 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
  */
 class SelectionCheck extends JCheckBox {
 
-    private static final ImageIcon ICO_SELECT = IconBundle.getInstance().getIcon("16_select");
-    private static final ImageIcon ICO_NOSELECT = IconBundle.getInstance().getIcon("16_noselect");
+    private static final ImageIcon ICO_SELECT = IconBundle.getIcon("16_select");
+    private static final ImageIcon ICO_NOSELECT = IconBundle.getIcon("16_noselect");
 
     @Override
     public void paintComponent(Graphics g) {

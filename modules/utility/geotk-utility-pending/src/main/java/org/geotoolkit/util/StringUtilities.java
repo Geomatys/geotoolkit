@@ -356,21 +356,23 @@ public final class StringUtilities {
     /**
      * Returns the values of the list separated by commas.
      *
-     * @param values The list to extract values.
+     * @param values The collection to extract values.
      * @return A string which contains values concatened with comma(s), or an empty
      *         string if the list is empty or {@code null}.
      */
-    public static String toCommaSeparatedValues(final List<?> values) {
+    public static String toCommaSeparatedValues(final Collection<?> values) {
         if (values == null || values.isEmpty()) {
             return "";
         }
-        final int listSize = values.size();
         final StringBuilder builder = new StringBuilder();
-        for (int i=0; i<listSize; i++) {
-            if (i>0) {
+        boolean first = true;
+        for(Object obj : values){
+            if(first){
+                first = false;
+            }else{
                 builder.append(',');
             }
-            builder.append(values.get(i));
+            builder.append(obj);
         }
         return builder.toString();
     }
@@ -382,7 +384,7 @@ public final class StringUtilities {
      * @return A string which contains values concatened with comma(s), or an empty
      *         string if the array is empty or {@code null}.
      */
-    public static String toCommaSeparatedValues(final String[] values) {
+    public static String toCommaSeparatedValues(final Object ... values) {
         if (values == null || values.length == 0) {
             return "";
         }

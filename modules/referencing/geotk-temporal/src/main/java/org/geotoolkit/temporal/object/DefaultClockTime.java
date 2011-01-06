@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  * 
  *    (C) 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009, Geomatys
+ *    (C) 2009-2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.temporal.object;
 
+import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.Utilities;
 import org.opengis.temporal.ClockTime;
 import org.opengis.temporal.IndeterminateValue;
@@ -86,7 +87,7 @@ public class DefaultClockTime extends DefaultTemporalPosition implements ClockTi
     public String toString() {
         StringBuilder s = new StringBuilder("ClockTime:").append('\n');
         if (clockTime != null) {
-            s.append("clockTime:").append(clockTime).append('\n');
+            s.append("clockTime:").append(StringUtilities.toCommaSeparatedValues((Object[])clockTime)).append('\n');
         }
         return s.toString();
     }

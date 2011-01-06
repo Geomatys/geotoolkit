@@ -32,8 +32,8 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  */
 public class InformationAction extends AbstractAction {
 
-    private static final ImageIcon ICON_INFO_16 = IconBundle.getInstance().getIcon("16_deco_info");
-    private static final ImageIcon ICON_INFO_24 = IconBundle.getInstance().getIcon("24_deco_info");
+    private static final ImageIcon ICON_INFO_16 = IconBundle.getIcon("16_deco_info");
+    private static final ImageIcon ICON_INFO_24 = IconBundle.getIcon("24_deco_info");
 
     private JMap2D map = null;
     private InformationPresenter presenter = null;

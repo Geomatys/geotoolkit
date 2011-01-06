@@ -31,8 +31,8 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  */
 public class PanAction extends AbstractAction {
 
-    private static final ImageIcon ICON_ZOOM_PAN_16 = IconBundle.getInstance().getIcon("16_zoom_pan");
-    private static final ImageIcon ICON_ZOOM_PAN_24 = IconBundle.getInstance().getIcon("24_zoom_pan");
+    private static final ImageIcon ICON_ZOOM_PAN_16 = IconBundle.getIcon("16_zoom_pan");
+    private static final ImageIcon ICON_ZOOM_PAN_24 = IconBundle.getIcon("24_zoom_pan");
 
     private JMap2D map = null;
 

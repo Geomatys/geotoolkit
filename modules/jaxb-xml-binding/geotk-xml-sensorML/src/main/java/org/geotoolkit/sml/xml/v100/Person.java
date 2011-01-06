@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -95,7 +95,7 @@ public class Person implements AbstractPerson {
     }
 
     public Person(AbstractPerson person) {
-        if (person == null) {
+        if (person != null) {
             this.affiliation = person.getAffiliation();
             this.email       = person.getEmail();
             this.id          = person.getId();

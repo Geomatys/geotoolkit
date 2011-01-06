@@ -81,9 +81,9 @@ public class JPropertyDialog extends JDialog{
         if(rev)bas.add(revert);
         if(clo)bas.add(close);
         
-        apply.setIcon(IconBundle.getInstance().getIcon("16_apply"));
-        revert.setIcon(IconBundle.getInstance().getIcon("16_reload"));
-        close.setIcon(IconBundle.getInstance().getIcon("16_close"));
+        apply.setIcon(IconBundle.getIcon("16_apply"));
+        revert.setIcon(IconBundle.getIcon("16_reload"));
+        close.setIcon(IconBundle.getIcon("16_close"));
         
         
         tabs.addChangeListener(new ChangeListener() {

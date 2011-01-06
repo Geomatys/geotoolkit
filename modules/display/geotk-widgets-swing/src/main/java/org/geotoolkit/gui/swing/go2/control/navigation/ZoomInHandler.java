@@ -48,7 +48,7 @@ public class ZoomInHandler extends AbstractNavigationHandler {
         super(map);
         
         final Toolkit tk = Toolkit.getDefaultToolkit();
-        final ImageIcon ico_zoomIn = IconBundle.getInstance().getIcon("16_zoom_in");
+        final ImageIcon ico_zoomIn = IconBundle.getIcon("16_zoom_in");
         final BufferedImage img = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
         img.getGraphics().drawImage(ico_zoomIn.getImage(), 0, 0, null);
         CUR_ZOOM_IN = tk.createCustomCursor(img, new Point(1, 1), "in");

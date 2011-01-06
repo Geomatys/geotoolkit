@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.style;
 
+import java.util.Collections;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -67,8 +68,7 @@ public class DefaultGraphic implements Graphic{
             Expression rotation, AnchorPoint anchor, Displacement disp){
         
         if(symbols == null || symbols.isEmpty()){
-            this.symbols = new ArrayList<GraphicalSymbol>();
-            symbols.add(DEFAULT_GRAPHICAL_SYMBOL);
+            this.symbols = Collections.singletonList((GraphicalSymbol)DEFAULT_GRAPHICAL_SYMBOL);
         }else{
             final GraphicalSymbol[] rep = symbols.toArray(new GraphicalSymbol[symbols.size()]);
             this.symbols = UnmodifiableArrayList.wrap(rep);

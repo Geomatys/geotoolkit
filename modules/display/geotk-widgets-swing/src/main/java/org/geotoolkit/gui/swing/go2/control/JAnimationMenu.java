@@ -42,10 +42,10 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  */
 public abstract class JAnimationMenu extends JMenu{
 
-    private final ImageIcon ICON_PLAY = IconBundle.getInstance().getIcon("16_play");
-    private final ImageIcon ICON_PLAY_OVER = IconBundle.getInstance().getIcon("16_play");
-    private final ImageIcon ICON_PAUSE = IconBundle.getInstance().getIcon("16_stop");
-    private final ImageIcon ICON_PAUSE_OVER = IconBundle.getInstance().getIcon("16_stop");
+    private final ImageIcon ICON_PLAY = IconBundle.getIcon("16_play");
+    private final ImageIcon ICON_PLAY_OVER = IconBundle.getIcon("16_play");
+    private final ImageIcon ICON_PAUSE = IconBundle.getIcon("16_stop");
+    private final ImageIcon ICON_PAUSE_OVER = IconBundle.getIcon("16_stop");
 
     private final JMenuItem run = new JMenuItem();
     private final JSpinner factor = new JSpinner(new SpinnerNumberModel(1000d, 0.1d, Double.POSITIVE_INFINITY, 10d));

@@ -58,10 +58,10 @@ import org.opengis.referencing.operation.TransformException;
  */
 public final class DefaultEditionDecoration extends AbstractGeometryDecoration {
 
-    private static final Icon ICON_MOUSE_LEFT = IconBundle.getInstance().getIcon("22_mouse_left");
-    private static final Icon ICON_MOUSE_RIGHT = IconBundle.getInstance().getIcon("22_mouse_right");
-    private static final Icon ICON_MOUSE_CENTER = IconBundle.getInstance().getIcon("22_mouse_center");
-    private static final Icon ICON_MOUSE_WHEEL = IconBundle.getInstance().getIcon("22_mouse_wheel");
+    private static final Icon ICON_MOUSE_LEFT = IconBundle.getIcon("22_mouse_left");
+    private static final Icon ICON_MOUSE_RIGHT = IconBundle.getIcon("22_mouse_right");
+    private static final Icon ICON_MOUSE_CENTER = IconBundle.getIcon("22_mouse_center");
+    private static final Icon ICON_MOUSE_WHEEL = IconBundle.getIcon("22_mouse_wheel");
 
     public static final String MSG_GEOM_SELECT = MessageBundle.getString("gesture_geom_select");
     public static final String MSG_GEOM_MOVE = MessageBundle.getString("gesture_geom_move");

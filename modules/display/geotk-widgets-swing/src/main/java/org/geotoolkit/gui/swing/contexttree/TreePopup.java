@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Johann Sorel
+ *    (C) 2008 - 2011, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -46,20 +46,15 @@ final class TreePopup extends JPopupMenu {
     @Override
     public void setVisible(boolean view) {
 
-        if (view) {
+        if (view && tree != null) {
             removeAll();
 
-            TreePath[] selection = {};
-
-            if (tree != null) {
-                selection = tree.getRealTree().getSelectionPaths();
-            }
-            
+            TreePath[] selection = tree.getRealTree().getSelectionPaths();            
             if(selection == null){
                 selection = new TreePath[0];
             }
 
-            for (TreePopupItem control : tree.controls()) {
+            for (final TreePopupItem control : tree.controls()) {
                 control.setTree(tree);
                 if (control.isValid(selection)) {
                     add(control.getComponent(selection));

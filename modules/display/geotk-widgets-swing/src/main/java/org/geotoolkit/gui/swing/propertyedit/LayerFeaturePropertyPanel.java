@@ -464,7 +464,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
 
     @Override
     public ImageIcon getIcon() {
-        return IconBundle.getInstance().getIcon("16_feature_table");
+        return IconBundle.getIcon("16_feature_table");
     }
 
     @Override

@@ -46,7 +46,7 @@ public class PanHandler extends AbstractNavigationHandler {
     public PanHandler(JMap2D map) {
         super(map);
         final Toolkit tk = Toolkit.getDefaultToolkit();
-        final ImageIcon ico_zoomPan = IconBundle.getInstance().getIcon("16_zoom_pan");
+        final ImageIcon ico_zoomPan = IconBundle.getIcon("16_zoom_pan");
         final BufferedImage img3 = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
         img3.getGraphics().drawImage(ico_zoomPan.getImage(), 0, 0, null);
         CUR_ZOOM_PAN = tk.createCustomCursor(img3, new Point(1, 1), "in");

@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2011, Geomatys
  * 
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,7 +17,6 @@
  */
 package org.geotoolkit.data.shapefile.indexed;
 
-import org.geotoolkit.index.quadtree.LazyTyleSearchIterator;
 import com.vividsolutions.jts.geom.Envelope;
 
 import java.io.File;
@@ -55,7 +55,6 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.shapefile.ShpDBF;
 import org.geotoolkit.data.shapefile.indexed.IndexDataReader.ShpData;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.index.quadtree.LazySearchCollection;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.filter.visitor.FilterAttributeExtractor;
 import org.geotoolkit.filter.visitor.ExtractBoundsFilterVisitor;
@@ -68,6 +67,8 @@ import org.geotoolkit.index.TreeException;
 import org.geotoolkit.index.quadtree.DataReader;
 import org.geotoolkit.index.quadtree.QuadTree;
 import org.geotoolkit.index.quadtree.StoreException;
+import org.geotoolkit.index.quadtree.LazySearchCollection;
+import org.geotoolkit.index.quadtree.LazyTyleSearchIterator;
 import org.geotoolkit.index.rtree.RTree;
 import org.geotoolkit.util.NullProgressListener;
 import org.geotoolkit.data.query.QueryUtilities;
@@ -92,7 +93,6 @@ import org.opengis.filter.spatial.BBOX;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.geotoolkit.data.shapefile.ShpFileType.*;
-import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
 import static org.geotoolkit.data.shapefile.ShpFiles.*;
 
 
@@ -445,7 +445,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         try {
             final QuadTree quadTree = openQuadTree();
             final DataReader<ShpData> dr = new IndexDataReader(shx);
-            if ((quadTree != null)) {
+            if (quadTree != null) {
                 goodCollec = quadTree.search(dr,bbox,minRes);
             }
 

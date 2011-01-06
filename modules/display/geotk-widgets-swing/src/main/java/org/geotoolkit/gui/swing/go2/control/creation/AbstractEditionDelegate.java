@@ -34,21 +34,21 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
  */
 public abstract class AbstractEditionDelegate extends MouseNavigatonListener implements MouseInputListener,KeyListener,MouseWheelListener{
 
-    public static final Icon ICON_ADD = IconBundle.getInstance().getIcon("16_add");
-    public static final Icon ICON_MOVE = IconBundle.getInstance().getIcon("16_move");
-    public static final Icon ICON_DELETE = IconBundle.getInstance().getIcon("16_delete");
-    public static final Icon ICON_NODE_MOVE = IconBundle.getInstance().getIcon("16_move_node");
-    public static final Icon ICON_SUBPOINT_MOVE = IconBundle.getInstance().getIcon("16_move_subpoint");
-    public static final Icon ICON_SUBLINE_MOVE = IconBundle.getInstance().getIcon("16_move_subline");
-    public static final Icon ICON_SUBPOLYGON_MOVE = IconBundle.getInstance().getIcon("16_move_subpolygon");
-    public static final Icon ICON_NODE_ADD = IconBundle.getInstance().getIcon("16_add_node");
-    public static final Icon ICON_SUBPOINT_ADD = IconBundle.getInstance().getIcon("16_add_subpoint");
-    public static final Icon ICON_SUBLINE_ADD = IconBundle.getInstance().getIcon("16_add_subline");
-    public static final Icon ICON_SUBPOLYGON_ADD = IconBundle.getInstance().getIcon("16_add_subpolygon");
-    public static final Icon ICON_NODE_DELETE = IconBundle.getInstance().getIcon("16_remove_node");
-    public static final Icon ICON_SUBPOINT_DELETE = IconBundle.getInstance().getIcon("16_remove_subpoint");
-    public static final Icon ICON_SUBLINE_DELETE = IconBundle.getInstance().getIcon("16_remove_subline");
-    public static final Icon ICON_SUBPOLYGON_DELETE = IconBundle.getInstance().getIcon("16_remove_subpolygon");
+    public static final Icon ICON_ADD = IconBundle.getIcon("16_add");
+    public static final Icon ICON_MOVE = IconBundle.getIcon("16_move");
+    public static final Icon ICON_DELETE = IconBundle.getIcon("16_delete");
+    public static final Icon ICON_NODE_MOVE = IconBundle.getIcon("16_move_node");
+    public static final Icon ICON_SUBPOINT_MOVE = IconBundle.getIcon("16_move_subpoint");
+    public static final Icon ICON_SUBLINE_MOVE = IconBundle.getIcon("16_move_subline");
+    public static final Icon ICON_SUBPOLYGON_MOVE = IconBundle.getIcon("16_move_subpolygon");
+    public static final Icon ICON_NODE_ADD = IconBundle.getIcon("16_add_node");
+    public static final Icon ICON_SUBPOINT_ADD = IconBundle.getIcon("16_add_subpoint");
+    public static final Icon ICON_SUBLINE_ADD = IconBundle.getIcon("16_add_subline");
+    public static final Icon ICON_SUBPOLYGON_ADD = IconBundle.getIcon("16_add_subpolygon");
+    public static final Icon ICON_NODE_DELETE = IconBundle.getIcon("16_remove_node");
+    public static final Icon ICON_SUBPOINT_DELETE = IconBundle.getIcon("16_remove_subpoint");
+    public static final Icon ICON_SUBLINE_DELETE = IconBundle.getIcon("16_remove_subline");
+    public static final Icon ICON_SUBPOLYGON_DELETE = IconBundle.getIcon("16_remove_subpolygon");
 
     protected final DefaultEditionHandler handler;
     private JMap2D map;

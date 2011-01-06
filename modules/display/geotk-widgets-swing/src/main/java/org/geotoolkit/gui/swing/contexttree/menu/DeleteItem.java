@@ -50,7 +50,7 @@ public class DeleteItem extends AbstractTreePopupItem{
     }
 
     private void init(){
-        setIcon( IconBundle.getInstance().getIcon("16_delete") );
+        setIcon( IconBundle.getIcon("16_delete") );
         setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE,0));
 
         addActionListener(new ActionListener() {

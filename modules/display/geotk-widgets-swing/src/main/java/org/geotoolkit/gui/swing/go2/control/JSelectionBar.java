@@ -44,14 +44,14 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  */
 public class JSelectionBar extends JToolBar implements MapControlBar{
 
-    private static final ImageIcon ICON_SELECT = IconBundle.getInstance().getIcon("16_select");
-    private static final ImageIcon ICON_CONFIG = IconBundle.getInstance().getIcon("16_vertical_next");
-    private static final ImageIcon ICON_INTERSECT = IconBundle.getInstance().getIcon("16_select_intersect");
-    private static final ImageIcon ICON_WITHIN = IconBundle.getInstance().getIcon("16_select_within");
-    private static final ImageIcon ICON_LASSO = IconBundle.getInstance().getIcon("16_select_lasso");
-    private static final ImageIcon ICON_SQUARE = IconBundle.getInstance().getIcon("16_select_square");
-    private static final ImageIcon ICON_GEOGRAPHIC = IconBundle.getInstance().getIcon("16_zoom_all");
-    private static final ImageIcon ICON_VISUAL = IconBundle.getInstance().getIcon("16_visible");
+    private static final ImageIcon ICON_SELECT = IconBundle.getIcon("16_select");
+    private static final ImageIcon ICON_CONFIG = IconBundle.getIcon("16_vertical_next");
+    private static final ImageIcon ICON_INTERSECT = IconBundle.getIcon("16_select_intersect");
+    private static final ImageIcon ICON_WITHIN = IconBundle.getIcon("16_select_within");
+    private static final ImageIcon ICON_LASSO = IconBundle.getIcon("16_select_lasso");
+    private static final ImageIcon ICON_SQUARE = IconBundle.getIcon("16_select_square");
+    private static final ImageIcon ICON_GEOGRAPHIC = IconBundle.getIcon("16_zoom_all");
+    private static final ImageIcon ICON_VISUAL = IconBundle.getIcon("16_visible");
 
     private final ButtonGroup groupClip = new ButtonGroup();
     private final ButtonGroup groupZone = new ButtonGroup();

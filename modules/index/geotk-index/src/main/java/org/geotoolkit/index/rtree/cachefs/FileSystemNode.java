@@ -528,13 +528,26 @@ public class FileSystemNode extends Node {
         this.flushNeeded = true;
     }
 
-    /**
-     * {@inheritDoc }
-     */
     @Override
     public boolean equals(Object obj) {
-        FileSystemNode comp = (FileSystemNode) obj;
-
-        return this.getOffset() == comp.getOffset();
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final FileSystemNode other = (FileSystemNode) obj;
+        if (this.offset != other.offset) {
+            return false;
+        }
+        return true;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89 * hash + (int) (this.offset ^ (this.offset >>> 32));
+        return hash;
+    }
+
 }

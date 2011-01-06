@@ -71,9 +71,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class JCoordinateBar extends JToolBar {
 
-    private static final ImageIcon ICON_HINT = addHorizontalMargin(IconBundle.getInstance().getIcon("16_hint"),2);
-    private static final ImageIcon ICON_TEMPORAL = addHorizontalMargin(IconBundle.getInstance().getIcon("16_temporal"),2);
-    private static final ImageIcon ICON_ELEVATION = addHorizontalMargin(IconBundle.getInstance().getIcon("16_elevation"),2);
+    private static final ImageIcon ICON_HINT = addHorizontalMargin(IconBundle.getIcon("16_hint"),2);
+    private static final ImageIcon ICON_TEMPORAL = addHorizontalMargin(IconBundle.getIcon("16_temporal"),2);
+    private static final ImageIcon ICON_ELEVATION = addHorizontalMargin(IconBundle.getIcon("16_elevation"),2);
 
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getNumberInstance();
 

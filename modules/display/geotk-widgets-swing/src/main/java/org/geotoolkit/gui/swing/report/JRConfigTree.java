@@ -67,8 +67,8 @@ public class JRConfigTree<C> extends Outline{
 
     private static String STR_PARAMETERS    = "Parameters";
     private static String STR_FIELDS        = "Fields";
-    private static ImageIcon ICON_FIELD     = IconBundle.getInstance().getIcon("16_jasper_field");
-    private static ImageIcon ICON_PARAMETER = IconBundle.getInstance().getIcon("16_jasper_parameter");
+    private static ImageIcon ICON_FIELD     = IconBundle.getIcon("16_jasper_field");
+    private static ImageIcon ICON_PARAMETER = IconBundle.getIcon("16_jasper_parameter");
 
 
     private JRModel treeModel = null;

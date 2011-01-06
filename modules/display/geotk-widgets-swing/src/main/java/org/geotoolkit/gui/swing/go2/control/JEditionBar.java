@@ -37,7 +37,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  */
 public class JEditionBar extends JToolBar implements MapControlBar{
 
-    private static final ImageIcon ICON_EDIT = IconBundle.getInstance().getIcon("16_edit_geom");
+    private static final ImageIcon ICON_EDIT = IconBundle.getIcon("16_edit_geom");
 
     private final JButton guiEdit = new JButton(ICON_EDIT);
 

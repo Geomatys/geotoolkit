@@ -33,8 +33,8 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  */
 public class MesureAreaAction extends AbstractAction {
 
-    private static final ImageIcon ICON_AREA_16 = IconBundle.getInstance().getIcon("16_mesure_area");
-    private static final ImageIcon ICON_AREA_24 = IconBundle.getInstance().getIcon("24_mesure_area");
+    private static final ImageIcon ICON_AREA_16 = IconBundle.getIcon("16_mesure_area");
+    private static final ImageIcon ICON_AREA_24 = IconBundle.getIcon("24_mesure_area");
 
     private JMap2D map = null;
 

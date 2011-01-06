@@ -39,7 +39,7 @@ import org.geotoolkit.gui.swing.resource.IconBundle;
  */
 public class JSimpleDialog extends javax.swing.JDialog {
 
-    private static final ImageIcon ICO_CLOSE = IconBundle.getInstance().getIcon("16_close");
+    private static final ImageIcon ICO_CLOSE = IconBundle.getIcon("16_close");
     
     /** Creates new form JSimpleDialog */
     public JSimpleDialog(java.awt.Frame parent, boolean modal,Component child) {
