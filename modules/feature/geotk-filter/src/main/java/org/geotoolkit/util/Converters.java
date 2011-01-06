@@ -36,6 +36,7 @@ public final class Converters {
 
     public static <T> T convert(Object candidate, Class<T> target) {
         if(candidate == null) return null;
+        if(target == null) return (T) candidate;
         return (T) convert(candidate, (Class) candidate.getClass(), target);
     }
 

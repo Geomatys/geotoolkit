@@ -53,7 +53,7 @@ public final class XPathPropertyAccessorFactory implements PropertyAccessorFacto
 
     @Override
     public int getPriority() {
-        return 0;
+        return 5;
     }
 
     private static class XPathPropertyAccessor implements PropertyAccessor{

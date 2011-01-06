@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2010-2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -20,13 +20,14 @@ package org.geotoolkit.filter.accessor;
 import java.io.Serializable;
 import java.util.Map;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.util.Converters;
 
 /**
- * Test accesor for Map collections.
+ * Accesor for Map collections.
  * 
  * @author Johann Sorel (Geomatys)
  */
-public class DummyMapAccessorFactory implements PropertyAccessorFactory{
+public final class MapAccessorFactory implements PropertyAccessorFactory{
 
     private static final MapAccessor ACCESSOR = new MapAccessor();
 
@@ -53,13 +54,13 @@ public class DummyMapAccessorFactory implements PropertyAccessorFactory{
         @Override
         public Object get(Object object, String xpath, Class target) throws IllegalArgumentException {
             final Map map = (Map) object;
-            return map.get(xpath);
+            return Converters.convert(map.get(xpath),target);
         }
 
         @Override
         public void set(Object object, String xpath, Object value, Class target) throws IllegalArgumentException {
             final Map map = (Map) object;
-            map.put(xpath, value);
+            map.put(xpath, Converters.convert(value, target));
         }
 
         @Override
@@ -70,8 +71,8 @@ public class DummyMapAccessorFactory implements PropertyAccessorFactory{
             if (getClass() != obj.getClass()) {
                 return false;
             }
-            final MapAccessor other = (MapAccessor) obj;
-            return true;
+            //unique instance of this class
+            return this == obj;
         }
 
         @Override
