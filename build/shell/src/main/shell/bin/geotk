@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# ---------------------------------------------
+# Tool to execute geotoolkit processes.
+# Tools are discovered dynamicly when registered in services.
+# ---------------------------------------------
+
+set -o errexit
+set -o nounset
+
+# Common initialization.
+BASE_DIR=`dirname $0`/..
+export BASE_DIR
+. $BASE_DIR/etc/setenv.sh
+
+# Execution.
+java $OPTS -classpath "$JARS/*" org.geotoolkit.process.ProcessConsole "$@"

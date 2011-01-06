@@ -38,7 +38,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public final class TilingDescriptor extends AbstractProcessDescriptor{
 
-    public static final String NAME = "tyling";
+    public static final String NAME = "tiling";
 
     /**
      * Mandatory - Coverage to process
