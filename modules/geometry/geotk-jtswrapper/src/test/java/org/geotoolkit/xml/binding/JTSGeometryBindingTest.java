@@ -34,6 +34,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
+import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSEnvelope;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiCurve;
@@ -56,9 +57,9 @@ import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.primitive.Ring;
+import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.EPSG_VERSION;
 
 
 /**
@@ -68,7 +69,9 @@ import static org.geotoolkit.test.Commons.EPSG_VERSION;
 public class JTSGeometryBindingTest {
 
     private static final Logger LOGGER = Logger.getAnonymousLogger();
-    
+
+    private static String EPSG_VERSION;
+
     private MarshallerPool pool;
 
     private Unmarshaller un;
@@ -100,6 +103,8 @@ public class JTSGeometryBindingTest {
         Schema schema = sf.newSchema(new File(xsdDirectory, "gml.xsd"));
         un.setSchema(schema);
         //m.setSchema(schema);
+
+        EPSG_VERSION = CRS.getVersion("EPSG").toString();
 
     }
 
