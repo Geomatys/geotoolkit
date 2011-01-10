@@ -82,7 +82,7 @@ public class JTSGeometryBindingTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
-
+        EPSG_VERSION = CRS.getVersion("EPSG").toString();
     }
 
     @AfterClass
@@ -104,7 +104,7 @@ public class JTSGeometryBindingTest {
         un.setSchema(schema);
         //m.setSchema(schema);
 
-        EPSG_VERSION = CRS.getVersion("EPSG").toString();
+        
 
     }
 

@@ -79,6 +79,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.junit.Assert.*;
 import static org.geotoolkit.data.AbstractDataStore.*;
 import org.geotoolkit.data.AbstractFeatureCollection;
+import org.geotoolkit.util.FileUtilities;
 import org.xml.sax.SAXException;
 
 /**
@@ -99,6 +100,8 @@ public class XmlFeatureTest {
     private FeatureCollection collectionSimple;
 
     private final FeatureType complexType;
+
+    private static String EPSG_VERSION;
 
     public XmlFeatureTest() throws NoSuchAuthorityCodeException, FactoryException, ParseException {
 
@@ -241,6 +244,7 @@ public class XmlFeatureTest {
 
     @BeforeClass
     public static void setUpClass() throws Exception {
+        EPSG_VERSION = CRS.getVersion("EPSG").toString();
     }
 
     @AfterClass
@@ -329,8 +333,9 @@ public class XmlFeatureTest {
         writer.write(simpleFeatureFull, temp);
         writer.dispose();
 
-        DomCompare.compare(XmlFeatureTest.class
-                .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature.xml"), temp);
+        String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature.xml"));
+        expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
+        DomCompare.compare(expResult, temp);
     }
 
     @Test
