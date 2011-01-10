@@ -32,7 +32,7 @@ import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
-import org.geotoolkit.image.io.XImageIO;
+import org.geotoolkit.lang.Static;
 
 
 /**
@@ -42,7 +42,8 @@ import org.geotoolkit.image.io.XImageIO;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-public class ImageIOUtilities {
+@Static
+public final class ImageIOUtilities {
 
     private ImageIOUtilities(){}
 
@@ -87,8 +88,8 @@ public class ImageIOUtilities {
     public static void logImageWriterOrder(final String mime) {
         final Iterator<ImageWriter> writers = ImageIO.getImageWritersByMIMEType(mime);
         int i = 1;
-        String line = "\n///////////////////////////////////////////\n";
-        StringBuilder sb = new StringBuilder(line);
+        final String line = "\n///////////////////////////////////////////\n";
+        final StringBuilder sb = new StringBuilder(line);
         while (writers.hasNext()) {
             final ImageWriter writer = writers.next();
             final ImageWriterSpi spi = writer.getOriginatingProvider();

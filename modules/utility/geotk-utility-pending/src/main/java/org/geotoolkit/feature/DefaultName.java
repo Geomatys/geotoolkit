@@ -151,7 +151,7 @@ public class DefaultName implements Name,Serializable {
         }
 
         if (obj instanceof Name) {
-            DefaultName other = (DefaultName) obj;
+            final DefaultName other = (DefaultName) obj;
             if (!Utilities.equals(this.namespace, other.getNamespaceURI())) {
                 return false;
             }
@@ -202,7 +202,7 @@ public class DefaultName implements Name,Serializable {
     }
 
     private static Name toSessionNamespaceFromExtended(final String candidate) {
-        int index = candidate.indexOf('}');
+        final int index = candidate.indexOf('}');
 
         if(index == -1) throw new IllegalArgumentException("Invalide extended form : "+ candidate);
 
@@ -245,7 +245,7 @@ public class DefaultName implements Name,Serializable {
             return candidate.equals(DefaultName.toJCRExtendedForm(name));
         }
 
-        int index = candidate.lastIndexOf(':');
+        final int index = candidate.lastIndexOf(':');
 
         if(index <= 0){
             return candidate.equals(name.getLocalPart());

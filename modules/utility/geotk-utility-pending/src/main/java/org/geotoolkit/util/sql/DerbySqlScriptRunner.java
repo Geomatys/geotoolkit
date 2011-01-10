@@ -65,7 +65,7 @@ public class DerbySqlScriptRunner extends ScriptRunner {
                 && !query.startsWith("CREATE INDEX")
                 && !query.startsWith("CREATE SEQUENCE")
                 && !query.startsWith("SELECT pg_catalog.setval")
-                && !query.equals("")) {
+                && !"".equals(query)) {
             try {
                 return super.execute(new StringBuilder(query));
             } catch (SQLException ex) {

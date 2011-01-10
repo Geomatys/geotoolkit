@@ -32,7 +32,7 @@ public final class XInteger {
 
     private XInteger(){}
 
-    public static final int parseIntSigned(final CharSequence str, int i, final int max) throws NumberFormatException {
+    public static int parseIntSigned(final CharSequence str, int i, final int max) throws NumberFormatException {
         if (str == null) {
             throw new NumberFormatException("null");
         }
@@ -89,7 +89,7 @@ public final class XInteger {
         }
     }
 
-    public static final int parseIntUnsigned(final CharSequence str, int i, final int max) throws NumberFormatException {
+    public static int parseIntUnsigned(final CharSequence str, int i, final int max) throws NumberFormatException {
         if (str == null) {
             throw new NumberFormatException("null");
         }

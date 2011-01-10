@@ -26,7 +26,6 @@ import java.net.URL;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -35,7 +34,6 @@ import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
 
 import org.geotoolkit.coverage.grid.GridGeometry2D;
-import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -53,7 +51,6 @@ import org.geotoolkit.metadata.iso.DefaultMetadata;
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.util.logging.Logging;
 
@@ -76,7 +73,7 @@ import org.opengis.referencing.operation.TransformException;
  * @module pending
  */
 @Static
-public class GridCoverageReaders {
+public final class GridCoverageReaders {
 
     private static final Logger LOGGER = Logging.getLogger(GridCoverageReaders.class);
 
@@ -217,7 +214,7 @@ public class GridCoverageReaders {
             if(obj instanceof TileManager){
                 manager = (TileManager)obj;
 
-                File prjFile = (File)IOUtilities.changeExtension(file, "prj");
+                final File prjFile = (File)IOUtilities.changeExtension(file, "prj");
                 if(prjFile.exists()){
                     crs = PrjFiles.read(prjFile);
                 }else{
@@ -324,14 +321,14 @@ public class GridCoverageReaders {
             final File[] list = file.listFiles();
             if (list != null) {
                 for (int i = 0; i < list.length; i++) {
-                    CoordinateReferenceSystem ccrs = visit(list[i],tiles);
+                    final CoordinateReferenceSystem ccrs = visit(list[i],tiles);
                     if(ccrs != null){
                         crs = ccrs;
                     }
                 }
             }
         } else {
-            CoordinateReferenceSystem ccrs = test(file,tiles);
+            final CoordinateReferenceSystem ccrs = test(file,tiles);
             if(ccrs != null){
                 crs = ccrs;
             }

@@ -28,7 +28,7 @@ import java.util.NoSuchElementException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class SingletonIterator<E> implements Iterator<E> {
+public final class SingletonIterator<E> implements Iterator<E> {
 
     private final E singleton;
     private boolean hasNext = true;

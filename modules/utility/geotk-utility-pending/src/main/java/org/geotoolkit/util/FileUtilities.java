@@ -29,9 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -52,6 +49,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.logging.Logging;
 
 /**
@@ -60,7 +58,8 @@ import org.geotoolkit.util.logging.Logging;
  * @module pending
  * @Static
  */
-public class FileUtilities {
+@Static
+public final class FileUtilities {
 
     private static final Logger LOGGER = Logging.getLogger(FileUtilities.class);
     private static final int BUFFER = 2048;
@@ -80,14 +79,16 @@ public class FileUtilities {
             return;
         }
         if (!src.exists()) {
-            LOGGER.warning("The source file does not exist: "+ src);
+            LOGGER.log(Level.WARNING, "The source file does not exist: {0}", src);
             return;
         }
         if (src.isDirectory()) {
             if (!dest.exists()) {
-                dest.mkdir();
+                if(!dest.mkdir()){
+                    throw new IOException("Failed to create directory : " + dest);
+                }
             }
-            String files[] = src.list();
+            final String files[] = src.list();
             for (int i = 0; i < files.length; i++) {
                 copy(new File(src, files[i]), new File(dest, files[i]));
             }
@@ -97,7 +98,7 @@ public class FileUtilities {
             try {
                 from = new FileInputStream(src);
                 to = new FileOutputStream(dest);
-                byte[] buffer = new byte[4096];
+                final byte[] buffer = new byte[4096];
                 int bytesRead;
 
                 while ((bytesRead = from.read(buffer)) != -1) {
@@ -150,10 +151,13 @@ public class FileUtilities {
         final FileWriter fw = new FileWriter(urlFile, true);
         final BufferedWriter output = new BufferedWriter(fw);
 
-        output.write(text);
-        output.newLine();
-        output.flush();
-        output.close();
+        try{
+            output.write(text);
+            output.newLine();
+            output.flush();
+        }finally{
+            output.close();
+        }
     }
 
     /**
@@ -166,9 +170,14 @@ public class FileUtilities {
     public static void emptyFile(final String urlFile) throws IOException {
         final File file = new File(urlFile);
         if (file.exists()) {
-            file.delete();
+            if(!file.delete()){
+                throw new IOException("Failed to delete file : " + file);
+            }
         }
-        file.createNewFile();
+        if(!file.createNewFile()){
+            //should have been deleted before, so we expect this to be true.
+            throw new IOException("Failed to create file : " + file);
+        }
     }
 
     /**
@@ -183,10 +192,13 @@ public class FileUtilities {
         final StringBuilder sb = new StringBuilder();
         final BufferedReader br = new BufferedReader(new FileReader(f));
         String line;
-        while ((line = br.readLine()) != null) {
-            sb.append(line).append('\n');
+        try{
+            while ((line = br.readLine()) != null) {
+                sb.append(line).append('\n');
+            }
+        }finally{
+            br.close();
         }
-        br.close();
         return sb.toString();
     }
 
@@ -202,11 +214,14 @@ public class FileUtilities {
         final StringBuilder sb  = new StringBuilder();
         final BufferedReader br = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
         String line;
-        while ((line = br.readLine()) != null) {
-            sb.append(line).append('\n');
+        try{
+            while ((line = br.readLine()) != null) {
+                sb.append(line).append('\n');
+            }
+        }finally{
+            br.close();
+            stream.close();
         }
-        br.close();
-        stream.close();
         return sb.toString();
     }
 
@@ -288,10 +303,15 @@ public class FileUtilities {
             final Properties prop = new Properties();
             if (f.exists()) {
                 final FileInputStream in = new FileInputStream(f);
-                prop.load(in);
-                in.close();
+                try{
+                    prop.load(in);
+                }finally{
+                    in.close();
+                }
             } else {
-                f.createNewFile();
+                if(!f.createNewFile()){
+                    throw new IOException("Failed to create file : " + f);
+                }
             }
             return prop;
         } else {
@@ -311,8 +331,11 @@ public class FileUtilities {
             throw new IllegalArgumentException(" the properties or file can't be null");
         } else {
             final FileOutputStream out = new FileOutputStream(f);
-            prop.store(out, "");
-            out.close();
+            try{
+                prop.store(out, "");
+            }finally{
+                out.close();
+            }
         }
     }
 
@@ -327,12 +350,12 @@ public class FileUtilities {
      */
     public static File scanDir(final URI u, final String filePackageName) throws IOException {
         final String scheme = u.getScheme();
-        if (scheme.equals("file")) {
+        if ("file".equals(scheme)) {
             final File f = new File(u.getPath());
             if (f.isDirectory()) {
                 return f;
             }
-        } else if (scheme.equals("jar") || scheme.equals("zip")) {
+        } else if ("jar".equals(scheme) || "zip".equals(scheme)) {
             final File f = new File(System.getProperty("java.io.tmpdir") + "/Constellation");
             boolean created = true;
             if (!f.exists()) {
@@ -344,8 +367,8 @@ public class FileUtilities {
                     if (cleanedUri.indexOf('!') != -1) {
                         cleanedUri = cleanedUri.substring(0, cleanedUri.indexOf('!'));
                     }
-                    URI newUri = new URI(cleanedUri);
-                    InputStream i = newUri.toURL().openStream();
+                    final URI newUri = new URI(cleanedUri);
+                    final InputStream i = newUri.toURL().openStream();
                     IOUtilities.unzip(i, f);
                 } catch (URISyntaxException ex) {
                     LOGGER.log(Level.WARNING, null, ex);
@@ -374,10 +397,10 @@ public class FileUtilities {
      */
     public static File scanFile(final URI u, final String filePackageName) throws IOException {
         final String scheme = u.getScheme();
-        if (scheme.equals("file")) {
+        if ("file".equals(scheme)) {
             return new File(u.getPath());
         }
-        if (scheme.equals("jar") || scheme.equals("zip")) {
+        if ("jar".equals(scheme) || "zip".equals(scheme)) {
             final File f = new File(System.getProperty("java.io.tmpdir") + "/Constellation");
             boolean created = true;
             if (!f.exists()) {
@@ -448,8 +471,8 @@ public class FileUtilities {
                     final URL url = urls.nextElement();
                     try {
                         final URI uri = url.toURI();
-                        List<String> scanned = scan(uri, fileP, true);
-                        for (String s : scanned) {
+                        final List<String> scanned = scan(uri, fileP, true);
+                        for (final String s : scanned) {
                             if (!result.contains(s)) {
                                 result.add(s);
                             }
@@ -478,11 +501,11 @@ public class FileUtilities {
     public static List<String> scan(final URI u, final String filePackageName, final boolean directory) throws IOException {
         final List<String> result = new ArrayList<String>();
         final String scheme = u.getScheme();
-        if (scheme.equals("file")) {
+        if ("file".equals(scheme)) {
             final File f = new File(u.getPath());
             if (f.isDirectory()) {
-                List<String> scanned = scanDirectory(f, filePackageName, directory);
-                for (String s : scanned) {
+                final List<String> scanned = scanDirectory(f, filePackageName, directory);
+                for (final String s : scanned) {
                     if (!result.contains(s)) {
                         result.add(s);
                     }
@@ -490,14 +513,14 @@ public class FileUtilities {
             } else if (!directory) {
                 result.add(f.getPath());
             }
-        } else if (scheme.equals("jar") || scheme.equals("zip")) {
+        } else if ("jar".equals(scheme) || "zip".equals(scheme)) {
             try {
-                String brut = u.getSchemeSpecificPart();
-                URI uri = URI.create(brut.replaceAll(" ", "%20"));
+                final String brut = u.getSchemeSpecificPart();
+                final URI uri = URI.create(brut.replaceAll(" ", "%20"));
                 String jarFile = uri.getPath();
                 jarFile = jarFile.substring(0, jarFile.indexOf('!'));
-                List<String> scanned = scanJar(new File(jarFile), filePackageName, directory);
-                for (String s : scanned) {
+                final List<String> scanned = scanJar(new File(jarFile), filePackageName, directory);
+                for (final String s : scanned) {
                     if (!result.contains(s)) {
                         result.add(s);
                     }
@@ -524,13 +547,13 @@ public class FileUtilities {
         for (File child : root.listFiles()) {
             if (child.isDirectory()) {
                 if (directory) {
-                    String s = parent.replace('/', '.') + '.' + child.getName();
+                    final String s = parent.replace('/', '.') + '.' + child.getName();
                     if (!result.contains(s)) {
                         result.add(s);
                     }
                 }
-                List<String> scanned = scanDirectory(child, parent, directory);
-                for (String s : scanned) {
+                final List<String> scanned = scanDirectory(child, parent, directory);
+                for (final String s : scanned) {
                     if (!result.contains(s)) {
                         result.add(s);
                     }
@@ -587,8 +610,11 @@ public class FileUtilities {
     public static void stringToFile(final File f, final String s) throws IOException {
 
         final BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-        bw.write(s);
-        bw.close();
+        try{
+            bw.write(s);
+        }finally{
+            bw.close();
+        }
     }
 
     /**
@@ -632,7 +658,7 @@ public class FileUtilities {
 
         final BufferedOutputStream buf;
         if (checksum != null) {
-            CheckedOutputStream cos = new CheckedOutputStream(toOutputStream(zip), checksum);
+            final CheckedOutputStream cos = new CheckedOutputStream(toOutputStream(zip), checksum);
             buf = new BufferedOutputStream(cos);
         } else {
             buf = new BufferedOutputStream(toOutputStream(zip));
@@ -759,7 +785,7 @@ public class FileUtilities {
             throws IOException {
         final BufferedInputStream buffi;
         if (checksum != null) {
-            CheckedInputStream cis = new CheckedInputStream(toInputStream(zip), checksum);
+            final CheckedInputStream cis = new CheckedInputStream(toInputStream(zip), checksum);
             buffi = new BufferedInputStream(cis);
         } else {
             buffi = new BufferedInputStream(toInputStream(zip));

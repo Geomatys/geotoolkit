@@ -41,6 +41,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 
@@ -56,7 +57,8 @@ import org.xml.sax.SAXException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DomUtilities {
+@Static
+public final class DomUtilities {
 
     private DomUtilities(){}
 
@@ -95,7 +97,7 @@ public class DomUtilities {
         }
 
         final TransformerFactory factory = TransformerFactory.newInstance();
-        Transformer trs = factory.newTransformer();
+        final Transformer trs = factory.newTransformer();
         trs.setOutputProperty(OutputKeys.INDENT, "yes");
         trs.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1");
 
