@@ -118,10 +118,19 @@ public class PaletteComboBox extends JComponent {
 
     /**
      * Adds a uniform color (typically opaque) to the list of proposed choices.
+     * The color will be inserted before the gradients.
      *
      * @param color The uniform color to add.
      */
     public void addColor(final Color color) {
+        final int size = comboBox.getItemCount();
+        // The element at index 0 is "none", so we need to skip it.
+        for (int i=1; i<size; i++) {
+            if (!(comboBox.getItemAt(i) instanceof Color)) {
+                comboBox.insertItemAt(color, i);
+                return;
+            }
+        }
         comboBox.addItem(color);
     }
 

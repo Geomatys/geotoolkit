@@ -526,17 +526,8 @@ public class PaletteFactory {
      *         is unable to fetch this information.
      */
     public Set<String> getAvailableNames() {
-        boolean found = false;
-        final Set<String> names = new TreeSet<String>();
-        PaletteFactory factory = this;
-        do {
-            found |= factory.getAvailableNames(names);
-            factory = factory.fallback;
-        } while (factory != null);
-        if (!found) {
-            return null;
-        }
-        return names;
+        final Set<String> names = new LinkedHashSet<String>();
+        return getAvailableNames(names) ? names : null;
     }
 
     /**
@@ -547,11 +538,14 @@ public class PaletteFactory {
      */
     private boolean getAvailableNames(final Collection<String> names) {
         /*
+         * Queries the fallback first, in order to make the "standard" palettes appear first.
+         */
+        boolean found = (fallback != null) && fallback.getAvailableNames(names);
+        /*
          * First, parse the content of every "list.txt" files found on the classpath. Those files
          * are optional. But if they are present, we assume that their content are accurate (this
          * will not be verified).
          */
-        boolean found = false;
         try {
             BufferedReader in = getReader(LIST_FILE, "getAvailableNames");
             if (in != null) {

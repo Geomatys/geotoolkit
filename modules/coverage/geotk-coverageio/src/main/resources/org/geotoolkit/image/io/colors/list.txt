@@ -1,23 +1,24 @@
 #
-# List of *.pal files.
+# List of *.pal files, sorted in the order
+# to make them appear in GUI combo box.
 #
 
-bell
+grayscale
 blue
+cyan-blue
+green-inverse
+brown-inverse
+red-inverse
+green-yellow-red
+green-beige-red
 blue-beige-red
 blue-red
-brown-inverse
-cyan-blue
-dem
-grayscale
-green-inverse
-green-beige-red
-green-yellow-red
-rainbow
-rainbow-c
-rainbow-t
-red-inverse
 red-blue
-SeaWiFS
-white-cyan-red
 yellow-green-blue
+white-cyan-red
+bell
+rainbow
+rainbow-t
+rainbow-c
+SeaWiFS
+dem
